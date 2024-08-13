@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事業用クイズ</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>事業用クイズ</h1>
+    </header>
+    <main>
+        <section id="quiz-selection">
+            <!-- 問題セット選択ボタンがここに動的に追加されます -->
+        </section>
+        <section id="quiz-container" style="display: none;">
+            <p id="question-number"></p>
+            <h2 id="question"></h2>
+            <div id="answers">
+                <!-- 回答オプションがここに動的に追加されます -->
+            </div>
+            <button id="submit-answer">回答を送信</button>
+            <p id="result"></p>
+            <p id="explanation"></p>
+            <button id="next-question" style="display: none;">次の問題</button>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 SDW</p>
+    </footer>
+    <script src="app.js"></script>
+</body>
+</html>
