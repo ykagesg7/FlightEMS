@@ -1,35 +1,4 @@
-let supabase;
-
-document.addEventListener('DOMContentLoaded', () => {
-  const supabaseUrl = 'https://fstynltdfdetpyvbrswr.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzdHlubHRkZmRldHB5dmJyc3dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1MzI1ODcsImV4cCI6MjAzOTEwODU4N30.vzbj7_IjPZPBhJPUHvYLTONpOySASM8npaZIvwUXVG8';
-  supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-// スペース学習理論のクラス
-class SpacedRepetition {
-    constructor() {
-        this.intervals = [1, 3, 7, 14, 30, 60, 120]; // 復習間隔（日数）
-    }
-
-    calculateNextReview(currentIntervalIndex, wasCorrect) {
-        let nextIntervalIndex;
-        if (wasCorrect) {
-            nextIntervalIndex = Math.min(currentIntervalIndex + 1, this.intervals.length - 1);
-        } else {
-            nextIntervalIndex = Math.max(currentIntervalIndex - 1, 0);
-        }
-        const nextInterval = this.intervals[nextIntervalIndex];
-        const nextReviewDate = new Date();
-        nextReviewDate.setDate(nextReviewDate.getDate() + nextInterval);
-        return { nextReviewDate, nextIntervalIndex };
-    }
-
-    addQuestion() {
-        return { nextReviewDate: new Date(), intervalIndex: 0 };
-    }
-}
-
-// グローバル変数
+let supabaseClient;
 let allQuizData = [];
 let currentQuizQuestions = [];
 let currentQuestionIndex = 0;
@@ -37,40 +6,46 @@ let score = 0;
 let spacedRepetition = new SpacedRepetition();
 let questionReviewData = {};
 
-// DOMが読み込まれたら実行
 document.addEventListener('DOMContentLoaded', () => {
-    fetchQuizData();
+  const supabaseUrl = 'https://fstynltdfdetpyvbrswr.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzdHlubHRkZmRldHB5dmJyc3dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1MzI1ODcsImV4cCI6MjAzOTEwODU4N30.vzbj7_IjPZPBhJPUHvYLTONpOySASM8npaZIvwUXVG8';
+  supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+  fetchQuizData();
 });
 
-// 問題データをsupabaseから取得
+// スペース学習理論のクラス
+class SpacedRepetition {
+  // ... (既存のコード)
+}
+
+// JSONデータを取得
 async function fetchQuizData() {
-    try {
-      const { data, error } = await supabase
-        .from('quiz_questions')
-        .select('*');
-      if (error) throw error;
-      allQuizData = data;
-      initializeQuiz();
-    } catch (error) {
-      console.error('データの取得に失敗しました:', error);
-    }
+  try {
+    const { data, error } = await supabaseClient
+      .from('quiz_questions')
+      .select('*');
+    if (error) throw error;
+    allQuizData = data;
+    initializeQuiz();
+  } catch (error) {
+    console.error('データの取得に失敗しました:', error);
   }
+}
 
 // クイズの初期化
 function initializeQuiz() {
-    const quizSelection = document.getElementById('quiz-selection');
-    const quizContainer = document.getElementById('quiz-container');
-    quizSelection.innerHTML = '<option value="">問題セットを選択してください</option>';
-    allQuizData.forEach((quizSet, index) => {
-        quizSelection.innerHTML += `<option value="${index}">${quizSet.category}</option>`;
-    });
-    quizContainer.style.display = 'none';
-    
-    quizSelection.addEventListener('change', (e) => {
-        if (e.target.value !== "") {
-            startQuiz(parseInt(e.target.value));
-        }
-    });
+  const quizSelection = document.getElementById('quiz-selection');
+  const quizContainer = document.getElementById('quiz-container');
+  quizSelection.innerHTML = '<option value="">問題セットを選択してください</option>';
+  allQuizData.forEach((quizSet, index) => {
+    quizSelection.innerHTML += `<option value="${index}">${quizSet.category}</option>`;
+  });
+  quizContainer.style.display = 'none';
+  quizSelection.addEventListener('change', (e) => {
+    if (e.target.value !== "") {
+      startQuiz(parseInt(e.target.value));
+    }
+  });
 }
 
 // クイズの開始
@@ -143,4 +118,4 @@ function showResults() {
 }
 
 // イベントリスナーの設定
-document.getElementById('next-button').addEventListener('click', nextQuestion)})
+document.getElementById('next-button').addEventListener('click', nextQuestion)
