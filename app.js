@@ -1,22 +1,20 @@
-let supabaseClient;
-let allQuizData = [];
-let currentQuizQuestions = [];
-let currentQuestionIndex = 0;
-let score = 0;
-let spacedRepetition = new SpacedRepetition();
-let questionReviewData = {};
+var supabaseClient;
+var allQuizData = [];
+var currentQuizQuestions = [];
+var currentQuestionIndex = 0;
+var score = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
   const supabaseUrl = 'https://fstynltdfdetpyvbrswr.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzdHlubHRkZmRldHB5dmJyc3dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1MzI1ODcsImV4cCI6MjAzOTEwODU4N30.vzbj7_IjPZPBhJPUHvYLTONpOySASM8npaZIvwUXVG8';
   supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
   fetchQuizData();
-});
 
-// スペース学習理論のクラス
-class SpacedRepetition {
-  // ... (既存のコード)
-}
+  const nextButton = document.getElementById('next-button');
+  if (nextButton) {
+    nextButton.addEventListener('click', nextQuestion);
+  }
+});
 
 // JSONデータを取得
 async function fetchQuizData() {
@@ -29,6 +27,8 @@ async function fetchQuizData() {
     initializeQuiz();
   } catch (error) {
     console.error('データの取得に失敗しました:', error);
+    // ユーザーにエラーを通知する処理を追加
+    alert('クイズデータの取得に失敗しました。ページをリロードしてください。');
   }
 }
 
@@ -116,6 +116,3 @@ function showResults() {
     restartButton.addEventListener('click', initializeQuiz);
     quizContainer.appendChild(restartButton);
 }
-
-// イベントリスナーの設定
-document.getElementById('next-button').addEventListener('click', nextQuestion)
