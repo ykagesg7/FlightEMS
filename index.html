@@ -17,7 +17,6 @@
         <main>
             <div class="container">
                 <div id="quiz-selection-container">
-                    <label for="quiz-selection">カテゴリ選択:</label>
                     <select id="quiz-selection" name="quiz-selection">
                         <option value="">カテゴリを選択してください</option>
                     </select>
@@ -29,6 +28,10 @@
                     <div id="result" style="display: none;"></div>
                     <div id="explanation" style="display: none;"></div>
                     <button id="next-button" onclick="nextQuestion()" style="display: none;">次の問題</button>
+                    <div id="progress-container">
+                        <div id="progress-bar"></div>
+                        <div id="question-counter"></div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -40,7 +43,7 @@
         </footer>
 
         <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-        <script src="app3.js" defer></script>
+        <script src="app5.js" defer></script>
 
     </body>
 </html>

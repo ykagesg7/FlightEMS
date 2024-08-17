@@ -206,6 +206,28 @@ button:hover {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+#progress-container {
+  width: 100%;
+  background-color: var(--neutral-color);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+#progress-bar {
+  width: 0;
+  height: 10px;
+  background-color: var(--secondary-color);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+#question-counter {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary-color);
+}
+
 @media (max-width: 600px) {
   #quiz-container {
     padding: 1rem;
