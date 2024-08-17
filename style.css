@@ -1,205 +1,227 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 
 :root {
-    --primary-color: #4a90e2;
-    --secondary-color: #f39c12;
-    --background-color: #f4f7f9;
-    --text-color: #333;
-    --success-color: #2ecc71;
-    --error-color: #e74c3c;
+  --primary-color: #6200EA;
+  --secondary-color: #03DAC6;
+  --background-color: #121212;
+  --surface-color: #1E1E1E;
+  --text-color: #FFFFFF;
+  --text-secondary-color: #B0BEC5;
+  --success-color: #00C853;
+  --error-color: #FF5252;
+  --neutral-color: #424242;
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: var(--background-color);
-    color: var(--text-color);
-    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 header, footer {
-    background: linear-gradient(135deg, var(--primary-color), #2980b9);
-    color: #fff;
-    text-align: center;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  text-align: center;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 main {
-    flex: 1;
-    padding: 2rem;
-    max-width: 800px;
-    margin: 2rem auto;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+#quiz-container {
+  background-color: var(--surface-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+  max-width: 600px;
 }
 
 h1, h2 {
-    margin-bottom: 1rem;
-    font-weight: 700;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
 }
 
 h1 {
-    font-size: 2.5rem;
+  font-size: 2.5rem;
+  color: var(--primary-color);
 }
 
 h2 {
-    font-size: 1.8rem;
-    color: var(--primary-color);
+  font-size: 1.8rem;
+  color: var(--secondary-color);
 }
 
 select, button {
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
-    margin: 0.5rem 0;
-    border-radius: 4px;
-    border: none;
-    transition: all 0.3s ease;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 4px;
+  border: none;
+  transition: all 0.3s ease;
 }
 
-select {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.7rem top 50%;
-    padding-right: 2.5rem;
+select#quiz-selection {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: var(--neutral-color);
+  color: var(--text-color);
+  border: 1px solid var(--primary-color);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+select#quiz-selection:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(3, 218, 198, 0.2);
 }
 
 button {
-    background-color: var(--primary-color);
-    color: #fff;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
 button:hover {
-    background-color: #3a7bc8;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  background-color: #7C4DFF;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 #answers {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 #question-number {
-    font-size: 1.2rem;
-    color: var(--secondary-color);
-    margin-bottom: 1rem;
-    text-align: center;
+  font-size: 1.2rem;
+  color: var(--text-secondary-color);
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
-#answers button {
-    width: 100%;
-    background-color: #fff;
-    color: var(--text-color);
-    border: 2px solid var(--primary-color);
-    font-weight: 400;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+#answer-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-#answers button:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,.3), transparent);
-    transition: all 0.5s;
+#answer-buttons button {
+  background-color: var(--neutral-color);
+  color: var(--text-color);
+  padding: 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-#answers button:hover:before {
-    left: 100%;
+#answer-buttons button:hover {
+  background-color: var(--primary-color);
 }
 
-#answers button:hover, #answers button.selected {
-    background-color: var(--primary-color);
-    color: #fff;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+#next-button {
+  display: none;
+  margin-top: 1rem;
+  padding: 10px 20px;
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 #result {
-    font-weight: bold;
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 4px;
-    text-align: center;
-    display: none; /* 初期状態では非表示 */
+  font-weight: bold;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+  text-align: center;
+  display: none;
 }
 
 #result.correct {
-    background-color: var(--success-color);
-    color: #fff;
+  background-color: var(--success-color);
+  color: var(--text-color);
 }
 
 #result.incorrect {
-    background-color: var(--error-color);
-    color: #fff;
+  background-color: var(--error-color);
+  color: var(--text-color);
 }
 
 #explanation {
-    margin-top: 1rem;
-    padding: 1rem;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    display: none; /* 初期状態では非表示 */
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--neutral-color);
+  border-radius: 4px;
+  display: none;
+  color: var(--text-secondary-color);
 }
 
 #next-question, #submit-answer {
-    display: block;
-    width: 100%;
-    margin-top: 1rem;
-    background: linear-gradient(135deg, var(--primary-color), #2980b9);
-    color: #fff;
-    border: none;
-    padding: 1rem;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  background: linear-gradient(135deg, var(--primary-color), #7C4DFF);
+  color: var(--text-color);
+  border: none;
+  padding: 1rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 #next-question:hover, #submit-answer:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 600px) {
-    #answers {
-        grid-template-columns: 1fr;
-    }
+  #quiz-container {
+    padding: 1rem;
+  }
 
-    main {
-        padding: 1rem;
-    }
+  #answer-buttons {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Accessibility improvements */
 button:focus, select:focus {
-    outline: 3px solid var(--secondary-color);
-    outline-offset: 2px;
+  outline: 3px solid var(--secondary-color);
+  outline-offset: 2px;
 }
 
-/* Animation for question transition */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-#question, #answers {
-    animation: fadeIn 0.5s ease-out;
+#question, #answer-buttons {
+  animation: fadeIn 0.5s ease-out;
 }
