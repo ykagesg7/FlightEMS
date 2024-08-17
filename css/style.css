@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+:root {
+  --primary-color: #6200EA;
+  --secondary-color: #03DAC6;
+  --background-color: #121212;
+  --surface-color: #1E1E1E;
+  --text-color: #FFFFFF;
+  --text-secondary-color: #B0BEC5;
+  --success-color: #00C853;
+  --error-color: #FF5252;
+  --neutral-color: #424242;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+header, footer {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  text-align: center;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+#quiz-container {
+  background-color: var(--surface-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+h1, h2 {
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: var(--secondary-color);
+}
+
+select, button {
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 4px;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+select#quiz-selection {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: var(--neutral-color);
+  color: var(--text-color);
+  border: 1px solid var(--primary-color);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+select#quiz-selection:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(3, 218, 198, 0.2);
+}
+
+button {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #7C4DFF;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#answers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#question-number {
+  font-size: 1.2rem;
+  color: var(--text-secondary-color);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+#answer-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#answer-buttons button {
+  background-color: var(--neutral-color);
+  color: var(--text-color);
+  padding: 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#answer-buttons button:hover {
+  background-color: var(--primary-color);
+}
+
+#next-button {
+  display: none;
+  margin-top: 1rem;
+  padding: 10px 20px;
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#result {
+  font-weight: bold;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+  text-align: center;
+  display: none;
+}
+
+#result.correct {
+  background-color: var(--success-color);
+  color: var(--text-color);
+}
+
+#result.incorrect {
+  background-color: var(--error-color);
+  color: var(--text-color);
+}
+
+#explanation {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--neutral-color);
+  border-radius: 4px;
+  display: none;
+  color: var(--text-secondary-color);
+}
+
+#next-question, #submit-answer {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  background: linear-gradient(135deg, var(--primary-color), #7C4DFF);
+  color: var(--text-color);
+  border: none;
+  padding: 1rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#next-question:hover, #submit-answer:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 600px) {
+  #quiz-container {
+    padding: 1rem;
+  }
+
+  #answer-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Accessibility improvements */
+button:focus, select:focus {
+  outline: 3px solid var(--secondary-color);
+  outline-offset: 2px;
+}
+
+#question, #answer-buttons {
+  animation: fadeIn 0.5s ease-out;
+}
