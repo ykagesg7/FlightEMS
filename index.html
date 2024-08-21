@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>４択クイズ</title>
         <link rel="stylesheet" href="css/style.css">
+        <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     </head>
 
     <body>
@@ -16,22 +17,35 @@
     
         <main>
             <div class="container">
-                <div id="quiz-selection-container">
-                    <select id="quiz-selection" name="quiz-selection">
-                        <option value="">カテゴリを選択してください</option>
+                <div id="database-selection">
+                    <h2>データベースを選択してください</h2>
+                    <select id="database-select" class="form-control">
+                        <option value="">選択してください</option>
+                        <option value="quiz_questions">事業用クイズ</option>
+                        <option value="financial_questions">金融クイズ</option>
                     </select>
                 </div>
+
+                <div id="category-selection" style="display: none;">
+                    <h2>カテゴリーを選択してください</h2>
+                    <select id="category-select" class="form-control">
+                        <option value="">選択してください</option>
+                    </select>
+                </div>
+
                 <div id="quiz-container" style="display: none;">
-                    <div id="question-number"></div>
-                    <div id="question"></div>
-                    <div id="answer-buttons"></div>
-                    <div id="result" style="display: none;"></div>
-                    <div id="explanation" style="display: none;"></div>
-                    <button id="next-button" onclick="nextQuestion()" style="display: none;">次の問題</button>
+                <div id="question-number"></div>
+                <div id="question"></div>
+                <div id="answer-buttons"></div>
+                <div id="result" style="display: none;"></div>
+                <div id="explanation" style="display: none;"></div>
+                <button id="next-button" onclick="nextQuestion()" style="display: none;">次の問題</button>
+
                     <div id="progress-container">
                         <div id="progress-bar"></div>
                         <div id="question-counter"></div>
                     </div>
+                    
                 </div>
             </div>
         </main>
@@ -42,8 +56,7 @@
             </div>
         </footer>
 
-        <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-        <script src="app5.js" defer></script>
+        <script src="App6.js" defer></script>
 
     </body>
 </html>
