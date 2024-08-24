@@ -15,6 +15,20 @@
             </div>
         </header>
     
+        <form id="login-form" style="display: none;">
+            <input type="email" id="email" placeholder="メールアドレス" required>
+            <input type="password" id="password" placeholder="パスワード" required>
+            <button type="submit">ログイン</button>
+        </form>
+        <button id="logout-button" style="display: none;">ログアウト</button>
+
+        <form id="signup-form" style="display: none;">
+            <input type="email" id="signup-email" placeholder="メールアドレス" required>
+            <input type="password" id="signup-password" placeholder="パスワード" required>
+            <button type="submit">登録</button>
+        </form>
+        <button id="toggle-auth-form">登録 / ログイン切り替え</button>
+
         <main>
             <div class="container">
                 <div id="database-selection">
@@ -56,7 +70,7 @@
             </div>
         </footer>
 
-        <script src="app6.js" defer></script>
+        <script src="app7.js" defer></script>
 
     </body>
 </html>
