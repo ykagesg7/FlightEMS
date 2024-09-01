@@ -1,7 +1,7 @@
 // components/layout/header.tsx
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Button } from '../../components/ui/button';
 import { Plane } from 'lucide-react';
 
 interface HeaderProps {
