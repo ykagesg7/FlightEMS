@@ -84,7 +84,7 @@ export default function LMSPage() {
       if (error) throw error
 
       // カテゴリーの重複を削除し、配列に格納
-      const uniqueCategories = [...new Set(data?.map(item => item.category))]
+      const uniqueCategories = Array.from(new Set(data?.map(item => item.category) || []))
       setCategories(uniqueCategories)
     } catch (error) {
       console.error('Error fetching categories:', error)
