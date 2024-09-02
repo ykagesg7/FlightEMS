@@ -1,7 +1,7 @@
 // app/reset-password/page.tsx
 'use client'
 import { useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClientComponentClient } from '../../../node_modules/@supabase/auth-helpers-nextjs'
 
 export default function ResetPassword() {
   const [email, setEmail] = useState('')

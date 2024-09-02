@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Button } from '../../components/ui/button';
 import { Plane, Book, MapPin, BarChart2, Users, ChevronRight } from 'lucide-react';
 
 
