@@ -21,13 +21,8 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: #333;
+  background-color: #fff;
 }
 
 @layer utilities {
@@ -37,5 +32,5 @@ body {
 }
 
 input[type="email"], input[type="password"] {
-  color: #333; /* or any other color you prefer */
+  color: #333;
 }
