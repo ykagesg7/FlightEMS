@@ -4,10 +4,11 @@ import { resolve } from "path";
 
 export default defineConfig({
   plugins: [react()],
+  base: './', // この行を追加
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+        main: resolve(__dirname, 'index.html'), // この行を変更
       },
     },
   },
