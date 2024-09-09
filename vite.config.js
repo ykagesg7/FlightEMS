@@ -9,6 +9,11 @@ export default defineConfig({
     port: "8080",
   },
   build:{
+    rollupOptions:{
+      input:{
+        main:resolve(__dirname,'index.html'),
+      }
+    },
     target:'es2022'
   },
   envPrefix: 'VITE_',
