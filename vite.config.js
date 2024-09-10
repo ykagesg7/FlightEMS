@@ -1,8 +1,5 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
-
 export default defineConfig({
+  base: './',  // これを追加して、相対パスを使用
   plugins: [react()],
   build: {
     outDir: 'dist',
@@ -15,7 +12,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),  // これを追加
+      '@': resolve(__dirname, 'src'),
     },
   },
 });
