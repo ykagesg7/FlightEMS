@@ -1,20 +1,15 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import { resolve } from "path";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: './', // この行を追加
   build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'), // この行を変更
+      output: {
+        manualChunks: undefined,
       },
     },
   },
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
-    },
-  },
-});
+})
