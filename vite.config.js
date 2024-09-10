@@ -1,5 +1,5 @@
 export default defineConfig({
-  base: './',  // これを追加して、相対パスを使用
+  base: '/', 
   plugins: [react()],
   build: {
     outDir: 'dist',
