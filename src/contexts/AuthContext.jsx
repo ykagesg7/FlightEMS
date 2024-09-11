@@ -54,6 +54,64 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async (email, password, fullName) => {
+    try {
+      setLoading(true);
+      // Check if the user already exists
+      const { data: existingUser, error: checkError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError;
+      }
+
+      if (existingUser) {
+        // User exists, attempt to log in
+        return await login(email, password);
+      }
+
+      // User doesn't exist, proceed with registration
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([
+            { 
+              id: authData.user.id, 
+              full_name: fullName, 
+              email: email,
+              username: email.split('@')[0],
+              avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`,
+            },
+          ]);
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+          await supabase.auth.admin.deleteUser(authData.user.id);
+          throw new Error('Failed to create user profile. Please try again.');
+        }
+
+        setUser(authData.user);
+        navigate('/dashboard');
+        return authData.user;
+      }
+    } catch (error) {
+      console.error('Registration error:', error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
       setLoading(true);
@@ -72,6 +130,7 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
+    register,
     loading,
   };
 

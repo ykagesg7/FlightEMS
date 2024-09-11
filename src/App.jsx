@@ -14,8 +14,6 @@ import Login from "./pages/Login";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-import Sonner from '@/components/ui/sonner.jsx';
-
 
 const queryClient = new QueryClient();
 

@@ -57,6 +57,12 @@ const Index = () => {
           <Button asChild className="text-lg px-8 py-4 bg-blue-900 hover:bg-blue-800 text-white">
             <NavLink to="/login">Login to Start</NavLink>
           </Button>
+          <div>
+            <span className="text-gray-600">New to Flight Academy? </span>
+            <Button asChild variant="link" className="text-blue-600 hover:text-blue-800">
+              <NavLink to="/login?register=true">Register here</NavLink>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,41 +1,74 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Login = () => {
-  const { login, error } = useAuth();
+  const { login, register } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [error, setError] = useState('');
   
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleLogin = async (e) => {
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    setIsRegistering(searchParams.get('register') === 'true');
+  }, [location]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoginError('');
-    console.log('Attempting login with:', email);
+    setError('');
 
     try {
-      await login(email, password);
-      console.log('Login successful, redirecting to dashboard');
+      if (isRegistering) {
+        await register(email, password, fullName);
+      } else {
+        await login(email, password);
+      }
       navigate('/dashboard');
     } catch (error) {
-      console.error('Login error:', error);
-      setLoginError('ログインに失敗しました。メールアドレスとパスワードを確認してください。');
+      console.error(isRegistering ? 'Registration error:' : 'Login error:', error);
+      setError(error.message || (isRegistering ? '登録に失敗しました。' : 'ログインに失敗しました。'));
     }
+  };
+
+  const toggleMode = () => {
+    setIsRegistering(!isRegistering);
+    setError('');
   };
 
   return (
     <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-screen">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">ログイン</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">
+            {isRegistering ? '新規登録' : 'ログイン'}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {isRegistering && (
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
+                <Input
+                  type="text"
+                  id="fullName"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                  className="mt-1"
+                />
+              </div>
+            )}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email
@@ -47,6 +80,7 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="mt-1"
+                autoComplete="username"
               />
             </div>
             <div>
@@ -60,11 +94,24 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="mt-1"
+                autoComplete="current-password"
               />
             </div>
-            <Button type="submit" className="w-full">Login</Button>
-            {loginError && <p className="text-red-500 text-center">{loginError}</p>}
+            <Button type="submit" className="w-full">
+              {isRegistering ? '登録' : 'ログイン'}
+            </Button>
+            {error && (
+              <Alert variant="destructive">
+                <AlertTitle>エラー</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
           </form>
+          <div className="mt-4 text-center">
+            <Button variant="link" onClick={toggleMode}>
+              {isRegistering ? 'すでにアカウントをお持ちの方はこちら' : '新規登録はこちら'}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
