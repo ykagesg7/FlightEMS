@@ -14,8 +14,8 @@ const Index = () => {
         gradient="to-r"
       />
       
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-4 py-8 sm:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="text-blue-900">Flight Theory</CardTitle>
@@ -53,8 +53,8 @@ const Index = () => {
           </Card>
         </div>
         
-        <div className="mt-16 text-center">
-          <Button asChild className="text-lg px-8 py-4 bg-blue-900 hover:bg-blue-800 text-white">
+        <div className="mt-12 sm:mt-16 text-center space-y-4">
+          <Button asChild className="text-lg px-6 py-3 sm:px-8 sm:py-4 bg-blue-900 hover:bg-blue-800 text-white">
             <NavLink to="/login">Login to Start</NavLink>
           </Button>
           <div>

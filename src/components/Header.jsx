@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,10 +11,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from '../contexts/AuthContext';
+import { Menu, X } from 'lucide-react';
 
 const Header = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
     { to: "/dashboard", label: "Dashboard", roles: ["student", "teacher", "admin"] },
@@ -40,48 +42,59 @@ const Header = () => {
     navigate('/profile');
   };
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <header className="bg-white shadow-md">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <NavLink to="/" className="text-2xl font-bold text-blue-600">Flight Academy</NavLink>
-        <nav>
-          <ul className="flex space-x-4">
-            {navItems.map((item, index) => (
-              (item.roles.includes(userRole) || userRole === 'admin') && (
-                <li key={index}>
-                  <NavLink to={item.to} className="text-gray-600 hover:text-blue-600">
-                    {item.label}
-                  </NavLink>
-                </li>
-              )
-            ))}
-          </ul>
-        </nav>
-        {user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer">
-                <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${userName}`} alt={userName} />
-                <AvatarFallback>{getInitials(userName)}</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleProfileClick}>
-                プロフィール
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/settings')}>
-                設定
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout}>ログアウト</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Button asChild>
-            <NavLink to="/login">ログイン</NavLink>
-          </Button>
-        )}
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-between items-center">
+          <NavLink to="/" className="text-2xl font-bold text-blue-600">Flight Academy</NavLink>
+          <div className="md:hidden">
+            <Button variant="ghost" size="icon" onClick={toggleMenu}>
+              {isMenuOpen ? <X /> : <Menu />}
+            </Button>
+          </div>
+          <nav className={`md:flex ${isMenuOpen ? 'block' : 'hidden'} absolute md:relative top-16 md:top-0 left-0 right-0 bg-white md:bg-transparent z-50`}>
+            <ul className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 p-4 md:p-0">
+              {navItems.map((item, index) => (
+                (item.roles.includes(userRole) || userRole === 'admin') && (
+                  <li key={index}>
+                    <NavLink to={item.to} className="text-gray-600 hover:text-blue-600 block md:inline" onClick={() => setIsMenuOpen(false)}>
+                      {item.label}
+                    </NavLink>
+                  </li>
+                )
+              ))}
+            </ul>
+          </nav>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer">
+                  <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${userName}`} alt={userName} />
+                  <AvatarFallback>{getInitials(userName)}</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleProfileClick}>
+                  プロフィール
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/settings')}>
+                  設定
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>ログアウト</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button asChild>
+              <NavLink to="/login">ログイン</NavLink>
+            </Button>
+          )}
+        </div>
       </div>
     </header>
   );
