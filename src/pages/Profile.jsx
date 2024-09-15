@@ -52,7 +52,7 @@ const Profile = () => {
           <div className="flex items-center space-x-4 mb-4">
             <Avatar className="w-20 h-20">
               <AvatarImage src={profile.avatar_url} alt={profile.username} />
-              <AvatarFallback>{profile.username.charAt(0).toUpperCase()}</AvatarFallback>
+              < AvatarFallback>{profile.username ? profile.username.charAt(0).toUpperCase() : 'U'}</AvatarFallback >
             </Avatar>
             <div>
               <h2 className="text-2xl font-bold">{profile.full_name}</h2>

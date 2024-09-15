@@ -18,9 +18,13 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const session = supabase.auth.getSession();
-    setUser(session?.user ?? null);
-    setLoading(false);
+    const setInitialUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+      setLoading(false);
+    };
+
+    setInitialUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", event, session);
@@ -57,26 +61,15 @@ export const AuthProvider = ({ children }) => {
   const register = async (email, password, fullName) => {
     try {
       setLoading(true);
-      // Check if the user already exists
-      const { data: existingUser, error: checkError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', email)
-        .single();
-
-      if (checkError && checkError.code !== 'PGRST116') {
-        throw checkError;
-      }
-
-      if (existingUser) {
-        // User exists, attempt to log in
-        return await login(email, password);
-      }
-
-      // User doesn't exist, proceed with registration
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: fullName,
+            role: 'user',
+          },
+        },
       });
 
       if (authError) throw authError;
@@ -91,18 +84,22 @@ export const AuthProvider = ({ children }) => {
               email: email,
               username: email.split('@')[0],
               avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              role: 'user',
             },
           ]);
 
         if (profileError) {
           console.error('Error creating profile:', profileError);
-          await supabase.auth.admin.deleteUser(authData.user.id);
-          throw new Error('Failed to create user profile. Please try again.');
+          throw new Error('Failed to create user profile. Please contact support.');
         }
 
         setUser(authData.user);
         navigate('/dashboard');
         return authData.user;
+      } else {
+        throw new Error('Failed to create user. Please try again.');
       }
     } catch (error) {
       console.error('Registration error:', error.message);

@@ -22,6 +22,7 @@ const Header = () => {
     { to: "/dashboard", label: "Dashboard", roles: ["student", "teacher", "admin"] },
     { to: "/course", label: "Courses", roles: ["student", "teacher", "admin"] },
     { to: "/community", label: "Community", roles: ["student", "teacher", "admin"] },
+    { to: "/flight-tips", label: "Flight Tips", roles: ["student", "teacher", "admin"] },
     { to: "/admin-dashboard", label: "Admin Dashboard", roles: ["admin"] },
     { to: "/course-management", label: "Course Management", roles: ["admin", "teacher"] },
   ];

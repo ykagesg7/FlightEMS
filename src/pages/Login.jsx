@@ -6,13 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-const Login = () => {
-  const { login, register } = useAuth();
+export default function Login() {
+  const { login, register, user, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,19 +21,31 @@ const Login = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     setIsRegistering(searchParams.get('register') === 'true');
+
+    if (searchParams.get('email_confirmed') === 'true') {
+      setMessage('メールアドレスが確認されました。ログインしてください。');
+    }
   }, [location]);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setMessage('');
 
     try {
       if (isRegistering) {
         await register(email, password, fullName);
+        setMessage('登録を受付けました。確認メールをご確認ください。');
+        setIsRegistering(false);
       } else {
         await login(email, password);
       }
-      navigate('/dashboard');
     } catch (error) {
       console.error(isRegistering ? 'Registration error:' : 'Login error:', error);
       setError(error.message || (isRegistering ? '登録に失敗しました。' : 'ログインに失敗しました。'));
@@ -42,6 +55,7 @@ const Login = () => {
   const toggleMode = () => {
     setIsRegistering(!isRegistering);
     setError('');
+    setMessage('');
   };
 
   return (
@@ -97,13 +111,19 @@ const Login = () => {
                 autoComplete="current-password"
               />
             </div>
-            <Button type="submit" className="w-full">
-              {isRegistering ? '登録' : 'ログイン'}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Processing...' : (isRegistering ? '登録' : 'ログイン')}
             </Button>
             {error && (
               <Alert variant="destructive">
                 <AlertTitle>エラー</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            {message && (
+              <Alert>
+                <AlertTitle>成功</AlertTitle>
+                <AlertDescription>{message}</AlertDescription>
               </Alert>
             )}
           </form>
@@ -116,6 +136,4 @@ const Login = () => {
       </Card>
     </div>
   );
-};
-
-export default Login;
+}

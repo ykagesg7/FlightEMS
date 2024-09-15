@@ -1,3 +1,4 @@
+import React from 'react';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import Login from "./pages/Login";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import FlightTips from "./pages/FlightTips";
 
 const queryClient = new QueryClient();
 
@@ -97,6 +99,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/flight-tips"
+          element={
+            <ProtectedRoute>
+              <FlightTips />
             </ProtectedRoute>
           }
         />

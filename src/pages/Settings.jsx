@@ -9,7 +9,7 @@ import { supabase } from '../lib/supabaseClient';
 const Settings = () => {
   const { user } = useAuth();
   const [profile, setProfile] = useState({
-    username: '',
+    username: '', // 初期値を空文字列に変更
     full_name: '',
     email: '',
     website: '',

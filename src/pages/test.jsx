@@ -97,8 +97,8 @@ export default function TestPage() {
     fetchQuestionsForCategory(category);
   }
 
-  function handleAnswer(selectedAnswer) {
-    if (currentQuestion) {
+  async function handleAnswer(selectedAnswer) {
+    if (currentQuestion && user) {  // userが存在することを確認
       const answerMap = {
         'answer1': 0,
         'answer2': 1,
@@ -115,6 +115,23 @@ export default function TestPage() {
       }
       setAnsweredQuestions(answeredQuestions + 1);
       setShowFeedback(true);
+
+      // Supabaseに結果を保存
+      try {
+        const { data, error } = await supabase
+          .from('user_quiz_results')
+          .insert({
+            user_id: user.id,  // ここでuser.idを使用していることを確認
+            question_id: currentQuestion.id,
+            category: currentQuestion.category,
+            is_correct: correct
+          });
+
+        if (error) throw error;
+        console.log('Quiz result saved successfully:', data);
+      } catch (error) {
+        console.error('Error saving quiz result:', error);
+      }
     }
   }
 
