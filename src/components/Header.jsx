@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,11 +12,34 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from '../contexts/AuthContext';
 import { Menu, X } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
+
 
 const Header = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('avatar_url')
+          .eq('id', user.id);
+
+        if (error) {
+          console.error('Error fetching profile:', error);
+          return;
+        }
+
+        setProfile(data[0]);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const navItems = [
     { to: "/dashboard", label: "Dashboard", roles: ["student", "teacher", "admin"] },
@@ -74,7 +97,11 @@ const Header = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">
-                  <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${userName}`} alt={userName} />
+                  {profile && profile.avatar_url ? (
+                    <AvatarImage src={profile.avatar_url} alt={userName} />
+                  ) : (
+                    <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${userName}`} alt={userName} />
+                  )}
                   <AvatarFallback>{getInitials(userName)}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
