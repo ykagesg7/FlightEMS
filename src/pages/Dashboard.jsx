@@ -116,7 +116,7 @@ const Dashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Welcome back, {user?.email || 'Student'}!</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Welcome back, {user?.username || user?.email || 'Student'}!</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         <Card>

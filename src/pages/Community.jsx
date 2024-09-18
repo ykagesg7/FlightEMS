@@ -1,196 +1,107 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabaseClient';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { ThumbsUp, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
-import { supabase } from '@/lib/supabaseClient';
 
-export default function Community() {
+const Community = () => {
+  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
-  const [newPost, setNewPost] = useState({ title: '', content: '', tags: [] });
-  const [comments, setComments] = useState({});
-  const [newComments, setNewComments] = useState({});
-  const [showComments, setShowComments] = useState({});
-  const [sortOption, setSortOption] = useState('newest');
-  const [availableTags, setAvailableTags] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const navigate = useNavigate();
+  const [newPost, setNewPost] = useState({ title: '', content: '' });
+  const [newComment, setNewComment] = useState('');
+  const [commentingOn, setCommentingOn] = useState(null);
 
   useEffect(() => {
     fetchPosts();
-    fetchTags();
-    setupRealtimeSubscription();
   }, []);
 
   const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*, user:users(name), post_tags(tag_id, tags(name))')
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .select(`
+          *,
+          profiles:user_id (username, avatar_url),
+          comments:comments_post_id_fkey (
+            id,
+            content,
+            created_at,
+            user_id,
+            profiles:user_id (username, avatar_url)
+          )
+        `)
+        .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching posts:', error);
-    } else {
+      if (error) throw error;
       setPosts(data);
+    } catch (error) {
+      console.error('Error fetching posts:', error.message);
     }
-  };
-
-  const fetchTags = async () => {
-    const { data, error } = await supabase
-      .from('tags')
-      .select('*');
-
-    if (error) {
-      console.error('Error fetching tags:', error);
-    } else {
-      setAvailableTags(data);
-    }
-  };
-
-  const setupRealtimeSubscription = () => {
-    const postsChannel = supabase
-      .channel('public:posts')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, payload => {
-        if (payload.eventType === 'INSERT') {
-          setPosts(currentPosts => [payload.new, ...currentPosts]);
-        } else if (payload.eventType === 'UPDATE') {
-          setPosts(currentPosts => currentPosts.map(post => post.id === payload.new.id ? payload.new : post));
-        } else if (payload.eventType === 'DELETE') {
-          setPosts(currentPosts => currentPosts.filter(post => post.id !== payload.old.id));
-        }
-      })
-      .subscribe();
-
-    const commentsChannel = supabase
-      .channel('public:comments')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, payload => {
-        if (payload.eventType === 'INSERT') {
-          setComments(currentComments => ({
-            ...currentComments,
-            [payload.new.post_id]: [...(currentComments[payload.new.post_id] || []), payload.new]
-          }));
-        } else if (payload.eventType === 'UPDATE') {
-          setComments(currentComments => ({
-            ...currentComments,
-            [payload.new.post_id]: currentComments[payload.new.post_id].map(comment => 
-              comment.id === payload.new.id ? payload.new : comment
-            )
-          }));
-        } else if (payload.eventType === 'DELETE') {
-          setComments(currentComments => ({
-            ...currentComments,
-            [payload.old.post_id]: currentComments[payload.old.post_id].filter(comment => comment.id !== payload.old.id)
-          }));
-        }
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(postsChannel);
-      supabase.removeChannel(commentsChannel);
-    };
   };
 
   const handleNewPost = async () => {
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) {
-      navigate('/login');
-      return;
-    }
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .insert([{ ...newPost, user_id: user.id }])
+        .select();
 
-    const { data, error } = await supabase
-      .from('posts')
-      .insert({
-        title: newPost.title,
-        content: newPost.content,
-        user_id: userData.user.id
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error creating new post:', error);
-    } else {
-      // Add tags to the post
-      if (newPost.tags.length > 0) {
-        const { error: tagError } = await supabase
-          .from('post_tags')
-          .insert(newPost.tags.map(tagId => ({ post_id: data.id, tag_id: tagId })));
-
-        if (tagError) {
-          console.error('Error adding tags to post:', tagError);
-        }
-      }
-
-      setNewPost({ title: '', content: '', tags: [] });
+      if (error) throw error;
+      setNewPost({ title: '', content: '' });
+      fetchPosts();
+    } catch (error) {
+      console.error('Error creating new post:', error.message);
     }
   };
 
   const handleNewComment = async (postId) => {
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) {
-      navigate('/login');
-      return;
-    }
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .insert([{ content: newComment, user_id: user.id, post_id: postId }])
+        .select();
 
-    const { data, error } = await supabase
-      .from('comments')
-      .insert({
-        content: newComments[postId],
-        post_id: postId,
-        user_id: userData.user.id
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error creating new comment:', error);
-    } else {
-      setNewComments({ ...newComments, [postId]: '' });
+      if (error) throw error;
+      setNewComment('');
+      setCommentingOn(null);
+      fetchPosts();
+    } catch (error) {
+      console.error('Error creating new comment:', error.message);
     }
   };
 
-  const handleLike = async (postId) => {
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) {
-      navigate('/login');
-      return;
-    }
+  const handleDeletePost = async (postId) => {
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', postId)
+        .eq('user_id', user.id);
 
-    const { data, error } = await supabase
-      .from('likes')
-      .upsert({ user_id: userData.user.id, post_id: postId }, { onConflict: ['user_id', 'post_id'] })
-      .select();
-
-    if (error) {
-      console.error('Error liking post:', error);
+      if (error) throw error;
+      fetchPosts();
+    } catch (error) {
+      console.error('Error deleting post:', error.message);
     }
   };
 
-  const sortedPosts = useMemo(() => {
-    switch (sortOption) {
-      case 'oldest':
-        return [...posts].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-      case 'most_commented':
-        return [...posts].sort((a, b) => b.comment_count - a.comment_count);
-      case 'most_liked':
-        return [...posts].sort((a, b) => b.like_count - a.like_count);
-      default:
-        return [...posts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    }
-  }, [posts, sortOption]);
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const { error } = await supabase
+        .from('comments')
+        .delete()
+        .eq('id', commentId)
+        .eq('user_id', user.id);
 
-  const filteredPosts = useMemo(() => {
-    if (selectedTags.length === 0) return sortedPosts;
-    return sortedPosts.filter(post => 
-      post.post_tags.some(postTag => selectedTags.includes(postTag.tag_id))
-    );
-  }, [sortedPosts, selectedTags]);
+      if (error) throw error;
+      fetchPosts();
+    } catch (error) {
+      console.error('Error deleting comment:', error.message);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -213,114 +124,64 @@ export default function Community() {
             onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
             className="mb-4"
           />
-          <Select
-            multiple
-            value={newPost.tags}
-            onChange={(value) => setNewPost({ ...newPost, tags: value })}
-          >
-            <SelectTrigger className="w-full mb-4">
-              <SelectValue placeholder="Select tags" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableTags.map((tag) => (
-                <SelectItem key={tag.id} value={tag.id}>{tag.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <Button onClick={handleNewPost}>Post</Button>
         </CardContent>
       </Card>
 
-      <div className="mb-4 flex justify-between items-center">
-        <Select value={sortOption} onValueChange={setSortOption}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="newest">Newest</SelectItem>
-            <SelectItem value="oldest">Oldest</SelectItem>
-            <SelectItem value="most_commented">Most Commented</SelectItem>
-            <SelectItem value="most_liked">Most Liked</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select
-          multiple
-          value={selectedTags}
-          onChange={(value) => setSelectedTags(value)}
-        >
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Filter by tags" />
-          </SelectTrigger>
-          <SelectContent>
-            {availableTags.map((tag) => (
-              <SelectItem key={tag.id} value={tag.id}>{tag.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {filteredPosts.map((post) => (
+      {posts.map((post) => (
         <Card key={post.id} className="mb-4">
           <CardHeader>
-            <div className="flex items-center">
-              <Avatar className="mr-2">
-                <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${post.user.name}`} />
-                <AvatarFallback>{post.user.name[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle>{post.title}</CardTitle>
-                <p className="text-sm text-gray-500">by {post.user.name}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Avatar className="mr-2">
+                  <AvatarImage src={post.profiles?.avatar_url} />
+                  <AvatarFallback>{post.profiles?.username?.charAt(0) || 'U'}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <CardTitle>{post.title}</CardTitle>
+                  <p className="text-sm text-gray-500">by {post.profiles?.username || 'Unknown User'}</p>
+                </div>
               </div>
+              {user && post.user_id === user.id && (
+                <Button variant="destructive" size="sm" onClick={() => handleDeletePost(post.id)}>Delete</Button>
+              )}
             </div>
           </CardHeader>
           <CardContent>
             <p className="mb-4">{post.content}</p>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {post.post_tags.map(({ tags }) => (
-                <Badge key={tags.id} variant="secondary">{tags.name}</Badge>
-              ))}
-            </div>
-            <div className="flex items-center mb-4">
-              <Button variant="outline" size="sm" onClick={() => handleLike(post.id)} className="mr-2">
-                <ThumbsUp className="mr-1 h-4 w-4" /> {post.like_count}
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => setShowComments(prev => ({ ...prev, [post.id]: !prev[post.id] }))} className="flex items-center">
-                <MessageCircle className="mr-1 h-4 w-4" />
-                {post.comment_count} comments
-                {showComments[post.id] ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />}
-              </Button>
-            </div>
-            
-            {showComments[post.id] && (
-              <div className="mt-4">
-                <h3 className="font-semibold mb-2">Comments</h3>
-                {comments[post.id]?.map((comment) => (
-                  <div key={comment.id} className="bg-gray-100 p-2 rounded mb-2">
-                    <div className="flex items-center mb-2">
-                      <Avatar className="mr-2 h-6 w-6">
-                        <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${comment.user.name}`} />
-                        <AvatarFallback>{comment.user.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <p className="text-sm font-semibold">{comment.user.name}</p>
-                    </div>
-                    <p className="text-sm mb-2">{comment.content}</p>
-                  </div>
-                ))}
-                <div className="mt-2">
-                  <Input
-                    placeholder="Add a comment..."
-                    value={newComments[post.id] || ''}
-                    onChange={(e) => setNewComments({ ...newComments, [post.id]: e.target.value })}
-                    className="mb-2"
-                  />
-                  <Button size="sm" onClick={() => handleNewComment(post.id)}>Add Comment</Button>
+            <h4 className="font-semibold mb-2">Comments:</h4>
+            {post.comments && post.comments.map((comment) => (
+              <div key={comment.id} className="mb-2 pl-4 border-l-2 border-gray-200">
+                <div className="flex items-center justify-between">
+                  <p>
+                    <span className="font-semibold">{comment.profiles.username}: </span>
+                    {comment.content}
+                  </p>
+                  {user && comment.user_id === user.id && (
+                    <Button variant="ghost" size="sm" onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
+                  )}
                 </div>
               </div>
+            ))}
+            {commentingOn === post.id ? (
+              <div className="mt-4">
+                <Textarea
+                  placeholder="Write a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className="mb-2"
+                />
+                <Button onClick={() => handleNewComment(post.id)} className="mr-2">Submit</Button>
+                <Button variant="outline" onClick={() => setCommentingOn(null)}>Cancel</Button>
+              </div>
+            ) : (
+              <Button variant="outline" onClick={() => setCommentingOn(post.id)} className="mt-2">Add Comment</Button>
             )}
           </CardContent>
         </Card>
       ))}
     </div>
   );
-}
+};
+
+export default Community;

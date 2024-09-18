@@ -10,11 +10,12 @@ export default function Login() {
   const { login, register, user, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState(''); // Full Name を User Name に変更
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
-  
+  const [showAlert, setShowAlert] = useState(false); // アラート表示用のステートを追加
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -37,11 +38,18 @@ export default function Login() {
     e.preventDefault();
     setError('');
     setMessage('');
+    setShowAlert(false); // アラートを非表示にする
+
+     // ログインの場合のみ入力値をチェック
+     if (!isRegistering && (!email || !password)) { // 入力値がすべて存在するか確認
+      setShowAlert(true); // アラートを表示
+      return;
+    }
 
     try {
       if (isRegistering) {
-        await register(email, password, fullName);
-        setMessage('登録を受付けました。確認メールをご確認ください。');
+        await register(email, password, username); // username を登録時に渡す
+        setMessage('仮登録しました。確認メールから登録を完了してください。');
         setIsRegistering(false);
       } else {
         await login(email, password);
@@ -56,6 +64,7 @@ export default function Login() {
     setIsRegistering(!isRegistering);
     setError('');
     setMessage('');
+    setShowAlert(false); // アラートを非表示にする
   };
 
   return (
@@ -70,14 +79,14 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {isRegistering && (
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                  Full Name
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                  User Name
                 </label>
                 <Input
                   type="text"
-                  id="fullName"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                   className="mt-1"
                 />
@@ -124,6 +133,12 @@ export default function Login() {
               <Alert>
                 <AlertTitle>成功</AlertTitle>
                 <AlertDescription>{message}</AlertDescription>
+              </Alert>
+            )}
+            {showAlert && ( // アラートを表示する条件を追加
+              <Alert variant="warning">
+                <AlertTitle>入力エラー</AlertTitle>
+                <AlertDescription>すべての項目を入力してください。</AlertDescription>
               </Alert>
             )}
           </form>
