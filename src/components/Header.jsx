@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,32 +14,32 @@ import { useAuth } from '../contexts/AuthContext';
 import { Menu, X } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 
-
 const Header = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [profile, setProfile] = useState(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (user) {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('avatar_url')
-          .eq('id', user.id);
+  const fetchProfile = useCallback(async () => {
+    if (user) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('id', user.id)
+        .single();
 
-        if (error) {
-          console.error('Error fetching profile:', error);
-          return;
-        }
-
-        setProfile(data[0]);
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return;
       }
-    };
 
-    fetchProfile();
+      setProfile(data);
+    }
   }, [user]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const navItems = [
     { to: "/dashboard", label: "Dashboard", roles: ["student", "teacher", "admin"] },
@@ -58,8 +58,17 @@ const Header = () => {
   const userRole = user?.user_metadata?.role || 'student';
 
   const handleLogout = async () => {
-    await logout();
-    navigate('/login');
+    if (logout) {
+      try {
+        await logout();
+        navigate('/login');
+      } catch (error) {
+        console.error('Logout error:', error);
+        // エラーハンドリングを追加することをお勧めします（例：ユーザーへの通知）
+      }
+    } else {
+      console.error('Logout function is not available');
+    }
   };
 
   const handleProfileClick = () => {
