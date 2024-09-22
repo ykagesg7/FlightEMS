@@ -12,6 +12,7 @@ export default defineConfig({
       output: {
         manualChunks: undefined,
       },
+      external:['leaflet/dist/leaflet.css']
     },
   },
   resolve: {
