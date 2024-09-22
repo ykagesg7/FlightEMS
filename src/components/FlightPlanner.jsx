@@ -138,6 +138,39 @@ const FlightPlanner = () => {
     takeoffTime: '',
   });
   const [flightInfo, setFlightInfo] = useState(null);
+  const [airbases, setAirbases] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch airbase data
+    fetch('/geojson/Airports.geojson')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text(); // Get the raw text first
+      })
+      .then(text => {
+        try {
+          const data = JSON.parse(text); // Try to parse it as JSON
+          const processedAirbases = data.features.map(feature => ({
+            id: feature.properties.id,
+            name: `${feature.properties.name1} (${feature.properties.name2})`,
+            lat: feature.properties["ARP.N(DD)"],
+            lng: feature.properties["ARP.E(DD)"]
+          }));
+          setAirbases(processedAirbases);
+        } catch (e) {
+          console.error('Error parsing JSON:', e);
+          console.log('Received content:', text.substring(0, 100) + '...'); // Log the first 100 characters
+          throw new Error('Failed to parse JSON');
+        }
+      })
+      .catch(error => {
+        console.error('Error loading airbase data:', error);
+        setError(`Failed to load airbase data: ${error.message}`);
+      });
+  }, []);
 
   const handleAirportSelect = (type, value) => {
     const [lat, lng, name] = value.split(',');
@@ -231,11 +264,14 @@ const FlightPlanner = () => {
                 <Label htmlFor="departure">Departure</Label>
                 <Select onValueChange={(value) => handleAirportSelect('departure', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select departure airport" />
+                    <SelectValue placeholder="出発飛行場を選択してください"/>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="35.5533,139.7811,Tokyo Haneda Airport">Tokyo Haneda Airport</SelectItem>
-                    <SelectItem value="34.7850,135.4380,Osaka Itami Airport">Osaka Itami Airport</SelectItem>
+                    {airbases.map(airbase => (
+                      <SelectItem key={airbase.id} value={`${airbase.lat},${airbase.lng},${airbase.name}`}>
+                        {airbase.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -243,11 +279,14 @@ const FlightPlanner = () => {
                 <Label htmlFor="arrival">Arrival</Label>
                 <Select onValueChange={(value) => handleAirportSelect('arrival', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select arrival airport" />
+                    <SelectValue placeholder="到着飛行場を選択してください。" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="35.5533,139.7811,Tokyo Haneda Airport">Tokyo Haneda Airport</SelectItem>
-                    <SelectItem value="34.7850,135.4380,Osaka Itami Airport">Osaka Itami Airport</SelectItem>
+                    {airbases.map(airbase => (
+                      <SelectItem key={airbase.id} value={`${airbase.lat},${airbase.lng},${airbase.name}`}>
+                        {airbase.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
