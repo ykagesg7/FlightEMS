@@ -17,7 +17,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import FlightTips from "./pages/FlightTips";
 import FlightPlannerPage from "./components/FlightPlanner";
-import './node_modules/leaflet/dist/leaflet.css';
+import 'leaflet/dist/leaflet.css';
 
 const queryClient = new QueryClient();
 

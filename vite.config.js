@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';  // defineConfigをインポート
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
@@ -12,7 +12,6 @@ export default defineConfig({
       output: {
         manualChunks: undefined,
       },
-      external:['leaflet/dist/leaflet.css']
     },
   },
   resolve: {
@@ -21,3 +20,4 @@ export default defineConfig({
     },
   },
 });
+
