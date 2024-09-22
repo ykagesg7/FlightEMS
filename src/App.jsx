@@ -16,6 +16,8 @@ import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import FlightTips from "./pages/FlightTips";
+import FlightPlannerPage from "./components/FlightPlanner";
+import 'leaflet/dist/leaflet.css';
 
 const queryClient = new QueryClient();
 
@@ -107,6 +109,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <FlightTips />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/flight-planner"
+          element={
+            <ProtectedRoute>
+              <FlightPlannerPage />
             </ProtectedRoute>
           }
         />

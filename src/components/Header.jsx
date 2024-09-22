@@ -46,6 +46,7 @@ const Header = () => {
     { to: "/course", label: "Courses", roles: ["student", "teacher", "admin"] },
     { to: "/community", label: "Community", roles: ["student", "teacher", "admin"] },
     { to: "/flight-tips", label: "Flight Tips", roles: ["student", "teacher", "admin"] },
+    { to: "/flight-planner", label: "Flight Planner", roles: ["student", "teacher", "admin"] },
     { to: "/admin-dashboard", label: "Admin Dashboard", roles: ["admin"] },
     { to: "/course-management", label: "Course Management", roles: ["admin", "teacher"] },
   ];
@@ -64,7 +65,6 @@ const Header = () => {
         navigate('/login');
       } catch (error) {
         console.error('Logout error:', error);
-        // エラーハンドリングを追加することをお勧めします（例：ユーザーへの通知）
       }
     } else {
       console.error('Logout function is not available');
