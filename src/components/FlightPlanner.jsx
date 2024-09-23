@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan }) => {
   const [layers, setLayers] = useState([]);
@@ -15,8 +16,9 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan }) => {
 
   useEffect(() => {
     setLayers([
-      { id: 1, name: 'VFR Routes', data: { type: 'FeatureCollection', features: [/* GeoJSON features */] } },
-      { id: 2, name: 'Airspace Classes', data: { type: 'FeatureCollection', features: [/* GeoJSON features */] } },
+      { id: 1, name: 'Airports', data: { type: 'FeatureCollection', features: [/* GeoJSON features */] } },
+      { id: 2, name: 'ACC_Sector', data: { type: 'FeatureCollection', features: [/* GeoJSON features */] } },
+      { id: 3, name: 'Navaids', data: { type: 'FeatureCollection', features: [/* GeoJSON features */] } },
     ]);
   }, []);
 
@@ -81,6 +83,12 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan }) => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
         </LayersControl.BaseLayer>
+        <LayersControl.BaseLayer name="Satellite">
+          <TileLayer
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
+          />
+        </LayersControl.BaseLayer>
         {layers.map((layer) => (
           <LayersControl.Overlay key={layer.id} name={layer.name}>
             <GeoJSON data={layer.data} />
@@ -133,13 +141,17 @@ const FlightPlanner = () => {
     departure: null,
     arrival: null,
     waypoints: [],
-    speed: 0,
-    altitude: 0,
+    speed: '',
+    altitude: '',
     takeoffTime: '',
   });
   const [flightInfo, setFlightInfo] = useState(null);
   const [airbases, setAirbases] = useState([]);
+  const [navaids, setNavaids] = useState([]);
   const [error, setError] = useState(null);
+  const [selectedNavaid, setSelectedNavaid] = useState('');
+  const [bearing, setBearing] = useState('');
+  const [distance, setDistance] = useState('');
 
   useEffect(() => {
     // Fetch airbase data
@@ -148,28 +160,27 @@ const FlightPlanner = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.text(); // Get the raw text first
+        return response.json();
       })
-      .then(text => {
-        try {
-          const data = JSON.parse(text); // Try to parse it as JSON
-          const processedAirbases = data.features.map(feature => ({
-            id: feature.properties.id,
-            name: `${feature.properties.name1} (${feature.properties.name2})`,
-            lat: feature.properties["ARP.N(DD)"],
-            lng: feature.properties["ARP.E(DD)"]
-          }));
-          setAirbases(processedAirbases);
-        } catch (e) {
-          console.error('Error parsing JSON:', e);
-          console.log('Received content:', text.substring(0, 100) + '...'); // Log the first 100 characters
-          throw new Error('Failed to parse JSON');
-        }
+      .then(data => {
+        const processedAirbases = data.features.map(feature => ({
+          id: feature.properties.id,
+          name: `${feature.properties.name1} (${feature.properties.name2})`,
+          lat: feature.properties["ARP.N(DD)"],
+          lng: feature.properties["ARP.E(DD)"]
+        }));
+        setAirbases(processedAirbases);
       })
       .catch(error => {
         console.error('Error loading airbase data:', error);
         setError(`Failed to load airbase data: ${error.message}`);
       });
+
+    // Mock Navaids data (replace with actual data fetching when available)
+    setNavaids([
+      { id: 1, name: 'VOR1', lat: 35.6895, lng: 139.6917 },
+      { id: 2, name: 'VOR2', lat: 34.6937, lng: 135.5023 },
+    ]);
   }, []);
 
   const handleAirportSelect = (type, value) => {
@@ -184,8 +195,46 @@ const FlightPlanner = () => {
     const { name, value } = e.target;
     setFlightPlan(prev => ({
       ...prev,
-      [name]: name === 'takeoffTime' ? value : parseFloat(value)
+      [name]: name === 'takeoffTime' ? value : value === '' ? '' : parseFloat(value)
     }));
+  };
+
+  const addWaypointFromNavaid = () => {
+    if (!selectedNavaid || bearing === '' || distance === '') return;
+
+    const navaid = navaids.find(n => n.id === parseInt(selectedNavaid));
+    if (!navaid) return;
+
+    const bearingRad = (parseFloat(bearing) * Math.PI) / 180;
+    const distanceNM = parseFloat(distance);
+
+    const R = 3440.065; // Earth's radius in nautical miles
+    const lat1 = (navaid.lat * Math.PI) / 180;
+    const lon1 = (navaid.lng * Math.PI) / 180;
+    const lat2 = Math.asin(
+      Math.sin(lat1) * Math.cos(distanceNM / R) +
+      Math.cos(lat1) * Math.sin(distanceNM / R) * Math.cos(bearingRad)
+    );
+    const lon2 = lon1 + Math.atan2(
+      Math.sin(bearingRad) * Math.sin(distanceNM / R) * Math.cos(lat1),
+      Math.cos(distanceNM / R) - Math.sin(lat1) * Math.sin(lat2)
+    );
+
+    const newWaypoint = {
+      lat: (lat2 * 180) / Math.PI,
+      lng: (lon2 * 180) / Math.PI,
+      name: `Waypoint ${flightPlan.waypoints.length + 1}`,
+    };
+
+    setFlightPlan(prev => ({
+      ...prev,
+      waypoints: [...prev.waypoints, newWaypoint]
+    }));
+
+    // Reset input fields
+    setSelectedNavaid('');
+    setBearing('');
+    setDistance('');
   };
 
   const calculateFlightInfo = () => {
@@ -252,122 +301,160 @@ const FlightPlanner = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full flex">
-      <div className="w-1/3 p-4 overflow-y-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle>Flight Plan</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="departure">Departure</Label>
-                <Select onValueChange={(value) => handleAirportSelect('departure', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="出発飛行場を選択してください"/>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {airbases.map(airbase => (
-                      <SelectItem key={airbase.id} value={`${airbase.lat},${airbase.lng},${airbase.name}`}>
-                        {airbase.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="arrival">Arrival</Label>
-                <Select onValueChange={(value) => handleAirportSelect('arrival', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="到着飛行場を選択してください。" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {airbases.map(airbase => (
-                      <SelectItem key={airbase.id} value={`${airbase.lat},${airbase.lng},${airbase.name}`}>
-                        {airbase.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="speed">Speed (knots)</Label>
-                <Input
-                  id="speed"
-                  name="speed"
-                  type="number"
-                  value={flightPlan.speed}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="altitude">Altitude (ft)</Label>
-                <Input
-                  id="altitude"
-                  name="altitude"
-                  type="number"
-                  value={flightPlan.altitude}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="takeoffTime">Takeoff Time</Label>
-                <Input
-                  id="takeoffTime"
-                  name="takeoffTime"
-                  type="time"
-                  value={flightPlan.takeoffTime}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div>
-                <Label>Waypoints</Label>
-                {flightPlan.waypoints.map((waypoint, index) => (
-                  <div key={index}>{waypoint.name}: {waypoint.lat.toFixed(4)}, {waypoint.lng.toFixed(4)}</div>
-                ))}
-              </div>
-              <Button onClick={calculateFlightInfo}>Calculate Flight Info</Button>
-            </div>
-          </CardContent>
-        </Card>
-        {flightInfo && (
-          <Card className="mt-4">
+    <div className="h-screen flex flex-col">
+      <Tabs defaultValue="plan" className="flex-grow flex flex-col">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="plan">Plan</TabsTrigger>
+          <TabsTrigger value="map">Map</TabsTrigger>
+        </TabsList>
+        <TabsContent value="plan" className="flex-grow overflow-auto">
+          <Card className="m-4">
             <CardHeader>
-              <CardTitle>Flight Information</CardTitle>
+              <CardTitle>Flight Plan</CardTitle>
             </CardHeader>
             <CardContent>
-              <div>Total Distance: {flightInfo.totalDistance} nm</div>
-              <div>Total Time: {flightInfo.totalTime} hours</div>
-              <div className="mt-2">
-                <strong>Leg Information:</strong>
-                {flightInfo.legs.map((leg, index) => (
-                  <div key={index} className="mt-1">
-                    <div>{leg.from} to {leg.to}</div>
-                    <div>Distance: {leg.distance} nm</div>
-                    <div>Magnetic Heading: {leg.magneticHeading}°</div>
-                    <div>ETA: {leg.eta}</div>
-                  </div>
-                ))}
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="departure">Departure</Label>
+                  <Select onValueChange={(value) => handleAirportSelect('departure', value)}>
+                    <SelectTrigger id="departure">
+                      <SelectValue placeholder="Select departure airport" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {airbases.map(airbase => (
+                        <SelectItem key={airbase.id} value={`${airbase.lat},${airbase.lng},${airbase.name}`}>
+                          {airbase.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="arrival">Arrival</Label>
+                  <Select onValueChange={(value) => handleAirportSelect('arrival', value)}>
+                    <SelectTrigger id="arrival">
+                      <SelectValue placeholder="Select arrival airport"  />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {airbases.map(airbase => (
+                        <SelectItem key={airbase.id} value={`${airbase.lat},${airbase.lng},${airbase.name}`}>
+                          {airbase.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="speed">Speed (knots)</Label>
+                  <Input
+                    id="speed"
+                    name="speed"
+                    type="number"
+                    value={flightPlan.speed}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="altitude">Altitude (ft)</Label>
+                  <Input
+                    id="altitude"
+                    name="altitude"
+                    type="number"
+                    value={flightPlan.altitude}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="takeoffTime">Takeoff Time</Label>
+                  <Input
+                    id="takeoffTime"
+                    name="takeoffTime"
+                    type="time"
+                    value={flightPlan.takeoffTime}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="navaid">Add Waypoint from Navaid</Label>
+                  <Select value={selectedNavaid} onValueChange={setSelectedNavaid}>
+                    <SelectTrigger id="navaid">
+                      <SelectValue placeholder="Select Navaid" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {navaids.map(navaid => (
+                        <SelectItem key={navaid.id} value={navaid.id.toString()}>
+                          {navaid.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="bearing"
+                    type="number"
+                    placeholder="Bearing (degrees)"
+                    className="mt-2"
+                    value={bearing}
+                    onChange={(e) => setBearing(e.target.value)}
+                  />
+                  <Input
+                    id="distance"
+                    type="number"
+                    placeholder="Distance (nm)"
+                    className="mt-2"
+                    value={distance}
+                    onChange={(e) => setDistance(e.target.value)}
+                  />
+                  <Button className="mt-2" onClick={addWaypointFromNavaid}>Add Waypoint</Button>
+                </div>
+                <div>
+                  <Label>Waypoints</Label>
+                  {flightPlan.waypoints.map((waypoint, index) => (
+                    <div key={index}>{waypoint.name}: {waypoint.lat.toFixed(4)}, {waypoint.lng.toFixed(4)}</div>
+                  ))}
+                </div>
+                <Button onClick={calculateFlightInfo}>Calculate Flight Info</Button>
               </div>
             </CardContent>
           </Card>
-        )}
-      </div>
-      <div className="w-2/3">
-        <MapContainer 
-          center={[36.2048, 138.2529]} 
-          zoom={5} 
-          style={{ height: '100%', width: '100%' }}
-          maxBounds={[[20, 122], [46, 154]]}
-          minZoom={5}
-        >
-          <FlightPlannerContent
-            onWaypointAdd={(waypoint) => console.log('Waypoint added:', waypoint)}
-            flightPlan={flightPlan}
-            setFlightPlan={setFlightPlan}
-          />
-        </MapContainer>
-      </div>
+          {flightInfo && (
+            <Card className="m-4">
+              <CardHeader>
+                <CardTitle>Flight Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div>Total Distance: {flightInfo.totalDistance} nm</div>
+                <div>Total Time: {flightInfo.totalTime} hours</div>
+                <div className="mt-2">
+                  <strong>Leg Information:</strong>
+                  {flightInfo.legs.map((leg, index) => (
+                    <div key={index} className="mt-1">
+                      <div>{leg.from} to {leg.to}</div>
+                      <div>Distance: {leg.distance} nm</div>
+                      <div>Magnetic Heading: {leg.magneticHeading}°</div>
+                      <div>ETA: {leg.eta}</div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+        <TabsContent value="map" className="flex-grow">
+          <MapContainer 
+            center={[36.2048, 138.2529]} 
+            zoom={5} 
+            style={{ height: '100%', width: '100%' }}
+            maxBounds={[[20, 122], [46, 154]]}
+            minZoom={5}
+          >
+            <FlightPlannerContent
+              onWaypointAdd={(waypoint) => console.log('Waypoint added:', waypoint)}
+              flightPlan={flightPlan}
+              setFlightPlan={setFlightPlan}
+            />
+          </MapContainer>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

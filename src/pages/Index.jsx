@@ -10,9 +10,9 @@ import { supabase } from '../lib/supabaseClient';
 
 export default function Index() {
   const [announcements, setAnnouncements] = useState([
-    { id: 1, title: "Communityの投稿機能を実装しました。", date: "2024-09-19" },
-    { id: 2, title: "Flight Tipsページを開発中です。ブログの閲覧やコメントができるようにしています。", date: "2024-09-19" },
-    { id: 3, title: "Flight Planning機能を開発中です。", date: "2024-09-19" },
+    { id: 1, title: "Flight Planning機能を実装しました。出発・到着地、Waypointを入力し、簡易的な計算結果と地図を表示します。引き続き機能拡張中です。", date: "2024-09-23" },
+    { id: 2, title: "Communityの投稿機能を実装しました。", date: "2024-09-19" },
+    { id: 3, title: "Courseページを開発中です。", date: "2024-09-19" },
   ]);
 
   const [topPerformers, setTopPerformers] = useState([]);
@@ -103,17 +103,17 @@ export default function Index() {
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <h1 className="text-6xl font-bold text-white">Break Through</h1>
+          <h1 className="text-6xl font-bold text-white">Flight Academy</h1>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300">
-            Flight Academy
-          </h2>
           <p className="text-2xl text-blue-200">
-            Learn to fly, Aim high, Soar the sky, together.
+            Learn to fly, Aim high, Soar the sky.
+          </p>
+          <p className="text-2xl text-blue-200">
+            Break through, together.
           </p>
         </div>
 
