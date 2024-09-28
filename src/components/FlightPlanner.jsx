@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Polyline, useMapEvents, Popup, LayersControl, GeoJSON } from 'react-leaflet';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { MapContainer, TileLayer, Marker, Polyline, useMapEvents, Popup, LayersControl, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,18 +8,41 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan }) => {
-  const [layers, setLayers] = useState([]);
+const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo }) => {
+  const [accSectorData, setAccSectorData] = useState(null);
+  const [airportsData, setAirportsData] = useState(null);
+  const [navaidsData, setNavaidsData] = useState(null);
   const longPressTimeoutRef = useRef(null);
   const isLongPressRef = useRef(false);
+  const [cursorPosition, setCursorPosition] = useState({ lat: 0, lng: 0 });
+  const [draggingWaypointIndex, setDraggingWaypointIndex] = useState(null);
 
   useEffect(() => {
-    setLayers([
-      { id: 1, name: 'Airports', data: { type: 'FeatureCollection', features: [/* GeoJSON features */] } },
-      { id: 2, name: 'ACC_Sector', data: { type: 'FeatureCollection', features: [/* GeoJSON features */] } },
-      { id: 3, name: 'Navaids', data: { type: 'FeatureCollection', features: [/* GeoJSON features */] } },
-    ]);
+    // ACC_Sector GeoJSON データを読み込む
+    fetch('/geojson/ACC_Sector.geojson')
+      .then(response => response.json())
+      .then(data => {
+        setAccSectorData(data);
+      })
+      .catch(error => console.error('Error loading ACC_Sector data:', error));
+
+    // Airports GeoJSON データを読み込む
+    fetch('/geojson/Airports.geojson')
+      .then(response => response.json())
+      .then(data => {
+        setAirportsData(data);
+      })
+      .catch(error => console.error('Error loading Airports data:', error));
+
+    // Navaids GeoJSON データを読み込む
+    fetch('/geojson/Navaids.geojson')
+      .then(response => response.json())
+      .then(data => {
+        setNavaidsData(data);
+      })
+      .catch(error => console.error('Error loading Navaids data:', error));
   }, []);
 
   const MapEvents = () => {
@@ -37,8 +60,9 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan }) => {
       mouseup() {
         clearTimeout(longPressTimeoutRef.current);
       },
-      mousemove() {
+      mousemove(e) {
         clearTimeout(longPressTimeoutRef.current);
+        setCursorPosition(e.latlng);
       },
     });
 
@@ -59,23 +83,70 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan }) => {
     onWaypointAdd(newWaypoint);
   };
 
-  const airportIcon = L.icon({
-    iconUrl: '/airport-icon.png',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32]
-  });
+  const pointToLayer = (feature, latlng) => {
+    return L.circleMarker(latlng, {
+      radius: 6,
+      fillColor: feature.properties.type === "空港" ? "#ff7800" : "#0078ff",
+      color: "#000",
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.5
+    });
+  };
 
-  const waypointIcon = L.icon({
-    iconUrl: '/waypoint-icon.png',
-    iconSize: [24, 24],
-    iconAnchor: [12, 24],
-    popupAnchor: [0, -24]
-  });
+  const updateWaypointPosition = useCallback((index, newPosition) => {
+    setFlightPlan(prev => ({
+      ...prev,
+      waypoints: prev.waypoints.map((wp, i) => 
+        i === index ? { ...wp, ...newPosition } : wp
+      )
+    }));
+  }, [setFlightPlan]);
+
+  const toDMS = (coord) => {
+    const absolute = Math.abs(coord);
+    const degrees = Math.floor(absolute);
+    const minutesNotTruncated = (absolute - degrees) * 60;
+    const minutes = Math.floor(minutesNotTruncated);
+    const seconds = Math.floor((minutesNotTruncated - minutes) * 60);
+    return `${degrees}° ${minutes}' ${seconds}"`;
+  };
+
+  const CursorPositionControl = () => {
+    const map = useMap();
+    
+    useEffect(() => {
+      const control = L.control({ position: 'topleft' });
+      control.onAdd = () => {
+        const div = L.DomUtil.create('div', 'cursor-position');
+        div.style.backgroundColor = 'white';
+        div.style.padding = '5px';
+        div.style.border = '2px solid rgba(0,0,0,0.2)';
+        div.style.borderRadius = '4px';
+        return div;
+      };
+      control.addTo(map);
+
+      return () => {
+        control.remove();
+      };
+    }, [map]);
+
+    useEffect(() => {
+      const container = document.querySelector('.cursor-position');
+      if (container) {
+        container.innerHTML = `Lat: ${toDMS(cursorPosition.lat)} ${cursorPosition.lat >= 0 ? 'N' : 'S'}<br>
+                               Lng: ${toDMS(cursorPosition.lng)} ${cursorPosition.lng >= 0 ? 'E' : 'W'}`;
+      }
+    }, [cursorPosition]);
+
+    return null;
+  };
 
   return (
     <>
       <MapEvents />
+      <CursorPositionControl />
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="OpenStreetMap">
           <TileLayer
@@ -89,16 +160,46 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan }) => {
             attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
           />
         </LayersControl.BaseLayer>
-        {layers.map((layer) => (
-          <LayersControl.Overlay key={layer.id} name={layer.name}>
-            <GeoJSON data={layer.data} />
-          </LayersControl.Overlay>
-        ))}
+        <LayersControl.Overlay name="ACC Sectors">
+          {accSectorData && (
+            <GeoJSON 
+              data={accSectorData} 
+              style={() => ({
+                color: 'green',
+                weight: 2,
+                opacity: 0.6,
+                fillColor: 'green',
+                fillOpacity: 0.2
+              })}
+            />
+          )}
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Airports">
+          {airportsData && (
+            <GeoJSON 
+              data={airportsData}
+              pointToLayer={pointToLayer}
+              onEachFeature={(feature, layer) => {
+                layer.bindPopup(`${feature.properties.name1} (${feature.properties.name2})`);
+              }}
+            />
+          )}
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Navaids">
+          {navaidsData && (
+            <GeoJSON 
+              data={navaidsData}
+              pointToLayer={pointToLayer}
+              onEachFeature={(feature, layer) => {
+                layer.bindPopup(`${feature.properties.name}`);
+              }}
+            />
+          )}
+        </LayersControl.Overlay>
       </LayersControl>
       {flightPlan.departure && (
         <Marker
           position={[flightPlan.departure.lat, flightPlan.departure.lng]}
-          icon={airportIcon}
         >
           <Popup>{flightPlan.departure.name}</Popup>
         </Marker>
@@ -106,7 +207,6 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan }) => {
       {flightPlan.arrival && (
         <Marker
           position={[flightPlan.arrival.lat, flightPlan.arrival.lng]}
-          icon={airportIcon}
         >
           <Popup>{flightPlan.arrival.name}</Popup>
         </Marker>
@@ -115,22 +215,45 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan }) => {
         <Marker
           key={index}
           position={[waypoint.lat, waypoint.lng]}
-          icon={waypointIcon}
+          draggable={true}
+          eventHandlers={{
+            dragstart: () => {
+              setDraggingWaypointIndex(index);
+            },
+            drag: (e) => {
+              const marker = e.target;
+              const position = marker.getLatLng();
+              updateWaypointPosition(index, position);
+            },
+            dragend: () => {
+              setDraggingWaypointIndex(null);
+            },
+          }}
         >
           <Popup>{waypoint.name}</Popup>
         </Marker>
       ))}
-      {flightPlan.departure && flightPlan.arrival && (
-        <Polyline
-          positions={[
-            [flightPlan.departure.lat, flightPlan.departure.lng],
-            ...flightPlan.waypoints.map(wp => [wp.lat, wp.lng]),
-            [flightPlan.arrival.lat, flightPlan.arrival.lng]
-          ]}
-          color="blue"
-          weight={3}
-          opacity={0.7}
-        />
+      {flightPlan.departure && flightPlan.arrival && flightInfo && (
+        <>
+          {flightInfo.legs.map((leg, index) => (
+            <Polyline
+              key={index}
+              positions={[
+                [leg.fromLat, leg.fromLng],
+                [leg.toLat, leg.toLng]
+              ]}
+              color="blue"
+              weight={3}
+              opacity={0.7}
+            >
+              <Popup>
+                <div>Magnetic Heading: {leg.magneticHeading}°</div>
+                <div>Distance: {leg.distance} nm</div>
+                <div>ETE: {leg.ete}</div>
+              </Popup>
+            </Polyline>
+          ))}
+        </>
       )}
     </>
   );
@@ -176,11 +299,27 @@ const FlightPlanner = () => {
         setError(`Failed to load airbase data: ${error.message}`);
       });
 
-    // Mock Navaids data (replace with actual data fetching when available)
-    setNavaids([
-      { id: 1, name: 'VOR1', lat: 35.6895, lng: 139.6917 },
-      { id: 2, name: 'VOR2', lat: 34.6937, lng: 135.5023 },
-    ]);
+    // Fetch Navaids data
+    fetch('/geojson/Navaids.geojson')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        const processedNavaids = data.features.map(feature => ({
+          id: feature.properties.id,
+          name: feature.properties.name,
+          lat: feature.geometry.coordinates[1],
+          lng: feature.geometry.coordinates[0]
+        }));
+        setNavaids(processedNavaids);
+      })
+      .catch(error => {
+        console.error('Error loading navaids data:', error);
+        setError(`Failed to load navaids data: ${error.message}`);
+      });
   }, []);
 
   const handleAirportSelect = (type, value) => {
@@ -199,10 +338,19 @@ const FlightPlanner = () => {
     }));
   };
 
+  const handleWaypointNameChange = (index, newName) => {
+    setFlightPlan(prev => ({
+      ...prev,
+      waypoints: prev.waypoints.map((wp, i) => 
+        i === index ? { ...wp, name: newName } : wp
+      )
+    }));
+  };
+
   const addWaypointFromNavaid = () => {
     if (!selectedNavaid || bearing === '' || distance === '') return;
 
-    const navaid = navaids.find(n => n.id === parseInt(selectedNavaid));
+    const navaid = navaids.find(n => n.id === selectedNavaid);
     if (!navaid) return;
 
     const bearingRad = (parseFloat(bearing) * Math.PI) / 180;
@@ -240,33 +388,39 @@ const FlightPlanner = () => {
   const calculateFlightInfo = () => {
     const { departure, arrival, waypoints, speed, altitude, takeoffTime } = flightPlan;
     if (!departure || !arrival || speed <= 0 || altitude <= 0 || !takeoffTime) return;
-
+  
     const points = [departure, ...waypoints, arrival];
     let totalDistance = 0;
     let currentTime = new Date(`2000-01-01T${takeoffTime}`);
     const legs = [];
-
+  
     for (let i = 0; i < points.length - 1; i++) {
       const start = points[i];
       const end = points[i + 1];
       const distance = calculateDistance(start, end);
       const magneticHeading = calculateMagneticHeading(start, end);
       const legTime = (distance / speed) * 60 * 60 * 1000; // Convert to milliseconds
+      const ete = new Date(legTime).toISOString().substr(11, 8);
       currentTime = new Date(currentTime.getTime() + legTime);
-
+  
       totalDistance += distance;
       legs.push({
         from: start.name,
         to: end.name,
+        fromLat: start.lat,
+        fromLng: start.lng,
+        toLat: end.lat,
+        toLng: end.lng,
         distance: distance.toFixed(2),
-        magneticHeading: magneticHeading.toFixed(2),
+        magneticHeading: magneticHeading.toFixed(0),
+        ete: ete,
         eta: currentTime.toLocaleTimeString('en-US', { hour12: false })
       });
     }
-
+  
     setFlightInfo({
       totalDistance: totalDistance.toFixed(2),
-      totalTime: (totalDistance / speed).toFixed(2),
+      totalTime: new Date(totalDistance / speed * 60 * 60 * 1000).toISOString().substr(11, 8),
       legs: legs
     });
   };
@@ -382,7 +536,7 @@ const FlightPlanner = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {navaids.map(navaid => (
-                        <SelectItem key={navaid.id} value={navaid.id.toString()}>
+                        <SelectItem key={navaid.id} value={navaid.id}>
                           {navaid.name}
                         </SelectItem>
                       ))}
@@ -409,7 +563,13 @@ const FlightPlanner = () => {
                 <div>
                   <Label>Waypoints</Label>
                   {flightPlan.waypoints.map((waypoint, index) => (
-                    <div key={index}>{waypoint.name}: {waypoint.lat.toFixed(4)}, {waypoint.lng.toFixed(4)}</div>
+                    <div key={index} className="flex items-center space-x-2 mt-2">
+                      <Input
+                        value={waypoint.name}
+                        onChange={(e) => handleWaypointNameChange(index, e.target.value)}
+                      />
+                      <span>{waypoint.lat.toFixed(4)}, {waypoint.lng.toFixed(4)}</span>
+                    </div>
                   ))}
                 </div>
                 <Button onClick={calculateFlightInfo}>Calculate Flight Info</Button>
@@ -422,19 +582,34 @@ const FlightPlanner = () => {
                 <CardTitle>Flight Information</CardTitle>
               </CardHeader>
               <CardContent>
-                <div>Total Distance: {flightInfo.totalDistance} nm</div>
-                <div>Total Time: {flightInfo.totalTime} hours</div>
-                <div className="mt-2">
-                  <strong>Leg Information:</strong>
-                  {flightInfo.legs.map((leg, index) => (
-                    <div key={index} className="mt-1">
-                      <div>{leg.from} to {leg.to}</div>
-                      <div>Distance: {leg.distance} nm</div>
-                      <div>Magnetic Heading: {leg.magneticHeading}°</div>
-                      <div>ETA: {leg.eta}</div>
-                    </div>
-                  ))}
+                <div className="mb-4">
+                  <div>Total Distance: {flightInfo.totalDistance} nm</div>
+                  <div>Total Time: {flightInfo.totalTime}</div>
                 </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>From</TableHead>
+                      <TableHead>To</TableHead>
+                      <TableHead>Distance (nm)</TableHead>
+                      <TableHead>Magnetic Heading</TableHead>
+                      <TableHead>ETE</TableHead>
+                      <TableHead>ETA</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {flightInfo.legs.map((leg, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{leg.from}</TableCell>
+                        <TableCell>{leg.to}</TableCell>
+                        <TableCell>{leg.distance}</TableCell>
+                        <TableCell>{leg.magneticHeading}°</TableCell>
+                        <TableCell>{leg.ete}</TableCell>
+                        <TableCell>{leg.eta}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           )}
@@ -451,6 +626,7 @@ const FlightPlanner = () => {
               onWaypointAdd={(waypoint) => console.log('Waypoint added:', waypoint)}
               flightPlan={flightPlan}
               setFlightPlan={setFlightPlan}
+              flightInfo={flightInfo}
             />
           </MapContainer>
         </TabsContent>
