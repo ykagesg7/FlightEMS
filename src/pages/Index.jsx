@@ -5,14 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Progress } from "../components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { RadialBarChart, RadialBar, Legend, ResponsiveContainer, PolarAngleAxis, Tooltip } from 'recharts';
-import { ArrowRight, Bell, Trophy } from 'lucide-react';
+import { ArrowRight, Bell, Trophy, Lock } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { useAuth } from '../contexts/AuthContext'; // AuthContextをインポート
 
 export default function Index() {
+  const { user } = useAuth(); // AuthContextからユーザー情報を取得
   const [announcements, setAnnouncements] = useState([
-    { id: 1, title: "Flight Planning機能を実装しました。出発・到着地、Waypointを入力し、簡易的な計算結果と地図を表示します。引き続き機能拡張中です。", date: "2024-09-23" },
-    { id: 2, title: "Communityの投稿機能を実装しました。", date: "2024-09-19" },
-    { id: 3, title: "Courseページを開発中です。", date: "2024-09-19" },
+    { id: 1, title: "Courseページを実装しました。自分のペースで課目を学習できます。コンテンツは今後充実させていきます。", date: "2024-09-29" },
+    { id: 2, title: "Flight Planning機能を実装しました。出発・到着地、Waypointを入力し、簡易的な計算結果と地図を表示します。引き続き機能拡張中です。", date: "2024-09-23" },
+    { id: 3, title: "Communityの投稿機能を実装しました。", date: "2024-09-19" },
+    
   ]);
 
   const [topPerformers, setTopPerformers] = useState([]);
@@ -24,74 +27,76 @@ export default function Index() {
   }, []);
 
   async function fetchTopPerformers() {
-    const { data, error } = await supabase
-      .from('user_quiz_results')
-      .select(`
-        user_id,
-        is_correct,
-        profiles (username)
-      `)
-      .order('answered_at', { ascending: false })
-      .limit(1000);
+    try {
+      const { data, error } = await supabase
+        .from('user_quiz_results')
+        .select(`
+          user_id,
+          is_correct,
+          profiles (username)
+        `)
+        .order('answered_at', { ascending: false })
+        .limit(1000);
 
-    if (error) {
+      if (error) throw error;
+
+      const userScores = data.reduce((acc, result) => {
+        const userId = result.user_id;
+        const username = result.profiles?.username || `User ${userId.slice(0, 4)}`;
+        if (!acc[userId]) {
+          acc[userId] = { username, correct: 0, total: 0 };
+        }
+        acc[userId].total++;
+        if (result.is_correct) {
+          acc[userId].correct++;
+        }
+        return acc;
+      }, {});
+
+      const topPerformers = Object.entries(userScores)
+        .map(([userId, scores]) => ({
+          id: userId,
+          name: scores.username,
+          progress: Math.round((scores.correct / scores.total) * 100) || 0
+        }))
+        .sort((a, b) => b.progress - a.progress)
+        .slice(0, 5);
+
+      setTopPerformers(topPerformers);
+    } catch (error) {
       console.error('Error fetching top performers:', error);
-      return;
     }
-
-    const userScores = data.reduce((acc, result) => {
-      const userId = result.user_id;
-      const username = result.profiles?.username || `User ${userId.slice(0, 4)}`;
-      if (!acc[userId]) {
-        acc[userId] = { username, correct: 0, total: 0 };
-      }
-      acc[userId].total++;
-      if (result.is_correct) {
-        acc[userId].correct++;
-      }
-      return acc;
-    }, {});
-
-    const topPerformers = Object.entries(userScores)
-      .map(([userId, scores]) => ({
-        id: userId,
-        name: scores.username,
-        progress: Math.round((scores.correct / scores.total) * 100)
-      }))
-      .sort((a, b) => b.progress - a.progress)
-      .slice(0, 5);
-
-    setTopPerformers(topPerformers);
   }
 
   async function fetchCourseCompletionData() {
-    const { data, error } = await supabase
-      .from('user_quiz_results')
-      .select('category, is_correct');
+    try {
+      const { data, error } = await supabase
+        .from('user_quiz_results')
+        .select('category, is_correct');
 
-    if (error) {
+      if (error) throw error;
+
+      const categoryData = data.reduce((acc, result) => {
+        if (!acc[result.category]) {
+          acc[result.category] = { completed: 0, total: 0 };
+        }
+        acc[result.category].total++;
+        if (result.is_correct) {
+          acc[result.category].completed++;
+        }
+        return acc;
+      }, {});
+
+      const formattedData = Object.entries(categoryData).map(([name, stats], index) => ({
+        name,
+        completion: Math.round((stats.completed / stats.total) * 100) || 0,
+        fill: `hsl(${index * 60}, 70%, 50%)`,
+      }));
+
+      setCourseCompletionData(formattedData);
+    } catch (error) {
       console.error('Error fetching course completion data:', error);
-      return;
     }
-
-    const categoryData = data.reduce((acc, result) => {
-      if (!acc[result.category]) {
-        acc[result.category] = { completed: 0, total: 0 };
-      }
-      acc[result.category].total++;
-      if (result.is_correct) {
-        acc[result.category].completed++;
-      }
-      return acc;
-    }, {});
-
-    const formattedData = Object.entries(categoryData).map(([name, stats], index) => ({
-      name,
-      completion: Math.round((stats.completed / stats.total) * 100),
-      fill: `hsl(${index * 60}, 70%, 50%)`,
-    }));
-
-    setCourseCompletionData(formattedData);
   }
 
   return (
@@ -151,7 +156,7 @@ export default function Index() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {topPerformers.map((student) => (
+                  {topPerformers.slice(0, 3).map((student) => (
                     <TableRow key={student.id}>
                       <TableCell className="text-white">{student.name}</TableCell>
                       <TableCell>
@@ -161,6 +166,17 @@ export default function Index() {
                   ))}
                 </TableBody>
               </Table>
+              {!user && topPerformers.length > 0 && (
+                <div className="mt-4 text-center">
+                  <p className="text-blue-200 mb-2">ログインして全てのランキングを見る</p>
+                  <Button asChild className="bg-blue-500 hover:bg-blue-600">
+                    <Link to="/login">ログイン</Link>
+                  </Button>
+                </div>
+              )}
+              {topPerformers.length === 0 && (
+                <p className="text-center text-blue-200 mt-4">現在、表示できるデータがありません。</p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -170,60 +186,80 @@ export default function Index() {
             <CardTitle className="text-2xl font-bold text-blue-300">Course Completion Overview</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <RadialBarChart 
-                cx="50%" 
-                cy="50%" 
-                innerRadius="10%" 
-                outerRadius="80%" 
-                barSize={20} 
-                data={courseCompletionData}
-              >
-                <PolarAngleAxis
-                  type="number"
-                  domain={[0, 100]}
-                  angleAxisId={0}
-                  tick={false}
-                />
-                <RadialBar
-                  minAngle={15}
-                  label={{ position: 'insideStart', fill: '#fff', fontWeight: 600, fontSize: 14 }}
-                  background
-                  clockWise
-                  dataKey="completion"
-                />
-                <Legend
-                  iconSize={10}
-                  layout="vertical"
-                  verticalAlign="middle"
-                  wrapperStyle={{
-                    top: '50%',
-                    right: 0,
-                    transform: 'translate(0, -50%)',
-                    lineHeight: '24px'
-                  }}
-                />
-                <Tooltip
-                  formatter={(value) => `${value}%`}
-                  contentStyle={{ backgroundColor: '#1F2937', border: 'none', color: '#E5E7EB' }}
-                />
-              </RadialBarChart>
-            </ResponsiveContainer>
+            {user ? (
+              <ResponsiveContainer width="100%" height={400}>
+                <RadialBarChart 
+                  cx="50%" 
+                  cy="50%" 
+                  innerRadius="10%" 
+                  outerRadius="80%" 
+                  barSize={20} 
+                  data={courseCompletionData}
+                >
+                  <PolarAngleAxis
+                    type="number"
+                    domain={[0, 100]}
+                    angleAxisId={0}
+                    tick={false}
+                  />
+                  <RadialBar
+                    minAngle={15}
+                    label={{ position: 'insideStart', fill: '#fff', fontWeight: 600, fontSize: 14 }}
+                    background
+                    clockWise
+                    dataKey="completion"
+                  />
+                  <Legend
+                    iconSize={10}
+                    layout="vertical"
+                    verticalAlign="middle"
+                    wrapperStyle={{
+                      top: '50%',
+                      right: 0,
+                      transform: 'translate(0, -50%)',
+                      lineHeight: '24px'
+                    }}
+                  />
+                  <Tooltip
+                    formatter={(value) => `${value}%`}
+                    contentStyle={{ backgroundColor: '#1F2937', border: 'none', color: '#E5E7EB' }}
+                  />
+                </RadialBarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="text-center py-8">
+                <Lock className="mx-auto mb-4 text-blue-300" size={48} />
+                <p className="text-xl mb-4">詳細なコース完了状況を見るにはログインが必要です</p>
+                <Button asChild className="bg-blue-500 hover:bg-blue-600">
+                  <Link to="/login">ログインして詳細を見る</Link>
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
         
         <div className="text-center space-y-6">
-          <Button asChild className="text-lg px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white transition-all duration-300 transform hover:scale-105">
-            <Link to="/login" className="flex items-center">
-              Start Your Journey <ArrowRight className="ml-2" />
-            </Link>
-          </Button>
-          <div>
-            <span className="text-blue-200">Already a member? </span>
-            <Button asChild variant="link" className="text-white hover:text-blue-300">
-              <Link to="/login">Log in here</Link>
+          {user ? (
+            <Button asChild className="text-lg px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white transition-all duration-300 transform hover:scale-105">
+              <Link to="/dashboard" className="flex items-center">
+                ダッシュボードへ <ArrowRight className="ml-2" />
+              </Link>
             </Button>
-          </div>
+          ) : (
+            <>
+              <Button asChild className="text-lg px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white transition-all duration-300 transform hover:scale-105">
+                <Link to="/login" className="flex items-center">
+                  今すぐ始める <ArrowRight className="ml-2" />
+                </Link>
+              </Button>
+              <p className="text-blue-200">
+                アカウントをお持ちの方は
+                <Button asChild variant="link" className="text-white hover:text-blue-300">
+                  <Link to="/login">こちらからログイン</Link>
+                </Button>
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>
