@@ -78,7 +78,7 @@ const MissionPlanningPage = () => {
                 <p>飛鳥の言葉に、パイロットたちの表情が引き締まる。彼らの胸には、緊張感とともに、飛鳥への厚い信頼感が宿っていた。</p>
               </section>
             </div>
-            <img src="/public/briefing.jpg" alt="ブリーフィングのイメージ" className="w-full h-auto rounded-lg shadow-md" />
+            <img src="/briefing.jpg" alt="ブリーフィングのイメージ" className="w-full h-auto rounded-lg shadow-md" />
           </div>
         </ScrollArea>
       )
