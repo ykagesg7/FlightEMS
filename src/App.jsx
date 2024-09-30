@@ -9,13 +9,13 @@ import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Community from "./pages/Community";
 import Course from "./pages/Course";
+import MissionPlanningPage from './pages/MissionPlanning';
 import TestPage from "./pages/test";
 import CourseManagement from "./pages/CourseManagement";
 import Login from "./pages/Login";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-import FlightTips from "./pages/FlightTips";
 import FlightPlannerPage from "./components/FlightPlanner";
 import 'leaflet/dist/leaflet.css';
 
@@ -33,7 +33,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
   
   if (allowedRoles && !allowedRoles.includes(user.user_metadata?.role)) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
   
   return children;
@@ -47,7 +47,7 @@ const AppRoutes = () => {
       <Header />
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
+        <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
         <Route 
           path="/dashboard" 
           element={
@@ -59,7 +59,7 @@ const AppRoutes = () => {
         <Route
           path="/admin-dashboard"
           element={
-            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+            <ProtectedRoute allowedRoles={["Admin", "Teacher"]}>
               <AdminDashboard />
             </ProtectedRoute>
           }
@@ -81,9 +81,17 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/mission-planning"
+          element={
+            <ProtectedRoute>
+              <MissionPlanningPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/course-management"
           element={
-            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+            <ProtectedRoute allowedRoles={["Admin", "Teacher"]}>
               <CourseManagement />
             </ProtectedRoute>
           }
@@ -101,14 +109,6 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <Settings />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/flight-tips"
-          element={
-            <ProtectedRoute>
-              <FlightTips />
             </ProtectedRoute>
           }
         />

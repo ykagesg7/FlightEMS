@@ -3,12 +3,14 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!import.meta.env.VITE_SUPABASE_URL) {
-  console.warn('VITE_SUPABASE_PROJECT_URL is not set in the environment variables. Using fallback URL for development.');
+if (!supabaseUrl) {
+  console.error('VITE_SUPABASE_URL is not set in the environment variables.');
+  throw new Error('Supabase URL is missing');
 }
 
-if (!import.meta.env.VITE_SUPABASE_ANON_KEY) {
-  console.warn('VITE_SUPABASE_API_KEY is not set in the environment variables. Using fallback key for development.');
+if (!supabaseAnonKey) {
+  console.error('VITE_SUPABASE_ANON_KEY is not set in the environment variables.');
+  throw new Error('Supabase Anon Key is missing');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
