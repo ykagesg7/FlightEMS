@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, useMapEvents, Popup, LayersControl, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -10,10 +12,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo }) => {
+// マーカーアイコンの定義
+const defaultIcon = L.icon({
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowSize: [41, 41],
+});
+
+const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo, navaidsData, airportsData }) => {
   const [accSectorData, setAccSectorData] = useState(null);
-  const [airportsData, setAirportsData] = useState(null);
-  const [navaidsData, setNavaidsData] = useState(null);
   const longPressTimeoutRef = useRef(null);
   const isLongPressRef = useRef(false);
   const [cursorPosition, setCursorPosition] = useState({ lat: 0, lng: 0 });
@@ -27,7 +37,7 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
         setAccSectorData(data);
       })
       .catch(error => console.error('Error loading ACC_Sector data:', error));
-
+  
     // Airports GeoJSON データを読み込む
     fetch('/geojson/Airports.geojson')
       .then(response => response.json())
@@ -112,6 +122,14 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
     return `${degrees}° ${minutes}' ${seconds}"`;
   };
 
+  const formatCoordinates = (lat, lng) => {
+    const latDMS = toDMS(lat);
+    const lngDMS = toDMS(lng);
+    const latDir = lat >= 0 ? 'N' : 'S';
+    const lngDir = lng >= 0 ? 'E' : 'W';
+    return `${latDir} ${latDMS} / ${lngDir} ${lngDMS}`;
+  };
+
   const CursorPositionControl = () => {
     const map = useMap();
     
@@ -135,12 +153,89 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
     useEffect(() => {
       const container = document.querySelector('.cursor-position');
       if (container) {
-        container.innerHTML = `Lat: ${toDMS(cursorPosition.lat)} ${cursorPosition.lat >= 0 ? 'N' : 'S'}<br>
-                               Lng: ${toDMS(cursorPosition.lng)} ${cursorPosition.lng >= 0 ? 'E' : 'W'}`;
+        container.innerHTML = formatCoordinates(cursorPosition.lat, cursorPosition.lng);
       }
     }, [cursorPosition]);
 
     return null;
+  };
+
+  const calculateBearingAndDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371e3; // 地球の半径（メートル）
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c / 1852; // 海里に変換
+
+    const y = Math.sin(Δλ) * Math.cos(φ2);
+    const x = Math.cos(φ1) * Math.sin(φ2) -
+              Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+    const θ = Math.atan2(y, x);
+    let bearing = (θ * 180 / Math.PI + 360) % 360;
+
+    // 磁気偏角を適用（例: 7度）
+    const magneticDeclination = 7;
+    bearing = (bearing + magneticDeclination + 360) % 360;
+
+    return { bearing, distance };
+  };
+
+  const getNearestNavaids = (lat, lon) => {
+    if (!navaidsData) return [];
+
+    return navaidsData.features
+      .map(navaid => {
+        const { bearing, distance } = calculateBearingAndDistance(
+          lat, lon,
+          navaid.geometry.coordinates[1],
+          navaid.geometry.coordinates[0]
+        );
+        return {
+          name: navaid.properties.name,
+          bearing,
+          distance
+        };
+      })
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 3);
+  };
+
+  const getWaypointInfo = (waypoint) => {
+    const { departure, arrival } = flightPlan;
+    let info = '';
+
+    if (departure) {
+      const { bearing, distance } = calculateBearingAndDistance(
+        departure.lat, departure.lng,
+        waypoint.lat, waypoint.lng
+      );
+      info += `from Departure airport: ${bearing.toFixed(0)}°/${distance.toFixed(1)}nm<br>`;
+    }
+
+    if (arrival) {
+      const { bearing, distance } = calculateBearingAndDistance(
+        waypoint.lat, waypoint.lng,
+        arrival.lat, arrival.lng
+      );
+      info += `from Arrival airport: ${bearing.toFixed(0)}°/${distance.toFixed(1)}nm<br>`;
+    }
+
+    const nearestNavaids = getNearestNavaids(waypoint.lat, waypoint.lng);
+    info += 'from near Navaids:<br>';
+    nearestNavaids.forEach(navaid => {
+      info += `${navaid.bearing.toFixed(0)}°/${navaid.distance.toFixed(1)}nm from ${navaid.name}<br>`;
+    });
+
+    info += `Lat/Long: ${formatCoordinates(waypoint.lat, waypoint.lng)}`;
+
+    return info;
   };
 
   return (
@@ -174,22 +269,40 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             />
           )}
         </LayersControl.Overlay>
-        <LayersControl.Overlay name="Airports">
+        <LayersControl.Overlay checked name="Airports">
           {airportsData && (
             <GeoJSON 
               data={airportsData}
-              pointToLayer={pointToLayer}
+              pointToLayer={(feature, latlng) => 
+                L.circleMarker(latlng, {
+                  radius: 6,
+                  fillColor: "#ff7800",
+                  color: "#000",
+                  weight: 1,
+                  opacity: 1,
+                  fillOpacity: 0.5
+                })
+              }
               onEachFeature={(feature, layer) => {
                 layer.bindPopup(`${feature.properties.name1} (${feature.properties.name2})`);
               }}
             />
           )}
         </LayersControl.Overlay>
-        <LayersControl.Overlay name="Navaids">
+        <LayersControl.Overlay checked name="Navaids">
           {navaidsData && (
             <GeoJSON 
               data={navaidsData}
-              pointToLayer={pointToLayer}
+              pointToLayer={(feature, latlng) => 
+                L.circleMarker(latlng, {
+                  radius: 6,
+                  fillColor: "#0078ff",
+                  color: "#000",
+                  weight: 1,
+                  opacity: 1,
+                  fillOpacity: 0.5
+                })
+              }
               onEachFeature={(feature, layer) => {
                 layer.bindPopup(`${feature.properties.name}`);
               }}
@@ -200,6 +313,7 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
       {flightPlan.departure && (
         <Marker
           position={[flightPlan.departure.lat, flightPlan.departure.lng]}
+          icon={defaultIcon}
         >
           <Popup>{flightPlan.departure.name}</Popup>
         </Marker>
@@ -207,6 +321,7 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
       {flightPlan.arrival && (
         <Marker
           position={[flightPlan.arrival.lat, flightPlan.arrival.lng]}
+          icon={defaultIcon}
         >
           <Popup>{flightPlan.arrival.name}</Popup>
         </Marker>
@@ -216,6 +331,7 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
           key={index}
           position={[waypoint.lat, waypoint.lng]}
           draggable={true}
+          icon={defaultIcon}
           eventHandlers={{
             dragstart: () => {
               setDraggingWaypointIndex(index);
@@ -227,7 +343,12 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             },
             dragend: () => {
               setDraggingWaypointIndex(null);
+              onWaypointAdd(flightPlan.waypoints[index]);
             },
+            click: (e) => {
+              const popupContent = getWaypointInfo(waypoint);
+              e.target.bindPopup(popupContent).openPopup();
+            }
           }}
         >
           <Popup>{waypoint.name}</Popup>
@@ -247,9 +368,9 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
               opacity={0.7}
             >
               <Popup>
-                <div>Magnetic Heading: {leg.magneticHeading}°</div>
-                <div>Distance: {leg.distance} nm</div>
-                <div>ETE: {leg.ete}</div>
+                <div>磁方位: {leg.magneticHeading}°</div>
+                <div>距離: {leg.distance} nm</div>
+                <div>所要時間: {leg.ete}</div>
               </Popup>
             </Polyline>
           ))}
@@ -264,17 +385,36 @@ const FlightPlanner = () => {
     departure: null,
     arrival: null,
     waypoints: [],
-    speed: '',
-    altitude: '',
+    speed: 300,
+    altitude: 23000,
     takeoffTime: '',
   });
   const [flightInfo, setFlightInfo] = useState(null);
   const [airbases, setAirbases] = useState([]);
+  const [navaidsData, setNavaidsData] = useState(null);
   const [navaids, setNavaids] = useState([]);
+  const [airportsData, setAirportsData] = useState(null);
   const [error, setError] = useState(null);
   const [selectedNavaid, setSelectedNavaid] = useState('');
   const [bearing, setBearing] = useState('');
   const [distance, setDistance] = useState('');
+  const [activeTab, setActiveTab] = useState('plan');
+  const [selectedWaypoint, setSelectedWaypoint] = useState(null);
+  const [mapKey, setMapKey] = useState(0);
+
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    if (activeTab === 'map') {
+      setMapKey(prev => prev + 1);
+    }
+  }, [activeTab]);
+  
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     // Fetch airbase data
@@ -300,27 +440,30 @@ const FlightPlanner = () => {
       });
 
     // Fetch Navaids data
-    fetch('/geojson/Navaids.geojson')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        const processedNavaids = data.features.map(feature => ({
-          id: feature.properties.id,
-          name: feature.properties.name,
-          lat: feature.geometry.coordinates[1],
-          lng: feature.geometry.coordinates[0]
-        }));
-        setNavaids(processedNavaids);
-      })
-      .catch(error => {
-        console.error('Error loading navaids data:', error);
-        setError(`Failed to load navaids data: ${error.message}`);
-      });
-  }, []);
+  fetch('/geojson/Navaids.geojson')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    setNavaidsData(data); // ここで navaidsData を設定
+    const processedNavaids = data.features.map(feature => ({
+      id: feature.properties.id,
+      name: feature.properties.name,
+      lat: feature.geometry.coordinates[1],
+      lng: feature.geometry.coordinates[0]
+    }));
+
+    setNavaids(processedNavaids);
+  })
+  .catch(error => {
+    console.error('Error loading navaids data:', error);
+    setError(`Failed to load navaids data: ${error.message}`);
+  });
+}, []);
+
 
   const handleAirportSelect = (type, value) => {
     const [lat, lng, name] = value.split(',');
@@ -338,6 +481,19 @@ const FlightPlanner = () => {
     }));
   };
 
+  const adjustValue = (name, increment) => {
+    setFlightPlan(prev => {
+      const currentValue = prev[name];
+      let newValue;
+      if (name === 'speed') {
+        newValue = Math.max(0, currentValue + increment * 10);
+      } else if (name === 'altitude') {
+        newValue = Math.max(0, currentValue + increment * 500);
+      }
+      return { ...prev, [name]: newValue };
+    });
+  };
+
   const handleWaypointNameChange = (index, newName) => {
     setFlightPlan(prev => ({
       ...prev,
@@ -348,41 +504,128 @@ const FlightPlanner = () => {
   };
 
   const addWaypointFromNavaid = () => {
-    if (!selectedNavaid || bearing === '' || distance === '') return;
-
+    console.log('addWaypointFromNavaid called');
+    console.log('selectedNavaid:', selectedNavaid);
+    console.log('navaidsData:', navaidsData);
+  
+    if (!selectedNavaid || !navaids) {
+      console.log('selectedNavaid or navaids is missing');
+      return;
+    }
+  
     const navaid = navaids.find(n => n.id === selectedNavaid);
-    if (!navaid) return;
-
-    const bearingRad = (parseFloat(bearing) * Math.PI) / 180;
-    const distanceNM = parseFloat(distance);
-
-    const R = 3440.065; // Earth's radius in nautical miles
-    const lat1 = (navaid.lat * Math.PI) / 180;
-    const lon1 = (navaid.lng * Math.PI) / 180;
-    const lat2 = Math.asin(
-      Math.sin(lat1) * Math.cos(distanceNM / R) +
-      Math.cos(lat1) * Math.sin(distanceNM / R) * Math.cos(bearingRad)
-    );
-    const lon2 = lon1 + Math.atan2(
-      Math.sin(bearingRad) * Math.sin(distanceNM / R) * Math.cos(lat1),
-      Math.cos(distanceNM / R) - Math.sin(lat1) * Math.sin(lat2)
-    );
-
-    const newWaypoint = {
-      lat: (lat2 * 180) / Math.PI,
-      lng: (lon2 * 180) / Math.PI,
-      name: `Waypoint ${flightPlan.waypoints.length + 1}`,
-    };
-
-    setFlightPlan(prev => ({
-      ...prev,
-      waypoints: [...prev.waypoints, newWaypoint]
-    }));
-
+    if (!navaid) {
+      console.log('Selected navaid not found');
+      return;
+    }
+  
+    let newWaypoint;
+  
+    if (bearing === '' || distance === '') {
+      console.log('Adding navaid directly as waypoint');
+      newWaypoint = {
+        lat: navaid.lat,
+        lng: navaid.lng,
+        name: `${navaid.name} Waypoint`,
+      };
+    } else {
+      console.log('Calculating new waypoint position');
+      const bearingRad = (parseFloat(bearing) * Math.PI) / 180;
+      const distanceNM = parseFloat(distance);
+  
+      const R = 3440.065; // Earth's radius in nautical miles
+      const lat1 = (navaid.lat * Math.PI) / 180;
+      const lon1 = (navaid.lng * Math.PI) / 180;
+      const lat2 = Math.asin(
+        Math.sin(lat1) * Math.cos(distanceNM / R) +
+        Math.cos(lat1) * Math.sin(distanceNM / R) * Math.cos(bearingRad)
+      );
+      const lon2 = lon1 + Math.atan2(
+        Math.sin(bearingRad) * Math.sin(distanceNM / R) * Math.cos(lat1),
+        Math.cos(distanceNM / R) - Math.sin(lat1) * Math.sin(lat2)
+      );
+  
+      newWaypoint = {
+        lat: (lat2 * 180) / Math.PI,
+        lng: (lon2 * 180) / Math.PI,
+        name: `Waypoint ${flightPlan.waypoints.length + 1}`,
+      };
+    }
+  
+    console.log('New waypoint:', newWaypoint);
+  
+    setFlightPlan(prev => {
+      const updatedPlan = {
+        ...prev,
+        waypoints: [...prev.waypoints, newWaypoint]
+      };
+  
+      console.log('Updated flight plan:', updatedPlan);
+      return updatedPlan;
+    });
+  
     // Reset input fields
     setSelectedNavaid('');
     setBearing('');
     setDistance('');
+    console.log('Input fields reset');
+  };
+
+  const updateWaypoint = () => {
+    if (selectedWaypoint === null) return;
+
+    const updatedWaypoint = {
+      ...flightPlan.waypoints[selectedWaypoint],
+      name: selectedNavaid ? `${selectedNavaid} Waypoint` : flightPlan.waypoints[selectedWaypoint].name,
+    };
+
+    if (bearing !== '' && distance !== '') {
+      const navaid = navaidsData.features.find(n => n.properties.id === selectedNavaid);
+      if (navaid) {
+        const bearingRad = (parseFloat(bearing) * Math.PI) / 180;
+        const distanceNM = parseFloat(distance);
+
+        const R = 3440.065; // Earth's radius in nautical miles
+        const lat1 = (navaid.geometry.coordinates[1] * Math.PI) / 180;
+        const lon1 = (navaid.geometry.coordinates[0] * Math.PI) / 180;
+        const lat2 = Math.asin(
+          Math.sin(lat1) * Math.cos(distanceNM / R) +
+          Math.cos(lat1) * Math.sin(distanceNM / R) * Math.cos(bearingRad)
+        );
+        const lon2 = lon1 + Math.atan2(
+          Math.sin(bearingRad) * Math.sin(distanceNM / R) * Math.cos(lat1),
+          Math.cos(distanceNM / R) - Math.sin(lat1) * Math.sin(lat2)
+        );
+
+        updatedWaypoint.lat = (lat2 * 180) / Math.PI;
+        updatedWaypoint.lng = (lon2 * 180) / Math.PI;
+      }
+    }
+
+    setFlightPlan(prev => ({
+      ...prev,
+      waypoints: prev.waypoints.map((wp, index) => 
+        index === selectedWaypoint ? updatedWaypoint : wp
+      )
+    }));
+
+    // Reset input fields and selection
+    setSelectedWaypoint(null);
+    setSelectedNavaid('');
+    setBearing('');
+    setDistance('');
+  };
+
+  const deleteWaypoint = () => {
+    if (selectedWaypoint === null) return;
+
+    setFlightPlan(prev => ({
+      ...prev,
+      waypoints: prev.waypoints.filter((_, index) => index !== selectedWaypoint)
+    }));
+
+    // Reset selection
+    setSelectedWaypoint(null);
   };
 
   const calculateFlightInfo = () => {
@@ -456,23 +699,23 @@ const FlightPlanner = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <Tabs defaultValue="plan" className="flex-grow flex flex-col">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-grow flex flex-col">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="plan">Plan</TabsTrigger>
-          <TabsTrigger value="map">Map</TabsTrigger>
+          <TabsTrigger value="plan">計画</TabsTrigger>
+          <TabsTrigger value="map">地図</TabsTrigger>
         </TabsList>
         <TabsContent value="plan" className="flex-grow overflow-auto">
           <Card className="m-4">
             <CardHeader>
-              <CardTitle>Flight Plan</CardTitle>
+              <CardTitle>飛行計画</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="departure">Departure</Label>
+                  <Label htmlFor="departure">出発空港</Label>
                   <Select onValueChange={(value) => handleAirportSelect('departure', value)}>
                     <SelectTrigger id="departure">
-                      <SelectValue placeholder="Select departure airport" />
+                      <SelectValue placeholder="出発空港を選択" />
                     </SelectTrigger>
                     <SelectContent>
                       {airbases.map(airbase => (
@@ -484,10 +727,10 @@ const FlightPlanner = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="arrival">Arrival</Label>
+                  <Label htmlFor="arrival">到着空港</Label>
                   <Select onValueChange={(value) => handleAirportSelect('arrival', value)}>
                     <SelectTrigger id="arrival">
-                      <SelectValue placeholder="Select arrival airport"  />
+                      <SelectValue placeholder="到着空港を選択"  />
                     </SelectTrigger>
                     <SelectContent>
                       {airbases.map(airbase => (
@@ -499,27 +742,35 @@ const FlightPlanner = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="speed">Speed (knots)</Label>
-                  <Input
-                    id="speed"
-                    name="speed"
-                    type="number"
-                    value={flightPlan.speed}
-                    onChange={handleInputChange}
-                  />
+                  <Label htmlFor="speed">速度 (ノット)</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      id="speed"
+                      name="speed"
+                      type="number"
+                      value={flightPlan.speed}
+                      onChange={handleInputChange}
+                    />
+                    <Button onClick={() => adjustValue('speed', -1)}>-</Button>
+                    <Button onClick={() => adjustValue('speed', 1)}>+</Button>
+                  </div>
                 </div>
                 <div>
-                  <Label htmlFor="altitude">Altitude (ft)</Label>
-                  <Input
-                    id="altitude"
-                    name="altitude"
-                    type="number"
-                    value={flightPlan.altitude}
-                    onChange={handleInputChange}
-                  />
+                  <Label htmlFor="altitude">高度 (フィート)</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      id="altitude"
+                      name="altitude"
+                      type="number"
+                      value={flightPlan.altitude}
+                      onChange={handleInputChange}
+                    />
+                    <Button onClick={() => adjustValue('altitude', -1)}>-</Button>
+                    <Button onClick={() => adjustValue('altitude', 1)}>+</Button>
+                  </div>
                 </div>
                 <div>
-                  <Label htmlFor="takeoffTime">Takeoff Time</Label>
+                  <Label htmlFor="takeoffTime">離陸時刻</Label>
                   <Input
                     id="takeoffTime"
                     name="takeoffTime"
@@ -529,13 +780,13 @@ const FlightPlanner = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="navaid">Add Waypoint from Navaid</Label>
+                  <Label htmlFor="navaid">Navaidからウェイポイントを追加/編集</Label>
                   <Select value={selectedNavaid} onValueChange={setSelectedNavaid}>
                     <SelectTrigger id="navaid">
-                      <SelectValue placeholder="Select Navaid" />
+                      <SelectValue placeholder="Navaidを選択" />
                     </SelectTrigger>
                     <SelectContent>
-                      {navaids.map(navaid => (
+                      {navaids && navaids.map(navaid => (
                         <SelectItem key={navaid.id} value={navaid.id}>
                           {navaid.name}
                         </SelectItem>
@@ -545,7 +796,7 @@ const FlightPlanner = () => {
                   <Input
                     id="bearing"
                     type="number"
-                    placeholder="Bearing (degrees)"
+                    placeholder="方位 (度)"
                     className="mt-2"
                     value={bearing}
                     onChange={(e) => setBearing(e.target.value)}
@@ -553,15 +804,19 @@ const FlightPlanner = () => {
                   <Input
                     id="distance"
                     type="number"
-                    placeholder="Distance (nm)"
+                    placeholder="距離 (海里)"
                     className="mt-2"
                     value={distance}
                     onChange={(e) => setDistance(e.target.value)}
                   />
-                  <Button className="mt-2" onClick={addWaypointFromNavaid}>Add Waypoint</Button>
+                  <div className="flex gap-2 mt-2">
+                    <Button onClick={addWaypointFromNavaid}>ウェイポイント追加</Button>
+                    <Button onClick={updateWaypoint} disabled={selectedWaypoint === null}>ウェイポイント更新</Button>
+                    <Button onClick={deleteWaypoint} disabled={selectedWaypoint === null}>ウェイポイント削除</Button>
+                  </div>
                 </div>
                 <div>
-                  <Label>Waypoints</Label>
+                  <Label>ウェイポイント</Label>
                   {flightPlan.waypoints.map((waypoint, index) => (
                     <div key={index} className="flex items-center space-x-2 mt-2">
                       <Input
@@ -569,32 +824,33 @@ const FlightPlanner = () => {
                         onChange={(e) => handleWaypointNameChange(index, e.target.value)}
                       />
                       <span>{waypoint.lat.toFixed(4)}, {waypoint.lng.toFixed(4)}</span>
+                      <Button onClick={() => setSelectedWaypoint(index)}>選択</Button>
                     </div>
                   ))}
                 </div>
-                <Button onClick={calculateFlightInfo}>Calculate Flight Info</Button>
+                <Button onClick={calculateFlightInfo}>飛行情報を計算</Button>
               </div>
             </CardContent>
           </Card>
           {flightInfo && (
             <Card className="m-4">
               <CardHeader>
-                <CardTitle>Flight Information</CardTitle>
+                <CardTitle>飛行情報</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="mb-4">
-                  <div>Total Distance: {flightInfo.totalDistance} nm</div>
-                  <div>Total Time: {flightInfo.totalTime}</div>
+                  <div>総距離: {flightInfo.totalDistance} 海里</div>
+                  <div>総飛行時間: {flightInfo.totalTime}</div>
                 </div>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>From</TableHead>
-                      <TableHead>To</TableHead>
-                      <TableHead>Distance (nm)</TableHead>
-                      <TableHead>Magnetic Heading</TableHead>
-                      <TableHead>ETE</TableHead>
-                      <TableHead>ETA</TableHead>
+                      <TableHead>出発</TableHead>
+                      <TableHead>到着</TableHead>
+                      <TableHead>距離 (海里)</TableHead>
+                      <TableHead>磁方位</TableHead>
+                      <TableHead>所要時間</TableHead>
+                      <TableHead>到着予定時刻</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -615,20 +871,25 @@ const FlightPlanner = () => {
           )}
         </TabsContent>
         <TabsContent value="map" className="flex-grow">
-          <MapContainer 
-            center={[36.2048, 138.2529]} 
-            zoom={5} 
-            style={{ height: '100%', width: '100%' }}
-            maxBounds={[[20, 122], [46, 154]]}
-            minZoom={5}
-          >
-            <FlightPlannerContent
-              onWaypointAdd={(waypoint) => console.log('Waypoint added:', waypoint)}
-              flightPlan={flightPlan}
-              setFlightPlan={setFlightPlan}
-              flightInfo={flightInfo}
-            />
-          </MapContainer>
+          {activeTab === 'map' && (
+            <MapContainer 
+              key={mapKey}
+              center={[36.2048, 138.2529]} 
+              zoom={5} 
+              style={{ height: '100%', width: '100%' }}
+              maxBounds={[[20, 122], [46, 154]]}
+              minZoom={5}
+            >
+              <FlightPlannerContent
+                onWaypointAdd={calculateFlightInfo}
+                flightPlan={flightPlan}
+                setFlightPlan={setFlightPlan}
+                flightInfo={flightInfo}
+                navaidsData={navaidsData}
+                airportsData={airportsData}
+              />
+            </MapContainer>
+          )}
         </TabsContent>
       </Tabs>
     </div>
