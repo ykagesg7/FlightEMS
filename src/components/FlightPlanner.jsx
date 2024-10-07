@@ -22,8 +22,10 @@ const defaultIcon = L.icon({
   shadowSize: [41, 41],
 });
 
-const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo, navaidsData, airportsData }) => {
+const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo}) => {
   const [accSectorData, setAccSectorData] = useState(null);
+  const [airportsData, setAirportsData] = useState(null);
+  const [navaidsData, setNavaidsData] = useState(null);
   const longPressTimeoutRef = useRef(null);
   const isLongPressRef = useRef(false);
   const [cursorPosition, setCursorPosition] = useState({ lat: 0, lng: 0 });
