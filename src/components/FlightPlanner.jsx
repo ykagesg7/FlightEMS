@@ -23,7 +23,8 @@ const defaultIcon = L.icon({
 });
 
 const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo}) => {
-  const [accSectorData, setAccSectorData] = useState(null);
+  const [accSectorHighData, setAccSectorHighData] = useState(null);
+  const [accSectorLowData, setAccSectorLowData] = useState(null);
   const [airportsData, setAirportsData] = useState(null);
   const [navaidsData, setNavaidsData] = useState(null);
   const longPressTimeoutRef = useRef(null);
@@ -32,13 +33,21 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
   const [draggingWaypointIndex, setDraggingWaypointIndex] = useState(null);
 
   useEffect(() => {
-    // ACC_Sector GeoJSON データを読み込む
-    fetch('/geojson/ACC_Sector.geojson')
+    // ACC_Sector_Low GeoJSON データを読み込む
+    fetch('/geojson/ACC_Sector_High.geojson')
+    .then(response => response.json())
+    .then(data => {
+      setAccSectorHighData(data);
+    })
+    .catch(error => console.error('Error loading ACC_Sector_High data:', error));
+
+    // ACC_Sector_Low GeoJSON データを読み込む
+    fetch('/geojson/ACC_Sector_Low.geojson')
       .then(response => response.json())
       .then(data => {
-        setAccSectorData(data);
+        setAccSectorLowData(data);
       })
-      .catch(error => console.error('Error loading ACC_Sector data:', error));
+      .catch(error => console.error('Error loading ACC_Sector_Low data:', error));
   
     // Airports GeoJSON データを読み込む
     fetch('/geojson/Airports.geojson')
@@ -257,13 +266,27 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
           />
         </LayersControl.BaseLayer>
-        <LayersControl.Overlay name="ACC Sectors">
-          {accSectorData && (
+        <LayersControl.Overlay name="ACC Sector above FL335">
+          {accSectorHighData && (
             <GeoJSON 
-              data={accSectorData} 
+              data={accSectorHighData} 
               style={() => ({
-                color: 'green',
-                weight: 2,
+                color: 'blue',
+                weight: 1,
+                opacity: 0.6,
+                fillColor: 'blue',
+                fillOpacity: 0.2
+              })}
+            />
+          )}
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="ACC Sector below FL335">
+          {accSectorLowData && (
+            <GeoJSON 
+              data={accSectorLowData} 
+              style={() => ({
+                color: 'blue',
+                weight: 1,
                 opacity: 0.6,
                 fillColor: 'green',
                 fillOpacity: 0.2
