@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -7,11 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThumbsUp, MessageSquare } from 'lucide-react';
-
-// Remove the static import
-// import 'react-quill/dist/quill.snow.css';
-
-const ReactQuill = lazy(() => import('react-quill'));
+import { Editor } from '@tinymce/tinymce-react';
 
 const POSTS_PER_PAGE = 10;
 
@@ -22,12 +18,10 @@ export default function Community() {
   const [newComment, setNewComment] = useState('');
   const [commentingOn, setCommentingOn] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const quillRef = useRef(null);
+  const editorRef = useRef(null);
 
   useEffect(() => {
     fetchPosts();
-    // Dynamically import the CSS
-    import('react-quill/dist/quill.snow.css');
   }, [currentPage]);
 
   const fetchPosts = async () => {
@@ -57,16 +51,20 @@ export default function Community() {
   };
 
   const createPost = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('posts')
-        .insert([{ ...newPost, user_id: user.id }])
-        .select();
-      if (error) throw error;
-      setPosts([data[0], ...posts]);
-      setNewPost({ title: '', content: '' });
-    } catch (error) {
-      console.error('Error creating post:', error);
+    if (editorRef.current) {
+      try {
+        const content = editorRef.current.getContent();
+        const { data, error } = await supabase
+          .from('posts')
+          .insert([{ ...newPost, content, user_id: user.id }])
+          .select();
+        if (error) throw error;
+        setPosts([data[0], ...posts]);
+        setNewPost({ title: '', content: '' });
+        editorRef.current.setContent('');
+      } catch (error) {
+        console.error('Error creating post:', error);
+      }
     }
   };
 
@@ -161,61 +159,6 @@ export default function Community() {
     }
   };
 
-  const handleImageUpload = useCallback(async () => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
-  
-    input.onchange = async () => {
-      const file = input.files[0];
-      if (file) {
-        try {
-          const { data, error } = await supabase.storage
-            .from('post-images')
-            .upload(`${Date.now()}_${file.name}`, file, {
-              cacheControl: '3600',
-              upsert: false
-            });
-  
-          if (error) throw error;
-  
-          const { data: publicUrlData } = supabase.storage
-            .from('post-images')
-            .getPublicUrl(data.path);
-  
-          const quill = quillRef.current.getEditor();
-          const range = quill.getSelection(true);
-          quill.insertEmbed(range.index, 'image', publicUrlData.publicUrl);
-        } catch (error) {
-          console.error('Error uploading image:', error);
-        }
-      }
-    };
-  }, []);
-
-  const modules = {
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, false] }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-        ['link', 'image'],
-        ['clean']
-      ],
-      handlers: {
-        image: handleImageUpload
-      }
-    }
-  };
-
-  const formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-    'link', 'image'
-  ];
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Community</h1>
@@ -231,18 +174,25 @@ export default function Community() {
             onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
             className="mb-4"
           />
-          <Suspense fallback={<div>Loading editor...</div>}>
-            <ReactQuill
-              ref={quillRef}
-              theme="snow"
-              value={newPost.content}
-              onChange={(content) => setNewPost({ ...newPost, content })}
-              modules={modules}
-              formats={formats}
-              placeholder="What's on your mind?"
-              className="mb-4"
-            />
-          </Suspense>
+          <Editor
+            onInit={(evt, editor) => editorRef.current = editor}
+            initialValue=""
+            init={{
+              height: 300,
+              menubar: false,
+              plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount'
+              ],
+              toolbar: 'undo redo | formatselect | ' +
+              'bold italic backcolor | alignleft aligncenter ' +
+              'alignright alignjustify | bullist numlist outdent indent | ' +
+              'removeformat | help',
+              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+            }}
+            className="mb-4"
+          />
           <Button onClick={createPost}>Post</Button>
         </CardContent>
       </Card>
