@@ -8,11 +8,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    rollupOptions: {
-      external: ['@tinymce/tinymce-react']
-    },
   },
-  
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
