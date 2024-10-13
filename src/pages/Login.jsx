@@ -10,11 +10,14 @@ export default function Login() {
   const { login, register, user, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState(''); // Full Name を User Name に変更
+  const [username, setUsername] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
-  const [showAlert, setShowAlert] = useState(false); // アラート表示用のステートを追加
+  const [showAlert, setShowAlert] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,21 +37,52 @@ export default function Login() {
     }
   }, [user, navigate]);
 
+  const validateEmail = (email) => {
+    if (!email) {
+      setEmailError('メールアドレスを入力してください。');
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('有効なメールアドレスを入力してください。');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      setPasswordError('パスワードを入力してください。');
+    } else {
+      setPasswordError('');
+    }
+  };
+
+  const validateUsername = (username) => {
+    if (isRegistering && !username) {
+      setUsernameError('ユーザー名を入力してください。');
+    } else {
+      setUsernameError('');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
-    setShowAlert(false); // アラートを非表示にする
+    setShowAlert(false);
 
-     // ログインの場合のみ入力値をチェック
-     if (!isRegistering && (!email || !password)) { // 入力値がすべて存在するか確認
-      setShowAlert(true); // アラートを表示
+    validateEmail(email);
+    validatePassword(password);
+    if (isRegistering) {
+      validateUsername(username);
+    }
+
+    if (emailError || passwordError || (isRegistering && usernameError)) {
+      setShowAlert(true);
       return;
     }
 
     try {
       if (isRegistering) {
-        await register(email, password, username); // username を登録時に渡す
+        await register(email, password, username);
         setMessage('仮登録しました。確認メールから登録を完了してください。');
         setIsRegistering(false);
       } else {
@@ -56,7 +90,13 @@ export default function Login() {
       }
     } catch (error) {
       console.error(isRegistering ? 'Registration error:' : 'Login error:', error);
-      setError(error.message || (isRegistering ? '登録に失敗しました。' : 'ログインに失敗しました。'));
+      if (error.message.includes('User already registered')) {
+        setError('このメールアドレスは既に登録されています。');
+      } else if (error.message.includes('Invalid login credentials')) {
+        setError('メールアドレスまたはパスワードが間違っています。');
+      } else {
+        setError(isRegistering ? '登録に失敗しました。もう一度お試しください。' : 'ログインに失敗しました。もう一度お試しください。');
+      }
     }
   };
 
@@ -64,7 +104,10 @@ export default function Login() {
     setIsRegistering(!isRegistering);
     setError('');
     setMessage('');
-    setShowAlert(false); // アラートを非表示にする
+    setShowAlert(false);
+    setEmailError('');
+    setPasswordError('');
+    setUsernameError('');
   };
 
   return (
@@ -86,10 +129,15 @@ export default function Login() {
                   type="text"
                   id="username"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    validateUsername(e.target.value);
+                  }}
+                  onBlur={() => validateUsername(username)}
                   required
                   className="mt-1"
                 />
+                {usernameError && <p className="text-red-500 text-sm mt-1">{usernameError}</p>}
               </div>
             )}
             <div>
@@ -100,11 +148,16 @@ export default function Login() {
                 type="email"
                 id="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  validateEmail(e.target.value);
+                }}
+                onBlur={() => validateEmail(email)}
                 required
                 className="mt-1"
                 autoComplete="username"
               />
+              {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
@@ -114,31 +167,36 @@ export default function Login() {
                 type="password"
                 id="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  validatePassword(e.target.value);
+                }}
+                onBlur={() => validatePassword(password)}
                 required
                 className="mt-1"
                 autoComplete="current-password"
               />
+              {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Processing...' : (isRegistering ? '登録' : 'ログイン')}
             </Button>
             {error && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" aria-live="assertive">
                 <AlertTitle>エラー</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             {message && (
-              <Alert>
+              <Alert aria-live="polite">
                 <AlertTitle>成功</AlertTitle>
                 <AlertDescription>{message}</AlertDescription>
               </Alert>
             )}
-            {showAlert && ( // アラートを表示する条件を追加
-              <Alert variant="warning">
+            {showAlert && (
+              <Alert variant="warning" aria-live="assertive">
                 <AlertTitle>入力エラー</AlertTitle>
-                <AlertDescription>すべての項目を入力してください。</AlertDescription>
+                <AlertDescription>すべての項目を正しく入力してください。</AlertDescription>
               </Alert>
             )}
           </form>

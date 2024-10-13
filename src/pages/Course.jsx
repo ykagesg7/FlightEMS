@@ -11,7 +11,8 @@ const Course = () => {
   const [completedLessons, setCompletedLessons] = useState([]);
 
   const lessons = [
-    { id: 1, title: 'Mission Planning', route: '/mission-planning', section: 'mission_planning' },
+    { id: 1, title: '航空法䂓', route: '/aviation-law', section: 'aviation-law' },
+    { id: 2, title: 'Mission Planning', route: '/mission-planning', section: 'mission_planning' },
     // Add more lessons here as they are created
   ];
 
