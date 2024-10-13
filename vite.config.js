@@ -12,6 +12,7 @@ export default defineConfig({
       output: {
         manualChunks: undefined,
       },
+      external: ['react-quill'],
     },
   },
   resolve: {
@@ -19,5 +20,7 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
+  optimizeDeps: {
+    include: ['react-quill'],
+  },
 });
-
