@@ -12,15 +12,11 @@ export default defineConfig({
       output: {
         manualChunks: undefined,
       },
-      external: ['react-quill'],
     },
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
     },
-  },
-  optimizeDeps: {
-    include: ['react-quill'],
   },
 });
