@@ -9,11 +9,10 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     rollupOptions: {
-      output: {
-        manualChunks: undefined,
-      },
+      external: ['@tinymce/tinymce-react']
     },
   },
+  
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
