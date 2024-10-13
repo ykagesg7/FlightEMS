@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThumbsUp, MessageSquare } from 'lucide-react';
-import 'react-quill/dist/quill.snow.css';
+
+// Remove the static import
+// import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = lazy(() => import('react-quill'));
 
@@ -24,6 +26,8 @@ export default function Community() {
 
   useEffect(() => {
     fetchPosts();
+    // Dynamically import the CSS
+    import('react-quill/dist/quill.snow.css');
   }, [currentPage]);
 
   const fetchPosts = async () => {
