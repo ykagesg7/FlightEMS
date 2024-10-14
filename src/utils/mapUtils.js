@@ -10,14 +10,25 @@ export const defaultIcon = L.icon({
 });
 
 export const pointToLayer = (feature, latlng) => {
-  return L.circleMarker(latlng, {
-    radius: 6,
-    fillColor: feature.properties.type === "空港" ? "#ff7800" : "#0078ff",
-    color: "#000",
-    weight: 1,
-    opacity: 1,
-    fillOpacity: 0.5
-  });
+  if (feature.properties.type === "空港") {
+    return L.circle(latlng, {
+      radius: 9260, // 5 nautical miles in meters
+      fillColor: "#ff7800",
+      color: "#000",
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.1
+    });
+  } else {
+    return L.circleMarker(latlng, {
+      radius: 5,
+      fillColor: "#0078ff",
+      color: "#000",
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.5
+    });
+  }
 };
 
 export const toDMS = (coord) => {

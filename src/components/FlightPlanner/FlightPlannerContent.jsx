@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { defaultIcon, pointToLayer, formatCoordinates } from '../../utils/mapUtils';
 import { calculateBearingAndDistance } from '../../utils/calculations';
 
-const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo, navaidsData, airportsData, accSectorHighData, accSectorLowData }) => {
+const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo, navaidsData, airportsData, accSectorHighData, accSectorLowData, trainingAreaHigh, trainingAreaLow, trainingAreaCivil}) => {
   const longPressTimeoutRef = useRef(null);
   const isLongPressRef = useRef(false);
   const [cursorPosition, setCursorPosition] = useState({ lat: 0, lng: 0 });
@@ -151,12 +151,14 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
         </LayersControl.BaseLayer>
+
         <LayersControl.BaseLayer name="Satellite">
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
           />
         </LayersControl.BaseLayer>
+
         <LayersControl.Overlay name="ACC Sector above FL335">
           {accSectorHighData && (
             <GeoJSON 
@@ -171,6 +173,7 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             />
           )}
         </LayersControl.Overlay>
+
         <LayersControl.Overlay name="ACC Sector below FL335">
           {accSectorLowData && (
             <GeoJSON 
@@ -185,10 +188,59 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             />
           )}
         </LayersControl.Overlay>
+
+        <LayersControl.Overlay name="高高度訓練空域">
+          {trainingAreaHigh && (
+            <GeoJSON 
+              data={trainingAreaHigh} 
+              style={() => ({
+                color: 'blue',
+                weight: 1,
+                opacity: 0.6,
+                fillColor: 'green',
+                fillOpacity: 0.2
+              })}
+            />
+          )}
+        </LayersControl.Overlay>
+
+        <LayersControl.Overlay name="低高度訓練空域">
+          {trainingAreaLow && (
+            <GeoJSON 
+              data={trainingAreaLow} 
+              style={() => ({
+                color: 'blue',
+                weight: 1,
+                opacity: 0.6,
+                fillColor: 'green',
+                fillOpacity: 0.2
+              })}
+            />
+          )}
+        </LayersControl.Overlay>
+
+        <LayersControl.Overlay name="民間訓練空域">
+          {trainingAreaCivil && (
+            <GeoJSON 
+              data={trainingAreaCivil} 
+              style={() => ({
+                color: 'blue',
+                weight: 1,
+                opacity: 0.6,
+                fillColor: 'gray',
+                fillOpacity: 0.2
+              })}
+            />
+          )}
+        </LayersControl.Overlay>
+
         <LayersControl.Overlay checked name="Airports">
           {airportsData && (
             <GeoJSON 
-              data={airportsData}
+              data={{
+                ...airportsData,
+                features: airportsData.features.filter(feature => feature.properties.type === "空港")
+              }}
               pointToLayer={pointToLayer}
               onEachFeature={(feature, layer) => {
                 layer.bindPopup(`${feature.properties.name1} (${feature.properties.name2})`);
@@ -196,10 +248,14 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             />
           )}
         </LayersControl.Overlay>
+
         <LayersControl.Overlay checked name="Navaids">
           {navaidsData && (
             <GeoJSON 
-              data={navaidsData}
+              data={{
+                ...navaidsData,
+                features: navaidsData.features.filter(feature => feature.properties.type !== "空港")
+              }}
               pointToLayer={pointToLayer}
               onEachFeature={(feature, layer) => {
                 layer.bindPopup(`${feature.properties.name}`);

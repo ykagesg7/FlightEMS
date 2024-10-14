@@ -19,21 +19,22 @@ const Header = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchProfile = useCallback(async () => {
     if (user) {
       const { data, error } = await supabase
         .from('profiles')
-        .select('avatar_url')
+        .select('avatar_url, roll')
         .eq('id', user.id)
         .single();
 
       if (error) {
         console.error('Error fetching profile:', error);
-        return;
+      } else {
+        setProfile(data);
       }
-
-      setProfile(data);
+      setLoading(false);
     }
   }, [user]);
 
@@ -45,9 +46,8 @@ const Header = () => {
     { to: "/dashboard", label: "Dashboard", roles: ["student", "teacher", "admin"] },
     { to: "/course", label: "Courses", roles: ["student", "teacher", "admin"] },
     { to: "/community", label: "Community", roles: ["student", "teacher", "admin"] },
-    //{ to: "/flight-tips", label: "Flight Tips", roles: ["student", "teacher", "admin"] },
     { to: "/flight-planner", label: "Flight Planner", roles: ["student", "teacher", "admin"] },
-    { to: "/admin-dashboard", label: "Admin Dashboard", roles: ["admin"] },
+    { to: "/admin-dashboard", label: "Admin Dashboard", roles: ["admin", "teacher"] },
     { to: "/course-management", label: "Course Management", roles: ["admin", "teacher"] },
   ];
 
@@ -56,7 +56,7 @@ const Header = () => {
   };
 
   const userName = user?.user_metadata?.full_name || user?.email || 'User';
-  const userRole = user?.user_metadata?.role || 'student';
+  const userRole = (profile?.roll || 'student').toLowerCase();
 
   const handleLogout = async () => {
     if (logout) {
@@ -71,13 +71,13 @@ const Header = () => {
     }
   };
 
-  const handleProfileClick = () => {
-    navigate('/profile');
-  };
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  if (loading) {
+    return <div>Loading...</div>; // ローディング中の表示
+  }
 
   return (
     <header className="bg-white shadow-md">
@@ -91,15 +91,15 @@ const Header = () => {
           </div>
           <nav className={`md:flex ${isMenuOpen ? 'block' : 'hidden'} absolute md:relative top-16 md:top-0 left-0 right-0 bg-white md:bg-transparent z-50`}>
             <ul className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 p-4 md:p-0">
-              {navItems.map((item, index) => (
-                (item.roles.includes(userRole) || userRole === 'admin') && (
-                  <li key={index}>
-                    <NavLink to={item.to} className="text-gray-600 hover:text-blue-600 block md:inline" onClick={() => setIsMenuOpen(false)}>
-                      {item.label}
-                    </NavLink>
-                  </li>
-                )
-              ))}
+            {navItems.map((item, index) => (
+              (item.roles.includes(userRole) || userRole === 'admin') && (
+                <li key={index}>
+                  <NavLink to={item.to} className="text-gray-600 hover:text-blue-600 block md:inline" onClick={() => setIsMenuOpen(false)}>
+                    {item.label}
+                  </NavLink>
+                </li>
+              )
+            ))}
             </ul>
           </nav>
           {user ? (
@@ -117,10 +117,7 @@ const Header = () => {
               <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleProfileClick}>
-                  プロフィール
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/settings')}>
+                <DropdownMenuItem onClick={() => navigate('/Settings')}>
                   設定
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>ログアウト</DropdownMenuItem>
@@ -128,7 +125,7 @@ const Header = () => {
             </DropdownMenu>
           ) : (
             <Button asChild>
-              <NavLink to="/login">ログイン</NavLink>
+              <NavLink to="/Login">ログイン</NavLink>
             </Button>
           )}
         </div>

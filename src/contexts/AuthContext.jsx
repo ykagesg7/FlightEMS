@@ -74,13 +74,13 @@ export const AuthProvider = ({ children }) => {
         options: {
           data: {
             full_name: fullName,
-            role: 'user',
+            // role は削除
           },
         },
       });
-
+  
       if (authError) throw authError;
-
+  
       if (authData.user) {
         const { error: profileError } = await supabase
           .from('profiles')
@@ -93,15 +93,15 @@ export const AuthProvider = ({ children }) => {
               avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
-              role: 'user',
+              role: 'Student', // デフォルトで Student ロールを設定
             },
           ]);
-
+  
         if (profileError) {
           console.error('Error creating profile:', profileError);
           throw new Error('Failed to create user profile. Please contact support.');
         }
-
+  
         setUser(authData.user);
         navigate('/dashboard');
         return authData.user;

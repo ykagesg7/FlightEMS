@@ -192,6 +192,7 @@ export default function Community() {
               content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }}
             className="mb-4"
+            tinymceScriptSrc={'/tinymce/tinymce.min.js'} // TinyMCEのスクリプトへのパス
           />
           <Button onClick={createPost}>Post</Button>
         </CardContent>

@@ -11,7 +11,7 @@ import useMapData from '../../hooks/useMapData';
 
 const FlightPlanner = () => {
   const { flightPlan, setFlightPlan, flightInfo, calculateFlightInfo } = useFlightPlan();
-  const { airbases, navaids, navaidsData, airportsData, accSectorHighData, accSectorLowData } = useMapData();
+  const { airbases, navaids, navaidsData, airportsData, accSectorHighData, accSectorLowData, trainingAreaHigh, trainingAreaLow, trainingAreaCivil } = useMapData();
   const [activeTab, setActiveTab] = useState('plan');
   const [mapKey, setMapKey] = useState(0);
 
@@ -57,6 +57,9 @@ const FlightPlanner = () => {
                 airportsData={airportsData}
                 accSectorHighData={accSectorHighData}
                 accSectorLowData={accSectorLowData}
+                trainingAreaHigh={trainingAreaHigh}
+                trainingAreaLow={trainingAreaLow}
+                trainingAreaCivil={trainingAreaCivil}
               />
             </MapContainer>
           )}

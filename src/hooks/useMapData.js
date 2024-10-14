@@ -7,6 +7,9 @@ const useMapData = () => {
   const [airportsData, setAirportsData] = useState(null);
   const [accSectorHighData, setAccSectorHighData] = useState(null);
   const [accSectorLowData, setAccSectorLowData] = useState(null);
+  const [trainingAreaHigh, setTrainingAreaHigh] = useState(null);
+  const [trainingAreaLow, setTrainingAreaLow] = useState(null);
+  const [trainingAreaCivil, setTrainingAreaCivil] = useState(null);
 
   useEffect(() => {
     // Fetch airbase data
@@ -68,9 +71,34 @@ const useMapData = () => {
         setAccSectorLowData(data);
       })
       .catch(error => console.error('Error loading ACC_Sector_Low data:', error));
+    
+    // Fetch TrainingAreaHigh data
+    fetch('/geojson/TrainingAreaHigh.geojson')
+    .then(response => response.json())
+    .then(data => {
+      setTrainingAreaHigh(data);
+    })
+    .catch(error => console.error('Error loading TrainingAreaHigh data:', error));
+
+    // Fetch TrainingAreaLow data
+    fetch('/geojson/TrainingAreaLow.geojson')
+    .then(response => response.json())
+    .then(data => {
+      setTrainingAreaLow(data);
+    })
+    .catch(error => console.error('Error loading TrainingAreaLow data:', error));
+
+    // Fetch TrainingAreaCivil data
+    fetch('/geojson/TrainingAreaCivil.geojson')
+    .then(response => response.json())
+    .then(data => {
+      setTrainingAreaCivil(data);
+    })
+    .catch(error => console.error('Error loading TrainingAreaCivil data:', error));
+
   }, []);
 
-  return { airbases, navaids, navaidsData, airportsData, accSectorHighData, accSectorLowData };
+  return { airbases, navaids, navaidsData, airportsData, accSectorHighData, accSectorLowData, trainingAreaHigh, trainingAreaLow, trainingAreaCivil};
 };
 
 export default useMapData;

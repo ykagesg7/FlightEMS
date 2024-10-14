@@ -1,140 +1,2840 @@
 {
-"type": "FeatureCollection",
-"name": "Airports",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { "id": "RJFA", "name1": "芦屋", "name2": "ashiya", "Elev(ft)": 98, "RWY1": 12, "RWY2": 30, "MAG Var": 8, "ARP.N(DMS)": 33.5253, "ARP.E(DMS)": 130.3906, "ARP.N(DD)": 33.8814, "ARP.E(DD)": 130.6517, "N(D)": 33.0, "N(M)": 52, "N(S)": 53, "E(D)": 130.0, "E(M)": 39, "E(S)": 6 }, "geometry": { "type": "Point", "coordinates": [ 130.6517, 33.8814 ] } },
-{ "type": "Feature", "properties": { "id": "RJCJ", "name1": "千歳", "name2": "chitose", "Elev(ft)": 89, "RWY1": 36, "RWY2": 18, "MAG Var": 9, "ARP.N(DMS)": 42.474, "ARP.E(DMS)": 141.3959, "ARP.N(DD)": 42.7944, "ARP.E(DD)": 141.6664, "N(D)": 42.0, "N(M)": 47, "N(S)": 40, "E(D)": 141.0, "E(M)": 39, "E(S)": 59 }, "geometry": { "type": "Point", "coordinates": [ 141.6664, 42.7944 ] } },
-{ "type": "Feature", "properties": { "id": "RJNG", "name1": "岐阜", "name2": "gifu", "Elev(ft)": 128, "RWY1": 10, "RWY2": 28, "MAG Var": 7, "ARP.N(DMS)": 35.234, "ARP.E(DMS)": 136.521, "ARP.N(DD)": 35.3944, "ARP.E(DD)": 136.8694, "N(D)": 35.0, "N(M)": 23, "N(S)": 40, "E(D)": 136.0, "E(M)": 52, "E(S)": 10 }, "geometry": { "type": "Point", "coordinates": [ 136.8694, 35.3944 ] } },
-{ "type": "Feature", "properties": { "id": "RJNH", "name1": "浜松", "name2": "hamamatsu", "Elev(ft)": 150, "RWY1": 9, "RWY2": 27, "MAG Var": 8, "ARP.N(DMS)": 34.4501, "ARP.E(DMS)": 137.4211, "ARP.N(DD)": 34.7503, "ARP.E(DD)": 137.7031, "N(D)": 34.0, "N(M)": 45, "N(S)": 1, "E(D)": 137.0, "E(M)": 42, "E(S)": 11 }, "geometry": { "type": "Point", "coordinates": [ 137.7031, 34.7503 ] } },
-{ "type": "Feature", "properties": { "id": "RJOF", "name1": "防府", "name2": "hofu", "Elev(ft)": 7, "RWY1": 12, "RWY2": 30, "MAG Var": 7, "ARP.N(DMS)": 34.0204, "ARP.E(DMS)": 131.3247, "ARP.N(DD)": 34.0344, "ARP.E(DD)": 131.5464, "N(D)": 34.0, "N(M)": 2, "N(S)": 4, "E(D)": 131.0, "E(M)": 32, "E(S)": 47 }, "geometry": { "type": "Point", "coordinates": [ 131.5464, 34.0344 ] } },
-{ "type": "Feature", "properties": { "id": "RJAH", "name1": "百里", "name2": "hyakuri", "Elev(ft)": 107, "RWY1": 3, "RWY2": 21, "MAG Var": 7, "ARP.N(DMS)": 36.1054, "ARP.E(DMS)": 140.2453, "ARP.N(DD)": 36.1817, "ARP.E(DD)": 140.4147, "N(D)": 36.0, "N(M)": 10, "N(S)": 54, "E(D)": 140.0, "E(M)": 24, "E(S)": 53 }, "geometry": { "type": "Point", "coordinates": [ 140.4147, 36.1817 ] } },
-{ "type": "Feature", "properties": { "id": "RJTJ", "name1": "入間", "name2": "iruma", "Elev(ft)": 295, "RWY1": 17, "RWY2": 35, "MAG Var": 7, "ARP.N(DMS)": 35.5031, "ARP.E(DMS)": 139.2438, "ARP.N(DD)": 35.8419, "ARP.E(DD)": 139.4106, "N(D)": 35.0, "N(M)": 50, "N(S)": 31, "E(D)": 139.0, "E(M)": 24, "E(S)": 38 }, "geometry": { "type": "Point", "coordinates": [ 139.4106, 35.8419 ] } },
-{ "type": "Feature", "properties": { "id": "RJNK", "name1": "小松", "name2": "komatsu", "Elev(ft)": 22, "RWY1": 6, "RWY2": 24, "MAG Var": 8, "ARP.N(DMS)": 36.2338, "ARP.E(DMS)": 136.2427, "ARP.N(DD)": 36.3939, "ARP.E(DD)": 136.4075, "N(D)": 36.0, "N(M)": 23, "N(S)": 38, "E(D)": 136.0, "E(M)": 24, "E(S)": 27 }, "geometry": { "type": "Point", "coordinates": [ 136.4075, 36.3939 ] } },
-{ "type": "Feature", "properties": { "id": "RJST", "name1": "松島", "name2": "matsushima", "Elev(ft)": 7, "RWY1": 7, "RWY2": 25, "MAG Var": 8, "ARP.N(DMS)": 38.2411, "ARP.E(DMS)": 141.1243, "ARP.N(DD)": 38.4031, "ARP.E(DD)": 141.2119, "N(D)": 38.0, "N(M)": 24, "N(S)": 11, "E(D)": 141.0, "E(M)": 12, "E(S)": 43 }, "geometry": { "type": "Point", "coordinates": [ 141.2119, 38.4031 ] } },
-{ "type": "Feature", "properties": { "id": "RJOH", "name1": "美保", "name2": "miho", "Elev(ft)": 13, "RWY1": 7, "RWY2": 25, "MAG Var": 7, "ARP.N(DMS)": 35.2936, "ARP.E(DMS)": 133.1421, "ARP.N(DD)": 35.4933, "ARP.E(DD)": 133.2392, "N(D)": 35.0, "N(M)": 29, "N(S)": 36, "E(D)": 133.0, "E(M)": 14, "E(S)": 21 }, "geometry": { "type": "Point", "coordinates": [ 133.2392, 35.4933 ] } },
-{ "type": "Feature", "properties": { "id": "RJSM", "name1": "三沢", "name2": "misawa", "Elev(ft)": 119, "RWY1": 10, "RWY2": 28, "MAG Var": 9, "ARP.N(DMS)": 40.4211, "ARP.E(DMS)": 141.2206, "ARP.N(DD)": 40.7031, "ARP.E(DD)": 141.3683, "N(D)": 40.0, "N(M)": 42, "N(S)": 11, "E(D)": 141.0, "E(M)": 22, "E(S)": 6 }, "geometry": { "type": "Point", "coordinates": [ 141.3683, 40.7031 ] } },
-{ "type": "Feature", "properties": { "id": "RJNA", "name1": "名古屋", "name2": "nagoya", "Elev(ft)": 126, "RWY1": 16, "RWY2": 34, "MAG Var": 7, "ARP.N(DMS)": 35.1518, "ARP.E(DMS)": 136.5528, "ARP.N(DD)": 35.255, "ARP.E(DD)": 136.9244, "N(D)": 35.0, "N(M)": 15, "N(S)": 18, "E(D)": 136.0, "E(M)": 55, "E(S)": 28 }, "geometry": { "type": "Point", "coordinates": [ 136.9244, 35.255 ] } },
-{ "type": "Feature", "properties": { "id": "RJFN", "name1": "新田原", "name2": "nyutabaru", "Elev(ft)": 259, "RWY1": 10, "RWY2": 28, "MAG Var": 7, "ARP.N(DMS)": 32.0501, "ARP.E(DMS)": 131.2705, "ARP.N(DD)": 32.0836, "ARP.E(DD)": 131.4514, "N(D)": 32.0, "N(M)": 5, "N(S)": 1, "E(D)": 131.0, "E(M)": 27, "E(S)": 5 }, "geometry": { "type": "Point", "coordinates": [ 131.4514, 32.0836 ] } },
-{ "type": "Feature", "properties": { "id": "RJNY", "name1": "静浜", "name2": "shizuhama", "Elev(ft)": 23, "RWY1": 9, "RWY2": 27, "MAG Var": 8, "ARP.N(DMS)": 34.4846, "ARP.E(DMS)": 138.1753, "ARP.N(DD)": 34.8128, "ARP.E(DD)": 138.2981, "N(D)": 34.0, "N(M)": 48, "N(S)": 46, "E(D)": 138.0, "E(M)": 17, "E(S)": 53 }, "geometry": { "type": "Point", "coordinates": [ 138.2981, 34.8128 ] } },
-{ "type": "Feature", "properties": { "id": "RJFZ", "name1": "築城", "name2": "tsuiki", "Elev(ft)": 28, "RWY1": 7, "RWY2": 25, "MAG Var": 8, "ARP.N(DMS)": 33.4106, "ARP.E(DMS)": 131.0225, "ARP.N(DD)": 33.685, "ARP.E(DD)": 131.0403, "N(D)": 33.0, "N(M)": 41, "N(S)": 6, "E(D)": 131.0, "E(M)": 2, "E(S)": 25 }, "geometry": { "type": "Point", "coordinates": [ 131.0403, 33.685 ] } },
-{ "type": "Feature", "properties": { "id": "ROAH", "name1": "那覇", "name2": "naha", "Elev(ft)": 11, "RWY1": 36, "RWY2": 18, "MAG Var": 5, "ARP.N(DMS)": 26.1136, "ARP.E(DMS)": 127.3823, "ARP.N(DD)": 26.1933, "ARP.E(DD)": 127.6397, "N(D)": 26.0, "N(M)": 11, "N(S)": 36, "E(D)": 127.0, "E(M)": 38, "E(S)": 23 }, "geometry": { "type": "Point", "coordinates": [ 127.6397, 26.1933 ] } },
-{ "type": "Feature", "properties": { "id": "ROTM", "type": "米軍", "name1": "普天間", "name2": "futenma", "Elev(ft)": 246, "RWY1": 6, "RWY2": 24, "MAG Var": 4, "ARP.N(DMS)": 26.1615, "ARP.E(DMS)": 127.4453, "ARP.N(DD)": 26.2708, "ARP.E(DD)": 127.7481, "N(D)": 26.0, "N(M)": 16, "N(S)": 15, "E(D)": 127.0, "E(M)": 44, "E(S)": 53 }, "geometry": { "type": "Point", "coordinates": [ 127.7481, 26.2708 ] } },
-{ "type": "Feature", "properties": { "id": "RJOI", "type": "米軍", "name1": "岩国", "name2": "iwakuni", "Elev(ft)": 10, "RWY1": 2, "RWY2": 20, "MAG Var": 7, "ARP.N(DMS)": 34.0842, "ARP.E(DMS)": 132.1449, "ARP.N(DD)": 34.145, "ARP.E(DD)": 132.2469, "N(D)": 34.0, "N(M)": 8, "N(S)": 42, "E(D)": 132.0, "E(M)": 14, "E(S)": 49 }, "geometry": { "type": "Point", "coordinates": [ 132.2469, 34.145 ] } },
-{ "type": "Feature", "properties": { "id": "RODN", "type": "米軍", "name1": "嘉手納", "name2": "kadena", "Elev(ft)": 143, "RWY1": 5, "RWY2": 23, "MAG Var": 4, "ARP.N(DMS)": 26.212, "ARP.E(DMS)": 127.4603, "ARP.N(DD)": 26.3556, "ARP.E(DD)": 127.7675, "N(D)": 26.0, "N(M)": 21, "N(S)": 20, "E(D)": 127.0, "E(M)": 46, "E(S)": 3 }, "geometry": { "type": "Point", "coordinates": [ 127.7675, 26.3556 ] } },
-{ "type": "Feature", "properties": { "id": "RJTY", "type": "米軍", "name1": "横田", "name2": "yokota", "Elev(ft)": 462, "RWY1": 36, "RWY2": 18, "MAG Var": 7, "ARP.N(DMS)": 35.4455, "ARP.E(DMS)": 139.2055, "ARP.N(DD)": 35.7486, "ARP.E(DD)": 139.3486, "N(D)": 35.0, "N(M)": 44, "N(S)": 55, "E(D)": 139.0, "E(M)": 20, "E(S)": 55 }, "geometry": { "type": "Point", "coordinates": [ 139.3486, 35.7486 ] } },
-{ "type": "Feature", "properties": { "id": "RJTR", "type": "ヘリ", "name1": "座間", "name2": "zama", "Elev(ft)": 367, "RWY1": 2, "RWY2": 20, "MAG Var": null, "ARP.N(DMS)": 35.3049, "ARP.E(DMS)": 139.2337, "ARP.N(DD)": 40.7333, "ARP.E(DD)": 140.6886, "N(D)": 40.0, "N(M)": 44, "N(S)": 0, "E(D)": 140.0, "E(M)": 41, "E(S)": 19 }, "geometry": { "type": "Point", "coordinates": [ 140.6886, 40.7333 ] } },
-{ "type": "Feature", "properties": { "id": "RJTA", "type": "海自", "name1": "厚木", "name2": "atsugi", "Elev(ft)": 205, "RWY1": 1, "RWY2": 19, "MAG Var": 8, "ARP.N(DMS)": 35.2717, "ARP.E(DMS)": 139.27, "ARP.E(DD)": 139.45, "ARP.N(DD)": 35.4547, "N(D)": 35.0, "N(M)": 27, "N(S)": 17, "E(D)": 139.0, "E(M)": 27, "E(S)": 0 }, "geometry": { "type": "Point", "coordinates": [ 139.45, 35.4547 ] } },
-{ "type": "Feature", "properties": { "id": "RJSH", "type": "海自", "name1": "八戸", "name2": "hachinohe", "Elev(ft)": 152, "RWY1": 7, "RWY2": 25, "MAG Var": 9, "ARP.N(DMS)": 40.3307, "ARP.E(DMS)": 141.2802, "ARP.E(DD)": 141.4672, "ARP.N(DD)": 40.5519, "N(D)": 40.0, "N(M)": 33, "N(S)": 7, "E(D)": 141.0, "E(M)": 28, "E(S)": 2 }, "geometry": { "type": "Point", "coordinates": [ 141.4672, 40.5519 ] } },
-{ "type": "Feature", "properties": { "id": "RJAW", "type": "海自", "name1": "硫黄島", "name2": "iwoto", "Elev(ft)": 394, "RWY1": 7, "RWY2": 25, "MAG Var": null, "ARP.N(DMS)": 24.4703, "ARP.E(DMS)": 141.1922, "ARP.E(DD)": 141.3228, "ARP.N(DD)": 24.7842, "N(D)": 24.0, "N(M)": 47, "N(S)": 3, "E(D)": 141.0, "E(M)": 19, "E(S)": 22 }, "geometry": { "type": "Point", "coordinates": [ 141.3228, 24.7842 ] } },
-{ "type": "Feature", "properties": { "id": "RJFY", "type": "海自", "name1": "鹿屋", "name2": "kanoya", "Elev(ft)": 202, "RWY1": 8, "RWY2": 26, "MAG Var": 7, "ARP.N(DMS)": 31.2205, "ARP.E(DMS)": 130.5017, "ARP.E(DD)": 130.8381, "ARP.N(DD)": 31.3681, "N(D)": 31.0, "N(M)": 22, "N(S)": 5, "E(D)": 130.0, "E(M)": 50, "E(S)": 17 }, "geometry": { "type": "Point", "coordinates": [ 130.8381, 31.3681 ] } },
-{ "type": "Feature", "properties": { "id": "RJSO", "type": "海自", "name1": "大湊", "name2": "ominato", "Elev(ft)": 24, "RWY1": 4, "RWY2": 22, "MAG Var": 9, "ARP.N(DMS)": 41.1358, "ARP.E(DMS)": 141.0756, "ARP.E(DD)": 141.1322, "ARP.N(DD)": 41.2328, "N(D)": 41.0, "N(M)": 13, "N(S)": 58, "E(D)": 141.0, "E(M)": 7, "E(S)": 56 }, "geometry": { "type": "Point", "coordinates": [ 141.1322, 41.2328 ] } },
-{ "type": "Feature", "properties": { "id": "RJDU", "type": "海自", "name1": "大村", "name2": "omura", "Elev(ft)": 19, "RWY1": 36, "RWY2": 18, "MAG Var": 7, "ARP.N(DMS)": 32.5541, "ARP.E(DMS)": 129.5603, "ARP.E(DD)": 129.9342, "ARP.N(DD)": 32.9281, "N(D)": 32.0, "N(M)": 55, "N(S)": 41, "E(D)": 129.0, "E(M)": 56, "E(S)": 3 }, "geometry": { "type": "Point", "coordinates": [ 129.9342, 32.9281 ] } },
-{ "type": "Feature", "properties": { "id": "RJOZ", "type": "海自", "name1": "小月", "name2": "ozuki", "Elev(ft)": 13, "RWY1": 17, "RWY2": 35, "MAG Var": 7, "ARP.N(DMS)": 34.0249, "ARP.E(DMS)": 131.0309, "ARP.E(DD)": 131.0525, "ARP.N(DD)": 34.0469, "N(D)": 34.0, "N(M)": 2, "N(S)": 49, "E(D)": 131.0, "E(M)": 3, "E(S)": 9 }, "geometry": { "type": "Point", "coordinates": [ 131.0525, 34.0469 ] } },
-{ "type": "Feature", "properties": { "id": "RJTL", "type": "海自", "name1": "下総", "name2": "shimofusa", "Elev(ft)": 96, "RWY1": 1, "RWY2": 19, "MAG Var": 8, "ARP.N(DMS)": 35.4756, "ARP.E(DMS)": 140.0044, "ARP.E(DD)": 140.0122, "ARP.N(DD)": 35.7989, "N(D)": 35.0, "N(M)": 47, "N(S)": 56, "E(D)": 140.0, "E(M)": 0, "E(S)": 44 }, "geometry": { "type": "Point", "coordinates": [ 140.0122, 35.7989 ] } },
-{ "type": "Feature", "properties": { "id": "RJTE", "type": "海自", "name1": "館山", "name2": "tateyama", "Elev(ft)": 10, "RWY1": 9, "RWY2": 27, "MAG Var": 8, "ARP.N(DMS)": 34.5915, "ARP.E(DMS)": 139.4955, "ARP.E(DD)": 139.8319, "ARP.N(DD)": 34.9875, "N(D)": 34.0, "N(M)": 59, "N(S)": 15, "E(D)": 139.0, "E(M)": 49, "E(S)": 55 }, "geometry": { "type": "Point", "coordinates": [ 139.8319, 34.9875 ] } },
-{ "type": "Feature", "properties": { "id": "RJOS", "type": "海自", "name1": "徳島", "name2": "tokushima", "Elev(ft)": 37, "RWY1": 11, "RWY2": 29, "MAG Var": 7, "ARP.N(DMS)": 34.0756, "ARP.E(DMS)": 134.3633, "ARP.E(DD)": 134.6092, "ARP.N(DD)": 34.1322, "N(D)": 34.0, "N(M)": 7, "N(S)": 56, "E(D)": 134.0, "E(M)": 36, "E(S)": 33 }, "geometry": { "type": "Point", "coordinates": [ 134.6092, 34.1322 ] } },
-{ "type": "Feature", "properties": { "id": "RJAM", "type": "海自", "name1": "南鳥島", "name2": "minamitorishima", "Elev(ft)": 22, "RWY1": 5, "RWY2": 23, "MAG Var": null, "ARP.N(DMS)": 24.1723, "ARP.E(DMS)": 153.5845, "ARP.E(DD)": 153.9792, "ARP.N(DD)": 24.2897, "N(D)": 24.0, "N(M)": 17, "N(S)": 23, "E(D)": 153.0, "E(M)": 58, "E(S)": 45 }, "geometry": { "type": "Point", "coordinates": [ 153.9792, 24.2897 ] } },
-{ "type": "Feature", "properties": { "id": "RJOP", "type": "ヘリ", "name1": "小松島", "name2": "komatsushima", "Elev(ft)": 8, "RWY1": 0, "RWY2": 0, "MAG Var": null, "ARP.N(DMS)": 34.0019, "ARP.E(DMS)": 134.3735, "ARP.E(DD)": 134.6264, "ARP.N(DD)": 34.0053, "N(D)": 34.0, "N(M)": 0, "N(S)": 19, "E(D)": 134.0, "E(M)": 37, "E(S)": 35 }, "geometry": { "type": "Point", "coordinates": [ 134.6264, 34.0053 ] } },
-{ "type": "Feature", "properties": { "id": "RJBM", "type": "ヘリ", "name1": "舞鶴", "name2": "maizuru", "Elev(ft)": 19, "RWY1": 0, "RWY2": 0, "MAG Var": null, "ARP.N(DMS)": 35.2926, "ARP.E(DMS)": 135.2238, "ARP.E(DD)": 135.3772, "ARP.N(DD)": 35.4906, "N(D)": 35.0, "N(M)": 29, "N(S)": 26, "E(D)": 135.0, "E(M)": 22, "E(S)": 38 }, "geometry": { "type": "Point", "coordinates": [ 135.3772, 35.4906 ] } },
-{ "type": "Feature", "properties": { "id": "RJOE", "type": "陸自", "name1": "明野", "name2": "akeno", "Elev(ft)": 20, "RWY1": 13, "RWY2": 31, "MAG Var": 7, "ARP.N(DMS)": 34.32, "ARP.E(DMS)": 136.402, "ARP.E(DD)": 136.6722, "ARP.N(DD)": 34.5333, "N(D)": 34.0, "N(M)": 32, "N(S)": 0, "E(D)": 136.0, "E(M)": 40, "E(S)": 20 }, "geometry": { "type": "Point", "coordinates": [ 136.6722, 34.5333 ] } },
-{ "type": "Feature", "properties": { "id": "RJCA", "type": "陸自", "name1": "旭川", "name2": "asahikawa", "Elev(ft)": 377, "RWY1": 8, "RWY2": 26, "MAG Var": 9, "ARP.N(DMS)": 43.474, "ARP.E(DMS)": 142.2154, "ARP.E(DD)": 142.365, "ARP.N(DD)": 43.7944, "N(D)": 43.0, "N(M)": 47, "N(S)": 40, "E(D)": 142.0, "E(M)": 21, "E(S)": 54 }, "geometry": { "type": "Point", "coordinates": [ 142.365, 43.7944 ] } },
-{ "type": "Feature", "properties": { "id": "RJAK", "type": "陸自", "name1": "霞ヶ浦", "name2": "kasumigaura", "Elev(ft)": 85, "RWY1": 6, "RWY2": 24, "MAG Var": 7, "ARP.N(DMS)": 36.0205, "ARP.E(DMS)": 140.1134, "ARP.E(DD)": 140.1928, "ARP.N(DD)": 36.0347, "N(D)": 36.0, "N(M)": 2, "N(S)": 5, "E(D)": 140.0, "E(M)": 11, "E(S)": 34 }, "geometry": { "type": "Point", "coordinates": [ 140.1928, 36.0347 ] } },
-{ "type": "Feature", "properties": { "id": "RJSU", "type": "陸自", "name1": "霞の目", "name2": "kasuminome", "Elev(ft)": 23, "RWY1": 14, "RWY2": 32, "MAG Var": 8, "ARP.N(DMS)": 38.1408, "ARP.E(DMS)": 140.5523, "ARP.E(DD)": 140.9231, "ARP.N(DD)": 38.2356, "N(D)": 38.0, "N(M)": 14, "N(S)": 8, "E(D)": 140.0, "E(M)": 55, "E(S)": 23 }, "geometry": { "type": "Point", "coordinates": [ 140.9231, 38.2356 ] } },
-{ "type": "Feature", "properties": { "id": "RJTK", "type": "陸自", "name1": "木更津", "name2": "kisarazu", "Elev(ft)": 10, "RWY1": 2, "RWY2": 20, "MAG Var": 8, "ARP.N(DMS)": 35.2354, "ARP.E(DMS)": 139.5435, "ARP.E(DD)": 139.9097, "ARP.N(DD)": 35.3983, "N(D)": 35.0, "N(M)": 23, "N(S)": 54, "E(D)": 139.0, "E(M)": 54, "E(S)": 35 }, "geometry": { "type": "Point", "coordinates": [ 139.9097, 35.3983 ] } },
-{ "type": "Feature", "properties": { "id": "RJDM", "type": "陸自", "name1": "目達原", "name2": "metabaru", "Elev(ft)": 53, "RWY1": 4, "RWY2": 22, "MAG Var": 7, "ARP.N(DMS)": 33.1931, "ARP.E(DMS)": 130.2449, "ARP.E(DD)": 130.4136, "ARP.N(DD)": 33.3253, "N(D)": 33.0, "N(M)": 19, "N(S)": 31, "E(D)": 130.0, "E(M)": 24, "E(S)": 49 }, "geometry": { "type": "Point", "coordinates": [ 130.4136, 33.3253 ] } },
-{ "type": "Feature", "properties": { "id": "RJCO", "type": "陸自", "name1": "丘珠", "name2": "okadama", "Elev(ft)": 26, "RWY1": 14, "RWY2": 32, "MAG Var": 9, "ARP.N(DMS)": 43.0703, "ARP.E(DMS)": 141.2253, "ARP.E(DD)": 141.3814, "ARP.N(DD)": 43.1175, "N(D)": 43.0, "N(M)": 7, "N(S)": 3, "E(D)": 141.0, "E(M)": 22, "E(S)": 53 }, "geometry": { "type": "Point", "coordinates": [ 141.3814, 43.1175 ] } },
-{ "type": "Feature", "properties": { "id": "RJTC", "type": "陸自", "name1": "立川", "name2": "tachikawa", "Elev(ft)": 313, "RWY1": 1, "RWY2": 19, "MAG Var": 8, "ARP.N(DMS)": 35.4239, "ARP.E(DMS)": 139.2411, "ARP.E(DD)": 139.4031, "ARP.N(DD)": 35.7108, "N(D)": 35.0, "N(M)": 42, "N(S)": 39, "E(D)": 139.0, "E(M)": 24, "E(S)": 11 }, "geometry": { "type": "Point", "coordinates": [ 139.4031, 35.7108 ] } },
-{ "type": "Feature", "properties": { "id": "RJCT", "type": "陸自", "name1": "十勝", "name2": "tokachi", "Elev(ft)": 281, "RWY1": 13, "RWY2": 31, "MAG Var": 9, "ARP.N(DMS)": 42.5325, "ARP.E(DMS)": 143.093, "ARP.E(DD)": 143.1583, "ARP.N(DD)": 42.8903, "N(D)": 42.0, "N(M)": 53, "N(S)": 25, "E(D)": 143.0, "E(M)": 9, "E(S)": 30 }, "geometry": { "type": "Point", "coordinates": [ 143.1583, 42.8903 ] } },
-{ "type": "Feature", "properties": { "id": "RJTU", "type": "陸自", "name1": "宇都宮", "name2": "utsunomiya", "Elev(ft)": 334, "RWY1": 1, "RWY2": 19, "MAG Var": 8, "ARP.N(DMS)": 36.3052, "ARP.E(DMS)": 139.5215, "ARP.E(DD)": 139.8708, "ARP.N(DD)": 36.5144, "N(D)": 36.0, "N(M)": 30, "N(S)": 52, "E(D)": 139.0, "E(M)": 52, "E(S)": 15 }, "geometry": { "type": "Point", "coordinates": [ 139.8708, 36.5144 ] } },
-{ "type": "Feature", "properties": { "id": "RJTS", "type": "ヘリ", "name1": "相馬原", "name2": "soumagahara", "Elev(ft)": 1306, "RWY1": 6, "RWY2": 24, "MAG Var": null, "ARP.N(DMS)": 36.2605, "ARP.E(DMS)": 138.5711, "ARP.E(DD)": 138.9531, "ARP.N(DD)": 36.4347, "N(D)": 36.0, "N(M)": 26, "N(S)": 5, "E(D)": 138.0, "E(M)": 57, "E(S)": 11 }, "geometry": { "type": "Point", "coordinates": [ 138.9531, 36.4347 ] } },
-{ "type": "Feature", "properties": { "id": "RORA", "type": "空港", "name1": "粟国", "name2": "aguni", "Elev(ft)": 38, "RWY1": 1, "RWY2": 19, "MAG Var": 5, "ARP.N(DMS)": 26.3534, "ARP.E(DMS)": 127.1425, "ARP.N(DD)": 26.5928, "ARP.E(DD)": 127.2403, "N(D)": 26.0, "N(M)": 35, "N(S)": 34, "E(D)": 127.0, "E(M)": 14, "E(S)": 25 }, "geometry": { "type": "Point", "coordinates": [ 127.2403, 26.5928 ] } },
-{ "type": "Feature", "properties": { "id": "RJSK", "type": "空港", "name1": "秋田", "name2": "akita", "Elev(ft)": 127, "RWY1": 10, "RWY2": 28, "MAG Var": 8, "ARP.N(DMS)": 39.3656, "ARP.E(DMS)": 140.1307, "ARP.N(DD)": 39.6156, "ARP.E(DD)": 140.2186, "N(D)": 39.0, "N(M)": 36, "N(S)": 56, "E(D)": 140.0, "E(M)": 13, "E(S)": 7 }, "geometry": { "type": "Point", "coordinates": [ 140.2186, 39.6156 ] } },
-{ "type": "Feature", "properties": { "id": "RJDA", "type": "空港", "name1": "天草", "name2": "amakusa", "Elev(ft)": 106, "RWY1": 13, "RWY2": 31, "MAG Var": 7, "ARP.N(DMS)": 32.2856, "ARP.E(DMS)": 130.0932, "ARP.N(DD)": 32.4822, "ARP.E(DD)": 130.1589, "N(D)": 32.0, "N(M)": 28, "N(S)": 56, "E(D)": 130.0, "E(M)": 9, "E(S)": 32 }, "geometry": { "type": "Point", "coordinates": [ 130.1589, 32.4822 ] } },
-{ "type": "Feature", "properties": { "id": "RJKA", "type": "空港", "name1": "奄美", "name2": "amami", "Elev(ft)": 14, "RWY1": 3, "RWY2": 21, "MAG Var": 6, "ARP.N(DMS)": 28.2551, "ARP.E(DMS)": 129.4245, "ARP.N(DD)": 28.4308, "ARP.E(DD)": 129.7125, "N(D)": 28.0, "N(M)": 25, "N(S)": 51, "E(D)": 129.0, "E(M)": 42, "E(S)": 45 }, "geometry": { "type": "Point", "coordinates": [ 129.7125, 28.4308 ] } },
-{ "type": "Feature", "properties": { "id": "RJSA", "type": "空港", "name1": "青森", "name2": "aomori", "Elev(ft)": 650, "RWY1": 6, "RWY2": 24, "MAG Var": 9, "ARP.N(DMS)": 40.44, "ARP.E(DMS)": 140.4119, "ARP.N(DD)": 40.7333, "ARP.E(DD)": 140.6886, "N(D)": 40.0, "N(M)": 44, "N(S)": 0, "E(D)": 140.0, "E(M)": 41, "E(S)": 19 }, "geometry": { "type": "Point", "coordinates": [ 140.6886, 40.7333 ] } },
-{ "type": "Feature", "properties": { "id": "RJEC", "type": "空港", "name1": "旭川", "name2": "asahikawa", "Elev(ft)": 690, "RWY1": 16, "RWY2": 34, "MAG Var": 9, "ARP.N(DMS)": 43.4015, "ARP.E(DMS)": 142.2651, "ARP.N(DD)": 43.6708, "ARP.E(DD)": 142.4475, "N(D)": 43.0, "N(M)": 40, "N(S)": 15, "E(D)": 142.0, "E(M)": 26, "E(S)": 51 }, "geometry": { "type": "Point", "coordinates": [ 142.4475, 43.6708 ] } },
-{ "type": "Feature", "properties": { "id": "RJTF", "type": "空港", "name1": "調布", "name2": "chofu", "Elev(ft)": 139, "RWY1": 17, "RWY2": 35, "MAG Var": 7, "ARP.N(DMS)": 35.4018, "ARP.E(DMS)": 139.3141, "ARP.N(DD)": 35.6717, "ARP.E(DD)": 139.5281, "N(D)": 35.0, "N(M)": 40, "N(S)": 18, "E(D)": 139.0, "E(M)": 31, "E(S)": 41 }, "geometry": { "type": "Point", "coordinates": [ 139.5281, 35.6717 ] } },
-{ "type": "Feature", "properties": { "id": "RJGG", "type": "空港", "name1": "中部セントレア国際", "name2": "chubu centrair INTL", "Elev(ft)": 12, "RWY1": 36, "RWY2": 18, "MAG Var": 7, "ARP.N(DMS)": 34.513, "ARP.E(DMS)": 136.4819, "ARP.N(DD)": 34.8583, "ARP.E(DD)": 136.8053, "N(D)": 34.0, "N(M)": 51, "N(S)": 30, "E(D)": 136.0, "E(M)": 48, "E(S)": 19 }, "geometry": { "type": "Point", "coordinates": [ 136.8053, 34.8583 ] } },
-{ "type": "Feature", "properties": { "id": "RJFE", "type": "空港", "name1": "福江", "name2": "fukue", "Elev(ft)": 251, "RWY1": 3, "RWY2": 21, "MAG Var": 7, "ARP.N(DMS)": 32.3959, "ARP.E(DMS)": 128.4958, "ARP.N(DD)": 32.6664, "ARP.E(DD)": 128.8328, "N(D)": 32.0, "N(M)": 39, "N(S)": 59, "E(D)": 128.0, "E(M)": 49, "E(S)": 58 }, "geometry": { "type": "Point", "coordinates": [ 128.8328, 32.6664 ] } },
-{ "type": "Feature", "properties": { "id": "RJNF", "type": "空港", "name1": "福井", "name2": "fukui", "Elev(ft)": 18, "RWY1": 36, "RWY2": 18, "MAG Var": 8, "ARP.N(DMS)": 36.0834, "ARP.E(DMS)": 136.1326, "ARP.N(DD)": 36.1428, "ARP.E(DD)": 136.2239, "N(D)": 36.0, "N(M)": 8, "N(S)": 34, "E(D)": 136.0, "E(M)": 13, "E(S)": 26 }, "geometry": { "type": "Point", "coordinates": [ 136.2239, 36.1428 ] } },
-{ "type": "Feature", "properties": { "id": "RJFF", "type": "空港", "name1": "福岡", "name2": "fukuoka", "Elev(ft)": 30, "RWY1": 16, "RWY2": 34, "MAG Var": 8, "ARP.N(DMS)": 33.3504, "ARP.E(DMS)": 130.2706, "ARP.N(DD)": 33.5844, "ARP.E(DD)": 130.4517, "N(D)": 33.0, "N(M)": 35, "N(S)": 4, "E(D)": 130.0, "E(M)": 27, "E(S)": 6 }, "geometry": { "type": "Point", "coordinates": [ 130.4517, 33.5844 ] } },
-{ "type": "Feature", "properties": { "id": "RJSF", "type": "空港", "name1": "福島", "name2": "fukushima", "Elev(ft)": 1220, "RWY1": 1, "RWY2": 19, "MAG Var": 7, "ARP.N(DMS)": 37.1339, "ARP.E(DMS)": 140.2541, "ARP.N(DD)": 37.2275, "ARP.E(DD)": 140.4281, "N(D)": 37.0, "N(M)": 13, "N(S)": 39, "E(D)": 140.0, "E(M)": 25, "E(S)": 41 }, "geometry": { "type": "Point", "coordinates": [ 140.4281, 37.2275 ] } },
-{ "type": "Feature", "properties": { "id": "RJTH", "type": "空港", "name1": "八丈島", "name2": "hachijojima", "Elev(ft)": 301, "RWY1": 8, "RWY2": 26, "MAG Var": 6, "ARP.N(DMS)": 33.0654, "ARP.E(DMS)": 139.4709, "ARP.N(DD)": 33.115, "ARP.E(DD)": 139.7858, "N(D)": 33.0, "N(M)": 6, "N(S)": 54, "E(D)": 139.0, "E(M)": 47, "E(S)": 9 }, "geometry": { "type": "Point", "coordinates": [ 139.7858, 33.115 ] } },
-{ "type": "Feature", "properties": { "id": "RJCH", "type": "空港", "name1": "函館", "name2": "hakodate", "Elev(ft)": 112, "RWY1": 12, "RWY2": 30, "MAG Var": 9, "ARP.N(DMS)": 41.4612, "ARP.E(DMS)": 140.4919, "ARP.N(DD)": 41.77, "ARP.E(DD)": 140.8219, "N(D)": 41.0, "N(M)": 46, "N(S)": 12, "E(D)": 140.0, "E(M)": 49, "E(S)": 19 }, "geometry": { "type": "Point", "coordinates": [ 140.8219, 41.77 ] } },
-{ "type": "Feature", "properties": { "id": "RJSI", "type": "空港", "name1": "花巻", "name2": "hanamaki", "Elev(ft)": 294, "RWY1": 2, "RWY2": 20, "MAG Var": 9, "ARP.N(DMS)": 39.2543, "ARP.E(DMS)": 141.0807, "ARP.N(DD)": 39.4286, "ARP.E(DD)": 141.1353, "N(D)": 39.0, "N(M)": 25, "N(S)": 43, "E(D)": 141.0, "E(M)": 8, "E(S)": 7 }, "geometry": { "type": "Point", "coordinates": [ 141.1353, 39.4286 ] } },
-{ "type": "Feature", "properties": { "id": "RORH", "type": "空港", "name1": "波照間", "name2": "hateruma", "Elev(ft)": 43, "RWY1": 3, "RWY2": 21, "MAG Var": 4, "ARP.N(DMS)": 24.033, "ARP.E(DMS)": 123.4814, "ARP.N(DD)": 24.0583, "ARP.E(DD)": 123.8039, "N(D)": 24.0, "N(M)": 3, "N(S)": 30, "E(D)": 123.0, "E(M)": 48, "E(S)": 14 }, "geometry": { "type": "Point", "coordinates": [ 123.8039, 24.0583 ] } },
-{ "type": "Feature", "properties": { "id": "RJOA", "type": "空港", "name1": "広島", "name2": "hiroshima", "Elev(ft)": 1086, "RWY1": 10, "RWY2": 28, "MAG Var": 8, "ARP.N(DMS)": 34.261, "ARP.E(DMS)": 132.551, "ARP.N(DD)": 34.4361, "ARP.E(DD)": 132.9194, "N(D)": 34.0, "N(M)": 26, "N(S)": 10, "E(D)": 132.0, "E(M)": 55, "E(S)": 10 }, "geometry": { "type": "Point", "coordinates": [ 132.9194, 34.4361 ] } },
-{ "type": "Feature", "properties": { "id": "RORE", "type": "空港", "name1": "伊江島", "name2": "iejima", "Elev(ft)": 238, "RWY1": 4, "RWY2": 22, "MAG Var": 5, "ARP.N(DMS)": 26.4321, "ARP.E(DMS)": 127.4713, "ARP.N(DD)": 26.7225, "ARP.E(DD)": 127.7869, "N(D)": 26.0, "N(M)": 43, "N(S)": 21, "E(D)": 127.0, "E(M)": 47, "E(S)": 13 }, "geometry": { "type": "Point", "coordinates": [ 127.7869, 26.7225 ] } },
-{ "type": "Feature", "properties": { "id": "RJDB", "type": "空港", "name1": "壱岐", "name2": "iki", "Elev(ft)": 41, "RWY1": 2, "RWY2": 20, "MAG Var": 7, "ARP.N(DMS)": 33.4457, "ARP.E(DMS)": 129.4709, "ARP.N(DD)": 33.7492, "ARP.E(DD)": 129.7858, "N(D)": 33.0, "N(M)": 44, "N(S)": 57, "E(D)": 129.0, "E(M)": 47, "E(S)": 9 }, "geometry": { "type": "Point", "coordinates": [ 129.7858, 33.7492 ] } },
-{ "type": "Feature", "properties": { "id": "RJOW", "type": "空港", "name1": "石見", "name2": "iwami", "Elev(ft)": 177, "RWY1": 11, "RWY2": 29, "MAG Var": 7, "ARP.N(DMS)": 34.4035, "ARP.E(DMS)": 131.4725, "ARP.N(DD)": 34.6764, "ARP.E(DD)": 131.7903, "N(D)": 34.0, "N(M)": 40, "N(S)": 35, "E(D)": 131.0, "E(M)": 47, "E(S)": 25 }, "geometry": { "type": "Point", "coordinates": [ 131.7903, 34.6764 ] } },
-{ "type": "Feature", "properties": { "id": "RJOC", "type": "空港", "name1": "出雲", "name2": "izumo", "Elev(ft)": 6, "RWY1": 7, "RWY2": 25, "MAG Var": 7, "ARP.N(DMS)": 35.2449, "ARP.E(DMS)": 132.5324, "ARP.N(DD)": 35.4136, "ARP.E(DD)": 132.89, "N(D)": 35.0, "N(M)": 24, "N(S)": 49, "E(D)": 132.0, "E(M)": 53, "E(S)": 24 }, "geometry": { "type": "Point", "coordinates": [ 132.89, 35.4136 ] } },
-{ "type": "Feature", "properties": { "id": "RJFK", "type": "空港", "name1": "鹿児島", "name2": "kagoshima", "Elev(ft)": 891, "RWY1": 16, "RWY2": 34, "MAG Var": 7, "ARP.N(DMS)": 31.4812, "ARP.E(DMS)": 130.431, "ARP.N(DD)": 31.8033, "ARP.E(DD)": 130.7194, "N(D)": 31.0, "N(M)": 48, "N(S)": 12, "E(D)": 130.0, "E(M)": 43, "E(S)": 10 }, "geometry": { "type": "Point", "coordinates": [ 130.7194, 31.8033 ] } },
-{ "type": "Feature", "properties": { "id": "RJDK", "type": "空港", "name1": "上五島", "name2": "kamigoto", "Elev(ft)": 263, "RWY1": 17, "RWY2": 35, "MAG Var": 7, "ARP.N(DMS)": 33.0049, "ARP.E(DMS)": 129.1133, "ARP.N(DD)": 33.0136, "ARP.E(DD)": 129.1925, "N(D)": 33.0, "N(M)": 0, "N(S)": 49, "E(D)": 129.0, "E(M)": 11, "E(S)": 33 }, "geometry": { "type": "Point", "coordinates": [ 129.1925, 33.0136 ] } },
-{ "type": "Feature", "properties": { "id": "RJBB", "type": "空港", "name1": "関西国際", "name2": "kansai INTL", "Elev(ft)": 17, "RWY1": 6, "RWY2": 24, "MAG Var": 7, "ARP.N(DMS)": 34.2603, "ARP.E(DMS)": 135.1358, "ARP.N(DD)": 34.4342, "ARP.E(DD)": 135.2328, "N(D)": 34.0, "N(M)": 26, "N(S)": 3, "E(D)": 135.0, "E(M)": 13, "E(S)": 58 }, "geometry": { "type": "Point", "coordinates": [ 135.2328, 34.4342 ] } },
-{ "type": "Feature", "properties": { "id": "ROKR", "type": "空港", "name1": "慶良間", "name2": "kerama", "Elev(ft)": 156, "RWY1": 2, "RWY2": 20, "MAG Var": 5, "ARP.N(DMS)": 26.1006, "ARP.E(DMS)": 127.1736, "ARP.N(DD)": 26.1683, "ARP.E(DD)": 127.2933, "N(D)": 26.0, "N(M)": 10, "N(S)": 6, "E(D)": 127.0, "E(M)": 17, "E(S)": 36 }, "geometry": { "type": "Point", "coordinates": [ 127.2933, 26.1683 ] } },
-{ "type": "Feature", "properties": { "id": "RJKI", "type": "空港", "name1": "喜界島", "name2": "kikaigashima", "Elev(ft)": 15, "RWY1": 7, "RWY2": 25, "MAG Var": 6, "ARP.N(DMS)": 28.1917, "ARP.E(DMS)": 129.5541, "ARP.N(DD)": 28.3214, "ARP.E(DD)": 129.9281, "N(D)": 28.0, "N(M)": 19, "N(S)": 17, "E(D)": 129.0, "E(M)": 55, "E(S)": 41 }, "geometry": { "type": "Point", "coordinates": [ 129.9281, 28.3214 ] } },
-{ "type": "Feature", "properties": { "id": "RORK", "type": "空港", "name1": "北大東", "name2": "kitadaito", "Elev(ft)": 71, "RWY1": 3, "RWY2": 21, "MAG Var": 5, "ARP.N(DMS)": 25.5641, "ARP.E(DMS)": 131.1937, "ARP.N(DD)": 25.9447, "ARP.E(DD)": 131.3269, "N(D)": 25.0, "N(M)": 56, "N(S)": 41, "E(D)": 131.0, "E(M)": 19, "E(S)": 37 }, "geometry": { "type": "Point", "coordinates": [ 131.3269, 25.9447 ] } },
-{ "type": "Feature", "properties": { "id": "RJFR", "type": "空港", "name1": "北九州", "name2": "kitakyusyu", "Elev(ft)": 21, "RWY1": 36, "RWY2": 18, "MAG Var": 8, "ARP.N(DMS)": 33.5044, "ARP.E(DMS)": 131.0206, "ARP.N(DD)": 33.8456, "ARP.E(DD)": 131.035, "N(D)": 33.0, "N(M)": 50, "N(S)": 44, "E(D)": 131.0, "E(M)": 2, "E(S)": 6 }, "geometry": { "type": "Point", "coordinates": [ 131.035, 33.8456 ] } },
-{ "type": "Feature", "properties": { "id": "RJBE", "type": "空港", "name1": "神戸", "name2": "kobe", "Elev(ft)": 18, "RWY1": 9, "RWY2": 27, "MAG Var": 7, "ARP.N(DMS)": 34.3758, "ARP.E(DMS)": 135.1326, "ARP.N(DD)": 34.6328, "ARP.E(DD)": 135.2239, "N(D)": 34.0, "N(M)": 37, "N(S)": 58, "E(D)": 135.0, "E(M)": 13, "E(S)": 26 }, "geometry": { "type": "Point", "coordinates": [ 135.2239, 34.6328 ] } },
-{ "type": "Feature", "properties": { "id": "RJOK", "type": "空港", "name1": "高知", "name2": "kochi", "Elev(ft)": 29, "RWY1": 14, "RWY2": 32, "MAG Var": 7, "ARP.N(DMS)": 33.3246, "ARP.E(DMS)": 133.401, "ARP.N(DD)": 33.5461, "ARP.E(DD)": 133.6694, "N(D)": 33.0, "N(M)": 32, "N(S)": 46, "E(D)": 133.0, "E(M)": 40, "E(S)": 10 }, "geometry": { "type": "Point", "coordinates": [ 133.6694, 33.5461 ] } },
-{ "type": "Feature", "properties": { "id": "RJBK", "type": "空港", "name1": "岡南", "name2": "kohnan", "Elev(ft)": 0, "RWY1": 9, "RWY2": 27, "MAG Var": 8, "ARP.N(DMS)": 34.3529, "ARP.E(DMS)": 133.56, "ARP.N(DD)": 34.5914, "ARP.E(DD)": 133.9333, "N(D)": 34.0, "N(M)": 35, "N(S)": 29, "E(D)": 133.0, "E(M)": 56, "E(S)": 0 }, "geometry": { "type": "Point", "coordinates": [ 133.9333, 34.5914 ] } },
-{ "type": "Feature", "properties": { "id": "RJAZ", "type": "空港", "name1": "神津島", "name2": "kozushima", "Elev(ft)": 454, "RWY1": 11, "RWY2": 29, "MAG Var": 6, "ARP.N(DMS)": 34.1122, "ARP.E(DMS)": 139.0801, "ARP.N(DD)": 34.1894, "ARP.E(DD)": 139.1336, "N(D)": 34.0, "N(M)": 11, "N(S)": 22, "E(D)": 139.0, "E(M)": 8, "E(S)": 1 }, "geometry": { "type": "Point", "coordinates": [ 139.1336, 34.1894 ] } },
-{ "type": "Feature", "properties": { "id": "RJFT", "type": "空港", "name1": "熊本", "name2": "kumamoto", "Elev(ft)": 632, "RWY1": 7, "RWY2": 25, "MAG Var": 7, "ARP.N(DMS)": 32.5014, "ARP.E(DMS)": 130.5119, "ARP.N(DD)": 32.8372, "ARP.E(DD)": 130.8553, "N(D)": 32.0, "N(M)": 50, "N(S)": 14, "E(D)": 130.0, "E(M)": 51, "E(S)": 19 }, "geometry": { "type": "Point", "coordinates": [ 130.8553, 32.8372 ] } },
-{ "type": "Feature", "properties": { "id": "ROKJ", "type": "空港", "name1": "久米島", "name2": "kume jima", "Elev(ft)": 23, "RWY1": 3, "RWY2": 21, "MAG Var": 5, "ARP.N(DMS)": 26.2149, "ARP.E(DMS)": 126.425, "ARP.N(DD)": 26.3636, "ARP.E(DD)": 126.7139, "N(D)": 26.0, "N(M)": 21, "N(S)": 49, "E(D)": 126.0, "E(M)": 42, "E(S)": 50 }, "geometry": { "type": "Point", "coordinates": [ 126.7139, 26.3636 ] } },
-{ "type": "Feature", "properties": { "id": "RJCK", "type": "空港", "name1": "釧路", "name2": "kushiro", "Elev(ft)": 311, "RWY1": 17, "RWY2": 35, "MAG Var": 9, "ARP.N(DMS)": 43.0227, "ARP.E(DMS)": 144.1135, "ARP.N(DD)": 43.0408, "ARP.E(DD)": 144.1931, "N(D)": 43.0, "N(M)": 2, "N(S)": 27, "E(D)": 144.0, "E(M)": 11, "E(S)": 35 }, "geometry": { "type": "Point", "coordinates": [ 144.1931, 43.0408 ] } },
-{ "type": "Feature", "properties": { "id": "RJAF", "type": "空港", "name1": "松本", "name2": "matsumoto", "Elev(ft)": 2157, "RWY1": 36, "RWY2": 18, "MAG Var": 7, "ARP.N(DMS)": 36.1, "ARP.E(DMS)": 137.5522, "ARP.N(DD)": 36.1667, "ARP.E(DD)": 137.9228, "N(D)": 36.0, "N(M)": 10, "N(S)": 0, "E(D)": 137.0, "E(M)": 55, "E(S)": 22 }, "geometry": { "type": "Point", "coordinates": [ 137.9228, 36.1667 ] } },
-{ "type": "Feature", "properties": { "id": "RJOM", "type": "空港", "name1": "松山", "name2": "matsuyama", "Elev(ft)": 13, "RWY1": 14, "RWY2": 32, "MAG Var": 7, "ARP.N(DMS)": 33.4938, "ARP.E(DMS)": 132.4159, "ARP.N(DD)": 33.8272, "ARP.E(DD)": 132.6997, "N(D)": 33.0, "N(M)": 49, "N(S)": 38, "E(D)": 132.0, "E(M)": 41, "E(S)": 59 }, "geometry": { "type": "Point", "coordinates": [ 132.6997, 33.8272 ] } },
-{ "type": "Feature", "properties": { "id": "RJCM", "type": "空港", "name1": "女満別", "name2": "memanbetsu", "Elev(ft)": 109, "RWY1": 36, "RWY2": 18, "MAG Var": 9, "ARP.N(DMS)": 43.525, "ARP.E(DMS)": 144.0951, "ARP.N(DD)": 43.8806, "ARP.E(DD)": 144.1642, "N(D)": 43.0, "N(M)": 52, "N(S)": 50, "E(D)": 144.0, "E(M)": 9, "E(S)": 51 }, "geometry": { "type": "Point", "coordinates": [ 144.1642, 43.8806 ] } },
-{ "type": "Feature", "properties": { "id": "ROMD", "type": "空港", "name1": "南大東", "name2": "minami daito", "Elev(ft)": 159, "RWY1": 2, "RWY2": 20, "MAG Var": 5, "ARP.N(DMS)": 25.5048, "ARP.E(DMS)": 131.1549, "ARP.N(DD)": 25.8467, "ARP.E(DD)": 131.2636, "N(D)": 25.0, "N(M)": 50, "N(S)": 48, "E(D)": 131.0, "E(M)": 15, "E(S)": 49 }, "geometry": { "type": "Point", "coordinates": [ 131.2636, 25.8467 ] } },
-{ "type": "Feature", "properties": { "id": "RJTQ", "type": "空港", "name1": "三宅島", "name2": "miyakejima", "Elev(ft)": 65, "RWY1": 2, "RWY2": 20, "MAG Var": 6, "ARP.N(DMS)": 34.0425, "ARP.E(DMS)": 139.3337, "ARP.N(DD)": 34.0736, "ARP.E(DD)": 139.5603, "N(D)": 34.0, "N(M)": 4, "N(S)": 25, "E(D)": 139.0, "E(M)": 33, "E(S)": 37 }, "geometry": { "type": "Point", "coordinates": [ 139.5603, 34.0736 ] } },
-{ "type": "Feature", "properties": { "id": "ROMY", "type": "空港", "name1": "宮古", "name2": "miyako", "Elev(ft)": 140, "RWY1": 4, "RWY2": 22, "MAG Var": 5, "ARP.N(DMS)": 24.4658, "ARP.E(DMS)": 125.1742, "ARP.N(DD)": 24.7828, "ARP.E(DD)": 125.295, "N(D)": 24.0, "N(M)": 46, "N(S)": 58, "E(D)": 125.0, "E(M)": 17, "E(S)": 42 }, "geometry": { "type": "Point", "coordinates": [ 125.295, 24.7828 ] } },
-{ "type": "Feature", "properties": { "id": "RJFM", "type": "空港", "name1": "宮崎", "name2": "miyazaki", "Elev(ft)": 19, "RWY1": 9, "RWY2": 27, "MAG Var": 7, "ARP.N(DMS)": 31.5238, "ARP.E(DMS)": 131.2655, "ARP.N(DD)": 31.8772, "ARP.E(DD)": 131.4486, "N(D)": 31.0, "N(M)": 52, "N(S)": 38, "E(D)": 131.0, "E(M)": 26, "E(S)": 55 }, "geometry": { "type": "Point", "coordinates": [ 131.4486, 31.8772 ] } },
-{ "type": "Feature", "properties": { "id": "RJEB", "type": "空港", "name1": "紋別", "name2": "monbetsu", "Elev(ft)": 58, "RWY1": 14, "RWY2": 32, "MAG Var": 9, "ARP.N(DMS)": 44.1815, "ARP.E(DMS)": 143.2415, "ARP.N(DD)": 44.3042, "ARP.E(DD)": 143.4042, "N(D)": 44.0, "N(M)": 18, "N(S)": 15, "E(D)": 143.0, "E(M)": 24, "E(S)": 15 }, "geometry": { "type": "Point", "coordinates": [ 143.4042, 44.3042 ] } },
-{ "type": "Feature", "properties": { "id": "RJFU", "type": "空港", "name1": "長崎", "name2": "nagasaki", "Elev(ft)": 8, "RWY1": 14, "RWY2": 32, "MAG Var": 7, "ARP.N(DMS)": 32.5501, "ARP.E(DMS)": 129.5449, "ARP.N(DD)": 32.9169, "ARP.E(DD)": 129.9136, "N(D)": 32.0, "N(M)": 55, "N(S)": 1, "E(D)": 129.0, "E(M)": 54, "E(S)": 49 }, "geometry": { "type": "Point", "coordinates": [ 129.9136, 32.9169 ] } },
-{ "type": "Feature", "properties": { "id": "RJCN", "type": "空港", "name1": "中標津", "name2": "nakashibetsu", "Elev(ft)": 214, "RWY1": 8, "RWY2": 26, "MAG Var": 9, "ARP.N(DMS)": 43.3439, "ARP.E(DMS)": 144.5736, "ARP.N(DD)": 43.5775, "ARP.E(DD)": 144.96, "N(D)": 43.0, "N(M)": 34, "N(S)": 39, "E(D)": 144.0, "E(M)": 57, "E(S)": 36 }, "geometry": { "type": "Point", "coordinates": [ 144.96, 43.5775 ] } },
-{ "type": "Feature", "properties": { "id": "RJBD", "type": "空港", "name1": "南紀白浜", "name2": "nanki shirahama", "Elev(ft)": 293, "RWY1": 15, "RWY2": 33, "MAG Var": 8, "ARP.N(DMS)": 33.3944, "ARP.E(DMS)": 135.2152, "ARP.N(DD)": 33.6622, "ARP.E(DD)": 135.3644, "N(D)": 33.0, "N(M)": 39, "N(S)": 44, "E(D)": 135.0, "E(M)": 21, "E(S)": 52 }, "geometry": { "type": "Point", "coordinates": [ 135.3644, 33.6622 ] } },
-{ "type": "Feature", "properties": { "id": "RJAA", "type": "空港", "name1": "成田国際", "name2": "narita INTL", "Elev(ft)": 135, "RWY1": 16, "RWY2": 34, "MAG Var": 7, "ARP.N(DMS)": 35.4555, "ARP.E(DMS)": 140.2308, "ARP.N(DD)": 35.7653, "ARP.E(DD)": 140.3856, "N(D)": 35.0, "N(M)": 45, "N(S)": 55, "E(D)": 140.0, "E(M)": 23, "E(S)": 8 }, "geometry": { "type": "Point", "coordinates": [ 140.3856, 35.7653 ] } },
-{ "type": "Feature", "properties": { "id": "RJFH", "type": "ヘリ", "name1": "奈多", "name2": "nata", "Elev(ft)": 20, "RWY1": 16, "RWY2": 33, "MAG Var": 8, "ARP.N(DMS)": 33.4039, "ARP.E(DMS)": 130.2327, "ARP.N(DD)": 33.6775, "ARP.E(DD)": 130.3908, "N(D)": 33.0, "N(M)": 40, "N(S)": 39, "E(D)": 130.0, "E(M)": 23, "E(S)": 27 }, "geometry": { "type": "Point", "coordinates": [ 130.3908, 33.6775 ] } },
-{ "type": "Feature", "properties": { "id": "RJCC", "type": "空港", "name1": "新千歳", "name2": "new chitose", "Elev(ft)": 70, "RWY1": 1, "RWY2": 19, "MAG Var": 9, "ARP.N(DMS)": 42.4631, "ARP.E(DMS)": 141.4133, "ARP.N(DD)": 42.7753, "ARP.E(DD)": 141.6925, "N(D)": 42.0, "N(M)": 46, "N(S)": 31, "E(D)": 141.0, "E(M)": 41, "E(S)": 33 }, "geometry": { "type": "Point", "coordinates": [ 141.6925, 42.7753 ] } },
-{ "type": "Feature", "properties": { "id": "ROIG", "type": "空港", "name1": "新石垣", "name2": "new ishigaki", "Elev(ft)": 102, "RWY1": 4, "RWY2": 22, "MAG Var": 5, "ARP.N(DMS)": 24.2347, "ARP.E(DMS)": 124.1442, "ARP.N(DD)": 24.3964, "ARP.E(DD)": 124.245, "N(D)": 24.0, "N(M)": 23, "N(S)": 47, "E(D)": 124.0, "E(M)": 14, "E(S)": 42 }, "geometry": { "type": "Point", "coordinates": [ 124.245, 24.3964 ] } },
-{ "type": "Feature", "properties": { "id": "RJSN", "type": "空港", "name1": "新潟", "name2": "niigata", "Elev(ft)": 5, "RWY1": 10, "RWY2": 28, "MAG Var": 8, "ARP.N(DMS)": 37.5721, "ARP.E(DMS)": 139.0642, "ARP.N(DD)": 37.9558, "ARP.E(DD)": 139.1117, "N(D)": 37.0, "N(M)": 57, "N(S)": 21, "E(D)": 139.0, "E(M)": 6, "E(S)": 42 }, "geometry": { "type": "Point", "coordinates": [ 139.1117, 37.9558 ] } },
-{ "type": "Feature", "properties": { "id": "RJAN", "type": "空港", "name1": "新島", "name2": "niijima", "Elev(ft)": 94, "RWY1": 11, "RWY2": 29, "MAG Var": 7, "ARP.N(DMS)": 34.221, "ARP.E(DMS)": 139.1607, "ARP.N(DD)": 34.3694, "ARP.E(DD)": 139.2686, "N(D)": 34.0, "N(M)": 22, "N(S)": 10, "E(D)": 139.0, "E(M)": 16, "E(S)": 7 }, "geometry": { "type": "Point", "coordinates": [ 139.2686, 34.3694 ] } },
-{ "type": "Feature", "properties": { "id": "RJNW", "type": "空港", "name1": "能登", "name2": "noto", "Elev(ft)": 718, "RWY1": 7, "RWY2": 25, "MAG Var": 9, "ARP.N(DMS)": 37.1736, "ARP.E(DMS)": 136.5744, "ARP.N(DD)": 37.2933, "ARP.E(DD)": 136.9622, "N(D)": 37.0, "N(M)": 17, "N(S)": 36, "E(D)": 136.0, "E(M)": 57, "E(S)": 44 }, "geometry": { "type": "Point", "coordinates": [ 136.9622, 37.2933 ] } },
-{ "type": "Feature", "properties": { "id": "RJCB", "type": "空港", "name1": "帯広", "name2": "obihiro", "Elev(ft)": 490, "RWY1": 17, "RWY2": 35, "MAG Var": 9, "ARP.N(DMS)": 42.44, "ARP.E(DMS)": 143.1302, "ARP.N(DD)": 42.7333, "ARP.E(DD)": 143.2172, "N(D)": 42.0, "N(M)": 44, "N(S)": 0, "E(D)": 143.0, "E(M)": 13, "E(S)": 2 }, "geometry": { "type": "Point", "coordinates": [ 143.2172, 42.7333 ] } },
-{ "type": "Feature", "properties": { "id": "RJSR", "type": "空港", "name1": "大舘能代", "name2": "odate noshiro", "Elev(ft)": 276, "RWY1": 11, "RWY2": 29, "MAG Var": 8, "ARP.N(DMS)": 40.1131, "ARP.E(DMS)": 140.2218, "ARP.N(DD)": 40.1919, "ARP.E(DD)": 140.3717, "N(D)": 40.0, "N(M)": 11, "N(S)": 31, "E(D)": 140.0, "E(M)": 22, "E(S)": 18 }, "geometry": { "type": "Point", "coordinates": [ 140.3717, 40.1919 ] } },
-{ "type": "Feature", "properties": { "id": "RJFO", "type": "空港", "name1": "大分", "name2": "oita", "Elev(ft)": 17, "RWY1": 1, "RWY2": 19, "MAG Var": 7, "ARP.N(DMS)": 33.2846, "ARP.E(DMS)": 131.4414, "ARP.N(DD)": 33.4794, "ARP.E(DD)": 131.7372, "N(D)": 33.0, "N(M)": 28, "N(S)": 46, "E(D)": 131.0, "E(M)": 44, "E(S)": 14 }, "geometry": { "type": "Point", "coordinates": [ 131.7372, 33.4794 ] } },
-{ "type": "Feature", "properties": { "id": "RJDO", "type": "空港", "name1": "小値賀", "name2": "ojika", "Elev(ft)": 25, "RWY1": 3, "RWY2": 21, "MAG Var": 7, "ARP.N(DMS)": 33.1127, "ARP.E(DMS)": 129.0525, "ARP.N(DD)": 33.1908, "ARP.E(DD)": 129.0903, "N(D)": 33.0, "N(M)": 11, "N(S)": 27, "E(D)": 129.0, "E(M)": 5, "E(S)": 25 }, "geometry": { "type": "Point", "coordinates": [ 129.0903, 33.1908 ] } },
-{ "type": "Feature", "properties": { "id": "RJOB", "type": "空港", "name1": "岡山", "name2": "okayama", "Elev(ft)": 785, "RWY1": 7, "RWY2": 25, "MAG Var": 8, "ARP.N(DMS)": 34.4525, "ARP.E(DMS)": 133.5119, "ARP.N(DD)": 34.7569, "ARP.E(DD)": 133.8553, "N(D)": 34.0, "N(M)": 45, "N(S)": 25, "E(D)": 133.0, "E(M)": 51, "E(S)": 19 }, "geometry": { "type": "Point", "coordinates": [ 133.8553, 34.7569 ] } },
-{ "type": "Feature", "properties": { "id": "RJNO", "type": "空港", "name1": "隠岐", "name2": "oki", "Elev(ft)": 262, "RWY1": 8, "RWY2": 26, "MAG Var": 8, "ARP.N(DMS)": 36.1042, "ARP.E(DMS)": 133.1924, "ARP.N(DD)": 36.1783, "ARP.E(DD)": 133.3233, "N(D)": 36.0, "N(M)": 10, "N(S)": 42, "E(D)": 133.0, "E(M)": 19, "E(S)": 24 }, "geometry": { "type": "Point", "coordinates": [ 133.3233, 36.1783 ] } },
-{ "type": "Feature", "properties": { "id": "RJKB", "type": "空港", "name1": "沖永良部", "name2": "okierabu", "Elev(ft)": 88, "RWY1": 4, "RWY2": 22, "MAG Var": 6, "ARP.N(DMS)": 27.2554, "ARP.E(DMS)": 128.422, "ARP.N(DD)": 27.4317, "ARP.E(DD)": 128.7056, "N(D)": 27.0, "N(M)": 25, "N(S)": 54, "E(D)": 128.0, "E(M)": 42, "E(S)": 20 }, "geometry": { "type": "Point", "coordinates": [ 128.7056, 27.4317 ] } },
-{ "type": "Feature", "properties": { "id": "RJEO", "type": "空港", "name1": "奥尻", "name2": "okushiri", "Elev(ft)": 161, "RWY1": 13, "RWY2": 31, "MAG Var": 9, "ARP.N(DMS)": 42.0418, "ARP.E(DMS)": 139.2558, "ARP.N(DD)": 42.0717, "ARP.E(DD)": 139.4328, "N(D)": 42.0, "N(M)": 4, "N(S)": 18, "E(D)": 139.0, "E(M)": 25, "E(S)": 58 }, "geometry": { "type": "Point", "coordinates": [ 139.4328, 42.0717 ] } },
-{ "type": "Feature", "properties": { "id": "RJOO", "type": "空港", "name1": "大阪国際", "name2": "osaka INTL", "Elev(ft)": 39, "RWY1": 14, "RWY2": 32, "MAG Var": 7, "ARP.N(DMS)": 34.4704, "ARP.E(DMS)": 135.2621, "ARP.N(DD)": 34.7844, "ARP.E(DD)": 135.4392, "N(D)": 34.0, "N(M)": 47, "N(S)": 4, "E(D)": 135.0, "E(M)": 26, "E(S)": 21 }, "geometry": { "type": "Point", "coordinates": [ 135.4392, 34.7844 ] } },
-{ "type": "Feature", "properties": { "id": "RJTO", "type": "空港", "name1": "大島", "name2": "oshima", "Elev(ft)": 124, "RWY1": 3, "RWY2": 21, "MAG Var": 7, "ARP.N(DMS)": 34.4655, "ARP.E(DMS)": 139.2137, "ARP.N(DD)": 34.7819, "ARP.E(DD)": 139.3603, "N(D)": 34.0, "N(M)": 46, "N(S)": 55, "E(D)": 139.0, "E(M)": 21, "E(S)": 37 }, "geometry": { "type": "Point", "coordinates": [ 139.3603, 34.7819 ] } },
-{ "type": "Feature", "properties": { "id": "RJCR", "type": "空港", "name1": "礼文", "name2": "rebun", "Elev(ft)": 85, "RWY1": 14, "RWY2": 32, "MAG Var": 9, "ARP.N(DMS)": 45.2718, "ARP.E(DMS)": 141.0221, "ARP.N(DD)": 45.455, "ARP.E(DD)": 141.0392, "N(D)": 45.0, "N(M)": 27, "N(S)": 18, "E(D)": 141.0, "E(M)": 2, "E(S)": 21 }, "geometry": { "type": "Point", "coordinates": [ 141.0392, 45.455 ] } },
-{ "type": "Feature", "properties": { "id": "RJER", "type": "空港", "name1": "利尻", "name2": "rishiri", "Elev(ft)": 99, "RWY1": 7, "RWY2": 25, "MAG Var": 10, "ARP.N(DMS)": 45.1431, "ARP.E(DMS)": 141.1115, "ARP.N(DD)": 45.2419, "ARP.E(DD)": 141.1875, "N(D)": 45.0, "N(M)": 14, "N(S)": 31, "E(D)": 141.0, "E(M)": 11, "E(S)": 15 }, "geometry": { "type": "Point", "coordinates": [ 141.1875, 45.2419 ] } },
-{ "type": "Feature", "properties": { "id": "RJSD", "type": "空港", "name1": "佐渡", "name2": "sado", "Elev(ft)": 75, "RWY1": 10, "RWY2": 28, "MAG Var": 7, "ARP.N(DMS)": 38.034, "ARP.E(DMS)": 138.2451, "ARP.N(DD)": 38.0611, "ARP.E(DD)": 138.4142, "N(D)": 38.0, "N(M)": 3, "N(S)": 40, "E(D)": 138.0, "E(M)": 24, "E(S)": 51 }, "geometry": { "type": "Point", "coordinates": [ 138.4142, 38.0611 ] } },
-{ "type": "Feature", "properties": { "id": "RJFS", "type": "空港", "name1": "佐賀", "name2": "saga", "Elev(ft)": 6, "RWY1": 11, "RWY2": 29, "MAG Var": 7, "ARP.N(DMS)": 33.0859, "ARP.E(DMS)": 130.1808, "ARP.N(DD)": 33.1497, "ARP.E(DD)": 130.3022, "N(D)": 33.0, "N(M)": 8, "N(S)": 59, "E(D)": 130.0, "E(M)": 18, "E(S)": 8 }, "geometry": { "type": "Point", "coordinates": [ 130.3022, 33.1497 ] } },
-{ "type": "Feature", "properties": { "id": "RJSS", "type": "空港", "name1": "仙台", "name2": "sendai", "Elev(ft)": 6, "RWY1": 9, "RWY2": 27, "MAG Var": 8, "ARP.N(DMS)": 38.0823, "ARP.E(DMS)": 140.5501, "ARP.N(DD)": 38.1397, "ARP.E(DD)": 140.9169, "N(D)": 38.0, "N(M)": 8, "N(S)": 23, "E(D)": 140.0, "E(M)": 55, "E(S)": 1 }, "geometry": { "type": "Point", "coordinates": [ 140.9169, 38.1397 ] } },
-{ "type": "Feature", "properties": { "id": "RORS", "type": "空港", "name1": "下地島", "name2": "shimojishima", "Elev(ft)": 25, "RWY1": 17, "RWY2": 35, "MAG Var": 5, "ARP.N(DMS)": 24.4936, "ARP.E(DMS)": 125.0841, "ARP.N(DD)": 24.8267, "ARP.E(DD)": 125.1447, "N(D)": 24.0, "N(M)": 49, "N(S)": 36, "E(D)": 125.0, "E(M)": 8, "E(S)": 41 }, "geometry": { "type": "Point", "coordinates": [ 125.1447, 24.8267 ] } },
-{ "type": "Feature", "properties": { "id": "RJNS", "type": "空港", "name1": "静岡", "name2": "shizuoka", "Elev(ft)": 433, "RWY1": 12, "RWY2": 30, "MAG Var": 8, "ARP.N(DMS)": 34.4746, "ARP.E(DMS)": 138.1122, "ARP.N(DD)": 34.7961, "ARP.E(DD)": 138.1894, "N(D)": 34.0, "N(M)": 47, "N(S)": 46, "E(D)": 138.0, "E(M)": 11, "E(S)": 22 }, "geometry": { "type": "Point", "coordinates": [ 138.1894, 34.7961 ] } },
-{ "type": "Feature", "properties": { "id": "RJSY", "type": "空港", "name1": "庄内", "name2": "shonai", "Elev(ft)": 72, "RWY1": 9, "RWY2": 27, "MAG Var": 8, "ARP.N(DMS)": 38.4844, "ARP.E(DMS)": 139.4714, "ARP.N(DD)": 38.8122, "ARP.E(DD)": 139.7872, "N(D)": 38.0, "N(M)": 48, "N(S)": 44, "E(D)": 139.0, "E(M)": 47, "E(S)": 14 }, "geometry": { "type": "Point", "coordinates": [ 139.7872, 38.8122 ] } },
-{ "type": "Feature", "properties": { "id": "RJBT", "type": "空港", "name1": "田島", "name2": "tajima", "Elev(ft)": 578, "RWY1": 1, "RWY2": 19, "MAG Var": 8, "ARP.N(DMS)": 35.3046, "ARP.E(DMS)": 134.4713, "ARP.N(DD)": 35.5128, "ARP.E(DD)": 134.7869, "N(D)": 35.0, "N(M)": 30, "N(S)": 46, "E(D)": 134.0, "E(M)": 47, "E(S)": 13 }, "geometry": { "type": "Point", "coordinates": [ 134.7869, 35.5128 ] } },
-{ "type": "Feature", "properties": { "id": "RJOT", "type": "空港", "name1": "高松", "name2": "takamatsu", "Elev(ft)": 607, "RWY1": 8, "RWY2": 26, "MAG Var": 7, "ARP.N(DMS)": 34.1251, "ARP.E(DMS)": 134.0056, "ARP.N(DD)": 34.2142, "ARP.E(DD)": 134.0156, "N(D)": 34.0, "N(M)": 12, "N(S)": 51, "E(D)": 134.0, "E(M)": 0, "E(S)": 56 }, "geometry": { "type": "Point", "coordinates": [ 134.0156, 34.2142 ] } },
-{ "type": "Feature", "properties": { "id": "RJFG", "type": "空港", "name1": "種子島", "name2": "tanegashima", "Elev(ft)": 768, "RWY1": 13, "RWY2": 31, "MAG Var": 7, "ARP.N(DMS)": 30.3618, "ARP.E(DMS)": 130.593, "ARP.N(DD)": 30.605, "ARP.E(DD)": 130.9917, "N(D)": 30.0, "N(M)": 36, "N(S)": 18, "E(D)": 130.0, "E(M)": 59, "E(S)": 30 }, "geometry": { "type": "Point", "coordinates": [ 130.9917, 30.605 ] } },
-{ "type": "Feature", "properties": { "id": "RORT", "type": "空港", "name1": "多良間", "name2": "tarama", "Elev(ft)": 34, "RWY1": 36, "RWY2": 18, "MAG Var": 5, "ARP.N(DMS)": 24.3914, "ARP.E(DMS)": 124.4031, "ARP.N(DD)": 24.6539, "ARP.E(DD)": 124.6753, "N(D)": 24.0, "N(M)": 39, "N(S)": 14, "E(D)": 124.0, "E(M)": 40, "E(S)": 31 }, "geometry": { "type": "Point", "coordinates": [ 124.6753, 24.6539 ] } },
-{ "type": "Feature", "properties": { "id": "RJKN", "type": "空港", "name1": "徳之島", "name2": "tokunoshima", "Elev(ft)": 8, "RWY1": 1, "RWY2": 19, "MAG Var": 6, "ARP.N(DMS)": 27.5011, "ARP.E(DMS)": 128.5253, "ARP.N(DD)": 27.8364, "ARP.E(DD)": 128.8814, "N(D)": 27.0, "N(M)": 50, "N(S)": 11, "E(D)": 128.0, "E(M)": 52, "E(S)": 53 }, "geometry": { "type": "Point", "coordinates": [ 128.8814, 27.8364 ] } },
-{ "type": "Feature", "properties": { "id": "RJTI", "type": "ヘリ", "name1": "東京", "name2": "tokyo", "Elev(ft)": 16, "RWY1": 1, "RWY2": 19, "MAG Var": 7, "ARP.N(DMS)": 35.381, "ARP.E(DMS)": 139.5022, "ARP.N(DD)": 35.6361, "ARP.E(DD)": 139.8394, "N(D)": 35.0, "N(M)": 38, "N(S)": 10, "E(D)": 139.0, "E(M)": 50, "E(S)": 22 }, "geometry": { "type": "Point", "coordinates": [ 139.8394, 35.6361 ] } },
-{ "type": "Feature", "properties": { "id": "RJTT", "type": "空港", "name1": "東京国際", "name2": "tokyo INTL", "Elev(ft)": 21, "RWY1": 16, "RWY2": 34, "MAG Var": 8, "ARP.N(DMS)": 35.3312, "ARP.E(DMS)": 139.4652, "ARP.N(DD)": 35.5533, "ARP.E(DD)": 139.7811, "N(D)": 35.0, "N(M)": 33, "N(S)": 12, "E(D)": 139.0, "E(M)": 46, "E(S)": 52 }, "geometry": { "type": "Point", "coordinates": [ 139.7811, 35.5533 ] } },
-{ "type": "Feature", "properties": { "id": "RJOR", "type": "空港", "name1": "鳥取", "name2": "tottori", "Elev(ft)": 48, "RWY1": 10, "RWY2": 28, "MAG Var": 8, "ARP.N(DMS)": 35.3148, "ARP.E(DMS)": 134.0954, "ARP.N(DD)": 35.53, "ARP.E(DD)": 134.165, "N(D)": 35.0, "N(M)": 31, "N(S)": 48, "E(D)": 134.0, "E(M)": 9, "E(S)": 54 }, "geometry": { "type": "Point", "coordinates": [ 134.165, 35.53 ] } },
-{ "type": "Feature", "properties": { "id": "RJNT", "type": "空港", "name1": "富山", "name2": "toyama", "Elev(ft)": 77, "RWY1": 2, "RWY2": 20, "MAG Var": 8, "ARP.N(DMS)": 36.3854, "ARP.E(DMS)": 137.1115, "ARP.N(DD)": 36.6483, "ARP.E(DD)": 137.1875, "N(D)": 36.0, "N(M)": 38, "N(S)": 54, "E(D)": 137.0, "E(M)": 11, "E(S)": 15 }, "geometry": { "type": "Point", "coordinates": [ 137.1875, 36.6483 ] } },
-{ "type": "Feature", "properties": { "id": "RJDT", "type": "空港", "name1": "対馬", "name2": "tsushima", "Elev(ft)": 207, "RWY1": 14, "RWY2": 32, "MAG Var": 7, "ARP.N(DMS)": 34.1706, "ARP.E(DMS)": 129.195, "ARP.N(DD)": 34.285, "ARP.E(DD)": 129.3306, "N(D)": 34.0, "N(M)": 17, "N(S)": 6, "E(D)": 129.0, "E(M)": 19, "E(S)": 50 }, "geometry": { "type": "Point", "coordinates": [ 129.3306, 34.285 ] } },
-{ "type": "Feature", "properties": { "id": "RJCW", "type": "空港", "name1": "稚内", "name2": "wakkanai", "Elev(ft)": 27, "RWY1": 8, "RWY2": 26, "MAG Var": 10, "ARP.N(DMS)": 45.2416, "ARP.E(DMS)": 141.4808, "ARP.N(DD)": 45.4044, "ARP.E(DD)": 141.8022, "N(D)": 45.0, "N(M)": 24, "N(S)": 16, "E(D)": 141.0, "E(M)": 48, "E(S)": 8 }, "geometry": { "type": "Point", "coordinates": [ 141.8022, 45.4044 ] } },
-{ "type": "Feature", "properties": { "id": "RJFC", "type": "空港", "name1": "屋久島", "name2": "yakushima", "Elev(ft)": 122, "RWY1": 14, "RWY2": 32, "MAG Var": 7, "ARP.N(DMS)": 30.2308, "ARP.E(DMS)": 130.3933, "ARP.N(DD)": 30.3856, "ARP.E(DD)": 130.6592, "N(D)": 30.0, "N(M)": 23, "N(S)": 8, "E(D)": 130.0, "E(M)": 39, "E(S)": 33 }, "geometry": { "type": "Point", "coordinates": [ 130.6592, 30.3856 ] } },
-{ "type": "Feature", "properties": { "id": "RJSC", "type": "空港", "name1": "山形", "name2": "yamagata", "Elev(ft)": 345, "RWY1": 1, "RWY2": 19, "MAG Var": 8, "ARP.N(DMS)": 38.2443, "ARP.E(DMS)": 140.2216, "ARP.N(DD)": 38.4119, "ARP.E(DD)": 140.3711, "N(D)": 38.0, "N(M)": 24, "N(S)": 43, "E(D)": 140.0, "E(M)": 22, "E(S)": 16 }, "geometry": { "type": "Point", "coordinates": [ 140.3711, 38.4119 ] } },
-{ "type": "Feature", "properties": { "id": "RJDC", "type": "空港", "name1": "山口宇部", "name2": "yamaguchi ube", "Elev(ft)": 15, "RWY1": 7, "RWY2": 25, "MAG Var": 7, "ARP.N(DMS)": 33.5548, "ARP.E(DMS)": 131.1643, "ARP.N(DD)": 33.93, "ARP.E(DD)": 131.2786, "N(D)": 33.0, "N(M)": 55, "N(S)": 48, "E(D)": 131.0, "E(M)": 16, "E(S)": 43 }, "geometry": { "type": "Point", "coordinates": [ 131.2786, 33.93 ] } },
-{ "type": "Feature", "properties": { "id": "RJOY", "type": "空港", "name1": "八尾", "name2": "yao", "Elev(ft)": 33, "RWY1": 9, "RWY2": 27, "MAG Var": 7, "ARP.N(DMS)": 34.3548, "ARP.E(DMS)": 135.3602, "ARP.N(DD)": 34.5967, "ARP.E(DD)": 135.6006, "N(D)": 34.0, "N(M)": 35, "N(S)": 48, "E(D)": 135.0, "E(M)": 36, "E(S)": 2 }, "geometry": { "type": "Point", "coordinates": [ 135.6006, 34.5967 ] } },
-{ "type": "Feature", "properties": { "id": "ROYN", "type": "空港", "name1": "与那国島", "name2": "yonaguni jima", "Elev(ft)": 49, "RWY1": 8, "RWY2": 26, "MAG Var": 5, "ARP.N(DMS)": 24.2803, "ARP.E(DMS)": 122.5847, "ARP.N(DD)": 24.4675, "ARP.E(DD)": 122.9797, "N(D)": 24.0, "N(M)": 28, "N(S)": 3, "E(D)": 122.0, "E(M)": 58, "E(S)": 47 }, "geometry": { "type": "Point", "coordinates": [ 122.9797, 24.4675 ] } },
-{ "type": "Feature", "properties": { "id": "RORY", "type": "空港", "name1": "与論", "name2": "yoron", "Elev(ft)": 47, "RWY1": 14, "RWY2": 32, "MAG Var": 6, "ARP.N(DMS)": 27.0238, "ARP.E(DMS)": 128.2406, "ARP.N(DD)": 27.0439, "ARP.E(DD)": 128.4017, "N(D)": 27.0, "N(M)": 2, "N(S)": 38, "E(D)": 128.0, "E(M)": 24, "E(S)": 6 }, "geometry": { "type": "Point", "coordinates": [ 128.4017, 27.0439 ] } }
+  "type": "FeatureCollection",
+  "name": "Airports",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFA",
+        "type": "空港",
+        "name1": "芦屋",
+        "name2": "ashiya",
+        "Elev(ft)": 98,
+        "RWY1": 12,
+        "RWY2": 30,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 33.5253,
+        "ARP.E(DMS)": 130.3906,
+        "ARP.N(DD)": 33.8814,
+        "ARP.E(DD)": 130.6517
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.6517, 33.8814 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCJ",
+        "type": "空港",
+        "name1": "千歳",
+        "name2": "chitose",
+        "Elev(ft)": 89,
+        "RWY1": 36,
+        "RWY2": 18,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 42.474,
+        "ARP.E(DMS)": 141.3959,
+        "ARP.N(DD)": 42.7944,
+        "ARP.E(DD)": 141.6664
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.6664, 42.7944 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJNG",
+        "type": "空港",
+        "name1": "岐阜",
+        "name2": "gifu",
+        "Elev(ft)": 128,
+        "RWY1": 10,
+        "RWY2": 28,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 35.234,
+        "ARP.E(DMS)": 136.521,
+        "ARP.N(DD)": 35.3944,
+        "ARP.E(DD)": 136.8694
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [136.8694, 35.3944]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJNH",
+        "type": "空港",
+        "name1": "浜松",
+        "name2": "hamamatsu",
+        "Elev(ft)": 150,
+        "RWY1": 9,
+        "RWY2": 27,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 34.4501,
+        "ARP.E(DMS)": 137.4211,
+        "ARP.N(DD)": 34.7503,
+        "ARP.E(DD)": 137.7031
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [137.7031, 34.7503]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOF",
+        "type": "空港",
+        "name1": "防府",
+        "name2": "hofu",
+        "Elev(ft)": 7,
+        "RWY1": 12,
+        "RWY2": 30,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.0204,
+        "ARP.E(DMS)": 131.3247,
+        "ARP.N(DD)": 34.0344,
+        "ARP.E(DD)": 131.5464
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.5464, 34.0344]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJAH",
+        "type": "空港",
+        "name1": "百里",
+        "name2": "hyakuri",
+        "Elev(ft)": 107,
+        "RWY1": 3,
+        "RWY2": 21,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 36.1054,
+        "ARP.E(DMS)": 140.2453,
+        "ARP.N(DD)": 36.1817,
+        "ARP.E(DD)": 140.4147
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.4147, 36.1817]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTJ",
+        "type": "空港",
+        "name1": "入間",
+        "name2": "iruma",
+        "Elev(ft)": 295,
+        "RWY1": 17,
+        "RWY2": 35,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 35.5031,
+        "ARP.E(DMS)": 139.2438,
+        "ARP.N(DD)": 35.8419,
+        "ARP.E(DD)": 139.4106
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.4106, 35.8419]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJNK",
+        "type": "空港",
+        "name1": "小松",
+        "name2": "komatsu",
+        "Elev(ft)": 22,
+        "RWY1": 6,
+        "RWY2": 24,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 36.2338,
+        "ARP.E(DMS)": 136.2427,
+        "ARP.N(DD)": 36.3939,
+        "ARP.E(DD)": 136.4075
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [136.4075, 36.3939]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJST",
+        "type": "空港",
+        "name1": "松島",
+        "name2": "matsushima",
+        "Elev(ft)": 7,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 38.2411,
+        "ARP.E(DMS)": 141.1243,
+        "ARP.N(DD)": 38.4031,
+        "ARP.E(DD)": 141.2119
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [141.2119, 38.4031]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOH",
+        "type": "空港",
+        "name1": "美保",
+        "name2": "miho",
+        "Elev(ft)": 13,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 35.2936,
+        "ARP.E(DMS)": 133.1421,
+        "ARP.N(DD)": 35.4933,
+        "ARP.E(DD)": 133.2392
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [133.2392, 35.4933]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSM",
+        "type": "空港",
+        "name1": "三沢",
+        "name2": "misawa",
+        "Elev(ft)": 119,
+        "RWY1": 10,
+        "RWY2": 28,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 40.4211,
+        "ARP.E(DMS)": 141.2206,
+        "ARP.N(DD)": 40.7031,
+        "ARP.E(DD)": 141.3683
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [141.3683, 40.7031]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJNA",
+        "type": "空港",
+        "name1": "名古屋",
+        "name2": "nagoya",
+        "Elev(ft)": 126,
+        "RWY1": 16,
+        "RWY2": 34,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 35.1518,
+        "ARP.E(DMS)": 136.5528,
+        "ARP.N(DD)": 35.255,
+        "ARP.E(DD)": 136.9244
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [136.9244, 35.255]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFN",
+        "type": "空港",
+        "name1": "新田原",
+        "name2": "nyutabaru",
+        "Elev(ft)": 259,
+        "RWY1": 10,
+        "RWY2": 28,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 32.0501,
+        "ARP.E(DMS)": 131.2705,
+        "ARP.N(DD)": 32.0836,
+        "ARP.E(DD)": 131.4514
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.4514, 32.0836]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJNY",
+        "type": "空港",
+        "name1": "静浜",
+        "name2": "shizuhama",
+        "Elev(ft)": 23,
+        "RWY1": 9,
+        "RWY2": 27,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 34.4846,
+        "ARP.E(DMS)": 138.1753,
+        "ARP.N(DD)": 34.8128,
+        "ARP.E(DD)": 138.2981
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [138.2981, 34.8128]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFZ",
+        "type": "空港",
+        "name1": "築城",
+        "name2": "tsuiki",
+        "Elev(ft)": 28,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 33.4106,
+        "ARP.E(DMS)": 131.0225,
+        "ARP.N(DD)": 33.685,
+        "ARP.E(DD)": 131.0403
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.0403, 33.685]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROAH",
+        "type": "空港",
+        "name1": "那覇",
+        "name2": "naha",
+        "Elev(ft)": 11,
+        "RWY1": 36,
+        "RWY2": 18,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 26.1136,
+        "ARP.E(DMS)": 127.3823,
+        "ARP.N(DD)": 26.1933,
+        "ARP.E(DD)": 127.6397
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [127.6397, 26.1933]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROTM",
+        "type": "空港",
+        "name1": "普天間",
+        "name2": "futenma",
+        "Elev(ft)": 246,
+        "RWY1": 6,
+        "RWY2": 24,
+        "MAG Var": 4,
+        "ARP.N(DMS)": 26.1615,
+        "ARP.E(DMS)": 127.4453,
+        "ARP.N(DD)": 26.2708,
+        "ARP.E(DD)": 127.7481
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [127.7481, 26.2708]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOI",
+        "type": "空港",
+        "name1": "岩国",
+        "name2": "iwakuni",
+        "Elev(ft)": 10,
+        "RWY1": 2,
+        "RWY2": 20,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.0842,
+        "ARP.E(DMS)": 132.1449,
+        "ARP.N(DD)": 34.145,
+        "ARP.E(DD)": 132.2469
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [132.2469, 34.145]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RODN",
+        "type": "空港",
+        "name1": "嘉手納",
+        "name2": "kadena",
+        "Elev(ft)": 143,
+        "RWY1": 5,
+        "RWY2": 23,
+        "MAG Var": 4,
+        "ARP.N(DMS)": 26.212,
+        "ARP.E(DMS)": 127.4603,
+        "ARP.N(DD)": 26.3556,
+        "ARP.E(DD)": 127.7675
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [127.7675, 26.3556]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTY",
+        "type": "空港",
+        "name1": "横田",
+        "name2": "yokota",
+        "Elev(ft)": 462,
+        "RWY1": 36,
+        "RWY2": 18,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 35.4455,
+        "ARP.E(DMS)": 139.2055,
+        "ARP.N(DD)": 35.7486,
+        "ARP.E(DD)": 139.3486
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.3486, 35.7486]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTA",
+        "type": "空港",
+        "name1": "厚木",
+        "name2": "atsugi",
+        "Elev(ft)": 205,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 35.2717,
+        "ARP.E(DMS)": 139.27,
+        "ARP.E(DD)": 139.45,
+        "ARP.N(DD)": 35.4547,
+        "N(D)": 35.0,
+        "N(M)": 27,
+        "N(S)": 17,
+        "E(D)": 139.0,
+        "E(M)": 27,
+        "E(S)": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.45,
+          35.4547
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSH",
+        "type": "空港",
+        "name1": "八戸",
+        "name2": "hachinohe",
+        "Elev(ft)": 152,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 40.3307,
+        "ARP.E(DMS)": 141.2802,
+        "ARP.E(DD)": 141.4672,
+        "ARP.N(DD)": 40.5519,
+        "N(D)": 40.0,
+        "N(M)": 33,
+        "N(S)": 7,
+        "E(D)": 141.0,
+        "E(M)": 28,
+        "E(S)": 2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.4672,
+          40.5519
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJAW",
+        "type": "空港",
+        "name1": "硫黄島",
+        "name2": "iwoto",
+        "Elev(ft)": 394,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": null,
+        "ARP.N(DMS)": 24.4703,
+        "ARP.E(DMS)": 141.1922,
+        "ARP.E(DD)": 141.3228,
+        "ARP.N(DD)": 24.7842,
+        "N(D)": 24.0,
+        "N(M)": 47,
+        "N(S)": 3,
+        "E(D)": 141.0,
+        "E(M)": 19,
+        "E(S)": 22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.3228,
+          24.7842
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFY",
+        "type": "空港",
+        "name1": "鹿屋",
+        "name2": "kanoya",
+        "Elev(ft)": 202,
+        "RWY1": 8,
+        "RWY2": 26,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 31.2205,
+        "ARP.E(DMS)": 130.5017,
+        "ARP.E(DD)": 130.8381,
+        "ARP.N(DD)": 31.3681,
+        "N(D)": 31.0,
+        "N(M)": 22,
+        "N(S)": 5,
+        "E(D)": 130.0,
+        "E(M)": 50,
+        "E(S)": 17
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.8381,
+          31.3681
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSO",
+        "type": "空港",
+        "name1": "大湊",
+        "name2": "ominato",
+        "Elev(ft)": 24,
+        "RWY1": 4,
+        "RWY2": 22,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 41.1358,
+        "ARP.E(DMS)": 141.0756,
+        "ARP.E(DD)": 141.1322,
+        "ARP.N(DD)": 41.2328,
+        "N(D)": 41.0,
+        "N(M)": 13,
+        "N(S)": 58,
+        "E(D)": 141.0,
+        "E(M)": 7,
+        "E(S)": 56
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1322,
+          41.2328
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJDU",
+        "type": "空港",
+        "name1": "大村",
+        "name2": "omura",
+        "Elev(ft)": 19,
+        "RWY1": 36,
+        "RWY2": 18,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 32.5541,
+        "ARP.E(DMS)": 129.5603,
+        "ARP.E(DD)": 129.9342,
+        "ARP.N(DD)": 32.9281,
+        "N(D)": 32.0,
+        "N(M)": 55,
+        "N(S)": 41,
+        "E(D)": 129.0,
+        "E(M)": 56,
+        "E(S)": 3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.9342,
+          32.9281
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOZ",
+        "type": "空港",
+        "name1": "小月",
+        "name2": "ozuki",
+        "Elev(ft)": 13,
+        "RWY1": 17,
+        "RWY2": 35,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.0249,
+        "ARP.E(DMS)": 131.0309,
+        "ARP.E(DD)": 131.0525,
+        "ARP.N(DD)": 34.0469,
+        "N(D)": 34.0,
+        "N(M)": 2,
+        "N(S)": 49,
+        "E(D)": 131.0,
+        "E(M)": 3,
+        "E(S)": 9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.0525,
+          34.0469
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTL",
+        "type": "空港",
+        "name1": "下総",
+        "name2": "shimofusa",
+        "Elev(ft)": 96,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 35.4756,
+        "ARP.E(DMS)": 140.0044,
+        "ARP.E(DD)": 140.0122,
+        "ARP.N(DD)": 35.7989,
+        "N(D)": 35.0,
+        "N(M)": 47,
+        "N(S)": 56,
+        "E(D)": 140.0,
+        "E(M)": 0,
+        "E(S)": 44
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0122,
+          35.7989
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTE",
+        "type": "空港",
+        "name1": "館山",
+        "name2": "tateyama",
+        "Elev(ft)": 10,
+        "RWY1": 9,
+        "RWY2": 27,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 34.5915,
+        "ARP.E(DMS)": 139.4955,
+        "ARP.E(DD)": 139.8319,
+        "ARP.N(DD)": 34.9875,
+        "N(D)": 34.0,
+        "N(M)": 59,
+        "N(S)": 15,
+        "E(D)": 139.0,
+        "E(M)": 49,
+        "E(S)": 55
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8319,
+          34.9875
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOS",
+        "type": "空港",
+        "name1": "徳島",
+        "name2": "tokushima",
+        "Elev(ft)": 37,
+        "RWY1": 11,
+        "RWY2": 29,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.0756,
+        "ARP.E(DMS)": 134.3633,
+        "ARP.E(DD)": 134.6092,
+        "ARP.N(DD)": 34.1322,
+        "N(D)": 34.0,
+        "N(M)": 7,
+        "N(S)": 56,
+        "E(D)": 134.0,
+        "E(M)": 36,
+        "E(S)": 33
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.6092,
+          34.1322
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJAM",
+        "type": "空港",
+        "name1": "南鳥島",
+        "name2": "minamitorishima",
+        "Elev(ft)": 22,
+        "RWY1": 5,
+        "RWY2": 23,
+        "MAG Var": null,
+        "ARP.N(DMS)": 24.1723,
+        "ARP.E(DMS)": 153.5845,
+        "ARP.E(DD)": 153.9792,
+        "ARP.N(DD)": 24.2897,
+        "N(D)": 24.0,
+        "N(M)": 17,
+        "N(S)": 23,
+        "E(D)": 153.0,
+        "E(M)": 58,
+        "E(S)": 45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          153.9792,
+          24.2897
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOE",
+        "type": "空港",
+        "name1": "明野",
+        "name2": "akeno",
+        "Elev(ft)": 20,
+        "RWY1": 13,
+        "RWY2": 31,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.32,
+        "ARP.E(DMS)": 136.402,
+        "ARP.E(DD)": 136.6722,
+        "ARP.N(DD)": 34.5333,
+        "N(D)": 34.0,
+        "N(M)": 32,
+        "N(S)": 0,
+        "E(D)": 136.0,
+        "E(M)": 40,
+        "E(S)": 20
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [136.6722, 34.5333]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCA",
+        "type": "空港",
+        "name1": "旭川",
+        "name2": "asahikawa",
+        "Elev(ft)": 377,
+        "RWY1": 8,
+        "RWY2": 26,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 43.474,
+        "ARP.E(DMS)": 142.2154,
+        "ARP.E(DD)": 142.365,
+        "ARP.N(DD)": 43.7944,
+        "N(D)": 43.0,
+        "N(M)": 47,
+        "N(S)": 40,
+        "E(D)": 142.0,
+        "E(M)": 21,
+        "E(S)": 54
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [142.365, 43.7944]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJAK",
+        "type": "空港",
+        "name1": "霞ヶ浦",
+        "name2": "kasumigaura",
+        "Elev(ft)": 85,
+        "RWY1": 6,
+        "RWY2": 24,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 36.0205,
+        "ARP.E(DMS)": 140.1134,
+        "ARP.E(DD)": 140.1928,
+        "ARP.N(DD)": 36.0347,
+        "N(D)": 36.0,
+        "N(M)": 2,
+        "N(S)": 5,
+        "E(D)": 140.0,
+        "E(M)": 11,
+        "E(S)": 34
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.1928, 36.0347]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSU",
+        "type": "空港",
+        "name1": "霞の目",
+        "name2": "kasuminome",
+        "Elev(ft)": 23,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 38.1408,
+        "ARP.E(DMS)": 140.5523,
+        "ARP.E(DD)": 140.9231,
+        "ARP.N(DD)": 38.2356,
+        "N(D)": 38.0,
+        "N(M)": 14,
+        "N(S)": 8,
+        "E(D)": 140.0,
+        "E(M)": 55,
+        "E(S)": 23
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.9231, 38.2356]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTK",
+        "type": "空港",
+        "name1": "木更津",
+        "name2": "kisarazu",
+        "Elev(ft)": 10,
+        "RWY1": 2,
+        "RWY2": 20,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 35.2354,
+        "ARP.E(DMS)": 139.5435,
+        "ARP.E(DD)": 139.9097,
+        "ARP.N(DD)": 35.3983,
+        "N(D)": 35.0,
+        "N(M)": 23,
+        "N(S)": 54,
+        "E(D)": 139.0,
+        "E(M)": 54,
+        "E(S)": 35
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.9097, 35.3983]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJDM",
+        "type": "空港",
+        "name1": "目達原",
+        "name2": "metabaru",
+        "Elev(ft)": 53,
+        "RWY1": 4,
+        "RWY2": 22,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 33.1931,
+        "ARP.E(DMS)": 130.2449,
+        "ARP.E(DD)": 130.4136,
+        "ARP.N(DD)": 33.3253,
+        "N(D)": 33.0,
+        "N(M)": 19,
+        "N(S)": 31,
+        "E(D)": 130.0,
+        "E(M)": 24,
+        "E(S)": 49
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.4136, 33.3253]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCO",
+        "type": "空港",
+        "name1": "丘珠",
+        "name2": "okadama",
+        "Elev(ft)": 26,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 43.0703,
+        "ARP.E(DMS)": 141.2253,
+        "ARP.E(DD)": 141.3814,
+        "ARP.N(DD)": 43.1175,
+        "N(D)": 43.0,
+        "N(M)": 7,
+        "N(S)": 3,
+        "E(D)": 141.0,
+        "E(M)": 22,
+        "E(S)": 53
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [141.3814, 43.1175]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTC",
+        "type": "空港",
+        "name1": "立川",
+        "name2": "tachikawa",
+        "Elev(ft)": 313,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 35.4239,
+        "ARP.E(DMS)": 139.2411,
+        "ARP.E(DD)": 139.4031,
+        "ARP.N(DD)": 35.7108,
+        "N(D)": 35.0,
+        "N(M)": 42,
+        "N(S)": 39,
+        "E(D)": 139.0,
+        "E(M)": 24,
+        "E(S)": 11
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.4031, 35.7108]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCT",
+        "type": "空港",
+        "name1": "十勝",
+        "name2": "tokachi",
+        "Elev(ft)": 281,
+        "RWY1": 13,
+        "RWY2": 31,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 42.5325,
+        "ARP.E(DMS)": 143.093,
+        "ARP.E(DD)": 143.1583,
+        "ARP.N(DD)": 42.8903,
+        "N(D)": 42.0,
+        "N(M)": 53,
+        "N(S)": 25,
+        "E(D)": 143.0,
+        "E(M)": 9,
+        "E(S)": 30
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [143.1583, 42.8903]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTU",
+        "type": "空港",
+        "name1": "宇都宮",
+        "name2": "utsunomiya",
+        "Elev(ft)": 334,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 36.3052,
+        "ARP.E(DMS)": 139.5215,
+        "ARP.E(DD)": 139.8708,
+        "ARP.N(DD)": 36.5144,
+        "N(D)": 36.0,
+        "N(M)": 30,
+        "N(S)": 52,
+        "E(D)": 139.0,
+        "E(M)": 52,
+        "E(S)": 15
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.8708, 36.5144]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RORA",
+        "type": "空港",
+        "name1": "粟国",
+        "name2": "aguni",
+        "Elev(ft)": 38,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 26.3534,
+        "ARP.E(DMS)": 127.1425,
+        "ARP.N(DD)": 26.5928,
+        "ARP.E(DD)": 127.2403
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [127.2403, 26.5928]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSK",
+        "type": "空港",
+        "name1": "秋田",
+        "name2": "akita",
+        "Elev(ft)": 127,
+        "RWY1": 10,
+        "RWY2": 28,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 39.3656,
+        "ARP.E(DMS)": 140.1307,
+        "ARP.N(DD)": 39.6156,
+        "ARP.E(DD)": 140.2186
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.2186, 39.6156]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJDA",
+        "type": "空港",
+        "name1": "天草",
+        "name2": "amakusa",
+        "Elev(ft)": 106,
+        "RWY1": 13,
+        "RWY2": 31,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 32.2856,
+        "ARP.E(DMS)": 130.0932,
+        "ARP.N(DD)": 32.4822,
+        "ARP.E(DD)": 130.1589
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.1589, 32.4822]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJKA",
+        "type": "空港",
+        "name1": "奄美",
+        "name2": "amami",
+        "Elev(ft)": 14,
+        "RWY1": 3,
+        "RWY2": 21,
+        "MAG Var": 6,
+        "ARP.N(DMS)": 28.2551,
+        "ARP.E(DMS)": 129.4245,
+        "ARP.N(DD)": 28.4308,
+        "ARP.E(DD)": 129.7125
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [129.7125, 28.4308]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSA",
+        "type": "空港",
+        "name1": "青森",
+        "name2": "aomori",
+        "Elev(ft)": 650,
+        "RWY1": 6,
+        "RWY2": 24,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 40.44,
+        "ARP.E(DMS)": 140.4119,
+        "ARP.N(DD)": 40.7333,
+        "ARP.E(DD)": 140.6886
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.6886, 40.7333]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJEC",
+        "type": "空港",
+        "name1": "旭川",
+        "name2": "asahikawa",
+        "Elev(ft)": 690,
+        "RWY1": 16,
+        "RWY2": 34,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 43.4015,
+        "ARP.E(DMS)": 142.2651,
+        "ARP.N(DD)": 43.6708,
+        "ARP.E(DD)": 142.4475
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [142.4475, 43.6708]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTF",
+        "type": "空港",
+        "name1": "調布",
+        "name2": "chofu",
+        "Elev(ft)": 139,
+        "RWY1": 17,
+        "RWY2": 35,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 35.4018,
+        "ARP.E(DMS)": 139.3141,
+        "ARP.N(DD)": 35.6717,
+        "ARP.E(DD)": 139.5281
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.5281, 35.6717]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJGG",
+        "type": "空港",
+        "name1": "中部セントレア国際",
+        "name2": "chubu centrair INTL",
+        "Elev(ft)": 12,
+        "RWY1": 36,
+        "RWY2": 18,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.513,
+        "ARP.E(DMS)": 136.4819,
+        "ARP.N(DD)": 34.8583,
+        "ARP.E(DD)": 136.8053
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [136.8053, 34.8583]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFE",
+        "type": "空港",
+        "name1": "福江",
+        "name2": "fukue",
+        "Elev(ft)": 251,
+        "RWY1": 3,
+        "RWY2": 21,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 32.3959,
+        "ARP.E(DMS)": 128.4958,
+        "ARP.N(DD)": 32.6664,
+        "ARP.E(DD)": 128.8328
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [128.8328, 32.6664]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJNF",
+        "type": "空港",
+        "name1": "福井",
+        "name2": "fukui",
+        "Elev(ft)": 18,
+        "RWY1": 36,
+        "RWY2": 18,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 36.0834,
+        "ARP.E(DMS)": 136.1326,
+        "ARP.N(DD)": 36.1428,
+        "ARP.E(DD)": 136.2239
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [136.2239, 36.1428]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFF",
+        "type": "空港",
+        "name1": "福岡",
+        "name2": "fukuoka",
+        "Elev(ft)": 30,
+        "RWY1": 16,
+        "RWY2": 34,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 33.3504,
+        "ARP.E(DMS)": 130.2706,
+        "ARP.N(DD)": 33.5844,
+        "ARP.E(DD)": 130.4517
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.4517, 33.5844]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSF",
+        "type": "空港",
+        "name1": "福島",
+        "name2": "fukushima",
+        "Elev(ft)": 1220,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 37.1339,
+        "ARP.E(DMS)": 140.2541,
+        "ARP.N(DD)": 37.2275,
+        "ARP.E(DD)": 140.4281
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.4281, 37.2275]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTH",
+        "type": "空港",
+        "name1": "八丈島",
+        "name2": "hachijojima",
+        "Elev(ft)": 301,
+        "RWY1": 8,
+        "RWY2": 26,
+        "MAG Var": 6,
+        "ARP.N(DMS)": 33.0654,
+        "ARP.E(DMS)": 139.4709,
+        "ARP.N(DD)": 33.115,
+        "ARP.E(DD)": 139.7858
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.7858, 33.115]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCH",
+        "type": "空港",
+        "name1": "函館",
+        "name2": "hakodate",
+        "Elev(ft)": 112,
+        "RWY1": 12,
+        "RWY2": 30,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 41.4612,
+        "ARP.E(DMS)": 140.4919,
+        "ARP.N(DD)": 41.77,
+        "ARP.E(DD)": 140.8219
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.8219, 41.77]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSI",
+        "type": "空港",
+        "name1": "花巻",
+        "name2": "hanamaki",
+        "Elev(ft)": 294,
+        "RWY1": 2,
+        "RWY2": 20,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 39.2543,
+        "ARP.E(DMS)": 141.0807,
+        "ARP.N(DD)": 39.4286,
+        "ARP.E(DD)": 141.1353
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [141.1353, 39.4286]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RORH",
+        "type": "空港",
+        "name1": "波照間",
+        "name2": "hateruma",
+        "Elev(ft)": 43,
+        "RWY1": 3,
+        "RWY2": 21,
+        "MAG Var": 4,
+        "ARP.N(DMS)": 24.033,
+        "ARP.E(DMS)": 123.4814,
+        "ARP.N(DD)": 24.0583,
+        "ARP.E(DD)": 123.8039
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [123.8039, 24.0583]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOA",
+        "type": "空港",
+        "name1": "広島",
+        "name2": "hiroshima",
+        "Elev(ft)": 1086,
+        "RWY1": 10,
+        "RWY2": 28,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 34.261,
+        "ARP.E(DMS)": 132.551,
+        "ARP.N(DD)": 34.4361,
+        "ARP.E(DD)": 132.9194
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [132.9194, 34.4361]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RORE",
+        "type": "空港",
+        "name1": "伊江島",
+        "name2": "iejima",
+        "Elev(ft)": 238,
+        "RWY1": 4,
+        "RWY2": 22,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 26.4321,
+        "ARP.E(DMS)": 127.4713,
+        "ARP.N(DD)": 26.7225,
+        "ARP.E(DD)": 127.7869
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [127.7869, 26.7225]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJDB",
+        "type": "空港",
+        "name1": "壱岐",
+        "name2": "iki",
+        "Elev(ft)": 41,
+        "RWY1": 2,
+        "RWY2": 20,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 33.4457,
+        "ARP.E(DMS)": 129.4709,
+        "ARP.N(DD)": 33.7492,
+        "ARP.E(DD)": 129.7858
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [129.7858, 33.7492]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOW",
+        "type": "空港",
+        "name1": "石見",
+        "name2": "iwami",
+        "Elev(ft)": 177,
+        "RWY1": 11,
+        "RWY2": 29,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.4035,
+        "ARP.E(DMS)": 131.4725,
+        "ARP.N(DD)": 34.6764,
+        "ARP.E(DD)": 131.7903
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.7903, 34.6764]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOC",
+        "type": "空港",
+        "name1": "出雲",
+        "name2": "izumo",
+        "Elev(ft)": 6,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 35.2449,
+        "ARP.E(DMS)": 132.5324,
+        "ARP.N(DD)": 35.4136,
+        "ARP.E(DD)": 132.89
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [132.89, 35.4136]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFK",
+        "type": "空港",
+        "name1": "鹿児島",
+        "name2": "kagoshima",
+        "Elev(ft)": 891,
+        "RWY1": 16,
+        "RWY2": 34,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 31.4812,
+        "ARP.E(DMS)": 130.431,
+        "ARP.N(DD)": 31.8033,
+        "ARP.E(DD)": 130.7194
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.7194, 31.8033]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJDK",
+        "type": "空港",
+        "name1": "上五島",
+        "name2": "kamigoto",
+        "Elev(ft)": 263,
+        "RWY1": 17,
+        "RWY2": 35,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 33.0049,
+        "ARP.E(DMS)": 129.1133,
+        "ARP.N(DD)": 33.0136,
+        "ARP.E(DD)": 129.1925
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [129.1925, 33.0136]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJBB",
+        "type": "空港",
+        "name1": "関西国際",
+        "name2": "kansai INTL",
+        "Elev(ft)": 17,
+        "RWY1": 6,
+        "RWY2": 24,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.2603,
+        "ARP.E(DMS)": 135.1358,
+        "ARP.N(DD)": 34.4342,
+        "ARP.E(DD)": 135.2328
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [135.2328, 34.4342]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROKR",
+        "type": "空港",
+        "name1": "慶良間",
+        "name2": "kerama",
+        "Elev(ft)": 156,
+        "RWY1": 2,
+        "RWY2": 20,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 26.1006,
+        "ARP.E(DMS)": 127.1736,
+        "ARP.N(DD)": 26.1683,
+        "ARP.E(DD)": 127.2933
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [127.2933, 26.1683]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJKI",
+        "type": "空港",
+        "name1": "喜界島",
+        "name2": "kikaigashima",
+        "Elev(ft)": 15,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 6,
+        "ARP.N(DMS)": 28.1917,
+        "ARP.E(DMS)": 129.5541,
+        "ARP.N(DD)": 28.3214,
+        "ARP.E(DD)": 129.9281
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [129.9281, 28.3214]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RORK",
+        "type": "空港",
+        "name1": "北大東",
+        "name2": "kitadaito",
+        "Elev(ft)": 71,
+        "RWY1": 3,
+        "RWY2": 21,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 25.5641,
+        "ARP.E(DMS)": 131.1937,
+        "ARP.N(DD)": 25.9447,
+        "ARP.E(DD)": 131.3269
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.3269, 25.9447]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFR",
+        "type": "空港",
+        "name1": "北九州",
+        "name2": "kitakyusyu",
+        "Elev(ft)": 21,
+        "RWY1": 36,
+        "RWY2": 18,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 33.5044,
+        "ARP.E(DMS)": 131.0206,
+        "ARP.N(DD)": 33.8456,
+        "ARP.E(DD)": 131.035
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.035, 33.8456]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJBE",
+        "type": "空港",
+        "name1": "神戸",
+        "name2": "kobe",
+        "Elev(ft)": 18,
+        "RWY1": 9,
+        "RWY2": 27,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.3758,
+        "ARP.E(DMS)": 135.1326,
+        "ARP.N(DD)": 34.6328,
+        "ARP.E(DD)": 135.2239
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [135.2239, 34.6328]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOK",
+        "type": "空港",
+        "name1": "高知",
+        "name2": "kochi",
+        "Elev(ft)": 29,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 33.3246,
+        "ARP.E(DMS)": 133.401,
+        "ARP.N(DD)": 33.5461,
+        "ARP.E(DD)": 133.6694
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [133.6694, 33.5461]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJBK",
+        "type": "空港",
+        "name1": "岡南",
+        "name2": "kohnan",
+        "Elev(ft)": 0,
+        "RWY1": 9,
+        "RWY2": 27,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 34.3529,
+        "ARP.E(DMS)": 133.56,
+        "ARP.N(DD)": 34.5914,
+        "ARP.E(DD)": 133.9333
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [133.9333, 34.5914]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJAZ",
+        "type": "空港",
+        "name1": "神津島",
+        "name2": "kozushima",
+        "Elev(ft)": 454,
+        "RWY1": 11,
+        "RWY2": 29,
+        "MAG Var": 6,
+        "ARP.N(DMS)": 34.1122,
+        "ARP.E(DMS)": 139.0801,
+        "ARP.N(DD)": 34.1894,
+        "ARP.E(DD)": 139.1336
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.1336, 34.1894]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFT",
+        "type": "空港",
+        "name1": "熊本",
+        "name2": "kumamoto",
+        "Elev(ft)": 632,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 32.5014,
+        "ARP.E(DMS)": 130.5119,
+        "ARP.N(DD)": 32.8372,
+        "ARP.E(DD)": 130.8553
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.8553, 32.8372]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROKJ",
+        "type": "空港",
+        "name1": "久米島",
+        "name2": "kume jima",
+        "Elev(ft)": 23,
+        "RWY1": 3,
+        "RWY2": 21,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 26.2149,
+        "ARP.E(DMS)": 126.425,
+        "ARP.N(DD)": 26.3636,
+        "ARP.E(DD)": 126.7139
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [126.7139, 26.3636]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCK",
+        "type": "空港",
+        "name1": "釧路",
+        "name2": "kushiro",
+        "Elev(ft)": 311,
+        "RWY1": 17,
+        "RWY2": 35,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 43.0227,
+        "ARP.E(DMS)": 144.1135,
+        "ARP.N(DD)": 43.0408,
+        "ARP.E(DD)": 144.1931
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.1931, 43.0408]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJAF",
+        "type": "空港",
+        "name1": "松本",
+        "name2": "matsumoto",
+        "Elev(ft)": 2157,
+        "RWY1": 36,
+        "RWY2": 18,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 36.1,
+        "ARP.E(DMS)": 137.5522,
+        "ARP.N(DD)": 36.1667,
+        "ARP.E(DD)": 137.9228
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [137.9228, 36.1667]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOM",
+        "type": "空港",
+        "name1": "松山",
+        "name2": "matsuyama",
+        "Elev(ft)": 13,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 33.4938,
+        "ARP.E(DMS)": 132.4159,
+        "ARP.N(DD)": 33.8272,
+        "ARP.E(DD)": 132.6997
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [132.6997, 33.8272]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCM",
+        "type": "空港",
+        "name1": "女満別",
+        "name2": "memanbetsu",
+        "Elev(ft)": 109,
+        "RWY1": 36,
+        "RWY2": 18,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 43.525,
+        "ARP.E(DMS)": 144.0951,
+        "ARP.N(DD)": 43.8806,
+        "ARP.E(DD)": 144.1642
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.1642, 43.8806]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROMD",
+        "type": "空港",
+        "name1": "南大東",
+        "name2": "minami daito",
+        "Elev(ft)": 159,
+        "RWY1": 2,
+        "RWY2": 20,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 25.5048,
+        "ARP.E(DMS)": 131.1549,
+        "ARP.N(DD)": 25.8467,
+        "ARP.E(DD)": 131.2636
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.2636, 25.8467]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTQ",
+        "type": "空港",
+        "name1": "三宅島",
+        "name2": "miyakejima",
+        "Elev(ft)": 65,
+        "RWY1": 2,
+        "RWY2": 20,
+        "MAG Var": 6,
+        "ARP.N(DMS)": 34.0425,
+        "ARP.E(DMS)": 139.3337,
+        "ARP.N(DD)": 34.0736,
+        "ARP.E(DD)": 139.5603
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.5603, 34.0736]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROMY",
+        "type": "空港",
+        "name1": "宮古",
+        "name2": "miyako",
+        "Elev(ft)": 140,
+        "RWY1": 4,
+        "RWY2": 22,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 24.4658,
+        "ARP.E(DMS)": 125.1742,
+        "ARP.N(DD)": 24.7828,
+        "ARP.E(DD)": 125.295
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [125.295, 24.7828]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFM",
+        "type": "空港",
+        "name1": "宮崎",
+        "name2": "miyazaki",
+        "Elev(ft)": 19,
+        "RWY1": 9,
+        "RWY2": 27,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 31.5238,
+        "ARP.E(DMS)": 131.2655,
+        "ARP.N(DD)": 31.8772,
+        "ARP.E(DD)": 131.4486
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.4486, 31.8772]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJEB",
+        "type": "空港",
+        "name1": "紋別",
+        "name2": "monbetsu",
+        "Elev(ft)": 58,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 44.1815,
+        "ARP.E(DMS)": 143.2415,
+        "ARP.N(DD)": 44.3042,
+        "ARP.E(DD)": 143.4042
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [143.4042, 44.3042]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFU",
+        "type": "空港",
+        "name1": "長崎",
+        "name2": "nagasaki",
+        "Elev(ft)": 8,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 32.5501,
+        "ARP.E(DMS)": 129.5449,
+        "ARP.N(DD)": 32.9169,
+        "ARP.E(DD)": 129.9136
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [129.9136, 32.9169]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCN",
+        "type": "空港",
+        "name1": "中標津",
+        "name2": "nakashibetsu",
+        "Elev(ft)": 214,
+        "RWY1": 8,
+        "RWY2": 26,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 43.3439,
+        "ARP.E(DMS)": 144.5736,
+        "ARP.N(DD)": 43.5775,
+        "ARP.E(DD)": 144.96
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.96, 43.5775]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJBD",
+        "type": "空港",
+        "name1": "南紀白浜",
+        "name2": "nanki shirahama",
+        "Elev(ft)": 293,
+        "RWY1": 15,
+        "RWY2": 33,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 33.3944,
+        "ARP.E(DMS)": 135.2152,
+        "ARP.N(DD)": 33.6622,
+        "ARP.E(DD)": 135.3644
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [135.3644, 33.6622]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJAA",
+        "type": "空港",
+        "name1": "成田国際",
+        "name2": "narita INTL",
+        "Elev(ft)": 135,
+        "RWY1": 16,
+        "RWY2": 34,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 35.4555,
+        "ARP.E(DMS)": 140.2308,
+        "ARP.N(DD)": 35.7653,
+        "ARP.E(DD)": 140.3856
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.3856, 35.7653]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCC",
+        "type": "空港",
+        "name1": "新千歳",
+        "name2": "new chitose",
+        "Elev(ft)": 70,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 42.4631,
+        "ARP.E(DMS)": 141.4133,
+        "ARP.N(DD)": 42.7753,
+        "ARP.E(DD)": 141.6925
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [141.6925, 42.7753]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROIG",
+        "type": "空港",
+        "name1": "新石垣",
+        "name2": "new ishigaki",
+        "Elev(ft)": 102,
+        "RWY1": 4,
+        "RWY2": 22,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 24.2347,
+        "ARP.E(DMS)": 124.1442,
+        "ARP.N(DD)": 24.3964,
+        "ARP.E(DD)": 124.245
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [124.245, 24.3964]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSN",
+        "type": "空港",
+        "name1": "新潟",
+        "name2": "niigata",
+        "Elev(ft)": 5,
+        "RWY1": 10,
+        "RWY2": 28,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 37.5721,
+        "ARP.E(DMS)": 139.0642,
+        "ARP.N(DD)": 37.9558,
+        "ARP.E(DD)": 139.1117
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.1117, 37.9558]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJAN",
+        "type": "空港",
+        "name1": "新島",
+        "name2": "niijima",
+        "Elev(ft)": 94,
+        "RWY1": 11,
+        "RWY2": 29,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.221,
+        "ARP.E(DMS)": 139.1607,
+        "ARP.N(DD)": 34.3694,
+        "ARP.E(DD)": 139.2686
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.2686, 34.3694]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJNW",
+        "type": "空港",
+        "name1": "能登",
+        "name2": "noto",
+        "Elev(ft)": 718,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 37.1736,
+        "ARP.E(DMS)": 136.5744,
+        "ARP.N(DD)": 37.2933,
+        "ARP.E(DD)": 136.9622
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [136.9622, 37.2933]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCB",
+        "type": "空港",
+        "name1": "帯広",
+        "name2": "obihiro",
+        "Elev(ft)": 490,
+        "RWY1": 17,
+        "RWY2": 35,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 42.44,
+        "ARP.E(DMS)": 143.1302,
+        "ARP.N(DD)": 42.7333,
+        "ARP.E(DD)": 143.2172
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [143.2172, 42.7333]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSR",
+        "type": "空港",
+        "name1": "大舘能代",
+        "name2": "odate noshiro",
+        "Elev(ft)": 276,
+        "RWY1": 11,
+        "RWY2": 29,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 40.1131,
+        "ARP.E(DMS)": 140.2218,
+        "ARP.N(DD)": 40.1919,
+        "ARP.E(DD)": 140.3717
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.3717, 40.1919]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFO",
+        "type": "空港",
+        "name1": "大分",
+        "name2": "oita",
+        "Elev(ft)": 17,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 33.2846,
+        "ARP.E(DMS)": 131.4414,
+        "ARP.N(DD)": 33.4794,
+        "ARP.E(DD)": 131.7372
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.7372, 33.4794]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJDO",
+        "type": "空港",
+        "name1": "小値賀",
+        "name2": "ojika",
+        "Elev(ft)": 25,
+        "RWY1": 3,
+        "RWY2": 21,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 33.1127,
+        "ARP.E(DMS)": 129.0525,
+        "ARP.N(DD)": 33.1908,
+        "ARP.E(DD)": 129.0903
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [129.0903, 33.1908]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOB",
+        "type": "空港",
+        "name1": "岡山",
+        "name2": "okayama",
+        "Elev(ft)": 785,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 34.4525,
+        "ARP.E(DMS)": 133.5119,
+        "ARP.N(DD)": 34.7569,
+        "ARP.E(DD)": 133.8553
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [133.8553, 34.7569]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJNO",
+        "type": "空港",
+        "name1": "隠岐",
+        "name2": "oki",
+        "Elev(ft)": 262,
+        "RWY1": 8,
+        "RWY2": 26,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 36.1042,
+        "ARP.E(DMS)": 133.1924,
+        "ARP.N(DD)": 36.1783,
+        "ARP.E(DD)": 133.3233
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [133.3233, 36.1783]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJKB",
+        "type": "空港",
+        "name1": "沖永良部",
+        "name2": "okierabu",
+        "Elev(ft)": 88,
+        "RWY1": 4,
+        "RWY2": 22,
+        "MAG Var": 6,
+        "ARP.N(DMS)": 27.2554,
+        "ARP.E(DMS)": 128.422,
+        "ARP.N(DD)": 27.4317,
+        "ARP.E(DD)": 128.7056
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [128.7056, 27.4317]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJEO",
+        "type": "空港",
+        "name1": "奥尻",
+        "name2": "okushiri",
+        "Elev(ft)": 161,
+        "RWY1": 13,
+        "RWY2": 31,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 42.0418,
+        "ARP.E(DMS)": 139.2558,
+        "ARP.N(DD)": 42.0717,
+        "ARP.E(DD)": 139.4328
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.4328, 42.0717]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOO",
+        "type": "空港",
+        "name1": "大阪国際",
+        "name2": "osaka INTL",
+        "Elev(ft)": 39,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.4704,
+        "ARP.E(DMS)": 135.2621,
+        "ARP.N(DD)": 34.7844,
+        "ARP.E(DD)": 135.4392
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [135.4392, 34.7844]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTO",
+        "type": "空港",
+        "name1": "大島",
+        "name2": "oshima",
+        "Elev(ft)": 124,
+        "RWY1": 3,
+        "RWY2": 21,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.4655,
+        "ARP.E(DMS)": 139.2137,
+        "ARP.N(DD)": 34.7819,
+        "ARP.E(DD)": 139.3603
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.3603, 34.7819]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCR",
+        "type": "空港",
+        "name1": "礼文",
+        "name2": "rebun",
+        "Elev(ft)": 85,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 9,
+        "ARP.N(DMS)": 45.2718,
+        "ARP.E(DMS)": 141.0221,
+        "ARP.N(DD)": 45.455,
+        "ARP.E(DD)": 141.0392
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [141.0392, 45.455]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJER",
+        "type": "空港",
+        "name1": "利尻",
+        "name2": "rishiri",
+        "Elev(ft)": 99,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 10,
+        "ARP.N(DMS)": 45.1431,
+        "ARP.E(DMS)": 141.1115,
+        "ARP.N(DD)": 45.2419,
+        "ARP.E(DD)": 141.1875
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [141.1875, 45.2419]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSD",
+        "type": "空港",
+        "name1": "佐渡",
+        "name2": "sado",
+        "Elev(ft)": 75,
+        "RWY1": 10,
+        "RWY2": 28,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 38.034,
+        "ARP.E(DMS)": 138.2451,
+        "ARP.N(DD)": 38.0611,
+        "ARP.E(DD)": 138.4142
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [138.4142, 38.0611]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFS",
+        "type": "空港",
+        "name1": "佐賀",
+        "name2": "saga",
+        "Elev(ft)": 6,
+        "RWY1": 11,
+        "RWY2": 29,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 33.0859,
+        "ARP.E(DMS)": 130.1808,
+        "ARP.N(DD)": 33.1497,
+        "ARP.E(DD)": 130.3022
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.3022, 33.1497]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSS",
+        "type": "空港",
+        "name1": "仙台",
+        "name2": "sendai",
+        "Elev(ft)": 6,
+        "RWY1": 9,
+        "RWY2": 27,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 38.0823,
+        "ARP.E(DMS)": 140.5501,
+        "ARP.N(DD)": 38.1397,
+        "ARP.E(DD)": 140.9169
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.9169, 38.1397]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RORS",
+        "type": "空港",
+        "name1": "下地島",
+        "name2": "shimojishima",
+        "Elev(ft)": 25,
+        "RWY1": 17,
+        "RWY2": 35,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 24.4936,
+        "ARP.E(DMS)": 125.0841,
+        "ARP.N(DD)": 24.8267,
+        "ARP.E(DD)": 125.1447
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [125.1447, 24.8267]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJNS",
+        "type": "空港",
+        "name1": "静岡",
+        "name2": "shizuoka",
+        "Elev(ft)": 433,
+        "RWY1": 12,
+        "RWY2": 30,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 34.4746,
+        "ARP.E(DMS)": 138.1122,
+        "ARP.N(DD)": 34.7961,
+        "ARP.E(DD)": 138.1894
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [138.1894, 34.7961]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSY",
+        "type": "空港",
+        "name1": "庄内",
+        "name2": "shonai",
+        "Elev(ft)": 72,
+        "RWY1": 9,
+        "RWY2": 27,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 38.4844,
+        "ARP.E(DMS)": 139.4714,
+        "ARP.N(DD)": 38.8122,
+        "ARP.E(DD)": 139.7872
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.7872, 38.8122]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJBT",
+        "type": "空港",
+        "name1": "田島",
+        "name2": "tajima",
+        "Elev(ft)": 578,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 35.3046,
+        "ARP.E(DMS)": 134.4713,
+        "ARP.N(DD)": 35.5128,
+        "ARP.E(DD)": 134.7869
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [134.7869, 35.5128]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOT",
+        "type": "空港",
+        "name1": "高松",
+        "name2": "takamatsu",
+        "Elev(ft)": 607,
+        "RWY1": 8,
+        "RWY2": 26,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.1251,
+        "ARP.E(DMS)": 134.0056,
+        "ARP.N(DD)": 34.2142,
+        "ARP.E(DD)": 134.0156
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [134.0156, 34.2142]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFG",
+        "type": "空港",
+        "name1": "種子島",
+        "name2": "tanegashima",
+        "Elev(ft)": 768,
+        "RWY1": 13,
+        "RWY2": 31,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 30.3618,
+        "ARP.E(DMS)": 130.593,
+        "ARP.N(DD)": 30.605,
+        "ARP.E(DD)": 130.9917
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.9917, 30.605]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RORT",
+        "type": "空港",
+        "name1": "多良間",
+        "name2": "tarama",
+        "Elev(ft)": 34,
+        "RWY1": 36,
+        "RWY2": 18,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 24.3914,
+        "ARP.E(DMS)": 124.4031,
+        "ARP.N(DD)": 24.6539,
+        "ARP.E(DD)": 124.6753
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [124.6753, 24.6539]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJKN",
+        "type": "空港",
+        "name1": "徳之島",
+        "name2": "tokunoshima",
+        "Elev(ft)": 8,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 6,
+        "ARP.N(DMS)": 27.5011,
+        "ARP.E(DMS)": 128.5253,
+        "ARP.N(DD)": 27.8364,
+        "ARP.E(DD)": 128.8814
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [128.8814, 27.8364]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJTT",
+        "type": "空港",
+        "name1": "東京国際",
+        "name2": "tokyo INTL",
+        "Elev(ft)": 21,
+        "RWY1": 16,
+        "RWY2": 34,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 35.3312,
+        "ARP.E(DMS)": 139.4652,
+        "ARP.N(DD)": 35.5533,
+        "ARP.E(DD)": 139.7811
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [139.7811, 35.5533]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOR",
+        "type": "空港",
+        "name1": "鳥取",
+        "name2": "tottori",
+        "Elev(ft)": 48,
+        "RWY1": 10,
+        "RWY2": 28,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 35.3148,
+        "ARP.E(DMS)": 134.0954,
+        "ARP.N(DD)": 35.53,
+        "ARP.E(DD)": 134.165
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [134.165, 35.53]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJNT",
+        "type": "空港",
+        "name1": "富山",
+        "name2": "toyama",
+        "Elev(ft)": 77,
+        "RWY1": 2,
+        "RWY2": 20,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 36.3854,
+        "ARP.E(DMS)": 137.1115,
+        "ARP.N(DD)": 36.6483,
+        "ARP.E(DD)": 137.1875
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [137.1875, 36.6483]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJDT",
+        "type": "空港",
+        "name1": "対馬",
+        "name2": "tsushima",
+        "Elev(ft)": 207,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.1706,
+        "ARP.E(DMS)": 129.195,
+        "ARP.N(DD)": 34.285,
+        "ARP.E(DD)": 129.3306
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [129.3306, 34.285]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJCW",
+        "type": "空港",
+        "name1": "稚内",
+        "name2": "wakkanai",
+        "Elev(ft)": 27,
+        "RWY1": 8,
+        "RWY2": 26,
+        "MAG Var": 10,
+        "ARP.N(DMS)": 45.2416,
+        "ARP.E(DMS)": 141.4808,
+        "ARP.N(DD)": 45.4044,
+        "ARP.E(DD)": 141.8022
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [141.8022, 45.4044]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJFC",
+        "type": "空港",
+        "name1": "屋久島",
+        "name2": "yakushima",
+        "Elev(ft)": 122,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 30.2308,
+        "ARP.E(DMS)": 130.3933,
+        "ARP.N(DD)": 30.3856,
+        "ARP.E(DD)": 130.6592
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.6592, 30.3856]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJSC",
+        "type": "空港",
+        "name1": "山形",
+        "name2": "yamagata",
+        "Elev(ft)": 345,
+        "RWY1": 1,
+        "RWY2": 19,
+        "MAG Var": 8,
+        "ARP.N(DMS)": 38.2443,
+        "ARP.E(DMS)": 140.2216,
+        "ARP.N(DD)": 38.4119,
+        "ARP.E(DD)": 140.3711
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.3711, 38.4119]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJDC",
+        "type": "空港",
+        "name1": "山口宇部",
+        "name2": "yamaguchi ube",
+        "Elev(ft)": 15,
+        "RWY1": 7,
+        "RWY2": 25,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 33.5548,
+        "ARP.E(DMS)": 131.1643,
+        "ARP.N(DD)": 33.93,
+        "ARP.E(DD)": 131.2786
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.2786, 33.93]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RJOY",
+        "type": "空港",
+        "name1": "八尾",
+        "name2": "yao",
+        "Elev(ft)": 33,
+        "RWY1": 9,
+        "RWY2": 27,
+        "MAG Var": 7,
+        "ARP.N(DMS)": 34.3548,
+        "ARP.E(DMS)": 135.3602,
+        "ARP.N(DD)": 34.5967,
+        "ARP.E(DD)": 135.6006
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [135.6006, 34.5967]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROYN",
+        "type": "空港",
+        "name1": "与那国島",
+        "name2": "yonaguni jima",
+        "Elev(ft)": 49,
+        "RWY1": 8,
+        "RWY2": 26,
+        "MAG Var": 5,
+        "ARP.N(DMS)": 24.2803,
+        "ARP.E(DMS)": 122.5847,
+        "ARP.N(DD)": 24.4675,
+        "ARP.E(DD)": 122.9797
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [122.9797, 24.4675]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RORY",
+        "type": "空港",
+        "name1": "与論",
+        "name2": "yoron",
+        "Elev(ft)": 47,
+        "RWY1": 14,
+        "RWY2": 32,
+        "MAG Var": 6,
+        "ARP.N(DMS)": 27.0238,
+        "ARP.E(DMS)": 128.2406,
+        "ARP.N(DD)": 27.0439,
+        "ARP.E(DD)": 128.4017
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [128.4017, 27.0439]
+      }
+    },
+
+    { "type": "Feature", "properties": { "id": "RJTI", "type": "ヘリ", "name1": "東京", "name2": "tokyo", "Elev(ft)": 16, "RWY1": 1, "RWY2": 19, "MAG Var": 7, "ARP.N(DMS)": 35.381, "ARP.E(DMS)": 139.5022, "ARP.N(DD)": 35.6361, "ARP.E(DD)": 139.8394, "N(D)": 35.0, "N(M)": 38, "N(S)": 10, "E(D)": 139.0, "E(M)": 50, "E(S)": 22 }, "geometry": { "type": "Point", "coordinates": [ 139.8394, 35.6361 ] } },
+    { "type": "Feature", "properties": { "id": "RJTR", "type": "ヘリ", "name1": "座間", "name2": "zama", "Elev(ft)": 367, "RWY1": 2, "RWY2": 20, "MAG Var": null, "ARP.N(DMS)": 35.3049, "ARP.E(DMS)": 139.2337, "ARP.N(DD)": 40.7333, "ARP.E(DD)": 140.6886, "N(D)": 40.0, "N(M)": 44, "N(S)": 0, "E(D)": 140.0, "E(M)": 41, "E(S)": 19 }, "geometry": { "type": "Point", "coordinates": [ 140.6886, 40.7333 ] } },
+    { "type": "Feature", "properties": { "id": "RJOP", "type": "ヘリ", "name1": "小松島", "name2": "komatsushima", "Elev(ft)": 8, "RWY1": 0, "RWY2": 0, "MAG Var": null, "ARP.N(DMS)": 34.0019, "ARP.E(DMS)": 134.3735, "ARP.E(DD)": 134.6264, "ARP.N(DD)": 34.0053, "N(D)": 34.0, "N(M)": 0, "N(S)": 19, "E(D)": 134.0, "E(M)": 37, "E(S)": 35 }, "geometry": { "type": "Point", "coordinates": [ 134.6264, 34.0053 ] } },
+    { "type": "Feature", "properties": { "id": "RJBM", "type": "ヘリ", "name1": "舞鶴", "name2": "maizuru", "Elev(ft)": 19, "RWY1": 0, "RWY2": 0, "MAG Var": null, "ARP.N(DMS)": 35.2926, "ARP.E(DMS)": 135.2238, "ARP.E(DD)": 135.3772, "ARP.N(DD)": 35.4906, "N(D)": 35.0, "N(M)": 29, "N(S)": 26, "E(D)": 135.0, "E(M)": 22, "E(S)": 38 }, "geometry": { "type": "Point", "coordinates": [ 135.3772, 35.4906 ] } },
+    { "type": "Feature", "properties": { "id": "RJTS", "type": "ヘリ", "name1": "相馬原", "name2": "soumagahara", "Elev(ft)": 1306, "RWY1": 6, "RWY2": 24, "MAG Var": null, "ARP.N(DMS)": 36.2605, "ARP.E(DMS)": 138.5711, "ARP.E(DD)": 138.9531, "ARP.N(DD)": 36.4347, "N(D)": 36.0, "N(M)": 26, "N(S)": 5, "E(D)": 138.0, "E(M)": 57, "E(S)": 11 }, "geometry": { "type": "Point", "coordinates": [ 138.9531, 36.4347 ] } },
+    { "type": "Feature", "properties": { "id": "RJFH", "type": "ヘリ", "name1": "奈多", "name2": "nata", "Elev(ft)": 20, "RWY1": 16, "RWY2": 33, "MAG Var": 8, "ARP.N(DMS)": 33.4039, "ARP.E(DMS)": 130.2327, "ARP.N(DD)": 33.6775, "ARP.E(DD)": 130.3908, "N(D)": 33.0, "N(M)": 40, "N(S)": 39, "E(D)": 130.0, "E(M)": 23, "E(S)": 27 }, "geometry": { "type": "Point", "coordinates": [ 130.3908, 33.6775 ] } }
 ]
 }
