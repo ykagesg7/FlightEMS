@@ -8,10 +8,16 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    rollupOptions: {
+      external: ['react-hot-toast']
+    }
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
     },
   },
+  optimizeDeps: {
+    include: ['react-hot-toast']
+  }
 });

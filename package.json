@@ -9,12 +9,10 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "copy-tinymce": "mkdir -p public/tinymce && cp -r node_modules/tinymce/tinymce.min.js node_modules/tinymce/themes node_modules/tinymce/skins node_modules/tinymce/icons node_modules/tinymce/plugins public/tinymce",
+    "copy-tinymce": "if not exist public\\tinymce mkdir public\\tinymce && xcopy /E /I /Y node_modules\\tinymce\\tinymce.min.js public\\tinymce && xcopy /E /I /Y node_modules\\tinymce\\themes public\\tinymce\\themes && xcopy /E /I /Y node_modules\\tinymce\\skins public\\tinymce\\skins && xcopy /E /I /Y node_modules\\tinymce\\icons public\\tinymce\\icons && xcopy /E /I /Y node_modules\\tinymce\\plugins public\\tinymce\\plugins",
     "postinstall": "npm run copy-tinymce"
   },
   "dependencies": {
-    "@eslint/config-array": "^0.18.0",
-    "@eslint/object-schema": "^2.1.4",
     "@hookform/resolvers": "^3.6.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.0",
@@ -52,7 +50,6 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.1.5",
     "framer-motion": "^11.3.9",
-    "glob": "^11.0.0",
     "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
     "inflight": "^1.0.6",
@@ -65,12 +62,12 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.52.0",
+    "react-hot-toast": "^2.4.1",
     "react-intersection-observer": "^9.13.1",
     "react-leaflet": "^4.2.1",
     "react-resizable-panels": "^2.0.19",
     "react-router-dom": "^6.23.1",
     "recharts": "^2.12.7",
-    "rimraf": "^6.0.1",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
@@ -78,6 +75,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@eslint/config-array": "^0.18.0",
+    "@eslint/object-schema": "^2.1.4",
     "@types/node": "^22.5.4",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
@@ -87,7 +86,9 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "glob": "^11.0.0",
     "postcss": "^8.4.38",
+    "rimraf": "^6.0.1",
     "tailwindcss": "^3.4.4",
     "vite": "^5.1.4"
   }
