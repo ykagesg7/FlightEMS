@@ -4,10 +4,10 @@ import { supabase } from '../lib/supabaseClient';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThumbsUp, MessageSquare } from 'lucide-react';
 import { Editor } from '@tinymce/tinymce-react';
+import { toast, Toaster } from 'react-hot-toast';
 
 const POSTS_PER_PAGE = 10;
 
@@ -18,13 +18,18 @@ export default function Community() {
   const [newComment, setNewComment] = useState('');
   const [commentingOn, setCommentingOn] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const editorRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const postEditorRef = useRef(null);
+  const commentEditorRef = useRef(null);
 
   useEffect(() => {
     fetchPosts();
   }, [currentPage]);
 
   const fetchPosts = async () => {
+    setIsLoading(true);
+    setError(null);
     try {
       let { data, error } = await supabase
         .from('posts')
@@ -44,61 +49,100 @@ export default function Community() {
         .range(currentPage * POSTS_PER_PAGE, (currentPage + 1) * POSTS_PER_PAGE - 1);
 
       if (error) throw error;
-      setPosts(data);
+      setPosts(data || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
+      setError('投稿の取得中にエラーが発生しました。');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const createPost = async () => {
-    if (editorRef.current) {
+    if (postEditorRef.current) {
+      const content = postEditorRef.current.getContent();
+      if (!newPost.title.trim() || !content.trim()) {
+        toast.error('タイトルと内容を入力してください。');
+        return;
+      }
+
+      if (!window.confirm('投稿してもよろしいですか？')) {
+        return;
+      }
+
       try {
-        const content = editorRef.current.getContent();
         const { data, error } = await supabase
           .from('posts')
           .insert([{ ...newPost, content, user_id: user.id }])
-          .select();
+          .select(`
+            *,
+            profiles:user_id (username, avatar_url)
+          `);
         if (error) throw error;
         setPosts([data[0], ...posts]);
         setNewPost({ title: '', content: '' });
-        editorRef.current.setContent('');
+        postEditorRef.current.setContent('');
+        toast.success('投稿が作成されました。');
       } catch (error) {
         console.error('Error creating post:', error);
+        toast.error('投稿の作成中にエラーが発生しました。');
       }
     }
   };
 
   const createComment = async (postId) => {
-    try {
-      const { data, error } = await supabase
-        .from('comments')
-        .insert([{ content: newComment, user_id: user.id, post_id: postId }])
-        .select(`
-          id,
-          content,
-          created_at,
-          user_id,
-          profiles:user_id (username, avatar_url)
-        `);
-      if (error) throw error;
-      const updatedPosts = posts.map(post => {
-        if (post.id === postId) {
-          return { ...post, comments: [...post.comments, data[0]] };
-        }
-        return post;
-      });
-      setPosts(updatedPosts);
-      setNewComment('');
-      setCommentingOn(null);
-    } catch (error) {
-      console.error('Error creating comment:', error);
+    if (commentEditorRef.current) {
+      const content = commentEditorRef.current.getContent();
+      if (!content.trim()) {
+        toast.error('コメント内容を入力してください。');
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('comments')
+          .insert([{ content, user_id: user.id, post_id: postId }])
+          .select(`
+            id,
+            content,
+            created_at,
+            user_id,
+            profiles:user_id (username, avatar_url)
+          `);
+        if (error) throw error;
+        const updatedPosts = posts.map(post => {
+          if (post.id === postId) {
+            return { ...post, comments: [...(post.comments || []), data[0]] };
+          }
+          return post;
+        });
+        setPosts(updatedPosts);
+        setNewComment('');
+        setCommentingOn(null);
+        commentEditorRef.current.setContent('');
+        toast.success('コメントが投稿されました。');
+      } catch (error) {
+        console.error('Error creating comment:', error);
+        toast.error('コメントの作成中にエラーが発生しました。');
+      }
     }
   };
 
   const toggleLike = async (postId) => {
+    if (!user) {
+      toast.error('いいねするにはログインが必要です。');
+      return;
+    }
+
     try {
       const likedPost = posts.find(post => post.id === postId);
-      const isLiked = likedPost.likes.some(like => like.user_id === user.id);
+      if (!likedPost) {
+        console.error('Post not found');
+        return;
+      }
+
+      const isLiked = likedPost.likes && Array.isArray(likedPost.likes) &&
+                      likedPost.likes.some(like => like.user_id === user.id);
       
       if (isLiked) {
         await supabase
@@ -115,90 +159,110 @@ export default function Community() {
       const updatedPosts = posts.map(post => {
         if (post.id === postId) {
           const updatedLikes = isLiked
-            ? post.likes.filter(like => like.user_id !== user.id)
-            : [...post.likes, { user_id: user.id }];
+            ? (post.likes || []).filter(like => like.user_id !== user.id)
+            : [...(post.likes || []), { user_id: user.id }];
           return { ...post, likes: updatedLikes };
         }
         return post;
       });
       setPosts(updatedPosts);
+      toast.success(isLiked ? 'いいねを取り消しました。' : 'いいねしました。');
     } catch (error) {
       console.error('Error toggling like:', error);
+      toast.error('いいねの更新中にエラーが発生しました。');
     }
   };
 
   const deletePost = async (postId) => {
-    try {
-      const { error } = await supabase
-        .from('posts')
-        .delete()
-        .eq('id', postId)
-        .eq('user_id', user.id);
-      if (error) throw error;
-      setPosts(posts.filter(post => post.id !== postId));
-    } catch (error) {
-      console.error('Error deleting post:', error);
+    if (window.confirm('本当にこの投稿を削除しますか？')) {
+      try {
+        const { error } = await supabase
+          .from('posts')
+          .delete()
+          .eq('id', postId)
+          .eq('user_id', user.id);
+        if (error) throw error;
+        setPosts(posts.filter(post => post.id !== postId));
+        toast.success('投稿が削除されました。');
+      } catch (error) {
+        console.error('Error deleting post:', error);
+        toast.error('投稿の削除中にエラーが発生しました。');
+      }
     }
   };
 
   const deleteComment = async (commentId) => {
-    try {
-      const { error } = await supabase
-        .from('comments')
-        .delete()
-        .eq('id', commentId)
-        .eq('user_id', user.id);
-      if (error) throw error;
-      const updatedPosts = posts.map(post => ({
-        ...post,
-        comments: post.comments.filter(comment => comment.id !== commentId)
-      }));
-      setPosts(updatedPosts);
-    } catch (error) {
-      console.error('Error deleting comment:', error);
+    if (window.confirm('本当にこのコメントを削除しますか？')) {
+      try {
+        const { error } = await supabase
+          .from('comments')
+          .delete()
+          .eq('id', commentId)
+          .eq('user_id', user.id);
+        if (error) throw error;
+        const updatedPosts = posts.map(post => ({
+          ...post,
+          comments: (post.comments || []).filter(comment => comment.id !== commentId)
+        }));
+        setPosts(updatedPosts);
+        toast.success('コメントが削除されました。');
+      } catch (error) {
+        console.error('Error deleting comment:', error);
+        toast.error('コメントの削除中にエラーが発生しました。');
+      }
     }
   };
 
+  if (isLoading) {
+    return <div>読み込み中...</div>;
+  }
+
+  if (error) {
+    return <div>エラーが発生しました: {error}</div>;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Community</h1>
+      <Toaster position="top-center" reverseOrder={false} />
+      <h1 className="text-3xl font-bold mb-8">コミュニティ</h1>
       
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>新しいDiscussionをはじめましょう</CardTitle>
+          <CardTitle>新しいディスカッションを始めましょう</CardTitle>
         </CardHeader>
         <CardContent>
           <Input
-            placeholder="Title"
+            placeholder="タイトル"
             value={newPost.title}
             onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
             className="mb-4"
           />
           <Editor
-            onInit={(evt, editor) => editorRef.current = editor}
+            onInit={(evt, editor) => postEditorRef.current = editor}
             initialValue=""
             init={{
               height: 300,
               menubar: false,
               plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount'
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'anchor',
+                'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
               ],
               toolbar: 'undo redo | formatselect | ' +
               'bold italic backcolor | alignleft aligncenter ' +
               'alignright alignjustify | bullist numlist outdent indent | ' +
               'removeformat | help',
-              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+              license_key: 'gpl'
             }}
             className="mb-4"
-            tinymceScriptSrc={'/tinymce/tinymce.min.js'} // TinyMCEのスクリプトへのパス
+            tinymceScriptSrc="/tinymce/tinymce.min.js"
           />
-          <Button onClick={createPost}>Post</Button>
+          <Button onClick={createPost}>投稿</Button>
         </CardContent>
       </Card>
 
-      <h2 className="text-2xl font-semibold mb-4">Recent Discussions</h2>
+      <h2 className="text-2xl font-semibold mb-4">最近のディスカッション</h2>
 
       {posts.map((post) => (
         <Card key={post.id} className="mb-4">
@@ -207,15 +271,15 @@ export default function Community() {
               <div className="flex items-center">
                 <Avatar className="mr-2">
                   <AvatarImage src={post.profiles?.avatar_url} />
-                  <AvatarFallback>{post.profiles?.username?.charAt(0) || 'U'}</AvatarFallback>
+                  <AvatarFallback>{post.profiles?.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                 </Avatar>
                 <div>
                   <CardTitle>{post.title}</CardTitle>
-                  <p className="text-sm text-gray-500">by {post.profiles?.username || 'Unknown User'}</p>
+                  <p className="text-sm text-gray-500">投稿者: {post.profiles?.username || '不明なユーザー'}</p>
                 </div>
               </div>
               {user && post.user_id === user.id && (
-                <Button variant="destructive" size="sm" onClick={() => deletePost(post.id)}>Delete</Button>
+                <Button variant="destructive" size="sm" onClick={() => deletePost(post.id)}>削除</Button>
               )}
             </div>
           </CardHeader>
@@ -228,8 +292,8 @@ export default function Community() {
                   size="sm"
                   onClick={() => toggleLike(post.id)}
                 >
-                  <ThumbsUp className={`mr-2 h-4 w-4 ${post.likes.some(like => like.user_id === user.id) ? 'text-blue-500' : ''}`} />
-                  {post.likes.length}
+                  <ThumbsUp className={`mr-2 h-4 w-4 ${post.likes && Array.isArray(post.likes) && post.likes.some(like => like.user_id === user?.id) ? 'text-blue-500' : ''}`} />
+                  {post.likes ? post.likes.length : 0}
                 </Button>
                 <Button
                   variant="ghost"
@@ -237,37 +301,52 @@ export default function Community() {
                   onClick={() => setCommentingOn(commentingOn === post.id ? null : post.id)}
                 >
                   <MessageSquare className="mr-2 h-4 w-4" />
-                  {post.comments.length}
+                  {post.comments ? post.comments.length : 0}
                 </Button>
               </div>
               <span className="text-sm text-gray-500">{new Date(post.created_at).toLocaleString()}</span>
             </CardFooter>
           </CardContent>
           <CardContent>
-            <h4 className="font-semibold mb-2">Comments:</h4>
+            <h4 className="font-semibold mb-2">コメント:</h4>
             {post.comments && post.comments.map((comment) => (
               <div key={comment.id} className="mb-2 pl-4 border-l-2 border-gray-200">
                 <div className="flex items-center justify-between">
-                  <p>
-                    <span className="font-semibold">{comment.profiles?.username || 'Unknown User'}: </span>
-                    {comment.content}
-                  </p>
+                  <div>
+                    <span className="font-semibold">{comment.profiles?.username || '不明なユーザー'}: </span>
+                    <div dangerouslySetInnerHTML={{ __html: comment.content }} />
+                  </div>
                   {user && comment.user_id === user.id && (
-                    <Button variant="ghost" size="sm" onClick={() => deleteComment(comment.id)}>Delete</Button>
+                    <Button variant="ghost" size="sm" onClick={() => deleteComment(comment.id)}>削除</Button>
                   )}
                 </div>
               </div>
             ))}
             {commentingOn === post.id && (
               <div className="mt-4">
-                <Textarea
-                  placeholder="Write a comment..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
+                <Editor
+                  onInit={(evt, editor) => commentEditorRef.current = editor}
+                  initialValue=""
+                  init={{
+                    height: 200,
+                    menubar: false,
+                    plugins: [
+                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                      'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | formatselect | ' +
+                    'bold italic backcolor | alignleft aligncenter  ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                    'removeformat | help',
+                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                    license_key: 'gpl'
+                  }}
                   className="mb-2"
+                  tinymceScriptSrc="/tinymce/tinymce.min.js"
                 />
-                <Button onClick={() => createComment(post.id)} className="mr-2">Submit</Button>
-                <Button variant="outline" onClick={() => setCommentingOn(null)}>Cancel</Button>
+                <Button onClick={() => createComment(post.id)} className="mr-2">送信</Button>
+                <Button variant="outline" onClick={() => setCommentingOn(null)}>キャンセル</Button>
               </div>
             )}
           </CardContent>
@@ -278,13 +357,13 @@ export default function Community() {
           onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
           disabled={currentPage === 0}
         >
-          Previous Page
+          前のページ
         </Button>
         <Button
           onClick={() => setCurrentPage(prev => prev + 1)}
           disabled={posts.length < POSTS_PER_PAGE}
         >
-          Next Page
+          次のページ
         </Button>
       </div>
     </div>

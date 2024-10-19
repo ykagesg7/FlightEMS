@@ -23,17 +23,24 @@ const Header = () => {
 
   const fetchProfile = useCallback(async () => {
     if (user) {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('avatar_url, roll')
-        .eq('id', user.id)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('avatar_url, roll')
+          .eq('id', user.id)
+          .single();
 
-      if (error) {
-        console.error('Error fetching profile:', error);
-      } else {
-        setProfile(data);
+        if (error) {
+          console.error('Error fetching profile:', error);
+        } else {
+          setProfile(data);
+        }
+      } catch (error) {
+        console.error('Error in fetchProfile:', error);
+      } finally {
+        setLoading(false);
       }
+    } else {
       setLoading(false);
     }
   }, [user]);
@@ -76,7 +83,16 @@ const Header = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>; // ローディング中の表示
+    return (
+      <header className="bg-white shadow-md">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <NavLink to="/" className="text-2xl font-bold text-blue-600">Flight Academy</NavLink>
+            <div>Loading...</div>
+          </div>
+        </div>
+      </header>
+    );
   }
 
   return (

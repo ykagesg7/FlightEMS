@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, Polyline, useMapEvents, Popup, LayersControl, GeoJSON, useMap } from 'react-leaflet';
+import { TileLayer, Marker, Polyline, useMapEvents, Popup, LayersControl, GeoJSON, useMap, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { defaultIcon, pointToLayer, formatCoordinates } from '../../utils/mapUtils';
@@ -140,6 +140,16 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
     return info;
   };
 
+  const onEachFeature = (feature, layer) => {
+    if (feature.properties && feature.properties.Area_ID) {
+      layer.bindTooltip(feature.properties.Area_ID, {
+        permanent: true,
+        direction: 'center',
+        className: 'area-id-label'
+      });
+    }
+  };
+
   return (
     <>
       <MapEvents />
@@ -164,10 +174,10 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             <GeoJSON 
               data={accSectorHighData} 
               style={() => ({
-                color: 'blue',
+                color: 'gray',
                 weight: 1,
                 opacity: 0.6,
-                fillColor: 'blue',
+                fillColor: 'gray',
                 fillOpacity: 0.2
               })}
             />
@@ -179,10 +189,10 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             <GeoJSON 
               data={accSectorLowData} 
               style={() => ({
-                color: 'blue',
+                color: 'yellow',
                 weight: 1,
                 opacity: 0.6,
-                fillColor: 'green',
+                fillColor: 'yellow',
                 fillOpacity: 0.2
               })}
             />
@@ -197,10 +207,15 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
                 color: 'blue',
                 weight: 1,
                 opacity: 0.6,
-                fillColor: 'green',
+                fillColor: 'blue',
                 fillOpacity: 0.2
               })}
-            />
+              onEachFeature={onEachFeature}
+            >
+              <Tooltip permanent direction="center" className="bg-transparent border-none shadow-none font-bold text-black">
+                {(layer) => layer.feature.properties.Area_ID}
+              </Tooltip>
+            </GeoJSON>
           )}
         </LayersControl.Overlay>
 
@@ -209,7 +224,7 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             <GeoJSON 
               data={trainingAreaLow} 
               style={() => ({
-                color: 'blue',
+                color: 'green',
                 weight: 1,
                 opacity: 0.6,
                 fillColor: 'green',
@@ -224,11 +239,11 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             <GeoJSON 
               data={trainingAreaCivil} 
               style={() => ({
-                color: 'blue',
+                color: 'gray',
                 weight: 1,
                 opacity: 0.6,
                 fillColor: 'gray',
-                fillOpacity: 0.2
+                fillOpacity: 0.4
               })}
             />
           )}
