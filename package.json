@@ -4,12 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "clean": "rimraf node_modules package-lock.json",
+    "clean:install": "npm run clean && npm install",
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "copy-tinymce": "mkdir -p public/tinymce && cp node_modules/tinymce/tinymce.min.js public/tinymce && cp -r node_modules/tinymce/{themes,skins,icons,plugins} public/tinymce/",
+    "copy-tinymce": "node scripts/copy-tinymce.js",
     "postinstall": "npm run copy-tinymce"
   },
   "dependencies": {
@@ -86,10 +88,11 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "glob": "^11.0.0",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.10",
     "postcss": "^8.4.38",
-    "rimraf": "^6.0.1",
+    "rimraf": "^5.0.5",
     "tailwindcss": "^3.4.4",
     "vite": "^5.1.4"
-  }
+  } 
 }

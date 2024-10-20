@@ -3,13 +3,13 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
 export default defineConfig({
-  base: './',
+  base: '/',
   plugins: [react()],
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     rollupOptions: {
-      external: ['react-hot-toast']
+      external: [] // react-hot-toastを外部依存から削除
     }
   },
   resolve: {
