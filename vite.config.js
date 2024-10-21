@@ -5,17 +5,19 @@ import { resolve } from 'path';
 export default defineConfig({
   base: '/',
   plugins: [react()],
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+      },
+    },
+  },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-      },
-      output: {
-        manualChunks: {
-          tinymce: ['tinymce'],
-        },
       },
     },
   },
@@ -25,6 +27,6 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['react-hot-toast']
+    include: ['react-hot-toast', 'react-quill']
   }
 });

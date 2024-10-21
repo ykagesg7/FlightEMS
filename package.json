@@ -4,16 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "clean": "rimraf node_modules package-lock.json",
+    "clean": "npx rimraf node_modules/.vite",
     "clean:install": "npm run clean && npm install",
     "dev": "vite",
-    "build": "vite build && node scripts/copy-tinymce.js",
+    "build": "npx vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "copy-tinymce": "node scripts/copy-tinymce.js",
-    "postinstall": "node scripts/copy-tinymce.js",
-    "postbuild":"node scripts/copy-tinymce.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.6.0",
@@ -46,7 +43,6 @@
     "@radix-ui/react-tooltip": "^1.1.0",
     "@supabase/supabase-js": "^2.45.3",
     "@tanstack/react-query": "^5.59.8",
-    "@tinymce/tinymce-react": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^1.0.0",
@@ -68,6 +64,7 @@
     "react-hot-toast": "^2.4.1",
     "react-intersection-observer": "^9.13.1",
     "react-leaflet": "^4.2.1",
+    "react-quill": "^2.0.0",
     "react-resizable-panels": "^2.0.19",
     "react-router-dom": "^6.23.1",
     "recharts": "^2.12.7",
@@ -92,8 +89,8 @@
     "fs-extra": "^11.2.0",
     "glob": "^10.3.10",
     "postcss": "^8.4.38",
-    "rimraf": "^5.0.5",
+    "rimraf": "^6.0.1",
     "tailwindcss": "^3.4.4",
-    "vite": "^5.1.4"
-  } 
+    "vite": "^5.4.9"
+  }
 }
