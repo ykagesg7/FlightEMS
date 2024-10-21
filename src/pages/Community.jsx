@@ -256,7 +256,7 @@ export default function Community() {
               license_key: 'gpl'
             }}
             className="mb-4"
-            tinymceScriptSrc="/tinymce/tinymce.min.js"
+            tinymceScriptSrc={process.env.NODE_ENV === 'production' ? '/tinymce/tinymce.min.js' : '/tinymce/tinymce.min.js'}
           />
           <Button onClick={createPost}>投稿</Button>
         </CardContent>
