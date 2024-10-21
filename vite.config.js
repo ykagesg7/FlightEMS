@@ -11,9 +11,13 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        tinymce: resolve(__dirname, 'public/tinymce/tinymce.min.js')
-      }
-    }
+      },
+      output: {
+        manualChunks: {
+          tinymce: ['tinymce'],
+        },
+      },
+    },
   },
   resolve: {
     alias: {
