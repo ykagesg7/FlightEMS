@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThumbsUp, MessageSquare } from 'lucide-react';
-import { Editor } from '@tinymce/tinymce-react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { toast, Toaster } from 'react-hot-toast';
 
 const POSTS_PER_PAGE = 10;
@@ -20,8 +21,6 @@ export default function Community() {
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const postEditorRef = useRef(null);
-  const commentEditorRef = useRef(null);
 
   useEffect(() => {
     fetchPosts();
@@ -59,72 +58,64 @@ export default function Community() {
   };
 
   const createPost = async () => {
-    if (postEditorRef.current) {
-      const content = postEditorRef.current.getContent();
-      if (!newPost.title.trim() || !content.trim()) {
-        toast.error('タイトルと内容を入力してください。');
-        return;
-      }
+    if (!newPost.title.trim() || !newPost.content.trim()) {
+      toast.error('タイトルと内容を入力してください。');
+      return;
+    }
 
-      if (!window.confirm('投稿してもよろしいですか？')) {
-        return;
-      }
+    if (!window.confirm('投稿してもよろしいですか？')) {
+      return;
+    }
 
-      try {
-        const { data, error } = await supabase
-          .from('posts')
-          .insert([{ ...newPost, content, user_id: user.id }])
-          .select(`
-            *,
-            profiles:user_id (username, avatar_url)
-          `);
-        if (error) throw error;
-        setPosts([data[0], ...posts]);
-        setNewPost({ title: '', content: '' });
-        postEditorRef.current.setContent('');
-        toast.success('投稿が作成されました。');
-      } catch (error) {
-        console.error('Error creating post:', error);
-        toast.error('投稿の作成中にエラーが発生しました。');
-      }
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .insert([{ ...newPost, user_id: user.id }])
+        .select(`
+          *,
+          profiles:user_id (username, avatar_url)
+        `);
+      if (error) throw error;
+      setPosts([data[0], ...posts]);
+      setNewPost({ title: '', content: '' });
+      toast.success('投稿が作成されました。');
+    } catch (error) {
+      console.error('Error creating post:', error);
+      toast.error('投稿の作成中にエラーが発生しました。');
     }
   };
 
   const createComment = async (postId) => {
-    if (commentEditorRef.current) {
-      const content = commentEditorRef.current.getContent();
-      if (!content.trim()) {
-        toast.error('コメント内容を入力してください。');
-        return;
-      }
+    if (!newComment.trim()) {
+      toast.error('コメント内容を入力してください。');
+      return;
+    }
 
-      try {
-        const { data, error } = await supabase
-          .from('comments')
-          .insert([{ content, user_id: user.id, post_id: postId }])
-          .select(`
-            id,
-            content,
-            created_at,
-            user_id,
-            profiles:user_id (username, avatar_url)
-          `);
-        if (error) throw error;
-        const updatedPosts = posts.map(post => {
-          if (post.id === postId) {
-            return { ...post, comments: [...(post.comments || []), data[0]] };
-          }
-          return post;
-        });
-        setPosts(updatedPosts);
-        setNewComment('');
-        setCommentingOn(null);
-        commentEditorRef.current.setContent('');
-        toast.success('コメントが投稿されました。');
-      } catch (error) {
-        console.error('Error creating comment:', error);
-        toast.error('コメントの作成中にエラーが発生しました。');
-      }
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .insert([{ content: newComment, user_id: user.id, post_id: postId }])
+        .select(`
+          id,
+          content,
+          created_at,
+          user_id,
+          profiles:user_id (username, avatar_url)
+        `);
+      if (error) throw error;
+      const updatedPosts = posts.map(post => {
+        if (post.id === postId) {
+          return { ...post, comments: [...(post.comments || []), data[0]] };
+        }
+        return post;
+      });
+      setPosts(updatedPosts);
+      setNewComment('');
+      setCommentingOn(null);
+      toast.success('コメントが投稿されました。');
+    } catch (error) {
+      console.error('Error creating comment:', error);
+      toast.error('コメントの作成中にエラーが発生しました。');
     }
   };
 
@@ -237,28 +228,10 @@ export default function Community() {
             onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
             className="mb-4"
           />
-          <Editor
-            onInit={(evt, editor) => {
-              postEditorRef.current = editor;
-              console.log('TinyMCE initialized', editor);
-            }}
-            initialValue=""
-            init={{
-              selector: 'textarea#myTextArea',
-              height: 300,
-              menubar: false,
-              plugins: [
-                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'anchor',
-                'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-              ],
-              toolbar: 'undo redo | formatselect | ' +
-              'bold italic backcolor | alignleft aligncenter ' +
-              'alignright alignjustify | bullist numlist outdent indent | ' +
-              'removeformat | help',
-              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-            }}
-            tinymceScriptSrc="/tinymce/tinymce.min.js"
+          <ReactQuill
+            value={newPost.content}
+            onChange={(content) => setNewPost({ ...newPost, content })}
+            className="mb-4"
           />
           <Button onClick={createPost}>投稿</Button>
         </CardContent>
@@ -326,26 +299,10 @@ export default function Community() {
             ))}
             {commentingOn === post.id && (
               <div className="mt-4">
-                <Editor
-                  onInit={(evt, editor) => commentEditorRef.current = editor}
-                  initialValue=""
-                  init={{
-                    height: 200,
-                    menubar: false,
-                    plugins: [
-                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                      'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-                    ],
-                    toolbar: 'undo redo | formatselect | ' +
-                    'bold italic backcolor | alignleft aligncenter  ' +
-                    'alignright alignjustify | bullist numlist outdent indent | ' +
-                    'removeformat | help',
-                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                    license_key: 'gpl'
-                  }}
+                <ReactQuill
+                  value={newComment}
+                  onChange={setNewComment}
                   className="mb-2"
-                  tinymceScriptSrc="/tinymce/tinymce.min.js"
                 />
                 <Button onClick={() => createComment(post.id)} className="mr-2">送信</Button>
                 <Button variant="outline" onClick={() => setCommentingOn(null)}>キャンセル</Button>
