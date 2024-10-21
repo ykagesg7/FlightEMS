@@ -7,12 +7,13 @@
     "clean": "rimraf node_modules package-lock.json",
     "clean:install": "npm run clean && npm install",
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/copy-tinymce.js",
     "build:dev": "vite build --mode development",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "copy-tinymce": "node scripts/copy-tinymce.js",
-    "postinstall": "npm run copy-tinymce"
+    "postinstall": "node scripts/copy-tinymce.js",
+    "postbuild":"node scripts/copy-tinymce.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.6.0",

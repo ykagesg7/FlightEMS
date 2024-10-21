@@ -9,7 +9,10 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     rollupOptions: {
-      external: [] // react-hot-toastを外部依存から削除
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        tinymce: resolve(__dirname, 'public/tinymce/tinymce.min.js')
+      }
     }
   },
   resolve: {
