@@ -238,9 +238,13 @@ export default function Community() {
             className="mb-4"
           />
           <Editor
-            onInit={(evt, editor) => postEditorRef.current = editor}
+            onInit={(evt, editor) => {
+              postEditorRef.current = editor;
+              console.log('TinyMCE initialized', editor);
+            }}
             initialValue=""
             init={{
+              selector: 'textarea#myTextArea',
               height: 300,
               menubar: false,
               plugins: [
@@ -253,10 +257,8 @@ export default function Community() {
               'alignright alignjustify | bullist numlist outdent indent | ' +
               'removeformat | help',
               content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-              license_key: 'gpl'
             }}
-            className="mb-4"
-            tinymceScriptSrc={process.env.NODE_ENV === 'production' ? '/tinymce/tinymce.min.js' : '/tinymce/tinymce.min.js'}
+            tinymceScriptSrc="/tinymce/tinymce.min.js"
           />
           <Button onClick={createPost}>投稿</Button>
         </CardContent>
