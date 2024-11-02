@@ -134,7 +134,7 @@ const WeatherBasics2 = () => {
             } else {
               throw error;
             }
-          } else if (data?.completed_units?.includes('WeatherBasics2')) {
+          } else if (data?.completed_units?.includes('WeatherBasics-1-2')) {
             setTestCompleted(true);
           }
         }
@@ -181,15 +181,15 @@ const WeatherBasics2 = () => {
                 .from('user_progress')
                 .insert({ 
                   user_id: user.id, 
-                  completed_units: ['WeatherBasics2']
+                  completed_units: ['WeatherBasics-1-2']
                 });
             } else {
               throw error;
             }
           } else {
             const completedUnits = data.completed_units || [];
-            if (!completedUnits.includes('WeatherBasics2')) {
-              completedUnits.push('WeatherBasics2');
+            if (!completedUnits.includes('WeatherBasics-1-2')) {
+              completedUnits.push('WeatherBasics-1-2');
               await supabase
                 .from('user_progress')
                 .update({ completed_units: completedUnits })
@@ -202,6 +202,7 @@ const WeatherBasics2 = () => {
           title: "おめでとうございます！",
           description: "トロポポーズの役割の学習を完了しました。",
         });
+        navigate('/course');
       } catch (error) {
         console.error('Error updating user progress:', error);
         await toast({
@@ -245,11 +246,7 @@ const WeatherBasics2 = () => {
       )}
       
       <Tabs defaultValue="slides" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="slides">学習内容</TabsTrigger>
-          <TabsTrigger value="test">理解度テスト</TabsTrigger>
-        </TabsList>
-        
+                
         <TabsContent value="slides">
           <Card>
             <CardHeader>
@@ -264,6 +261,11 @@ const WeatherBasics2 = () => {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="slides">学習内容</TabsTrigger>
+          <TabsTrigger value="test">理解度テスト</TabsTrigger>
+        </TabsList>
 
         <TabsContent value="test">
           <Card>

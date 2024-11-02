@@ -134,7 +134,7 @@ const WeatherBasics1 = () => {
             } else {
               throw error;
             }
-          } else if (data?.completed_units?.includes('WeatherBasics1')) {
+          } else if (data?.completed_units?.includes('weather-basics-1-1')) {
             setTestCompleted(true);
           }
         }
@@ -181,15 +181,15 @@ const WeatherBasics1 = () => {
                 .from('user_progress')
                 .insert({ 
                   user_id: user.id, 
-                  completed_units: ['WeatherBasics1']
+                  completed_units: ['weather-basics-1-1']
                 });
             } else {
               throw error;
             }
           } else {
             const completedUnits = data.completed_units || [];
-            if (!completedUnits.includes('WeatherBasics1')) {
-              completedUnits.push('WeatherBasics1');
+            if (!completedUnits.includes('weather-basics-1-1')) {
+              completedUnits.push('weather-basics-1-1');
               await supabase
                 .from('user_progress')
                 .update({ completed_units: completedUnits })
@@ -198,20 +198,21 @@ const WeatherBasics1 = () => {
           }
         }
         setTestCompleted(true);
-        toast({
+        await toast({
           title: "おめでとうございます！",
           description: "大気の層とその特徴の学習を完了しました。",
         });
+        navigate('/course');
       } catch (error) {
         console.error('Error updating user progress:', error);
-        toast({
+        await toast({
           title: "エラー",
           description: "進捗の更新中にエラーが発生しました。",
           variant: "destructive",
         });
       }
     } else {
-      toast({
+      await toast({
         title: "もう一度挑戦してください",
         description: `正解数: ${score}/${comprehensionTest.length}`,
         variant: "destructive",
@@ -245,11 +246,7 @@ const WeatherBasics1 = () => {
       )}
       
       <Tabs defaultValue="slides" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="slides">学習内容</TabsTrigger>
-          <TabsTrigger value="test">理解度テスト</TabsTrigger>
-        </TabsList>
-        
+                
         <TabsContent value="slides">
           <Card>
             <CardHeader>
@@ -264,6 +261,11 @@ const WeatherBasics1 = () => {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="slides">学習内容</TabsTrigger>
+          <TabsTrigger value="test">理解度テスト</TabsTrigger>
+        </TabsList>
 
         <TabsContent value="test">
           <Card>

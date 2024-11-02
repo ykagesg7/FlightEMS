@@ -12,10 +12,21 @@ import { useAuth } from '../contexts/AuthContext'; // AuthContextをインポー
 export default function Index() {
   const { user } = useAuth(); // AuthContextからユーザー情報を取得
   const [announcements, setAnnouncements] = useState([
-    { id: 1, title: "Courseページを実装しました。自分のペースで課目を学習できます。コンテンツは今後充実させていきます。", date: "2024-09-29" },
-    { id: 2, title: "Flight Planning機能を実装しました。出発・到着地、Waypointを入力し、簡易的な計算結果と地図を表示します。引き続き機能拡張中です。", date: "2024-09-23" },
-    { id: 3, title: "Communityの投稿機能を実装しました。", date: "2024-09-19" },
-    
+    {
+      id: 1,
+      title: "Courseページに航空気象のコースを追加しました。",
+      date: "2024-10-31"
+    },
+    {
+      id: 2,
+      title: "Flight Planningページに訓練空域のレイヤーを追加しました。",
+      date: "2024-10-31"
+    },
+    {
+      id: 3,
+      title: "Communityの投稿機能を実装しました。",
+      date: "2024-09-19"
+    }
   ]);
 
   const [topPerformers, setTopPerformers] = useState([]);

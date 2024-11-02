@@ -10,108 +10,108 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const comprehensionTest = [
   {
-    question: "高度が上がると大気圧はどのように変化しますか？",
+    question: "地表付近の大気を構成する最も多い気体はどれですか？",
     options: [
-      "上昇する",
-      "低下する",
-      "一定である",
-      "日によって変わる"
+      "酸素（O₂）",
+      "窒素（N₂）",
+      "アルゴン（Ar）",
+      " 二酸化炭素（CO₂）"
     ],
     correctAnswer: 1
   },
   {
-    question: "海面高度における標準気圧は次のうちどれですか？",
+    question: "大気中の酸素の体積比率はおよそ何％ですか？",
     options: [
-      "1,000hPa",
-      "995hPa",
-      "1,013hPa",
-      "1,020hPa"
-    ],
-    correctAnswer: 2
-  },
-  {
-    question: "標準大気において、気圧が半分になる高度はいくつですか？",
-    options: [
-      "10,000ft",
-      "20,000ft",
-      "30,000ft",
-      "40,000ft"
+      "約78%",
+      "約21%",
+      "約0.93%",
+      "約0.04%"
     ],
     correctAnswer: 1
   },
   {
-    question: "高度計をQNHに設定すると、どのような高度を示しますか？",
+    question: "大気中の微量成分で、温室効果ガスとして気候に大きな影響を与えるのはどれですか？",
     options: [
-      "標高ゼロからの高度（真高度）",
-      "飛行場の標高からの高度（相対高度）",
-      "海面高度からの高度（平均海面高度）",
-      "気圧高度からの高度（気圧高度）"
+      "酸素（O₂）",
+      "窒素（N₂）",
+      "アルゴン（Ar）",
+      " 二酸化炭素（CO₂）"
+    ],
+    correctAnswer: 3
+  },
+  {
+    question: "水蒸気が大気中に含まれる最大の割合は約何％ですか？",
+    options: [
+      "約1%",
+      "約2%",
+      "約4%",
+      "約10%"
     ],
     correctAnswer: 2
   },
   {
-    question: "高度計の設定を誤るとどのような危険がありますか？",
+    question: "高度約36,000ftまでの対流圏内で、大気の主な成分の割合はどのようになりますか？",
     options: [
-      "燃料消費が増える",
-      "通信が途絶える",
-      "実際の高度と異なる高度を示し、衝突のリスクが高まる",
-      "エンジンが停止する"
+      "高度とともに大きく変化する",
+      "高度とともに減少する",
+      "ほぼ一定である",
+      "高度とともに増加する"
     ],
     correctAnswer: 2
   },
   {
-    question: "標高の高い空港で離陸する際に注意すべき点はどれですか？",
+    question: "高高度で酸素マスクが必要となる理由は何ですか？",
     options: [
-      "空気密度が高く、揚力が過剰になる",
-      "空気密度が低く、離陸距離が長くなる",
-      "気圧が高く、エンジンが過負荷になる",
-      "気温が低く、燃料が凍結する"
+      "酸素の割合が低下するため",
+      "気圧の低下により酸素の分圧が低下するため",
+      "二酸化炭素濃度が上昇するため",
+      "窒素が不足するため"
     ],
     correctAnswer: 1
   },
   {
-    question: "気圧高度計が高度を測定する際に利用する原理は何ですか？",
+    question: "次のうち、不活性ガスであり、大気中に約0.93%含まれるのはどれですか？",
     options: [
-      "GPS衛星からの信号",
-      "電波高度計による地表面との距離計測",
-      "大気圧の変化によるカプセルの変形",
-      "気温の変化による膨張収縮"
+      "ヘリウム（He）",
+      "ネオン（Ne）",
+      "アルゴン（Ar）",
+      "キセノン（Xe）"
     ],
     correctAnswer: 2
   },
   {
-    question: "高度10,000ftでの標準大気圧はおよそ何hPaですか？",
+    question: "大気中の窒素が生物の利用可能な形になる過程を何といいますか？",
     options: [
-      "1,013hPa",
-      "850hPa",
-      "700hPa",
-      "250hPa"
+      "窒素循環",
+      "窒素固定",
+      "光合成",
+      "蒸発"
     ],
-    correctAnswer: 2
+    correctAnswer: 1
   },
   {
-    question: "高度計設定の「QNE」とは何を意味しますか？",
+    question: "対流圏よりも高高度では、大気の成分の割合が変化する主な理由は何ですか？",
     options: [
-      "現地の気圧に合わせる設定",
-      "滑走路面で高度計をゼロに合わせる設定",
-      "気圧を1013.25 hPaに設定すること",
-      "高度計を使用しない設定"
+      "温度の上昇による化学反応の促進",
+      "重力による分子量の違いによる成分分離",
+      "太陽風による成分の吹き飛ばし",
+      "地球の磁場の影響"
     ],
-    correctAnswer: 2
+    correctAnswer: 1
   },
   {
-    question: "高度が増すとエンジン性能が低下する主な理由は何ですか？",
+    question: "航空機の排出が地球温暖化に影響を与える主な理由は何ですか？",
     options: [
-      "空気密度が低下し、酸素供給が減少するため",
-      "気温が高くなり、エンジンが過熱するため",
-      "重力が弱くなり、燃焼効率が落ちるため",
-      "風速が増し、エンジンが逆回転するため"
+      "窒素の排出による大気汚染",
+      "大量の酸素を消費するため",
+      "二酸化炭素の排出による温室効果ガスの増加",
+      "アルゴンの放出による気候変動"
     ],
-    correctAnswer: 0
+    correctAnswer: 2
   }
 ];
 
-const WeatherBasics3 = () => {
+const WeatherBasics4 = () => {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [testCompleted, setTestCompleted] = useState(false);
   const { toast } = useToast();
@@ -134,13 +134,13 @@ const WeatherBasics3 = () => {
             } else {
               throw error;
             }
-          } else if (data?.completed_units?.includes('WeatherBasics-1-3')) {
+          } else if (data?.completed_units?.includes('weather-basics-2-1')) {
             setTestCompleted(true);
           }
         }
       } catch (error) {
         console.error('Error checking completion status:', error);
-        await toast({
+        toast({
           title: "エラー",
           description: "完了状況の確認中にエラーが発生しました。",
           variant: "destructive",
@@ -181,15 +181,15 @@ const WeatherBasics3 = () => {
                 .from('user_progress')
                 .insert({ 
                   user_id: user.id, 
-                  completed_units: ['WeatherBasics-1-3']
+                  completed_units: ['weather-basics-2-1']
                 });
             } else {
               throw error;
             }
           } else {
             const completedUnits = data.completed_units || [];
-            if (!completedUnits.includes('WeatherBasics-1-3')) {
-              completedUnits.push('WeatherBasics-1-3');
+            if (!completedUnits.includes('weather-basics-2-1')) {
+              completedUnits.push('weather-basics-2-1');
               await supabase
                 .from('user_progress')
                 .update({ completed_units: completedUnits })
@@ -200,7 +200,7 @@ const WeatherBasics3 = () => {
         setTestCompleted(true);
         await toast({
           title: "おめでとうございます！",
-          description: "気圧と高度の関係の学習を完了しました。",
+          description: "大気の層とその特徴の学習を完了しました。",
         });
         navigate('/course');
       } catch (error) {
@@ -227,13 +227,13 @@ const WeatherBasics3 = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">気圧と高度の関係</h1>
-
+      <h1 className="text-3xl font-bold mb-8">大気の主な成分</h1>
+      
       {testCompleted && (
         <Card className="mb-8">
           <CardContent className="pt-6">
             <p className="text-lg font-semibold text-green-600 mb-4">
-              おめでとうございます！大気の層とその特徴の学習を完了しました。
+              おめでとうございます！大気の主な成分の学習を完了しました。
             </p>
             <Button onClick={handleRetakeTest} className="mr-4">
               テストを再受験
@@ -254,9 +254,9 @@ const WeatherBasics3 = () => {
             </CardHeader>
             <CardContent>
               <iframe
-                src="/Weather/Weather1-1-3.html"
+                src="/Weather/Weather1-2-1.html"
                 className="w-full h-[600px] border-0"
-                title="気圧と高度の関係"
+                title="大気の層とその特徴"
               />
             </CardContent>
           </Card>
@@ -304,4 +304,4 @@ const WeatherBasics3 = () => {
   );
 };
 
-export default WeatherBasics3;
+export default WeatherBasics4;

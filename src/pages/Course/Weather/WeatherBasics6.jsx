@@ -10,108 +10,108 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const comprehensionTest = [
   {
-    question: "高度が上がると大気圧はどのように変化しますか？",
+    question: "気温の減率とは何を示すものですか？",
     options: [
-      "上昇する",
-      "低下する",
-      "一定である",
-      "日によって変わる"
+      "高度が上がるにつれて気温が上昇する割合",
+      "高度が上がっても気温が変化しない現象",
+      "高度が上がるにつれて気温が低下する割合",
+      "高度と気温の関係が逆転する現象"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "国際標準大気（ISA）における標準の気温減率はどれですか？",
+    options: [
+      "約1℃/1,000ft",
+      "約2℃/1,000ft",
+      "約3℃/1,000ft",
+      "約4℃/1,000ft"
     ],
     correctAnswer: 1
   },
   {
-    question: "海面高度における標準気圧は次のうちどれですか？",
+    question: "乾燥断熱減率の値として正しいのは次のうちどれですか？",
     options: [
-      "1,000hPa",
-      "995hPa",
-      "1,013hPa",
-      "1,020hPa"
-    ],
-    correctAnswer: 2
-  },
-  {
-    question: "標準大気において、気圧が半分になる高度はいくつですか？",
-    options: [
-      "10,000ft",
-      "20,000ft",
-      "30,000ft",
-      "40,000ft"
+      "約1℃/1,000ft",
+      "約2℃/1,000ft",
+      "約3℃/1,000ft",
+      "約4℃/1,000ft"
     ],
     correctAnswer: 1
   },
   {
-    question: "高度計をQNHに設定すると、どのような高度を示しますか？",
+    question: "湿潤断熱減率が乾燥断熱減率より小さい理由は何ですか？",
     options: [
-      "標高ゼロからの高度（真高度）",
-      "飛行場の標高からの高度（相対高度）",
-      "海面高度からの高度（平均海面高度）",
-      "気圧高度からの高度（気圧高度）"
-    ],
-    correctAnswer: 2
-  },
-  {
-    question: "高度計の設定を誤るとどのような危険がありますか？",
-    options: [
-      "燃料消費が増える",
-      "通信が途絶える",
-      "実際の高度と異なる高度を示し、衝突のリスクが高まる",
-      "エンジンが停止する"
-    ],
-    correctAnswer: 2
-  },
-  {
-    question: "標高の高い空港で離陸する際に注意すべき点はどれですか？",
-    options: [
-      "空気密度が高く、揚力が過剰になる",
-      "空気密度が低く、離陸距離が長くなる",
-      "気圧が高く、エンジンが過負荷になる",
-      "気温が低く、燃料が凍結する"
+      "湿った空気は軽いため、上昇しやすいから",
+      "水蒸気の凝結により潜熱が放出され、冷却が緩和されるから",
+      "湿った空気は熱を吸収しやすいから",
+      "水蒸気が蒸発して熱を奪うから"
     ],
     correctAnswer: 1
   },
   {
-    question: "気圧高度計が高度を測定する際に利用する原理は何ですか？",
+    question: "環境気温減率が乾燥断熱減率より大きい場合の大気の状態は何ですか？",
     options: [
-      "GPS衛星からの信号",
-      "電波高度計による地表面との距離計測",
-      "大気圧の変化によるカプセルの変形",
-      "気温の変化による膨張収縮"
+      "安定",
+      "条件付き不安定",
+      "不安定",
+      "中立"
     ],
     correctAnswer: 2
   },
   {
-    question: "高度10,000ftでの標準大気圧はおよそ何hPaですか？",
+    question: "不安定な大気で発生しやすい気象現象はどれですか？",
     options: [
-      "1,013hPa",
-      "850hPa",
-      "700hPa",
-      "250hPa"
+      "霧の発生",
+      "積乱雲の形成",
+      "逆転層の出現",
+      "高気圧の停滞"
     ],
-    correctAnswer: 2
+    correctAnswer: 1
   },
   {
-    question: "高度計設定の「QNE」とは何を意味しますか？",
+    question: "航空機が乱気流に遭遇しやすいのは、どのような大気の安定度のときですか？",
     options: [
-      "現地の気圧に合わせる設定",
-      "滑走路面で高度計をゼロに合わせる設定",
-      "気圧を1013.25 hPaに設定すること",
-      "高度計を使用しない設定"
+      "安定な大気",
+      "不安定な大気",
+      "等温層",
+      "逆転層"
     ],
-    correctAnswer: 2
+    correctAnswer: 1
   },
   {
-    question: "高度が増すとエンジン性能が低下する主な理由は何ですか？",
+    question: "標準大気において、海抜0ftでの気温が15℃のとき、高度5,000ftでの気温は何℃になりますか？",
     options: [
-      "空気密度が低下し、酸素供給が減少するため",
-      "気温が高くなり、エンジンが過熱するため",
-      "重力が弱くなり、燃焼効率が落ちるため",
-      "風速が増し、エンジンが逆回転するため"
+      "5℃",
+      "10℃",
+      "0℃",
+      "-5℃"
     ],
     correctAnswer: 0
+  },
+  {
+    question: "湿潤断熱減率が乾燥断熱減率より小さいことが示す意味は何ですか？",
+    options: [
+      "湿った空気は温度の低下が緩やかである",
+      "湿った空気は温度の低下が急激である",
+      "乾いた空気は温度が上昇する",
+      "湿った空気は温度が一定である"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "大気の安定度が航空機の飛行計画に影響を与える理由として正しいものはどれですか？",
+    options: [
+      "大気の安定度によって飛行禁止区域が変わるため",
+      "エンジンの出力が大きく変化するため",
+      "乱気流や積乱雲の発生を予測し、飛行経路や高度を選択する必要があるため",
+      "パイロットの視界が大きく遮られるため"
+    ],
+    correctAnswer: 2
   }
 ];
 
-const WeatherBasics3 = () => {
+const WeatherBasics6 = () => {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [testCompleted, setTestCompleted] = useState(false);
   const { toast } = useToast();
@@ -134,13 +134,13 @@ const WeatherBasics3 = () => {
             } else {
               throw error;
             }
-          } else if (data?.completed_units?.includes('WeatherBasics-1-3')) {
+          } else if (data?.completed_units?.includes('weather-basics-3-1')) {
             setTestCompleted(true);
           }
         }
       } catch (error) {
         console.error('Error checking completion status:', error);
-        await toast({
+        toast({
           title: "エラー",
           description: "完了状況の確認中にエラーが発生しました。",
           variant: "destructive",
@@ -181,15 +181,15 @@ const WeatherBasics3 = () => {
                 .from('user_progress')
                 .insert({ 
                   user_id: user.id, 
-                  completed_units: ['WeatherBasics-1-3']
+                  completed_units: ['weather-basics-3-1']
                 });
             } else {
               throw error;
             }
           } else {
             const completedUnits = data.completed_units || [];
-            if (!completedUnits.includes('WeatherBasics-1-3')) {
-              completedUnits.push('WeatherBasics-1-3');
+            if (!completedUnits.includes('weather-basics-3-1')) {
+              completedUnits.push('weather-basics-3-1');
               await supabase
                 .from('user_progress')
                 .update({ completed_units: completedUnits })
@@ -200,7 +200,7 @@ const WeatherBasics3 = () => {
         setTestCompleted(true);
         await toast({
           title: "おめでとうございます！",
-          description: "気圧と高度の関係の学習を完了しました。",
+          description: "気温の減率とその意味の学習を完了しました。",
         });
         navigate('/course');
       } catch (error) {
@@ -227,13 +227,13 @@ const WeatherBasics3 = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">気圧と高度の関係</h1>
-
+      <h1 className="text-3xl font-bold mb-8">気温の減率とその意味</h1>
+      
       {testCompleted && (
         <Card className="mb-8">
           <CardContent className="pt-6">
             <p className="text-lg font-semibold text-green-600 mb-4">
-              おめでとうございます！大気の層とその特徴の学習を完了しました。
+              おめでとうございます！気温の減率とその意味の学習を完了しました。
             </p>
             <Button onClick={handleRetakeTest} className="mr-4">
               テストを再受験
@@ -254,9 +254,9 @@ const WeatherBasics3 = () => {
             </CardHeader>
             <CardContent>
               <iframe
-                src="/Weather/Weather1-1-3.html"
+                src="/Weather/Weather1-3-1.html"
                 className="w-full h-[600px] border-0"
-                title="気圧と高度の関係"
+                title="気温の減率とその意味"
               />
             </CardContent>
           </Card>
@@ -304,4 +304,4 @@ const WeatherBasics3 = () => {
   );
 };
 
-export default WeatherBasics3;
+export default WeatherBasics6;

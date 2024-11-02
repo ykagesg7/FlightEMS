@@ -15,6 +15,9 @@ import MissionPlanningPage from './pages/Course/MissionPlanning';
 import WeatherBasics1 from './pages/Course/Weather/WeatherBasics1';
 import WeatherBasics2 from './pages/Course/Weather/WeatherBasics2';
 import WeatherBasics3 from './pages/Course/Weather/WeatherBasics3';
+import WeatherBasics4 from './pages/Course/Weather/WeatherBasics4';
+import WeatherBasics5 from './pages/Course/Weather/WeatherBasics5';
+import WeatherBasics6 from './pages/Course/Weather/WeatherBasics6';
 import CourseManagement from "./pages/CourseManagement";
 import Login from "./pages/Login";
 import Index from "./pages/Index";
@@ -56,9 +59,12 @@ function App() {
               <Route path="/aviation-law" element={<AviationLaw />} />
               <Route path="/aviation-law/basics" element={<AviationLawBasics />} />
               <Route path="/mission-planning" element={<MissionPlanningPage />} />
-              <Route path="/weather/basics1" element={<WeatherBasics1 />} />
-              <Route path="/weather/basics2" element={<WeatherBasics2 />} />
-              <Route path="/weather/basics3" element={<WeatherBasics3 />} />
+              <Route path="/weather/basics/1" element={<WeatherBasics1 />} />
+              <Route path="/weather/basics/2" element={<WeatherBasics2 />} />
+              <Route path="/weather/basics/3" element={<WeatherBasics3 />} />
+              <Route path="/weather/basics/4" element={<WeatherBasics4 />} />
+              <Route path="/weather/basics/5" element={<WeatherBasics5 />} />
+              <Route path="/weather/basics/6" element={<WeatherBasics6 />} />
               <Route path="/community" element={<Community />} />
               <Route path="/flight-planner" element={<FlightPlannerPage />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
