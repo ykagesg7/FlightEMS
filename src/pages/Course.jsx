@@ -119,17 +119,17 @@ export default function Course() {
               id: 'weather-phenomenon-4',
               title: 'STAGE-4：雷雨・積乱雲',
               units: [
-                { id: 'weather-phenomenon-4-1', title: 'UNIT-8：雷雨の発達段階', route: '/weather/phenomenon/7' },
-                { id: 'weather-phenomenon-4-2', title: 'UNIT-9：積乱雲の識別と回避方法', route: '/weather/phenomenon/8' },
-                { id: 'weather-phenomenon-4-3', title: 'UNIT-10：ダウンバーストとマイクロバースト', route: '/weather/phenomenon/9' },
+                { id: 'weather-phenomenon-4-1', title: 'UNIT-7：雷雨の発達段階', route: '/weather/phenomenon/7' },
+                { id: 'weather-phenomenon-4-2', title: 'UNIT-8：積乱雲の識別と回避方法', route: '/weather/phenomenon/8' },
+                { id: 'weather-phenomenon-4-3', title: 'UNIT-9：ダウンバーストとマイクロバースト', route: '/weather/phenomenon/9' },
               ]
             },
             {
               id: 'weather-phenomenon-5',
               title: 'STAGE-5：ウインド・シア',
               units: [
-                { id: 'weather-phenomenon-5-1', title: 'UNIT-8：ウインドシアの発生要因', route: '/weather/phenomenon/10' },
-                { id: 'weather-phenomenon-5-2', title: 'UNIT-9：ウインドシアへの対応策', route: '/weather/phenomenon/11' },
+                { id: 'weather-phenomenon-5-1', title: 'UNIT-10：ウインドシアの発生要因', route: '/weather/phenomenon/10' },
+                { id: 'weather-phenomenon-5-2', title: 'UNIT-11：ウインドシアへの対応策', route: '/weather/phenomenon/11' },
               ]
             }
           ]
@@ -190,15 +190,15 @@ export default function Course() {
             {
               title: 'STAGE-1：ICAO気象規則の概要',
               units: [
-                { id: 'unit9', title: 'UNIT-1：国際標準気象コードの理解', route: '/weather/elements1' },
-                { id: 'unit10', title: 'UNIT-2：気象通報の国際基準', route: '/weather/elements2' },
+                { id: 'weather-regulations-1-1', title: 'UNIT-1：国際標準気象コードの理解', route: '/weather/regulations1' },
+                { id: 'weather-regulations-1-2', title: 'UNIT-2：気象通報の国際基準', route: '/weather/regulations2' },
               ]
             },
             {
               title: 'STAGE-2：国内の航空気象規定',
               units: [
-                { id: 'unit11', title: 'UNIT-3：航空法における気象規定', route: '/weather/elements3' },
-                { id: 'unit12', title: 'UNIT-4：気象情報提供システムの利用', route: '/weather/elements4' },
+                { id: 'weather-regulations-2-1', title: 'UNIT-3：航空法における気象規定', route: '/weather/regulations3' },
+                { id: 'weather-regulations-2-2', title: 'UNIT-4：気象情報提供システムの利用', route: '/weather/regulations4' },
               ]
             }
           ]

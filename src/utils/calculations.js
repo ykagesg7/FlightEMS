@@ -53,3 +53,24 @@ export const calculateBearingAndDistance = (lat1, lon1, lat2, lon2) => {
 
   return { bearing, distance };
 };
+
+export const calculateTAS = (ias, altitude) => {
+  // 標準大気の温度減率を使用
+  const standardTemp = 15 - (1.98 * (altitude / 1000)); // 温度（℃）
+  const standardPressure = 1013.25 * Math.exp(-0.0001875 * altitude); // 気圧（hPa）
+  
+  // 空気密度比の計算
+  const densityRatio = (standardPressure / 1013.25) * (288.15 / (273.15 + standardTemp));
+  
+  // TASの計算
+  const tas = ias / Math.sqrt(densityRatio);
+  
+  // マッハ数の計算（音速を約661.47 * sqrt(T/273.15) KTとして）
+  const speedOfSound = 661.47 * Math.sqrt((273.15 + standardTemp) / 273.15);
+  const machNumber = tas / speedOfSound;
+  
+  return {
+    tas: Math.round(tas),
+    mach: machNumber.toFixed(3)
+  };
+};

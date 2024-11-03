@@ -1,15 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { calculateTAS, calculateBearingAndDistance } from '@/utils/calculations';
 
 const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculateFlightInfo }) => {
   const [selectedNavaid, setSelectedNavaid] = useState('');
   const [bearing, setBearing] = useState('');
   const [distance, setDistance] = useState('');
   const [selectedWaypoint, setSelectedWaypoint] = useState(null);
+  const [flightPerformance, setFlightPerformance] = useState({ tas: 0, mach: 0 });
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+
+  // useEffectフックを使用して、speedまたはaltitudeが変更されたときに性能を計算
+  useEffect(() => {
+    if (flightPlan.speed && flightPlan.altitude) {
+      const performance = calculateTAS(flightPlan.speed, flightPlan.altitude);
+      setFlightPerformance(performance);
+    }
+  }, [flightPlan.speed, flightPlan.altitude]);
 
   const handleAirportSelect = (type, value) => {
     const [lat, lng, name] = value.split(',');
@@ -158,6 +170,52 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
     setSelectedWaypoint(null);
   };
 
+  const convertDMStoDD = (dms) => {
+    const parts = dms.match(/(\d{2,3})(\d{2})(\d{2})/);
+    if (!parts) {
+      throw new Error('Invalid DMS format');
+    }
+    const degrees = parseInt(parts[1], 10);
+    const minutes = parseInt(parts[2], 10);
+    const seconds = parseInt(parts[3], 10);
+    
+    if (minutes >= 60 || seconds >= 60) {
+      throw new Error('Invalid minutes or seconds');
+    }
+
+    let dd = degrees + minutes/60 + seconds/3600;
+    
+    return dd;
+  };
+
+  const addWaypointFromCoordinates = () => {
+    try {
+      const lat = convertDMStoDD(latitude);
+      const lng = convertDMStoDD(longitude);
+
+      if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        throw new Error('Invalid latitude or longitude');
+      }
+
+      const newWaypoint = {
+        lat,
+        lng,
+        name: `Waypoint ${flightPlan.waypoints.length + 1}`,
+      };
+
+      setFlightPlan(prev => ({
+        ...prev,
+        waypoints: [...prev.waypoints, newWaypoint]
+      }));
+
+      // Reset input fields
+      setLatitude('');
+      setLongitude('');
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   return (
     <Card className="m-4">
       <CardHeader>
@@ -208,7 +266,13 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
               <Button onClick={() => adjustValue('speed', -1)}>-</Button>
               <Button onClick={() => adjustValue('speed', 1)}>+</Button>
             </div>
+            {flightPlan.speed && flightPlan.altitude && (
+              <div className="text-sm text-gray-600 mt-1">
+                TAS: {flightPerformance.tas} KT / Mach: {flightPerformance.mach}
+              </div>
+            )}
           </div>
+
           <div>
             <Label htmlFor="altitude">高度 (フィート)</Label>
             <div className="flex items-center space-x-2">
@@ -268,6 +332,24 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
               <Button onClick={updateWaypoint} disabled={selectedWaypoint === null}>ウェイポイント更新</Button>
               <Button onClick={deleteWaypoint} disabled={selectedWaypoint === null}>ウェイポイント削除</Button>
             </div>
+          </div>
+          <div>
+            <Label htmlFor="coordinates">座標からウェイポイントを追加</Label>
+            <Input
+              id="latitude"
+              placeholder="緯度 (DDMMSS)"
+              className="mt-2"
+              value={latitude}
+              onChange={(e) => setLatitude(e.target.value)}
+            />
+            <Input
+              id="longitude"
+              placeholder="経度 (DDDMMSS)"
+              className="mt-2"
+              value={longitude}
+              onChange={(e) => setLongitude(e.target.value)}
+            />
+            <Button onClick={addWaypointFromCoordinates} className="mt-2">座標からウェイポイント追加</Button>
           </div>
           <div>
             <Label>ウェイポイント</Label>

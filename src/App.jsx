@@ -12,12 +12,24 @@ import Course from "./pages/Course";
 import AviationLaw from './pages/Course/AviationLaw'
 import AviationLawBasics from './pages/Course/AviationLawBasics';
 import MissionPlanningPage from './pages/Course/MissionPlanning';
-import WeatherBasics1 from './pages/Course/Weather/WeatherBasics1';
-import WeatherBasics2 from './pages/Course/Weather/WeatherBasics2';
-import WeatherBasics3 from './pages/Course/Weather/WeatherBasics3';
-import WeatherBasics4 from './pages/Course/Weather/WeatherBasics4';
-import WeatherBasics5 from './pages/Course/Weather/WeatherBasics5';
-import WeatherBasics6 from './pages/Course/Weather/WeatherBasics6';
+import WeatherBasics1 from './pages/Course/Weather/WeatherBasics/WeatherBasics1';
+import WeatherBasics2 from './pages/Course/Weather/WeatherBasics/WeatherBasics2';
+import WeatherBasics3 from './pages/Course/Weather/WeatherBasics/WeatherBasics3';
+import WeatherBasics4 from './pages/Course/Weather/WeatherBasics/WeatherBasics4';
+import WeatherBasics5 from './pages/Course/Weather/WeatherBasics/WeatherBasics5';
+import WeatherBasics6 from './pages/Course/Weather/WeatherBasics/WeatherBasics6';
+import WeatherBasics7 from './pages/Course/Weather/WeatherBasics/WeatherBasics7';
+import WeatherBasics8 from './pages/Course/Weather/WeatherBasics/WeatherBasics8';
+import WeatherElements1 from './pages/Course/Weather/WeatherElements/WeatherElements1';
+import WeatherElements2 from './pages/Course/Weather/WeatherElements/WeatherElements2';
+import WeatherElements3 from './pages/Course/Weather/WeatherElements/WeatherElements3';
+import WeatherElements4 from './pages/Course/Weather/WeatherElements/WeatherElements4';
+import WeatherElements5 from './pages/Course/Weather/WeatherElements/WeatherElements5';
+import WeatherElements6 from './pages/Course/Weather/WeatherElements/WeatherElements6';
+import WeatherElements7 from './pages/Course/Weather/WeatherElements/WeatherElements7';
+import WeatherElements8 from './pages/Course/Weather/WeatherElements/WeatherElements8';
+import WeatherElements9 from './pages/Course/Weather/WeatherElements/WeatherElements9';
+import WeatherElements10 from './pages/Course/Weather/WeatherElements/WeatherElements10';
 import CourseManagement from "./pages/CourseManagement";
 import Login from "./pages/Login";
 import Index from "./pages/Index";
@@ -65,6 +77,18 @@ function App() {
               <Route path="/weather/basics/4" element={<WeatherBasics4 />} />
               <Route path="/weather/basics/5" element={<WeatherBasics5 />} />
               <Route path="/weather/basics/6" element={<WeatherBasics6 />} />
+              <Route path="/weather/basics/7" element={<WeatherBasics7 />} />
+              <Route path="/weather/basics/8" element={<WeatherBasics8 />} />
+              <Route path="/weather/elements/1" element={<WeatherElements1 />} />
+              <Route path="/weather/elements/2" element={<WeatherElements2 />} />
+              <Route path="/weather/elements/3" element={<WeatherElements3 />} />
+              <Route path="/weather/elements/4" element={<WeatherElements4 />} />
+              <Route path="/weather/elements/5" element={<WeatherElements5 />} />
+              <Route path="/weather/elements/6" element={<WeatherElements6 />} />
+              <Route path="/weather/elements/7" element={<WeatherElements7 />} />
+              <Route path="/weather/elements/8" element={<WeatherElements8 />} />
+              <Route path="/weather/elements/9" element={<WeatherElements9 />} />
+              <Route path="/weather/elements/10" element={<WeatherElements10 />} />
               <Route path="/community" element={<Community />} />
               <Route path="/flight-planner" element={<FlightPlannerPage />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />

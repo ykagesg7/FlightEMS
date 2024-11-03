@@ -10,6 +10,8 @@ const useMapData = () => {
   const [trainingAreaHigh, setTrainingAreaHigh] = useState(null);
   const [trainingAreaLow, setTrainingAreaLow] = useState(null);
   const [trainingAreaCivil, setTrainingAreaCivil] = useState(null);
+  const [restrictedArea, setRestrictedArea] = useState(null);
+  const [RAPCON, setRAPCON] = useState(null);
 
   useEffect(() => {
     // Fetch airbase data
@@ -96,9 +98,25 @@ const useMapData = () => {
     })
     .catch(error => console.error('Error loading TrainingAreaCivil data:', error));
 
+    // Fetch RestrictedArea data
+    fetch('/geojson/RestrictedAirspace.geojson')
+    .then(response => response.json())
+    .then(data => {
+      setRestrictedArea(data);
+    })
+    .catch(error => console.error('Error loading RestrictedAirspace data:', error));
+
+    // Fetch RAPCON data
+    fetch('/geojson/RAPCON.geojson')
+    .then(response => response.json())
+    .then(data => {
+      setRAPCON(data);
+    })
+    .catch(error => console.error('Error loading RAPCON data:', error));
+
   }, []);
 
-  return { airbases, navaids, navaidsData, airportsData, accSectorHighData, accSectorLowData, trainingAreaHigh, trainingAreaLow, trainingAreaCivil};
+  return { airbases, navaids, navaidsData, airportsData, accSectorHighData, accSectorLowData, trainingAreaHigh, trainingAreaLow, trainingAreaCivil, restrictedArea, RAPCON};
 };
 
 export default useMapData;

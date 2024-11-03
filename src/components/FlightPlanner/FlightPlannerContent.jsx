@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { defaultIcon, pointToLayer, formatCoordinates } from '../../utils/mapUtils';
 import { calculateBearingAndDistance } from '../../utils/calculations';
 
-const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo, navaidsData, airportsData, accSectorHighData, accSectorLowData, trainingAreaHigh, trainingAreaLow, trainingAreaCivil}) => {
+const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo, navaidsData, airportsData, accSectorHighData, accSectorLowData, trainingAreaHigh, trainingAreaLow, trainingAreaCivil, RAPCON, restrictedArea}) => {
   const longPressTimeoutRef = useRef(null);
   const isLongPressRef = useRef(false);
   const [cursorPosition, setCursorPosition] = useState({ lat: 0, lng: 0 });
@@ -238,6 +238,36 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
           {trainingAreaCivil && (
             <GeoJSON 
               data={trainingAreaCivil} 
+              style={() => ({
+                color: 'gray',
+                weight: 1,
+                opacity: 0.6,
+                fillColor: 'gray',
+                fillOpacity: 0.4
+              })}
+            />
+          )}
+        </LayersControl.Overlay>
+
+        <LayersControl.Overlay name="制限空域">
+          {restrictedArea && (
+            <GeoJSON 
+              data={restrictedArea} 
+              style={() => ({
+                color: 'red',
+                weight: 1,
+                opacity: 0.6,
+                fillColor: 'red',
+                fillOpacity: 0.4
+              })}
+            />
+          )}
+        </LayersControl.Overlay>
+
+        <LayersControl.Overlay name="RAPCON">
+          {RAPCON && (
+            <GeoJSON 
+              data={RAPCON} 
               style={() => ({
                 color: 'gray',
                 weight: 1,
