@@ -14,12 +14,12 @@ export default function Index() {
   const [announcements, setAnnouncements] = useState([
     {
       id: 1,
-      title: "Courseページに航空気象のコースを追加しました。",
-      date: "2024-10-31"
+      title: "Flight Planningページに訓練空域、RAPCONのレイヤーを追加しました。",
+      date: "2024-11-3"
     },
     {
       id: 2,
-      title: "Flight Planningページに訓練空域のレイヤーを追加しました。",
+      title: "Courseページに航空気象を追加しました。",
       date: "2024-10-31"
     },
     {
