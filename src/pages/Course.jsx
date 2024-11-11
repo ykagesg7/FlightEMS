@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Link } from 'react-router-dom';
-import { supabase } from '@/lib/supabaseClient';
-import { CheckCircle, FileText, Lock, ChevronDown, ChevronRight } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import React, { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
+import { Link } from 'react-router-dom'
+import { supabase } from '../lib/supabaseClient'
+import { CheckCircle, FileText, Lock, ChevronDown, ChevronRight, BookOpen } from 'lucide-react'
+import { useToast } from "@/components/ui/use-toast"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { Badge } from "@/components/ui/badge"
 
 export default function Course() {
-  const [user, setUser] = useState(null);
-  const [completedUnits, setCompletedUnits] = useState([]);
-  const { toast } = useToast();
-
+  const [user, setUser] = useState(null)
+  const [completedUnits, setCompletedUnits] = useState([])
+  const { toast } = useToast()
   const lessons = [
     { 
       id: 1, 
@@ -233,8 +233,8 @@ export default function Course() {
 
   useEffect(() => {
     const fetchUserAndProgress = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
 
       if (user) {
         try {
@@ -242,129 +242,126 @@ export default function Course() {
             .from('user_progress')
             .select('completed_units')
             .eq('user_id', user.id)
-            .single();
+            .single()
 
           if (error) {
             if (error.code === 'PGRST116') {
-              console.log('No existing progress found for this user');
+              console.log('このユーザーの既存の進捗情報が見つかりません')
               await supabase.from('user_progress').insert({
                 user_id: user.id,
                 completed_units: []
-              });
-              setCompletedUnits([]);
+              })
+              setCompletedUnits([])
             } else {
-              throw error;
+              throw error
             }
           } else {
-            setCompletedUnits(data.completed_units || []);
+            setCompletedUnits(data.completed_units || [])
           }
         } catch (error) {
-          console.error('Error fetching user progress:', error);
+          console.error('ユーザー進捗情報の取得中にエラーが発生しました:', error)
           toast({
             title: "エラー",
             description: "ユーザーの進捗情報の取得中にエラーが発生しました。",
             variant: "destructive",
-          });
+          })
         }
       }
-    };
+    }
 
-    fetchUserAndProgress();
-  }, [toast]);
+    fetchUserAndProgress()
+  }, [toast])
 
   const calculateProgress = () => {
     const totalUnits = lessons.reduce((lessonAcc, lesson) => 
-      lessonAcc + lesson.sections.reduce((sectionAcc, section) => 
-        sectionAcc + section.stages.reduce((stageAcc, stage) => 
-          stageAcc + stage.units.length, 0), 0), 0);
-    return (completedUnits.length / totalUnits) * 100;
-  };
+      lessonAcc + lesson.sections.reduce((sectionAcc, section) =>
+        sectionAcc + section.stages.reduce((stageAcc, stage) =>
+          stageAcc + stage.units.length, 0), 0), 0)
+    return (completedUnits.length / totalUnits) * 100
+  }
 
-  const isUnitCompleted = (unitId) => {
-    return completedUnits.includes(unitId);
-  };
-
-  const isStageCompleted = (stage) => {
-    return stage.units.every(unit => isUnitCompleted(unit.id));
-  };
-
-  const isUnitUnlocked = (units, unitIndex) => {
-    if (unitIndex === 0) return true;
-    return isUnitCompleted(units[unitIndex - 1].id);
-  };
+  const isUnitCompleted = (unitId) => completedUnits.includes(unitId)
+  const isStageCompleted = (stage) => stage.units.every(unit => isUnitCompleted(unit.id))
+  const isUnitUnlocked = (units, unitIndex) => unitIndex === 0 || isUnitCompleted(units[unitIndex - 1].id)
+  const isSectionCompleted = (section) => section.stages.every(stage => isStageCompleted(stage))
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Fighter Pilot Course</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">事業用操縦士コース</h1>
       
-      {lessons.map((lesson) => (
-        <Card key={lesson.id} className="mb-8">
-          <CardHeader>
-            <CardTitle>{lesson.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {lesson.sections.map((section, sectionIndex) => (
-              <Collapsible key={sectionIndex} className="mb-6">
-                <CollapsibleTrigger className="flex items-center w-full">
-                  <h2 className="text-2xl font-semibold">{section.title}</h2>
-                  <ChevronDown className="ml-2 h-4 w-4" />
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  {section.stages.map((stage, stageIndex) => (
-                    <Collapsible key={stageIndex} className="mb-4 ml-4">
-                      <CollapsibleTrigger className="flex items-center w-full">
-                        <h3 className="text-xl font-semibold">{stage.title}</h3>
-                        {isStageCompleted(stage) && (
-                          <CheckCircle className="ml-2 h-4 w-4 text-green-500" />
-                        )}
-                        <ChevronRight className="ml-2 h-4 w-4" />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <div className="space-y-2 ml-4">
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-2xl">コース進捗状況</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Progress value={calculateProgress()} className="w-full h-4 mb-4" />
+          <p className="text-lg font-semibold text-center">
+            {completedUnits.length} / {lessons.reduce((lessonAcc, lesson) => 
+              lesson.sections.reduce((sectionAcc, section) => 
+                sectionAcc + section.stages.reduce((stageAcc, stage) => 
+                  stageAcc + stage.units.length, 0), lessonAcc), 0)} ユニット完了
+          </p>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {lessons.map((lesson) => (
+          <Card key={lesson.id} className="flex flex-col">
+            <CardHeader>
+              <CardTitle className="text-2xl flex items-center">
+                <BookOpen className="mr-2 h-6 w-6" />
+                {lesson.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex-grow">
+              {lesson.sections.map((section, sectionIndex) => (
+                <Collapsible key={sectionIndex} className="mb-4">
+                  <CollapsibleTrigger className="flex items-center w-full text-left p-2 hover:bg-gray-100 rounded-md transition-colors">
+                    <h2 className={`text-xl font-semibold flex-grow ${isSectionCompleted(section) ? 'text-green-600' : ''}`}>
+                      {section.title}
+                    </h2>
+                    <ChevronDown className="h-5 w-5 flex-shrink-0" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-2">
+                    {section.stages.map((stage, stageIndex) => (
+                      <Collapsible key={stageIndex} className="ml-4 mb-2">
+                        <CollapsibleTrigger className="flex items-center w-full text-left p-2 hover:bg-gray-100 rounded-md transition-colors">
+                          <h3 className="text-lg font-medium flex-grow">{stage.title}</h3>
+                          {isStageCompleted(stage) && (
+                            <Badge variant="success" className="mr-2">完了</Badge>
+                          )}
+                          <ChevronRight className="h-4 w-4 flex-shrink-0" />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-2 mt-2">
                           {stage.units.map((unit, unitIndex) => (
                             <Link key={unit.id} to={unit.route}>
                               <Button 
-                                variant="outline" 
-                                className="w-full justify-start"
+                                variant={isUnitCompleted(unit.id) ? "default" : "outline"}
+                                className="w-full justify-start text-left h-auto py-2"
                                 disabled={!isUnitUnlocked(stage.units, unitIndex)}
                               >
                                 {isUnitUnlocked(stage.units, unitIndex) ? (
-                                  <FileText className="mr-2 h-4 w-4" />
+                                  <FileText className="mr-2 h-4 w-4 flex-shrink-0" />
                                 ) : (
-                                  <Lock className="mr-2 h-4 w-4" />
+                                  <Lock className="mr-2 h-4 w-4 flex-shrink-0" />
                                 )}
-                                {unit.title}
+                                <span className="flex-grow">{unit.title}</span>
                                 {isUnitCompleted(unit.id) && (
-                                  <CheckCircle className="ml-auto h-4 w-4 text-green-500" />
+                                  <CheckCircle className="ml-2 h-4 w-4 text-green-500 flex-shrink-0" />
                                 )}
                               </Button>
                             </Link>
                           ))}
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  ))}
-                </CollapsibleContent>
-              </Collapsible>
-            ))}
-          </CardContent>
-        </Card>
-      ))}
-
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle>Course Progress</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Progress value={calculateProgress()} className="w-full" />
-          <p className="mt-2">
-            {completedUnits.length} of {lessons.reduce((lessonAcc, lesson) => 
-              lesson.sections.reduce((sectionAcc, section) => 
-                sectionAcc + section.stages.reduce((stageAcc, stage) => 
-                  stageAcc + stage.units.length, 0), lessonAcc), 0)} units completed
-          </p>
-        </CardContent>
-      </Card>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              ))}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
-  );
+  )
 }
