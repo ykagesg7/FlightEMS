@@ -55,22 +55,41 @@ export const calculateBearingAndDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 export const calculateTAS = (ias, altitude) => {
-  // 標準大気の温度減率を使用
-  const standardTemp = 15 - (1.98 * (altitude / 1000)); // 温度（℃）
-  const standardPressure = 1013.25 * Math.exp(-0.0001875 * altitude); // 気圧（hPa）
-  
-  // 空気密度比の計算
-  const densityRatio = (standardPressure / 1013.25) * (288.15 / (273.15 + standardTemp));
-  
-  // TASの計算
-  const tas = ias / Math.sqrt(densityRatio);
-  
-  // マッハ数の計算（音速を約661.47 * sqrt(T/273.15) KTとして）
-  const speedOfSound = 661.47 * Math.sqrt((273.15 + standardTemp) / 273.15);
-  const machNumber = tas / speedOfSound;
-  
+  // 1. 標準大気温度の計算 (ケルビン)
+  const altitudeMeters = altitude * 0.3048;
+  const lapseRate = 0.0065;
+  const seaLevelTemp = 288.15;
+  const temp = seaLevelTemp - lapseRate * altitudeMeters;
+
+  // 2. 標準大気圧の計算 (Pa)
+  const seaLevelPressure = 101325;
+  const g = 9.80665;
+  const R = 287.058;
+  const pressure = seaLevelPressure * Math.pow(temp / seaLevelTemp, g / (R * lapseRate));
+
+  // 3. 空気密度の計算 (kg/m³)
+  const density = pressure / (R * temp);
+
+  // 4. 真対気速度 (TAS) の計算 (m/s)
+  const iasMetersPerSecond = ias * 0.514444;
+  const seaLevelDensity = 1.225;
+  const tasMetersPerSecond = iasMetersPerSecond * Math.sqrt(seaLevelDensity / density);
+
+  // 5. TAS をノットに変換
+  const tasKnots = tasMetersPerSecond / 0.514444;
+
+  // 6. 音速の計算 (m/s)
+  const gamma = 1.4;
+  const speedOfSoundMetersPerSecond = Math.sqrt(gamma * R * temp);
+
+  // 7. 音速をノットに変換
+  const speedOfSoundKnots = speedOfSoundMetersPerSecond / 0.514444;
+
+  // 8. マッハ数の計算
+  const machNumber = tasMetersPerSecond / speedOfSoundMetersPerSecond;
+
   return {
-    tas: Math.round(tas),
+    tas: Math.round(tasKnots),
     mach: machNumber.toFixed(3)
   };
 };
