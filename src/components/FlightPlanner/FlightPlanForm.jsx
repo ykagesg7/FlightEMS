@@ -108,9 +108,9 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
     }));
   
     // Reset input fields
-    setSelectedNavaid('');
-    setBearing('');
-    setDistance('');
+    //setSelectedNavaid('');
+    //setBearing('');
+    //setDistance('');
   };
 
   const updateWaypoint = () => {
