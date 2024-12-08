@@ -4,7 +4,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK1-1"
+        "Area_ID": "HK1-1",
+        "altitude":"FL200↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -20,7 +21,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK1-2"
+        "Area_ID": "HK1-2",
+        "altitude":"FL150↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -36,7 +38,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK1-3"
+        "Area_ID": "HK1-3",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -55,7 +58,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK2-1"
+        "Area_ID": "HK2-1",
+        "altitude":"4,000-8,000ft"
       },
       "geometry": {
         "type": "Polygon",
@@ -72,7 +76,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK2-2"
+        "Area_ID": "HK2-2",
+        "altitude":"2,000-6000ft"
       },
       "geometry": {
         "type": "Polygon",
@@ -100,7 +105,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK2-4"
+        "Area_ID": "HK2-4",
+        "altitude":"3,500-6,000ft"
       },
       "geometry": {
         "type": "Polygon",
@@ -127,7 +133,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK2-5"
+        "Area_ID": "HK2-5",
+        "altitude":"3,500-6,000ft"
       },
       "geometry": {
         "type": "Polygon",
@@ -168,7 +175,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK2-6"
+        "Area_ID": "HK2-6",
+        "altitude":"6,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -187,7 +195,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK2-7"
+        "Area_ID": "HK2-7",
+        "altitude":"6,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -229,7 +238,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK2-9"
+        "Area_ID": "HK2-9",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -261,7 +271,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK2-11"
+        "Area_ID": "HK2-11",
+        "altitude":"6,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -290,7 +301,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK2-12"
+        "Area_ID": "HK2-12",
+        "altitude":"6,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -309,7 +321,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK2-14"
+        "Area_ID": "HK2-14",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -325,7 +338,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK3"
+        "Area_ID": "HK3",
+        "altitude":"8,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -341,7 +355,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK11-1"
+        "Area_ID": "HK11-1",
+        "altitude":"1,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -361,7 +376,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK11-2"
+        "Area_ID": "HK11-2",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -379,7 +395,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK11-3"
+        "Area_ID": "HK11-3",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -401,7 +418,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK12-1"
+        "Area_ID": "HK12-1",
+        "altitude":"10,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -421,7 +439,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK12-2"
+        "Area_ID": "HK12-2",
+        "altitude":"7,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -438,7 +457,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK12-3"
+        "Area_ID": "HK12-3",
+        "altitude":"6,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -462,7 +482,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK12-4"
+        "Area_ID": "HK12-4",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -479,7 +500,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK12-5"
+        "Area_ID": "HK12-5",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -499,7 +521,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "HK12-6"
+        "Area_ID": "HK12-6",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -516,7 +539,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH1"
+        "Area_ID": "TH1",
+        "altitude":"FL200↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -532,7 +556,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH2-1"
+        "Area_ID": "TH2-1",
+        "altitude":"3,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -560,7 +585,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH2-2"
+        "Area_ID": "TH2-2",
+        "altitude":"3,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -587,7 +613,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH2-3"
+        "Area_ID": "TH2-3",
+        "altitude":"3,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -602,7 +629,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH2-4"
+        "Area_ID": "TH2-4",
+        "altitude":"3,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -638,7 +666,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH2-5"
+        "Area_ID": "TH2-5",
+        "altitude":"3,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -656,7 +685,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH3-1"
+        "Area_ID": "TH3-1",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -687,7 +717,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH3-2"
+        "Area_ID": "TH3-2",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -718,7 +749,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH11"
+        "Area_ID": "TH11",
+        "altitude":"8,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -738,7 +770,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH12-1"
+        "Area_ID": "TH12-1",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -762,7 +795,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH12-2"
+        "Area_ID": "TH12-2",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -782,7 +816,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH12-3"
+        "Area_ID": "TH12-3",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -801,7 +836,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH13-1"
+        "Area_ID": "TH13-1",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -850,7 +886,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH13-2"
+        "Area_ID": "TH13-2",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -872,7 +909,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH13-3"
+        "Area_ID": "TH13-3",
+        "altitude":"FL140↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -889,7 +927,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "TH13-4"
+        "Area_ID": "TH13-4",
+        "altitude":"5,000-10,000ft"
       },
       "geometry": {
         "type": "Polygon",
@@ -905,7 +944,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK1-1"
+        "Area_ID": "KK1-1",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -921,7 +961,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK1-2"
+        "Area_ID": "KK1-2",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -937,7 +978,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK1-3"
+        "Area_ID": "KK1-3",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -954,7 +996,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK1-4"
+        "Area_ID": "KK1-4",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -970,7 +1013,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK1-5"
+        "Area_ID": "KK1-5",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -986,7 +1030,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK1-6"
+        "Area_ID": "KK1-6",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1002,7 +1047,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK2-1"
+        "Area_ID": "KK2-1",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1021,7 +1067,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK2-2"
+        "Area_ID": "KK2-2",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1037,7 +1084,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK2-3"
+        "Area_ID": "KK2-3",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1053,7 +1101,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK2-4"
+        "Area_ID": "KK2-4",
+        "altitude":"1,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1070,7 +1119,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK3-1"
+        "Area_ID": "KK3-1",
+        "altitude":"9,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1101,7 +1151,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK3-1"
+        "Area_ID": "KK3-2",
+        "altitude":"9,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1132,7 +1183,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK4-1"
+        "Area_ID": "KK4-1",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1153,7 +1205,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK4-2,4-3"
+        "Area_ID": "KK4-2,4-3",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1181,7 +1234,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK4-4"
+        "Area_ID": "KK4-4",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1199,7 +1253,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK4-5"
+        "Area_ID": "KK4-5",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1218,7 +1273,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK4-6"
+        "Area_ID": "KK4-6",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1239,7 +1295,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK4-7"
+        "Area_ID": "KK4-7",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1258,7 +1315,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK4-8"
+        "Area_ID": "KK4-8",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1276,7 +1334,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK5-1"
+        "Area_ID": "KK5-1",
+        "altitude":"1,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1298,7 +1357,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK5-2"
+        "Area_ID": "KK5-2",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1315,7 +1375,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KK5-3"
+        "Area_ID": "KK5-3",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1339,7 +1400,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK1-1"
+        "Area_ID": "CK1-1",
+        "altitude":"1,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1355,7 +1417,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK1-2-1"
+        "Area_ID": "CK1-2-1",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1371,7 +1434,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK1-2-2"
+        "Area_ID": "CK1-2-2",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1388,7 +1452,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK1-3"
+        "Area_ID": "CK1-3",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1405,7 +1470,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK1-4"
+        "Area_ID": "CK1-4",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1421,7 +1487,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK1-5"
+        "Area_ID": "CK1-5",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1437,7 +1504,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK3"
+        "Area_ID": "CK3",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1457,7 +1525,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK-4"
+        "Area_ID": "CK-4",
+        "altitude":"6,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1474,7 +1543,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK11-1"
+        "Area_ID": "CK11-1",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1494,7 +1564,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK11-2"
+        "Area_ID": "CK11-2",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1510,7 +1581,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK11-3"
+        "Area_ID": "CK11-3",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1528,7 +1600,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK11-4"
+        "Area_ID": "CK11-4",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1557,7 +1630,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK11-5"
+        "Area_ID": "CK11-5",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1575,7 +1649,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK11-6"
+        "Area_ID": "CK11-6",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1591,7 +1666,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK-12"
+        "Area_ID": "CK-12",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1607,7 +1683,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK13-1"
+        "Area_ID": "CK13-1",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1624,7 +1701,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK13-2"
+        "Area_ID": "CK13-2",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1642,7 +1720,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK21-1"
+        "Area_ID": "CK21-1",
+        "altitude":"6,000-10,000ft"
       },
       "geometry": {
         "type": "Polygon",
@@ -1664,7 +1743,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CK21-2"
+        "Area_ID": "CK21-2",
+        "altitude":"6,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1686,7 +1766,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CS-1"
+        "Area_ID": "CS-1",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1703,7 +1784,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CS2-1"
+        "Area_ID": "CS2-1",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1720,7 +1802,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CS2-2"
+        "Area_ID": "CS2-2",
+        "altitude":"4,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1736,7 +1819,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "CS-3"
+        "Area_ID": "CS-3",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1755,7 +1839,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-1-1-30/50"
+        "Area_ID": "KS-1-1-30/50",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1772,7 +1857,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-1-2-30/50"
+        "Area_ID": "KS-1-2-30/50",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1791,7 +1877,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-1-3-30/50"
+        "Area_ID": "KS-1-3-30/50",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1807,7 +1894,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-1-4-30/50"
+        "Area_ID": "KS-1-4-30/50",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1825,7 +1913,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-2-1"
+        "Area_ID": "KS-2-1",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1841,7 +1930,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-2-2"
+        "Area_ID": "KS-2-2",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1857,7 +1947,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-2-3"
+        "Area_ID": "KS-2-3",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1873,7 +1964,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-2-4"
+        "Area_ID": "KS-2-4",
+        "altitude":"2,500ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1889,7 +1981,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-3-1-1"
+        "Area_ID": "KS-3-1-1",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1905,7 +1998,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-3-1-2"
+        "Area_ID": "KS-3-1-2",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1922,7 +2016,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-3-1-3"
+        "Area_ID": "KS-3-1-3",
+        "altitude":"3,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1938,7 +2033,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-3-2"
+        "Area_ID": "KS-3-2",
+        "altitude":"8,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1957,7 +2053,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-3-3"
+        "Area_ID": "KS-3-3",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1974,7 +2071,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-3-4-3/5"
+        "Area_ID": "KS-3-4-3/5",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -1990,7 +2088,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-3-5"
+        "Area_ID": "KS-3-5",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -2009,7 +2108,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-3-6"
+        "Area_ID": "KS-3-6",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -2027,7 +2127,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-3-7"
+        "Area_ID": "KS-3-7",
+        "altitude":"5,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -2044,7 +2145,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-3-8-10/15"
+        "Area_ID": "KS-3-8-10/15",
+        "altitude":"5,000-FL150"
       },
       "geometry": {
         "type": "Polygon",
@@ -2062,7 +2164,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-4-1-60/65/70"
+        "Area_ID": "KS-4-1-60/65/70",
+        "altitude":"5,500-7,000ft"
       },
       "geometry": {
         "type": "Polygon",
@@ -2102,7 +2205,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-4-2-20/35/50/65/80"
+        "Area_ID": "KS-4-2-20/35/50/65/80",
+        "altitude":"8,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -2123,7 +2227,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-4-3-30/45/60"
+        "Area_ID": "KS-4-3-30/45/60",
+        "altitude":"6,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -2150,7 +2255,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Area_ID": "KS-4-4"
+        "Area_ID": "KS-4-4",
+        "altitude":"2,000ft↓"
       },
       "geometry": {
         "type": "Polygon",
@@ -2167,6 +2273,273 @@
           [131.2871, 31.9857],
           [131.3112, 32.0062],
           [131.3328, 32.0197]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-4-5-30/45/60",
+        "altitude":"6,000ft↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [130.8358, 32.1992],
+          [131.0339, 32.1881],
+          [130.9972, 32.1378],
+          [130.9806, 31.9944],
+          [130.9756, 31.8406],
+          [130.9657, 31.8713],
+          [130.9470, 31.9056],
+          [130.9215, 31.9365],
+          [130.8901, 31.9633],
+          [130.8537, 31.9849],
+          [130.7803, 32.0097],
+          [130.8358, 32.1992]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-4-6-25/40",
+        "altitude":"6,000ft↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [131.0428, 31.8522],
+          [131.2142, 31.7728],          
+          [131.1858, 31.6543],
+          [131.1494, 31.5886],          
+          [131.1486, 31.5881],
+          [131.0200, 31.6519],
+          [130.9756, 31.8406],
+          [131.0428, 31.8522]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-4-7",
+        "altitude":"6,000ft↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [131.2142, 31.7728],
+          [131.3836, 31.6942],
+          [131.3389, 31.5397],
+          [131.2719, 31.5264],
+          [131.1486, 31.5881],
+          [131.1494, 31.5886],
+          [131.1858, 31.6543],
+          [131.2142, 31.7728]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-4-8-20/35/50/65/80",
+        "altitude":"8,000ft↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [131.6706, 31.6033],
+          [131.7944, 31.4561],
+          [131.5867, 31.4158],
+          [131.5683, 31.5836],
+          [131.6706, 31.6033]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-5-1-30/50",
+        "altitude":"1,500-5,000ft"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [130.6167, 32.6181],
+          [130.5333, 32.6178],
+          [130.4656, 32.5358],
+          [130.5283, 32.5217],
+          [130.6167, 32.6181]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-5-2-30/50",
+        "altitude":"1,500-5,000ft"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [130.4656, 32.5358],
+          [130.4253, 32.4319],
+          [130.4914, 32.4064],
+          [130.5283, 32.5217],
+          [130.4656, 32.5358]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-11-1",
+        "altitude":"5,000ft↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [130.5300, 30.8381],
+          [130.2144, 30.4536],
+          [129.4647, 30.8611],
+          [129.4731, 31.2039],
+          [129.9131, 31.1281],
+          [130.0875, 30.8375],
+          [130.5300, 30.8381]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-11-2",
+        "altitude":"5,000ft↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [129.9131, 31.1281],
+          [130.6606, 30.9961],
+          [130.5300, 30.8381],
+          [130.0875, 30.8375],
+          [129.9131, 31.1281]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-12",
+        "altitude":"4,000ft↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [130.1894, 31.7508],
+          [130.4483, 31.7344],
+          [130.3233, 31.4164],
+          [130.1083, 31.4092],
+          [130.1894, 31.7508]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-13",
+        "altitude": "FL150↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [129.7856, 31.7878],
+          [129.7856, 31.5978],
+          [129.5733, 31.5978],
+          [129.5733, 31.7878],
+          [129.7856, 31.7878]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-14-1/2/3",
+        "altitude": "12,000ft↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [129.7978, 32.6700],
+          [129.8811, 32.5867],
+          [130.0978, 32.1700],
+          [129.5811, 32.1700],
+          [129.7978, 32.6700]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-14-4/5/6",
+        "altitude": "12,000ft↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [129.7978, 32.6700],
+          [129.5811, 32.1700],
+          [129.2478, 32.1700],
+          [129.2478, 32.5867],
+          [129.6478, 32.5867],
+          [129.7978, 32.6700]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-15",
+        "altitude": "5,000ft↓"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [129.1311, 33.2867],
+          [129.4311, 33.1867],
+          [129.4311, 33.0658],
+          [129.3128, 33.1433],
+
+          [129.2872, 33.1337],
+          [129.2597, 33.1259],
+          [129.2308, 33.1199],
+          [129.2008, 33.1158],
+          [129.1699, 33.1137],
+          [129.1385, 33.1135],
+          [129.1069, 33.1153],
+          [129.0754, 33.1191],
+
+          [129.0619, 33.1392],
+          [129.1311, 33.2867]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Area_ID": "KS-16",
+        "altitude": "6,000-FL250"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [130.9900, 30.1014],
+          [130.6792, 29.6914],
+          [130.8569, 29.4358],
+          [131.4097, 29.7444],
+          [131.3247, 29.8833],
+          [131.2797, 29.9439],
+          [130.9900, 30.1014]
         ]]
       }
     }
