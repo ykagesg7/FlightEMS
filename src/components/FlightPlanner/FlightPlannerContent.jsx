@@ -10,6 +10,7 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
   const isLongPressRef = useRef(false);
   const [cursorPosition, setCursorPosition] = useState({ lat: 0, lng: 0 });
   const [draggingWaypointIndex, setDraggingWaypointIndex] = useState(null);
+  const [selectedArea, setSelectedArea] = useState(null);
 
   const MapEvents = () => {
     const map = useMapEvents({
@@ -140,13 +141,42 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
     return info;
   };
 
-  const onEachFeature = (feature, layer) => {
-    if (feature.properties && feature.properties.Area_ID) {
-      layer.bindTooltip(feature.properties.Area_ID, {
-        permanent: true,
-        direction: 'center',
-        className: 'area-id-label'
-      });
+  const onEachFeatureACC = (feature, layer) => {
+    if (feature.properties && feature.properties.name) {
+      layer.bindPopup(`${feature.properties.name}`);
+    }
+  };
+
+  const onEachFeatureTrainingArea = (feature, layer) => {
+    if (feature.properties) {
+      const { Area_ID, Name, altitude } = feature.properties; // altitude を取得
+      let popupContent = "";
+
+      if (Name) {
+        popupContent = `${Name} (${Area_ID})`;
+      } else if (Area_ID) {
+        popupContent = `${Area_ID}`;
+      }
+
+      if (altitude) {
+        popupContent += `<br>${altitude}`; // 高度情報を追加
+      }
+
+      if (popupContent) {
+        layer.bindPopup(popupContent);
+      }
+    }
+  };
+
+  const onEachFeatureRestrictedArea = (feature, layer) => {
+    if (feature.properties && feature.properties.name) {
+      layer.bindPopup(`${feature.properties.name}`);
+    }
+  };
+
+  const onEachFeatureRAPCON = (feature, layer) => {
+    if (feature.properties && feature.properties.name) {
+      layer.bindPopup(`${feature.properties.name}`);
     }
   };
 
@@ -178,8 +208,10 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
                 weight: 1,
                 opacity: 0.6,
                 fillColor: 'gray',
-                fillOpacity: 0.2
+                fillOpacity: 0.2,
+                zIndex: 401
               })}
+              onEachFeature={onEachFeatureACC}
             />
           )}
         </LayersControl.Overlay>
@@ -193,8 +225,10 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
                 weight: 1,
                 opacity: 0.6,
                 fillColor: 'yellow',
-                fillOpacity: 0.2
+                fillOpacity: 0.2,
+                zIndex: 402
               })}
+              onEachFeature={onEachFeatureACC}
             />
           )}
         </LayersControl.Overlay>
@@ -208,14 +242,11 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
                 weight: 1,
                 opacity: 0.6,
                 fillColor: 'blue',
-                fillOpacity: 0.2
+                fillOpacity: 0.2,
+                zIndex: 403
               })}
-              onEachFeature={onEachFeature}
-            >
-              <Tooltip permanent direction="center" className="bg-transparent border-none shadow-none font-bold text-black">
-                {(layer) => layer.feature.properties.Area_ID}
-              </Tooltip>
-            </GeoJSON>
+              onEachFeature={onEachFeatureTrainingArea}
+            />
           )}
         </LayersControl.Overlay>
 
@@ -228,8 +259,10 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
                 weight: 1,
                 opacity: 0.6,
                 fillColor: 'green',
-                fillOpacity: 0.2
+                fillOpacity: 0.2,
+                zIndex: 404
               })}
+              onEachFeature={onEachFeatureTrainingArea}
             />
           )}
         </LayersControl.Overlay>
@@ -243,8 +276,10 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
                 weight: 1,
                 opacity: 0.6,
                 fillColor: 'gray',
-                fillOpacity: 0.4
+                fillOpacity: 0.4,
+                zIndex: 405
               })}
+              onEachFeature={onEachFeatureTrainingArea}
             />
           )}
         </LayersControl.Overlay>
@@ -258,8 +293,10 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
                 weight: 1,
                 opacity: 0.6,
                 fillColor: 'red',
-                fillOpacity: 0.4
+                fillOpacity: 0.4,
+                zIndex: 406
               })}
+              onEachFeature={onEachFeatureRestrictedArea}
             />
           )}
         </LayersControl.Overlay>
@@ -273,8 +310,10 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
                 weight: 1,
                 opacity: 0.6,
                 fillColor: 'gray',
-                fillOpacity: 0.4
+                fillOpacity: 0.4,
+                zIndex: 407
               })}
+              onEachFeature={onEachFeatureRAPCON}
             />
           )}
         </LayersControl.Overlay>
@@ -290,6 +329,7 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
               onEachFeature={(feature, layer) => {
                 layer.bindPopup(`${feature.properties.name1} (${feature.properties.name2})`);
               }}
+              zIndex={409}
             />
           )}
         </LayersControl.Overlay>
@@ -305,6 +345,7 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
               onEachFeature={(feature, layer) => {
                 layer.bindPopup(`${feature.properties.name}`);
               }}
+              zIndex={410}
             />
           )}
         </LayersControl.Overlay>
