@@ -1,137 +1,1787 @@
 {
-"type": "FeatureCollection",
-"name": "Navaids",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { "No.": 1, "type": "TACAN", "name": "芦屋", "id": "AHT", "ch": "23x", "freq": "NA", "latitude(DMS)": 335314.74, "longitude(DMS)": 1303859.52, "latitude(DD)": 33.8874, "longitude(DD)": 130.6499, "N(D)": 33, "N(M)": 53, "N(S)": 14.74, "E(D)": 130, "E(M)": 38, "E(S)": 59.52 }, "geometry": { "type": "Point", "coordinates": [ 130.6499, 33.8874 ] } },
-{ "type": "Feature", "properties": { "No.": 2, "type": "TACAN", "name": "明野", "id": "AKT", "ch": "57y", "freq": "NA", "latitude(DMS)": 343142.7, "longitude(DMS)": 1364030.6, "latitude(DD)": 34.5285, "longitude(DD)": 136.6752, "N(D)": 34, "N(M)": 31, "N(S)": 42.7, "E(D)": 136, "E(M)": 40, "E(S)": 30.6 }, "geometry": { "type": "Point", "coordinates": [ 136.6752, 34.5285 ] } },
-{ "type": "Feature", "properties": { "No.": 3, "type": "TACAN", "name": "奄美", "id": "ALT", "ch": "102x", "freq": "NA", "latitude(DMS)": 282636.5, "longitude(DMS)": 1293500.24, "latitude(DD)": 28.4435, "longitude(DD)": 129.5834, "N(D)": 28, "N(M)": 26, "N(S)": 36.5, "E(D)": 129, "E(M)": 35, "E(S)": 0.24 }, "geometry": { "type": "Point", "coordinates": [ 129.5834, 28.4435 ] } },
-{ "type": "Feature", "properties": { "No.": 4, "type": "TACAN", "name": "銚子", "id": "CVT", "ch": "83x", "freq": "NA", "latitude(DMS)": 354336.06, "longitude(DMS)": 1404759.68, "latitude(DD)": 35.7267, "longitude(DD)": 140.7999, "N(D)": 35, "N(M)": 43, "N(S)": 36.06, "E(D)": 140, "E(M)": 47, "E(S)": 59.68 }, "geometry": { "type": "Point", "coordinates": [ 140.7999, 35.7267 ] } },
-{ "type": "Feature", "properties": { "No.": 5, "type": "TACAN", "name": "防府", "id": "FMT", "ch": "77x", "freq": "NA", "latitude(DMS)": 340218.33, "longitude(DMS)": 1313244.67, "latitude(DD)": 34.0384, "longitude(DD)": 131.5457, "N(D)": 34, "N(M)": 2, "N(S)": 18.33, "E(D)": 131, "E(M)": 32, "E(S)": 44.67 }, "geometry": { "type": "Point", "coordinates": [ 131.5457, 34.0384 ] } },
-{ "type": "Feature", "properties": { "No.": 6, "type": "TACAN", "name": "岐阜", "id": "GFT", "ch": "31x", "freq": "NA", "latitude(DMS)": 352330.0, "longitude(DMS)": 1365130.0, "latitude(DD)": 35.3917, "longitude(DD)": 136.8583, "N(D)": 35, "N(M)": 23, "N(S)": 30.0, "E(D)": 136, "E(M)": 51, "E(S)": 30.0 }, "geometry": { "type": "Point", "coordinates": [ 136.8583, 35.3917 ] } },
-{ "type": "Feature", "properties": { "No.": 7, "type": "TACAN", "name": "大子", "id": "GOT", "ch": "100x", "freq": "NA", "latitude(DMS)": 364441.47, "longitude(DMS)": 1402058.42, "latitude(DD)": 36.7449, "longitude(DD)": 140.3496, "N(D)": 36, "N(M)": 44, "N(S)": 41.47, "E(D)": 140, "E(M)": 20, "E(S)": 58.42 }, "geometry": { "type": "Point", "coordinates": [ 140.3496, 36.7449 ] } },
-{ "type": "Feature", "properties": { "No.": 8, "type": "TACAN", "name": "八戸", "id": "HVT", "ch": "23x", "freq": "NA", "latitude(DMS)": 403321.0, "longitude(DMS)": 1412812.0, "latitude(DD)": 40.5558, "longitude(DD)": 141.47, "N(D)": 40, "N(M)": 33, "N(S)": 21.0, "E(D)": 141, "E(M)": 28, "E(S)": 12.0 }, "geometry": { "type": "Point", "coordinates": [ 141.47, 40.5558 ] } },
-{ "type": "Feature", "properties": { "No.": 9, "type": "TACAN", "name": "硫黄島", "id": "IJT", "ch": "35x", "freq": "NA", "latitude(DMS)": 244705.0, "longitude(DMS)": 1411857.0, "latitude(DD)": 24.7847, "longitude(DD)": 141.3158, "N(D)": 24, "N(M)": 47, "N(S)": 5.0, "E(D)": 141, "E(M)": 18, "E(S)": 57.0 }, "geometry": { "type": "Point", "coordinates": [ 141.3158, 24.7847 ] } },
-{ "type": "Feature", "properties": { "No.": 10, "type": "TACAN", "name": "玖珂", "id": "IWT", "ch": "90x", "freq": "NA", "latitude(DMS)": 340447.64, "longitude(DMS)": 1320850.31, "latitude(DD)": 34.0799, "longitude(DD)": 132.1473, "N(D)": 34, "N(M)": 4, "N(S)": 47.64, "E(D)": 132, "E(M)": 8, "E(S)": 50.31 }, "geometry": { "type": "Point", "coordinates": [ 132.1473, 34.0799 ] } },
-{ "type": "Feature", "properties": { "No.": 11, "type": "TACAN", "name": "鹿屋", "id": "JAT", "ch": "85x", "freq": "NA", "latitude(DMS)": 312146.0, "longitude(DMS)": 1304949.0, "latitude(DD)": 31.3628, "longitude(DD)": 130.8303, "N(D)": 31, "N(M)": 21, "N(S)": 46.0, "E(D)": 130, "E(M)": 49, "E(S)": 49.0 }, "geometry": { "type": "Point", "coordinates": [ 130.8303, 31.3628 ] } },
-{ "type": "Feature", "properties": { "No.": 12, "type": "TACAN", "name": "大村", "id": "JBT", "ch": "87y", "freq": "NA", "latitude(DMS)": 325533.0, "longitude(DMS)": 1295556.0, "latitude(DD)": 32.9258, "longitude(DD)": 129.9322, "N(D)": 32, "N(M)": 55, "N(S)": 33.0, "E(D)": 129, "E(M)": 55, "E(S)": 56.0 }, "geometry": { "type": "Point", "coordinates": [ 129.9322, 32.9258 ] } },
-{ "type": "Feature", "properties": { "No.": 13, "type": "TACAN", "name": "宇都宮", "id": "JDT", "ch": "58y", "freq": "NA", "latitude(DMS)": 363101.0, "longitude(DMS)": 1395232.0, "latitude(DD)": 36.5169, "longitude(DD)": 139.8756, "N(D)": 36, "N(M)": 31, "N(S)": 1.0, "E(D)": 139, "E(M)": 52, "E(S)": 32.0 }, "geometry": { "type": "Point", "coordinates": [ 139.8756, 36.5169 ] } },
-{ "type": "Feature", "properties": { "No.": 14, "type": "TACAN", "name": "美保", "id": "JET", "ch": "114x", "freq": "NA", "latitude(DMS)": 353151.77, "longitude(DMS)": 1330538.72, "latitude(DD)": 35.531, "longitude(DD)": 133.0941, "N(D)": 35, "N(M)": 31, "N(S)": 51.77, "E(D)": 133, "E(M)": 5, "E(S)": 38.72 }, "geometry": { "type": "Point", "coordinates": [ 133.0941, 35.531 ] } },
-{ "type": "Feature", "properties": { "No.": 15, "type": "TACAN", "name": "小松島", "id": "KJT", "ch": "82y", "freq": "NA", "latitude(DMS)": 340015.0, "longitude(DMS)": 1343732.0, "latitude(DD)": 34.0042, "longitude(DD)": 134.6256, "N(D)": 34, "N(M)": 0, "N(S)": 15.0, "E(D)": 134, "E(M)": 37, "E(S)": 32.0 }, "geometry": { "type": "Point", "coordinates": [ 134.6256, 34.0042 ] } },
-{ "type": "Feature", "properties": { "No.": 16, "type": "TACAN", "name": "木更津", "id": "KZT", "ch": "37y", "freq": "NA", "latitude(DMS)": 352349.4, "longitude(DMS)": 1395416.19, "latitude(DD)": 35.3971, "longitude(DD)": 139.9045, "N(D)": 35, "N(M)": 23, "N(S)": 49.4, "E(D)": 139, "E(M)": 54, "E(S)": 16.19 }, "geometry": { "type": "Point", "coordinates": [ 139.9045, 35.3971 ] } },
-{ "type": "Feature", "properties": { "No.": 17, "type": "TACAN", "name": "浜松", "id": "LHT", "ch": "94x", "freq": "NA", "latitude(DMS)": 344450.0, "longitude(DMS)": 1374236.0, "latitude(DD)": 34.7472, "longitude(DD)": 137.71, "N(D)": 34, "N(M)": 44, "N(S)": 50.0, "E(D)": 137, "E(M)": 42, "E(S)": 36.0 }, "geometry": { "type": "Point", "coordinates": [ 137.71, 34.7472 ] } },
-{ "type": "Feature", "properties": { "No.": 18, "type": "TACAN", "name": "見島", "id": "MIT", "ch": "43x", "freq": "NA", "latitude(DMS)": 344618.0, "longitude(DMS)": 1310817.0, "latitude(DD)": 34.7717, "longitude(DD)": 131.1381, "N(D)": 34, "N(M)": 46, "N(S)": 18.0, "E(D)": 131, "E(M)": 8, "E(S)": 17.0 }, "geometry": { "type": "Point", "coordinates": [ 131.1381, 34.7717 ] } },
-{ "type": "Feature", "properties": { "No.": 19, "type": "TACAN", "name": "南鳥島", "id": "MLT", "ch": "23x", "freq": "NA", "latitude(DMS)": 241722.0, "longitude(DMS)": 1535839.0, "latitude(DD)": 24.2894, "longitude(DD)": 153.9775, "N(D)": 24, "N(M)": 17, "N(S)": 22.0, "E(D)": 153, "E(M)": 58, "E(S)": 39.0 }, "geometry": { "type": "Point", "coordinates": [ 153.9775, 24.2894 ] } },
-{ "type": "Feature", "properties": { "No.": 20, "type": "TACAN", "name": "松島", "id": "MXT", "ch": "90x", "freq": "NA", "latitude(DMS)": 382414.0, "longitude(DMS)": 1411332.0, "latitude(DD)": 38.4039, "longitude(DD)": 141.2256, "N(D)": 38, "N(M)": 24, "N(S)": 14.0, "E(D)": 141, "E(M)": 13, "E(S)": 32.0 }, "geometry": { "type": "Point", "coordinates": [ 141.2256, 38.4039 ] } },
-{ "type": "Feature", "properties": { "No.": 21, "type": "TACAN", "name": "舞鶴", "id": "MZT", "ch": "33y", "freq": "NA", "latitude(DMS)": 353253.0, "longitude(DMS)": 1352532.0, "latitude(DD)": 35.5481, "longitude(DD)": 135.4256, "N(D)": 35, "N(M)": 32, "N(S)": 53.0, "E(D)": 135, "E(M)": 25, "E(S)": 32.0 }, "geometry": { "type": "Point", "coordinates": [ 135.4256, 35.5481 ] } },
-{ "type": "Feature", "properties": { "No.": 22, "type": "TACAN", "name": "岩国", "id": "NEU", "ch": "35x", "freq": "NA", "latitude(DMS)": 340930.27, "longitude(DMS)": 1321443.81, "latitude(DD)": 34.1584, "longitude(DD)": 132.2455, "N(D)": 34, "N(M)": 9, "N(S)": 30.27, "E(D)": 132, "E(M)": 14, "E(S)": 43.81 }, "geometry": { "type": "Point", "coordinates": [ 132.2455, 34.1584 ] } },
-{ "type": "Feature", "properties": { "No.": 23, "type": "TACAN", "name": "普天間", "id": "NFO", "ch": "42x", "freq": "NA", "latitude(DMS)": 261607.8, "longitude(DMS)": 1274434.8, "latitude(DD)": 26.2688, "longitude(DD)": 127.743, "N(D)": 26, "N(M)": 16, "N(S)": 7.8, "E(D)": 127, "E(M)": 44, "E(S)": 34.8 }, "geometry": { "type": "Point", "coordinates": [ 127.743, 26.2688 ] } },
-{ "type": "Feature", "properties": { "No.": 24, "type": "TACAN", "name": "新田原", "id": "NHT", "ch": "97x", "freq": "NA", "latitude(DMS)": 320449.0, "longitude(DMS)": 1312713.0, "latitude(DD)": 32.0803, "longitude(DD)": 131.4536, "N(D)": 32, "N(M)": 4, "N(S)": 49.0, "E(D)": 131, "E(M)": 27, "E(S)": 13.0 }, "geometry": { "type": "Point", "coordinates": [ 131.4536, 32.0803 ] } },
-{ "type": "Feature", "properties": { "No.": 25, "type": "TACAN", "name": "厚木", "id": "NJA", "ch": "98x", "freq": "NA", "latitude(DMS)": 352644.0, "longitude(DMS)": 1392714.0, "latitude(DD)": 35.4456, "longitude(DD)": 139.4539, "N(D)": 35, "N(M)": 26, "N(S)": 44.0, "E(D)": 139, "E(M)": 27, "E(S)": 14.0 }, "geometry": { "type": "Point", "coordinates": [ 139.4539, 35.4456 ] } },
-{ "type": "Feature", "properties": { "No.": 26, "type": "TACAN", "name": "新島", "id": "NJT", "ch": "112x", "freq": "NA", "latitude(DMS)": 342051.99, "longitude(DMS)": 1391618.43, "latitude(DD)": 34.3478, "longitude(DD)": 139.2718, "N(D)": 34, "N(M)": 20, "N(S)": 51.99, "E(D)": 139, "E(M)": 16, "E(S)": 18.43 }, "geometry": { "type": "Point", "coordinates": [ 139.2718, 34.3478 ] } },
-{ "type": "Feature", "properties": { "No.": 27, "type": "TACAN", "name": "小月", "id": "OCT", "ch": "58y", "freq": "NA", "latitude(DMS)": 340239.0, "longitude(DMS)": 1310259.0, "latitude(DD)": 34.0442, "longitude(DD)": 131.0497, "N(D)": 34, "N(M)": 2, "N(S)": 39.0, "E(D)": 131, "E(M)": 2, "E(S)": 59.0 }, "geometry": { "type": "Point", "coordinates": [ 131.0497, 34.0442 ] } },
-{ "type": "Feature", "properties": { "No.": 28, "type": "TACAN", "name": "御宿", "id": "OJT", "ch": "104x", "freq": "NA", "latitude(DMS)": 351102.89, "longitude(DMS)": 1402217.14, "latitude(DD)": 35.1841, "longitude(DD)": 140.3714, "N(D)": 35, "N(M)": 11, "N(S)": 2.89, "E(D)": 140, "E(M)": 22, "E(S)": 17.14 }, "geometry": { "type": "Point", "coordinates": [ 140.3714, 35.1841 ] } },
-{ "type": "Feature", "properties": { "No.": 29, "type": "TACAN", "name": "岡山", "id": "OKT", "ch": "106x", "freq": "NA", "latitude(DMS)": 344016.61, "longitude(DMS)": 1340054.26, "latitude(DD)": 34.6713, "longitude(DD)": 134.0151, "N(D)": 34, "N(M)": 40, "N(S)": 16.61, "E(D)": 134, "E(M)": 0, "E(S)": 54.26 }, "geometry": { "type": "Point", "coordinates": [ 134.0151, 34.6713 ] } },
-{ "type": "Feature", "properties": { "No.": 30, "type": "TACAN", "name": "大湊", "id": "OMT", "ch": "95y", "freq": "NA", "latitude(DMS)": 411351.0, "longitude(DMS)": 1410809.0, "latitude(DD)": 41.2308, "longitude(DD)": 141.1358, "N(D)": 41, "N(M)": 13, "N(S)": 51.0, "E(D)": 141, "E(M)": 8, "E(S)": 9.0 }, "geometry": { "type": "Point", "coordinates": [ 141.1358, 41.2308 ] } },
-{ "type": "Feature", "properties": { "No.": 31, "type": "TACAN", "name": "下総", "id": "SHT", "ch": "19x", "freq": "NA", "latitude(DMS)": 354807.0, "longitude(DMS)": 1400035.0, "latitude(DD)": 35.8019, "longitude(DD)": 140.0097, "N(D)": 35, "N(M)": 48, "N(S)": 7.0, "E(D)": 140, "E(M)": 0, "E(S)": 35.0 }, "geometry": { "type": "Point", "coordinates": [ 140.0097, 35.8019 ] } },
-{ "type": "Feature", "properties": { "No.": 32, "type": "TACAN", "name": "館山", "id": "TET", "ch": "25x", "freq": "NA", "latitude(DMS)": 345815.0, "longitude(DMS)": 1395017.0, "latitude(DD)": 34.9708, "longitude(DD)": 139.8381, "N(D)": 34, "N(M)": 58, "N(S)": 15.0, "E(D)": 139, "E(M)": 50, "E(S)": 17.0 }, "geometry": { "type": "Point", "coordinates": [ 139.8381, 34.9708 ] } },
-{ "type": "Feature", "properties": { "No.": 33, "type": "TACAN", "name": "知念", "id": "TIT", "ch": "89x", "freq": "NA", "latitude(DMS)": 260938.4, "longitude(DMS)": 1274803.92, "latitude(DD)": 26.1607, "longitude(DD)": 127.8011, "N(D)": 26, "N(M)": 9, "N(S)": 38.4, "E(D)": 127, "E(M)": 48, "E(S)": 3.92 }, "geometry": { "type": "Point", "coordinates": [ 127.8011, 26.1607 ] } },
-{ "type": "Feature", "properties": { "No.": 34, "type": "TACAN", "name": "十勝", "id": "TKT", "ch": "55x", "freq": "NA", "latitude(DMS)": 425336.0, "longitude(DMS)": 1430957.0, "latitude(DD)": 42.8933, "longitude(DD)": 143.1658, "N(D)": 42, "N(M)": 53, "N(S)": 36.0, "E(D)": 143, "E(M)": 9, "E(S)": 57.0 }, "geometry": { "type": "Point", "coordinates": [ 143.1658, 42.8933 ] } },
-{ "type": "Feature", "properties": { "No.": 35, "type": "TACAN", "name": "立川", "id": "TNT", "ch": "105x", "freq": "NA", "latitude(DMS)": 354259.64, "longitude(DMS)": 1392358.17, "latitude(DD)": 35.7166, "longitude(DD)": 139.3995, "N(D)": 35, "N(M)": 42, "N(S)": 59.64, "E(D)": 139, "E(M)": 23, "E(S)": 58.17 }, "geometry": { "type": "Point", "coordinates": [ 139.3995, 35.7166 ] } },
-{ "type": "Feature", "properties": { "No.": 36, "type": "TACAN", "name": "築城", "id": "TQT", "ch": "41x", "freq": "NA", "latitude(DMS)": 334117.62, "longitude(DMS)": 1310208.97, "latitude(DD)": 33.6882, "longitude(DD)": 131.0358, "N(D)": 33, "N(M)": 41, "N(S)": 17.62, "E(D)": 131, "E(M)": 2, "E(S)": 8.97 }, "geometry": { "type": "Point", "coordinates": [ 131.0358, 33.6882 ] } },
-{ "type": "Feature", "properties": { "No.": 37, "type": "TACAN", "name": "高松", "id": "TZT", "ch": "122x", "freq": "NA", "latitude(DMS)": 341934.22, "longitude(DMS)": 1335713.83, "latitude(DD)": 34.3262, "longitude(DD)": 133.9538, "N(D)": 34, "N(M)": 19, "N(S)": 34.22, "E(D)": 133, "E(M)": 57, "E(S)": 13.83 }, "geometry": { "type": "Point", "coordinates": [ 133.9538, 34.3262 ] } },
-{ "type": "Feature", "properties": { "No.": 38, "type": "TACAN", "name": "下対馬", "id": "VCT", "ch": "115y", "freq": "NA", "latitude(DMS)": 340748.0, "longitude(DMS)": 1291700.0, "latitude(DD)": 34.13, "longitude(DD)": 129.2833, "N(D)": 34, "N(M)": 7, "N(S)": 48.0, "E(D)": 129, "E(M)": 17, "E(S)": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 129.2833, 34.13 ] } },
-{ "type": "Feature", "properties": { "No.": 39, "type": "TACAN", "name": "河和", "id": "XMT", "ch": "82x", "freq": "NA", "latitude(DMS)": 344216.54, "longitude(DMS)": 1365726.73, "latitude(DD)": 34.7046, "longitude(DD)": 136.9574, "N(D)": 34, "N(M)": 42, "N(S)": 16.54, "E(D)": 136, "E(M)": 57, "E(S)": 26.73 }, "geometry": { "type": "Point", "coordinates": [ 136.9574, 34.7046 ] } },
-{ "type": "Feature", "properties": { "No.": 40, "type": "TACAN", "name": "入間", "id": "YLT", "ch": "43x", "freq": "NA", "latitude(DMS)": 355022.78, "longitude(DMS)": 1392454.58, "latitude(DD)": 35.8397, "longitude(DD)": 139.4152, "N(D)": 35, "N(M)": 50, "N(S)": 22.78, "E(D)": 139, "E(M)": 24, "E(S)": 54.58 }, "geometry": { "type": "Point", "coordinates": [ 139.4152, 35.8397 ] } },
-{ "type": "Feature", "properties": { "No.": 41, "type": "TACAN", "name": "横田", "id": "YOK", "ch": "85x", "freq": "NA", "latitude(DMS)": 354456.35, "longitude(DMS)": 1392100.94, "latitude(DD)": 35.749, "longitude(DD)": 139.3503, "N(D)": 35, "N(M)": 44, "N(S)": 56.35, "E(D)": 139, "E(M)": 21, "E(S)": 0.94 }, "geometry": { "type": "Point", "coordinates": [ 139.3503, 35.749 ] } },
-{ "type": "Feature", "properties": { "No.": 42, "type": "TACAN", "name": "静浜", "id": "YZT", "ch": "29x", "freq": "NA", "latitude(DMS)": 344851.92, "longitude(DMS)": 1381744.92, "latitude(DD)": 34.8144, "longitude(DD)": 138.2958, "N(D)": 34, "N(M)": 48, "N(S)": 51.92, "E(D)": 138, "E(M)": 17, "E(S)": 44.92 }, "geometry": { "type": "Point", "coordinates": [ 138.2958, 34.8144 ] } },
-{ "type": "Feature", "properties": { "No.": 43, "type": "TACAN", "name": "千歳", "id": "ZYT", "ch": "29x", "freq": "NA", "latitude(DMS)": 424552.0, "longitude(DMS)": 1414025.0, "latitude(DD)": 42.7644, "longitude(DD)": 141.6736, "N(D)": 42, "N(M)": 45, "N(S)": 52.0, "E(D)": 141, "E(M)": 40, "E(S)": 25.0 }, "geometry": { "type": "Point", "coordinates": [ 141.6736, 42.7644 ] } },
-{ "type": "Feature", "properties": { "No.": 1, "type": "VORTAC", "name": "福岡", "id": "DGC", "ch": "92x", "freq": 114.5, "latitude(DMS)": 334034.35, "longitude(DMS)": 1302322.66, "latitude(DD)": 33.6762, "longitude(DD)": 130.3896, "N(D)": 33, "N(M)": 40, "N(S)": 34.35, "E(D)": 130, "E(M)": 23, "E(S)": 22.66 }, "geometry": { "type": "Point", "coordinates": [ 130.3896, 33.6762 ] } },
-{ "type": "Feature", "properties": { "No.": 2, "type": "VORTAC", "name": "新潟", "id": "GTC", "ch": "102x", "freq": 115.5, "latitude(DMS)": 375729.86, "longitude(DMS)": 1390653.59, "latitude(DD)": 37.9583, "longitude(DD)": 139.1149, "N(D)": 37, "N(M)": 57, "N(S)": 29.86, "E(D)": 139, "E(M)": 6, "E(S)": 53.59 }, "geometry": { "type": "Point", "coordinates": [ 139.1149, 37.9583 ] } },
-{ "type": "Feature", "properties": { "No.": 3, "type": "VORTAC", "name": "鹿児島", "id": "HKC", "ch": "80x", "freq": 113.3, "latitude(DMS)": 314150.0, "longitude(DMS)": 1303458.59, "latitude(DD)": 31.6972, "longitude(DD)": 130.5829, "N(D)": 31, "N(M)": 41, "N(S)": 50.0, "E(D)": 130, "E(M)": 34, "E(S)": 58.59 }, "geometry": { "type": "Point", "coordinates": [ 130.5829, 31.6972 ] } },
-{ "type": "Feature", "properties": { "No.": 4, "type": "VORTAC", "name": "百里", "id": "HUC", "ch": "80x", "freq": 113.3, "latitude(DMS)": 361113.22, "longitude(DMS)": 1402449.42, "latitude(DD)": 36.187, "longitude(DD)": 140.4137, "N(D)": 36, "N(M)": 11, "N(S)": 13.22, "E(D)": 140, "E(M)": 24, "E(S)": 49.42 }, "geometry": { "type": "Point", "coordinates": [ 140.4137, 36.187 ] } },
-{ "type": "Feature", "properties": { "No.": 5, "type": "VORTAC", "name": "嘉手納", "id": "KAD", "ch": "57x", "freq": 112.0, "latitude(DMS)": 262124.16, "longitude(DMS)": 1274606.73, "latitude(DD)": 26.3567, "longitude(DD)": 127.7685, "N(D)": 26, "N(M)": 21, "N(S)": 24.16, "E(D)": 127, "E(M)": 46, "E(S)": 6.73 }, "geometry": { "type": "Point", "coordinates": [ 127.7685, 26.3567 ] } },
-{ "type": "Feature", "properties": { "No.": 6, "type": "VORTAC", "name": "名古屋", "id": "KCC", "ch": "89x", "freq": 114.2, "latitude(DMS)": 351554.96, "longitude(DMS)": 1365453.73, "latitude(DD)": 35.2653, "longitude(DD)": 136.9149, "N(D)": 35, "N(M)": 15, "N(S)": 54.96, "E(D)": 136, "E(M)": 54, "E(S)": 53.73 }, "geometry": { "type": "Point", "coordinates": [ 136.9149, 35.2653 ] } },
-{ "type": "Feature", "properties": { "No.": 7, "type": "VORTAC", "name": "串本", "id": "KEC", "ch": "76x", "freq": 112.9, "latitude(DMS)": 332651.87, "longitude(DMS)": 1354740.18, "latitude(DD)": 33.4477, "longitude(DD)": 135.7945, "N(D)": 33, "N(M)": 26, "N(S)": 51.87, "E(D)": 135, "E(M)": 47, "E(S)": 40.18 }, "geometry": { "type": "Point", "coordinates": [ 135.7945, 33.4477 ] } },
-{ "type": "Feature", "properties": { "No.": 8, "type": "VORTAC", "name": "小松", "id": "KMC", "ch": "57x", "freq": 112.0, "latitude(DMS)": 362347.29, "longitude(DMS)": 1362415.31, "latitude(DD)": 36.3965, "longitude(DD)": 136.4043, "N(D)": 36, "N(M)": 23, "N(S)": 47.29, "E(D)": 136, "E(M)": 24, "E(S)": 15.31 }, "geometry": { "type": "Point", "coordinates": [ 136.4043, 36.3965 ] } },
-{ "type": "Feature", "properties": { "No.": 9, "type": "VORTAC", "name": "久米島", "id": "KXC", "ch": "114x", "freq": 116.7, "latitude(DMS)": 262218.73, "longitude(DMS)": 1264319.43, "latitude(DD)": 26.3719, "longitude(DD)": 126.7221, "N(D)": 26, "N(M)": 22, "N(S)": 18.73, "E(D)": 126, "E(M)": 43, "E(S)": 19.43 }, "geometry": { "type": "Point", "coordinates": [ 126.7221, 26.3719 ] } },
-{ "type": "Feature", "properties": { "No.": 10, "type": "VORTAC", "name": "三沢", "id": "MIS", "ch": "101x", "freq": 115.4, "latitude(DMS)": 404213.76, "longitude(DMS)": 1412251.99, "latitude(DD)": 40.7038, "longitude(DD)": 141.3811, "N(D)": 40, "N(M)": 42, "N(S)": 13.76, "E(D)": 141, "E(M)": 22, "E(S)": 51.99 }, "geometry": { "type": "Point", "coordinates": [ 141.3811, 40.7038 ] } },
-{ "type": "Feature", "properties": { "No.": 11, "type": "VORTAC", "name": "宮古島", "id": "MJC", "ch": "81y", "freq": 113.45, "latitude(DMS)": 244638.61, "longitude(DMS)": 1251736.27, "latitude(DD)": 24.7774, "longitude(DD)": 125.2934, "N(D)": 24, "N(M)": 46, "N(S)": 38.61, "E(D)": 125, "E(M)": 17, "E(S)": 36.27 }, "geometry": { "type": "Point", "coordinates": [ 125.2934, 24.7774 ] } },
-{ "type": "Feature", "properties": { "No.": 12, "type": "VORTAC", "name": "那覇", "id": "NHC", "ch": "112x", "freq": 116.5, "latitude(DMS)": 261230.71, "longitude(DMS)": 1273834.32, "latitude(DD)": 26.2085, "longitude(DD)": 127.6429, "N(D)": 26, "N(M)": 12, "N(S)": 30.71, "E(D)": 127, "E(M)": 38, "E(S)": 34.32 }, "geometry": { "type": "Point", "coordinates": [ 127.6429, 26.2085 ] } },
-{ "type": "Feature", "properties": { "No.": 13, "type": "VORTAC", "name": "永良部", "id": "ONC", "ch": "78x", "freq": 113.1, "latitude(DMS)": 272558.38, "longitude(DMS)": 1284156.27, "latitude(DD)": 27.4329, "longitude(DD)": 128.699, "N(D)": 27, "N(M)": 25, "N(S)": 58.38, "E(D)": 128, "E(M)": 41, "E(S)": 56.27 }, "geometry": { "type": "Point", "coordinates": [ 128.699, 27.4329 ] } },
-{ "type": "Feature", "properties": { "No.": 14, "type": "VORTAC", "name": "清水", "id": "SUC", "ch": "99x", "freq": 115.2, "latitude(DMS)": 324521.49, "longitude(DMS)": 1325947.93, "latitude(DD)": 32.756, "longitude(DD)": 132.9966, "N(D)": 32, "N(M)": 45, "N(S)": 21.49, "E(D)": 132, "E(M)": 59, "E(S)": 47.93 }, "geometry": { "type": "Point", "coordinates": [ 132.9966, 32.756 ] } },
-{ "type": "Feature", "properties": { "No.": 15, "type": "VORTAC", "name": "徳島", "id": "TSC", "ch": "96x", "freq": 114.9, "latitude(DMS)": 340747.0, "longitude(DMS)": 1343631.0, "latitude(DD)": 34.1297, "longitude(DD)": 134.6086, "N(D)": 34, "N(M)": 7, "N(S)": 47.0, "E(D)": 134, "E(M)": 36, "E(S)": 31.0 }, "geometry": { "type": "Point", "coordinates": [ 134.6086, 34.1297 ] } },
-{ "type": "Feature", "properties": { "No.": 16, "type": "VORTAC", "name": "大島", "id": "XAC", "ch": "78x", "freq": 113.1, "latitude(DMS)": 344244.11, "longitude(DMS)": 1392450.46, "latitude(DD)": 34.7123, "longitude(DD)": 139.414, "N(D)": 34, "N(M)": 42, "N(S)": 44.11, "E(D)": 139, "E(M)": 24, "E(S)": 50.46 }, "geometry": { "type": "Point", "coordinates": [ 139.414, 34.7123 ] } },
-{ "type": "Feature", "properties": { "No.": 1, "type": "VOR", "name": "天草", "id": "AKE", "ch": "81y", "freq": 113.45, "latitude(DMS)": 322848.85, "longitude(DMS)": 1300939.48, "latitude(DD)": 32.4802, "longitude(DD)": 130.161, "N(D)": 32, "N(M)": 28, "N(S)": 48.85, "E(D)": 130, "E(M)": 9, "E(S)": 39.48 }, "geometry": { "type": "Point", "coordinates": [ 130.161, 32.4802 ] } },
-{ "type": "Feature", "properties": { "No.": 2, "type": "VOR", "name": "笠利", "id": "AME", "ch": "86y", "freq": 113.95, "latitude(DMS)": 282604.98, "longitude(DMS)": 1294241.07, "latitude(DD)": 28.4347, "longitude(DD)": 129.7114, "N(D)": 28, "N(M)": 26, "N(S)": 4.98, "E(D)": 129, "E(M)": 42, "E(S)": 41.07 }, "geometry": { "type": "Point", "coordinates": [ 129.7114, 28.4347 ] } },
-{ "type": "Feature", "properties": { "No.": 3, "type": "VOR", "name": "旭川", "id": "AWE", "ch": "82x", "freq": 113.5, "latitude(DMS)": 434002.15, "longitude(DMS)": 1422724.65, "latitude(DD)": 43.6673, "longitude(DD)": 142.4568, "N(D)": 43, "N(M)": 40, "N(S)": 2.15, "E(D)": 142, "E(M)": 27, "E(S)": 24.65 }, "geometry": { "type": "Point", "coordinates": [ 142.4568, 43.6673 ] } },
-{ "type": "Feature", "properties": { "No.": 4, "type": "VOR", "name": "中部", "id": "CBE", "ch": "125x", "freq": 117.8, "latitude(DMS)": 345128.82, "longitude(DMS)": 1364811.41, "latitude(DD)": 34.858, "longitude(DD)": 136.8032, "N(D)": 34, "N(M)": 51, "N(S)": 28.82, "E(D)": 136, "E(M)": 48, "E(S)": 11.41 }, "geometry": { "type": "Point", "coordinates": [ 136.8032, 34.858 ] } },
-{ "type": "Feature", "properties": { "No.": 5, "type": "VOR", "name": "千歳", "id": "CHE", "ch": "116x", "freq": 116.9, "latitude(DMS)": 424159.65, "longitude(DMS)": 1414110.2, "latitude(DD)": 42.6999, "longitude(DD)": 141.6862, "N(D)": 42, "N(M)": 41, "N(S)": 59.65, "E(D)": 141, "E(M)": 41, "E(S)": 10.2 }, "geometry": { "type": "Point", "coordinates": [ 141.6862, 42.6999 ] } },
-{ "type": "Feature", "properties": { "No.": 6, "type": "VOR", "name": "福島", "id": "FKE", "ch": "81y", "freq": 113.45, "latitude(DMS)": 371327.5, "longitude(DMS)": 1402613.51, "latitude(DD)": 37.2243, "longitude(DD)": 140.4371, "N(D)": 37, "N(M)": 13, "N(S)": 27.5, "E(D)": 140, "E(M)": 26, "E(S)": 13.51 }, "geometry": { "type": "Point", "coordinates": [ 140.4371, 37.2243 ] } },
-{ "type": "Feature", "properties": { "No.": 7, "type": "VOR", "name": "福江", "id": "FUE", "ch": "105x", "freq": 115.8, "latitude(DMS)": 324006.98, "longitude(DMS)": 1284936.25, "latitude(DD)": 32.6686, "longitude(DD)": 128.8267, "N(D)": 32, "N(M)": 40, "N(S)": 6.98, "E(D)": 128, "E(M)": 49, "E(S)": 36.25 }, "geometry": { "type": "Point", "coordinates": [ 128.8267, 32.6686 ] } },
-{ "type": "Feature", "properties": { "No.": 8, "type": "VOR", "name": "八丈島", "id": "HCE", "ch": "113y", "freq": 116.65, "latitude(DMS)": 330651.66, "longitude(DMS)": 1394718.54, "latitude(DD)": 33.1144, "longitude(DD)": 139.7885, "N(D)": 33, "N(M)": 6, "N(S)": 51.66, "E(D)": 139, "E(M)": 47, "E(S)": 18.54 }, "geometry": { "type": "Point", "coordinates": [ 139.7885, 33.1144 ] } },
-{ "type": "Feature", "properties": { "No.": 9, "type": "VOR", "name": "本郷", "id": "HGE", "ch": "126x", "freq": 117.9, "latitude(DMS)": 342601.59, "longitude(DMS)": 1325526.29, "latitude(DD)": 34.4338, "longitude(DD)": 132.924, "N(D)": 34, "N(M)": 26, "N(S)": 1.59, "E(D)": 132, "E(M)": 55, "E(S)": 26.29 }, "geometry": { "type": "Point", "coordinates": [ 132.924, 34.4338 ] } },
-{ "type": "Feature", "properties": { "No.": 10, "type": "VOR", "name": "羽田", "id": "HME", "ch": "59x", "freq": 112.2, "latitude(DMS)": 353344.34, "longitude(DMS)": 1394540.14, "latitude(DD)": 35.5623, "longitude(DD)": 139.7612, "N(D)": 35, "N(M)": 33, "N(S)": 44.34, "E(D)": 139, "E(M)": 45, "E(S)": 40.14 }, "geometry": { "type": "Point", "coordinates": [ 139.7612, 35.5623 ] } },
-{ "type": "Feature", "properties": { "No.": 11, "type": "VOR", "name": "花巻", "id": "HPE", "ch": "75x", "freq": 112.8, "latitude(DMS)": 392600.09, "longitude(DMS)": 1410800.6, "latitude(DD)": 39.4334, "longitude(DD)": 141.1335, "N(D)": 39, "N(M)": 26, "N(S)": 0.09, "E(D)": 141, "E(M)": 8, "E(S)": 0.6 }, "geometry": { "type": "Point", "coordinates": [ 141.1335, 39.4334 ] } },
-{ "type": "Feature", "properties": { "No.": 12, "type": "VOR", "name": "函館", "id": "HWE", "ch": "70x", "freq": 112.3, "latitude(DMS)": 414626.51, "longitude(DMS)": 1404955.98, "latitude(DD)": 41.774, "longitude(DD)": 140.8322, "N(D)": 41, "N(M)": 46, "N(S)": 26.51, "E(D)": 140, "E(M)": 49, "E(S)": 55.98 }, "geometry": { "type": "Point", "coordinates": [ 140.8322, 41.774 ] } },
-{ "type": "Feature", "properties": { "No.": 13, "type": "VOR", "name": "石垣島", "id": "IGE", "ch": "101x", "freq": 115.4, "latitude(DMS)": 242345.64, "longitude(DMS)": 1241416.63, "latitude(DD)": 24.396, "longitude(DD)": 124.238, "N(D)": 24, "N(M)": 23, "N(S)": 45.64, "E(D)": 124, "E(M)": 14, "E(S)": 16.63 }, "geometry": { "type": "Point", "coordinates": [ 124.238, 24.396 ] } },
-{ "type": "Feature", "properties": { "No.": 14, "type": "VOR", "name": "壱岐", "id": "IKE", "ch": "79x", "freq": 113.2, "latitude(DMS)": 334451.04, "longitude(DMS)": 1294636.67, "latitude(DD)": 33.7475, "longitude(DD)": 129.7769, "N(D)": 33, "N(M)": 44, "N(S)": 51.04, "E(D)": 129, "E(M)": 46, "E(S)": 36.67 }, "geometry": { "type": "Point", "coordinates": [ 129.7769, 33.7475 ] } },
-{ "type": "Feature", "properties": { "No.": 15, "type": "VOR", "name": "石見", "id": "IME", "ch": "97y", "freq": 115.05, "latitude(DMS)": 344034.48, "longitude(DMS)": 1314647.57, "latitude(DD)": 34.6762, "longitude(DD)": 131.7799, "N(D)": 34, "N(M)": 40, "N(S)": 34.48, "E(D)": 131, "E(M)": 46, "E(S)": 47.57 }, "geometry": { "type": "Point", "coordinates": [ 131.7799, 34.6762 ] } },
-{ "type": "Feature", "properties": { "No.": 16, "type": "VOR", "name": "伊丹", "id": "ITE", "ch": "94y", "freq": 114.75, "latitude(DMS)": 344819.74, "longitude(DMS)": 1352413.18, "latitude(DD)": 34.8055, "longitude(DD)": 135.4037, "N(D)": 34, "N(M)": 48, "N(S)": 19.74, "E(D)": 135, "E(M)": 24, "E(S)": 13.18 }, "geometry": { "type": "Point", "coordinates": [ 135.4037, 34.8055 ] } },
-{ "type": "Feature", "properties": { "No.": 17, "type": "VOR", "name": "いわき", "id": "IXE", "ch": "124x", "freq": 117.7, "latitude(DMS)": 370855.91, "longitude(DMS)": 1405832.47, "latitude(DD)": 37.1489, "longitude(DD)": 140.9757, "N(D)": 37, "N(M)": 8, "N(S)": 55.91, "E(D)": 140, "E(M)": 58, "E(S)": 32.47 }, "geometry": { "type": "Point", "coordinates": [ 140.9757, 37.1489 ] } },
-{ "type": "Feature", "properties": { "No.": 18, "type": "VOR", "name": "神戸", "id": "KCE", "ch": "49y", "freq": 111.25, "latitude(DMS)": 343751.58, "longitude(DMS)": 1351342.45, "latitude(DD)": 34.631, "longitude(DD)": 135.2285, "N(D)": 34, "N(M)": 37, "N(S)": 51.58, "E(D)": 135, "E(M)": 13, "E(S)": 42.45 }, "geometry": { "type": "Point", "coordinates": [ 135.2285, 34.631 ] } },
-{ "type": "Feature", "properties": { "No.": 19, "type": "VOR", "name": "加治木", "id": "KGE", "ch": "104x", "freq": 115.7, "latitude(DMS)": 314751.15, "longitude(DMS)": 1304333.97, "latitude(DD)": 31.7975, "longitude(DD)": 130.7261, "N(D)": 31, "N(M)": 47, "N(S)": 51.15, "E(D)": 130, "E(M)": 43, "E(S)": 33.97 }, "geometry": { "type": "Point", "coordinates": [ 130.7261, 31.7975 ] } },
-{ "type": "Feature", "properties": { "No.": 20, "type": "VOR", "name": "関西", "id": "KNE", "ch": "55x", "freq": 111.8, "latitude(DMS)": 342548.31, "longitude(DMS)": 1351506.42, "latitude(DD)": 34.4301, "longitude(DD)": 135.2518, "N(D)": 34, "N(M)": 25, "N(S)": 48.31, "E(D)": 135, "E(M)": 15, "E(S)": 6.42 }, "geometry": { "type": "Point", "coordinates": [ 135.2518, 34.4301 ] } },
-{ "type": "Feature", "properties": { "No.": 21, "type": "VOR", "name": "高知", "id": "KRE", "ch": "84x", "freq": 113.7, "latitude(DMS)": 333230.42, "longitude(DMS)": 1334048.57, "latitude(DD)": 33.5418, "longitude(DD)": 133.6802, "N(D)": 33, "N(M)": 32, "N(S)": 30.42, "E(D)": 133, "E(M)": 40, "E(S)": 48.57 }, "geometry": { "type": "Point", "coordinates": [ 133.6802, 33.5418 ] } },
-{ "type": "Feature", "properties": { "No.": 22, "type": "VOR", "name": "釧路", "id": "KSE", "ch": "72x", "freq": 112.5, "latitude(DMS)": 430201.69, "longitude(DMS)": 1441214.81, "latitude(DD)": 43.0338, "longitude(DD)": 144.2041, "N(D)": 43, "N(M)": 2, "N(S)": 1.69, "E(D)": 144, "E(M)": 12, "E(S)": 14.81 }, "geometry": { "type": "Point", "coordinates": [ 144.2041, 43.0338 ] } },
-{ "type": "Feature", "properties": { "No.": 23, "type": "VOR", "name": "香川", "id": "KTE", "ch": "21x", "freq": 108.4, "latitude(DMS)": 341244.99, "longitude(DMS)": 1340121.33, "latitude(DD)": 34.2125, "longitude(DD)": 134.0226, "N(D)": 34, "N(M)": 12, "N(S)": 44.99, "E(D)": 134, "E(M)": 1, "E(S)": 21.33 }, "geometry": { "type": "Point", "coordinates": [ 134.0226, 34.2125 ] } },
-{ "type": "Feature", "properties": { "No.": 24, "type": "VOR", "name": "熊本", "id": "KUE", "ch": "75x", "freq": 112.8, "latitude(DMS)": 325005.29, "longitude(DMS)": 1305029.45, "latitude(DD)": 32.8348, "longitude(DD)": 130.8415, "N(D)": 32, "N(M)": 50, "N(S)": 5.29, "E(D)": 130, "E(M)": 50, "E(S)": 29.45 }, "geometry": { "type": "Point", "coordinates": [ 130.8415, 32.8348 ] } },
-{ "type": "Feature", "properties": { "No.": 25, "type": "VOR", "name": "松本", "id": "MBE", "ch": "123x", "freq": 117.6, "latitude(DMS)": 360921.51, "longitude(DMS)": 1375511.34, "latitude(DD)": 36.156, "longitude(DD)": 137.9198, "N(D)": 36, "N(M)": 9, "N(S)": 21.51, "E(D)": 137, "E(M)": 55, "E(S)": 11.34 }, "geometry": { "type": "Point", "coordinates": [ 137.9198, 36.156 ] } },
-{ "type": "Feature", "properties": { "No.": 26, "type": "VOR", "name": "南大東", "id": "MDE", "ch": "125x", "freq": 117.8, "latitude(DMS)": 255116.14, "longitude(DMS)": 1311549.64, "latitude(DD)": 25.8545, "longitude(DD)": 131.2638, "N(D)": 25, "N(M)": 51, "N(S)": 16.14, "E(D)": 131, "E(M)": 15, "E(S)": 49.64 }, "geometry": { "type": "Point", "coordinates": [ 131.2638, 25.8545 ] } },
-{ "type": "Feature", "properties": { "No.": 27, "type": "VOR", "name": "鵡川", "id": "MKE", "ch": "111x", "freq": 116.4, "latitude(DMS)": 423318.02, "longitude(DMS)": 1415720.27, "latitude(DD)": 42.555, "longitude(DD)": 141.9556, "N(D)": 42, "N(M)": 33, "N(S)": 18.02, "E(D)": 141, "E(M)": 57, "E(S)": 20.27 }, "geometry": { "type": "Point", "coordinates": [ 141.9556, 42.555 ] } },
-{ "type": "Feature", "properties": { "No.": 28, "type": "VOR", "name": "雄山", "id": "MOE", "ch": "23y", "freq": 108.65, "latitude(DMS)": 340415.75, "longitude(DMS)": 1393340.64, "latitude(DD)": 34.071, "longitude(DD)": 139.5613, "N(D)": 34, "N(M)": 4, "N(S)": 15.75, "E(D)": 139, "E(M)": 33, "E(S)": 40.64 }, "geometry": { "type": "Point", "coordinates": [ 139.5613, 34.071 ] } },
-{ "type": "Feature", "properties": { "No.": 29, "type": "VOR", "name": "宮古", "id": "MQE", "ch": "113x", "freq": 116.6, "latitude(DMS)": 395156.3, "longitude(DMS)": 1415703.84, "latitude(DD)": 39.8656, "longitude(DD)": 141.9511, "N(D)": 39, "N(M)": 51, "N(S)": 56.3, "E(D)": 141, "E(M)": 57, "E(S)": 3.84 }, "geometry": { "type": "Point", "coordinates": [ 141.9511, 39.8656 ] } },
-{ "type": "Feature", "properties": { "No.": 30, "type": "VOR", "name": "青森", "id": "MRE", "ch": "88x", "freq": 114.1, "latitude(DMS)": 404419.65, "longitude(DMS)": 1404219.2, "latitude(DD)": 40.7388, "longitude(DD)": 140.7053, "N(D)": 40, "N(M)": 44, "N(S)": 19.65, "E(D)": 140, "E(M)": 42, "E(S)": 19.2 }, "geometry": { "type": "Point", "coordinates": [ 140.7053, 40.7388 ] } },
-{ "type": "Feature", "properties": { "No.": 31, "type": "VOR", "name": "紋別", "id": "MVE", "ch": "76x", "freq": 112.9, "latitude(DMS)": 441818.96, "longitude(DMS)": 1432342.33, "latitude(DD)": 44.3053, "longitude(DD)": 143.3951, "N(D)": 44, "N(M)": 18, "N(S)": 18.96, "E(D)": 143, "E(M)": 23, "E(S)": 42.33 }, "geometry": { "type": "Point", "coordinates": [ 143.3951, 44.3053 ] } },
-{ "type": "Feature", "properties": { "No.": 32, "type": "VOR", "name": "松山", "id": "MYE", "ch": "43y", "freq": 110.65, "latitude(DMS)": 334948.37, "longitude(DMS)": 1324132.0, "latitude(DD)": 33.8301, "longitude(DD)": 132.6922, "N(D)": 33, "N(M)": 49, "N(S)": 48.37, "E(D)": 132, "E(M)": 41, "E(S)": 32.0 }, "geometry": { "type": "Point", "coordinates": [ 132.6922, 33.8301 ] } },
-{ "type": "Feature", "properties": { "No.": 33, "type": "VOR", "name": "宮崎", "id": "MZE", "ch": "71x", "freq": 112.4, "latitude(DMS)": 315243.42, "longitude(DMS)": 1312614.88, "latitude(DD)": 31.8787, "longitude(DD)": 131.4375, "N(D)": 31, "N(M)": 52, "N(S)": 43.42, "E(D)": 131, "E(M)": 26, "E(S)": 14.88 }, "geometry": { "type": "Point", "coordinates": [ 131.4375, 31.8787 ] } },
-{ "type": "Feature", "properties": { "No.": 34, "type": "VOR", "name": "南紀", "id": "NKE", "ch": "27y", "freq": 109.05, "latitude(DMS)": 333940.55, "longitude(DMS)": 1352133.89, "latitude(DD)": 33.6613, "longitude(DD)": 135.3594, "N(D)": 33, "N(M)": 39, "N(S)": 40.55, "E(D)": 135, "E(M)": 21, "E(S)": 33.89 }, "geometry": { "type": "Point", "coordinates": [ 135.3594, 33.6613 ] } },
-{ "type": "Feature", "properties": { "No.": 35, "type": "VOR", "name": "成田", "id": "NRE", "ch": "126x", "freq": 117.9, "latitude(DMS)": 354656.44, "longitude(DMS)": 1402145.13, "latitude(DD)": 35.7823, "longitude(DD)": 140.3625, "N(D)": 35, "N(M)": 46, "N(S)": 56.44, "E(D)": 140, "E(M)": 21, "E(S)": 45.13 }, "geometry": { "type": "Point", "coordinates": [ 140.3625, 35.7823 ] } },
-{ "type": "Feature", "properties": { "No.": 36, "type": "VOR", "name": "中標津", "id": "NSE", "ch": "51y", "freq": 111.45, "latitude(DMS)": 433438.5, "longitude(DMS)": 1445701.81, "latitude(DD)": 43.5774, "longitude(DD)": 144.9505, "N(D)": 43, "N(M)": 34, "N(S)": 38.5, "E(D)": 144, "E(M)": 57, "E(S)": 1.81 }, "geometry": { "type": "Point", "coordinates": [ 144.9505, 43.5774 ] } },
-{ "type": "Feature", "properties": { "No.": 37, "type": "VOR", "name": "能登", "id": "NTE", "ch": "51y", "freq": 111.45, "latitude(DMS)": 371723.86, "longitude(DMS)": 1365746.48, "latitude(DD)": 37.29, "longitude(DD)": 136.9629, "N(D)": 37, "N(M)": 17, "N(S)": 23.86, "E(D)": 136, "E(M)": 57, "E(S)": 46.48 }, "geometry": { "type": "Point", "coordinates": [ 136.9629, 37.29 ] } },
-{ "type": "Feature", "properties": { "No.": 38, "type": "VOR", "name": "帯広", "id": "OBE", "ch": "33y", "freq": 109.65, "latitude(DMS)": 424402.27, "longitude(DMS)": 1431313.63, "latitude(DD)": 42.734, "longitude(DD)": 143.2205, "N(D)": 42, "N(M)": 44, "N(S)": 2.27, "E(D)": 143, "E(M)": 13, "E(S)": 13.63 }, "geometry": { "type": "Point", "coordinates": [ 143.2205, 42.734 ] } },
-{ "type": "Feature", "properties": { "No.": 39, "type": "VOR", "name": "大舘", "id": "ODE", "ch": "94y", "freq": 114.75, "latitude(DMS)": 401154.03, "longitude(DMS)": 1402142.68, "latitude(DD)": 40.1983, "longitude(DD)": 140.3619, "N(D)": 40, "N(M)": 11, "N(S)": 54.03, "E(D)": 140, "E(M)": 21, "E(S)": 42.68 }, "geometry": { "type": "Point", "coordinates": [ 140.3619, 40.1983 ] } },
-{ "type": "Feature", "properties": { "No.": 40, "type": "VOR", "name": "隠岐", "id": "OIE", "ch": "29y", "freq": 109.25, "latitude(DMS)": 361036.27, "longitude(DMS)": 1331922.16, "latitude(DD)": 36.1767, "longitude(DD)": 133.3228, "N(D)": 36, "N(M)": 10, "N(S)": 36.27, "E(D)": 133, "E(M)": 19, "E(S)": 22.16 }, "geometry": { "type": "Point", "coordinates": [ 133.3228, 36.1767 ] } },
-{ "type": "Feature", "properties": { "No.": 41, "type": "VOR", "name": "長崎", "id": "OLE", "ch": "113x", "freq": 116.6, "latitude(DMS)": 325418.89, "longitude(DMS)": 1295504.73, "latitude(DD)": 32.9052, "longitude(DD)": 129.918, "N(D)": 32, "N(M)": 54, "N(S)": 18.89, "E(D)": 129, "E(M)": 55, "E(S)": 4.73 }, "geometry": { "type": "Point", "coordinates": [ 129.918, 32.9052 ] } },
-{ "type": "Feature", "properties": { "No.": 42, "type": "VOR", "name": "奥尻", "id": "ORE", "ch": "35y", "freq": 109.85, "latitude(DMS)": 420413.09, "longitude(DMS)": 1392636.25, "latitude(DD)": 42.0703, "longitude(DD)": 139.4434, "N(D)": 42, "N(M)": 4, "N(S)": 13.09, "E(D)": 139, "E(M)": 26, "E(S)": 36.25 }, "geometry": { "type": "Point", "coordinates": [ 139.4434, 42.0703 ] } },
-{ "type": "Feature", "properties": { "No.": 43, "type": "VOR", "name": "三原", "id": "OSE", "ch": "35y", "freq": 109.85, "latitude(DMS)": 344715.87, "longitude(DMS)": 1392153.46, "latitude(DD)": 34.7877, "longitude(DD)": 139.3649, "N(D)": 34, "N(M)": 47, "N(S)": 15.87, "E(D)": 139, "E(M)": 21, "E(S)": 53.46 }, "geometry": { "type": "Point", "coordinates": [ 139.3649, 34.7877 ] } },
-{ "type": "Feature", "properties": { "No.": 44, "type": "VOR", "name": "吉備", "id": "OYE", "ch": "47x", "freq": 111.0, "latitude(DMS)": 344501.38, "longitude(DMS)": 1335006.2, "latitude(DD)": 34.7504, "longitude(DD)": 133.8351, "N(D)": 34, "N(M)": 45, "N(S)": 1.38, "E(D)": 133, "E(M)": 50, "E(S)": 6.2 }, "geometry": { "type": "Point", "coordinates": [ 133.8351, 34.7504 ] } },
-{ "type": "Feature", "properties": { "No.": 45, "type": "VOR", "name": "利尻", "id": "RSE", "ch": "93x", "freq": 114.6, "latitude(DMS)": 451444.38, "longitude(DMS)": 1411112.36, "latitude(DD)": 45.2457, "longitude(DD)": 141.1868, "N(D)": 45, "N(M)": 14, "N(S)": 44.38, "E(D)": 141, "E(M)": 11, "E(S)": 12.36 }, "geometry": { "type": "Point", "coordinates": [ 141.1868, 45.2457 ] } },
-{ "type": "Feature", "properties": { "No.": 46, "type": "VOR", "name": "仙台", "id": "SDE", "ch": "110x", "freq": 116.3, "latitude(DMS)": 380818.86, "longitude(DMS)": 1405517.34, "latitude(DD)": 38.1386, "longitude(DD)": 140.9215, "N(D)": 38, "N(M)": 8, "N(S)": 18.86, "E(D)": 140, "E(M)": 55, "E(S)": 17.34 }, "geometry": { "type": "Point", "coordinates": [ 140.9215, 38.1386 ] } },
-{ "type": "Feature", "properties": { "No.": 47, "type": "VOR", "name": "佐賀", "id": "SGE", "ch": "94y", "freq": 114.75, "latitude(DMS)": 330855.03, "longitude(DMS)": 1301734.43, "latitude(DD)": 33.1486, "longitude(DD)": 130.2929, "N(D)": 33, "N(M)": 8, "N(S)": 55.03, "E(D)": 130, "E(M)": 17, "E(S)": 34.43 }, "geometry": { "type": "Point", "coordinates": [ 130.2929, 33.1486 ] } },
-{ "type": "Feature", "properties": { "No.": 48, "type": "VOR", "name": "下地島", "id": "SJE", "ch": "118x", "freq": 117.1, "latitude(DMS)": 244918.96, "longitude(DMS)": 1250837.7, "latitude(DD)": 24.8219, "longitude(DD)": 125.1438, "N(D)": 24, "N(M)": 49, "N(S)": 18.96, "E(D)": 125, "E(M)": 8, "E(S)": 37.7 }, "geometry": { "type": "Point", "coordinates": [ 125.1438, 24.8219 ] } },
-{ "type": "Feature", "properties": { "No.": 49, "type": "VOR", "name": "札幌", "id": "SPE", "ch": "86x", "freq": 113.9, "latitude(DMS)": 431028.71, "longitude(DMS)": 1411808.58, "latitude(DD)": 43.1746, "longitude(DD)": 141.3024, "N(D)": 43, "N(M)": 10, "N(S)": 28.71, "E(D)": 141, "E(M)": 18, "E(S)": 8.58 }, "geometry": { "type": "Point", "coordinates": [ 141.3024, 43.1746 ] } },
-{ "type": "Feature", "properties": { "No.": 50, "type": "VOR", "name": "周防", "id": "SWE", "ch": "85y", "freq": 113.85, "latitude(DMS)": 335123.82, "longitude(DMS)": 1310145.84, "latitude(DD)": 33.8566, "longitude(DD)": 131.0294, "N(D)": 33, "N(M)": 51, "N(S)": 23.82, "E(D)": 131, "E(M)": 1, "E(S)": 45.84 }, "geometry": { "type": "Point", "coordinates": [ 131.0294, 33.8566 ] } },
-{ "type": "Feature", "properties": { "No.": 51, "type": "VOR", "name": "関宿", "id": "SYE", "ch": "117x", "freq": 117.0, "latitude(DMS)": 360039.33, "longitude(DMS)": 1395021.02, "latitude(DD)": 36.0109, "longitude(DD)": 139.8392, "N(D)": 36, "N(M)": 0, "N(S)": 39.33, "E(D)": 139, "E(M)": 50, "E(S)": 21.02 }, "geometry": { "type": "Point", "coordinates": [ 139.8392, 36.0109 ] } },
-{ "type": "Feature", "properties": { "No.": 52, "type": "VOR", "name": "静岡", "id": "SZE", "ch": "43y", "freq": 110.65, "latitude(DMS)": 344748.63, "longitude(DMS)": 1381135.51, "latitude(DD)": 34.7968, "longitude(DD)": 138.1932, "N(D)": 34, "N(M)": 47, "N(S)": 48.63, "E(D)": 138, "E(M)": 11, "E(S)": 35.51 }, "geometry": { "type": "Point", "coordinates": [ 138.1932, 34.7968 ] } },
-{ "type": "Feature", "properties": { "No.": 53, "type": "VOR", "name": "女満別", "id": "TBE", "ch": "45y", "freq": 110.85, "latitude(DMS)": 435305.67, "longitude(DMS)": 1440958.26, "latitude(DD)": 43.8849, "longitude(DD)": 144.1662, "N(D)": 43, "N(M)": 53, "N(S)": 5.67, "E(D)": 144, "E(M)": 9, "E(S)": 58.26 }, "geometry": { "type": "Point", "coordinates": [ 144.1662, 43.8849 ] } },
-{ "type": "Feature", "properties": { "No.": 54, "type": "VOR", "name": "武蔵", "id": "TFE", "ch": "124x", "freq": 117.7, "latitude(DMS)": 332922.97, "longitude(DMS)": 1314343.52, "latitude(DD)": 33.4897, "longitude(DD)": 131.7288, "N(D)": 33, "N(M)": 29, "N(S)": 22.97, "E(D)": 131, "E(M)": 43, "E(S)": 43.52 }, "geometry": { "type": "Point", "coordinates": [ 131.7288, 33.4897 ] } },
-{ "type": "Feature", "properties": { "No.": 55, "type": "VOR", "name": "中種子", "id": "TGE", "ch": "101x", "freq": 115.4, "latitude(DMS)": 303607.76, "longitude(DMS)": 1305929.52, "latitude(DD)": 30.6022, "longitude(DD)": 130.9915, "N(D)": 30, "N(M)": 36, "N(S)": 7.76, "E(D)": 130, "E(M)": 59, "E(S)": 29.52 }, "geometry": { "type": "Point", "coordinates": [ 130.9915, 30.6022 ] } },
-{ "type": "Feature", "properties": { "No.": 56, "type": "VOR", "name": "徳之島", "id": "TKE", "ch": "41y", "freq": 110.45, "latitude(DMS)": 274929.2, "longitude(DMS)": 1285255.98, "latitude(DD)": 27.8248, "longitude(DD)": 128.8822, "N(D)": 27, "N(M)": 49, "N(S)": 29.2, "E(D)": 128, "E(M)": 52, "E(S)": 55.98 }, "geometry": { "type": "Point", "coordinates": [ 128.8822, 27.8248 ] } },
-{ "type": "Feature", "properties": { "No.": 57, "type": "VOR", "name": "富山", "id": "TOE", "ch": "45y", "freq": 110.85, "latitude(DMS)": 363907.88, "longitude(DMS)": 1371128.0, "latitude(DD)": 36.6522, "longitude(DD)": 137.1911, "N(D)": 36, "N(M)": 39, "N(S)": 7.88, "E(D)": 137, "E(M)": 11, "E(S)": 28.0 }, "geometry": { "type": "Point", "coordinates": [ 137.1911, 36.6522 ] } },
-{ "type": "Feature", "properties": { "No.": 58, "type": "VOR", "name": "鳥取", "id": "TRE", "ch": "39x", "freq": 110.2, "latitude(DMS)": 353138.28, "longitude(DMS)": 1340953.59, "latitude(DD)": 35.5273, "longitude(DD)": 134.1649, "N(D)": 35, "N(M)": 31, "N(S)": 38.28, "E(D)": 134, "E(M)": 9, "E(S)": 53.59 }, "geometry": { "type": "Point", "coordinates": [ 134.1649, 35.5273 ] } },
-{ "type": "Feature", "properties": { "No.": 59, "type": "VOR", "name": "宇部", "id": "UBE", "ch": "45x", "freq": 110.8, "latitude(DMS)": 335608.26, "longitude(DMS)": 1311700.71, "latitude(DD)": 33.9356, "longitude(DD)": 131.2835, "N(D)": 33, "N(M)": 56, "N(S)": 8.26, "E(D)": 131, "E(M)": 17, "E(S)": 0.71 }, "geometry": { "type": "Point", "coordinates": [ 131.2835, 33.9356 ] } },
-{ "type": "Feature", "properties": { "No.": 60, "type": "VOR", "name": "雄和", "id": "UWE", "ch": "43y", "freq": 110.65, "latitude(DMS)": 393701.66, "longitude(DMS)": 1401112.97, "latitude(DD)": 39.6171, "longitude(DD)": 140.1869, "N(D)": 39, "N(M)": 37, "N(S)": 1.66, "E(D)": 140, "E(M)": 11, "E(S)": 12.97 }, "geometry": { "type": "Point", "coordinates": [ 140.1869, 39.6171 ] } },
-{ "type": "Feature", "properties": { "No.": 61, "type": "VOR", "name": "対馬", "id": "VCE", "ch": "51y", "freq": 111.45, "latitude(DMS)": 341653.43, "longitude(DMS)": 1292013.24, "latitude(DD)": 34.2815, "longitude(DD)": 129.337, "N(D)": 34, "N(M)": 16, "N(S)": 53.43, "E(D)": 129, "E(M)": 20, "E(S)": 13.24 }, "geometry": { "type": "Point", "coordinates": [ 129.337, 34.2815 ] } },
-{ "type": "Feature", "properties": { "No.": 62, "type": "VOR", "name": "稚内", "id": "WKE", "ch": "100x", "freq": 115.3, "latitude(DMS)": 452426.49, "longitude(DMS)": 1414820.33, "latitude(DD)": 45.4074, "longitude(DD)": 141.8056, "N(D)": 45, "N(M)": 24, "N(S)": 26.49, "E(D)": 141, "E(M)": 48, "E(S)": 20.33 }, "geometry": { "type": "Point", "coordinates": [ 141.8056, 45.4074 ] } },
-{ "type": "Feature", "properties": { "No.": 63, "type": "VOR", "name": "出雲", "id": "XZE", "ch": "81x", "freq": 113.4, "latitude(DMS)": 352502.06, "longitude(DMS)": 1325332.54, "latitude(DD)": 35.4172, "longitude(DD)": 132.8924, "N(D)": 35, "N(M)": 25, "N(S)": 2.06, "E(D)": 132, "E(M)": 53, "E(S)": 32.54 }, "geometry": { "type": "Point", "coordinates": [ 132.8924, 35.4172 ] } },
-{ "type": "Feature", "properties": { "No.": 64, "type": "VOR", "name": "米子", "id": "YGE", "ch": "120x", "freq": 117.3, "latitude(DMS)": 353004.96, "longitude(DMS)": 1331525.94, "latitude(DD)": 35.5014, "longitude(DD)": 133.2572, "N(D)": 35, "N(M)": 30, "N(S)": 4.96, "E(D)": 133, "E(M)": 15, "E(S)": 25.94 }, "geometry": { "type": "Point", "coordinates": [ 133.2572, 35.5014 ] } },
-{ "type": "Feature", "properties": { "No.": 65, "type": "VOR", "name": "屋久島", "id": "YKE", "ch": "117x", "freq": 117.0, "latitude(DMS)": 302246.01, "longitude(DMS)": 1303945.78, "latitude(DD)": 30.3794, "longitude(DD)": 130.6627, "N(D)": 30, "N(M)": 22, "N(S)": 46.01, "E(D)": 130, "E(M)": 39, "E(S)": 45.78 }, "geometry": { "type": "Point", "coordinates": [ 130.6627, 30.3794 ] } },
-{ "type": "Feature", "properties": { "No.": 66, "type": "VOR", "name": "宮津", "id": "YME", "ch": "73x", "freq": 112.6, "latitude(DMS)": 352850.49, "longitude(DMS)": 1350813.28, "latitude(DD)": 35.4807, "longitude(DD)": 135.137, "N(D)": 35, "N(M)": 28, "N(S)": 50.49, "E(D)": 135, "E(M)": 8, "E(S)": 13.28 }, "geometry": { "type": "Point", "coordinates": [ 135.137, 35.4807 ] } },
-{ "type": "Feature", "properties": { "No.": 67, "type": "VOR", "name": "与那国", "id": "YNE", "ch": "97y", "freq": 115.05, "latitude(DMS)": 242753.72, "longitude(DMS)": 1225951.86, "latitude(DD)": 24.4649, "longitude(DD)": 122.9977, "N(D)": 24, "N(M)": 27, "N(S)": 53.72, "E(D)": 122, "E(M)": 59, "E(S)": 51.86 }, "geometry": { "type": "Point", "coordinates": [ 122.9977, 24.4649 ] } },
-{ "type": "Feature", "properties": { "No.": 68, "type": "VOR", "name": "八尾", "id": "YOE", "ch": "93x", "freq": 114.6, "latitude(DMS)": 343554.45, "longitude(DMS)": 1353537.34, "latitude(DD)": 34.5985, "longitude(DD)": 135.5937, "N(D)": 34, "N(M)": 35, "N(S)": 54.45, "E(D)": 135, "E(M)": 35, "E(S)": 37.34 }, "geometry": { "type": "Point", "coordinates": [ 135.5937, 34.5985 ] } },
-{ "type": "Feature", "properties": { "No.": 69, "type": "VOR", "name": "与論", "id": "YRE", "ch": "59y", "freq": 112.25, "latitude(DMS)": 270239.75, "longitude(DMS)": 1282352.89, "latitude(DD)": 27.0444, "longitude(DD)": 128.398, "N(D)": 27, "N(M)": 2, "N(S)": 39.75, "E(D)": 128, "E(M)": 23, "E(S)": 52.89 }, "geometry": { "type": "Point", "coordinates": [ 128.398, 27.0444 ] } },
-{ "type": "Feature", "properties": { "No.": 70, "type": "VOR", "name": "庄内", "id": "YSE", "ch": "33x", "freq": 109.6, "latitude(DMS)": 384838.81, "longitude(DMS)": 1394757.51, "latitude(DD)": 38.8108, "longitude(DD)": 139.7993, "N(D)": 38, "N(M)": 48, "N(S)": 38.81, "E(D)": 139, "E(M)": 47, "E(S)": 57.51 }, "geometry": { "type": "Point", "coordinates": [ 139.7993, 38.8108 ] } },
-{ "type": "Feature", "properties": { "No.": 71, "type": "VOR", "name": "山形", "id": "YTE", "ch": "77x", "freq": 113.0, "latitude(DMS)": 382319.04, "longitude(DMS)": 1402128.63, "latitude(DD)": 38.3886, "longitude(DD)": 140.358, "N(D)": 38, "N(M)": 23, "N(S)": 19.04, "E(D)": 140, "E(M)": 21, "E(S)": 28.63 }, "geometry": { "type": "Point", "coordinates": [ 140.358, 38.3886 ] } }
-]
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "芦屋",
+        "id": "AHT",
+        "ch": "23x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.6499, 33.8874 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "明野",
+        "id": "AKT",
+        "ch": "57y"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 136.6752, 34.5285 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "奄美",
+        "id": "ALT",
+        "ch": "102x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 129.5834, 28.4435 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "銚子",
+        "id": "CVT",
+        "ch": "83x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.7999, 35.7267 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "防府",
+        "id": "FMT",
+        "ch": "77x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.5457, 34.0384 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "岐阜",
+        "id": "GFT",
+        "ch": "31x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 136.8583, 35.3917 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "大子",
+        "id": "GOT",
+        "ch": "100x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.3496, 36.7449 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "八戸",
+        "id": "HVT",
+        "ch": "23x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.47, 40.5558 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "硫黄島",
+        "id": "IJT",
+        "ch": "35x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.3158, 24.7847 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "玖珂",
+        "id": "IWT",
+        "ch": "90x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 132.1473, 34.0799 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "鹿屋",
+        "id": "JAT",
+        "ch": "85x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.8303, 31.3628 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "大村",
+        "id": "JBT",
+        "ch": "87y"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 129.9322, 32.9258 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "宇都宮",
+        "id": "JDT",
+        "ch": "58y"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.8756, 36.5169 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "美保",
+        "id": "JET",
+        "ch": "114x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 133.0941, 35.531 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "小松島",
+        "id": "KJT",
+        "ch": "82y"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 134.6256, 34.0042 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "木更津",
+        "id": "KZT",
+        "ch": "37y"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.9045, 35.3971 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "浜松",
+        "id": "LHT",
+        "ch": "94x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 137.71, 34.7472 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "見島",
+        "id": "MIT",
+        "ch": "43x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.1381, 34.7717 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "南鳥島",
+        "id": "MLT",
+        "ch": "23x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 153.9775, 24.2894 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "松島",
+        "id": "MXT",
+        "ch": "90x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.2256, 38.4039 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "舞鶴",
+        "id": "MZT",
+        "ch": "33y"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 135.4256, 35.5481 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "岩国",
+        "id": "NEU"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 132.2455, 34.1584 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "普天間",
+        "id": "NFO",
+        "ch": "42x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 127.743, 26.2688 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "新田原",
+        "id": "NHT",
+        "ch": "97x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.4536, 32.0803 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "厚木",
+        "id": "NJA",
+        "ch": "98x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.4539, 35.4456 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "新島",
+        "id": "NJT",
+        "ch": "112x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.2718, 34.3478 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "小月",
+        "id": "OCT",
+        "ch": "58y"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.0497, 34.0442 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "御宿",
+        "id": "OJT",
+        "ch": "104x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.3714, 35.1841 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "岡山",
+        "id": "OKT",
+        "ch": "106x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 134.0151, 34.6713 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "大湊",
+        "id": "OMT",
+        "ch": "95y"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.1358, 41.2308 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "下総",
+        "id": "SHT",
+        "ch": "19x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.0097, 35.8019 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "館山",
+        "id": "TET",
+        "ch": "25x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.8381, 34.9708 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "知念",
+        "id": "TIT",
+        "ch": "89x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 127.8011, 26.1607 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "十勝",
+        "id": "TKT",
+        "ch": "55x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 143.1658, 42.8933 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "立川",
+        "id": "TNT",
+        "ch": "105x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.3995, 35.7166 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "築城",
+        "id": "TQT",
+        "ch": "41x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.0358, 33.6882 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "高松",
+        "id": "TZT",
+        "ch": "122x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 133.9538, 34.3262 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "下対馬",
+        "id": "VCT",
+        "ch": "115y"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 129.2833, 34.13 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "河和",
+        "id": "XMT",
+        "ch": "82x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 136.9574, 34.7046 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "入間",
+        "id": "YLT",
+        "ch": "43x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.4152, 35.8397 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "横田",
+        "id": "YOK",
+        "ch": "85x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.3503, 35.749 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "静浜",
+        "id": "YZT",
+        "ch": "29x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 138.2958, 34.8144 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "TACAN",
+        "name": "千歳",
+        "id": "ZYT",
+        "ch": "29x"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.6736, 42.7644 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "福岡",
+        "id": "DGC",
+        "ch": "92x",
+        "freq": 114.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.3896, 33.6762 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "新潟",
+        "id": "GTC",
+        "ch": "102x",
+        "freq": 115.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.1149, 37.9583 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "鹿児島",
+        "id": "HKC",
+        "ch": "80x",
+        "freq": 113.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.5829, 31.6972 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "百里",
+        "id": "HUC",
+        "ch": "80x",
+        "freq": 113.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.4137, 36.187 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "嘉手納",
+        "id": "KAD",
+        "ch": "57x",
+        "freq": 112.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 127.7685, 26.3567 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "名古屋",
+        "id": "KCC",
+        "ch": "89x",
+        "freq": 114.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 136.9149, 35.2653 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "串本",
+        "id": "KEC",
+        "ch": "76x",
+        "freq": 112.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 135.7945, 33.4477 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "小松",
+        "id": "KMC",
+        "ch": "57x",
+        "freq": 112.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 136.4043, 36.3965 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "久米島",
+        "id": "KXC",
+        "ch": "114x",
+        "freq": 116.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 126.7221, 26.3719 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "三沢",
+        "id": "MIS",
+        "ch": "101x",
+        "freq": 115.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.3811, 40.7038 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "宮古島",
+        "id": "MJC",
+        "ch": "81y",
+        "freq": 113.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 125.2934, 24.7774 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "那覇",
+        "id": "NHC",
+        "ch": "112x",
+        "freq": 116.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 127.6429, 26.2085 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "永良部",
+        "id": "ONC",
+        "ch": "78x",
+        "freq": 113.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 128.699, 27.4329 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "清水",
+        "id": "SUC",
+        "ch": "99x",
+        "freq": 115.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 132.9966, 32.756 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "徳島",
+        "id": "TSC",
+        "ch": "96x",
+        "freq": 114.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 134.6086, 34.1297 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VORTAC",
+        "name": "大島",
+        "id": "XAC",
+        "ch": "78x",
+        "freq": 113.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.414, 34.7123 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "天草",
+        "id": "AKE",
+        "ch": "81y",
+        "freq": 113.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.161, 32.4802 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "笠利",
+        "id": "AME",
+        "ch": "86y",
+        "freq": 113.95
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 129.7114, 28.4347 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "旭川",
+        "id": "AWE",
+        "ch": "82x",
+        "freq": 113.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 142.4568, 43.6673 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "中部",
+        "id": "CBE",
+        "ch": "125x",
+        "freq": 117.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 136.8032, 34.858 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "千歳",
+        "id": "CHE",
+        "ch": "116x",
+        "freq": 116.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.6862, 42.6999 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "福島",
+        "id": "FKE",
+        "ch": "81y",
+        "freq": 113.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.4371, 37.2243 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "福江",
+        "id": "FUE",
+        "ch": "105x",
+        "freq": 115.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 128.8267, 32.6686 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "八丈島",
+        "id": "HCE",
+        "ch": "113y",
+        "freq": 116.65
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.7885, 33.1144 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "本郷",
+        "id": "HGE",
+        "ch": "126x",
+        "freq": 117.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 132.924, 34.4338 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "羽田",
+        "id": "HME",
+        "ch": "59x",
+        "freq": 112.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.7612, 35.5623 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "花巻",
+        "id": "HPE",
+        "ch": "75x",
+        "freq": 112.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.1335, 39.4334 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "函館",
+        "id": "HWE",
+        "ch": "70x",
+        "freq": 112.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.8322, 41.774 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "石垣島",
+        "id": "IGE",
+        "ch": "101x",
+        "freq": 115.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 124.238, 24.396 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "壱岐",
+        "id": "IKE",
+        "ch": "79x",
+        "freq": 113.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 129.7769, 33.7475 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "石見",
+        "id": "IME",
+        "ch": "97y",
+        "freq": 115.05
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.7799, 34.6762 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "伊丹",
+        "id": "ITE",
+        "ch": "94y",
+        "freq": 114.75
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 135.4037, 34.8055 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "いわき",
+        "id": "IXE",
+        "ch": "124x",
+        "freq": 117.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.9757, 37.1489 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "神戸",
+        "id": "KCE",
+        "ch": "49y",
+        "freq": 111.25
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 135.2285, 34.631 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "加治木",
+        "id": "KGE",
+        "ch": "104x",
+        "freq": 115.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.7261, 31.7975 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "関西",
+        "id": "KNE",
+        "ch": "55x",
+        "freq": 111.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 135.2518, 34.4301 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "高知",
+        "id": "KRE",
+        "ch": "84x",
+        "freq": 113.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 133.6802, 33.5418 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "釧路",
+        "id": "KSE",
+        "ch": "72x",
+        "freq": 112.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 144.2041, 43.0338 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "香川",
+        "id": "KTE",
+        "ch": "21x",
+        "freq": 108.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 134.0226, 34.2125 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "熊本",
+        "id": "KUE",
+        "ch": "75x",
+        "freq": 112.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.8415, 32.8348 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "松本",
+        "id": "MBE",
+        "ch": "123x",
+        "freq": 117.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 137.9198, 36.156 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "南大東",
+        "id": "MDE",
+        "ch": "125x",
+        "freq": 117.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.2638, 25.8545 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "鵡川",
+        "id": "MKE",
+        "ch": "111x",
+        "freq": 116.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.9556, 42.555 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "雄山",
+        "id": "MOE",
+        "ch": "23y",
+        "freq": 108.65
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.5613, 34.071 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "宮古",
+        "id": "MQE",
+        "ch": "113x",
+        "freq": 116.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.9511, 39.8656 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "青森",
+        "id": "MRE",
+        "ch": "88x",
+        "freq": 114.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.7053, 40.7388 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "紋別",
+        "id": "MVE",
+        "ch": "76x",
+        "freq": 112.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 143.3951, 44.3053 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "松山",
+        "id": "MYE",
+        "ch": "43y",
+        "freq": 110.65
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 132.6922, 33.8301 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "宮崎",
+        "id": "MZE",
+        "ch": "71x",
+        "freq": 112.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.4375, 31.8787 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "南紀",
+        "id": "NKE",
+        "ch": "27y",
+        "freq": 109.05
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 135.3594, 33.6613 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "成田",
+        "id": "NRE",
+        "ch": "126x",
+        "freq": 117.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.3625, 35.7823 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "中標津",
+        "id": "NSE",
+        "ch": "51y",
+        "freq": 111.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 144.9505, 43.5774 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "能登",
+        "id": "NTE",
+        "ch": "51y",
+        "freq": 111.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 136.9629, 37.29 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "帯広",
+        "id": "OBE",
+        "ch": "33y",
+        "freq": 109.65
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 143.2205, 42.734 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "大舘",
+        "id": "ODE",
+        "ch": "94y",
+        "freq": 114.75
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.3619, 40.1983 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "隠岐",
+        "id": "OIE",
+        "ch": "29y",
+        "freq": 109.25
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 133.3228, 36.1767 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "長崎",
+        "id": "OLE",
+        "ch": "113x",
+        "freq": 116.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 129.918, 32.9052 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "奥尻",
+        "id": "ORE",
+        "ch": "35y",
+        "freq": 109.85
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.4434, 42.0703 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "三原",
+        "id": "OSE",
+        "ch": "35y",
+        "freq": 109.85
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.3649, 34.7877 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "吉備",
+        "id": "OYE",
+        "ch": "47x",
+        "freq": 111.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 133.8351, 34.7504 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "利尻",
+        "id": "RSE",
+        "ch": "93x",
+        "freq": 114.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.1868, 45.2457 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "仙台",
+        "id": "SDE",
+        "ch": "110x",
+        "freq": 116.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.9215, 38.1386 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "佐賀",
+        "id": "SGE",
+        "ch": "94y",
+        "freq": 114.75
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.2929, 33.1486 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "下地島",
+        "id": "SJE",
+        "ch": "118x",
+        "freq": 117.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 125.1438, 24.8219 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "札幌",
+        "id": "SPE",
+        "ch": "86x",
+        "freq": 113.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.3024, 43.1746 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "周防",
+        "id": "SWE",
+        "ch": "85y",
+        "freq": 113.85
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.0294, 33.8566 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "関宿",
+        "id": "SYE",
+        "ch": "117x",
+        "freq": 117.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.8392, 36.0109 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "静岡",
+        "id": "SZE",
+        "ch": "43y",
+        "freq": 110.65
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 138.1932, 34.7968 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "女満別",
+        "id": "TBE",
+        "ch": "45y",
+        "freq": 110.85
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 144.1662, 43.8849 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "武蔵",
+        "id": "TFE",
+        "ch": "124x",
+        "freq": 117.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.7288, 33.4897 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "中種子",
+        "id": "TGE",
+        "ch": "101x",
+        "freq": 115.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.9915, 30.6022 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "徳之島",
+        "id": "TKE",
+        "ch": "41y",
+        "freq": 110.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 128.8822, 27.8248 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "富山",
+        "id": "TOE",
+        "ch": "45y",
+        "freq": 110.85
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 137.1911, 36.6522 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "鳥取",
+        "id": "TRE",
+        "ch": "39x",
+        "freq": 110.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 134.1649, 35.5273 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "宇部",
+        "id": "UBE",
+        "ch": "45x",
+        "freq": 110.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 131.2835, 33.9356 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "雄和",
+        "id": "UWE",
+        "ch": "43y",
+        "freq": 110.65
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.1869, 39.6171 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "対馬",
+        "id": "VCE",
+        "ch": "51y",
+        "freq": 111.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 129.337, 34.2815 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "稚内",
+        "id": "WKE",
+        "ch": "100x",
+        "freq": 115.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 141.8056, 45.4074 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "出雲",
+        "id": "XZE",
+        "ch": "81x",
+        "freq": 113.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 132.8924, 35.4172 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "米子",
+        "id": "YGE",
+        "ch": "120x",
+        "freq": 117.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 133.2572, 35.5014 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "屋久島",
+        "id": "YKE",
+        "ch": "117x",
+        "freq": 117.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 130.6627, 30.3794 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "宮津",
+        "id": "YME",
+        "ch": "73x",
+        "freq": 112.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 135.137, 35.4807 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "与那国",
+        "id": "YNE",
+        "ch": "97y",
+        "freq": 115.05
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 122.9977, 24.4649 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "八尾",
+        "id": "YOE",
+        "ch": "93x",
+        "freq": 114.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 135.5937, 34.5985 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "与論",
+        "id": "YRE",
+        "ch": "59y",
+        "freq": 112.25
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 128.398, 27.0444 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "庄内",
+        "id": "YSE",
+        "ch": "33x",
+        "freq": 109.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 139.7993, 38.8108 ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "VOR",
+        "name": "山形",
+        "id": "YTE",
+        "ch": "77x",
+        "freq": 113.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [ 140.358, 38.3886 ]
+      }
+    }
+  ]
 }
