@@ -51,6 +51,14 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        'navaid-icon-blue': 'blue',
+        'navaid-icon-green': 'green',
+        'navaid-icon-red': 'red',
+        zIndex: {
+          '1': '1',
+          '2': '2',
+          '3': '3',
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -73,5 +81,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require('@tailwindcss/typography'),
+  ],
 };
