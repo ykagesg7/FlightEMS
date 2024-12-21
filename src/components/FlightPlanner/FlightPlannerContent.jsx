@@ -169,8 +169,23 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
   };
 
   const onEachFeatureRestrictedArea = (feature, layer) => {
-    if (feature.properties && feature.properties.name) {
-      layer.bindPopup(`${feature.properties.name}`);
+    if (feature.properties) {
+      const { Area_ID, Name, altitude } = feature.properties; // altitude を取得
+      let popupContent = "";
+
+      if (Name) {
+        popupContent = `${Name} (${Area_ID})`;
+      } else if (Area_ID) {
+        popupContent = `${Area_ID}`;
+      }
+
+      if (altitude) {
+        popupContent += `<br>${altitude}`; // 高度情報を追加
+      }
+
+      if (popupContent) {
+        layer.bindPopup(popupContent);
+      }
     }
   };
 
@@ -184,20 +199,77 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
     <>
       <MapEvents />
       <CursorPositionControl />
-      <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="OpenStreetMap">
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-        </LayersControl.BaseLayer>
+        <LayersControl position="topright">
+          
+          <LayersControl.BaseLayer checked name="Satellite">
+            <TileLayer
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
+            />
+          </LayersControl.BaseLayer>
+          
+          <LayersControl.BaseLayer name="OpenStreetMap">
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+          </LayersControl.BaseLayer>
 
-        <LayersControl.BaseLayer name="Satellite">
-          <TileLayer
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
-          />
-        </LayersControl.BaseLayer>
+          <LayersControl.Overlay checked name="Airports">
+          {airportsData && (
+            <GeoJSON
+              data={{
+                ...airportsData,
+                features: airportsData.features.filter(feature => feature.properties.type === "空港")
+              }}
+              pointToLayer={pointToLayer}
+              onEachFeature={(feature, layer) => {
+                const { id, name1, "Elev(ft)": elev, RWY, "MAG Var": magVar } = feature.properties;
+                const popupContent = `<b>${id}(${name1})</b><br>Elev: ${elev}ft<br>RWY: ${RWY}<br>MAG: ${magVar}°`;
+                layer.bindPopup(popupContent);
+              }}
+              zIndex={9}
+            />
+          )}
+        </LayersControl.Overlay>
+
+        <LayersControl.Overlay checked name="Navaids">
+          {navaidsData && (
+            <GeoJSON
+              data={{
+                ...navaidsData,
+                features: navaidsData.features.filter(feature => {
+                  const shouldInclude = feature.properties.type !== "空港";
+                  return shouldInclude;
+                })
+              }}
+
+              pointToLayer={(feature, latlng) => {
+                const { type } = feature.properties;
+
+                const icon = L.divIcon({
+                  className: `navaid-icon rounded-full border border-black w-1 h-1 opacity-50 ${
+                    type === 'VOR' ? 'bg-navaid-icon-blue' :
+                    type === 'DME' ? 'bg-navaid-icon-green' :
+                    type === 'TACAN' ? 'bg-navaid-icon-red' :
+                    'bg-gray-500' // デフォルト
+                  }`,
+                  iconSize: [16, 16],
+                  iconAnchor: [8, 8],
+                });
+                return L.marker(latlng, { icon, zIndexOffset: 100 });
+              }}
+              
+              onEachFeature={(feature, layer) => {
+                const { name, id, ch, freq } = feature.properties;
+                let popupContent = `<b>${name}</b><br>ID: ${id}<br>CH: ${ch}`;
+                if (freq) {
+                  popupContent += `<br>FREQ: ${freq}`;
+                }
+                layer.bindPopup(popupContent);
+              }}
+              zIndex={10}
+            />
+          )}
+        </LayersControl.Overlay>
 
         <LayersControl.Overlay name="ACC Sector above FL335">
           {accSectorHighData && (
@@ -318,37 +390,6 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
           )}
         </LayersControl.Overlay>
 
-        <LayersControl.Overlay checked name="Airports">
-          {airportsData && (
-            <GeoJSON 
-              data={{
-                ...airportsData,
-                features: airportsData.features.filter(feature => feature.properties.type === "空港")
-              }}
-              pointToLayer={pointToLayer}
-              onEachFeature={(feature, layer) => {
-                layer.bindPopup(`${feature.properties.name1} (${feature.properties.name2})`);
-              }}
-              zIndex={409}
-            />
-          )}
-        </LayersControl.Overlay>
-
-        <LayersControl.Overlay checked name="Navaids">
-          {navaidsData && (
-            <GeoJSON 
-              data={{
-                ...navaidsData,
-                features: navaidsData.features.filter(feature => feature.properties.type !== "空港")
-              }}
-              pointToLayer={pointToLayer}
-              onEachFeature={(feature, layer) => {
-                layer.bindPopup(`${feature.properties.name}`);
-              }}
-              zIndex={410}
-            />
-          )}
-        </LayersControl.Overlay>
       </LayersControl>
       {flightPlan.departure && (
         <Marker
