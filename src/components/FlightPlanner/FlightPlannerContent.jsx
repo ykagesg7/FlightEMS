@@ -252,8 +252,8 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
                     type === 'TACAN' ? 'bg-navaid-icon-red' :
                     'bg-gray-500' // デフォルト
                   }`,
-                  iconSize: [16, 16],
-                  iconAnchor: [8, 8],
+                  iconSize: [8, 8],
+                  iconAnchor: [4, 4],
                 });
                 return L.marker(latlng, { icon, zIndexOffset: 100 });
               }}

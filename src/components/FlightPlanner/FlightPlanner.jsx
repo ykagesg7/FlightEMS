@@ -45,7 +45,7 @@ const FlightPlanner = () => {
               center={[36.2048, 138.2529]} 
               zoom={5} 
               style={{ height: '100%', width: '100%' }}
-              maxBounds={[[20, 122], [46, 154]]}
+              maxBounds={[[10, 100], [60, 170]]}
               minZoom={5}
             >
               <FlightPlannerContent
