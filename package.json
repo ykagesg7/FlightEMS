@@ -2,7 +2,6 @@
   "name": "vite-project",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "clean": "npx rimraf node_modules/.vite",
     "clean:install": "npm run clean && npm install",
@@ -73,6 +72,7 @@
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^11.0.3",
     "vaul": "^0.9.1",
     "zod": "^3.23.8"
   },
