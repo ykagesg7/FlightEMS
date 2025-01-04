@@ -41,19 +41,19 @@ const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return <div>Loading...</div>;
   }
-  
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  
+
   if (allowedRoles && !allowedRoles.includes(user.user_metadata?.role)) {
     return <Navigate to="/" replace />;
   }
-  
+
   return children;
 };
 
@@ -66,34 +66,230 @@ function App() {
             <Header />
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/course" element={<Course />} />
-              <Route path="/aviation-law" element={<AviationLaw />} />
-              <Route path="/aviation-law/basics" element={<AviationLawBasics />} />
-              <Route path="/mission-planning" element={<MissionPlanningPage />} />
-              <Route path="/weather/basics/1" element={<WeatherBasics1 />} />
-              <Route path="/weather/basics/2" element={<WeatherBasics2 />} />
-              <Route path="/weather/basics/3" element={<WeatherBasics3 />} />
-              <Route path="/weather/basics/4" element={<WeatherBasics4 />} />
-              <Route path="/weather/basics/5" element={<WeatherBasics5 />} />
-              <Route path="/weather/basics/6" element={<WeatherBasics6 />} />
-              <Route path="/weather/basics/7" element={<WeatherBasics7 />} />
-              <Route path="/weather/basics/8" element={<WeatherBasics8 />} />
-              <Route path="/weather/elements/1" element={<WeatherElements1 />} />
-              <Route path="/weather/elements/2" element={<WeatherElements2 />} />
-              <Route path="/weather/elements/3" element={<WeatherElements3 />} />
-              <Route path="/weather/elements/4" element={<WeatherElements4 />} />
-              <Route path="/weather/elements/5" element={<WeatherElements5 />} />
-              <Route path="/weather/elements/6" element={<WeatherElements6 />} />
-              <Route path="/weather/elements/7" element={<WeatherElements7 />} />
-              <Route path="/weather/elements/8" element={<WeatherElements8 />} />
-              <Route path="/weather/elements/9" element={<WeatherElements9 />} />
-              <Route path="/weather/elements/10" element={<WeatherElements10 />} />
-              <Route path="/community" element={<Community />} />
-              <Route path="/flight-planner" element={<FlightPlannerPage />} />
-              <Route path="/admin-dashboard" element={<AdminDashboard />} />
-              <Route path="/course-management" element={<CourseManagement />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/course"
+                element={
+                  <ProtectedRoute>
+                    <Course />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/aviation-law"
+                element={
+                  <ProtectedRoute>
+                    <AviationLaw />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/aviation-law/basics"
+                element={
+                  <ProtectedRoute>
+                    <AviationLawBasics />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/mission-planning"
+                element={
+                  <ProtectedRoute>
+                    <MissionPlanningPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/basics/1"
+                element={
+                  <ProtectedRoute>
+                    <WeatherBasics1 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/basics/2"
+                element={
+                  <ProtectedRoute>
+                    <WeatherBasics2 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/basics/3"
+                element={
+                  <ProtectedRoute>
+                    <WeatherBasics3 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/basics/4"
+                element={
+                  <ProtectedRoute>
+                    <WeatherBasics4 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/basics/5"
+                element={
+                  <ProtectedRoute>
+                    <WeatherBasics5 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/basics/6"
+                element={
+                  <ProtectedRoute>
+                    <WeatherBasics6 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/basics/7"
+                element={
+                  <ProtectedRoute>
+                    <WeatherBasics7 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/basics/8"
+                element={
+                  <ProtectedRoute>
+                    <WeatherBasics8 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/elements/1"
+                element={
+                  <ProtectedRoute>
+                    <WeatherElements1 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/elements/2"
+                element={
+                  <ProtectedRoute>
+                    <WeatherElements2 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/elements/3"
+                element={
+                  <ProtectedRoute>
+                    <WeatherElements3 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/elements/4"
+                element={
+                  <ProtectedRoute>
+                    <WeatherElements4 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/elements/5"
+                element={
+                  <ProtectedRoute>
+                    <WeatherElements5 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/elements/6"
+                element={
+                  <ProtectedRoute>
+                    <WeatherElements6 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/elements/7"
+                element={
+                  <ProtectedRoute>
+                    <WeatherElements7 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/elements/8"
+                element={
+                  <ProtectedRoute>
+                    <WeatherElements8 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/elements/9"
+                element={
+                  <ProtectedRoute>
+                    <WeatherElements9 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weather/elements/10"
+                element={
+                  <ProtectedRoute>
+                    <WeatherElements10 />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/community"
+                element={
+                  <ProtectedRoute>
+                    <Community />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/flight-planner"
+                element={
+                  <ProtectedRoute>
+                    <FlightPlannerPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin-dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={["Teacher"]}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/course-management"
+                element={
+                  <ProtectedRoute allowedRoles={["Teacher"]}>
+                    <CourseManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/login" element={<Login />} />
             </Routes>
             <Toaster />
