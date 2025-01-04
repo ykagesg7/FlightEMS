@@ -1,16 +1,65 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { TileLayer, Marker, Polyline, useMapEvents, Popup, LayersControl, GeoJSON, useMap, Tooltip } from 'react-leaflet';
+import React, { useState, useRef, useCallback, memo } from 'react';
+import { TileLayer, Marker, Polyline, useMapEvents, Popup, LayersControl, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { defaultIcon, pointToLayer, formatCoordinates } from '../../utils/mapUtils';
 import { calculateBearingAndDistance } from '../../utils/calculations';
 
-const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo, navaidsData, airportsData, accSectorHighData, accSectorLowData, trainingAreaHigh, trainingAreaLow, trainingAreaCivil, RAPCON, restrictedArea}) => {
+const FlightPlannerContent = memo(({ onWaypointAdd, flightPlan, setFlightPlan, flightInfo, navaidsData, airportsData, accSectorHighData, accSectorLowData, trainingAreaHigh, trainingAreaLow, trainingAreaCivil, RAPCON, restrictedArea}) => {
+  
   const longPressTimeoutRef = useRef(null);
   const isLongPressRef = useRef(false);
   const [cursorPosition, setCursorPosition] = useState({ lat: 0, lng: 0 });
   const [draggingWaypointIndex, setDraggingWaypointIndex] = useState(null);
-  const [selectedArea, setSelectedArea] = useState(null);
+  const [showAirports, setShowAirports] = useState(true);
+  const [showHelicopters, setShowHelicopters] = useState(false);
+
+  const airportPointToLayer = (feature, latlng) => {
+    const type = feature.properties.type;
+    const radiusNm = 5; // 半径 5 海里
+    const radiusMeters = radiusNm * 1852;
+
+    let circleOptions = {
+      radius: radiusMeters,
+      weight: 1,
+      opacity: 0.3,
+      fillOpacity: 0.2,
+      zIndexOffset: 800 // 空港とヘリポートの zIndex を上げる
+    };
+
+    switch (type) {
+      case 'JASDF':
+        circleOptions = { ...circleOptions, fillColor: "#4981cf", color: "black" };
+        break;
+
+      case 'JMSDF':
+        circleOptions = { ...circleOptions, fillColor: "#00033a", color: "black" };
+        break;
+      
+      case 'JGSDF':
+        circleOptions = { ...circleOptions, fillColor: "#455a4f", color: "black" };
+        break;
+
+      case 'USF':
+        circleOptions = { ...circleOptions, fillColor: "#7a211e", color: "black" };
+        break;
+
+      case 'CIVIL':
+        circleOptions = { ...circleOptions, fillColor: "#646569", color: "black" };
+        break;
+
+      case '空港':
+        circleOptions = { ...circleOptions, fillColor: "#e6e6e8", color: "black" };
+        break;
+
+      case 'ヘリ':
+        circleOptions = { ...circleOptions, fillColor: "#455a4f", color: "black" };
+        break;
+    }
+
+    return L.circle(latlng, circleOptions);
+
+  };
 
   const MapEvents = () => {
     const map = useMapEvents({
@@ -213,184 +262,183 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
             />
           </LayersControl.BaseLayer>
 
-          <LayersControl.Overlay checked name="Airports">
-          {airportsData && (
-            <GeoJSON
-              data={{
-                ...airportsData,
-                features: airportsData.features.filter(feature => feature.properties.type === "空港")
-              }}
-              pointToLayer={pointToLayer}
-              onEachFeature={(feature, layer) => {
-                const { id, name1, "Elev(ft)": elev, RWY, "MAG Var": magVar } = feature.properties;
-                const popupContent = `<b>${id}(${name1})</b><br>Elev: ${elev}ft<br>RWY: ${RWY}<br>MAG: ${magVar}°`;
-                layer.bindPopup(popupContent);
-              }}
-              zIndex={9}
-            />
-          )}
-        </LayersControl.Overlay>
+          <LayersControl.Overlay checked name="Navaids">
+            {navaidsData && (
+              <GeoJSON
+                data={navaidsData}
+                pointToLayer={(feature, latlng) => {
+                  const { type } = feature.properties;
 
-        <LayersControl.Overlay checked name="Navaids">
-          {navaidsData && (
-            <GeoJSON
-              data={{
-                ...navaidsData,
-                features: navaidsData.features.filter(feature => {
-                  const shouldInclude = feature.properties.type !== "空港";
-                  return shouldInclude;
-                })
-              }}
-
-              pointToLayer={(feature, latlng) => {
-                const { type } = feature.properties;
-
-                const icon = L.divIcon({
-                  className: `navaid-icon rounded-full border border-black w-1 h-1 opacity-50 ${
-                    type === 'VOR' ? 'bg-navaid-icon-blue' :
-                    type === 'DME' ? 'bg-navaid-icon-green' :
-                    type === 'TACAN' ? 'bg-navaid-icon-red' :
-                    'bg-gray-500' // デフォルト
-                  }`,
-                  iconSize: [8, 8],
-                  iconAnchor: [4, 4],
-                });
-                return L.marker(latlng, { icon, zIndexOffset: 100 });
-              }}
+                  const icon = L.divIcon({
+                    className: `navaid-icon rounded-full border border-black w-1 h-1 opacity-50 ${
+                      type === 'VOR' ? 'bg-navaid-icon-blue' :
+                      type === 'DME' ? 'bg-navaid-icon-green' :
+                      type === 'TACAN' ? 'bg-navaid-icon-red' :
+                      'bg-gray-500' // デフォルト
+                    }`,
+                    iconSize: [8, 8],
+                    iconAnchor: [4, 4],
+                  });
+                  return L.marker(latlng, { icon, zIndexOffset: 100 });
+                }}
               
-              onEachFeature={(feature, layer) => {
-                const { name, id, ch, freq } = feature.properties;
-                let popupContent = `<b>${name}</b><br>ID: ${id}<br>CH: ${ch}`;
-                if (freq) {
-                  popupContent += `<br>FREQ: ${freq}`;
-                }
-                layer.bindPopup(popupContent);
-              }}
-              zIndex={10}
-            />
-          )}
-        </LayersControl.Overlay>
+                onEachFeature={(feature, layer) => {
+                  const { name, id, ch, freq } = feature.properties;
+                  let popupContent = `<b>${name}</b><br>ID: ${id}<br>CH: ${ch}`;
+                  if (freq) {
+                    popupContent += `<br>FREQ: ${freq}`;
+                  }
+                  layer.bindPopup(popupContent);
+                }}
+                zIndex={1000}
+              />
+            )}
+          </LayersControl.Overlay>
 
-        <LayersControl.Overlay name="ACC Sector above FL335">
-          {accSectorHighData && (
-            <GeoJSON 
-              data={accSectorHighData} 
-              style={() => ({
-                color: 'gray',
-                weight: 1,
-                opacity: 0.6,
-                fillColor: 'gray',
-                fillOpacity: 0.2,
-                zIndex: 401
-              })}
-              onEachFeature={onEachFeatureACC}
-            />
-          )}
-        </LayersControl.Overlay>
+          <LayersControl.Overlay checked name="Airports">
+            {airportsData && (
+              <GeoJSON
+                data={airportsData}
+                pointToLayer={airportPointToLayer}
+                onEachFeature={(feature, layer) => {
+                  const { id, name1, "Elev(ft)": elev, RWY1, "MAG Var": magVar, RWY2 } = feature.properties;
+                  let popupContent = `<b>${id}(${name1})</b><br>Elev: ${elev}ft<br>RWY: ${RWY1}`;
+                  if (RWY2 !== undefined) {
+                    popupContent += `<br>RWY: ${RWY2}`;
+                  }
+                  popupContent += `<br>MAG: ${magVar}°`;
+                  layer.bindPopup(popupContent);
 
-        <LayersControl.Overlay name="ACC Sector below FL335">
-          {accSectorLowData && (
-            <GeoJSON 
-              data={accSectorLowData} 
-              style={() => ({
-                color: 'yellow',
-                weight: 1,
-                opacity: 0.6,
-                fillColor: 'yellow',
-                fillOpacity: 0.2,
-                zIndex: 402
-              })}
-              onEachFeature={onEachFeatureACC}
-            />
-          )}
-        </LayersControl.Overlay>
+                  // イベント伝播を停止
+                  layer.on('click', (event) => {
+                    L.DomEvent.stopPropagation(event);
+                  });
+                }}
+                zIndex={900}
+              />
+            )}
+          </LayersControl.Overlay>
 
-        <LayersControl.Overlay name="高高度訓練空域">
-          {trainingAreaHigh && (
-            <GeoJSON 
-              data={trainingAreaHigh} 
-              style={() => ({
-                color: 'blue',
-                weight: 1,
-                opacity: 0.6,
-                fillColor: 'blue',
-                fillOpacity: 0.2,
-                zIndex: 403
-              })}
-              onEachFeature={onEachFeatureTrainingArea}
-            />
-          )}
-        </LayersControl.Overlay>
+          <LayersControl.Overlay name="高高度訓練空域">
+            {trainingAreaHigh && (
+              <GeoJSON 
+                data={trainingAreaHigh} 
+                style={() => ({
+                  color: 'blue',
+                  weight: 1,
+                  opacity: 0.6,
+                  fillColor: 'blue',
+                  fillOpacity: 0.2,
+                  zIndex: 403
+                })}
+                onEachFeature={onEachFeatureTrainingArea}
+              />
+            )}
+          </LayersControl.Overlay>
 
-        <LayersControl.Overlay name="低高度訓練空域">
-          {trainingAreaLow && (
-            <GeoJSON 
-              data={trainingAreaLow} 
-              style={() => ({
-                color: 'green',
-                weight: 1,
-                opacity: 0.6,
-                fillColor: 'green',
-                fillOpacity: 0.2,
-                zIndex: 404
-              })}
-              onEachFeature={onEachFeatureTrainingArea}
-            />
-          )}
-        </LayersControl.Overlay>
+          <LayersControl.Overlay name="低高度訓練空域">
+            {trainingAreaLow && (
+              <GeoJSON 
+                data={trainingAreaLow} 
+                style={() => ({
+                  color: 'green',
+                  weight: 1,
+                  opacity: 0.6,
+                  fillColor: 'green',
+                  fillOpacity: 0.2,
+                  zIndex: 402
+                })}
+                onEachFeature={onEachFeatureTrainingArea}
+              />
+            )}
+          </LayersControl.Overlay>
 
-        <LayersControl.Overlay name="民間訓練空域">
-          {trainingAreaCivil && (
-            <GeoJSON 
-              data={trainingAreaCivil} 
-              style={() => ({
-                color: 'gray',
-                weight: 1,
-                opacity: 0.6,
-                fillColor: 'gray',
-                fillOpacity: 0.4,
-                zIndex: 405
-              })}
-              onEachFeature={onEachFeatureTrainingArea}
-            />
-          )}
-        </LayersControl.Overlay>
+          <LayersControl.Overlay name="民間訓練空域">
+            {trainingAreaCivil && (
+              <GeoJSON 
+                data={trainingAreaCivil} 
+                style={() => ({
+                  color: 'gray',
+                  weight: 1,
+                  opacity: 0.6,
+                  fillColor: 'gray',
+                  fillOpacity: 0.4,
+                  zIndex: 401
+                })}
+                onEachFeature={onEachFeatureTrainingArea}
+              />
+            )}
+          </LayersControl.Overlay>
 
-        <LayersControl.Overlay name="制限空域">
-          {restrictedArea && (
-            <GeoJSON 
-              data={restrictedArea} 
-              style={() => ({
-                color: 'red',
-                weight: 1,
-                opacity: 0.6,
-                fillColor: 'red',
-                fillOpacity: 0.4,
-                zIndex: 406
-              })}
-              onEachFeature={onEachFeatureRestrictedArea}
-            />
-          )}
-        </LayersControl.Overlay>
+          <LayersControl.Overlay name="制限空域">
+            {restrictedArea && (
+              <GeoJSON 
+                data={restrictedArea} 
+                style={() => ({
+                  color: 'red',
+                  weight: 1,
+                  opacity: 0.6,
+                  fillColor: 'red',
+                  fillOpacity: 0.4,
+                  zIndex: 404
+                })}
+                onEachFeature={onEachFeatureRestrictedArea}
+              />
+            )}
+          </LayersControl.Overlay>
 
-        <LayersControl.Overlay name="RAPCON">
-          {RAPCON && (
-            <GeoJSON 
-              data={RAPCON} 
-              style={() => ({
-                color: 'gray',
-                weight: 1,
-                opacity: 0.6,
-                fillColor: 'gray',
-                fillOpacity: 0.4,
-                zIndex: 407
-              })}
-              onEachFeature={onEachFeatureRAPCON}
-            />
-          )}
-        </LayersControl.Overlay>
+          <LayersControl.Overlay name="ACC Sector above FL335">
+            {accSectorHighData && (
+              <GeoJSON 
+                data={accSectorHighData} 
+                style={() => ({
+                  color: 'gray',
+                  weight: 1,
+                  opacity: 0.6,
+                  fillColor: 'gray',
+                  fillOpacity: 0.2,
+                  zIndex: 400
+                })}
+                onEachFeature={onEachFeatureACC}
+              />
+            )}
+          </LayersControl.Overlay>
 
+          <LayersControl.Overlay name="ACC Sector below FL335">
+            {accSectorLowData && (
+              <GeoJSON 
+                data={accSectorLowData} 
+                style={() => ({
+                  color: 'yellow',
+                  weight: 1,
+                  opacity: 0.6,
+                  fillColor: 'yellow',
+                  fillOpacity: 0.2,
+                  zIndex: 399
+                })}
+                onEachFeature={onEachFeatureACC}
+              />
+            )}
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="RAPCON">
+            {RAPCON && (
+              <GeoJSON 
+                data={RAPCON} 
+                style={() => ({
+                  color: 'gray',
+                  weight: 1,
+                  opacity: 0.6,
+                  fillColor: 'gray',
+                  fillOpacity: 0.4,
+                  zIndex: 407
+                })}
+                onEachFeature={onEachFeatureRAPCON}
+              />
+            )}
+          </LayersControl.Overlay>
       </LayersControl>
+      
       {flightPlan.departure && (
         <Marker
           position={[flightPlan.departure.lat, flightPlan.departure.lng]}
@@ -399,6 +447,7 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
           <Popup>{flightPlan.departure.name}</Popup>
         </Marker>
       )}
+      
       {flightPlan.arrival && (
         <Marker
           position={[flightPlan.arrival.lat, flightPlan.arrival.lng]}
@@ -407,34 +456,26 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
           <Popup>{flightPlan.arrival.name}</Popup>
         </Marker>
       )}
+      
       {flightPlan.waypoints.map((waypoint, index) => (
         <Marker
-          key={index}
+          key={waypoint.id}
           position={[waypoint.lat, waypoint.lng]}
-          draggable={true}
           icon={defaultIcon}
+          draggable={true}
           eventHandlers={{
-            dragstart: () => {
-              setDraggingWaypointIndex(index);
-            },
-            drag: (e) => {
-              const marker = e.target;
-              const position = marker.getLatLng();
-              updateWaypointPosition(index, position);
-            },
-            dragend: () => {
-              setDraggingWaypointIndex(null);
-              onWaypointAdd(flightPlan.waypoints[index]);
-            },
-            click: (e) => {
-              const popupContent = getWaypointInfo(waypoint);
-              e.target.bindPopup(popupContent).openPopup();
+            dragend(e) {
+              const { lat, lng } = e.target.getLatLng();
+              updateWaypointPosition(index, { lat, lng });
             }
           }}
         >
-          <Popup>{waypoint.name}</Popup>
+          <Popup>
+            <span>{waypoint.name}< br />{getWaypointInfo(waypoint)}</span>
+          </Popup>
         </Marker>
       ))}
+      
       {flightPlan.departure && flightPlan.arrival && flightInfo && (
         <>
           {flightInfo.legs.map((leg, index) => (
@@ -459,6 +500,6 @@ const FlightPlannerContent = ({ onWaypointAdd, flightPlan, setFlightPlan, flight
       )}
     </>
   );
-};
+});
 
 export default FlightPlannerContent;

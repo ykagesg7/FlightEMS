@@ -5,15 +5,23 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { calculateTAS, calculateBearingAndDistance } from '@/utils/calculations';
+import { v4 as uuidv4 } from 'uuid';
 
 const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculateFlightInfo }) => {
+
   const [selectedNavaid, setSelectedNavaid] = useState('');
   const [bearing, setBearing] = useState('');
   const [distance, setDistance] = useState('');
   const [selectedWaypoint, setSelectedWaypoint] = useState(null);
   const [flightPerformance, setFlightPerformance] = useState({ tas: 0, mach: 0 });
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
+  const [latitudeDMS, setLatitudeDMS] = useState('');
+  const [longitudeDMS, setLongitudeDMS] = useState('');
+  const [latitudeDegree, setLatitudeDegree] = useState('');
+  const [longitudeDegree, setLongitudeDegree] = useState('');
+  const [departureAirportType, setDepartureAirportType] = useState('all');
+  const [arrivalAirportType, setArrivalAirportType] = useState('all');
+  const [navaidTypeFilter, setNavaidTypeFilter] = useState('all');
+  const [coordinateInputMode, setCoordinateInputMode] = useState('DDMMSS');
 
   // useEffectフックを使用して、speedまたはaltitudeが変更されたときに性能を計算
   useEffect(() => {
@@ -26,8 +34,7 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
   const handleAirportSelect = (type, value) => {
     const [lat, lng, name] = value.split(',');
     setFlightPlan(prev => ({
-      ...prev,
-      [type]: { lat: parseFloat(lat), lng: parseFloat(lng), name }
+      ...prev, [type]: { lat: parseFloat(lat), lng: parseFloat(lng), name }
     }));
   };
 
@@ -66,7 +73,7 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
       return;
     }
   
-    const navaid = navaids.find(n => n.id === selectedNavaid);
+    const navaid = navaids.features.find(n => n.properties.id === selectedNavaid);
     if (!navaid) {
       return;
     }
@@ -75,17 +82,18 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
   
     if (bearing === '' || distance === '') {
       newWaypoint = {
-        lat: navaid.lat,
-        lng: navaid.lng,
-        name: `${navaid.name} Waypoint`,
+        id: uuidv4(), // 一意な ID を生成
+        lat: navaid.geometry.coordinates[1],
+        lng: navaid.geometry.coordinates[0],
+        name: `${navaid.properties.name} Waypoint`,
       };
     } else {
       const bearingRad = (parseFloat(bearing) * Math.PI) / 180;
       const distanceNM = parseFloat(distance);
-  
+
       const R = 3440.065; // Earth's radius in nautical miles
-      const lat1 = (navaid.lat * Math.PI) / 180;
-      const lon1 = (navaid.lng * Math.PI) / 180;
+      const lat1 = (navaid.geometry.coordinates[1] * Math.PI) / 180;
+      const lon1 = (navaid.geometry.coordinates[0] * Math.PI) / 180;
       const lat2 = Math.asin(
         Math.sin(lat1) * Math.cos(distanceNM / R) +
         Math.cos(lat1) * Math.sin(distanceNM / R) * Math.cos(bearingRad)
@@ -94,7 +102,7 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
         Math.sin(bearingRad) * Math.sin(distanceNM / R) * Math.cos(lat1),
         Math.cos(distanceNM / R) - Math.sin(lat1) * Math.sin(lat2)
       );
-  
+
       newWaypoint = {
         lat: (lat2 * 180) / Math.PI,
         lng: (lon2 * 180) / Math.PI,
@@ -107,7 +115,7 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
       waypoints: [...prev.waypoints, newWaypoint]
     }));
   
-    // Reset input fields
+    // 入力データのリセット処理
     //setSelectedNavaid('');
     //setBearing('');
     //setDistance('');
@@ -189,30 +197,35 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
   };
 
   const addWaypointFromCoordinates = () => {
-    try {
-      const lat = convertDMStoDD(latitude);
-      const lng = convertDMStoDD(longitude);
+    let latNum = null;
+    let lngNum = null;
 
-      if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-        throw new Error('Invalid latitude or longitude');
+    if (coordinateInputMode === 'DDMMSS') {
+      const latMatch = latitudeDMS.match(/(\d{2})(\d{2})(\d{2})/);
+      const lngMatch = longitudeDMS.match(/(\d{3})(\d{2})(\d{2})/);
+      if (latMatch && lngMatch) {
+        latNum = parseInt(latMatch[1], 10) + parseInt(latMatch[2], 10) / 60 + parseInt(latMatch[3], 10) / 3600;
+        lngNum = parseInt(lngMatch[1], 10) + parseInt(lngMatch[2], 10) / 60 + parseInt(lngMatch[3], 10) / 3600;
       }
+    } else if (coordinateInputMode === 'Degree') {
+      latNum = parseFloat(latitudeDegree);
+      lngNum = parseFloat(longitudeDegree);
+    }
 
+    if (latNum !== null && lngNum !== null) {
       const newWaypoint = {
-        lat,
-        lng,
-        name: `Waypoint ${flightPlan.waypoints.length + 1}`,
+        id: uuidv4(), // 一意な ID を生成
+        name: `WP${flightPlan.waypoints.length + 1}`,
+        lat: latNum,
+        lng: lngNum,
       };
-
-      setFlightPlan(prev => ({
-        ...prev,
-        waypoints: [...prev.waypoints, newWaypoint]
-      }));
-
-      // Reset input fields
-      setLatitude('');
-      setLongitude('');
-    } catch (error) {
-      alert(error.message);
+      setFlightPlan(prev => ({ ...prev, waypoints: [...prev.waypoints, newWaypoint] }));
+      setLatitudeDMS('');
+      setLongitudeDMS('');
+      setLatitudeDegree('');
+      setLongitudeDegree('');
+    } else {
+      alert('緯度または経度の形式が正しくありません。');
     }
   };
 
@@ -225,35 +238,206 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
         <div className="space-y-4">
           <div>
             <Label htmlFor="departure">出発空港</Label>
+            <div className='space-x-4'>
+              <label>
+                <input
+                  type="radio"
+                  value="JASDF"
+                  checked={departureAirportType === 'JASDF'}
+                  onChange={() => setDepartureAirportType('JASDF')}
+                />
+                JASDF
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  value="JMSDF"
+                  checked={departureAirportType === 'JMSDF'}
+                  onChange={() => setDepartureAirportType('JMSDF')}
+                />
+                JMSDF
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  value="USF"
+                  checked={departureAirportType === 'USF'}
+                  onChange={() => setDepartureAirportType('USF')}
+                />
+                米軍
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  value="JGSDF"
+                  checked={departureAirportType === 'JGSDF'}
+                  onChange={() => setDepartureAirportType('JGSDF')}
+                />
+                JGSDF
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  value="CIVIL"
+                  checked={departureAirportType === 'CIVIL'}
+                  onChange={() => setDepartureAirportType('CIVIL')}
+                />
+                民間飛行場
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  value="airport"
+                  checked={departureAirportType === 'airport'}
+                  onChange={() => setDepartureAirportType('airport')}
+                />
+                その他の飛行場
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  value="heli"
+                  checked={departureAirportType === 'heli'}
+                  onChange={() => setDepartureAirportType('heli')}
+                />
+                ヘリポート
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  value="all"
+                  checked={departureAirportType === 'all'}
+                  onChange={() => setDepartureAirportType('all')}
+                />
+                すべて
+              </label>
+
+            </div>
             <Select onValueChange={(value) => handleAirportSelect('departure', value)}>
               <SelectTrigger id="departure">
                 <SelectValue placeholder="出発空港を選択" />
               </SelectTrigger>
               <SelectContent>
-                {airbases.map(airbase => (
-                  <SelectItem key={airbase.id} value={`${airbase.lat},${airbase.lng},${airbase.name}`}>
-                    {airbase.name}
-                  </SelectItem>
-                ))}
+                {airbases
+                  .filter(airbase => departureAirportType === 'all' || (departureAirportType === 'JASDF' && airbase.type === 'JASDF') || (departureAirportType === 'JMSDF' && airbase.type === 'JMSDF') || (departureAirportType === 'USF' && airbase.type === 'USF') || (departureAirportType === 'JGSDF' && airbase.type === 'JGSDF') || (departureAirportType === 'CIVIL' && airbase.type === 'CIVIL') || (departureAirportType === 'airport' && airbase.type === '空港') || (departureAirportType === 'heli' && airbase.type === 'ヘリ') )
+                  
+                  .map(airbase => (
+                    <SelectItem key={airbase.id} value={`${airbase.lat},${airbase.lng},${airbase.name}`}>
+                      {airbase.id} ({airbase.name})
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
+
           <div>
             <Label htmlFor="arrival">到着空港</Label>
-            <Select onValueChange={(value) => handleAirportSelect('arrival', value)}>
-              <SelectTrigger id="arrival">
-                <SelectValue placeholder="到着空港を選択"  />
-              </SelectTrigger>
-              <SelectContent>
-                {airbases.map(airbase => (
-                  <SelectItem key={airbase.id} value={`${airbase.lat},${airbase.lng},${airbase.name}`}>
-                    {airbase.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <div className='space-x-4'>
+                <label>
+                  <input
+                    type="radio"
+                    value="JASDF"
+                    checked={arrivalAirportType === 'JASDF'}
+                    onChange={() => setArrivalAirportType('JASDF')}
+                  />
+                  JASDF
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    value="JMSDF"
+                    checked={arrivalAirportType === 'JMSDF'}
+                    onChange={() => setArrivalAirportType('JMSDF')}
+                  />
+                  JMSDF
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    value="USF"
+                    checked={arrivalAirportType === 'USF'}
+                    onChange={() => setArrivalAirportType('USF')}
+                  />
+                  米軍
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    value="JGSDF"
+                    checked={arrivalAirportType === 'JGSDF'}
+                    onChange={() => setArrivalAirportType('JGSDF')}
+                  />
+                  JGSDF
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    value="CIVIL"
+                    checked={arrivalAirportType === 'CIVIL'}
+                    onChange={() => setArrivalAirportType('CIVIL')}
+                  />
+                  民間飛行場
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    value="airport"
+                    checked={arrivalAirportType === 'airport'}
+                    onChange={() => setArrivalAirportType('airport')}
+                  />
+                  その他の飛行場
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    value="heli"
+                    checked={arrivalAirportType === 'heli'}
+                    onChange={() => setArrivalAirportType('heli')}
+                  />
+                  ヘリポート
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    value="all"
+                    checked={arrivalAirportType === 'all'}
+                    onChange={() => setArrivalAirportType('all')}
+                  />
+                  すべて
+                </label>
+
+              </div>
+              <Select onValueChange={(value) => handleAirportSelect('arrival', value)}>
+                <SelectTrigger id="arrival">
+                  <SelectValue placeholder="到着空港を選択" />
+                </SelectTrigger>
+                <SelectContent>
+                  {airbases
+                    .filter(airbase => arrivalAirportType === 'all' || (arrivalAirportType === 'JASDF' && airbase.type === 'JASDF') || (arrivalAirportType === 'JMSDF' && airbase.type === 'JMSDF') || (arrivalAirportType === 'USF' && airbase.type === 'USF') || (arrivalAirportType === 'JGSDF' && airbase.type === 'JGSDF') ||(arrivalAirportType === 'CIVIL' && airbase.type === 'CIVIL') || (arrivalAirportType === 'airport' && airbase.type === '空港') || (arrivalAirportType === 'heli' && airbase.type === 'ヘリ') )
+                    .map(airbase => (
+                      <SelectItem key={airbase.id} value={`${airbase.lat},${airbase.lng},${airbase.name}`}>
+                        {airbase.id} ({airbase.name})
+                      </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select> 
           </div>
-          <div>
+
+          <div>            
             <Label htmlFor="speed">速度 (ノット)</Label>
             <div className="flex items-center space-x-2">
               <Input
@@ -287,6 +471,7 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
               <Button onClick={() => adjustValue('altitude', 1)}>+</Button>
             </div>
           </div>
+          
           <div>
             <Label htmlFor="takeoffTime">離陸時刻</Label>
             <Input
@@ -297,19 +482,36 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
               onChange={handleInputChange}
             />
           </div>
+          
           <div>
-            <Label htmlFor="navaid">Navaidからウェイポイントを追加/編集</Label>
+            <Label htmlFor="navaid">Navaidからポイントを追加/編集</Label>
             <Select value={selectedNavaid} onValueChange={setSelectedNavaid}>
               <SelectTrigger id="navaid">
                 <SelectValue placeholder="Navaidを選択" />
               </SelectTrigger>
               <SelectContent>
-                {navaids && navaids.map(navaid => (
-                  <SelectItem key={navaid.id} value={navaid.id}>
-                    {navaid.name}
+                <div>
+                  <label>
+                    <input type="radio" value="all" checked={navaidTypeFilter === 'all'} onChange={(e) => setNavaidTypeFilter(e.target.value)} /> すべて
+                  </label>
+                  <label>
+                    <input type="radio" value="VOR" checked={navaidTypeFilter === 'VOR'} onChange={(e) => setNavaidTypeFilter(e.target.value)} /> VOR
+                  </label>
+                  <label>
+                    <input type="radio" value="TACAN" checked={navaidTypeFilter === 'TACAN'} onChange={(e) => setNavaidTypeFilter(e.target.value)} /> TACAN
+                  </label>
+                  <label>
+                    <input type="radio" value="VORTAC" checked={navaidTypeFilter === 'VORTAC'} onChange={(e) => setNavaidTypeFilter(e.target.value)} /> VORTAC
+                  </label>
+                </div>
+                {navaids && navaids.features && Array.isArray(navaids.features) && navaids.features
+                .filter(navaid => navaidTypeFilter === 'all' || navaid.properties.type === navaidTypeFilter)
+                .map(navaid => (
+                  <SelectItem key={navaid.properties.id} value={navaid.properties.id}>
+                    {navaid.properties.name} ({navaid.properties.id}) - {navaid.properties.ch}
                   </SelectItem>
                 ))}
-              </SelectContent>
+              </SelectContent >
             </Select>
             <Input
               id="bearing"
@@ -333,39 +535,84 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
               <Button onClick={deleteWaypoint} disabled={selectedWaypoint === null}>ウェイポイント削除</Button>
             </div>
           </div>
-          <div>
-            <Label htmlFor="coordinates">座標からウェイポイントを追加</Label>
-            <Input
-              id="latitude"
-              placeholder="緯度 (DDMMSS)"
-              className="mt-2"
-              value={latitude}
-              onChange={(e) => setLatitude(e.target.value)}
-            />
-            <Input
-              id="longitude"
-              placeholder="経度 (DDDMMSS)"
-              className="mt-2"
-              value={longitude}
-              onChange={(e) => setLongitude(e.target.value)}
-            />
-            <Button onClick={addWaypointFromCoordinates} className="mt-2">座標からウェイポイント追加</Button>
+          
+          <div >
+            < Label>座標からウェイポイントを追加</Label>
+            <div className="space-x-4">
+              <label>
+                <input
+                  type="radio"
+                  value="DDMMSS"
+                  checked={coordinateInputMode === 'DDMMSS'}
+                  onChange={() => setCoordinateInputMode('DDMMSS')}
+                />
+                DDMMSS
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="Degree"
+                  checked={coordinateInputMode === 'Degree'}
+                  onChange={() => setCoordinateInputMode('Degree')}
+                />
+                Degree
+              </label>
+            </div>
+
+            {coordinateInputMode === 'DDMMSS' && (
+              <div className="flex space-x-2 mt-2">
+                <Input
+                  id="latitudeDMS"
+                  placeholder="緯度 (DDMMSS)"
+                  value={latitudeDMS}
+                  onChange={(e) => setLatitudeDMS(e.target.value)}
+                />
+                <Input
+                  id="longitudeDMS"
+                  placeholder="経度 (DDDMMSS)"
+                  value={longitudeDMS}
+                  onChange={(e) => setLongitudeDMS(e.target.value)}
+                />
+              </div>
+            )}
+
+            {coordinateInputMode === 'Degree' && (
+              <div className="flex space-x-2 mt-2">
+                <Input
+                  id="latitudeDegree"
+                  placeholder="緯度 (dd.dddd)"
+                  value={latitudeDegree}
+                  onChange={(e) => setLatitudeDegree(e.target.value)}
+                />
+                <Input
+                  id="longitudeDegree"
+                  placeholder="経度 (ddd.dddd)"
+                  value={longitudeDegree}
+                  onChange={(e) => setLongitudeDegree(e.target.value)}
+                />
+              </div>
+            )}
+
+            <Button onClick={addWaypointFromCoordinates} className="mt-2">ウェイポイント追加</Button>
           </div>
+
           <div>
             <Label>ウェイポイント</Label>
-            {flightPlan.waypoints.map((waypoint, index) => (
-              <div key={index} className="flex items-center space-x-2 mt-2">
+
+            {flightPlan.waypoints.map((waypoint) => (
+              <div key={waypoint.id} className="flex items-center space-x-2 mt-2">
                 <Input
                   value={waypoint.name}
-                  onChange={(e) => handleWaypointNameChange(index, e.target.value)}
+                  onChange={(e) => handleWaypointNameChange(waypoint.id, e.target.value)}
                 />
                 <span>{waypoint.lat.toFixed(4)}, {waypoint.lng.toFixed(4)}</span>
-                <Button onClick={() => setSelectedWaypoint(index)}>選択</Button>
+                <Button onClick={() => setSelectedWaypoint(waypoint.id)}>選択</Button>
               </div>
             ))}
           </div>
+
           <Button onClick={calculateFlightInfo}>飛行情報を計算</Button>
-        </div>
+        </div> 
       </CardContent>
     </Card>
   );
