@@ -18,7 +18,7 @@ const useFlightPlan = () => {
   
     const points = [departure, ...waypoints, arrival];
     let totalDistance = 0;
-    let currentTime = new Date(`2000-01-01T${takeoffTime}`);
+    let currentTime = takeoffTime ? new Date(`2000-01-01T${takeoffTime}`) : null;
     const legs = [];
   
     for (let i = 0; i < points.length - 1; i++) {
@@ -28,7 +28,7 @@ const useFlightPlan = () => {
       const magneticHeading = calculateMagneticHeading(start, end);
       const legTime = (distance / speed) * 60 * 60 * 1000; // Convert to milliseconds
       const ete = new Date(legTime).toISOString().substr(11, 8);
-      currentTime = new Date(currentTime.getTime() + legTime);
+      currentTime = currentTime ? new Date(currentTime.getTime() + legTime) : null;
   
       totalDistance += distance;
       legs.push({
@@ -41,13 +41,13 @@ const useFlightPlan = () => {
         distance: distance.toFixed(2),
         magneticHeading: magneticHeading.toFixed(0),
         ete: ete,
-        eta: currentTime.toLocaleTimeString('en-US', { hour12: false })
+        eta: currentTime?.toLocaleTimeString('en-US', { hour12: false })
       });
     }
   
     setFlightInfo({
       totalDistance: totalDistance.toFixed(2),
-      totalTime: new Date(totalDistance / speed * 60 * 60 * 1000).toISOString().substr(11, 8),
+      totalTime: takeoffTime ? new Date(totalDistance / speed * 60 * 60 * 1000).toISOString().substr(11, 8) : '00:00:00',
       legs: legs
     });
   };

@@ -23,18 +23,17 @@ const useMapData = () => {
         return response.json();
       })
       .then(data => {
-        const processedAirbases = data.features.map(feature => ({
+        const airbasesData = data.features.map(feature => ({
           id: feature.properties.id,
-          name: `${feature.properties.name1} (${feature.properties.name2})`,
-          lat: feature.properties["ARP.N(DD)"],
-          lng: feature.properties["ARP.E(DD)"]
+          name: `${feature.properties.name1}`,
+          type: feature.properties.type,
+          lat: feature.geometry.coordinates[1],
+          lng: feature.geometry.coordinates[0]
         }));
-        setAirbases(processedAirbases);
-        setAirportsData(data);
+        setAirbases(airbasesData);
+        setAirportsData(data); // airportsData ステートを設定
       })
-      .catch(error => {
-        console.error('Error loading airbase data:', error);
-      });
+      .catch(error => console.error('Error loading airbase data:', error));
 
     // Fetch Navaids data
     fetch('/geojson/Navaids.geojson')
@@ -44,19 +43,10 @@ const useMapData = () => {
         }
         return response.json();
       })
-      .then(data => {
+      .then(data => { // ここで data 引数を受け取るように修正
         setNavaidsData(data);
-        const processedNavaids = data.features.map(feature => ({
-          id: feature.properties.id,
-          name: feature.properties.name,
-          lat: feature.geometry.coordinates[1],
-          lng: feature.geometry.coordinates[0]
-        }));
-        setNavaids(processedNavaids);
       })
-      .catch(error => {
-        console.error('Error loading navaids data:', error);
-      });
+      .catch(error => console.error('Error loading navaids data:', error));
 
     // Fetch ACC Sector High data
     fetch('/geojson/ACC_Sector_High.geojson')
@@ -73,50 +63,61 @@ const useMapData = () => {
         setAccSectorLowData(data);
       })
       .catch(error => console.error('Error loading ACC_Sector_Low data:', error));
-    
-    // Fetch TrainingAreaHigh data
-    fetch('/geojson/TrainingAreaHigh.geojson')
-    .then(response => response.json())
-    .then(data => {
-      setTrainingAreaHigh(data);
-    })
-    .catch(error => console.error('Error loading TrainingAreaHigh data:', error));
 
-    // Fetch TrainingAreaLow data
+     // Fetch Training Area High data
+     fetch('/geojson/TrainingAreaHigh.geojson')
+     .then(response => response.json())
+     .then(data => {
+       setTrainingAreaHigh(data);
+     })
+     .catch(error => console.error('Error loading TrainingAreaHigh data:', error));
+
+    // Fetch Training Area Low data
     fetch('/geojson/TrainingAreaLow.geojson')
-    .then(response => response.json())
-    .then(data => {
-      setTrainingAreaLow(data);
-    })
-    .catch(error => console.error('Error loading TrainingAreaLow data:', error));
+      .then(response => response.json())
+      .then(data => {
+        setTrainingAreaLow(data);
+      })
+      .catch(error => console.error('Error loading TrainingAreaLow data:', error));
 
-    // Fetch TrainingAreaCivil data
+    // Fetch Training Area Civil data
     fetch('/geojson/TrainingAreaCivil.geojson')
-    .then(response => response.json())
-    .then(data => {
-      setTrainingAreaCivil(data);
-    })
-    .catch(error => console.error('Error loading TrainingAreaCivil data:', error));
+      .then(response => response.json())
+      .then(data => {
+        setTrainingAreaCivil(data);
+      })
+      .catch(error => console.error('Error loading TrainingAreaCivil data:', error));
 
-    // Fetch RestrictedArea data
+    // Fetch Restricted Area data
     fetch('/geojson/RestrictedAirspace.geojson')
-    .then(response => response.json())
-    .then(data => {
-      setRestrictedArea(data);
-    })
-    .catch(error => console.error('Error loading RestrictedAirspace data:', error));
+      .then(response => response.json())
+      .then(data => {
+        setRestrictedArea(data);
+      })
+      .catch(error => console.error('Error loading RestrictedAirspace data:', error));
 
     // Fetch RAPCON data
     fetch('/geojson/RAPCON.geojson')
-    .then(response => response.json())
-    .then(data => {
-      setRAPCON(data);
-    })
-    .catch(error => console.error('Error loading RAPCON data:', error));
-
+      .then(response => response.json())
+      .then(data => {
+        setRAPCON(data);
+      })
+      .catch(error => console.error('Error loading RAPCON data:', error));
   }, []);
 
-  return { airbases, navaids, navaidsData, airportsData, accSectorHighData, accSectorLowData, trainingAreaHigh, trainingAreaLow, trainingAreaCivil, restrictedArea, RAPCON};
+  return {
+    airbases,
+    navaids,
+    navaidsData,
+    airportsData,
+    accSectorHighData,
+    accSectorLowData,
+    trainingAreaHigh,
+    trainingAreaLow,
+    trainingAreaCivil,
+    restrictedArea,
+    RAPCON,
+  };
 };
 
 export default useMapData;
