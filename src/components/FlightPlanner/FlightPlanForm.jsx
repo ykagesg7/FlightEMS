@@ -12,7 +12,7 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
   const [selectedNavaid, setSelectedNavaid] = useState('');
   const [bearing, setBearing] = useState('');
   const [distance, setDistance] = useState('');
-  const [selectedWaypoint, setSelectedWaypoint] = useState(null);
+  const [selectedWaypoint, setSelectedWaypoint] = useState(null); // 型を string | null に変更
   const [flightPerformance, setFlightPerformance] = useState({ tas: 0, mach: 0 });
   const [latitudeDMS, setLatitudeDMS] = useState('');
   const [longitudeDMS, setLongitudeDMS] = useState('');
@@ -122,22 +122,23 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
   };
 
   const updateWaypoint = () => {
-    if (selectedWaypoint === null) return;
+    if (!selectedWaypoint) return;
 
     const updatedWaypoint = {
-      ...flightPlan.waypoints[selectedWaypoint],
-      name: selectedNavaid ? `${selectedNavaid} Waypoint` : flightPlan.waypoints[selectedWaypoint].name,
+      ...flightPlan.waypoints.find(wp => wp.id === selectedWaypoint),
+      name: selectedNavaid ? `${selectedNavaid} Waypoint` : flightPlan.waypoints.find(wp => wp.id === selectedWaypoint).name,
     };
 
-    if (bearing !== '' && distance !== '') {
-      const navaid = navaids.find(n => n.id === selectedNavaid);
+    // Navaid からの方位距離による更新
+    if (selectedNavaid && bearing !== '' && distance !== '') {
+      const navaid = navaids.features.find(n => n.properties.id === selectedNavaid);
       if (navaid) {
         const bearingRad = (parseFloat(bearing) * Math.PI) / 180;
         const distanceNM = parseFloat(distance);
 
         const R = 3440.065; // Earth's radius in nautical miles
-        const lat1 = (navaid.lat * Math.PI) / 180;
-        const lon1 = (navaid.lng * Math.PI) / 180;
+        const lat1 = (navaid.geometry.coordinates[1] * Math.PI) / 180;
+        const lon1 = (navaid.geometry.coordinates[0] * Math.PI) / 180;
         const lat2 = Math.asin(
           Math.sin(lat1) * Math.cos(distanceNM / R) +
           Math.cos(lat1) * Math.sin(distanceNM / R) * Math.cos(bearingRad)
@@ -151,27 +152,51 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
         updatedWaypoint.lng = (lon2 * 180) / Math.PI;
       }
     }
+    // 座標からの更新
+    else if (coordinateInputMode === 'DDMMSS' && latitudeDMS && longitudeDMS) {
+      const latMatch = latitudeDMS.match(/(\d{2})(\d{2})(\d{2})/);
+      const lngMatch = longitudeDMS.match(/(\d{3})(\d{2})(\d{2})/);
+      if (latMatch && lngMatch) {
+        updatedWaypoint.lat = parseInt(latMatch[1], 10) + parseInt(latMatch[2], 10) / 60 + parseInt(latMatch[3], 10) / 3600;
+        updatedWaypoint.lng = parseInt(lngMatch[1], 10) + parseInt(lngMatch[2], 10) / 60 + parseInt(lngMatch[3], 10) / 3600;
+      }
+    } else if (coordinateInputMode === 'Degree' && latitudeDegree && longitudeDegree) {
+      updatedWaypoint.lat = parseFloat(latitudeDegree);
+      updatedWaypoint.lng = parseFloat(longitudeDegree);
+    }
+    // 地点からのオフセットによる更新
+    else if (latitudeDMS && longitudeDMS && bearing !== '' && distance !== '') {
+      const newCoords = calculateNewWaypointFromPoint(latitudeDMS, longitudeDMS, bearing, distance);
+      if (newCoords) {
+        updatedWaypoint.lat = newCoords.lat;
+        updatedWaypoint.lng = newCoords.lng;
+      }
+    }
 
     setFlightPlan(prev => ({
       ...prev,
-      waypoints: prev.waypoints.map((wp, index) => 
-        index === selectedWaypoint ? updatedWaypoint : wp
+      waypoints: prev.waypoints.map(wp =>
+        wp.id === selectedWaypoint ? updatedWaypoint : wp
       )
     }));
 
     // Reset input fields and selection
-    setSelectedWaypoint(null);
-    setSelectedNavaid('');
-    setBearing('');
-    setDistance('');
+    //setSelectedWaypoint(null);
+    //setSelectedNavaid('');
+    //setBearing('');
+    //setDistance('');
+    //setLatitudeDMS('');
+    //setLongitudeDMS('');
+    //setLatitudeDegree('');
+    //setLongitudeDegree('');
   };
 
   const deleteWaypoint = () => {
-    if (selectedWaypoint === null) return;
+    if (!selectedWaypoint) return;
 
     setFlightPlan(prev => ({
       ...prev,
-      waypoints: prev.waypoints.filter((_, index) => index !== selectedWaypoint)
+      waypoints: prev.waypoints.filter(wp => wp.id !== selectedWaypoint)
     }));
 
     // Reset selection
@@ -226,6 +251,58 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
       setLongitudeDegree('');
     } else {
       alert('緯度または経度の形式が正しくありません。');
+    }
+  };
+
+  const calculateNewWaypointFromPoint = (latDMS, lngDMS, bearing, distance) => {
+    try {
+      const latDeg = convertDMStoDD(latDMS);
+      const lngDeg = convertDMStoDD(lngDMS);
+
+      const bearingRad = (parseFloat(bearing) * Math.PI) / 180;
+      const distanceNM = parseFloat(distance);
+
+      const R = 3440.065; // Earth's radius in nautical miles
+      const lat1 = (latDeg * Math.PI) / 180;
+      const lon1 = (lngDeg * Math.PI) / 180;
+
+      const lat2 = Math.asin(
+        Math.sin(lat1) * Math.cos(distanceNM / R) +
+        Math.cos(lat1) * Math.sin(distanceNM / R) * Math.cos(bearingRad)
+      );
+
+      const lon2 = lon1 + Math.atan2(
+        Math.sin(bearingRad) * Math.sin(distanceNM / R) * Math.cos(lat1),
+        Math.cos(distanceNM / R) - Math.sin(lat1) * Math.sin(lat2)
+      );
+
+      return {
+        lat: (lat2 * 180) / Math.PI,
+        lng: (lon2 * 180) / Math.PI,
+      };
+    } catch (error) {
+      console.error("座標変換エラー:", error);
+      return null;
+    }
+  };
+
+  const handleAddWaypointFromPoint = () => {
+    const newWaypointCoords = calculateNewWaypointFromPoint(latitudeDMS, longitudeDMS, bearing, distance);
+    if (newWaypointCoords) {
+      const newWaypoint = {
+        id: uuidv4(),
+        name: `WP${flightPlan.waypoints.length + 1}`,
+        lat: newWaypointCoords.lat,
+        lng: newWaypointCoords.lng,
+      };
+      setFlightPlan(prev => ({ ...prev, waypoints: [...prev.waypoints, newWaypoint] }));
+      // 入力フィールドのリセット
+      //setLatitudeDMS('');
+      //setLongitudeDMS('');
+      //setBearing('');
+      //setDistance('');
+    } else {
+      alert('方位または距離の形式が正しくありません。');
     }
   };
 
@@ -535,6 +612,41 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
               <Button onClick={deleteWaypoint} disabled={selectedWaypoint === null}>ウェイポイント削除</Button>
             </div>
           </div>
+
+          <div>
+            < Label>地点からのオフセットでウェイポイントを追加</Label>
+            <div className="flex space-x-2 mt-2">
+              <Input
+                id="latitudeDMS"
+                placeholder="緯度 (DDMMSS)"
+                value={latitudeDMS}
+                onChange={(e) => setLatitudeDMS(e.target.value)}
+              />
+              <Input
+                id="longitudeDMS"
+                placeholder="経度 (DDDMMSS)"
+                value={longitudeDMS}
+                onChange={(e) => setLongitudeDMS(e.target.value)}
+              />
+            </div>
+            <div className="flex space-x-2 mt-2">
+              <Input
+                id="bearing"
+                type="number"
+                placeholder="方位 (度)"
+                value={bearing}
+                onChange={(e) => setBearing(e.target.value)}
+              />
+              <Input
+                id="distance"
+                type="number"
+                placeholder="距離 (海里)"
+                value={distance}
+                onChange={(e) => setDistance(e.target.value)}
+              />
+            </div>
+            <Button onClick={handleAddWaypointFromPoint} className="mt-2">ウェイポイント追加</Button>
+          </div>
           
           <div >
             < Label>座標からウェイポイントを追加</Label>
@@ -603,7 +715,7 @@ const FlightPlanForm = ({ flightPlan, setFlightPlan, airbases, navaids, calculat
               <div key={waypoint.id} className="flex items-center space-x-2 mt-2">
                 <Input
                   value={waypoint.name}
-                  onChange={(e) => handleWaypointNameChange(waypoint.id, e.target.value)}
+                  onChange={(e) => handleWaypointNameChange(flightPlan.waypoints.indexOf(waypoint), e.target.value)}
                 />
                 <span>{waypoint.lat.toFixed(4)}, {waypoint.lng.toFixed(4)}</span>
                 <Button onClick={() => setSelectedWaypoint(waypoint.id)}>選択</Button>
