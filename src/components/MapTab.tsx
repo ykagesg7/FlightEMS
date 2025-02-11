@@ -8,7 +8,7 @@ import L from 'leaflet';
 import icon from '/images/marker-icon.png';
 import iconShadow from '/images/marker-shadow.png';
 import { useMapRoute } from '../hooks/useMapRoute';
-import { DEFAULT_CENTER, DEFAULT_ZOOM, getNavaidColor } from '../utils';
+import { DEFAULT_CENTER, DEFAULT_ZOOM, getNavaidColor, formatDMS } from '../utils';
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -30,9 +30,23 @@ interface MapTabProps {
 const MapTab: React.FC<MapTabProps> = ({ flightPlan }) => {
   const routePoints = useMapRoute(flightPlan);
   const [map, setMap] = useState<L.Map | null>(null);
+  const [cursorPosition, setCursorPosition] = useState<L.LatLng | null>(null);
+
+  useEffect(() => {
+    if (!map) return;
+    const onMouseMove = (e: L.LeafletMouseEvent) => {
+      setCursorPosition(e.latlng);
+    };
+    // マウスが map 内を移動したときに位置情報を更新
+    map.on('mousemove', onMouseMove);
+    // ※ マウスアウト時に座標をクリアする処理を削除
+    return () => {
+      map.off('mousemove', onMouseMove);
+    };
+  }, [map]);
 
   return (
-    <div className="h-[calc(100vh-7rem)] bg-white rounded-lg shadow-sm overflow-hidden">
+    <div className="relative h-[calc(100vh-7rem)] bg-white rounded-lg shadow-sm overflow-hidden">
       <MapContainer
         center={[DEFAULT_CENTER.lat, DEFAULT_CENTER.lng]}
         zoom={DEFAULT_ZOOM}
@@ -41,6 +55,14 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan }) => {
       >
         <MapContent flightPlan={flightPlan} routePoints={routePoints} map={map} />
       </MapContainer>
+      <div className="absolute bottom-2 left-2 z-[9999] pointer-events-none bg-gray-800 text-white text-sm px-2 py-1 rounded">
+        {cursorPosition ? (
+          <div>
+            <div>{formatDMS(cursorPosition.lat, cursorPosition.lng)}</div>
+            <div>位置(Degree)： {cursorPosition.lat.toFixed(4)}°N, {cursorPosition.lng.toFixed(4)}°E</div>
+          </div>
+        ) : '位置(DMS/ DD)：--'}
+      </div>
     </div>
   );
 };

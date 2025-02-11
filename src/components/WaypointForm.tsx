@@ -285,15 +285,15 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
       </button>
 
       <div>
-        <label>
-          連続DMS入力 (例:
-          N334005,E1234005):
+        <label className="block text-sm font-medium text-gray-400">
+          連続DMS入力 (例: N334005,E1234005)
         </label>
         <input 
           type="text" 
           value={dmsInput} 
           onChange={handleDmsInputChange} 
           placeholder="Nddmmss または Edddmmss"
+          className="mt-1 block w-full rounded-md border-gray-600 shadow-sm bg-gray-700 text-gray-50 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         />
       </div>
     </div>
