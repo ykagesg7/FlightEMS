@@ -134,7 +134,9 @@
     {
       "type": "Feature",
       "properties": {
-        "Sector_ID": "F01"
+        "ID": "F01",
+        "Callsign": "福岡Control",
+        "Frequency": "133.3MHz/133.5MHz/279.2MHz"
       },
       "geometry": {
         "type": "Polygon",
@@ -165,7 +167,9 @@
     {
       "type": "Feature",
       "properties": {
-        "Sector_ID": "F04"
+        "ID": "F04",
+        "Callsign": "福岡Control",
+        "Frequency": "120.75MHz/279.5MHz"
       },
       "geometry": {
         "type": "Polygon",
@@ -192,14 +196,17 @@
           [140.1672,38.8775],
           [140.1367,39.0028],
           [139.9967,39.0028],
-          [139.2939,39.2903]
+          [139.2939,39.2903],
+          [138.4617,39.8861]
         ]]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "Sector_ID": "F05"
+        "ID": "F05",
+        "Callsign": "福岡Control",
+        "Frequency": "128.125MHz/320.0MHz"
       },
       "geometry": {
         "type": "Polygon",
@@ -232,7 +239,9 @@
     {
       "type": "Feature",
       "properties": {
-        "Sector_ID": "F07"
+        "ID": "F07",
+        "Callsign": "福岡Control",
+        "Frequency": "133.025MHz/310.0MHz"
       },
       "geometry": {
         "type": "Polygon",
@@ -244,6 +253,7 @@
           [134.1186, 37.5806],
           [134.2353, 36.7097],
           [134.8317, 36.6831],
+          
           [134.3492, 35.8281],
           [134.9353, 35.7486],
           [135.0986, 35.5553],
