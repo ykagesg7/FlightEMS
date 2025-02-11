@@ -15,6 +15,7 @@ export default defineConfig(({ command }) => {
       },
     },
     assetsInclude: ['/.geojson'],
-    base: command === 'serve' ? '/' : '/FlightPlanner/',
+    // Vercel向けにはルートパスではなく、相対パスを利用する
+    base: command === 'serve' ? '/' : './',
   };
 });
