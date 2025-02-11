@@ -1,0 +1,12 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+{ "type": "Feature", "properties": { "id": "日出生台", "name1": "R-91", "name2": "hijudai", "UpperLimit(ft)": 12000, "LowerLimit(ft)": 0, "RWY2": 30, "MAG Var": 8, "ARP.N(DMS)": 33.5253, "ARP.E(DMS)": 130.3906, "ARP.N(DD)": 33.8814, "ARP.E(DD)": 130.6517, "N(D)": 33.0, "N(M)": 52, "N(S)": 53, "E(D)": 130.0, "E(M)": 39, "E(S)": 6 }, "geometry": { "type": "Point", "coordinates": [ 130.6517, 33.8814 ] } }
+]
+}
