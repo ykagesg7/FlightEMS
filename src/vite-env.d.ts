@@ -1,11 +1,11 @@
 /// <reference types="vite/client" />
 
-interface ImportMetaEnv {
-  readonly VITE_SUPABASE_URL: string;
-  readonly VITE_SUPABASE_ANON_KEY: string;
-  // その他の環境変数を追加
+declare module '*.geojson' {
+  const value: any;
+  export default value;
 }
 
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
+declare module '*.png' {
+  const value: string;
+  export default value;
 }
