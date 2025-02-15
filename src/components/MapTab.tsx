@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useMemo, useState, useCallback } from 'react';
 import { MapContainer, Popup, Polyline, CircleMarker } from 'react-leaflet';
-import { FlightPlan, GeoJSONFeature } from '../types';
+import { FlightPlan } from '../types';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
 import 'leaflet-groupedlayercontrol';
@@ -69,7 +69,6 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan }) => {
 
 const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, number][], map: L.Map | null }> = ({ flightPlan, routePoints, map }) => {
   const layerControlRef = useRef<L.Control.Layers | null>(null) as LayerControlRef;
-  const [navaids, setNavaids] = React.useState<GeoJSONFeature[]>([]);
 
   // 各フィーチャーをクリック時に詳細情報をポップアップ表示するための関数
   const onEachFeaturePopup = useCallback((feature: any, layer: L.Layer) => {
@@ -112,7 +111,7 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
         onEachFeature: onEachFeaturePopup 
     }),
     "Airports": L.geoJSON(null, {
-      pointToLayer: (feature, latlng) => {
+      pointToLayer: (_feature, latlng) => {
         // 空港のマーカーは非表示、5nm (約9260m) の管制圏円のみ表示
         const circle = L.circle(latlng, { radius: 9260, color: 'cyan', weight: 2, dashArray: '5, 5', fillOpacity: 0.1 });
         return L.layerGroup([circle]);
@@ -123,6 +122,30 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
           ID: ${feature.properties.id}<br/>
           Type: ${feature.properties.type}
         </div>`;
+        layer.bindPopup(popupContent);
+      }
+    }),
+    "Navaids": L.geoJSON(null, {
+      pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
+        radius: 4,
+        fillColor: getNavaidColor(feature.properties.type ?? ''),
+        color: getNavaidColor(feature.properties.type ?? ''),
+        weight: 1,
+        fillOpacity: 0.8
+      }),
+      onEachFeature: (feature, layer) => {
+        let popupContent = `<div class="space-y-1">
+          <h2 class="font-bold text-lg">${feature.properties.name}</h2>
+          <p class="text-sm text-gray-600">ID: ${feature.properties.id}</p>
+          <p class="text-sm text-gray-600">Type: ${feature.properties.type}</p>`;
+        if (feature.properties.ch) {
+          popupContent += `<p class="text-sm text-gray-600">Channel: ${feature.properties.ch}</p>`;
+        }
+        if (feature.properties.freq) {
+          popupContent += `<p class="text-sm text-gray-600">Frequency: ${feature.properties.freq} MHz</p>`;
+        }
+        const coords = (feature.geometry as GeoJSON.Point).coordinates;
+        popupContent += `<p class="text-sm text-gray-600">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p></div>`;
         layer.bindPopup(popupContent);
       }
     })
@@ -171,6 +194,12 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
       .then(res => res.json())
       .then(data => overlayLayers["Airports"].addData(data))
       .catch(console.error);
+
+    // Navaids レイヤーのデータ取得
+    fetch('/geojson/Navaids.geojson')
+      .then(res => res.json())
+      .then(data => overlayLayers["Navaids"].addData(data))
+      .catch(console.error);
   }, [overlayLayers]);
 
   // OpenStreetMapレイヤー
@@ -196,21 +225,6 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
       "衛星写真": esriLayer,
     };
   }, [osmLayer, esriLayer]);
-
-  // Navaidsデータを読み込む
-  const fetchNavaids = useCallback(async () => {
-    try {
-      const response = await fetch('/geojson/Navaids.geojson');
-      const data = await response.json();
-      setNavaids(data.features);
-    } catch (error) {
-      console.error('Failed to load Navaids:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchNavaids();
-  }, [fetchNavaids]);
 
   // レイヤーコントロールの更新
   useEffect(() => {
@@ -309,39 +323,6 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
             <div>
               <h2 className="font-bold text-lg">{waypoint.name}</h2>
               <p className="text-sm text-gray-500">Waypoint</p>
-            </div>
-          </Popup>
-        </CircleMarker>
-      ))}
-
-      {/* Navaidsのマーカー */}
-      {navaids.map((navaid, index) => (
-        <CircleMarker
-          key={index}
-          center={[
-            navaid.geometry.coordinates[1],
-            navaid.geometry.coordinates[0]
-          ]}
-          radius={4}
-          fillColor={getNavaidColor(navaid.properties.type ?? '')}
-          color={getNavaidColor(navaid.properties.type ?? '')}
-          weight={1}
-          fillOpacity={0.8}
-        >
-          <Popup>
-            <div className="space-y-1">
-              <h2 className="font-bold text-lg">{navaid.properties.name}</h2>
-              <p className="text-sm text-gray-600">ID: {navaid.properties.id}</p>
-              <p className="text-sm text-gray-600">Type: {navaid.properties.type}</p>
-              {navaid.properties.ch && (
-                <p className="text-sm text-gray-600">Channel: {navaid.properties.ch}</p>
-              )}
-              {navaid.properties.freq && (
-                <p className="text-sm text-gray-600">Frequency: {navaid.properties.freq} MHz</p>
-              )}
-              <p className="text-sm text-gray-600">
-                Position: {navaid.geometry.coordinates[1].toFixed(4)}°N, {navaid.geometry.coordinates[0].toFixed(4)}°E
-              </p>
             </div>
           </Popup>
         </CircleMarker>
