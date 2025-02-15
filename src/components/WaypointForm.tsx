@@ -122,32 +122,48 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
     const value = e.target.value;
     setDmsInput(value);
 
-    // カンマまたはセミコロン区切りの場合、例: "334005,1234005" あるいは "N334005;E1234005"
-    const parts = value.split(/,|;/).map(part => part.trim());
-    if (parts.length === 2) {
-      let latRaw = parts[0];
-      let lonRaw = parts[1];
+    if (value.includes(',') || value.includes(';')) {
+      // カンマまたはセミコロン区切りの場合、例: "334005,1234005" あるいは "N334005;E1234005"
+      const parts = value.split(/,|;/).map(part => part.trim());
+      if (parts.length === 2) {
+        let latRaw = parts[0];
+        let lonRaw = parts[1];
 
-      // 緯度：NまたはSが含まれていなければデフォルトで「N」を付与
-      if (!/^[NnSs]/.test(latRaw) && !/[NnSs]$/.test(latRaw)) {
-        latRaw = "N" + latRaw;
+        // 緯度：NまたはSが含まれていなければデフォルトで「N」を付与
+        if (!/^[NnSs]/.test(latRaw) && !/[NnSs]$/.test(latRaw)) {
+          latRaw = "N" + latRaw;
+        }
+
+        // 経度：EまたはWが含まれていなければデフォルトで「E」を付与
+        if (!/^[EeWw]/.test(lonRaw) && !/[EeWw]$/.test(lonRaw)) {
+          lonRaw = "E" + lonRaw;
+        }
+
+        // 桁数の検証（ヘミスフィア記号を除いた部分）
+        const latDigits = latRaw.replace(/[NnSs]/g, '');
+        const lonDigits = lonRaw.replace(/[EeWw]/g, '');
+        if (latDigits.length === 6 && lonDigits.length === 7) {
+          // 統一された形式で大文字に変換して状態を更新
+          setCoordinates(prev => ({
+            ...prev,
+            dms: { lat: latRaw.toUpperCase(), lon: lonRaw.toUpperCase() }
+          }));
+          // エラークリア
+          setErrors({ lat: '', lon: '' });
+        }
       }
-
-      // 経度：EまたはWが含まれていなければデフォルトで「E」を付与
-      if (!/^[EeWw]/.test(lonRaw) && !/[EeWw]$/.test(lonRaw)) {
-        lonRaw = "E" + lonRaw;
-      }
-
-      // 桁数の検証（ヘミスフィア記号を除いた部分）
-      const latDigits = latRaw.replace(/[NnSs]/g, '');
-      const lonDigits = lonRaw.replace(/[EeWw]/g, '');
-      if (latDigits.length === 6 && lonDigits.length === 7) {
-        // 統一された形式で大文字に変換して状態を更新
+    } else {
+      // カンマやセミコロンが含まれていない場合、連続したDMS入力を処理
+      // 例: ddmmssNdddmmssE (例: 284953N1332549E)
+      const continuousRegex = /^(\d{6}[NnSs])(\d{7}[EeWw])$/;
+      const match = value.match(continuousRegex);
+      if (match) {
+        const latRaw = match[1];
+        const lonRaw = match[2];
         setCoordinates(prev => ({
           ...prev,
           dms: { lat: latRaw.toUpperCase(), lon: lonRaw.toUpperCase() }
         }));
-        // エラークリア
         setErrors({ lat: '', lon: '' });
       }
     }
