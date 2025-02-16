@@ -9,6 +9,9 @@ import icon from '/images/marker-icon.png';
 import iconShadow from '/images/marker-shadow.png';
 import { useMapRoute } from '../hooks/useMapRoute';
 import { DEFAULT_CENTER, DEFAULT_ZOOM, getNavaidColor, formatDMS } from '../utils';
+import { calculateMagneticBearing } from '../utils/bearing';
+import { formatBearing } from '../utils/format';
+import type { LatLng } from 'leaflet';
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -28,10 +31,21 @@ interface MapTabProps {
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
 }
 
+// types/index.ts の Navaid 型とは異なる、Map 内で使用する Navaid 型を定義
+interface MapNavaid {
+  coordinates: LatLng;
+  id: string;
+  name: string;
+}
+
 const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
   const routePoints = useMapRoute(flightPlan);
   const [map, setMap] = useState<L.Map | null>(null);
   const [cursorPosition, setCursorPosition] = useState<L.LatLng | null>(null);
+  // Navaid の GeoJSON から取得したデータを保持
+  const [navaidData, setNavaidData] = useState<MapNavaid[]>([]);
+  // カーソル位置に基づく上位３件の Navaid 情報を保持
+  const [navaidInfos, setNavaidInfos] = useState<Array<{ bearing: number, distance: number, id: string }>>([]);
 
   useEffect(() => {
     if (!map) return;
@@ -69,6 +83,47 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
     };
   }, [map, setFlightPlan]);
 
+  // Navaid GeoJSON を取得
+  useEffect(() => {
+    fetch('/geojson/Navaids.geojson')
+      .then(res => res.json())
+      .then(data => {
+        const navaids = data.features.map((feat: any): MapNavaid => {
+          const [lng, lat] = feat.geometry.coordinates;
+          return { coordinates: L.latLng(lat, lng), id: feat.properties.id, name: feat.properties.name };
+        });
+        setNavaidData(navaids);
+      })
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (!cursorPosition || navaidData.length === 0) {
+      setNavaidInfos([]);
+      return;
+    }
+    // 各 navaid について、カーソルとの距離と磁方位を計算
+    const calculations = navaidData.map(navaid => {
+      const dist = cursorPosition.distanceTo(navaid.coordinates);
+      const bearing = calculateMagneticBearing(
+         navaid.coordinates.lat,
+         navaid.coordinates.lng,
+         cursorPosition.lat,
+         cursorPosition.lng
+      );
+      return { navaid, bearing, distance: dist };
+    });
+
+    // 距離昇順にソートし、上位３件を抽出
+    calculations.sort((a, b) => a.distance - b.distance);
+    const infos = calculations.slice(0, 3).map(item => ({
+      bearing: item.bearing,
+      distance: parseFloat((item.distance / 1852).toFixed(1)),
+      id: item.navaid.id,
+    }));
+    setNavaidInfos(infos);
+  }, [cursorPosition, navaidData]);
+
   return (
     <div className="relative h-[calc(100vh-7rem)] bg-white rounded-lg shadow-sm overflow-hidden">
       <MapContainer
@@ -84,6 +139,11 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
           <div>
             <div>{formatDMS(cursorPosition.lat, cursorPosition.lng)}</div>
             <div>位置(Degree)： {cursorPosition.lat.toFixed(4)}°N, {cursorPosition.lng.toFixed(4)}°E</div>
+            {navaidInfos.map((info, index) => (
+              <div key={index}>
+                位置(from Navaid{index + 1})： {Math.round(info.bearing)}°/{info.distance}nm {info.id}
+              </div>
+            ))}
           </div>
         ) : '位置(DMS/ DD)：--'}
       </div>
@@ -93,19 +153,6 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
 
 const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, number][], map: L.Map | null }> = ({ flightPlan, map }) => {
   const layerControlRef = useRef<L.Control.Layers | null>(null) as LayerControlRef;
-
-  // グローバルに calculateBearing を定義
-  const calculateBearing = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δλ = (lng2 - lng1) * Math.PI / 180;
-    const x = Math.sin(Δλ) * Math.cos(φ2);
-    const y = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
-    let trueBearing = (Math.atan2(x, y) * 180 / Math.PI + 360) % 360;
-    const MAGNETIC_DECLINATION = 8; // 日本の平均磁気偏差 (度)
-    const magneticBearing = (trueBearing + MAGNETIC_DECLINATION + 360) % 360;
-    return magneticBearing;
-  };
 
   // 各フィーチャーをクリック時に詳細情報をポップアップ表示するための関数
   const onEachFeaturePopup = useCallback((feature: any, layer: L.Layer) => {
@@ -119,75 +166,78 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
 
   // overlayLayers を useMemo で安定したオブジェクトとして生成
   const overlayLayers = useMemo(() => ({
-    "ACC Sector High": L.geoJSON(null, { 
-        style: { color: 'blue', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup
-    }),
-    "ACC Sector Low": L.geoJSON(null, { 
-        style: { color: 'green', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup 
-    }),
-    "RAPCON": L.geoJSON(null, { 
-        style: { color: 'orange', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup 
-    }),
-    "Restricted Airspace": L.geoJSON(null, { 
+    "Common Layers": {
+      "空港": L.geoJSON(null, {
+        pointToLayer: (_feature, latlng) => {
+          const circle = L.circle(latlng, { radius: 9260, color: 'cyan', weight: 2, dashArray: '5, 5', fillOpacity: 0.1 });
+          return L.layerGroup([circle]);
+        },
+        onEachFeature: (feature, layer) => {
+          const popupContent = `<div>
+            <strong>${feature.properties.name1}</strong><br/>
+            ID: ${feature.properties.id}<br/>
+            Type: ${feature.properties.type}
+          </div>`;
+          layer.bindPopup(popupContent);
+        }
+      }),
+      "Navaids": L.geoJSON(null, {
+        pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
+          radius: 4,
+          fillColor: getNavaidColor(feature.properties.type ?? ''),
+          color: getNavaidColor(feature.properties.type ?? ''),
+          weight: 1,
+          fillOpacity: 0.8
+        }),
+        onEachFeature: (feature, layer) => {
+          let popupContent = `<div class="space-y-1">
+            <h2 class="font-bold text-lg">${feature.properties.name}</h2>
+            <p class="text-sm text-gray-600">ID: ${feature.properties.id}</p>
+            <p class="text-sm text-gray-600">Type: ${feature.properties.type}</p>`;
+          if (feature.properties.ch) {
+            popupContent += `<p class="text-sm text-gray-600">Channel: ${feature.properties.ch}</p>`;
+          }
+          if (feature.properties.freq) {
+            popupContent += `<p class="text-sm text-gray-600">Frequency: ${feature.properties.freq} MHz</p>`;
+          }
+          const coords = (feature.geometry as GeoJSON.LineString).coordinates;
+          popupContent += `<p class="text-sm text-gray-600">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p></div>`;
+          layer.bindPopup(popupContent);
+        }
+      }),
+      "制限空域": L.geoJSON(null, { 
         style: { color: 'red', weight: 2, opacity: 0.7, dashArray: '4' },
         onEachFeature: onEachFeaturePopup 
-    }),
-    "Training Area Civil": L.geoJSON(null, { 
-        style: { color: 'brown', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup 
-    }),
-    "Training Area High": L.geoJSON(null, { 
+      }),
+      "高高度訓練空域": L.geoJSON(null, { 
         style: { color: 'purple', weight: 2, opacity: 0.7 },
         onEachFeature: onEachFeaturePopup 
-    }),
-    "Training Area Low": L.geoJSON(null, { 
+      }),
+      "低高度訓練空域": L.geoJSON(null, { 
         style: { color: 'yellow', weight: 2, opacity: 0.7 },
         onEachFeature: onEachFeaturePopup 
-    }),
-    "Airports": L.geoJSON(null, {
-      pointToLayer: (_feature, latlng) => {
-        // 空港のマーカーは非表示、5nm (約9260m) の管制圏円のみ表示
-        const circle = L.circle(latlng, { radius: 9260, color: 'cyan', weight: 2, dashArray: '5, 5', fillOpacity: 0.1 });
-        return L.layerGroup([circle]);
-      },
-      onEachFeature: (feature, layer) => {
-        const popupContent = `<div>
-          <strong>${feature.properties.name1}</strong><br/>
-          ID: ${feature.properties.id}<br/>
-          Type: ${feature.properties.type}
-        </div>`;
-        layer.bindPopup(popupContent);
-      }
-    }),
-    "Navaids": L.geoJSON(null, {
-      pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
-        radius: 4,
-        fillColor: getNavaidColor(feature.properties.type ?? ''),
-        color: getNavaidColor(feature.properties.type ?? ''),
-        weight: 1,
-        fillOpacity: 0.8
       }),
-      onEachFeature: (feature, layer) => {
-        let popupContent = `<div class="space-y-1">
-          <h2 class="font-bold text-lg">${feature.properties.name}</h2>
-          <p class="text-sm text-gray-600">ID: ${feature.properties.id}</p>
-          <p class="text-sm text-gray-600">Type: ${feature.properties.type}</p>`;
-        if (feature.properties.ch) {
-          popupContent += `<p class="text-sm text-gray-600">Channel: ${feature.properties.ch}</p>`;
-        }
-        if (feature.properties.freq) {
-          popupContent += `<p class="text-sm text-gray-600">Frequency: ${feature.properties.freq} MHz</p>`;
-        }
-        const coords = (feature.geometry as GeoJSON.LineString).coordinates;
-        popupContent += `<p class="text-sm text-gray-600">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p></div>`;
-        layer.bindPopup(popupContent);
-      }
-    }),   
-    // 変更: RJFAレイヤーを L.layerGroup に変更（従来の geoJSON 定義を削除）
-    "RJFA": L.layerGroup()
+      "民間訓練空域": L.geoJSON(null, { 
+        style: { color: 'brown', weight: 2, opacity: 0.7 },
+        onEachFeature: onEachFeaturePopup 
+      }),
+      "RAPCON": L.geoJSON(null, { 
+        style: { color: 'orange', weight: 2, opacity: 0.7 },
+        onEachFeature: onEachFeaturePopup 
+      }),
+      "ACC-Sector High": L.geoJSON(null, { 
+        style: { color: 'blue', weight: 2, opacity: 0.7 },
+        onEachFeature: onEachFeaturePopup
+      }),
+      "ACC-Sector Low": L.geoJSON(null, { 
+        style: { color: 'green', weight: 2, opacity: 0.7 },
+        onEachFeature: onEachFeaturePopup 
+      })
+    },
+    "Local Layers": {
+      "RJFA": L.layerGroup(),
+      "RJFZ": L.layerGroup()
+    }
   }), [onEachFeaturePopup, getNavaidColor]);
 
   // GeoJSONデータをフェッチして各レイヤーに追加
@@ -195,56 +245,56 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
     // ACC_Sector High/Low と他のレイヤーのデータ取得
     fetch('/geojson/ACC_Sector_High.geojson')
       .then(res => res.json())
-      .then(data => overlayLayers["ACC Sector High"].addData(data))
+      .then(data => overlayLayers["Common Layers"]["ACC-Sector High"].addData(data))
       .catch(console.error);
 
     fetch('/geojson/ACC_Sector_Low.geojson')
       .then(res => res.json())
-      .then(data => overlayLayers["ACC Sector Low"].addData(data))
+      .then(data => overlayLayers["Common Layers"]["ACC-Sector Low"].addData(data))
       .catch(console.error);
 
     fetch('/geojson/RAPCON.geojson')
       .then(res => res.json())
-      .then(data => overlayLayers["RAPCON"].addData(data))
+      .then(data => overlayLayers["Common Layers"]["RAPCON"].addData(data))
       .catch(console.error);
 
     fetch('/geojson/RestrictedAirspace.geojson')
       .then(res => res.json())
-      .then(data => overlayLayers["Restricted Airspace"].addData(data))
+      .then(data => overlayLayers["Common Layers"]["制限空域"].addData(data))
       .catch(console.error);
 
     fetch('/geojson/TrainingAreaCivil.geojson')
       .then(res => res.json())
-      .then(data => overlayLayers["Training Area Civil"].addData(data))
+      .then(data => overlayLayers["Common Layers"]["民間訓練空域"].addData(data))
       .catch(console.error);
 
     fetch('/geojson/TrainingAreaHigh.geojson')
       .then(res => res.json())
-      .then(data => overlayLayers["Training Area High"].addData(data))
+      .then(data => overlayLayers["Common Layers"]["高高度訓練空域"].addData(data))
       .catch(console.error);
 
     fetch('/geojson/TrainingAreaLow.geojson')
       .then(res => res.json())
-      .then(data => overlayLayers["Training Area Low"].addData(data))
+      .then(data => overlayLayers["Common Layers"]["低高度訓練空域"].addData(data))
       .catch(console.error);
 
     // Airports レイヤーのデータ取得
     fetch('/geojson/Airports.geojson')
       .then(res => res.json())
-      .then(data => overlayLayers["Airports"].addData(data))
+      .then(data => overlayLayers["Common Layers"]["空港"].addData(data))
       .catch(console.error);
 
     // Navaids レイヤーのデータ取得
     fetch('/geojson/Navaids.geojson')
       .then(res => res.json())
-      .then(data => overlayLayers["Navaids"].addData(data))
+      .then(data => overlayLayers["Common Layers"]["Navaids"].addData(data))
       .catch(console.error);
 
     // RJFA レイヤーのデータ取得（ポイントのみの場合、グループごとにPolylineを描画）
     fetch('/geojson/RJFA.geojson')
       .then(res => res.json())
       .then(data => {
-        const rjfaLayer = overlayLayers["RJFA"] as L.LayerGroup;
+        const rjfaLayer = overlayLayers["Local Layers"]["RJFA"] as L.LayerGroup;
         // 各グループごとに、{latlng, name} オブジェクトを蓄積するオブジェクト
         const groupPoints: { [group: string]: { latlng: L.LatLng, name: string }[] } = {};
         data.features.forEach((feature: any) => {
@@ -258,11 +308,8 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
               weight: 1,
               fillOpacity: 0.6,
             });
-            let popupContent = `<div><h4>Details</h4><table>`;
-            for (const key in feature.properties) {
-              popupContent += `<tr><td>${key}</td><td>${feature.properties[key]}</td></tr>`;
-            }
-            popupContent += `</table></div>`;
+            // Waypointクリック時のポップアップ表示を変更
+            const popupContent = `<div><strong>${feature.properties.name}</strong><br/>${feature.properties.Point}<br/>${feature.properties.altitude}</div>`;
             marker.bindPopup(popupContent);
             marker.addTo(rjfaLayer);
             if (!groupPoints[group]) {
@@ -297,10 +344,11 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
               if (bestSegmentIndex !== -1) {
                 const startObj = labeledPoints[bestSegmentIndex];
                 const endObj = labeledPoints[bestSegmentIndex + 1];
-                const bearing = calculateBearing(startObj.latlng.lat, startObj.latlng.lng, endObj.latlng.lat, endObj.latlng.lng);
+                const bearing = calculateMagneticBearing(startObj.latlng.lat, startObj.latlng.lng, endObj.latlng.lat, endObj.latlng.lng);
+                const formattedBearing = formatBearing(bearing) + '°';
                 const distanceMeters = startObj.latlng.distanceTo(endObj.latlng);
                 const distanceNM = Math.round(distanceMeters / 1852);
-                const popupContent = `<p>${startObj.name}-${endObj.name}：${Math.round(bearing)}°/${distanceNM}nm</p>`;
+                const popupContent = `<p><strong>${group}</strong><br/>${startObj.name}-${endObj.name}：${formattedBearing}/${distanceNM}nm</p>`;
                 map.openPopup(popupContent, e.latlng);
               }
             });
@@ -310,6 +358,96 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
       })
       .catch(console.error);
   }, [overlayLayers, map]);
+
+  // RJFZ GeoJSON をローカルレイヤーに追加 (RJFZ用のgroupごとのポリラインも追加)
+  useEffect(() => {
+    if (!map) return;
+    fetch('/geojson/RJFZ.geojson')
+      .then(res => res.json())
+      .then(data => {
+        const rjfzLayer = overlayLayers["Local Layers"]["RJFZ"] as L.LayerGroup;
+        rjfzLayer.clearLayers();
+        // 各ポイントをグループごとにまとめる
+        const groupPoints: Record<string, { latlng: L.LatLng, name: string }[]> = {};
+        
+        data.features.forEach((feature: any) => {
+          if (feature.geometry && feature.geometry.type === "Point") {
+            const [lng, lat] = feature.geometry.coordinates;
+            const marker = L.circleMarker([lat, lng], {
+              radius: 5,
+              fillColor: "green",
+              color: "green",
+              weight: 1,
+              fillOpacity: 0.6,
+            });
+            marker.bindPopup(
+              `<div><strong>${feature.properties.name}</strong><br/>${feature.properties.Point}<br/>${feature.properties.altitude}</div>`
+            );
+            marker.addTo(rjfzLayer);
+
+            const group = feature.properties.group;
+            if (group) {
+              if (!groupPoints[group]) {
+                groupPoints[group] = [];
+              }
+              groupPoints[group].push({ latlng: L.latLng(lat, lng), name: feature.properties.name });
+            }
+          }
+        });
+
+        // 各グループごとに、2点以上あればポリラインを生成
+        Object.keys(groupPoints).forEach(group => {
+          const points = groupPoints[group];
+          if (points.length >= 2) {
+            const latlngs = points.map(p => p.latlng);
+            const polyline = L.polyline(latlngs, { color: 'orange', weight: 2 });
+            // RJFAレイヤーと同様の詳細情報を表示するクリック時の処理
+            polyline.on("click", (e: L.LeafletMouseEvent) => {
+              if (!map) return;
+              const labeledPoints = points; // 各ポイント(オブジェクト {latlng, name})
+              const mapInstance = map;
+              // クリック位置から各セグメントとの距離を計算するため、レイヤーポイントに変換
+              const layerPoints = labeledPoints.map(pt => mapInstance.latLngToLayerPoint(pt.latlng));
+              const clickPoint = mapInstance.latLngToLayerPoint(e.latlng);
+              let bestSegmentIndex = -1;
+              let minDistance = Infinity;
+              for (let i = 0; i < layerPoints.length - 1; i++) {
+                const dist = L.LineUtil.pointToSegmentDistance(clickPoint, layerPoints[i], layerPoints[i+1]);
+                if (dist < minDistance) {
+                  minDistance = dist;
+                  bestSegmentIndex = i;
+                }
+              }
+              if (bestSegmentIndex !== -1) {
+                const startObj = labeledPoints[bestSegmentIndex];
+                const endObj = labeledPoints[bestSegmentIndex + 1];
+                const bearing = calculateMagneticBearing(
+                  startObj.latlng.lat, startObj.latlng.lng,
+                  endObj.latlng.lat, endObj.latlng.lng
+                );
+                const formattedBearing = formatBearing(bearing) + '°';
+                const distanceMeters = startObj.latlng.distanceTo(endObj.latlng);
+                const distanceNM = Math.round(distanceMeters / 1852);
+                const popupContent = `<p><strong>${group}</strong><br/>${startObj.name}-${endObj.name}：${formattedBearing}/${distanceNM}nm</p>`;
+                mapInstance.openPopup(popupContent, e.latlng);
+              }
+            });
+            polyline.addTo(rjfzLayer);
+          }
+        });
+
+        if (!map.hasLayer(rjfzLayer)) {
+          rjfzLayer.addTo(map);
+        }
+        // RJFZの各要素を前面に表示して、Airportsレイヤーより上になるようにする
+        rjfzLayer.eachLayer(layer => {
+           if (typeof (layer as any).bringToFront === 'function') {
+              (layer as any).bringToFront();
+           }
+        });
+      })
+      .catch(console.error);
+  }, [map, overlayLayers]);
 
   // OpenStreetMapレイヤー
   const osmLayer = useMemo(() => L.tileLayer(
@@ -343,23 +481,43 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
 
     // レイヤーコントロールがまだ追加されていない場合のみ追加する
     if (!layerControlRef.current) {
-      const control = L.control.layers(baseLayers, overlayLayers).addTo(map);
+      const control = L.control.groupedLayers(baseLayers, overlayLayers, {}) as any;
+      control.addTo(map);
       console.log("baseLayers in useEffect:", baseLayers);
       layerControlRef.current = control;
       // 初期のベースレイヤーとして "地図" のタイルレイヤー (osmLayer) を追加する
       if (!map.hasLayer(osmLayer)) {
         osmLayer.addTo(map);
       }
+      // 初期のオーバーレイとして「空港」、「制限空域」、「高高度訓練空域」を追加する
+      const defaultOverlays = ["空港", "制限空域", "高高度訓練空域"];
+      defaultOverlays.forEach(overlayName => {
+        const layer = (overlayLayers["Common Layers"] as Record<string, L.Layer>)[overlayName];
+        if (layer && !map.hasLayer(layer)) {
+          layer.addTo(map);
+        }
+      });
+      // 初期のローカルオーバーレイとして "RJFA" を追加する
+      const defaultLocalOverlays = ["RJFA"];
+      defaultLocalOverlays.forEach(overlayName => {
+        const layer = (overlayLayers["Local Layers"] as Record<string, L.Layer>)[overlayName];
+        if (layer && !map.hasLayer(layer)) {
+          layer.addTo(map);
+        }
+      });
     } else {
       // 既存のレイヤーコントロールを更新する
       (Object.keys(baseLayers) as Array<keyof typeof baseLayers>).forEach(key => {
         layerControlRef.current?.removeLayer(baseLayers[key]);
         layerControlRef.current?.addBaseLayer(baseLayers[key], key);
       });
-      // オーバーレイレイヤーも更新
-      (Object.keys(overlayLayers) as (keyof typeof overlayLayers)[]).forEach(key => {
-        layerControlRef.current?.removeLayer(overlayLayers[key]);
-        layerControlRef.current?.addOverlay(overlayLayers[key], key);
+
+      // 各グループごとにネストしてオーバーレイレイヤーを更新する
+      Object.entries(overlayLayers).forEach(([groupName, groupOverlays]) => {
+        Object.entries(groupOverlays as Record<string, L.Layer>).forEach(([overlayName, overlayLayer]) => {
+          layerControlRef.current?.removeLayer(overlayLayer);
+          (layerControlRef.current as any)?.addOverlay(overlayLayer, overlayName, groupName);
+        });
       });
     }
 
@@ -402,7 +560,7 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
             weight={2}
             eventHandlers={{
               click: (e: L.LeafletMouseEvent) => {
-                const bearing = calculateBearing(start[0], start[1], end[0], end[1]);
+                const bearing = calculateMagneticBearing(start[0], start[1], end[0], end[1]);
                 const startLatLng = L.latLng(start[0], start[1]);
                 const endLatLng = L.latLng(end[0], end[1]);
                 const distanceMeters = startLatLng.distanceTo(endLatLng);

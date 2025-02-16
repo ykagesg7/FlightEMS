@@ -8,6 +8,6 @@ export function calculateMagneticBearing(lat1: number, lng1: number, lat2: numbe
   const y = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
   const trueBearing = (Math.atan2(x, y) * 180 / Math.PI + 360) % 360;
   // 真方位から磁気偏差を引いて、磁気方位を算出
-  const magneticBearing = (trueBearing - MAGNETIC_DECLINATION + 360) % 360;
+  const magneticBearing = (trueBearing + MAGNETIC_DECLINATION + 360) % 360;
   return magneticBearing;
 } 
