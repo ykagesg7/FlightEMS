@@ -93,7 +93,7 @@ const TabsComponent: React.FC<TabsProps> = () => {
           />
         )}
         {activeTab === 'map' && (
-          <MapTab flightPlan={flightPlan} />
+          <MapTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
         )}
       </div>
     </div>

@@ -1,0 +1,1 @@
+export const MAGNETIC_DECLINATION = 8; // 日本の平均磁気偏差 (度) 

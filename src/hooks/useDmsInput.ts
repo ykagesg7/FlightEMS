@@ -19,9 +19,8 @@ export const useDmsInput = (initialValue: string, onChange: (value: string) => v
     }, [initialValue, latitude]);
 
     const handleFieldChange = useCallback((field: 'degrees' | 'minutes' | 'seconds', newValue: string) => {
-        // ... (バリデーションロジックはここに記述)
-        // ... (数値範囲チェック、エラーメッセージ設定)
-
+        // 例: newValue が空文字でない場合は有効とする（本来はより複雑なバリデーションを行う）
+        const isValid = newValue.trim() !== '';
         if (isValid) {
             setError(null);
             switch (field) {
@@ -35,6 +34,8 @@ export const useDmsInput = (initialValue: string, onChange: (value: string) => v
                     setSeconds(newValue);
                     break;
             }
+        } else {
+            setError('無効な値です');
         }
     }, [latitude]); // 依存配列を適切に設定
 

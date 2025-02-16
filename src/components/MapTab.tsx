@@ -25,9 +25,10 @@ interface LayerControlRef {
 
 interface MapTabProps {
   flightPlan: FlightPlan;
+  setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
 }
 
-const MapTab: React.FC<MapTabProps> = ({ flightPlan }) => {
+const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
   const routePoints = useMapRoute(flightPlan);
   const [map, setMap] = useState<L.Map | null>(null);
   const [cursorPosition, setCursorPosition] = useState<L.LatLng | null>(null);
@@ -39,11 +40,34 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan }) => {
     };
     // マウスが map 内を移動したときに位置情報を更新
     map.on('mousemove', onMouseMove);
-    // ※ マウスアウト時に座標をクリアする処理を削除
     return () => {
       map.off('mousemove', onMouseMove);
     };
   }, [map]);
+
+  // ダブルクリックした地点をウェイポイントとして追加
+  useEffect(() => {
+    if (!map) return;
+    const onDblClick = (e: L.LeafletMouseEvent) => {
+      const { lat, lng } = e.latlng;
+      const newWaypoint = {
+        id: String(Date.now()),  // ユニークなID（ここでは現在時刻を利用）
+        name: `Waypoint (${lat.toFixed(4)}, ${lng.toFixed(4)})`,
+        latitude: lat,
+        longitude: lng,
+        type: 'custom' as 'custom',  // 例えば、カスタムウェイポイントとして設定
+        coordinates: [lng, lat] as [number, number],  // タプルとしてキャスト
+      };
+      setFlightPlan(prev => ({
+        ...prev,
+        waypoints: [...prev.waypoints, newWaypoint],
+      }));
+    };
+    map.on('dblclick', onDblClick);
+    return () => {
+      map.off('dblclick', onDblClick);
+    };
+  }, [map, setFlightPlan]);
 
   return (
     <div className="relative h-[calc(100vh-7rem)] bg-white rounded-lg shadow-sm overflow-hidden">
@@ -67,8 +91,21 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan }) => {
   );
 };
 
-const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, number][], map: L.Map | null }> = ({ flightPlan, routePoints, map }) => {
+const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, number][], map: L.Map | null }> = ({ flightPlan, map }) => {
   const layerControlRef = useRef<L.Control.Layers | null>(null) as LayerControlRef;
+
+  // グローバルに calculateBearing を定義
+  const calculateBearing = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δλ = (lng2 - lng1) * Math.PI / 180;
+    const x = Math.sin(Δλ) * Math.cos(φ2);
+    const y = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+    let trueBearing = (Math.atan2(x, y) * 180 / Math.PI + 360) % 360;
+    const MAGNETIC_DECLINATION = 8; // 日本の平均磁気偏差 (度)
+    const magneticBearing = (trueBearing + MAGNETIC_DECLINATION + 360) % 360;
+    return magneticBearing;
+  };
 
   // 各フィーチャーをクリック時に詳細情報をポップアップ表示するための関数
   const onEachFeaturePopup = useCallback((feature: any, layer: L.Layer) => {
@@ -80,7 +117,7 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
     layer.bindPopup(popupContent);
   }, []);
 
-  // overlayLayers を useMemo で安定したオブジェクトとして生成（再レンダリング時に同じインスタンスを返す）
+  // overlayLayers を useMemo で安定したオブジェクトとして生成
   const overlayLayers = useMemo(() => ({
     "ACC Sector High": L.geoJSON(null, { 
         style: { color: 'blue', weight: 2, opacity: 0.7 },
@@ -144,12 +181,14 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
         if (feature.properties.freq) {
           popupContent += `<p class="text-sm text-gray-600">Frequency: ${feature.properties.freq} MHz</p>`;
         }
-        const coords = (feature.geometry as GeoJSON.Point).coordinates;
+        const coords = (feature.geometry as GeoJSON.LineString).coordinates;
         popupContent += `<p class="text-sm text-gray-600">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p></div>`;
         layer.bindPopup(popupContent);
       }
-    })
-  }), [onEachFeaturePopup]);
+    }),   
+    // 変更: RJFAレイヤーを L.layerGroup に変更（従来の geoJSON 定義を削除）
+    "RJFA": L.layerGroup()
+  }), [onEachFeaturePopup, getNavaidColor]);
 
   // GeoJSONデータをフェッチして各レイヤーに追加
   useEffect(() => {
@@ -200,7 +239,77 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
       .then(res => res.json())
       .then(data => overlayLayers["Navaids"].addData(data))
       .catch(console.error);
-  }, [overlayLayers]);
+
+    // RJFA レイヤーのデータ取得（ポイントのみの場合、グループごとにPolylineを描画）
+    fetch('/geojson/RJFA.geojson')
+      .then(res => res.json())
+      .then(data => {
+        const rjfaLayer = overlayLayers["RJFA"] as L.LayerGroup;
+        // 各グループごとに、{latlng, name} オブジェクトを蓄積するオブジェクト
+        const groupPoints: { [group: string]: { latlng: L.LatLng, name: string }[] } = {};
+        data.features.forEach((feature: any) => {
+          if (feature.geometry && feature.geometry.type === "Point") {
+            const [lng, lat] = feature.geometry.coordinates;
+            const group = feature.properties.group || "default";
+            const marker = L.circleMarker([lat, lng], {
+              radius: 5,
+              fillColor: "blue",
+              color: "blue",
+              weight: 1,
+              fillOpacity: 0.6,
+            });
+            let popupContent = `<div><h4>Details</h4><table>`;
+            for (const key in feature.properties) {
+              popupContent += `<tr><td>${key}</td><td>${feature.properties[key]}</td></tr>`;
+            }
+            popupContent += `</table></div>`;
+            marker.bindPopup(popupContent);
+            marker.addTo(rjfaLayer);
+            if (!groupPoints[group]) {
+              groupPoints[group] = [];
+            }
+            groupPoints[group].push({ latlng: L.latLng(lat, lng), name: feature.properties.name });
+          }
+        });
+        // 各グループごとにPolyline生成（2点以上あれば）
+        Object.keys(groupPoints).forEach(group => {
+          const labeledPoints = groupPoints[group];
+          if (labeledPoints.length > 1) {
+            const latlngs = labeledPoints.map(pt => pt.latlng);
+            const polyline = L.polyline(latlngs, { color: "blue", weight: 2 });
+            polyline.on("click", (e: L.LeafletMouseEvent) => {
+              if (!map) return;
+              // クリック位置をレイヤーポイントに変換
+              const clickPoint = map.latLngToLayerPoint(e.latlng);
+              let bestDistance = Infinity;
+              let bestSegmentIndex = -1;
+              // 各セグメントごとにクリック位置との距離を計算
+              for (let i = 0; i < labeledPoints.length - 1; i++) {
+                const p1 = map.latLngToLayerPoint(labeledPoints[i].latlng);
+                const p2 = map.latLngToLayerPoint(labeledPoints[i + 1].latlng);
+                const distance = L.LineUtil.pointToSegmentDistance(clickPoint, p1, p2);
+                if (distance < bestDistance) {
+                  bestDistance = distance;
+                  bestSegmentIndex = i;
+                }
+              }
+              // 最も近いセグメントが見つかった場合
+              if (bestSegmentIndex !== -1) {
+                const startObj = labeledPoints[bestSegmentIndex];
+                const endObj = labeledPoints[bestSegmentIndex + 1];
+                const bearing = calculateBearing(startObj.latlng.lat, startObj.latlng.lng, endObj.latlng.lat, endObj.latlng.lng);
+                const distanceMeters = startObj.latlng.distanceTo(endObj.latlng);
+                const distanceNM = Math.round(distanceMeters / 1852);
+                const popupContent = `<p>${startObj.name}-${endObj.name}：${Math.round(bearing)}°/${distanceNM}nm</p>`;
+                map.openPopup(popupContent, e.latlng);
+              }
+            });
+            polyline.addTo(rjfaLayer);
+          }
+        });
+      })
+      .catch(console.error);
+  }, [overlayLayers, map]);
 
   // OpenStreetMapレイヤー
   const osmLayer = useMemo(() => L.tileLayer(
@@ -262,14 +371,54 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
     };
   }, [map, baseLayers, overlayLayers]);
 
+  // 新たに、出発、ウェイポイント、到着を連結した completeRoute 配列に基づいて
+  // 各セグメントの Polyline を描画する
+  const completeRoute: [number, number][] = [];
+  if (flightPlan.departure) {
+    completeRoute.push([flightPlan.departure.latitude, flightPlan.departure.longitude]);
+  }
+  if (flightPlan.waypoints && flightPlan.waypoints.length > 0) {
+    flightPlan.waypoints.forEach(wp => {
+      completeRoute.push([wp.latitude, wp.longitude]);
+    });
+  }
+  if (flightPlan.arrival) {
+    completeRoute.push([flightPlan.arrival.latitude, flightPlan.arrival.longitude]);
+  }
+
   return (
     <>
-      {/* ベースレイヤー */}
-      {/* ルートの線 */}
-      {routePoints.length > 1 && (
-        <Polyline positions={routePoints} color="blue" weight={2} />
-      )}
-
+      {/* 新規: 連結ルートをセグメント毎に描画 */}
+      {completeRoute.length > 1 && completeRoute.map((_, i) => {
+        // 最後の点は次の点がないためスキップ
+        if (i === completeRoute.length - 1) return null;
+        const start = completeRoute[i];
+        const end = completeRoute[i + 1];
+        return (
+          <Polyline
+            key={`complete-route-${i}`}
+            positions={[start, end]}
+            color="blue"
+            weight={2}
+            eventHandlers={{
+              click: (e: L.LeafletMouseEvent) => {
+                const bearing = calculateBearing(start[0], start[1], end[0], end[1]);
+                const startLatLng = L.latLng(start[0], start[1]);
+                const endLatLng = L.latLng(end[0], end[1]);
+                const distanceMeters = startLatLng.distanceTo(endLatLng);
+                // 1 nm = 1852 m → 整数に丸める
+                const distanceNM = Math.round(distanceMeters / 1852);
+                const popupContent = `<div>
+                  <p>磁方位: ${Math.round(bearing)}°</p>
+                  <p>距離: ${distanceNM} nm</p>
+                </div>`;
+                map?.openPopup(popupContent, e.latlng);
+              }
+            }}
+          />
+        );
+      })}
+      
       {/* 出発空港のマーカー */}
       {flightPlan.departure && (
         <CircleMarker
