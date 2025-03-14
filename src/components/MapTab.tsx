@@ -1039,11 +1039,8 @@ const fetchAirportWeather = (feature: GeoJSON.Feature, map: L.Map) => {
   
   console.log(`${airportId} 空港の気象情報を取得します`);
   
-  // APIキーの管理（実際の環境では環境変数を使用するのが望ましい）
-  const apiKey = '562ddc79c40348858b541534250903'; // デモ用APIキー
-  
-  // 気象情報を取得するURL
-  const weatherApiUrl = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${latitude},${longitude}&days=1&aqi=no`;
+  // Vercel Functionsを使用してAPIリクエストを中継
+  const weatherApiUrl = `/api/weather?lat=${latitude}&lon=${longitude}`;
   
   // 気象情報を取得中のポップアップを表示
   const loadingPopupContent = `
@@ -1067,7 +1064,7 @@ const fetchAirportWeather = (feature: GeoJSON.Feature, map: L.Map) => {
     .setContent(loadingPopupContent)
     .openOn(map);
   
-  // 気象情報APIをフェッチ
+  // 気象情報APIをフェッチ（APIキーが含まれないURLを使用）
   fetch(weatherApiUrl)
     .then(response => {
       if (!response.ok) {
@@ -1085,7 +1082,7 @@ const fetchAirportWeather = (feature: GeoJSON.Feature, map: L.Map) => {
     .catch(error => {
       console.error('気象データの取得に失敗しました:', error);
       
-      // エラー時は基本情報のみのポップアップを表示（簡略化された情報を使用）
+      // エラー時は基本情報のみのポップアップを表示
       const errorPopupContent = `
         <div class="airport-popup airport-weather-popup">
           <div class="airport-popup-header">
@@ -1114,117 +1111,49 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
   // 気象データが正しく取得できたかチェック
   const current = weatherData?.current;
   
-  // 天気状態の日本語訳 (一般的な状態のみ)
-  const getJapaneseCondition = (englishCondition: string) => {
-    if (!englishCondition) return '';
-    
-    const conditionMap: {[key: string]: string} = {
-      'Sunny': '晴れ',
-      'Clear': '快晴',
-      'Partly cloudy': '晴れ時々曇り',
-      'Cloudy': '曇り',
-      'Overcast': '曇天',
-      'Mist': '霧',
-      'Fog': '濃霧',
-      'Freezing fog': '着氷性霧',
-      'Patchy rain possible': '所により雨の可能性',
-      'Patchy snow possible': '所により雪の可能性',
-      'Patchy sleet possible': '所によりみぞれの可能性',
-      'Patchy freezing drizzle possible': '所により着氷性の霧雨の可能性',
-      'Thundery outbreaks possible': '雷雨の可能性',
-      'Blowing snow': '吹雪',
-      'Blizzard': '猛吹雪',
-      'Rain': '雨',
-      'Light rain': '小雨',
-      'Moderate rain': '雨',
-      'Heavy rain': '大雨',
-      'Light freezing rain': '弱い着氷性の雨',
-      'Moderate or heavy freezing rain': '中～強い着氷性の雨',
-      'Light sleet': '弱いみぞれ',
-      'Moderate or heavy sleet': '中～強いみぞれ',
-      'Light snow': '小雪',
-      'Moderate snow': '雪',
-      'Heavy snow': '大雪',
-      'Patchy light rain': '所により小雨',
-      'Patchy moderate rain': '所により雨',
-      'Patchy heavy rain': '所により大雨',
-      'Patchy light snow': '所により小雪',
-      'Patchy moderate snow': '所により雪',
-      'Patchy heavy snow': '所により大雪'
-    };
-    
-    return conditionMap[englishCondition] || englishCondition;
-  };
+  if (!current) {
+    return `
+      <div class="airport-popup airport-weather-popup">
+        <div class="airport-popup-header">
+          ${airportProps.id}（${airportProps.name1.split('(')[0].trim()}）
+        </div>
+        <div class="p-3">
+          <p class="text-sm text-red-500">気象データが不完全です</p>
+        </div>
+      </div>
+    `;
+  }
   
-  // km/h から knots への変換
-  const kmhToKnots = (kmh: number) => {
-    return Math.round(kmh * 0.539957);
-  };
-  
-  // hPa から inchHg への変換
-  const hPaToInchHg = (hPa: number) => {
-    return (hPa * 0.02953).toFixed(2);
-  };
-  
-  // 時刻フォーマットの簡略化 (例: "06:30 AM" → "06:30")
-  const formatTime = (timeStr: string) => {
-    if (!timeStr) return '';
-    const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
-    if (!match) return timeStr;
-    
-    let hours = parseInt(match[1]);
-    const minutes = match[2];
-    const ampm = match[3]?.toUpperCase();
-    
-    if (ampm === 'PM' && hours < 12) hours += 12;
-    if (ampm === 'AM' && hours === 12) hours = 0;
-    
-    return `${hours.toString().padStart(2, '0')}:${minutes}`;
-  };
-  
-  // 日時フォーマット (例: "2022-05-15 14:30")
-  const formatDateTime = (dateTimeStr: string) => {
-    if (!dateTimeStr) return '';
-    const date = new Date(dateTimeStr);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
-  };
-  
-  // 各種気象情報の取得（存在しない場合はデフォルト値を使用）
-  const conditionText = current?.condition?.text ? getJapaneseCondition(current.condition.text) : '取得できません';
-  const temp = current?.temp_c !== undefined ? `${current.temp_c}℃` : '取得できません';
+  // フィルタリング済みのデータから日本語の天気状態を取得
+  const conditionText = current.condition.japanese || current.condition.text;
+  const temp = current.temp_c !== undefined ? `${current.temp_c}℃` : '取得できません';
   
   // 風向を3桁の度数表示に変更 (例: "039°/10kt")
-  const windDegree = current?.wind_degree !== undefined ? current.wind_degree : null;
-  const windSpeedKnots = current?.wind_kph !== undefined ? kmhToKnots(current.wind_kph) : null;
+  const windDegree = current.wind.degree !== undefined ? current.wind.degree : null;
+  const windSpeedKnots = current.wind.knots !== undefined ? current.wind.knots : null;
   const windInfo = (windDegree !== null && windSpeedKnots !== null) 
     ? `${windDegree.toString().padStart(3, '0')}°/${windSpeedKnots}kt`
     : '取得できません';
   
   // 気圧（inchHgフォーマット）
-  const pressureInch = current?.pressure_mb !== undefined 
-    ? `${hPaToInchHg(current.pressure_mb)}inch`
+  const pressureInch = current.pressure.inch !== undefined 
+    ? `${current.pressure.inch}inch`
     : '取得できません';
   
   // 視程
-  const visibility = current?.vis_km !== undefined ? `${current.vis_km}km` : '取得できません';
+  const visibility = current.visibility_km !== undefined ? `${current.visibility_km}km` : '取得できません';
   
   // 日の出・日の入り時刻
-  const astronomy = weatherData?.forecast?.forecastday?.[0]?.astro;
-  const sunrise = astronomy?.sunrise ? formatTime(astronomy.sunrise) : '情報なし';
-  const sunset = astronomy?.sunset ? formatTime(astronomy.sunset) : '情報なし';
+  const astronomy = weatherData.astronomy;
+  const sunrise = astronomy?.sunrise || '情報なし';
+  const sunset = astronomy?.sunset || '情報なし';
   const sunriseSunset = `${sunrise}/${sunset}`;
   
   // 最終更新日時
-  const lastUpdated = current?.last_updated ? formatDateTime(current.last_updated) : '不明';
+  const lastUpdated = current.last_updated || '不明';
   
   // アイコン表示部分
-  const iconUrl = current?.condition?.icon ? `https:${current.condition.icon}` : '';
+  const iconUrl = current.condition.icon ? `https:${current.condition.icon}` : '';
   const iconHtml = iconUrl ? `<img src="${iconUrl}" alt="${conditionText}" class="weather-icon">` : '';
   
   // 空港情報の簡略化バージョン
