@@ -22,20 +22,10 @@ export async function fetchWeatherData(lat: number, lon: number) {
       console.log('Using Weather API Key:', apiKey ? 'Key is set' : 'Key is not set');
     }
     
-    // 本番環境の場合はVercel Functions APIを使用、それ以外は直接Weather APIを呼び出す
-    let response;
-    if (isProd && deploymentDomain) {
-      // Vercelの場合はサーバーレス関数を使用
-      console.log(`Using serverless function at ${deploymentDomain}/api/weather`);
-      response = await axios.get(`${deploymentDomain}/api/weather`, {
-        params: {
-          lat,
-          lon
-        }
-      });
-    } else {
-      // ローカル環境では直接Weather APIを呼び出す
-      response = await axios.get(`https://api.weatherapi.com/v1/forecast.json`, {
+    // 本番環境と開発環境の両方で直接Weather APIを呼び出す
+    try {
+      console.log(`直接Weather APIを呼び出します: lat=${lat}, lon=${lon}`);
+      const response = await axios.get(`https://api.weatherapi.com/v1/forecast.json`, {
         params: {
           key: apiKey,
           q: `${lat},${lon}`,
@@ -43,13 +33,26 @@ export async function fetchWeatherData(lat: number, lon: number) {
           aqi: 'no'
         }
       });
-    }
-    
-    // レスポンスデータをフィルタリング（サーバーレス関数を使用する場合は既にフィルタリング済み）
-    if (isProd && deploymentDomain) {
-      return response.data;
-    } else {
+      
       return filterWeatherData(response.data);
+    } catch (directApiError) {
+      // 直接APIの呼び出しに失敗した場合はエラーログを出力
+      console.error('直接Weather APIの呼び出しに失敗しました:', directApiError);
+      
+      if (isProd && deploymentDomain) {
+        // 本番環境でサーバーレス関数を試す
+        console.log(`サーバーレス関数を試します: ${deploymentDomain}/api/weather`);
+        const serverlessResponse = await axios.get(`${deploymentDomain}/api/weather`, {
+          params: {
+            lat,
+            lon
+          }
+        });
+        return serverlessResponse.data;
+      } else {
+        // 本番環境以外または全ての方法が失敗した場合は最初のエラーを再スロー
+        throw directApiError;
+      }
     }
   } catch (error) {
     console.error('天気データの取得に失敗しました:', error);

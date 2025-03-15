@@ -1108,7 +1108,7 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
     return `
       <div class="airport-popup airport-weather-popup">
         <div class="airport-popup-header">
-          ${airportProps.id}（${airportProps.name1.split('(')[0].trim()}）
+          ${airportProps.id}（${airportProps.name1?.split('(')[0].trim()}）
         </div>
         <div class="p-3">
           <p class="text-sm text-red-500">気象データが不完全です</p>
@@ -1155,7 +1155,7 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
   return `
     <div class="airport-popup airport-weather-popup">
       <div class="airport-popup-header">
-        ${airportProps.id}（${airportProps.name1.split('(')[0].trim()}）
+        ${airportProps.id}（${airportProps.name1?.split('(')[0].trim()}）
       </div>
       <div class="p-3">
         <div class="mb-4">
@@ -1198,7 +1198,7 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
         <div>
           <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
           <div class="ml-2 airport-info-grid">
-            ${simplifiedAirportInfoContent(feature.properties)}
+            ${simplifiedAirportInfo}
           </div>
         </div>
       </div>
