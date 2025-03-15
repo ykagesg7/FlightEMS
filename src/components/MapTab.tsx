@@ -12,6 +12,8 @@ import { DEFAULT_CENTER, DEFAULT_ZOOM, getNavaidColor, formatDMS } from '../util
 import { calculateMagneticBearing } from '../utils/bearing';
 import { formatBearing } from '../utils/format';
 import type { LatLng } from 'leaflet';
+// 天気情報取得のためのAPIクライアントをインポート
+import { fetchWeatherData } from '../api/weather';
 
 // Waypoint用のツールチップスタイルを追加
 import './mapStyles.css';
@@ -1039,9 +1041,6 @@ const fetchAirportWeather = (feature: GeoJSON.Feature, map: L.Map) => {
   
   console.log(`${airportId} 空港の気象情報を取得します`);
   
-  // Vercel Functionsを使用してAPIリクエストを中継
-  const weatherApiUrl = `/api/weather?lat=${latitude}&lon=${longitude}`;
-  
   // 気象情報を取得中のポップアップを表示
   const loadingPopupContent = `
     <div class="airport-popup">
@@ -1064,14 +1063,8 @@ const fetchAirportWeather = (feature: GeoJSON.Feature, map: L.Map) => {
     .setContent(loadingPopupContent)
     .openOn(map);
   
-  // 気象情報APIをフェッチ（APIキーが含まれないURLを使用）
-  fetch(weatherApiUrl)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`気象API応答エラー: ${response.status}`);
-      }
-      return response.json();
-    })
+  // クライアントサイドでWeather APIを直接呼び出す
+  fetchWeatherData(latitude, longitude)
     .then(weatherData => {
       // 気象情報ポップアップを作成して表示
       const weatherPopupContent = createWeatherPopupContent(feature.properties, weatherData);

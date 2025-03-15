@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "vercel-build": "vite build",
+    "build:prod": "vite build --mode production",
+    "vercel-build": "vite build --mode production",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -14,6 +15,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.18",
     "@radix-ui/react-tabs": "^1.0.4",
+    "axios": "^1.8.3",
     "clsx": "^2.1.1",
     "date-fns-tz": "^3.2.0",
     "leaflet": "^1.9.4",
