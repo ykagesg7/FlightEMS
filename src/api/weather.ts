@@ -18,7 +18,7 @@ export async function fetchWeatherData(lat: number, lon: number) {
     // 環境変数からAPIキーを取得
     const apiKey = import.meta.env.VITE_WEATHER_API_KEY || '562ddc79c40348858b541534250903';
     
-    // 常に直接Weather APIを呼び出す
+    // 直接Weather APIにリクエスト
     console.log(`直接Weather APIを呼び出します: lat=${lat}, lon=${lon}`);
     const response = await axios.get(`https://api.weatherapi.com/v1/forecast.json`, {
       params: {
@@ -28,7 +28,7 @@ export async function fetchWeatherData(lat: number, lon: number) {
         aqi: 'no'
       }
     });
-      
+    
     return filterWeatherData(response.data);
   } catch (error) {
     console.error('天気データの取得に失敗しました:', error);
