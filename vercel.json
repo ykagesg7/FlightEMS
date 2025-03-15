@@ -28,5 +28,8 @@
       "src": "api/**/*.ts",
       "use": "@vercel/node"
     }
-  ]
+  ],
+  "env": {
+    "WEATHER_API_KEY": "562ddc79c40348858b541534250903"
+  }
 } 

@@ -1063,7 +1063,7 @@ const fetchAirportWeather = (feature: GeoJSON.Feature, map: L.Map) => {
     .setContent(loadingPopupContent)
     .openOn(map);
   
-  // クライアントサイドでWeather APIを直接呼び出す
+  // クライアントサイドで直接Weather APIを呼び出す
   fetchWeatherData(latitude, longitude)
     .then(weatherData => {
       // 気象情報ポップアップを作成して表示
@@ -1198,7 +1198,7 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
         <div>
           <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
           <div class="ml-2 airport-info-grid">
-            ${simplifiedAirportInfo}
+            ${simplifiedAirportInfoContent(feature.properties)}
           </div>
         </div>
       </div>

@@ -7,29 +7,50 @@ if (isDevMode) {
     import.meta.env.VITE_WEATHER_API_KEY ? '設定済み' : '未設定');
 }
 
+// 本番環境かどうかを判定する
+const isProd = import.meta.env.PROD;
+// デプロイ先のドメインを取得（未設定の場合はnull）
+const deploymentDomain = isProd ? window.location.origin : null;
+
 // Weather APIからデータを取得する関数
 export async function fetchWeatherData(lat: number, lon: number) {
   try {
     // 環境変数からAPIキーを取得
-    // APIキーを直接コードに埋め込む (一時的な解決策)
     const apiKey = import.meta.env.VITE_WEATHER_API_KEY || '562ddc79c40348858b541534250903';
     
     if (isDevMode) {
       console.log('Using Weather API Key:', apiKey ? 'Key is set' : 'Key is not set');
     }
     
-    // 直接Weather APIにリクエスト
-    const response = await axios.get(`https://api.weatherapi.com/v1/forecast.json`, {
-      params: {
-        key: apiKey,
-        q: `${lat},${lon}`,
-        days: 1,
-        aqi: 'no'
-      }
-    });
+    // 本番環境の場合はVercel Functions APIを使用、それ以外は直接Weather APIを呼び出す
+    let response;
+    if (isProd && deploymentDomain) {
+      // Vercelの場合はサーバーレス関数を使用
+      console.log(`Using serverless function at ${deploymentDomain}/api/weather`);
+      response = await axios.get(`${deploymentDomain}/api/weather`, {
+        params: {
+          lat,
+          lon
+        }
+      });
+    } else {
+      // ローカル環境では直接Weather APIを呼び出す
+      response = await axios.get(`https://api.weatherapi.com/v1/forecast.json`, {
+        params: {
+          key: apiKey,
+          q: `${lat},${lon}`,
+          days: 1,
+          aqi: 'no'
+        }
+      });
+    }
     
-    // レスポンスデータをフィルタリング
-    return filterWeatherData(response.data);
+    // レスポンスデータをフィルタリング（サーバーレス関数を使用する場合は既にフィルタリング済み）
+    if (isProd && deploymentDomain) {
+      return response.data;
+    } else {
+      return filterWeatherData(response.data);
+    }
   } catch (error) {
     console.error('天気データの取得に失敗しました:', error);
     throw error;

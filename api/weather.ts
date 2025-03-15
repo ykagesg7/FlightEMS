@@ -4,6 +4,20 @@ export default async function handler(
   request: VercelRequest,
   response: VercelResponse
 ) {
+  // リクエスト情報をログに出力
+  console.log(`Weather API Request - lat: ${request.query.lat}, lon: ${request.query.lon}`);
+  console.log(`Environment: WEATHER_API_KEY=${process.env.WEATHER_API_KEY ? 'set' : 'not set'}`);
+
+  // CORSヘッダーを設定
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // OPTIONSリクエストの場合は早期に成功レスポンスを返す
+  if (request.method === 'OPTIONS') {
+    return response.status(200).end();
+  }
+
   // クエリパラメータを取得
   const { lat, lon } = request.query;
   
@@ -21,16 +35,19 @@ export default async function handler(
     }
     
     // 外部APIへのリクエスト
+    console.log(`Fetching from Weather API: lat=${lat}, lon=${lon}`);
     const weatherResponse = await fetch(
       `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${lat},${lon}&days=1&aqi=no`
     );
     
     if (!weatherResponse.ok) {
+      console.error(`Weather API error: ${weatherResponse.status}`);
       throw new Error(`天気API応答エラー: ${weatherResponse.status}`);
     }
     
     // 天気データを取得
     const weatherData = await weatherResponse.json();
+    console.log('Weather data received successfully');
     
     // ここでレスポンスフィルタリングを実行
     const filteredData = filterWeatherData(weatherData);
