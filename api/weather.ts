@@ -16,6 +16,10 @@ export default async function handler(
     // APIキーは環境変数から取得
     const apiKey = process.env.WEATHER_API_KEY;
     
+    if (!apiKey) {
+      throw new Error('環境変数WEATHER_API_KEYが設定されていません');
+    }
+    
     // 外部APIへのリクエスト
     const weatherResponse = await fetch(
       `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${lat},${lon}&days=1&aqi=no`
