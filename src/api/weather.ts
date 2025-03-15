@@ -18,42 +18,18 @@ export async function fetchWeatherData(lat: number, lon: number) {
     // 環境変数からAPIキーを取得
     const apiKey = import.meta.env.VITE_WEATHER_API_KEY || '562ddc79c40348858b541534250903';
     
-    if (isDevMode) {
-      console.log('Using Weather API Key:', apiKey ? 'Key is set' : 'Key is not set');
-    }
-    
-    // 本番環境と開発環境の両方で直接Weather APIを呼び出す
-    try {
-      console.log(`直接Weather APIを呼び出します: lat=${lat}, lon=${lon}`);
-      const response = await axios.get(`https://api.weatherapi.com/v1/forecast.json`, {
-        params: {
-          key: apiKey,
-          q: `${lat},${lon}`,
-          days: 1,
-          aqi: 'no'
-        }
-      });
-      
-      return filterWeatherData(response.data);
-    } catch (directApiError) {
-      // 直接APIの呼び出しに失敗した場合はエラーログを出力
-      console.error('直接Weather APIの呼び出しに失敗しました:', directApiError);
-      
-      if (isProd && deploymentDomain) {
-        // 本番環境でサーバーレス関数を試す
-        console.log(`サーバーレス関数を試します: ${deploymentDomain}/api/weather`);
-        const serverlessResponse = await axios.get(`${deploymentDomain}/api/weather`, {
-          params: {
-            lat,
-            lon
-          }
-        });
-        return serverlessResponse.data;
-      } else {
-        // 本番環境以外または全ての方法が失敗した場合は最初のエラーを再スロー
-        throw directApiError;
+    // 常に直接Weather APIを呼び出す
+    console.log(`直接Weather APIを呼び出します: lat=${lat}, lon=${lon}`);
+    const response = await axios.get(`https://api.weatherapi.com/v1/forecast.json`, {
+      params: {
+        key: apiKey,
+        q: `${lat},${lon}`,
+        days: 1,
+        aqi: 'no'
       }
-    }
+    });
+      
+    return filterWeatherData(response.data);
   } catch (error) {
     console.error('天気データの取得に失敗しました:', error);
     throw error;
