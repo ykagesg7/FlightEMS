@@ -1,6 +1,8 @@
 import React from 'react';
-import { FlightPlan } from '../types';
-import { formatTime, calculateDistance, calculateETE, calculateETA, groupBy } from '../utils';
+import { FlightPlan, RouteSegment } from '../types';
+import { formatTime, calculateDistance, calculateETE, calculateETA, groupBy, calculateTAS } from '../utils';
+import { calculateMagneticBearing } from '../utils/bearing';
+import { formatBearing } from '../utils/format';
 import FlightParameters from './FlightParameters';
 import RoutePlanning from './RoutePlanning';
 import FlightSummary from './FlightSummary';
@@ -71,29 +73,70 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
   // Flight Summaryを更新する関数
   const updateFlightSummary = React.useCallback(() => {
     let totalDistance = 0;
+    const routeSegments: RouteSegment[] = [];
+    let cumulativeEte = 0;
 
-    const waypointsWithDeparture = [flightPlan.departure, ...flightPlan.waypoints];
+    // 出発地、経由地点、到着地を含む配列を作成
+    const allPoints = flightPlan.departure 
+      ? [
+          flightPlan.departure, 
+          ...flightPlan.waypoints, 
+          flightPlan.arrival
+        ].filter(Boolean)
+      : [];
 
-    if (flightPlan.departure && flightPlan.arrival) {
-      // 出発空港から最初のウェイポイント、ウェイポイント間、最後のウェイポイントから到着空港までの距離を計算
-      waypointsWithDeparture.forEach((waypoint, index) => {
-        if (waypoint && flightPlan.arrival) {
-          let nextWaypoint = waypointsWithDeparture[index + 1] || flightPlan.arrival;
-          if (nextWaypoint) {
-            const distance = calculateDistance(
-              waypoint.latitude,
-              waypoint.longitude,
-              nextWaypoint.latitude,
-              nextWaypoint.longitude
-            );
-            totalDistance += distance;
-          }
-        }
-      });
+    // 各セグメントごとに距離、方位、到着時刻を計算
+    for (let i = 0; i < allPoints.length - 1; i++) {
+      const currentPoint = allPoints[i];
+      const nextPoint = allPoints[i + 1];
+      
+      if (currentPoint && nextPoint) {
+        // 距離を計算
+        const distance = calculateDistance(
+          currentPoint.latitude,
+          currentPoint.longitude,
+          nextPoint.latitude,
+          nextPoint.longitude
+        );
+        
+        // 磁方位を計算
+        const bearing = calculateMagneticBearing(
+          currentPoint.latitude,
+          currentPoint.longitude,
+          nextPoint.latitude,
+          nextPoint.longitude
+        );
+        
+        // TASを取得
+        const tas = calculateTAS(flightPlan.speed, flightPlan.altitude);
+        
+        // このセグメントのETEを計算（分単位）
+        const segmentEteMinutes = calculateETE(distance, tas);
+        
+        // 累積ETEを更新
+        cumulativeEte += segmentEteMinutes;
+        
+        // このセグメントのETAを計算
+        const segmentEta = calculateETA(flightPlan.departureTime, cumulativeEte);
+        
+        // ルートセグメント情報を追加
+        routeSegments.push({
+          from: currentPoint.id,
+          to: nextPoint.id,
+          speed: flightPlan.speed,
+          bearing: bearing,
+          altitude: flightPlan.altitude,
+          eta: segmentEta,
+          distance: distance
+        });
+        
+        // 総距離を累積
+        totalDistance += distance;
+      }
     }
 
-    // ETE, ETAを計算
-    const eteMinutes = calculateETE(totalDistance, flightPlan.tas);
+    // 全体のETE、ETAを計算
+    const eteMinutes = calculateETE(totalDistance, calculateTAS(flightPlan.speed, flightPlan.altitude));
     const eteFormatted = formatTime(eteMinutes);
     const etaFormatted = calculateETA(flightPlan.departureTime, eteMinutes);
 
@@ -103,13 +146,32 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
       totalDistance: totalDistance,
       ete: eteFormatted,
       eta: etaFormatted,
-    } as FlightPlan));
-  }, [flightPlan.departure, flightPlan.arrival, flightPlan.waypoints, flightPlan.tas, flightPlan.departureTime, formatTime, calculateDistance, calculateETE, calculateETA]);
+      tas: calculateTAS(flightPlan.speed, flightPlan.altitude),
+      mach: flightPlan.mach,
+      routeSegments: routeSegments
+    }));
+  }, [
+    flightPlan.departure, 
+    flightPlan.arrival, 
+    flightPlan.waypoints, 
+    flightPlan.speed, 
+    flightPlan.altitude, 
+    flightPlan.departureTime,
+    flightPlan.mach
+  ]);
 
   // Flight Summaryを更新するuseEffect
   React.useEffect(() => {
     updateFlightSummary();
-  }, [updateFlightSummary, flightPlan.departure, flightPlan.arrival, flightPlan.waypoints, flightPlan.tas, flightPlan.departureTime]);
+  }, [
+    updateFlightSummary, 
+    flightPlan.departure, 
+    flightPlan.arrival, 
+    flightPlan.waypoints, 
+    flightPlan.speed, 
+    flightPlan.altitude, 
+    flightPlan.departureTime
+  ]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

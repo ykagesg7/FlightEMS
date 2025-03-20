@@ -23,6 +23,8 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
     distance: string;
     dmsLatitude: string;
     dmsLongitude: string;
+    editingWaypointIndex: number | null;
+    editingWaypointName: string;
   }
 
   const initialEditingState: EditingState = {
@@ -33,12 +35,14 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
     distance: '',
     dmsLatitude: '',
     dmsLongitude: '',
+    editingWaypointIndex: null,
+    editingWaypointName: '',
   };
 
   type EditingAction =
     | { type: 'START_EDIT'; index: number; mode: 'name' | 'id' | 'position'; waypoint: Waypoint }
     | { type: 'CANCEL_EDIT' }
-    | { type: 'UPDATE_FIELD'; field: 'bearing' | 'distance' | 'dmsLatitude' | 'dmsLongitude' | 'name'; value: string };
+    | { type: 'UPDATE_FIELD'; field: 'bearing' | 'distance' | 'dmsLatitude' | 'dmsLongitude' | 'name' | 'editingWaypointName'; value: string };
 
   function editingReducer(state: EditingState, action: EditingAction): EditingState {
     switch (action.type) {
@@ -55,6 +59,8 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
           dmsLongitude: action.mode === 'position'
             ? decimalToDMS(action.waypoint.latitude, action.waypoint.longitude).lonDMS
             : '',
+          editingWaypointIndex: action.index,
+          editingWaypointName: action.waypoint.name || '',
         };
       case 'CANCEL_EDIT':
         return initialEditingState;
@@ -67,7 +73,7 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
 
   const [editingState, dispatch] = useReducer(editingReducer, initialEditingState);
 
-  const { index: editingIndex, mode: editingMode, waypoint: editingWaypoint, bearing: editingBearing, distance: editingDistance, dmsLatitude, dmsLongitude } = editingState;
+  const { index: editingIndex, mode: editingMode, waypoint: editingWaypoint, bearing: editingBearing, distance: editingDistance, dmsLatitude, dmsLongitude, editingWaypointIndex, editingWaypointName } = editingState;
 
   // ウェイポイントを上に移動するハンドラー
   const handleMoveWaypointUp = (index: number) => {
@@ -109,8 +115,8 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
   };
 
   // 名前編集ハンドラー
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: 'UPDATE_FIELD', field: 'name', value: e.target.value });
+  const handleWaypointNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: 'UPDATE_FIELD', field: 'editingWaypointName', value: e.target.value });
   };
 
   // 磁方位編集ハンドラー
@@ -189,7 +195,8 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
         };
       }
     } else if (editingMode === 'name') {
-      // 名前編集モードの保存処理 (名前はinput要素で直接編集)
+      // 名前編集モードの保存処理
+      updatedWaypoint.name = editingWaypointName;
     }
 
     // ウェイポイントを更新
@@ -211,11 +218,20 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
               <div className="flex items-center space-x-2">
                 <MapPin className="w-4 h-4 text-blue-500" />
                 {/* ウェイポイント名 (1行目) */}
-                {editingMode === 'name' && editingIndex === index ? (
+                {editingWaypointIndex === index ? (
                   <input
                     type="text"
-                    value={editingWaypoint?.name ?? ''}
-                    onChange={handleNameChange}
+                    value={editingWaypointName}
+                    onChange={handleWaypointNameChange}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const updatedWaypoints = [...flightPlan.waypoints];
+                        updatedWaypoints[index].name = editingWaypointName;
+                        setFlightPlan({ ...flightPlan, waypoints: updatedWaypoints });
+                        dispatch({ type: 'CANCEL_EDIT' });
+                      }
+                    }}
+                    autoFocus
                     className="mt-1 block rounded-md border-gray-700 shadow-sm bg-gray-800 text-gray-50"
                   />
                 ) : (

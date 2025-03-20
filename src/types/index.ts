@@ -50,6 +50,17 @@ export interface FlightPlan {
   totalDistance: number;
   ete?: string;
   eta?: string;
+  routeSegments?: RouteSegment[];
+}
+
+export interface RouteSegment {
+  from: string;
+  to: string;
+  speed: number; // CAS
+  bearing: number; // 磁方位
+  altitude: number;
+  eta?: string; // 予定到着時刻
+  distance?: number;
 }
 
 export interface GeoJSONFeature {

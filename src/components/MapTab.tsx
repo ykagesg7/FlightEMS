@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useMemo, useState, useCallback } from 'react';
 import { MapContainer, Popup, Polyline, CircleMarker } from 'react-leaflet';
-import { FlightPlan } from '../types';
+import { FlightPlan, Waypoint } from '../types';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
 import 'leaflet-groupedlayercontrol';
 import L from 'leaflet';
 import icon from '/images/marker-icon.png';
 import iconShadow from '/images/marker-shadow.png';
-import { useMapRoute } from '../hooks/useMapRoute';
 import { DEFAULT_CENTER, DEFAULT_ZOOM, getNavaidColor, formatDMS } from '../utils';
 import { calculateMagneticBearing } from '../utils/bearing';
 import { formatBearing } from '../utils/format';
@@ -44,7 +43,6 @@ interface MapNavaid {
 }
 
 const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
-  const routePoints = useMapRoute(flightPlan);
   const [map, setMap] = useState<L.Map | null>(null);
   const [cursorPosition, setCursorPosition] = useState<L.LatLng | null>(null);
   // Navaid の GeoJSON から取得したデータを保持
@@ -137,7 +135,7 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
         className="h-full w-full"
         ref={setMap}
       >
-        <MapContent flightPlan={flightPlan} routePoints={routePoints} map={map} />
+        <MapContent flightPlan={flightPlan} map={map} setFlightPlan={setFlightPlan} />
       </MapContainer>
       <div className="absolute bottom-2 left-2 z-[9999] pointer-events-none bg-gray-800 text-white text-sm px-2 py-1 rounded">
         {cursorPosition ? (
@@ -156,7 +154,7 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
   );
 };
 
-const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, number][], map: L.Map | null }> = ({ flightPlan, map }) => {
+const MapContent: React.FC<{ flightPlan: FlightPlan, map: L.Map | null, setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>> }> = ({ flightPlan, map, setFlightPlan }) => {
   const layerControlRef = useRef<L.Control.Layers | null>(null) as LayerControlRef;
 
   // 各フィーチャーをクリック時に詳細情報をポップアップ表示するための関数
@@ -214,6 +212,7 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
               ${freqInfo}
               ${channelInfo}
               <p class="text-sm text-gray-600">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
+              <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
             </div>
           </div>`;
           
@@ -235,14 +234,67 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
           // クリックイベントの処理を追加
           layer.on('click', () => {
             console.log(`Navaid clicked: ${feature.properties.id}`);
+            
+            // ポップアップが表示された後に「ルートに追加」ボタンにイベントリスナーを追加
+            setTimeout(() => {
+              const addButton = document.querySelector('.navaid-custom-popup .add-to-route-btn');
+              if (addButton) {
+                addButton.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  
+                  // Navaidをウェイポイントとして追加
+                  const newWaypoint: Waypoint = {
+                    id: feature.properties.id,
+                    name: feature.properties.name || feature.properties.id,
+                    type: 'navaid',
+                    sourceId: feature.properties.id,
+                    ch: feature.properties.ch,
+                    coordinates: [coords[0], coords[1]],
+                    latitude: coords[1],
+                    longitude: coords[0]
+                  };
+                  
+                  setFlightPlan(prev => ({
+                    ...prev,
+                    waypoints: [...prev.waypoints, newWaypoint]
+                  }));
+                  
+                  // 成功メッセージを表示
+                  if (map) {
+                    const successMsg = L.DomUtil.create('div', 'success-message');
+                    successMsg.innerHTML = `${feature.properties.id}をルートに追加しました`;
+                    successMsg.style.position = 'absolute';
+                    successMsg.style.bottom = '10px';
+                    successMsg.style.left = '50%';
+                    successMsg.style.transform = 'translateX(-50%)';
+                    successMsg.style.backgroundColor = 'rgba(52, 211, 153, 0.9)';
+                    successMsg.style.color = 'white';
+                    successMsg.style.padding = '10px 20px';
+                    successMsg.style.borderRadius = '4px';
+                    successMsg.style.zIndex = '1000';
+                    
+                    document.body.appendChild(successMsg);
+                    
+                    // 3秒後にメッセージを削除
+                    setTimeout(() => {
+                      document.body.removeChild(successMsg);
+                    }, 3000);
+                    
+                    // ポップアップを閉じる
+                    map.closePopup();
+                  }
+                });
+              }
+            }, 100);
           });
         }
       }),
       "Waypoints": L.geoJSON(null, {
-        pointToLayer: (_, latlng) => L.circleMarker(latlng, {
+        pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
           radius: 4,
-          fillColor: "#FF9900",
-          color: "#FF6600",
+          fillColor: feature.properties.type === "Compulsory" ? "#FF9900" : "#66CCFF",
+          color: feature.properties.type === "Compulsory" ? "#FF6600" : "#3399CC",
           weight: 1.5,
           fillOpacity: 0.7,
           opacity: 0.9
@@ -255,7 +307,7 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
               <p class="text-sm font-bold">${feature.properties.name1 || '未設定'}</p>
               <p class="text-sm text-gray-600">Type: ${feature.properties.type}</p>
               <p class="text-sm text-gray-600">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
-              <p class="text-xs text-gray-500 mt-2">クリックしてルートに追加</p>
+              <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
             </div>
           </div>`;
           
@@ -277,7 +329,57 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
           // クリックイベントを追加
           layer.on('click', () => {
             console.log(`Waypoint clicked: ${feature.properties.id}`);
-            // ここで将来的にルートへの追加処理を実装できます
+            
+            // ポップアップが表示された後に「ルートに追加」ボタンにイベントリスナーを追加
+            setTimeout(() => {
+              const addButton = document.querySelector('.waypoint-custom-popup .add-to-route-btn');
+              if (addButton) {
+                addButton.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  
+                  // Waypointをウェイポイントとして追加
+                  const newWaypoint: Waypoint = {
+                    id: feature.properties.id,
+                    name: feature.properties.name1 || feature.properties.id,
+                    type: 'custom',
+                    coordinates: [coords[0], coords[1]],
+                    latitude: coords[1],
+                    longitude: coords[0]
+                  };
+                  
+                  setFlightPlan(prev => ({
+                    ...prev,
+                    waypoints: [...prev.waypoints, newWaypoint]
+                  }));
+                  
+                  // 成功メッセージを表示
+                  if (map) {
+                    const successMsg = L.DomUtil.create('div', 'success-message');
+                    successMsg.innerHTML = `${feature.properties.id}をルートに追加しました`;
+                    successMsg.style.position = 'absolute';
+                    successMsg.style.bottom = '10px';
+                    successMsg.style.left = '50%';
+                    successMsg.style.transform = 'translateX(-50%)';
+                    successMsg.style.backgroundColor = 'rgba(52, 211, 153, 0.9)';
+                    successMsg.style.color = 'white';
+                    successMsg.style.padding = '10px 20px';
+                    successMsg.style.borderRadius = '4px';
+                    successMsg.style.zIndex = '1000';
+                    
+                    document.body.appendChild(successMsg);
+                    
+                    // 3秒後にメッセージを削除
+                    setTimeout(() => {
+                      document.body.removeChild(successMsg);
+                    }, 3000);
+                    
+                    // ポップアップを閉じる
+                    map.closePopup();
+                  }
+                });
+              }
+            }, 100);
           });
         }
       }),
@@ -427,13 +529,14 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
           // 空港レイヤーを作成 - より見やすく改善
           const airportsLayer = L.geoJSON(data, {
             pointToLayer: (feature, latlng) => {
-              // カスタムアイコンを作成
-              const airportIcon = L.icon({
-                iconUrl: '/images/airport-icon.png',
-                iconSize: [32, 32], // アイコンサイズを大きく
-                iconAnchor: [16, 16],
-                popupAnchor: [0, -16],
-                className: 'airport-icon'
+              // 黒い丸マーカーを作成
+              const circleMarker = L.circleMarker(latlng, {
+                radius: 6,
+                fillColor: '#000000',
+                color: '#000000',
+                weight: 2,
+                opacity: 1.0,
+                fillOpacity: 1.0
               });
               
               // 管制圏を表す円 (5nm = 9260m)
@@ -447,18 +550,15 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
                 dashArray: '5, 5'
               });
               
-              // マーカーを作成
-              const marker = L.marker(latlng, { icon: airportIcon });
-              
               // マウスオーバー時のツールチップ表示
-              marker.bindTooltip(`${feature.properties.id} - ${feature.properties.name1}`, {
+              circleMarker.bindTooltip(`${feature.properties.id} - ${feature.properties.name1}`, {
                 permanent: false,
                 direction: 'top',
                 className: 'airport-tooltip'
               });
               
               // マーカーと管制圏の円をレイヤーグループにまとめる
-              return L.layerGroup([controlZone, marker]);
+              return L.layerGroup([controlZone, circleMarker]);
             },
             onEachFeature: (feature, layer) => {
               // GeoJSONから空港情報を取得して表示
@@ -518,6 +618,7 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
                     ${elevInfo}
                     ${magVarInfo}
                     ${positionInfo}
+                    <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
                   </div>
                 </div>
               `;
@@ -535,6 +636,56 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
                   // クリックイベントで気象情報を表示
                   sublayer.on('click', () => {
                     fetchAirportWeather(feature, map);
+                    
+                    // ポップアップが表示された後に「ルートに追加」ボタンにイベントリスナーを追加
+                    setTimeout(() => {
+                      const addButton = document.querySelector('.airport-custom-popup .add-to-route-btn');
+                      if (addButton) {
+                        addButton.addEventListener('click', (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          
+                          // 空港をウェイポイントとして追加
+                          const newWaypoint: Waypoint = {
+                            id: feature.properties.id,
+                            name: feature.properties.name1,
+                            type: 'airport',
+                            sourceId: feature.properties.id,
+                            coordinates: [coords[0], coords[1]],
+                            latitude: coords[1],
+                            longitude: coords[0]
+                          };
+                          
+                          setFlightPlan(prev => ({
+                            ...prev,
+                            waypoints: [...prev.waypoints, newWaypoint]
+                          }));
+                          
+                          // 成功メッセージを表示
+                          const successMsg = L.DomUtil.create('div', 'success-message');
+                          successMsg.innerHTML = `${feature.properties.id}をルートに追加しました`;
+                          successMsg.style.position = 'absolute';
+                          successMsg.style.bottom = '10px';
+                          successMsg.style.left = '50%';
+                          successMsg.style.transform = 'translateX(-50%)';
+                          successMsg.style.backgroundColor = 'rgba(52, 211, 153, 0.9)';
+                          successMsg.style.color = 'white';
+                          successMsg.style.padding = '10px 20px';
+                          successMsg.style.borderRadius = '4px';
+                          successMsg.style.zIndex = '1000';
+                          
+                          document.body.appendChild(successMsg);
+                          
+                          // 3秒後にメッセージを削除
+                          setTimeout(() => {
+                            document.body.removeChild(successMsg);
+                          }, 3000);
+                          
+                          // ポップアップを閉じる
+                          map.closePopup();
+                        });
+                      }
+                    }, 100);
                   });
                 });
               } else {
@@ -543,6 +694,56 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
                 // クリックイベントで気象情報を表示
                 layer.on('click', () => {
                   fetchAirportWeather(feature, map);
+                  
+                  // ポップアップが表示された後に「ルートに追加」ボタンにイベントリスナーを追加
+                  setTimeout(() => {
+                    const addButton = document.querySelector('.airport-custom-popup .add-to-route-btn');
+                    if (addButton) {
+                      addButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // 空港をウェイポイントとして追加
+                        const newWaypoint: Waypoint = {
+                          id: feature.properties.id,
+                          name: feature.properties.name1,
+                          type: 'airport',
+                          sourceId: feature.properties.id,
+                          coordinates: [coords[0], coords[1]],
+                          latitude: coords[1],
+                          longitude: coords[0]
+                        };
+                        
+                        setFlightPlan(prev => ({
+                          ...prev,
+                          waypoints: [...prev.waypoints, newWaypoint]
+                        }));
+                        
+                        // 成功メッセージを表示
+                        const successMsg = L.DomUtil.create('div', 'success-message');
+                        successMsg.innerHTML = `${feature.properties.id}をルートに追加しました`;
+                        successMsg.style.position = 'absolute';
+                        successMsg.style.bottom = '10px';
+                        successMsg.style.left = '50%';
+                        successMsg.style.transform = 'translateX(-50%)';
+                        successMsg.style.backgroundColor = 'rgba(52, 211, 153, 0.9)';
+                        successMsg.style.color = 'white';
+                        successMsg.style.padding = '10px 20px';
+                        successMsg.style.borderRadius = '4px';
+                        successMsg.style.zIndex = '1000';
+                        
+                        document.body.appendChild(successMsg);
+                        
+                        // 3秒後にメッセージを削除
+                        setTimeout(() => {
+                          document.body.removeChild(successMsg);
+                        }, 3000);
+                        
+                        // ポップアップを閉じる
+                        map.closePopup();
+                      });
+                    }
+                  }, 100);
                 });
               }
             }
@@ -829,9 +1030,9 @@ const MapContent: React.FC<{ flightPlan: FlightPlan, routePoints: [number, numbe
         }
         // RJFZの各要素を前面に表示して、Airportsレイヤーより上になるようにする
         rjfzLayer.eachLayer(layer => {
-           if (typeof (layer as any).bringToFront === 'function') {
-              (layer as any).bringToFront();
-           }
+          if (typeof (layer as any).bringToFront === 'function') {
+            (layer as any).bringToFront();
+          }
         });
       })
       .catch(console.error);
