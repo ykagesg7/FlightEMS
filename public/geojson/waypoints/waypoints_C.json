@@ -1,0 +1,596 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CANAI",
+        "type": "Compulsory",
+        "name1": "カナイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.0408,
+          26.7336
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHITOSE",
+        "type": "Compulsory",
+        "name1": "チトセ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6861,
+          42.7
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CUTEE",
+        "type": "Compulsory",
+        "name1": "カッティ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          162.31,
+          46.415
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CACAO",
+        "type": "Non-Compulsory",
+        "name1": "カカオ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.925,
+          35.3703
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CADDY",
+        "type": "Non-Compulsory",
+        "name1": "キャディー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9872,
+          31
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CAMEL",
+        "type": "Non-Compulsory",
+        "name1": "キャメル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9828,
+          35.2883
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CANDY",
+        "type": "Non-Compulsory",
+        "name1": "キャンディ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.9283,
+          33.875
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CANON",
+        "type": "Non-Compulsory",
+        "name1": "キャノン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6219,
+          34.23
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CARCO",
+        "type": "Non-Compulsory",
+        "name1": "カーコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.0467,
+          32.7172
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CARDS",
+        "type": "Non-Compulsory",
+        "name1": "カーズ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.4008,
+          34.4189
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CARNY",
+        "type": "Non-Compulsory",
+        "name1": "カーニー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.2203,
+          35.1553
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CAVES",
+        "type": "Non-Compulsory",
+        "name1": "ケイブス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.9153,
+          40.2642
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CAYAH",
+        "type": "Non-Compulsory",
+        "name1": "カヤー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9686,
+          38.675
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CECIL",
+        "type": "Non-Compulsory",
+        "name1": "セシル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8689,
+          35.4497
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CEDAR",
+        "type": "Non-Compulsory",
+        "name1": "シーダー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.7964,
+          30.3128
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHAGA",
+        "type": "Non-Compulsory",
+        "name1": "チャガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.8447,
+          31.9039
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHARA",
+        "type": "Non-Compulsory",
+        "name1": "チャラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.0272,
+          32.8103
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHAUS",
+        "type": "Non-Compulsory",
+        "name1": "チャウス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.0414,
+          35.4425
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHEIN",
+        "type": "Non-Compulsory",
+        "name1": "チェイン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8392,
+          35.4917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHERY",
+        "type": "Non-Compulsory",
+        "name1": "チェリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.655,
+          26.9322
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHESS",
+        "type": "Non-Compulsory",
+        "name1": "チェス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.485,
+          35.3425
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHIBA",
+        "type": "Non-Compulsory",
+        "name1": "チバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0069,
+          35.5894
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHIMI",
+        "type": "Non-Compulsory",
+        "name1": "チミ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.1911,
+          24.6578
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHIZU",
+        "type": "Non-Compulsory",
+        "name1": "チズ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.5069,
+          35.0294
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHOKA",
+        "type": "Non-Compulsory",
+        "name1": "チョウカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2336,
+          39.2861
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHUBU",
+        "type": "Non-Compulsory",
+        "name1": "チュウブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8031,
+          34.8581
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CIDER",
+        "type": "Non-Compulsory",
+        "name1": "サイダー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8578,
+          35.4656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CISCO",
+        "type": "Non-Compulsory",
+        "name1": "シスコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7253,
+          35.4194
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CLOVE",
+        "type": "Non-Compulsory",
+        "name1": "クローブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.8536,
+          34.8242
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "COMBI",
+        "type": "Non-Compulsory",
+        "name1": "コンビ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.4939,
+          33.9142
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CORCO",
+        "type": "Non-Compulsory",
+        "name1": "コルコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.9875,
+          25.8739
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "COSMO",
+        "type": "Non-Compulsory",
+        "name1": "コスモ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5108,
+          35.5767
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CRANE",
+        "type": "Non-Compulsory",
+        "name1": "クレーン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.5833,
+          43.2986
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CREST",
+        "type": "Non-Compulsory",
+        "name1": "クレスト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8483,
+          35.4786
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CROWN",
+        "type": "Non-Compulsory",
+        "name1": "クラウン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.4814,
+          35.6622
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CUPIE",
+        "type": "Non-Compulsory",
+        "name1": "キューピー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.1242,
+          35.4458
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CYGNY",
+        "type": "Non-Compulsory",
+        "name1": "シグニー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2883,
+          35.9292
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CACAO",
+        "type": "Non-Compulsory",
+        "name1": "カカオ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.925,
+          35.3703
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHIMI",
+        "type": "Non-Compulsory",
+        "name1": "チミ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.1911,
+          24.6578
+        ]
+      }
+    }
+  ]
+}

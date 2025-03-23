@@ -1,0 +1,596 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DAGDA",
+        "type": "Compulsory",
+        "name1": "ダグダ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.3478,
+          33.8161
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DEMPA",
+        "type": "Compulsory",
+        "name1": "デンパ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3311,
+          31.725
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DOVAG",
+        "type": "Compulsory",
+        "name1": "ドバック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.8142,
+          28.5839
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DAGRI",
+        "type": "Non-Compulsory",
+        "name1": "ダグリ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.1106,
+          31.4339
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DAIBU",
+        "type": "Non-Compulsory",
+        "name1": "ダイブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.5231,
+          35.4761
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DAIEI",
+        "type": "Non-Compulsory",
+        "name1": "ダイエイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.7028,
+          35.5106
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DAIJO",
+        "type": "Non-Compulsory",
+        "name1": "ダイジョー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.2089,
+          36.2817
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DAIOH",
+        "type": "Non-Compulsory",
+        "name1": "ダイオー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.3936,
+          34.2631
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DAIWA",
+        "type": "Non-Compulsory",
+        "name1": "ダイワ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8833,
+          38.3328
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DALMA",
+        "type": "Non-Compulsory",
+        "name1": "ダルマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.8561,
+          35.0139
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DAMBO",
+        "type": "Non-Compulsory",
+        "name1": "ダンボ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0789,
+          35.5714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DANJU",
+        "type": "Non-Compulsory",
+        "name1": "ダンジュ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.5781,
+          35.6261
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DANKE",
+        "type": "Non-Compulsory",
+        "name1": "ダンケ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.2533,
+          24.5994
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DANON",
+        "type": "Non-Compulsory",
+        "name1": "ダノン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.9458,
+          35.5717
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DANTE",
+        "type": "Non-Compulsory",
+        "name1": "ダンテ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.4728,
+          36.1214
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DAPPE",
+        "type": "Non-Compulsory",
+        "name1": "ダッペ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9419,
+          36.5781
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DARKS",
+        "type": "Non-Compulsory",
+        "name1": "ダークス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9842,
+          35.5708
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DASSY",
+        "type": "Non-Compulsory",
+        "name1": "ダッシー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7994,
+          45.2844
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DATIS",
+        "type": "Non-Compulsory",
+        "name1": "ダティス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.9369,
+          33.9811
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DATZU",
+        "type": "Non-Compulsory",
+        "name1": "ダッツ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.7678,
+          43.5292
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DEANE",
+        "type": "Non-Compulsory",
+        "name1": "ディーン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1319,
+          35.5714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DEIJI",
+        "type": "Non-Compulsory",
+        "name1": "デイジ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6544,
+          26.0478
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DELTA",
+        "type": "Non-Compulsory",
+        "name1": "デルタ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.5144,
+          27.8706
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DIANA",
+        "type": "Non-Compulsory",
+        "name1": "ダイアナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.0981,
+          24.9981
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DIFUK",
+        "type": "Non-Compulsory",
+        "name1": "ダイフク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.1814,
+          43.3786
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DIODE",
+        "type": "Non-Compulsory",
+        "name1": "ダイオード"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.6178,
+          33.9061
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DOALA",
+        "type": "Non-Compulsory",
+        "name1": "ドアラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.7656,
+          35.1425
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DODGE",
+        "type": "Non-Compulsory",
+        "name1": "ダッジ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.8742,
+          25.7439
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DOLLY",
+        "type": "Non-Compulsory",
+        "name1": "ドリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8339,
+          34.7439
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DOMEL",
+        "type": "Non-Compulsory",
+        "name1": "ドメル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9431,
+          35.5706
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DONAN",
+        "type": "Non-Compulsory",
+        "name1": "ドナン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.3322,
+          27.9656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DONAR",
+        "type": "Non-Compulsory",
+        "name1": "ドナー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.4847,
+          33.3514
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DONKO",
+        "type": "Non-Compulsory",
+        "name1": "ドンコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.9456,
+          33.7947
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DONKY",
+        "type": "Non-Compulsory",
+        "name1": "ドンキー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.1853,
+          32.6564
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DORIS",
+        "type": "Non-Compulsory",
+        "name1": "ドリス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.6983,
+          26.0753
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DOVIX",
+        "type": "Non-Compulsory",
+        "name1": "ドビックス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.2575,
+          37.0353
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DOYLE",
+        "type": "Non-Compulsory",
+        "name1": "ドイル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9431,
+          35.5714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DOZEN",
+        "type": "Non-Compulsory",
+        "name1": "ドゼン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.2569,
+          36.035
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DUFFY",
+        "type": "Non-Compulsory",
+        "name1": "ダフィー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.5136,
+          26.1406
+        ]
+      }
+    }
+  ]
+}

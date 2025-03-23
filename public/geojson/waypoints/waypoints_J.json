@@ -1,0 +1,251 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JACKY",
+        "type": "Non-Compulsory",
+        "name1": "ジャッキー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.8631,
+          31.5547
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JACOB",
+        "type": "Non-Compulsory",
+        "name1": "ジャコブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.1783,
+          43.7353
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JAKAL",
+        "type": "Non-Compulsory",
+        "name1": "ジャッカル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.2342,
+          33.0619
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JANDY",
+        "type": "Non-Compulsory",
+        "name1": "ジャンディー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.0419,
+          34.2914
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JEDAI",
+        "type": "Non-Compulsory",
+        "name1": "ジェダイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.2011,
+          30.7747
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JEWEL",
+        "type": "Non-Compulsory",
+        "name1": "ジュエル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.8403,
+          33.6478
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JIEFA",
+        "type": "Non-Compulsory",
+        "name1": "ジーファ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.8339,
+          24.9139
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JINGU",
+        "type": "Non-Compulsory",
+        "name1": "ジングウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.0486,
+          31.9028
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JOBAN",
+        "type": "Non-Compulsory",
+        "name1": "ジョウバン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0097,
+          35.9044
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JOKER",
+        "type": "Non-Compulsory",
+        "name1": "ジョーカー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.4592,
+          31.1164
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JOMMY",
+        "type": "Non-Compulsory",
+        "name1": "ジョミー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.1222,
+          42.8161
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JOSIN",
+        "type": "Non-Compulsory",
+        "name1": "ジョーシン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.9158,
+          33.6525
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JOTTO",
+        "type": "Non-Compulsory",
+        "name1": "ジョットー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.9642,
+          24.2439
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JYAKO",
+        "type": "Non-Compulsory",
+        "name1": "ジャコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.5219,
+          33.7789
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JYONA",
+        "type": "Non-Compulsory",
+        "name1": "ジョナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1575,
+          40.8089
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "JYUOH",
+        "type": "Non-Compulsory",
+        "name1": "ジュウオー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.4958,
+          36.6069
+        ]
+      }
+    }
+  ]
+}

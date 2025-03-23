@@ -1,0 +1,626 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LANAT",
+        "type": "Compulsory",
+        "name1": "ラナット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.4283,
+          36.3733
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAPIL",
+        "type": "Compulsory",
+        "name1": "ラピル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.9589,
+          35.2881
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LEBIX",
+        "type": "Compulsory",
+        "name1": "レビックス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          123.9083,
+          21
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LEPKI",
+        "type": "Compulsory",
+        "name1": "レプキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150,
+          37
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LUMIN",
+        "type": "Compulsory",
+        "name1": "ルーミン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.8383,
+          45.75
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAFCA",
+        "type": "Non-Compulsory",
+        "name1": "ラフカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.9925,
+          35.4633
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAFRA",
+        "type": "Non-Compulsory",
+        "name1": "ラフラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.3242,
+          38.0897
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAFTY",
+        "type": "Non-Compulsory",
+        "name1": "ラフティ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.5389,
+          25.7158
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAGER",
+        "type": "Non-Compulsory",
+        "name1": "ラガー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.2514,
+          33.8772
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAGNA",
+        "type": "Non-Compulsory",
+        "name1": "ラグナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.1608,
+          34.8428
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAKES",
+        "type": "Non-Compulsory",
+        "name1": "レイクス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5003,
+          35.9642
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LALAG",
+        "type": "Non-Compulsory",
+        "name1": "ララグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.6806,
+          32.2272
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAPIS",
+        "type": "Non-Compulsory",
+        "name1": "ラピス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5425,
+          35.5769
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAPUL",
+        "type": "Non-Compulsory",
+        "name1": "ラパル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6947,
+          40.6231
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LASOD",
+        "type": "Non-Compulsory",
+        "name1": "ラソッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.5881,
+          27.7617
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAVON",
+        "type": "Non-Compulsory",
+        "name1": "レイボン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.3681,
+          26.1703
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LAVOT",
+        "type": "Non-Compulsory",
+        "name1": "ラボット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7042,
+          38.8597
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LEDAX",
+        "type": "Non-Compulsory",
+        "name1": "レダックス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.5683,
+          45.0953
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LEDUM",
+        "type": "Non-Compulsory",
+        "name1": "レダム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.6767,
+          28.3656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LEKUP",
+        "type": "Non-Compulsory",
+        "name1": "レカップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.4556,
+          43.1075
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LEMEG",
+        "type": "Non-Compulsory",
+        "name1": "レメグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.5192,
+          29.3383
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LEMUM",
+        "type": "Non-Compulsory",
+        "name1": "レマム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8478,
+          36.135
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LESKA",
+        "type": "Non-Compulsory",
+        "name1": "レスカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.7069,
+          30.2658
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LEXUS",
+        "type": "Non-Compulsory",
+        "name1": "レクサス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.3244,
+          27.0028
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LIGSU",
+        "type": "Non-Compulsory",
+        "name1": "リグス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.8361,
+          34.09
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LILAC",
+        "type": "Non-Compulsory",
+        "name1": "ライラック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.9783,
+          34.4531
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LILLY",
+        "type": "Non-Compulsory",
+        "name1": "リリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.8414,
+          27.6097
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LILPI",
+        "type": "Non-Compulsory",
+        "name1": "リルピ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.0206,
+          34.4817
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LILRA",
+        "type": "Non-Compulsory",
+        "name1": "リルラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124.8708,
+          24.8297
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LOPIA",
+        "type": "Non-Compulsory",
+        "name1": "ロピア"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9375,
+          35.8731
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LORRY",
+        "type": "Non-Compulsory",
+        "name1": "ロリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6353,
+          35.7783
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LOSOC",
+        "type": "Non-Compulsory",
+        "name1": "ローソク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.2397,
+          36.1492
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LOVER",
+        "type": "Non-Compulsory",
+        "name1": "ラバー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6706,
+          42.8831
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LUBBY",
+        "type": "Non-Compulsory",
+        "name1": "ルビー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9125,
+          35.6161
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LUBEK",
+        "type": "Non-Compulsory",
+        "name1": "ルーベック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.9731,
+          44.0192
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LUGNO",
+        "type": "Non-Compulsory",
+        "name1": "ルグノ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.9219,
+          30.6508
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LUIBE",
+        "type": "Non-Compulsory",
+        "name1": "ルイベ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7761,
+          45.4881
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LUISU",
+        "type": "Non-Compulsory",
+        "name1": "ルイス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.7356,
+          33.2933
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LUKRA",
+        "type": "Non-Compulsory",
+        "name1": "ルクラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.095,
+          30.4656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LULKU",
+        "type": "Non-Compulsory",
+        "name1": "ルルク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7442,
+          35.1192
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LYCOS",
+        "type": "Non-Compulsory",
+        "name1": "ライコス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6661,
+          35.7353
+        ]
+      }
+    }
+  ]
+}

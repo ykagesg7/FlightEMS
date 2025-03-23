@@ -1,0 +1,221 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FUKUOKA",
+        "type": "Compulsory",
+        "name1": "フクオカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.3897,
+          33.6761
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FENDI",
+        "type": "Non-Compulsory",
+        "name1": "フェンディ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.7847,
+          34.9442
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FENIX",
+        "type": "Non-Compulsory",
+        "name1": "フェニックス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.5914,
+          32.1417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FERAR",
+        "type": "Non-Compulsory",
+        "name1": "フェラー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.9964,
+          33.2369
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FINCH",
+        "type": "Non-Compulsory",
+        "name1": "フィンチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.6061,
+          38.1092
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FKASI",
+        "type": "Non-Compulsory",
+        "name1": "フカシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.915,
+          36.2714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FTAMI",
+        "type": "Non-Compulsory",
+        "name1": "フタミ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.7086,
+          34.5678
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FUBKI",
+        "type": "Non-Compulsory",
+        "name1": "フブキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.0536,
+          32.7856
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FUCHA",
+        "type": "Non-Compulsory",
+        "name1": "フッチャ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.8192,
+          27.5375
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FUCHU",
+        "type": "Non-Compulsory",
+        "name1": "フチュウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.8958,
+          34.2642
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FUGEN",
+        "type": "Non-Compulsory",
+        "name1": "フゲン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.4903,
+          32.6553
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FUKUE",
+        "type": "Non-Compulsory",
+        "name1": "フクエ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.8267,
+          32.6686
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FURAH",
+        "type": "Non-Compulsory",
+        "name1": "フラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2344,
+          36.9661
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "FUSSE",
+        "type": "Non-Compulsory",
+        "name1": "フッセ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.4158,
+          36.2125
+        ]
+      }
+    }
+  ]
+}
