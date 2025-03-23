@@ -10,51 +10,6 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "CANAI",
-        "type": "Compulsory",
-        "name1": "カナイ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          134.0408,
-          26.7336
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "CHITOSE",
-        "type": "Compulsory",
-        "name1": "チトセ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          141.6861,
-          42.7
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "CUTEE",
-        "type": "Compulsory",
-        "name1": "カッティ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          162.31,
-          46.415
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "id": "CACAO",
         "type": "Non-Compulsory",
         "name1": "カカオ"
@@ -94,6 +49,21 @@
         "coordinates": [
           139.9828,
           35.2883
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CANAI",
+        "type": "Compulsory",
+        "name1": "カナイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.0408,
+          26.7336
         ]
       }
     },
@@ -282,7 +252,7 @@
       "properties": {
         "id": "CHEIN",
         "type": "Non-Compulsory",
-        "name1": "チェイン"
+        "name1": "チェーン"
       },
       "geometry": {
         "type": "Point",
@@ -349,6 +319,21 @@
         "coordinates": [
           125.1911,
           24.6578
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "CHITOSE",
+        "type": "Compulsory",
+        "name1": "チトセ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6861,
+          42.7
         ]
       }
     },
@@ -492,7 +477,7 @@
       "properties": {
         "id": "CRANE",
         "type": "Non-Compulsory",
-        "name1": "クレーン"
+        "name1": "クレイン"
       },
       "geometry": {
         "type": "Point",
@@ -550,6 +535,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "CUTEE",
+        "type": "Compulsory",
+        "name1": "カッティ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          162.31,
+          46.415
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "CYGNY",
         "type": "Non-Compulsory",
         "name1": "シグニー"
@@ -559,36 +559,6 @@
         "coordinates": [
           140.2883,
           35.9292
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "CACAO",
-        "type": "Non-Compulsory",
-        "name1": "カカオ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          139.925,
-          35.3703
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "CHIMI",
-        "type": "Non-Compulsory",
-        "name1": "チミ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          125.1911,
-          24.6578
         ]
       }
     }

@@ -11,15 +11,60 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "AOMORI",
-        "type": "Compulsory",
-        "name1": "アオモリ"
+        "id": "ABKMA",
+        "type": "Non-Compulsory",
+        "name1": "アブクマ"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          140.7053,
-          40.7389
+          140.4217,
+          37.0958
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AIBIS",
+        "type": "Non-Compulsory",
+        "name1": "アイビス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.9906,
+          37.96
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ALDET",
+        "type": "Non-Compulsory",
+        "name1": "アルデット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.6631,
+          40.9114
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AMARU",
+        "type": "Non-Compulsory",
+        "name1": "アマル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9025,
+          38.8331
         ]
       }
     },
@@ -50,6 +95,21 @@
         "coordinates": [
           141.1231,
           38.0172
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AOMORI",
+        "type": "Compulsory",
+        "name1": "アオモリ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7053,
+          40.7389
         ]
       }
     },
@@ -133,7 +193,7 @@
       "properties": {
         "id": "BASIN",
         "type": "Non-Compulsory",
-        "name1": "ベイシン"
+        "name1": "ベイジン"
       },
       "geometry": {
         "type": "Point",
@@ -926,21 +986,6 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "OBCHI",
-        "type": "Compulsory",
-        "name1": "オブチ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          141.8575,
-          40.8739
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "id": "OBAKO",
         "type": "Non-Compulsory",
         "name1": "オバコ"
@@ -950,6 +995,21 @@
         "coordinates": [
           140.0544,
           40.0728
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OBCHI",
+        "type": "Compulsory",
+        "name1": "オブチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.8575,
+          40.8739
         ]
       }
     },
@@ -973,7 +1033,7 @@
       "properties": {
         "id": "OHSHU",
         "type": "Non-Compulsory",
-        "name1": "オウシュウ"
+        "name1": "オウシュー"
       },
       "geometry": {
         "type": "Point",
@@ -1010,6 +1070,36 @@
         "coordinates": [
           138.5975,
           38.0375
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OLKUN",
+        "type": "Non-Compulsory",
+        "name1": "オルクン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9442,
+          38.5858
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OLSOX",
+        "type": "Non-Compulsory",
+        "name1": "オルソックス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6878,
+          40.6356
         ]
       }
     },

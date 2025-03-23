@@ -11,6 +11,141 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "ABENO",
+        "type": "Non-Compulsory",
+        "name1": "アベノ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.6989,
+          34.5922
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ADGUN",
+        "type": "Non-Compulsory",
+        "name1": "アドガン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.0214,
+          35.0625
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AGPUK",
+        "type": "Non-Compulsory",
+        "name1": "アグパック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.0808,
+          34.4856
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AKAPU",
+        "type": "Non-Compulsory",
+        "name1": "アカプ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.7153,
+          34.5322
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AKASI",
+        "type": "Non-Compulsory",
+        "name1": "アカシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135,
+          34.5897
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ALVIS",
+        "type": "Non-Compulsory",
+        "name1": "アルヴィス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.0258,
+          34.2806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AMAGO",
+        "type": "Non-Compulsory",
+        "name1": "アマゴ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.2953,
+          36.3306
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AMBER",
+        "type": "Non-Compulsory",
+        "name1": "アンバー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3453,
+          34.495
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AMEZY",
+        "type": "Non-Compulsory",
+        "name1": "アメジー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3142,
+          34.4742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "ANJYO",
         "type": "Non-Compulsory",
         "name1": "アンジョー"
@@ -1445,6 +1580,81 @@
         "coordinates": [
           137.6878,
           35.4036
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OLTOM",
+        "type": "Non-Compulsory",
+        "name1": "オルトム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.4617,
+          35.0261
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ORVIL",
+        "type": "Non-Compulsory",
+        "name1": "オービル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.7611,
+          35.0453
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OSAMU",
+        "type": "Non-Compulsory",
+        "name1": "オサム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.4333,
+          34.305
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OWARI",
+        "type": "Non-Compulsory",
+        "name1": "オワリ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.9828,
+          35.3517
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OYABE",
+        "type": "Non-Compulsory",
+        "name1": "オヤベ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.7536,
+          36.605
         ]
       }
     },

@@ -11,6 +11,51 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "ACTOR",
+        "type": "Non-Compulsory",
+        "name1": "アクター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8403,
+          35.4594
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ADDUM",
+        "type": "Non-Compulsory",
+        "name1": "アダム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2392,
+          34.8914
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ADKET",
+        "type": "Non-Compulsory",
+        "name1": "アドケット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.4133,
+          35.265
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "AGEDI",
         "type": "Compulsory",
         "name1": "アゲディ"
@@ -20,6 +65,96 @@
         "coordinates": [
           140.6008,
           36.4547
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AGNES",
+        "type": "Non-Compulsory",
+        "name1": "アグネス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8728,
+          35.4136
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AIDAH",
+        "type": "Non-Compulsory",
+        "name1": "アイダー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8564,
+          35.4508
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AKAGI",
+        "type": "Non-Compulsory",
+        "name1": "アカギ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6989,
+          36.3911
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ALLIE",
+        "type": "Non-Compulsory",
+        "name1": "アリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8514,
+          35.4436
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ALPUS",
+        "type": "Non-Compulsory",
+        "name1": "アルプス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.2969,
+          35.4492
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AMAHA",
+        "type": "Non-Compulsory",
+        "name1": "アマハ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9006,
+          35.2133
         ]
       }
     },
@@ -388,7 +523,7 @@
       "properties": {
         "id": "CHEIN",
         "type": "Non-Compulsory",
-        "name1": "チェイン"
+        "name1": "チェーン"
       },
       "geometry": {
         "type": "Point",
@@ -500,21 +635,6 @@
         "coordinates": [
           140.2883,
           35.9292
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "CACAO",
-        "type": "Non-Compulsory",
-        "name1": "カカオ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          139.925,
-          35.3703
         ]
       }
     },
@@ -1421,36 +1541,6 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "OMOTO",
-        "type": "Compulsory",
-        "name1": "オモト"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          138.4311,
-          35.2931
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "OSHIMA",
-        "type": "Compulsory",
-        "name1": "オオシマ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          139.4139,
-          34.7122
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "id": "OBMAP",
         "type": "Non-Compulsory",
         "name1": "オブマップ"
@@ -1520,6 +1610,126 @@
         "coordinates": [
           140.35,
           36.7711
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OLSAS",
+        "type": "Non-Compulsory",
+        "name1": "オルサス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9403,
+          34.8078
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OMIYA",
+        "type": "Non-Compulsory",
+        "name1": "オーミヤ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.5975,
+          35.9183
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OMOTO",
+        "type": "Compulsory",
+        "name1": "オモト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.4311,
+          35.2931
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ONASU",
+        "type": "Non-Compulsory",
+        "name1": "オナス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9206,
+          34.8814
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OPARL",
+        "type": "Non-Compulsory",
+        "name1": "オパール"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8839,
+          35.5922
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OPPAR",
+        "type": "Non-Compulsory",
+        "name1": "オッパー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7347,
+          35.3711
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OSHIMA",
+        "type": "Compulsory",
+        "name1": "オオシマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.4139,
+          34.7122
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OSTIG",
+        "type": "Non-Compulsory",
+        "name1": "オスティグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.5722,
+          36.3853
         ]
       }
     },

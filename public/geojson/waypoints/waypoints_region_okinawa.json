@@ -11,6 +11,81 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "ABASA",
+        "type": "Non-Compulsory",
+        "name1": "アバサ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          123.2522,
+          24.4392
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ADDAN",
+        "type": "Non-Compulsory",
+        "name1": "アダン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.3081,
+          26.6861
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ADPAB",
+        "type": "Non-Compulsory",
+        "name1": "アドパッブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.6672,
+          27.3542
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AGARI",
+        "type": "Non-Compulsory",
+        "name1": "アガリ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          123.1903,
+          24.5175
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AIBAR",
+        "type": "Non-Compulsory",
+        "name1": "アイバー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124.3778,
+          24.5283
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "ANNIE",
         "type": "Non-Compulsory",
         "name1": "アニー"
@@ -86,36 +161,6 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "BORDO",
-        "type": "Compulsory",
-        "name1": "ボルド"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          124,
-          26.0167
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "BULAN",
-        "type": "Compulsory",
-        "name1": "ブラン"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          124,
-          27.0917
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "id": "BALAS",
         "type": "Non-Compulsory",
         "name1": "バラス"
@@ -176,6 +221,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "BINID",
+        "type": "Non-Compulsory",
+        "name1": "ビニッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.8981,
+          27.9022
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "BLISS",
         "type": "Non-Compulsory",
         "name1": "ブリス"
@@ -200,6 +260,21 @@
         "coordinates": [
           127.6367,
           26.1147
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BORDO",
+        "type": "Compulsory",
+        "name1": "ボルド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124,
+          26.0167
         ]
       }
     },
@@ -236,6 +311,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "BULAN",
+        "type": "Compulsory",
+        "name1": "ブラン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124,
+          27.0917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "CHERY",
         "type": "Non-Compulsory",
         "name1": "チェリー"
@@ -245,21 +335,6 @@
         "coordinates": [
           128.655,
           26.9322
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "CHIMI",
-        "type": "Non-Compulsory",
-        "name1": "チミ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          125.1911,
-          24.6578
         ]
       }
     },
@@ -995,6 +1070,21 @@
         "coordinates": [
           128.0386,
           26.6714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OLVAL",
+        "type": "Non-Compulsory",
+        "name1": "オルバル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.4114,
+          26.0697
         ]
       }
     },

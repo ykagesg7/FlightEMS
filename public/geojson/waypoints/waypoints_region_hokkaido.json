@@ -11,6 +11,81 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "ABASI",
+        "type": "Non-Compulsory",
+        "name1": "アバシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.1428,
+          44.0003
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ABIRA",
+        "type": "Non-Compulsory",
+        "name1": "アビラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.9642,
+          42.7983
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AIKOK",
+        "type": "Non-Compulsory",
+        "name1": "アイコク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.2633,
+          42.6439
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AIRIS",
+        "type": "Non-Compulsory",
+        "name1": "アイリス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9575,
+          41.7133
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AKANN",
+        "type": "Non-Compulsory",
+        "name1": "アカン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.1661,
+          43.3372
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "AKSUN",
         "type": "Compulsory",
         "name1": "アクスン"
@@ -116,21 +191,6 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "BISIV",
-        "type": "Compulsory",
-        "name1": "ビシブ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          144.2828,
-          44.9919
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "id": "BAMBI",
         "type": "Non-Compulsory",
         "name1": "バンビ"
@@ -206,6 +266,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "BISIV",
+        "type": "Compulsory",
+        "name1": "ビシブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.2828,
+          44.9919
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "BOKSO",
         "type": "Non-Compulsory",
         "name1": "ボクソー"
@@ -268,7 +343,7 @@
       "properties": {
         "id": "CRANE",
         "type": "Non-Compulsory",
-        "name1": "クレーン"
+        "name1": "クレイン"
       },
       "geometry": {
         "type": "Point",
@@ -1196,6 +1271,66 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "OHMAR",
+        "type": "Non-Compulsory",
+        "name1": "オーマー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9878,
+          41.3094
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OLPOL",
+        "type": "Non-Compulsory",
+        "name1": "オルポル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.65,
+          42.8967
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OLTEN",
+        "type": "Non-Compulsory",
+        "name1": "オルテン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7453,
+          43.1675
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ONAGA",
+        "type": "Non-Compulsory",
+        "name1": "オナガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.09,
+          43.2369
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "ONEMU",
         "type": "Compulsory",
         "name1": "オネム"
@@ -1211,15 +1346,75 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "OHMAR",
+        "id": "ONUMI",
         "type": "Non-Compulsory",
-        "name1": "オマー"
+        "name1": "オヌミー"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          140.9878,
-          41.3094
+          144.09,
+          43.1136
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OPANO",
+        "type": "Non-Compulsory",
+        "name1": "オパノ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6356,
+          42.9794
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ORISU",
+        "type": "Non-Compulsory",
+        "name1": "オーリス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0642,
+          45.4661
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OSROB",
+        "type": "Non-Compulsory",
+        "name1": "オスローブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.3761,
+          42.9269
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OZORA",
+        "type": "Non-Compulsory",
+        "name1": "オーゾラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.1981,
+          43.4856
         ]
       }
     },

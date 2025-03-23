@@ -11,6 +11,51 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "AKANA",
+        "type": "Non-Compulsory",
+        "name1": "アカナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.6836,
+          33.9069
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AKAOH",
+        "type": "Non-Compulsory",
+        "name1": "アカオー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.7597,
+          34.6947
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "AKLIP",
+        "type": "Non-Compulsory",
+        "name1": "アクリップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.0158,
+          33.9497
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "ANPEP",
         "type": "Non-Compulsory",
         "name1": "アンペップ"
@@ -973,13 +1018,58 @@
       "properties": {
         "id": "OBOKE",
         "type": "Non-Compulsory",
-        "name1": "オボケ"
+        "name1": "オーボケ"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
           133.9217,
           34.015
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OMOGO",
+        "type": "Non-Compulsory",
+        "name1": "オモゴ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.2092,
+          33.6806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ONGHA",
+        "type": "Non-Compulsory",
+        "name1": "オンガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.7867,
+          33.7886
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "OPERA",
+        "type": "Non-Compulsory",
+        "name1": "オペラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.7103,
+          35.4972
         ]
       }
     },

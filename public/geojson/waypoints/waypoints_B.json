@@ -10,126 +10,6 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "BEEBO",
-        "type": "Compulsory",
-        "name1": "ビーボ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          153.1906,
-          22.4078
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "BISIG",
-        "type": "Compulsory",
-        "name1": "ビシック"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          125.2667,
-          21
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "BISIV",
-        "type": "Compulsory",
-        "name1": "ビシブ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          144.2828,
-          44.9919
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "BIXAK",
-        "type": "Compulsory",
-        "name1": "ビクサック"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          133.1375,
-          27.8806
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "BOMAP",
-        "type": "Compulsory",
-        "name1": "ボーマップ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          129.8244,
-          30.0036
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "BORDO",
-        "type": "Compulsory",
-        "name1": "ボルド"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          124,
-          26.0167
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "BUBDO",
-        "type": "Compulsory",
-        "name1": "ブブド"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          136.6539,
-          31.4319
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "BULAN",
-        "type": "Compulsory",
-        "name1": "ブラン"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          124,
-          27.0917
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "id": "BAARU",
         "type": "Non-Compulsory",
         "name1": "バール"
@@ -327,7 +207,7 @@
       "properties": {
         "id": "BASIN",
         "type": "Non-Compulsory",
-        "name1": "ベイシン"
+        "name1": "ベイジン"
       },
       "geometry": {
         "type": "Point",
@@ -409,6 +289,21 @@
         "coordinates": [
           141.7164,
           43.3519
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BEEBO",
+        "type": "Compulsory",
+        "name1": "ビーボ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          153.1906,
+          22.4078
         ]
       }
     },
@@ -565,6 +460,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "BINID",
+        "type": "Non-Compulsory",
+        "name1": "ビニッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.8981,
+          27.9022
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "BINKS",
         "type": "Non-Compulsory",
         "name1": "ビンクス"
@@ -610,6 +520,36 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "BISIG",
+        "type": "Compulsory",
+        "name1": "ビシック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.2667,
+          21
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BISIV",
+        "type": "Compulsory",
+        "name1": "ビシブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.2828,
+          44.9919
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "BITEP",
         "type": "Non-Compulsory",
         "name1": "ビテップ"
@@ -634,6 +574,21 @@
         "coordinates": [
           136.2561,
           35.1161
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BIXAK",
+        "type": "Compulsory",
+        "name1": "ビクサック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.1375,
+          27.8806
         ]
       }
     },
@@ -745,6 +700,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "BOMAP",
+        "type": "Compulsory",
+        "name1": "ボーマップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.8244,
+          30.0036
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "BONDO",
         "type": "Non-Compulsory",
         "name1": "ボンド"
@@ -814,6 +784,21 @@
         "coordinates": [
           127.6367,
           26.1147
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BORDO",
+        "type": "Compulsory",
+        "name1": "ボルド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124,
+          26.0167
         ]
       }
     },
@@ -925,6 +910,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "BUBDO",
+        "type": "Compulsory",
+        "name1": "ブブド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.6539,
+          31.4319
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "BUDOH",
         "type": "Non-Compulsory",
         "name1": "ブドウ"
@@ -949,6 +949,21 @@
         "coordinates": [
           128.7436,
           26.0683
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BULAN",
+        "type": "Compulsory",
+        "name1": "ブラン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124,
+          27.0917
         ]
       }
     },
