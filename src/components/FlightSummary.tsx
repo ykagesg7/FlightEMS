@@ -11,6 +11,22 @@ interface FlightSummaryProps {
  * 総距離、ETE、ETAの表示を行う
  */
 const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan }) => {
+  // 所要時間を計算して「hh:mm:ss」形式でフォーマットする関数
+  const formatDuration = (distance?: number, speed?: number): string => {
+    if (!distance || !speed || speed === 0) return '--:--:--';
+    
+    // 距離（NM）÷ 速度（kt）で時間（時間）を計算
+    const hours = distance / speed;
+    const totalSeconds = Math.round(hours * 3600);
+    
+    // hh:mm:ss 形式
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-sm">
       <h2 className="text-lg font-semibold mb-4 text-gray-50">Flight Summary</h2>
@@ -52,6 +68,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan }) => {
                     <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Speed</th>
                     <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Bearing</th>
                     <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Alt</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Duration</th>
                     <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">ETA</th>
                   </tr>
                 </thead>
@@ -70,6 +87,9 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan }) => {
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-100">
                         {segment.altitude} ft
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-100">
+                        {formatDuration(segment.distance, segment.speed)}
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-100">
                         {segment.eta || '--:--'}
