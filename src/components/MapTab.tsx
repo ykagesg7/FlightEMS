@@ -647,6 +647,14 @@ const MapContent: React.FC<{
                   className: 'airport-tooltip'
                 });
                 
+                // 黒丸マーカーに直接クリックイベントを追加
+                circleMarker.on('click', () => {
+                  if (map) {
+                    console.log(`${feature.properties.id} 空港のマーカーが直接クリックされました`);
+                    fetchAirportWeather(feature, map);
+                  }
+                });
+                
                 // マーカーと管制圏の円をレイヤーグループにまとめる
                 return L.layerGroup([controlZone, circleMarker]);
               },
@@ -671,9 +679,12 @@ const MapContent: React.FC<{
                 popup.setContent(popupContent);
                 layer.bindPopup(popup);
                 
-                // Weather APIデータ取得用のクリックイベント
+                // レイヤーグループへのクリックイベントも残しておく
                 layer.on('click', () => {
-                  if (map) fetchAirportWeather(feature, map);
+                  if (map) {
+                    console.log(`${feature.properties.id} 空港のレイヤーグループがクリックされました`);
+                    fetchAirportWeather(feature, map);
+                  }
                 });
               }
             });
@@ -1286,48 +1297,54 @@ const fetchAirportWeather = (feature: GeoJSON.Feature, map: L.Map) => {
     </div>
   `;
   
-  const loadingPopup = L.popup({
-    className: 'airport-custom-popup',
-    maxWidth: 300
-  })
-    .setLatLng([latitude, longitude])
-    .setContent(loadingPopupContent)
-    .openOn(map);
-  
-  // クライアントサイドで直接Weather APIを呼び出す
-  fetchWeatherData(latitude, longitude)
-    .then(weatherData => {
-      // 気象情報ポップアップを作成して表示
-      const weatherPopupContent = createWeatherPopupContent(feature.properties, weatherData);
-      
-      loadingPopup.setContent(weatherPopupContent);
-      loadingPopup.update();
+  try {
+    const loadingPopup = L.popup({
+      className: 'airport-custom-popup',
+      maxWidth: 300
     })
-    .catch(error => {
-      console.error('気象データの取得に失敗しました:', error);
-      
-      // エラー時は基本情報のみのポップアップを表示
-      const errorPopupContent = `
-        <div class="airport-popup airport-weather-popup">
-          <div class="airport-popup-header">
-            ${feature.properties?.id || '不明'}（${feature.properties?.name1?.split('(')[0].trim() || '空港'}）
-          </div>
-          <div class="p-3">
-            <div>
-              <p class="text-sm text-red-500 mb-3">気象情報の取得に失敗しました</p>
-              
-              <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
-              <div class="ml-2">
-                ${simplifiedAirportInfoContent(feature.properties)}
+      .setLatLng([latitude, longitude])
+      .setContent(loadingPopupContent)
+      .openOn(map);
+    
+    // クライアントサイドで直接Weather APIを呼び出す
+    console.log(`Weather APIを呼び出します: lat=${latitude}, lon=${longitude}`);
+    fetchWeatherData(latitude, longitude)
+      .then(weatherData => {
+        console.log(`${airportId}の気象情報を取得しました`, weatherData);
+        // 気象情報ポップアップを作成して表示
+        const weatherPopupContent = createWeatherPopupContent(feature.properties, weatherData);
+        
+        loadingPopup.setContent(weatherPopupContent);
+        loadingPopup.update();
+      })
+      .catch(error => {
+        console.error('気象データの取得に失敗しました:', error);
+        
+        // エラー時は基本情報のみのポップアップを表示
+        const errorPopupContent = `
+          <div class="airport-popup airport-weather-popup">
+            <div class="airport-popup-header">
+              ${feature.properties?.id || '不明'}（${feature.properties?.name1?.split('(')[0].trim() || '空港'}）
+            </div>
+            <div class="p-3">
+              <div>
+                <p class="text-sm text-red-500 mb-3">気象情報の取得に失敗しました</p>
+                
+                <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
+                <div class="ml-2">
+                  ${simplifiedAirportInfoContent(feature.properties)}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      `;
-      
-      loadingPopup.setContent(errorPopupContent);
-      loadingPopup.update();
-    });
+        `;
+        
+        loadingPopup.setContent(errorPopupContent);
+        loadingPopup.update();
+      });
+  } catch (error) {
+    console.error('ポップアップの作成中にエラーが発生しました:', error);
+  }
 };
 
 // 気象情報ポップアップコンテンツを作成する関数
