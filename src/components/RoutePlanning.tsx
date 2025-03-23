@@ -5,7 +5,7 @@ import AirportSelect from './AirportSelect';
 import NavaidSelector from './NavaidSelector';
 import WaypointForm from './WaypointForm';
 import { reactSelectStyles } from '../utils/reactSelectStyles';
-import { Select } from '@mantine/core';
+import Select from 'react-select';
 
 /**
  * Route Planning コンポーネント
@@ -58,6 +58,44 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
     setFlightPlan({ ...flightPlan, waypoints: newWaypoints });
   };
 
+  // モバイル対応のカスタムスタイル
+  const customStyles = {
+    ...reactSelectStyles,
+    control: (provided: any) => ({
+      ...provided,
+      minHeight: '36px',
+      padding: '0px 1px',
+      fontSize: '0.875rem',
+      backgroundColor: '#fff',
+      borderColor: '#d1d5db',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      fontSize: '0.875rem',
+      zIndex: 50,
+      backgroundColor: '#fff',
+    }),
+    option: (provided: any, state: any) => ({
+      ...provided,
+      padding: '4px 8px',
+      fontSize: '0.875rem',
+      backgroundColor: state.isFocused ? '#f3f4f6' : '#fff',
+      color: '#374151',
+    }),
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: '#6b7280',
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: '#374151',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: '#374151',
+    }),
+  };
+
   return (
     <div className="bg-white shadow-sm rounded-lg p-4 md:p-6">
       <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-gray-700">経路計画</h2>
@@ -72,12 +110,9 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
             options={airportOptions}
             value={flightPlan.departure}
             onChange={handleDepartureChange}
+            styles={customStyles}
+            classNamePrefix="react-select"
             className="text-sm"
-            classNames={{
-              control: () => "px-1 py-0.5 min-h-[36px]",
-              menu: () => "text-sm z-50",
-              option: () => "py-1 px-2"
-            }}
           />
         </div>
         <div>
@@ -90,12 +125,9 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
             options={airportOptions}
             value={flightPlan.arrival}
             onChange={handleArrivalChange}
+            styles={customStyles}
+            classNamePrefix="react-select"
             className="text-sm"
-            classNames={{
-              control: () => "px-1 py-0.5 min-h-[36px]",
-              menu: () => "text-sm z-50",
-              option: () => "py-1 px-2"
-            }}
           />
         </div>
       </div>
@@ -111,12 +143,9 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
               options={navaidOptions}
               value={selectedNavaid}
               onChange={handleNavaidChange}
+              styles={customStyles}
+              classNamePrefix="react-select"
               className="text-sm"
-              classNames={{
-                control: () => "px-1 py-0.5 min-h-[36px]",
-                menu: () => "text-sm z-40",
-                option: () => "py-1 px-2"
-              }}
             />
           </div>
           <div className="sm:col-span-1">
