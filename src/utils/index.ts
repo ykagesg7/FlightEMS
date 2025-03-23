@@ -157,8 +157,8 @@ export const dmsToDecimal = (dms: string, isLatitude: boolean): number | null =>
   return (hemisphere === 'S' || hemisphere === 'W') ? -decimal : decimal;
 };
 
-export const SPEED_INCREMENT = 10;
-export const ALTITUDE_INCREMENT = 1000;
+export const SPEED_INCREMENT = 5;
+export const ALTITUDE_INCREMENT = 500;
 
 export const parseTimeString = (timeString: string): Date => {
   const [hours, minutes] = timeString.split(':').map(Number);
@@ -213,4 +213,41 @@ export const getNavaidColor = (type: string) => {
       return 'gray';
   }
 };
+
+export function calculateCASFromTAS(tas: number, altitude: number): number {
+  // 高度をフィートからメートルに変換
+  const altitudeMeters = altitude * 0.3048;
+
+  // ISA標準に基づく高度における温度（ケルビン）
+  const temperature = 288.15 - 0.0065 * altitudeMeters;
+
+  // CASを計算：CAS = TAS / sqrt(T0 / T)
+  const cas = tas / Math.sqrt(288.15 / temperature);
+
+  return cas;
+}
+
+export function calculateTASFromMach(mach: number, altitude: number): number {
+  // 高度をフィートからメートルに変換
+  const altitudeMeters = altitude * 0.3048;
+
+  // ISA標準に基づく高度における温度（ケルビン）
+  const temperature = 288.15 - 0.0065 * altitudeMeters;
+
+  // 音速を計算（m/s）：a = sqrt(gamma * R * T)
+  const gamma = 1.4; // 比熱比
+  const R = 287.05; // 空気の比気体定数 (J/(kg·K))
+  const speedOfSound = Math.sqrt(gamma * R * temperature);
+
+  // Mach数からTASをm/sで計算
+  const tasMs = mach * speedOfSound;
+
+  // m/sからknotsに変換
+  const tas = tasMs / 0.514444;
+
+  return tas;
+}
+
+export const TAS_INCREMENT = 1;
+export const MACH_INCREMENT = 0.001;
   

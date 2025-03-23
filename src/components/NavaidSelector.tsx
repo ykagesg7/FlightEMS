@@ -61,8 +61,8 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
   };
 
   return (
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-white-700 mb-2">Add NAVAID</label>
+    <div>
+      <label className="block text-sm font-medium text-gray-400 mb-1">NAVAID選択</label>
       <ReactSelect
         options={options}
         value={selectedNavaid}
@@ -72,27 +72,27 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
         styles={reactSelectStyles}
       />
       
-      <div className="mt-2 space-y-2">
+      <div className="mt-3 space-y-3">
         <div>
-          <label className="block text-sm font-medium text-white-700 mb-2">磁方位(°)</label>
+          <label className="block text-sm font-medium text-gray-400 mb-1">磁方位(°)</label>
           <input
             type="number"
             value={bearing}
             onChange={(e) => setBearing(e.target.value)}
             placeholder="0 - 360"
-            className="mt-1 block w-32 rounded-md border-gray-700 shadow-sm px-3 py-2 bg-gray-700 text-gray-50"
+            className="mt-1 block w-full rounded-md border-gray-600 shadow-sm bg-gray-700 text-gray-50 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-3 py-2"
             min="0"
             max="360"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-white-700 mb-2">距離(nm)</label>
+          <label className="block text-sm font-medium text-gray-400 mb-1">距離(nm)</label>
           <input
             type="number"
             value={distance}
             onChange={(e) => setDistance(e.target.value)}
             placeholder="例: 10"
-            className="mt-1 block w-32 rounded-md border-gray-700 shadow-sm px-3 py-2 bg-gray-700 text-gray-50"
+            className="mt-1 block w-full rounded-md border-gray-600 shadow-sm bg-gray-700 text-gray-50 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-3 py-2"
             min="0"
           />
         </div>
@@ -100,9 +100,9 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
 
       <button
         onClick={handleAdd}
-        className="mt-2 w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
       >
-        Add NAVAID to Route
+        NAVAID をルートに追加
       </button>
     </div>
   );

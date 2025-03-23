@@ -326,14 +326,6 @@ const MapContent: React.FC<{
         }),
         onEachFeature: (feature, layer) => {
           const coords = (feature.geometry as GeoJSON.Point).coordinates;
-          let freqInfo = '';
-          if (feature.properties.freq) {
-            freqInfo = `<p class="text-sm font-bold">${feature.properties.freq} MHz</p>`;
-          }
-          let channelInfo = '';
-          if (feature.properties.ch) {
-            channelInfo = `<p class="text-sm text-gray-600">Channel: ${feature.properties.ch}</p>`;
-          }
           
           let popupContent = `<div class="navaid-popup">
             <div class="navaid-popup-header">${feature.properties.id}</div>
@@ -629,7 +621,7 @@ const MapContent: React.FC<{
               pointToLayer: (feature, latlng) => {
                 // 黒い丸マーカーを作成
                 const circleMarker = L.circleMarker(latlng, {
-                  radius: 6,
+                  radius: 3,
                   fillColor: '#000000',
                   color: '#000000',
                   weight: 2,
@@ -722,6 +714,10 @@ const MapContent: React.FC<{
         const rjfaLayer = overlayLayers["Local Layers"]["RJFA"] as L.LayerGroup;
         // 各グループごとに、{latlng, name} オブジェクトを蓄積するオブジェクト
         const groupPoints: { [group: string]: { latlng: L.LatLng, name: string }[] } = {};
+        
+        // レイヤーを一度クリアする
+        rjfaLayer.clearLayers();
+        
         data.features.forEach((feature: any) => {
           if (feature.geometry && feature.geometry.type === "Point") {
             const [lng, lat] = feature.geometry.coordinates;
@@ -837,6 +833,11 @@ const MapContent: React.FC<{
             polyline.addTo(rjfaLayer);
           }
         });
+        
+        // 注意: 初期状態ではレイヤーはマップに追加しない
+        // if (map.hasLayer(rjfaLayer)) {
+        //   map.addLayer(rjfaLayer);
+        // }
       })
       .catch(console.error);
   }, [overlayLayers, map]);
@@ -970,9 +971,11 @@ const MapContent: React.FC<{
           }
         });
 
-        if (!map.hasLayer(rjfzLayer)) {
-          rjfzLayer.addTo(map);
-        }
+        // 注意: 初期状態ではレイヤーはマップに追加しない
+        // if (!map.hasLayer(rjfzLayer)) {
+        //   rjfzLayer.addTo(map);
+        // }
+        
         // RJFZの各要素を前面に表示して、Airportsレイヤーより上になるようにする
         rjfzLayer.eachLayer(layer => {
           if (typeof (layer as any).bringToFront === 'function') {
@@ -1112,14 +1115,13 @@ const MapContent: React.FC<{
               });
             }, 10);
           }
-        });
-
-        // 初期のローカルオーバーレイとして "RJFA" を追加する
-        const defaultLocalOverlays = ["RJFA"];
-        defaultLocalOverlays.forEach(overlayName => {
-          const layer = (overlayLayers["Local Layers"] as Record<string, L.Layer>)[overlayName];
-          if (layer && !map.hasLayer(layer)) {
-            layer.addTo(map);
+          
+          // ローカルレイヤーが削除された場合、レイヤーグループを完全にクリアする
+          if (layerName === 'RJFA' || layerName === 'RJFZ') {
+            const localLayer = (overlayLayers["Local Layers"] as Record<string, L.Layer>)[layerName] as L.LayerGroup;
+            if (localLayer) {
+              localLayer.clearLayers();
+            }
           }
         });
       } else {
