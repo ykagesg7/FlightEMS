@@ -161,18 +161,18 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
           regions={regions}
         />
       </MapContainer>
-      <div className="absolute bottom-2 left-2 z-[9999] pointer-events-none bg-gray-800 text-white text-sm px-2 py-1 rounded">
+      <div className="absolute bottom-2 left-2 z-[9999] pointer-events-none bg-gray-800 bg-opacity-75 text-white px-2 py-1 rounded max-w-full sm:max-w-sm md:max-w-md">
         {cursorPosition ? (
-          <div>
-            <div>{formatDMS(cursorPosition.lat, cursorPosition.lng)}</div>
-            <div>位置(Degree)： {cursorPosition.lat.toFixed(4)}°N, {cursorPosition.lng.toFixed(4)}°E</div>
+          <div className="text-xs sm:text-sm space-y-0.5">
+            <div className="text-2xs sm:text-xs">{formatDMS(cursorPosition.lat, cursorPosition.lng)}</div>
+            <div className="text-2xs sm:text-xs">位置(Degree)： {cursorPosition.lat.toFixed(4)}°N, {cursorPosition.lng.toFixed(4)}°E</div>
             {navaidInfos.map((info, index) => (
-              <div key={index}>
+              <div key={index} className="text-2xs sm:text-xs truncate">
                 位置(from Navaid{index + 1})： {Math.round(info.bearing)}°/{info.distance}nm {info.id}
               </div>
             ))}
           </div>
-        ) : '位置(DMS/ DD)：--'}
+        ) : <span className="text-xs sm:text-sm">位置(DMS/ DD)：--</span>}
       </div>
     </div>
   );
@@ -218,9 +218,9 @@ const MapContent: React.FC<{
     let popupContent = `<div class="waypoint-popup">
       <div class="waypoint-popup-header">${feature.properties.id}</div>
       <div class="p-2">
-        <p class="text-sm font-bold">${feature.properties.name1 || '未設定'}</p>
-        <p class="text-sm text-gray-600">Type: ${feature.properties.type}</p>
-        <p class="text-sm text-gray-600">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
+        <p class="text-xs font-bold">${feature.properties.name1 || '未設定'}</p>
+        <p class="text-xs text-gray-600">Type: ${feature.properties.type}</p>
+        <p class="text-xs text-gray-600 position-info">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
         <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
       </div>
     </div>`;
@@ -338,11 +338,10 @@ const MapContent: React.FC<{
           let popupContent = `<div class="navaid-popup">
             <div class="navaid-popup-header">${feature.properties.id}</div>
             <div class="p-2">
-              <p class="text-sm font-bold">${feature.properties.name || feature.properties.id}</p>
-              <p class="text-sm text-gray-600">Type: ${feature.properties.type}</p>
-              ${freqInfo}
-              ${channelInfo}
-              <p class="text-sm text-gray-600">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
+              <p class="text-xs font-bold">${feature.properties.name || feature.properties.id}</p>
+              <p class="text-xs text-gray-600">Type: ${feature.properties.type}</p>
+              <p class="text-xs text-gray-600">CH: ${feature.properties.ch || 'N/A'}</p>
+              <p class="text-xs text-gray-600 position-info">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
               <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
             </div>
           </div>`;
