@@ -1,4 +1,21 @@
-# フライトプランナー
+# フライトアカデミー
+
+フライトプランニング用の対話型ウェブアプリケーションです。パイロットや航空学生がフライトルートを計画し、航法データを視覚化するツールを提供します。
+
+## 関連ドキュメント
+
+- [詳細なドキュメント（DOCUMENTATION.md）](./DOCUMENTATION.md) - プロジェクトの詳細な技術仕様と実装ガイド
+- [開発状況（DEVELOPMENT_STATUS.md）](./DEVELOPMENT_STATUS.md) - 現在の開発状況と今後の計画
+
+## クイックスタート
+
+```bash
+# 依存関係のインストール
+npm install
+
+# 開発サーバーの起動
+npm run dev
+```
 
 ## 環境変数の設定
 
@@ -47,4 +64,8 @@ npm run preview
 
 ## APIキーの取得方法
 
-Weather APIのキーは[https://www.weatherapi.com/](https://www.weatherapi.com/)で無料アカウントを作成して取得できます。 
+Weather APIのキーは[https://www.weatherapi.com/](https://www.weatherapi.com/)で無料アカウントを作成して取得できます。
+
+## ライセンス
+
+このプロジェクトは教育・訓練目的で提供されており、実際のフライトナビゲーションに使用することは推奨されません。 
