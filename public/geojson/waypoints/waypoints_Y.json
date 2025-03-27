@@ -1,0 +1,56 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YAMAGATA",
+        "type": "Compulsory",
+        "name1": "ヤマガタ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.3581,
+          38.3886
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YOSHI",
+        "type": "Compulsory",
+        "name1": "ヨシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.9575,
+          33.1708
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YUWA",
+        "type": "Compulsory",
+        "name1": "ユウワ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1869,
+          39.6172
+        ]
+      }
+    }
+  ]
+}

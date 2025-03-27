@@ -1,0 +1,1031 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BAARU",
+        "type": "Non-Compulsory",
+        "name1": "バール"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.4653,
+          35.2514
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BAHAN",
+        "type": "Non-Compulsory",
+        "name1": "バハン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.7992,
+          32.5786
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BAIEN",
+        "type": "Non-Compulsory",
+        "name1": "バイエン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.8497,
+          33.6222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BAJYO",
+        "type": "Non-Compulsory",
+        "name1": "バジョー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.1922,
+          37.9486
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BALAN",
+        "type": "Non-Compulsory",
+        "name1": "バラン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9911,
+          35.605
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BALAS",
+        "type": "Non-Compulsory",
+        "name1": "バラス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124.1792,
+          24.3128
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BAMBI",
+        "type": "Non-Compulsory",
+        "name1": "バンビ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7358,
+          42.5164
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BAMBO",
+        "type": "Non-Compulsory",
+        "name1": "バンブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.8839,
+          34.3133
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BANBA",
+        "type": "Non-Compulsory",
+        "name1": "バンバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.2511,
+          42.6536
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BANDO",
+        "type": "Non-Compulsory",
+        "name1": "バンドウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0069,
+          35.9889
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BANNA",
+        "type": "Non-Compulsory",
+        "name1": "バンナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124.0694,
+          24.4964
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BARBA",
+        "type": "Non-Compulsory",
+        "name1": "バーバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.2142,
+          32.8814
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BASHO",
+        "type": "Non-Compulsory",
+        "name1": "バショウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.8442,
+          27.0658
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BASIN",
+        "type": "Non-Compulsory",
+        "name1": "ベイジン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.9419,
+          38.1211
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BATTL",
+        "type": "Non-Compulsory",
+        "name1": "バトル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6667,
+          41.0553
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BEAST",
+        "type": "Non-Compulsory",
+        "name1": "ビースト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1431,
+          35.6056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BEBIL",
+        "type": "Non-Compulsory",
+        "name1": "ベビル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3144,
+          34.5011
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BECKY",
+        "type": "Non-Compulsory",
+        "name1": "ベッキー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.5086,
+          33.9192
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BEEBA",
+        "type": "Non-Compulsory",
+        "name1": "ビーバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7164,
+          43.3519
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BEEBO",
+        "type": "Compulsory",
+        "name1": "ビーボ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          153.1906,
+          22.4078
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BEETL",
+        "type": "Non-Compulsory",
+        "name1": "ビートル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.8292,
+          34.2625
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BEGAD",
+        "type": "Non-Compulsory",
+        "name1": "ベガッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.2467,
+          33.3869
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BEIGE",
+        "type": "Non-Compulsory",
+        "name1": "ベージュ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3631,
+          34.5339
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BEKEN",
+        "type": "Non-Compulsory",
+        "name1": "ベケン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.0617,
+          38.0058
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BENES",
+        "type": "Non-Compulsory",
+        "name1": "ベネス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.1553,
+          34.8344
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BERRY",
+        "type": "Non-Compulsory",
+        "name1": "ベリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.9422,
+          34.2506
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BERTH",
+        "type": "Non-Compulsory",
+        "name1": "バース"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.3167,
+          34.1531
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BETTY",
+        "type": "Non-Compulsory",
+        "name1": "ベティー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.3011,
+          24.2056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BIGIT",
+        "type": "Non-Compulsory",
+        "name1": "ビギット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.1206,
+          32.0392
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BINGO",
+        "type": "Non-Compulsory",
+        "name1": "ビンゴ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.1781,
+          34.4072
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BINID",
+        "type": "Non-Compulsory",
+        "name1": "ビニッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.8981,
+          27.9022
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BINKS",
+        "type": "Non-Compulsory",
+        "name1": "ビンクス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7325,
+          35.1878
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BIRDY",
+        "type": "Non-Compulsory",
+        "name1": "バーディー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.3122,
+          35.8769
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BISEI",
+        "type": "Non-Compulsory",
+        "name1": "ビセイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.9289,
+          42.8653
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BISIG",
+        "type": "Compulsory",
+        "name1": "ビシック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.2667,
+          21
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BISIV",
+        "type": "Compulsory",
+        "name1": "ビシブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.2828,
+          44.9919
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BITEP",
+        "type": "Non-Compulsory",
+        "name1": "ビテップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.9636,
+          34.5633
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BIWWA",
+        "type": "Non-Compulsory",
+        "name1": "ビワ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.2561,
+          35.1161
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BIXAK",
+        "type": "Compulsory",
+        "name1": "ビクサック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.1375,
+          27.8806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BLISS",
+        "type": "Non-Compulsory",
+        "name1": "ブリス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6397,
+          26.0469
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BLUES",
+        "type": "Non-Compulsory",
+        "name1": "ブルース"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.3817,
+          34.8664
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BNCHO",
+        "type": "Non-Compulsory",
+        "name1": "ブンチョウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.2719,
+          38.0933
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BOKSO",
+        "type": "Non-Compulsory",
+        "name1": "ボクソー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.4653,
+          42.8053
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BOLAL",
+        "type": "Non-Compulsory",
+        "name1": "ボラル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.0189,
+          34.3025
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BOLED",
+        "type": "Non-Compulsory",
+        "name1": "ボレッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.7467,
+          30.9631
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BOLUT",
+        "type": "Non-Compulsory",
+        "name1": "ボルト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124.7033,
+          28.7728
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BOMAP",
+        "type": "Compulsory",
+        "name1": "ボーマップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.8244,
+          30.0036
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BONDO",
+        "type": "Non-Compulsory",
+        "name1": "ボンド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9797,
+          35.6053
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BONJI",
+        "type": "Non-Compulsory",
+        "name1": "ボンジ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2978,
+          39.9869
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BONTI",
+        "type": "Non-Compulsory",
+        "name1": "ボンチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.5114,
+          35.5283
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BONUS",
+        "type": "Non-Compulsory",
+        "name1": "ボーナス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1194,
+          35.6056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BOOST",
+        "type": "Non-Compulsory",
+        "name1": "ブースト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6367,
+          26.1147
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BORDO",
+        "type": "Compulsory",
+        "name1": "ボルド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124,
+          26.0167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BOSPA",
+        "type": "Non-Compulsory",
+        "name1": "ボスパ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0864,
+          35.7992
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BOTAN",
+        "type": "Non-Compulsory",
+        "name1": "ボタン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.1847,
+          33.4656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BOUZU",
+        "type": "Non-Compulsory",
+        "name1": "ボウズ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.5017,
+          43.5897
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BRASS",
+        "type": "Non-Compulsory",
+        "name1": "ブラス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3753,
+          34.5419
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BRAVE",
+        "type": "Non-Compulsory",
+        "name1": "ブレイブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.8925,
+          33.4486
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BRENT",
+        "type": "Non-Compulsory",
+        "name1": "ブレント"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          123.1828,
+          25.0183
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BROOK",
+        "type": "Non-Compulsory",
+        "name1": "ブルック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1775,
+          36.0372
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BUBDO",
+        "type": "Compulsory",
+        "name1": "ブブド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.6539,
+          31.4319
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BUDOH",
+        "type": "Non-Compulsory",
+        "name1": "ブドウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.3086,
+          38.3997
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BUICK",
+        "type": "Non-Compulsory",
+        "name1": "ビュイック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.7436,
+          26.0683
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BULAN",
+        "type": "Compulsory",
+        "name1": "ブラン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124,
+          27.0917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BUMER",
+        "type": "Non-Compulsory",
+        "name1": "ブーマー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.1058,
+          34.7564
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BURTN",
+        "type": "Non-Compulsory",
+        "name1": "バートン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8897,
+          34.4903
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BUSYU",
+        "type": "Non-Compulsory",
+        "name1": "ブシュー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.7617,
+          35.7942
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BYOBU",
+        "type": "Non-Compulsory",
+        "name1": "ビョウブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7372,
+          41.0028
+        ]
+      }
+    }
+  ]
+}

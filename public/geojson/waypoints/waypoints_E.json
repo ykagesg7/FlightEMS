@@ -1,0 +1,611 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EMRON",
+        "type": "Compulsory",
+        "name1": "エムロン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150,
+          38.1061
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ERABU",
+        "type": "Compulsory",
+        "name1": "エラブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.6989,
+          27.4328
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EBISU",
+        "type": "Non-Compulsory",
+        "name1": "エビス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.5908,
+          34.0389
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EBUSI",
+        "type": "Non-Compulsory",
+        "name1": "エブシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.2153,
+          36.7394
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EDARR",
+        "type": "Non-Compulsory",
+        "name1": "エダー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.5417,
+          35.5572
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EGAWA",
+        "type": "Non-Compulsory",
+        "name1": "エガワ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9022,
+          35.2969
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EGOGO",
+        "type": "Non-Compulsory",
+        "name1": "エゴゴ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.2369,
+          34.4956
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EISAR",
+        "type": "Non-Compulsory",
+        "name1": "エイサ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6244,
+          26.4828
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EKOMU",
+        "type": "Non-Compulsory",
+        "name1": "エコム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6911,
+          42.6653
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EKORU",
+        "type": "Non-Compulsory",
+        "name1": "エコル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.4817,
+          31.485
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ELBIP",
+        "type": "Non-Compulsory",
+        "name1": "エルビップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.8089,
+          27.1194
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ELBOR",
+        "type": "Non-Compulsory",
+        "name1": "エルボー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.3044,
+          38.1511
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ELDAK",
+        "type": "Non-Compulsory",
+        "name1": "エルダック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7611,
+          38.0261
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ELIEE",
+        "type": "Non-Compulsory",
+        "name1": "エリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6406,
+          26.0211
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ELSAH",
+        "type": "Non-Compulsory",
+        "name1": "エルサ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.0008,
+          35.0553
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EMIKO",
+        "type": "Non-Compulsory",
+        "name1": "エミコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.7525,
+          27.4794
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EMITT",
+        "type": "Non-Compulsory",
+        "name1": "エミット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.0858,
+          35.4192
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENBEN",
+        "type": "Non-Compulsory",
+        "name1": "エンベン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.1308,
+          32.3953
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENBRY",
+        "type": "Non-Compulsory",
+        "name1": "エンブリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7058,
+          40.5181
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENDEG",
+        "type": "Non-Compulsory",
+        "name1": "エンデッグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124.1989,
+          24.3378
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENGEZ",
+        "type": "Non-Compulsory",
+        "name1": "エンゲツ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3061,
+          33.7203
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENLUG",
+        "type": "Non-Compulsory",
+        "name1": "エンラグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.9247,
+          33.6322
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENPAD",
+        "type": "Non-Compulsory",
+        "name1": "エンパッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.0706,
+          30.5769
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENPOM",
+        "type": "Non-Compulsory",
+        "name1": "エンポム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.2928,
+          34.755
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENRAB",
+        "type": "Non-Compulsory",
+        "name1": "エンラブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.5314,
+          34.7467
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENRIT",
+        "type": "Non-Compulsory",
+        "name1": "エンリット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.4275,
+          45.3514
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENSES",
+        "type": "Non-Compulsory",
+        "name1": "エンセス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.9953,
+          33.9028
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENSYU",
+        "type": "Non-Compulsory",
+        "name1": "エンシュウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.0342,
+          34.5433
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESANN",
+        "type": "Non-Compulsory",
+        "name1": "エサン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0908,
+          42.0561
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESASI",
+        "type": "Non-Compulsory",
+        "name1": "エサシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.19,
+          41.9133
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESBIS",
+        "type": "Non-Compulsory",
+        "name1": "エスビス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.3814,
+          31.2536
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESDUS",
+        "type": "Non-Compulsory",
+        "name1": "エスダス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.4317,
+          35.3469
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESKAP",
+        "type": "Non-Compulsory",
+        "name1": "エスカップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.3392,
+          32.5564
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESKOB",
+        "type": "Non-Compulsory",
+        "name1": "エスコブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.9578,
+          26.1694
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESKOK",
+        "type": "Non-Compulsory",
+        "name1": "エスコック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.3347,
+          34.7322
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESLIL",
+        "type": "Non-Compulsory",
+        "name1": "エスリル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.9175,
+          32.3203
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESNAL",
+        "type": "Non-Compulsory",
+        "name1": "エスナル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.605,
+          32.8536
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESPAN",
+        "type": "Non-Compulsory",
+        "name1": "エスパン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.5858,
+          34.1872
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ESPEK",
+        "type": "Non-Compulsory",
+        "name1": "エスペック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.0797,
+          24.9725
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "EXPOH",
+        "type": "Non-Compulsory",
+        "name1": "エキスポー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.02,
+          35.1053
+        ]
+      }
+    }
+  ]
+}

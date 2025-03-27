@@ -1,0 +1,596 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GURAG",
+        "type": "Compulsory",
+        "name1": "グラグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.4167,
+          21
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GURAR",
+        "type": "Compulsory",
+        "name1": "グーラー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.2272,
+          30.9864
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GAINA",
+        "type": "Non-Compulsory",
+        "name1": "ガイナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.5242,
+          35.6067
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GAKTO",
+        "type": "Non-Compulsory",
+        "name1": "ガクト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.9117,
+          36.3561
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GAMAR",
+        "type": "Non-Compulsory",
+        "name1": "ガマー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0831,
+          36.1886
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GANAS",
+        "type": "Non-Compulsory",
+        "name1": "ガナス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.8775,
+          25.435
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GANDO",
+        "type": "Non-Compulsory",
+        "name1": "ガンド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.2386,
+          36.7261
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GATAL",
+        "type": "Non-Compulsory",
+        "name1": "ガタル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.1278,
+          33.0797
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GATES",
+        "type": "Non-Compulsory",
+        "name1": "ゲイツ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.8172,
+          34.1392
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GATSU",
+        "type": "Non-Compulsory",
+        "name1": "ガツ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0511,
+          40.2306
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GENGE",
+        "type": "Non-Compulsory",
+        "name1": "ゲンゲ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.7669,
+          37.5422
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GIINA",
+        "type": "Non-Compulsory",
+        "name1": "ジーナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5497,
+          35.5225
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GILUS",
+        "type": "Non-Compulsory",
+        "name1": "ギルス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.1828,
+          33.8794
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GINGA",
+        "type": "Non-Compulsory",
+        "name1": "ギンガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.9531,
+          43.6275
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GLAXY",
+        "type": "Non-Compulsory",
+        "name1": "グラクシー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.6494,
+          36.5167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOBOH",
+        "type": "Non-Compulsory",
+        "name1": "ゴボー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.1061,
+          33.91
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOGON",
+        "type": "Non-Compulsory",
+        "name1": "ゴゴン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.2558,
+          40.4717
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOHEI",
+        "type": "Non-Compulsory",
+        "name1": "ゴヘイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.3578,
+          36.1978
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOKOR",
+        "type": "Non-Compulsory",
+        "name1": "ゴコール"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2475,
+          35.9411
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOLIA",
+        "type": "Non-Compulsory",
+        "name1": "ゴライア"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.0028,
+          34.2756
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOLUS",
+        "type": "Non-Compulsory",
+        "name1": "ゴラス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5208,
+          40.8817
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOMAF",
+        "type": "Non-Compulsory",
+        "name1": "ゴマフ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.3519,
+          44.4003
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOMAR",
+        "type": "Non-Compulsory",
+        "name1": "ゴマー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.8581,
+          32.4625
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOMES",
+        "type": "Non-Compulsory",
+        "name1": "ゴメス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.6989,
+          27.2711
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GONOU",
+        "type": "Non-Compulsory",
+        "name1": "ゴノウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0514,
+          40.4203
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GORYU",
+        "type": "Non-Compulsory",
+        "name1": "ゴリュウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.7694,
+          37.1986
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOTOH",
+        "type": "Non-Compulsory",
+        "name1": "ゴトー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          123.1719,
+          24.5553
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOURA",
+        "type": "Non-Compulsory",
+        "name1": "ゴーラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.2811,
+          33.6942
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GOZEN",
+        "type": "Non-Compulsory",
+        "name1": "ゴゼン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.1992,
+          36.4181
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GREEN",
+        "type": "Non-Compulsory",
+        "name1": "グリーン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.5664,
+          32.8986
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GULEG",
+        "type": "Non-Compulsory",
+        "name1": "グレグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.1672,
+          32.8761
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GUMBO",
+        "type": "Non-Compulsory",
+        "name1": "ガンボ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          123.2517,
+          22.765
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GUMYO",
+        "type": "Non-Compulsory",
+        "name1": "グミョウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.3672,
+          35.5469
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GUNVI",
+        "type": "Non-Compulsory",
+        "name1": "ガンヴィ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.7381,
+          34.1083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GUPTI",
+        "type": "Non-Compulsory",
+        "name1": "ガプティー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.1553,
+          29.0233
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GURUX",
+        "type": "Non-Compulsory",
+        "name1": "グルックス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6322,
+          26.1478
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GUSUK",
+        "type": "Non-Compulsory",
+        "name1": "グスク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124.4242,
+          24.465
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GUTLO",
+        "type": "Non-Compulsory",
+        "name1": "ガトロ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.3481,
+          34.7875
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GYOGN",
+        "type": "Non-Compulsory",
+        "name1": "ギョグン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8125,
+          33.5303
+        ]
+      }
+    }
+  ]
+}

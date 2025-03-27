@@ -1,0 +1,851 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HACHIJOJIMA",
+        "type": "Compulsory",
+        "name1": "ハチジョウジマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7886,
+          33.1144
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HAKODATE",
+        "type": "Compulsory",
+        "name1": "ハコダテ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8322,
+          41.7742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HANAMAKI",
+        "type": "Compulsory",
+        "name1": "ハナマキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1336,
+          39.4333
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HARKI",
+        "type": "Compulsory",
+        "name1": "ハーキィ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          159.6856,
+          49.3564
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HACHA",
+        "type": "Non-Compulsory",
+        "name1": "ハチャ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.0142,
+          28.1567
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HACHI",
+        "type": "Non-Compulsory",
+        "name1": "ハチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.6825,
+          35.7844
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HAGAR",
+        "type": "Non-Compulsory",
+        "name1": "ハガー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0397,
+          36.5811
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HAGEN",
+        "type": "Non-Compulsory",
+        "name1": "ハーゲン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.6594,
+          43.5019
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HAILY",
+        "type": "Non-Compulsory",
+        "name1": "ヘイリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.2964,
+          36.2644
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HAKBA",
+        "type": "Non-Compulsory",
+        "name1": "ハクバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.8847,
+          37.26
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HALHI",
+        "type": "Non-Compulsory",
+        "name1": "ハルヒ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.4111,
+          35.6281
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HALKI",
+        "type": "Non-Compulsory",
+        "name1": "ハルキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.0403,
+          37.3231
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HALMA",
+        "type": "Non-Compulsory",
+        "name1": "ハルマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.7111,
+          25.8931
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HALON",
+        "type": "Non-Compulsory",
+        "name1": "ハロン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.9972,
+          33.2489
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HAMNA",
+        "type": "Non-Compulsory",
+        "name1": "ハムナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.9461,
+          34.5603
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HANKA",
+        "type": "Non-Compulsory",
+        "name1": "ハンカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5614,
+          39.0183
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HAPPO",
+        "type": "Non-Compulsory",
+        "name1": "ハッポー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.8892,
+          37.1014
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HARIO",
+        "type": "Non-Compulsory",
+        "name1": "ハリオ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.8367,
+          33.0053
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HARKY",
+        "type": "Non-Compulsory",
+        "name1": "ハーキー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.2967,
+          34.4894
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HASMA",
+        "type": "Non-Compulsory",
+        "name1": "ハスマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.6542,
+          34.0108
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HATAR",
+        "type": "Non-Compulsory",
+        "name1": "ハター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6067,
+          36.3383
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HATCH",
+        "type": "Non-Compulsory",
+        "name1": "ハッチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.0467,
+          34.3453
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HATRI",
+        "type": "Non-Compulsory",
+        "name1": "ハトリ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1553,
+          37.3831
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HATSU",
+        "type": "Non-Compulsory",
+        "name1": "ハツ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.4981,
+          34.9767
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HAWKS",
+        "type": "Non-Compulsory",
+        "name1": "ホークス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.625,
+          33.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HAYAH",
+        "type": "Non-Compulsory",
+        "name1": "ハヤ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3181,
+          33.7272
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HAZEL",
+        "type": "Non-Compulsory",
+        "name1": "ハゼル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.3894,
+          34.235
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HEIGU",
+        "type": "Non-Compulsory",
+        "name1": "ヘイグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.0744,
+          33.6131
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HEIWA",
+        "type": "Non-Compulsory",
+        "name1": "ヘイワ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.8083,
+          34.03
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HERAI",
+        "type": "Non-Compulsory",
+        "name1": "ヘライ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.3289,
+          36.3394
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HERON",
+        "type": "Non-Compulsory",
+        "name1": "ヘロン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5989,
+          37.5322
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIBAR",
+        "type": "Non-Compulsory",
+        "name1": "ヒバー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7506,
+          41.1106
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIDEK",
+        "type": "Non-Compulsory",
+        "name1": "ヒデク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.7506,
+          28.3642
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIGMA",
+        "type": "Non-Compulsory",
+        "name1": "ヒグマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6581,
+          45.3653
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIGOH",
+        "type": "Non-Compulsory",
+        "name1": "ヒゴー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.8961,
+          32.1958
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIKNE",
+        "type": "Non-Compulsory",
+        "name1": "ヒコネ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.1769,
+          35.2375
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIMEH",
+        "type": "Non-Compulsory",
+        "name1": "ヒメ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.6142,
+          33.7375
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HINAG",
+        "type": "Non-Compulsory",
+        "name1": "ヒナグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.515,
+          32.395
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HINAI",
+        "type": "Non-Compulsory",
+        "name1": "ヒナイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.6383,
+          40.2917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HINOK",
+        "type": "Non-Compulsory",
+        "name1": "ヒノック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.7697,
+          33.3378
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIOTI",
+        "type": "Non-Compulsory",
+        "name1": "ヒオチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.7892,
+          34.8689
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIRAR",
+        "type": "Non-Compulsory",
+        "name1": "ヒラー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.7581,
+          25.0644
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIROO",
+        "type": "Non-Compulsory",
+        "name1": "ヒロオ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.5919,
+          41.9672
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIROS",
+        "type": "Non-Compulsory",
+        "name1": "ヒロス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.2086,
+          31.925
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HISAI",
+        "type": "Non-Compulsory",
+        "name1": "ヒサイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.4992,
+          34.6642
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HISAK",
+        "type": "Non-Compulsory",
+        "name1": "ヒサック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.9042,
+          32.7586
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HISUI",
+        "type": "Non-Compulsory",
+        "name1": "ヒスイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.9314,
+          37.5928
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HIZME",
+        "type": "Non-Compulsory",
+        "name1": "ヒヅメ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1597,
+          39.5283
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HOKKE",
+        "type": "Non-Compulsory",
+        "name1": "ホッケ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.4417,
+          40.0028
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HOKTA",
+        "type": "Non-Compulsory",
+        "name1": "ホコタ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9106,
+          36.3917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HOLNI",
+        "type": "Non-Compulsory",
+        "name1": "ホルニ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.3061,
+          34.7219
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HONDO",
+        "type": "Non-Compulsory",
+        "name1": "ホンド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.1847,
+          32.4219
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HOONMA",
+        "type": "Non-Compulsory",
+        "name1": "ホンマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.7847,
+          35.5717
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HOSTA",
+        "type": "Non-Compulsory",
+        "name1": "ホスタ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.1331,
+          34.3883
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HOUBA",
+        "type": "Non-Compulsory",
+        "name1": "ホウバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.2303,
+          35.7892
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HOVER",
+        "type": "Non-Compulsory",
+        "name1": "ホバー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.7372,
+          33.3433
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "sources": [
+    "waypoints/waypoints_A.json",
+    "waypoints/waypoints_B.json",
+    "waypoints/waypoints_C.json",
+    "waypoints/waypoints_D.json",
+    "waypoints/waypoints_E.json",
+    "waypoints/waypoints_F.json",
+    "waypoints/waypoints_G.json",
+    "waypoints/waypoints_H.json",
+    "waypoints/waypoints_I.json",
+    "waypoints/waypoints_K.json",
+    "waypoints/waypoints_L.json",
+    "waypoints/waypoints_M.json",
+    "waypoints/waypoints_N.json",
+    "waypoints/waypoints_O.json",
+    "waypoints/waypoints_P.json",
+    "waypoints/waypoints_R.json",
+    "waypoints/waypoints_S.json",
+    "waypoints/waypoints_T.json",
+    "waypoints/waypoints_U.json",
+    "waypoints/waypoints_V.json",
+    "waypoints/waypoints_W.json",
+    "waypoints/waypoints_Y.json",
+    "waypoints/waypoints_J.json"
+  ]
+}

@@ -1,0 +1,336 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "Oki Route(Departure)",
+        "name": "Turning Point",
+        "Point": "335/13 AHT",
+        "altitude": "5,000ft↓"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.5075, 34.0689]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "Oki Route(Departure)",
+        "name": "芦屋IP",
+        "Point": "320/23 AHT",
+        "altitude": "7,000ft↓"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.3059, 34.1432]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "Oki Route(Departure)",
+        "name": "Oki Point",
+        "Point": "315/35 AHT",
+        "altitude": "FL150↓"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.0868, 34.2369]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "Direct Route",
+        "name": "Bravo Point",
+        "Point": "315/23 AHT",
+        "altitude": "5,000ft↓"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.2804, 34.1174]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "Direct Route",
+        "name": "Oki Point",
+        "Point": "315/35 AHT",
+        "altitude": "FL150↓"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.0868, 34.2369]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "Oki Route(Arrival)",
+        "name": "North-Gate",
+        "Point": "320/33 AHT",
+        "altitude": "FL150↓"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.1557, 34.2542]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "Oki Route(Arrival)",
+        "name": "Range Gate",
+        "Point": "330/22 AHT",
+        "altitude": "7,000ft↓"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.3772, 34.1758]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "Oki Route(Arrival)",
+        "name": "South Gate",
+        "Point": "350/13 AHT",
+        "altitude": "5,000ft↓"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.5691, 34.0933]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "Hibiki Route",
+        "name": "Hibiki Gate",
+        "Point": "350/18 AHT",
+        "altitude": "5,000ft↓"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.5379, 34.1725]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "Hibiki Route",
+        "name": "South Gate",
+        "Point": "350/13 AHT",
+        "altitude": "5,000ft↓"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.5691, 34.0933]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "RWY12 Overhead",
+        "name": "12 Funnel",
+        "Point": "350/6 AHT",
+        "altitude": "2,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.6127, 33.9824]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "RWY12 Overhead",
+        "name": "Turn Point",
+        "Point": "302/4 AHT",
+        "altitude": "2,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.5766, 33.9145]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "RWY12 Overhead",
+        "name": "12 Initial",
+        "Point": "302/3 AHT",
+        "altitude": "2,000ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.5949, 33.9077]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "RWY30 Overhead",
+        "name": "白島",
+        "Point": "034/7 AHT",
+        "altitude": "2,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.7168, 34.0012]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "RWY30 Overhead",
+        "name": "小竹",
+        "Point": "080/6 AHT",
+        "altitude": "2,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.7644, 33.9182]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "RWY30 Overhead",
+        "name": "Turn Point",
+        "Point": "122/4.8 AHT",
+        "altitude": "2,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.7378, 33.8549]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "RWY30 Overhead",
+        "name": "30 Initial",
+        "Point": "122/4 AHT",
+        "altitude": "2,000ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.7232, 33.8603]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "築城Divert Route(to 築城)",
+        "name": "中間",
+        "Point": "165/5 AHT",
+        "altitude": "3,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.6891, 33.8107]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "築城Divert Route(to 築城)",
+        "name": "直方",
+        "Point": "165/9 AHT",
+        "altitude": "3,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.7203, 33.7494]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "築城Divert Route(to 築城)",
+        "name": "田川",
+        "Point": "165/17 AHT, 262/13 TQT",
+        "altitude": "3,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.7828, 33.6267]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "築城Divert Route(to 築城)",
+        "name": "犬ヶ岳",
+        "Point": "197/11 TQT",
+        "altitude": "5,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.0024, 33.5122]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "築城Divert Route(to 築城)",
+        "name": "中津IP",
+        "Point": "121/9 TQT",
+        "altitude": "3,000ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [131.1923, 33.6328]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "築城Divert Route(from 築城)",
+        "name": "田川",
+        "Point": "265/10 TQT, 155/17 AHT",
+        "altitude": "4,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.8352, 33.6498]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "築城Divert Route(from 築城)",
+        "name": "直方",
+        "Point": "155/9 AHT",
+        "altitude": "4,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.7481, 33.7616]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "group": "築城Divert Route(from 築城)",
+        "name": "中間",
+        "Point": "155/5 AHT",
+        "altitude": "4,500ft"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.7045, 33.8175]
+      }
+    }
+  ]
+}

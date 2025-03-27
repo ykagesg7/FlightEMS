@@ -1,0 +1,61 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "regions": [
+    {
+      "id": "hokkaido",
+      "name": "北海道",
+      "source": "waypoints/waypoints_region_hokkaido.json"
+    },
+    {
+      "id": "tohoku",
+      "name": "東北",
+      "source": "waypoints/waypoints_region_tohoku.json"
+    },
+    {
+      "id": "kanto",
+      "name": "関東",
+      "source": "waypoints/waypoints_region_kanto.json"
+    },
+    {
+      "id": "chubu",
+      "name": "中部",
+      "source": "waypoints/waypoints_region_chubu.json"
+    },
+    {
+      "id": "kinki",
+      "name": "近畿",
+      "source": "waypoints/waypoints_region_kinki.json"
+    },
+    {
+      "id": "chugoku",
+      "name": "中国",
+      "source": "waypoints/waypoints_region_chugoku.json"
+    },
+    {
+      "id": "shikoku",
+      "name": "四国",
+      "source": "waypoints/waypoints_region_shikoku.json"
+    },
+    {
+      "id": "kyushu",
+      "name": "九州",
+      "source": "waypoints/waypoints_region_kyushu.json"
+    },
+    {
+      "id": "okinawa",
+      "name": "沖縄",
+      "source": "waypoints/waypoints_region_okinawa.json"
+    },
+    {
+      "id": "others",
+      "name": "その他",
+      "source": "waypoints/waypoints_region_others.json"
+    }
+  ]
+}
