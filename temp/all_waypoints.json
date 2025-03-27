@@ -1,0 +1,345 @@
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "METIS",
+        "type": "Non-Compulsory",
+        "name1": "メティス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2397,
+          35.9961
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIBAI",
+        "type": "Non-Compulsory",
+        "name1": "ミバイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.4075,
+          24.9122
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIDER",
+        "type": "Non-Compulsory",
+        "name1": "マイダー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.8261,
+          35.0169
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIDOH",
+        "type": "Non-Compulsory",
+        "name1": "ミドー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.6,
+          34.6494
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIHAR",
+        "type": "Non-Compulsory",
+        "name1": "ミハー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9492,
+          38.7069
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIJIL",
+        "type": "Non-Compulsory",
+        "name1": "ミジル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.1739,
+          24.7425
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIKAN",
+        "type": "Non-Compulsory",
+        "name1": "ミカン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.2361,
+          34.2636
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIKAS",
+        "type": "Non-Compulsory",
+        "name1": "ミカス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.5808,
+          33.9186
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIKKA",
+        "type": "Non-Compulsory",
+        "name1": "ミッカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.4656,
+          34.7747
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIKRA",
+        "type": "Non-Compulsory",
+        "name1": "ミクラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.2406,
+          37.0486
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIKUM",
+        "type": "Non-Compulsory",
+        "name1": "ミクム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2733,
+          39.0011
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MILEP",
+        "type": "Non-Compulsory",
+        "name1": "ミレップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.2503,
+          32.8806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MILPS",
+        "type": "Non-Compulsory",
+        "name1": "ミルプス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.3117,
+          45.2986
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIMMY",
+        "type": "Non-Compulsory",
+        "name1": "ミミー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.5336,
+          34.9325
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MINAC",
+        "type": "Non-Compulsory",
+        "name1": "ミナック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.1739,
+          34.9239
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MINAT",
+        "type": "Non-Compulsory",
+        "name1": "ミナト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.4269,
+          35.6117
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MINNE",
+        "type": "Non-Compulsory",
+        "name1": "ミンネ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.2153,
+          34.1939
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MINOU",
+        "type": "Non-Compulsory",
+        "name1": "ミノウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.74,
+          35.6567
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIRAI",
+        "type": "Non-Compulsory",
+        "name1": "ミライ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.8978,
+          34.5369
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MIREI",
+        "type": "Non-Compulsory",
+        "name1": "ミレイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7186,
+          42.6161
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MISEN",
+        "type": "Non-Compulsory",
+        "name1": "ミセン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.6419,
+          34.4358
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MISMI",
+        "type": "Non-Compulsory",
+        "name1": "ミスミ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.6547,
+          32.7567
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "MITCH",
+        "type": "Non-Compulsory",
+        "name1": "ミッチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.1964,
+          33.1678
+        ]
+      }
+    }
