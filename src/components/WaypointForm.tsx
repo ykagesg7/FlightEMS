@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import DmsInput from './DmsInput'; // DmsInputのインポートを削除
 import { calculateOffsetPoint } from '../utils/offset'; // Import from offset.ts
 import { FlightPlan } from '../types';
 import { dmsToDecimal } from '../utils/dms'; // ユーティリティ関数をインポート

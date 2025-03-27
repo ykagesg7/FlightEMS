@@ -1,11 +1,14 @@
 import React from 'react';
 import TabsComponent from './components/Tabs';
 import './index.css';
+import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
 
 function App() {
   return (
     <React.StrictMode>
-      <TabsComponent />
+      <WeatherCacheProvider>
+        <TabsComponent />
+      </WeatherCacheProvider>
     </React.StrictMode>
   );
 }

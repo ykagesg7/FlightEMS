@@ -4,7 +4,7 @@ import React from 'react';
 import PlanningTab from './PlanningTab';
 import MapTab from './MapTab';
 import { FlightPlan } from '../types';
-import { calculateTAS, calculateMach, formatTime } from '../utils';
+import { calculateTAS, calculateMach, formatTime, calculateAirspeeds } from '../utils';
 import ExamTab from './ExamTab';
 
 const Tabs = TabsPrimitive.Root;
@@ -49,8 +49,20 @@ const TabsComponent: React.FC<TabsProps> = () => {
   const [flightPlan, setFlightPlan] = React.useState<FlightPlan>(() => {
     const initialSpeed = 250;
     const initialAltitude = 30000;
-    const initialTas = calculateTAS(initialSpeed, initialAltitude);
-    const initialMach = calculateMach(initialTas, initialAltitude);
+    const initialGroundTempC = 15; // ISA標準 地上気温
+    const initialGroundElevationFt = 0; // 海面高度
+
+    // 高精度計算モデルで各種値を計算
+    const airspeedsResult = calculateAirspeeds(
+      initialSpeed, 
+      initialAltitude, 
+      initialGroundTempC, 
+      initialGroundElevationFt
+    );
+
+    // 高精度計算が失敗した場合は従来の計算方法で代替
+    const initialTas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(initialSpeed, initialAltitude);
+    const initialMach = airspeedsResult ? airspeedsResult.mach : calculateMach(initialTas, initialAltitude);
 
     return {
       departure: null,
@@ -64,6 +76,8 @@ const TabsComponent: React.FC<TabsProps> = () => {
       ete: undefined,
       eta: undefined,
       departureTime: formatTime(new Date().getHours() * 60 + new Date().getMinutes()),
+      groundTempC: initialGroundTempC,
+      groundElevationFt: initialGroundElevationFt,
     };
   });
 

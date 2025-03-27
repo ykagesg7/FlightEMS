@@ -1,6 +1,6 @@
 import React from 'react';
 import { FlightPlan, RouteSegment } from '../types';
-import { formatTime, calculateDistance, calculateETE, calculateETA, groupBy, calculateTAS } from '../utils';
+import { formatTime, calculateDistance, calculateETE, calculateETA, groupBy, calculateTAS, calculateMach, calculateAirspeeds } from '../utils';
 import { calculateMagneticBearing } from '../utils/bearing';
 import { formatBearing } from '../utils/format';
 import FlightParameters from './FlightParameters';
@@ -30,9 +30,12 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
         const airportList = geojsonData.features.map((feature: any) => ({
           value: feature.properties.id,
           label: `${feature.properties.name1} (${feature.properties.id})`,
+          name: feature.properties.name1,
           type: feature.properties.type,
           latitude: feature.geometry.coordinates[1],
           longitude: feature.geometry.coordinates[0],
+          // GeoJSONのpropertiesを含める
+          properties: { ...feature.properties },
         }));
 
         // 空港タイプでグループ化
@@ -107,8 +110,15 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
           nextPoint.longitude
         );
         
-        // TASを取得
-        const tas = calculateTAS(flightPlan.speed, flightPlan.altitude);
+        // TASを計算 - 高精度計算モデル使用
+        const airspeedsResult = calculateAirspeeds(
+          flightPlan.speed, 
+          flightPlan.altitude, 
+          flightPlan.groundTempC, 
+          flightPlan.groundElevationFt
+        );
+        // 高精度計算が失敗した場合は従来の計算方法で代替
+        const tas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(flightPlan.speed, flightPlan.altitude);
         
         // このセグメントのETEを計算（分単位）
         const segmentEteMinutes = calculateETE(distance, tas);
@@ -135,8 +145,19 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
       }
     }
 
+    // 全体のTAS、Mach計算 - 高精度計算モデル使用
+    const airspeedsResult = calculateAirspeeds(
+      flightPlan.speed, 
+      flightPlan.altitude, 
+      flightPlan.groundTempC, 
+      flightPlan.groundElevationFt
+    );
+    // 高精度計算が失敗した場合は従来の計算方法で代替
+    const tas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(flightPlan.speed, flightPlan.altitude);
+    const mach = airspeedsResult ? airspeedsResult.mach : calculateMach(tas, flightPlan.altitude);
+
     // 全体のETE、ETAを計算
-    const eteMinutes = calculateETE(totalDistance, calculateTAS(flightPlan.speed, flightPlan.altitude));
+    const eteMinutes = calculateETE(totalDistance, tas);
     const eteFormatted = formatTime(eteMinutes);
     const etaFormatted = calculateETA(flightPlan.departureTime, eteMinutes);
 
@@ -146,8 +167,8 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
       totalDistance: totalDistance,
       ete: eteFormatted,
       eta: etaFormatted,
-      tas: calculateTAS(flightPlan.speed, flightPlan.altitude),
-      mach: flightPlan.mach,
+      tas: tas,
+      mach: mach,
       routeSegments: routeSegments
     }));
   }, [
@@ -157,7 +178,8 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
     flightPlan.speed, 
     flightPlan.altitude, 
     flightPlan.departureTime,
-    flightPlan.mach
+    flightPlan.groundTempC, 
+    flightPlan.groundElevationFt
   ]);
 
   // Flight Summaryを更新するuseEffect
@@ -170,7 +192,9 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
     flightPlan.waypoints, 
     flightPlan.speed, 
     flightPlan.altitude, 
-    flightPlan.departureTime
+    flightPlan.departureTime,
+    flightPlan.groundTempC,
+    flightPlan.groundElevationFt
   ]);
 
   return (

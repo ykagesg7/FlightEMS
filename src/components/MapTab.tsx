@@ -13,6 +13,7 @@ import { formatBearing } from '../utils/format';
 import type { LatLng } from 'leaflet';
 // 天気情報取得のためのAPIクライアントをインポート
 import { fetchWeatherData } from '../api/weather';
+import { useWeatherCache, WeatherCache, CACHE_DURATION } from '../contexts/WeatherCacheContext';
 
 // Waypoint用のツールチップスタイルを追加
 import './mapStyles.css';
@@ -189,6 +190,8 @@ const MapContent: React.FC<{
   const regionLayersRef = useRef<{[key: string]: L.GeoJSON}>({});
   // すべてのWaypointレイヤーを保持する参照
   const allWaypointsLayerRef = useRef<L.GeoJSON | null>(null);
+  // Context経由でキャッシュデータにアクセス
+  const { weatherCache, setWeatherCache } = useWeatherCache();
 
   // 各フィーチャーをクリック時に詳細情報をポップアップ表示するための関数
   const onEachFeaturePopup = useCallback((feature: any, layer: L.Layer) => {
@@ -651,7 +654,7 @@ const MapContent: React.FC<{
                 circleMarker.on('click', () => {
                   if (map) {
                     console.log(`${feature.properties.id} 空港のマーカーが直接クリックされました`);
-                    fetchAirportWeather(feature, map);
+                    fetchAirportWeather(feature, map, weatherCache, setWeatherCache);
                   }
                 });
                 
@@ -683,7 +686,7 @@ const MapContent: React.FC<{
                 layer.on('click', () => {
                   if (map) {
                     console.log(`${feature.properties.id} 空港のレイヤーグループがクリックされました`);
-                    fetchAirportWeather(feature, map);
+                    fetchAirportWeather(feature, map, weatherCache, setWeatherCache);
                   }
                 });
               }
@@ -851,7 +854,7 @@ const MapContent: React.FC<{
         // }
       })
       .catch(console.error);
-  }, [overlayLayers, map]);
+  }, [overlayLayers, map, weatherCache, setWeatherCache]);
 
   // RJFZ GeoJSON をローカルレイヤーに追加 (RJFZ用のgroupごとのポリラインも追加)
   useEffect(() => {
@@ -995,7 +998,7 @@ const MapContent: React.FC<{
         });
       })
       .catch(console.error);
-  }, [map, overlayLayers]);
+  }, [map, overlayLayers, weatherCache, setWeatherCache]);
 
   // OpenStreetMapレイヤー
   const osmLayer = useMemo(() => L.tileLayer(
@@ -1162,7 +1165,7 @@ const MapContent: React.FC<{
         layerControlRef.current = null;
       }
     };
-  }, [map, baseLayers, overlayLayers, regions, loadRegionWaypointsData, loadAllWaypointsData, osmLayer]);
+  }, [map, baseLayers, overlayLayers, regions, loadRegionWaypointsData, loadAllWaypointsData, osmLayer, weatherCache, setWeatherCache]);
 
   // 新たに、出発、ウェイポイント、到着を連結した completeRoute 配列に基づいて
   // 各セグメントの Polyline を描画する
@@ -1273,15 +1276,20 @@ const MapContent: React.FC<{
   );
 };
 
-// 空港の気象情報を取得して表示する関数
-const fetchAirportWeather = (feature: GeoJSON.Feature, map: L.Map) => {
+// 空港の気象情報を取得して表示する関数を更新
+const fetchAirportWeather = (
+  feature: GeoJSON.Feature, 
+  map: L.Map,
+  weatherCache: WeatherCache, 
+  setWeatherCache: React.Dispatch<React.SetStateAction<WeatherCache>>
+) => {
   if (!feature.properties || !feature.geometry) return;
   
   const airportId = feature.properties.id;
   const geometry = feature.geometry as GeoJSON.Point;
   const [longitude, latitude] = geometry.coordinates;
   
-  console.log(`${airportId} 空港の気象情報を取得します`);
+  console.log(`${airportId} 空港の気象情報を確認します`);
   
   // 気象情報を取得中のポップアップを表示
   const loadingPopupContent = `
@@ -1306,16 +1314,34 @@ const fetchAirportWeather = (feature: GeoJSON.Feature, map: L.Map) => {
       .setContent(loadingPopupContent)
       .openOn(map);
     
-    // クライアントサイドで直接Weather APIを呼び出す
+    // キャッシュの確認
+    const cachedEntry = weatherCache[airportId];
+    const now = Date.now();
+    
+    // キャッシュが存在し、かつ有効期限内の場合
+    if (cachedEntry && (now - cachedEntry.timestamp < CACHE_DURATION)) {
+      console.log(`${airportId}の気象情報をキャッシュから取得しました`);
+      const weatherPopupContent = createWeatherPopupContent(feature.properties, cachedEntry.data);
+      loadingPopup.setContent(weatherPopupContent);
+      loadingPopup.update();
+      return; // API呼び出しをスキップ
+    }
+    
+    // キャッシュがないか期限切れの場合は新しく取得
     console.log(`Weather APIを呼び出します: lat=${latitude}, lon=${longitude}`);
     fetchWeatherData(latitude, longitude)
       .then(weatherData => {
-        console.log(`${airportId}の気象情報を取得しました`, weatherData);
+        console.log(`${airportId}の気象情報をAPIから取得しました`, weatherData);
         // 気象情報ポップアップを作成して表示
         const weatherPopupContent = createWeatherPopupContent(feature.properties, weatherData);
-        
         loadingPopup.setContent(weatherPopupContent);
         loadingPopup.update();
+        
+        // キャッシュを更新
+        setWeatherCache(prevCache => ({
+          ...prevCache,
+          [airportId]: { data: weatherData, timestamp: Date.now() }
+        }));
       })
       .catch(error => {
         console.error('気象データの取得に失敗しました:', error);
@@ -1446,7 +1472,7 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
         <div>
           <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
           <div class="ml-2 airport-info-grid">
-            ${simplifiedAirportInfo}
+            ${simplifiedAirportInfoContent(airportProps)}
           </div>
         </div>
       </div>

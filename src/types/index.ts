@@ -7,6 +7,18 @@ export interface Airport {
   type: 'civilian' | 'military' | 'joint';
   latitude: number;
   longitude: number;
+  properties?: {
+    id?: string;
+    name1?: string;
+    type?: string;
+    "Elev(ft)"?: number;
+    RWY1?: string;
+    RWY2?: string;
+    RWY3?: string;
+    RWY4?: string;
+    "MAG Var"?: number;
+    [key: string]: any;
+  };
 }
 
 export interface Navaid {
@@ -51,6 +63,8 @@ export interface FlightPlan {
   ete?: string;
   eta?: string;
   routeSegments?: RouteSegment[];
+  groundTempC: number; // 地上気温 (摂氏)
+  groundElevationFt: number; // 地上標高 (フィート)
 }
 
 export interface RouteSegment {
