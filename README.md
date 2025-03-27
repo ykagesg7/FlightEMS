@@ -1,71 +1,62 @@
-# フライトアカデミー
+# FlightAcademyTsx
 
-フライトプランニング用の対話型ウェブアプリケーションです。パイロットや航空学生がフライトルートを計画し、航法データを視覚化するツールを提供します。
+飛行計画のための対話型ウェブアプリケーション。
+
+## 主な機能
+- 対話型マップインターフェースでのフライトプランニング
+- 空港、NAVAIDs、ウェイポイントの表示と選択
+- フライトパラメータの設定と管理
+- ルート情報の詳細表示と計算
+- 気象データの取得と活用
+
+詳細な機能リストは[技術ドキュメント](./DOCUMENTATION.md)を参照してください。
+
+## セットアップ手順
+
+1. **リポジトリをクローン**:
+   ```
+   git clone https://github.com/yourusername/FlightAcademyTsx.git
+   cd FlightAcademyTsx
+   ```
+
+2. **依存関係のインストール**:
+   ```
+   npm install
+   ```
+
+3. **環境変数の設定**:
+   `.env`ファイルを作成し、以下の内容を設定：
+   ```
+   VITE_WEATHER_API_KEY=your_weather_api_key
+   ```
+
+4. **開発サーバーの起動**:
+   ```
+   npm run dev
+   ```
+
+5. **ビルド**:
+   ```
+   npm run build
+   ```
+
+## 主要技術
+- React
+- TypeScript
+- Vite
+- Leaflet
+- Tailwind CSS
+- Weather API
 
 ## 関連ドキュメント
-
-- [詳細なドキュメント（DOCUMENTATION.md）](./DOCUMENTATION.md) - プロジェクトの詳細な技術仕様と実装ガイド
-- [開発状況（DEVELOPMENT_STATUS.md）](./DEVELOPMENT_STATUS.md) - 現在の開発状況と今後の計画
-
-## クイックスタート
-
-```bash
-# 依存関係のインストール
-npm install
-
-# 開発サーバーの起動
-npm run dev
-```
-
-## 環境変数の設定
-
-このプロジェクトでは以下の環境変数を使用します：
-
-| 環境変数 | 説明 | 設定場所 |
-|----------|------|---------|
-| VITE_WEATHER_API_KEY | Weather APIのアクセスキー | `.env.local`（開発）, `.env.production`（本番） |
-
-### 開発環境
-
-1. `.env.local`ファイルを作成し、必要な環境変数を設定します：
-
-```
-VITE_WEATHER_API_KEY=あなたのAPIキー
-```
-
-2. 開発サーバーを起動します：
-
-```bash
-npm run dev
-```
-
-### 本番環境へのデプロイ
-
-#### Vercelでのデプロイ
-
-1. [Vercelアカウント](https://vercel.com/)にログインします。
-
-2. 新しいプロジェクトを作成し、GitHubリポジトリを連携します。
-
-3. 「Environment Variables」セクションで以下の環境変数を設定します：
-   - `VITE_WEATHER_API_KEY` = あなたのWeather APIキー
-
-4. デプロイを実行します。
-
-#### ローカルでのビルド
-
-```bash
-# 本番ビルドを作成
-npm run build:prod
-
-# ビルド結果をプレビュー
-npm run preview
-```
-
-## APIキーの取得方法
-
-Weather APIのキーは[https://www.weatherapi.com/](https://www.weatherapi.com/)で無料アカウントを作成して取得できます。
+- [技術ドキュメント](./DOCUMENTATION.md) - プロジェクトの技術的な設計と実装の詳細
+- [開発状況](./DEVELOPMENT_STATUS.md) - 現在の実装状況と今後の開発計画
+- [開発参加ガイド](./CONTRIBUTING.md) - プロジェクトへの貢献方法
 
 ## ライセンス
+MIT
 
-このプロジェクトは教育・訓練目的で提供されており、実際のフライトナビゲーションに使用することは推奨されません。 
+## 利用における注意事項
+このプロジェクトは航空関連の教育・訓練を目的としており、実際のフライトナビゲーションに使用することは推奨されません。訓練と学習の補助ツールとしてご利用ください。
+
+最終更新日: 2024年7月2日 
