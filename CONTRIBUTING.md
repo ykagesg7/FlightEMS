@@ -35,6 +35,124 @@ VITE_WEATHER_API_KEY=your_weather_api_key
 6. フォークしたリポジトリにプッシュする：`git push origin feature/あなたの機能名`
 7. プルリクエストを作成する
 
+## Cursor.AIとGithub連携
+
+Cursor.AIを活用してGithubとの連携を効率化するための方法を説明します。
+
+### Cursor.AIでのGithub連携設定
+
+1. **リポジトリアクセスの設定**
+   - Cursor.AIでプロジェクトを開く
+   - 左側のサイドバーから「Source Control」アイコンをクリック
+   - 「Clone Repository」を選択し、GitHubリポジトリのURLを入力
+   - 必要に応じてGitHubアカウントへの認証を行う
+
+2. **認証設定**
+   - GitHubで個人アクセストークン（PAT）を作成：
+     - GitHubの設定 > Developer settings > Personal access tokens
+     - 必要な権限：`repo`, `workflow`
+   - 作成したトークンをCursor.AIの認証設定に追加
+
+### ブランチマージとコンフリクト解決の自動化
+
+#### 基本的なブランチマージフロー
+
+```bash
+# masterブランチの最新情報を取得
+git fetch origin master
+
+# 現在のブランチ（例：mainブランチ）にいることを確認
+git checkout main
+
+# masterブランチをmainブランチにマージする
+git merge origin/master
+
+# コンフリクトが発生した場合、解決後にコミット
+git add .
+git commit -m "Merge master into main"
+
+# リモートリポジトリにプッシュ
+git push origin main
+```
+
+#### Cursor.AIでのコンフリクト解決
+
+1. **コンフリクトの特定**
+   - マージコンフリクトが発生すると、Cursor.AIは該当ファイルをハイライト表示
+   - コンフリクトのある各ファイルには `<<<<<<< HEAD`, `=======`, `>>>>>>> master` のマーカーが表示される
+
+2. **AIアシスタントを使った解決**
+   - コンフリクトのあるファイルを開く
+   - Cursor.AIのAIアシスタントに「コンフリクトを解決してください」と指示
+   - AIが提案する解決策を確認し、必要に応じて調整
+
+3. **特定ファイルタイプのコンフリクト処理**
+   - **JSONファイル**: 構造の整合性を維持しながら、両方の変更を統合
+   - **TypeScriptファイル**: 型定義や依存関係を壊さないよう注意して解決
+   - **マークダウンファイル**: 文書構造を保持しながら内容をマージ
+
+4. **自動解決の検証**
+   - ファイル内のすべてのコンフリクトマーカーが解消されていることを確認
+   - 変更をステージングエリアに追加: `git add <ファイル名>`
+   - 変更をコミット: `git commit -m "Resolve merge conflicts"`
+
+### GitHub Actions連携
+
+Cursor.AIとGitHub Actionsを連携させて、自動テストやデプロイを効率化できます：
+
+1. **ワークフローファイルの作成・編集**
+   - `.github/workflows/`内のYAMLファイルをCursor.AIで編集
+   - AIアシスタントを使用してワークフロー設定を最適化
+
+2. **自動マージワークフローの例**
+
+```yaml
+name: Auto Merge Branches
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 毎日UTC 0:00に実行
+  workflow_dispatch:     # 手動実行も可能
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+      
+      - name: Merge master into main
+        run: |
+          git checkout main
+          git pull origin main
+          git merge origin/master --no-edit || {
+            echo "マージコンフリクトが発生しました。手動で解決してください。"
+            exit 1
+          }
+          git push origin main
+```
+
+### Cursor.AIを使ったコード品質向上
+
+1. **コードレビュー**
+   - コミット前にAIアシスタントにコードレビューを依頼
+   - 「このコードをレビューして最適化してください」と質問
+
+2. **バグの特定と修正**
+   - エラーメッセージをAIアシスタントに共有して解決策を得る
+   - 「このエラーの原因と修正方法を教えてください」と質問
+
+3. **ドキュメント生成**
+   - コードからドキュメントを自動生成
+   - 「このクラス/関数のドキュメントを生成してください」と依頼
+
 ## Issueの作成
 
 新機能の提案やバグ報告を行う場合は、以下のテンプレートに従ってIssueを作成してください：
@@ -153,4 +271,4 @@ VITE_WEATHER_API_KEY=your_weather_api_key
 
 ---
 
-最終更新日: 2024年7月2日 
+最終更新日: 2025年3月29日 
