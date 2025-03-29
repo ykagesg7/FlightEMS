@@ -111,6 +111,66 @@
           35.0572
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZARBA",
+        "type": "Non-Compulsory",
+        "name1": "ザルバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.8639,
+          34.2583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZEBRA",
+        "type": "Non-Compulsory",
+        "name1": "ゼブラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7861,
+          35.5167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZIPPY",
+        "type": "Non-Compulsory",
+        "name1": "ジッピー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.3519,
+          37.2344
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZOUMO",
+        "type": "Non-Compulsory",
+        "name1": "ゾウモ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.4756,
+          33.8453
+        ]
+      }
     }
   ]
 } 
