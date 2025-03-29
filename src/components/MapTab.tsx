@@ -331,11 +331,11 @@ const MapContent: React.FC<{
           const coords = (feature.geometry as GeoJSON.Point).coordinates;
           
           let popupContent = `<div class="navaid-popup">
-            <div class="navaid-popup-header">${feature.properties.id}</div>
+            <div class="navaid-popup-header">${feature.properties.id}（${feature.properties.name1} ${feature.properties.name2}）</div>
             <div class="p-2">
-              <p class="text-xs font-bold">${feature.properties.name || feature.properties.id}</p>
               <p class="text-xs text-gray-600">Type: ${feature.properties.type}</p>
               <p class="text-xs text-gray-600">CH: ${feature.properties.ch || 'N/A'}</p>
+              <p class="text-xs text-gray-600">Freq: ${feature.properties.freq ? feature.properties.freq + ' MHz' : 'N/A'}</p>
               <p class="text-xs text-gray-600 position-info">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
               <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
             </div>
@@ -350,7 +350,7 @@ const MapContent: React.FC<{
           layer.bindPopup(popup);
           
           // マウスオーバー時のツールチップ表示
-          layer.bindTooltip(`${feature.properties.id}${feature.properties.freq ? ' - ' + feature.properties.freq + ' MHz' : ''}`, {
+          layer.bindTooltip(`${feature.properties.id}（${feature.properties.name1} ${feature.properties.name2}）`, {
             permanent: false,
             direction: 'top',
             className: 'navaid-tooltip'
