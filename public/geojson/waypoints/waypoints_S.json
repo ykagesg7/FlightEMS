@@ -25,6 +25,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "SABAK",
+        "type": "Non-Compulsory",
+        "name1": "サバク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.3278,
+          34.7092
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "SABGU",
         "type": "Compulsory",
         "name1": "サブグ"
@@ -34,6 +49,21 @@
         "coordinates": [
           134.9892,
           25.4975
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SABRI",
+        "type": "Non-Compulsory",
+        "name1": "サブリ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7206,
+          32.7703
         ]
       }
     },
@@ -55,6 +85,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "SAEKI",
+        "type": "Non-Compulsory",
+        "name1": "サエキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.0642,
+          34.9522
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "SAGOP",
         "type": "Compulsory",
         "name1": "サゴップ"
@@ -64,6 +109,81 @@
         "coordinates": [
           144.34,
           25.0044
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAGRA",
+        "type": "Non-Compulsory",
+        "name1": "サガラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.4308,
+          34.7325
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAILS",
+        "type": "Non-Compulsory",
+        "name1": "セイルズ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.2253,
+          31.7544
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAIRO",
+        "type": "Non-Compulsory",
+        "name1": "サイロ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.1714,
+          42.8092
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAKAI",
+        "type": "Non-Compulsory",
+        "name1": "サカイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.4581,
+          34.0403
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAKIN",
+        "type": "Non-Compulsory",
+        "name1": "サキン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.3281,
+          45.0739
         ]
       }
     },
@@ -85,6 +205,36 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "SAKYU",
+        "type": "Non-Compulsory",
+        "name1": "サキュ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.5181,
+          35.9169
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SALID",
+        "type": "Non-Compulsory",
+        "name1": "サリッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.8986,
+          33.0211
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "SALMI",
         "type": "Compulsory",
         "name1": "サルミ"
@@ -100,6 +250,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "SALSA",
+        "type": "Non-Compulsory",
+        "name1": "サルサ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6236,
+          26.3425
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "SALVA",
         "type": "Compulsory",
         "name1": "サルバ"
@@ -109,6 +274,51 @@
         "coordinates": [
           130.9944,
           22.3789
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SALVO",
+        "type": "Non-Compulsory",
+        "name1": "サルボ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9917,
+          35.6814
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAMAX",
+        "type": "Non-Compulsory",
+        "name1": "サマックス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.6356,
+          28.2906
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAMBA",
+        "type": "Non-Compulsory",
+        "name1": "サンバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.0567,
+          35.0906
         ]
       }
     },
@@ -145,6 +355,156 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "SANDA",
+        "type": "Non-Compulsory",
+        "name1": "サンダ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3622,
+          34.9306
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SANDN",
+        "type": "Non-Compulsory",
+        "name1": "サンダン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3528,
+          33.5611
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SANGO",
+        "type": "Non-Compulsory",
+        "name1": "サンゴ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8039,
+          33.3806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SANKO",
+        "type": "Non-Compulsory",
+        "name1": "サンコー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.2714,
+          33.5594
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SANPO",
+        "type": "Non-Compulsory",
+        "name1": "サンポ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.2031,
+          34.2617
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAORY",
+        "type": "Non-Compulsory",
+        "name1": "サオリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.7958,
+          33.6656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAPEM",
+        "type": "Non-Compulsory",
+        "name1": "サーペン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.0789,
+          42.5539
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAPET",
+        "type": "Non-Compulsory",
+        "name1": "サペット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.1314,
+          28.6369
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAPIM",
+        "type": "Non-Compulsory",
+        "name1": "サピム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8278,
+          34.7875
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAPIS",
+        "type": "Non-Compulsory",
+        "name1": "サピス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.5375,
+          32.1675
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "SAPPORO",
         "type": "Compulsory",
         "name1": "サッポロ"
@@ -169,6 +529,261 @@
         "coordinates": [
           130.7236,
           35.8239
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SARBA",
+        "type": "Non-Compulsory",
+        "name1": "サーバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.4556,
+          33.9469
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAROM",
+        "type": "Non-Compulsory",
+        "name1": "サロム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.0742,
+          44.0878
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SASIK",
+        "type": "Non-Compulsory",
+        "name1": "サシック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.5211,
+          32.2997
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SASSY",
+        "type": "Non-Compulsory",
+        "name1": "サッシー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.4183,
+          33.1339
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SATAH",
+        "type": "Non-Compulsory",
+        "name1": "サター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.0864,
+          33.2853
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAUNA",
+        "type": "Non-Compulsory",
+        "name1": "サウナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.5786,
+          24.8614
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAVER",
+        "type": "Non-Compulsory",
+        "name1": "セイバー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9522,
+          35.6489
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAVIT",
+        "type": "Non-Compulsory",
+        "name1": "サビット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.4750,
+          42.4742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAYAK",
+        "type": "Non-Compulsory",
+        "name1": "サヤック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.2489,
+          25.7889
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAZAN",
+        "type": "Non-Compulsory",
+        "name1": "サザン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8819,
+          35.5669
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SAZMA",
+        "type": "Non-Compulsory",
+        "name1": "サツマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.3022,
+          31.0753
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SCOLI",
+        "type": "Non-Compulsory",
+        "name1": "スコリ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.3889,
+          34.8689
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SCOTT",
+        "type": "Non-Compulsory",
+        "name1": "スコット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6822,
+          34.3889
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SCUBA",
+        "type": "Non-Compulsory",
+        "name1": "スキューバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.3714,
+          26.8472
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SEALS",
+        "type": "Non-Compulsory",
+        "name1": "シールス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.9964,
+          35.3217
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SEBGA",
+        "type": "Non-Compulsory",
+        "name1": "セブガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8267,
+          39.0692
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SEBRO",
+        "type": "Non-Compulsory",
+        "name1": "セブロ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.3275,
+          38.4889
         ]
       }
     },
@@ -205,6 +820,51 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "SEIFA",
+        "type": "Non-Compulsory",
+        "name1": "セイファ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.7469,
+          26.0511
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SEKYY",
+        "type": "Non-Compulsory",
+        "name1": "セキー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.4656,
+          35.7039
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SEMKI",
+        "type": "Non-Compulsory",
+        "name1": "セムキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.7219,
+          34.5231
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "SENDAI",
         "type": "Compulsory",
         "name1": "センダイ"
@@ -235,6 +895,96 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "SETOH",
+        "type": "Non-Compulsory",
+        "name1": "セト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.1442,
+          34.5403
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SGIRA",
+        "type": "Non-Compulsory",
+        "name1": "スギラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.8533,
+          28.3433
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHATI",
+        "type": "Non-Compulsory",
+        "name1": "シャチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.1175,
+          35.2831
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHELL",
+        "type": "Non-Compulsory",
+        "name1": "シェル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0025,
+          33.1928
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHIHO",
+        "type": "Non-Compulsory",
+        "name1": "シホ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1200,
+          39.3350
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHIMA",
+        "type": "Non-Compulsory",
+        "name1": "シマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.5886,
+          34.3044
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "SHIMIZU",
         "type": "Compulsory",
         "name1": "シミズ"
@@ -250,6 +1000,411 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "SHIMOJISHIMA",
+        "type": "Non-Compulsory",
+        "name1": "シモジシマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.1406,
+          24.8219
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHINE",
+        "type": "Non-Compulsory",
+        "name1": "シャイン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7008,
+          43.0375
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHINO",
+        "type": "Non-Compulsory",
+        "name1": "シノ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.6667,
+          35.4431
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHION",
+        "type": "Non-Compulsory",
+        "name1": "シオン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.2825,
+          34.4283
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHIZUOKA",
+        "type": "Non-Compulsory",
+        "name1": "シズオカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.1933,
+          34.7969
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHODA",
+        "type": "Non-Compulsory",
+        "name1": "ショウダ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.7489,
+          27.6469
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHONAI",
+        "type": "Non-Compulsory",
+        "name1": "ショウナイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7994,
+          38.8108
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHRAK",
+        "type": "Non-Compulsory",
+        "name1": "シュラク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.7794,
+          35.4142
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SHUJI",
+        "type": "Non-Compulsory",
+        "name1": "シュウジ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.0986,
+          24.7089
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIBAT",
+        "type": "Non-Compulsory",
+        "name1": "シバット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.3125,
+          37.9486
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIGAK",
+        "type": "Non-Compulsory",
+        "name1": "シガック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.0481,
+          34.8856
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIIBA",
+        "type": "Non-Compulsory",
+        "name1": "シイバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.5717,
+          32.6297
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIJMI",
+        "type": "Non-Compulsory",
+        "name1": "シジミ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.9881,
+          35.4594
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SILGA",
+        "type": "Non-Compulsory",
+        "name1": "シルガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.5050,
+          43.5283
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIMAG",
+        "type": "Non-Compulsory",
+        "name1": "シマッグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.2653,
+          34.8631
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIMAK",
+        "type": "Non-Compulsory",
+        "name1": "シマック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7925,
+          35.7931
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIMAZ",
+        "type": "Non-Compulsory",
+        "name1": "シマヅ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.8044,
+          31.6772
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SINGO",
+        "type": "Non-Compulsory",
+        "name1": "シンゴ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0081,
+          35.2522
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SINWA",
+        "type": "Non-Compulsory",
+        "name1": "シンワ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.5969,
+          31.8864
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIOJI",
+        "type": "Non-Compulsory",
+        "name1": "シオジ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.9692,
+          34.6125
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIOTY",
+        "type": "Non-Compulsory",
+        "name1": "シオティ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6417,
+          26.1119
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIRAO",
+        "type": "Non-Compulsory",
+        "name1": "シラオ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.3156,
+          41.9661
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIRAS",
+        "type": "Non-Compulsory",
+        "name1": "シラス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.8175,
+          33.7906
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIROK",
+        "type": "Non-Compulsory",
+        "name1": "シロック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.2528,
+          32.2089
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SIZMI",
+        "type": "Non-Compulsory",
+        "name1": "シツミ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8617,
+          37.2692
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SLIDE",
+        "type": "Non-Compulsory",
+        "name1": "スライド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.3933,
+          35.2931
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SMILE",
+        "type": "Non-Compulsory",
+        "name1": "スマイル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0669,
+          35.7433
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "SMOLT",
         "type": "Compulsory",
         "name1": "スモルト"
@@ -259,6 +1414,486 @@
         "coordinates": [
           143.5164,
           34.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SNOKE",
+        "type": "Non-Compulsory",
+        "name1": "スノーク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2367,
+          35.5978
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SNOOK",
+        "type": "Non-Compulsory",
+        "name1": "スヌーク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9144,
+          37.9839
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SOARA",
+        "type": "Non-Compulsory",
+        "name1": "ソアラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.3697,
+          25.9836
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SOBAR",
+        "type": "Non-Compulsory",
+        "name1": "ソバー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.1942,
+          35.8561
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SONBU",
+        "type": "Non-Compulsory",
+        "name1": "ソンブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.5842,
+          36.1922
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SONIC",
+        "type": "Non-Compulsory",
+        "name1": "ソニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.7361,
+          33.3767
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SOOMY",
+        "type": "Non-Compulsory",
+        "name1": "スーミー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3728,
+          34.5442
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SORYU",
+        "type": "Non-Compulsory",
+        "name1": "ソーリュー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.3475,
+          24.8500
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SOUMA",
+        "type": "Non-Compulsory",
+        "name1": "ソーマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.4178,
+          37.0125
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SRUGA",
+        "type": "Non-Compulsory",
+        "name1": "スルガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.5997,
+          34.8006
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "STAGE",
+        "type": "Non-Compulsory",
+        "name1": "ステージ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.6933,
+          35.5811
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "STONE",
+        "type": "Non-Compulsory",
+        "name1": "ストーン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2567,
+          36.2797
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "STORK",
+        "type": "Non-Compulsory",
+        "name1": "ストーク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.2431,
+          32.9467
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "STRAW",
+        "type": "Non-Compulsory",
+        "name1": "ストロー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.4289,
+          36.1167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUIHO",
+        "type": "Non-Compulsory",
+        "name1": "スイホー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1808,
+          39.6136
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUIKA",
+        "type": "Non-Compulsory",
+        "name1": "スイカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7178,
+          43.3764
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUKMO",
+        "type": "Non-Compulsory",
+        "name1": "スクモ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.1958,
+          33.2556
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUMAR",
+        "type": "Non-Compulsory",
+        "name1": "スマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.0244,
+          34.7089
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUMOT",
+        "type": "Non-Compulsory",
+        "name1": "スモト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.2950,
+          32.4158
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUMOU",
+        "type": "Non-Compulsory",
+        "name1": "スモウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.6619,
+          32.7769
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUNFL",
+        "type": "Non-Compulsory",
+        "name1": "サンフル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.4853,
+          34.4367
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUNNS",
+        "type": "Non-Compulsory",
+        "name1": "サンズ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7381,
+          34.8044
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUOH",
+        "type": "Non-Compulsory",
+        "name1": "スオウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.0294,
+          33.8567
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SURIB",
+        "type": "Non-Compulsory",
+        "name1": "スリブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1500,
+          24.7986
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUSAK",
+        "type": "Non-Compulsory",
+        "name1": "スサック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.5036,
+          33.3394
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUSAR",
+        "type": "Non-Compulsory",
+        "name1": "スサー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.8550,
+          35.2322
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUVEN",
+        "type": "Non-Compulsory",
+        "name1": "スーベン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.7786,
+          34.9731
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SUZKI",
+        "type": "Non-Compulsory",
+        "name1": "スズキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.7536,
+          34.6036
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SWAMP",
+        "type": "Non-Compulsory",
+        "name1": "スワンプ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5381,
+          36.3206
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SWING",
+        "type": "Non-Compulsory",
+        "name1": "スウィング"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.2581,
+          35.3894
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SYONA",
+        "type": "Non-Compulsory",
+        "name1": "ショーナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.3361,
+          35.2894
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SYOWA",
+        "type": "Non-Compulsory",
+        "name1": "ショーワ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.2814,
+          36.4067
         ]
       }
     }

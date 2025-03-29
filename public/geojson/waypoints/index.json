@@ -16,6 +16,7 @@
     "waypoints/waypoints_G.json",
     "waypoints/waypoints_H.json",
     "waypoints/waypoints_I.json",
+    "waypoints/waypoints_J.json",
     "waypoints/waypoints_K.json",
     "waypoints/waypoints_L.json",
     "waypoints/waypoints_M.json",
@@ -29,6 +30,6 @@
     "waypoints/waypoints_V.json",
     "waypoints/waypoints_W.json",
     "waypoints/waypoints_Y.json",
-    "waypoints/waypoints_J.json"
+    "waypoints/waypoints_Z.json"
   ]
 }

@@ -10,6 +10,96 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "UBE",
+        "type": "Non-Compulsory",
+        "name1": "ウベ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.2836,
+          33.9356
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UBRAS",
+        "type": "Non-Compulsory",
+        "name1": "ウブラス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.7072,
+          44.2686
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UBSOL",
+        "type": "Non-Compulsory",
+        "name1": "ウブソル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.0336,
+          32.1747
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UENOH",
+        "type": "Non-Compulsory",
+        "name1": "ウエノー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.2269,
+          34.8358
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UGAMU",
+        "type": "Non-Compulsory",
+        "name1": "ウガム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.2625,
+          32.9578
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UGOLU",
+        "type": "Non-Compulsory",
+        "name1": "ウゴル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.5758,
+          33.4025
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "UKATA",
         "type": "Compulsory",
         "name1": "ユカタ"
@@ -25,6 +115,51 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "UKAKU",
+        "type": "Non-Compulsory",
+        "name1": "ウカク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8939,
+          34.8819
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UMAKI",
+        "type": "Non-Compulsory",
+        "name1": "ウマキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          124.8542,
+          24.6228
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UNIEY",
+        "type": "Non-Compulsory",
+        "name1": "ウニー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.9197,
+          45.4297
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "UPDOB",
         "type": "Compulsory",
         "name1": "アプドブ"
@@ -34,6 +169,201 @@
         "coordinates": [
           146.8514,
           30.0042
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UPLOK",
+        "type": "Non-Compulsory",
+        "name1": "アプロック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9144,
+          42.0219
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "URAGA",
+        "type": "Non-Compulsory",
+        "name1": "ウラガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8336,
+          35.2308
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "URAJA",
+        "type": "Non-Compulsory",
+        "name1": "ウラジャ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.7531,
+          34.7067
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "URUMA",
+        "type": "Non-Compulsory",
+        "name1": "ウルマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.5792,
+          28.9700
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "URUSI",
+        "type": "Non-Compulsory",
+        "name1": "ウルシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.1317,
+          36.8192
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "USIKU",
+        "type": "Non-Compulsory",
+        "name1": "ウシク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0142,
+          35.9189
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "USSAH",
+        "type": "Non-Compulsory",
+        "name1": "ウサ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.3511,
+          33.7419
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "USUBA",
+        "type": "Non-Compulsory",
+        "name1": "ウスバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1625,
+          38.5372
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UTAKI",
+        "type": "Non-Compulsory",
+        "name1": "ウタキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.5472,
+          26.0425
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UTAZU",
+        "type": "Non-Compulsory",
+        "name1": "ウタヅ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.8056,
+          34.3011
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UTIBO",
+        "type": "Non-Compulsory",
+        "name1": "ウチボ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8956,
+          34.9464
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UTIMA",
+        "type": "Non-Compulsory",
+        "name1": "ウチマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.3506,
+          24.8467
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UWAJI",
+        "type": "Non-Compulsory",
+        "name1": "ウワジ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.2767,
+          33.1756
         ]
       }
     }

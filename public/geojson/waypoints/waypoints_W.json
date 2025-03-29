@@ -10,6 +10,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "WADAH",
+        "type": "Non-Compulsory",
+        "name1": "ワダー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          123.0772,
+          24.5061
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "WAKKANAI",
         "type": "Compulsory",
         "name1": "ワッカナイ"
@@ -19,6 +34,156 @@
         "coordinates": [
           141.8056,
           45.4072
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WAKSA",
+        "type": "Non-Compulsory",
+        "name1": "ワカサ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6369,
+          42.9919
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WANKO",
+        "type": "Non-Compulsory",
+        "name1": "ワンコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0056,
+          39.4692
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WAPPA",
+        "type": "Non-Compulsory",
+        "name1": "ワッパ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5517,
+          39.7011
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WASYU",
+        "type": "Non-Compulsory",
+        "name1": "ワシュー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.3836,
+          34.4717
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WAVES",
+        "type": "Non-Compulsory",
+        "name1": "ウェーブス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.3581,
+          34.5700
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WHALE",
+        "type": "Non-Compulsory",
+        "name1": "ホエール"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.0797,
+          25.8675
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WHITE",
+        "type": "Non-Compulsory",
+        "name1": "ホワイト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6614,
+          42.9331
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WILBA",
+        "type": "Non-Compulsory",
+        "name1": "ウィルバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8503,
+          34.6714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WIMPY",
+        "type": "Non-Compulsory",
+        "name1": "ウインピー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.4858,
+          34.5208
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WOODY",
+        "type": "Non-Compulsory",
+        "name1": "ウッディ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.4922,
+          33.1269
         ]
       }
     }

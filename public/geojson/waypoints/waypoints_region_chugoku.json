@@ -1132,6 +1132,141 @@
           33.7789
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PADOC",
+        "type": "Non-Compulsory",
+        "name1": "パドック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.9972,
+          33.4828
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PANCH",
+        "type": "Non-Compulsory",
+        "name1": "パンチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.0883,
+          33.1892
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PEARL",
+        "type": "Non-Compulsory",
+        "name1": "パール"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.6189,
+          33.2492
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "REPOG",
+        "type": "Non-Compulsory",
+        "name1": "レポグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.4933,
+          33.2664
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROBIN",
+        "type": "Non-Compulsory",
+        "name1": "ロビン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.5394,
+          33.9411
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROCKY",
+        "type": "Non-Compulsory",
+        "name1": "ロッキー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.0939,
+          33.7142
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POPPY",
+        "type": "Non-Compulsory",
+        "name1": "ポピー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.8208,
+          33.8181
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYOMA",
+        "type": "Non-Compulsory",
+        "name1": "リョウマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.3761,
+          33.5103
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYUOH",
+        "type": "Non-Compulsory",
+        "name1": "リューオー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.4917,
+          34.6725
+        ]
+      }
     }
   ]
 }

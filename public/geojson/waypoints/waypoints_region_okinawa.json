@@ -1132,6 +1132,156 @@
           24.9139
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PARCO",
+        "type": "Non-Compulsory",
+        "name1": "パルコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6314,
+          26.3083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PARTY",
+        "type": "Non-Compulsory",
+        "name1": "パーティ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6289,
+          26.2619
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PAULO",
+        "type": "Non-Compulsory",
+        "name1": "パウロ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.9525,
+          27.5036
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PAYAO",
+        "type": "Non-Compulsory",
+        "name1": "パヤオ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.1092,
+          25.2792
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PINNE",
+        "type": "Non-Compulsory",
+        "name1": "パイニー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.0906,
+          27.8219
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POLAM",
+        "type": "Non-Compulsory",
+        "name1": "ポラム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.4394,
+          28.1983
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POMAS",
+        "type": "Non-Compulsory",
+        "name1": "ポマス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.1442,
+          28.5042
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RURIK",
+        "type": "Non-Compulsory",
+        "name1": "ルリック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.2144,
+          29.2997
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYOSA",
+        "type": "Non-Compulsory",
+        "name1": "リョーサ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.5058,
+          25.5200
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYUKI",
+        "type": "Non-Compulsory",
+        "name1": "リュウキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.2422,
+          27.6242
+        ]
+      }
     }
   ]
 }

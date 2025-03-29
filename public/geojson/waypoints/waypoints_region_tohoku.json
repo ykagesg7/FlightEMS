@@ -1177,6 +1177,81 @@
           40.8089
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PABBA",
+        "type": "Non-Compulsory",
+        "name1": "パッバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.9964,
+          37.0033
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PERID",
+        "type": "Non-Compulsory",
+        "name1": "ペリド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1306,
+          38.1625
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RIASU",
+        "type": "Non-Compulsory",
+        "name1": "リアス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6567,
+          38.7733
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RINGO",
+        "type": "Non-Compulsory",
+        "name1": "リンゴ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9447,
+          40.8853
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUNID",
+        "type": "Non-Compulsory",
+        "name1": "ルニッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8106,
+          39.0028
+        ]
+      }
     }
   ]
 }

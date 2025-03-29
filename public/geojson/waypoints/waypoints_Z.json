@@ -10,137 +10,107 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "VABLU",
+        "id": "ZAKMI",
         "type": "Non-Compulsory",
-        "name1": "ヴァブル"
+        "name1": "ザキミ"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          141.5800,
-          40.5886
+          127.6200,
+          26.4078
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "VACKY",
-        "type": "Compulsory",
-        "name1": "バッキー"
+        "id": "ZAIHO",
+        "type": "Non-Compulsory",
+        "name1": "ザイホー"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          143.8114,
-          35.24
+          130.8339,
+          31.6336
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "VADAR",
+        "id": "ZAKRO",
         "type": "Non-Compulsory",
-        "name1": "ベイダー"
+        "name1": "ザクロ"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          139.8622,
-          35.0992
-        ]
-      }
-    },  
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "VASHU",
-        "type": "Non-Compulsory",
-        "name1": "バシュ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          140.6347,
-          25.9756
+          129.6514,
+          33.9750
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "VASKO",
-        "type": "Compulsory",
-        "name1": "バスコ"
+        "id": "ZARON",
+        "type": "Non-Compulsory",
+        "name1": "ザロン"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          142.0369,
-          25.0044
+          131.8072,
+          32.2617
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "VELLA",
+        "id": "ZELBU",
         "type": "Non-Compulsory",
-        "name1": "ベラ"
+        "name1": "ゼルブ"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          133.0744,
-          34.4461
+          142.4769,
+          43.6089
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "VELNO",
+        "id": "ZOHRA",
         "type": "Non-Compulsory",
-        "name1": "ベルノ"
+        "name1": "ゾーラ"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          127.3094,
-          25.8964
+          135.0883,
+          34.3225
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "VIGER",
+        "id": "ZUSHI",
         "type": "Non-Compulsory",
-        "name1": "ビガー"
+        "name1": "ズシ"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          127.5908,
-          25.9622
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "VIRGO",
-        "type": "Non-Compulsory",
-        "name1": "バーゴ"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          140.4903,
-          35.6050
+          139.5239,
+          35.0572
         ]
       }
     }
   ]
-}
+} 

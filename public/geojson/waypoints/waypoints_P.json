@@ -10,6 +10,36 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "PABBA",
+        "type": "Non-Compulsory",
+        "name1": "パバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.9964,
+          37.0033
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PADOC",
+        "type": "Non-Compulsory",
+        "name1": "パドック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.9972,
+          33.4828
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "PAKDO",
         "type": "Compulsory",
         "name1": "パクド"
@@ -19,6 +49,126 @@
         "coordinates": [
           137.8217,
           21
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PAKMU",
+        "type": "Non-Compulsory",
+        "name1": "パクム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.5903,
+          32.0669
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PALVA",
+        "type": "Non-Compulsory",
+        "name1": "パルバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.2172,
+          40.5356
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PANAS",
+        "type": "Non-Compulsory",
+        "name1": "パナス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.7314,
+          34.7861
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PANCH",
+        "type": "Non-Compulsory",
+        "name1": "パンチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.0883,
+          33.1892
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PANKE",
+        "type": "Non-Compulsory",
+        "name1": "パンケ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.0836,
+          43.1553
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PAPNA",
+        "type": "Non-Compulsory",
+        "name1": "パプナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.0231,
+          36.6228
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PARCO",
+        "type": "Non-Compulsory",
+        "name1": "パルコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6314,
+          26.3083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PARTY",
+        "type": "Non-Compulsory",
+        "name1": "パーティー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6289,
+          26.2619
         ]
       }
     },
@@ -40,6 +190,141 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "PATRA",
+        "type": "Non-Compulsory",
+        "name1": "パトラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5131,
+          41.8447
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PAULO",
+        "type": "Non-Compulsory",
+        "name1": "パウロ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.9525,
+          27.5036
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PAYAO",
+        "type": "Non-Compulsory",
+        "name1": "パヤオ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.1092,
+          25.2792
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PEARL",
+        "type": "Non-Compulsory",
+        "name1": "パール"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.6189,
+          33.2492
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PEARS",
+        "type": "Non-Compulsory",
+        "name1": "ペアーズ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.0325,
+          35.5483
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PEKAN",
+        "type": "Non-Compulsory",
+        "name1": "ピーカン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.5742,
+          31.8800
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PERID",
+        "type": "Non-Compulsory",
+        "name1": "ペリッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1306,
+          38.1625
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PILIV",
+        "type": "Non-Compulsory",
+        "name1": "ピリブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.1125,
+          34.3656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PINNE",
+        "type": "Non-Compulsory",
+        "name1": "パイニー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.0906,
+          27.8219
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "PIPIK",
         "type": "Compulsory",
         "name1": "ピピック"
@@ -49,6 +334,171 @@
         "coordinates": [
           144.3111,
           34.16
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PIXIE",
+        "type": "Non-Compulsory",
+        "name1": "ピクシー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8839,
+          34.5906
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PIXUS",
+        "type": "Non-Compulsory",
+        "name1": "ピクサス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1764,
+          36.1189
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POKER",
+        "type": "Non-Compulsory",
+        "name1": "ポーカー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.5331,
+          35.1278
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POLAM",
+        "type": "Non-Compulsory",
+        "name1": "ポラム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.4394,
+          28.1983
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POMAS",
+        "type": "Non-Compulsory",
+        "name1": "ポーマス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.1442,
+          28.5042
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PONAP",
+        "type": "Non-Compulsory",
+        "name1": "ポナップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.0989,
+          43.1106
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PONTO",
+        "type": "Non-Compulsory",
+        "name1": "ポント"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.1431,
+          44.0439
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POPAI",
+        "type": "Non-Compulsory",
+        "name1": "ポパイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.2831,
+          34.2819
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POPPY",
+        "type": "Non-Compulsory",
+        "name1": "ポピー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.8208,
+          33.8181
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POROT",
+        "type": "Non-Compulsory",
+        "name1": "ポロット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.2281,
+          35.9297
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POTET",
+        "type": "Non-Compulsory",
+        "name1": "ポテト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.0397,
+          32.2800
         ]
       }
     },
@@ -85,6 +535,51 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "PRADA",
+        "type": "Non-Compulsory",
+        "name1": "プラダ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8267,
+          34.7703
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PROBE",
+        "type": "Non-Compulsory",
+        "name1": "プローブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8697,
+          34.5897
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PUDOG",
+        "type": "Non-Compulsory",
+        "name1": "プドッグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.9253,
+          30.4611
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "PUGAL",
         "type": "Compulsory",
         "name1": "プガル"
@@ -94,6 +589,36 @@
         "coordinates": [
           154.4167,
           44.8578
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PUKUK",
+        "type": "Non-Compulsory",
+        "name1": "プクック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.4514,
+          35.3772
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PUNCH",
+        "type": "Non-Compulsory",
+        "name1": "パンチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6603,
+          42.9672
         ]
       }
     },

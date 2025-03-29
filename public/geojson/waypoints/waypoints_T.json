@@ -10,6 +10,261 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "TAIKI",
+        "type": "Non-Compulsory",
+        "name1": "タイキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.3578,
+          42.4517
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAIME",
+        "type": "Non-Compulsory",
+        "name1": "タイメ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.4711,
+          32.8631
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAISI",
+        "type": "Non-Compulsory",
+        "name1": "タイシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.9431,
+          34.9456
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAIYO",
+        "type": "Non-Compulsory",
+        "name1": "タイヨウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9269,
+          36.3142
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAKAS",
+        "type": "Non-Compulsory",
+        "name1": "タカス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.6728,
+          32.8850
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAKDA",
+        "type": "Non-Compulsory",
+        "name1": "タケダ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.7675,
+          35.2692
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAKEO",
+        "type": "Non-Compulsory",
+        "name1": "タケオ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.0917,
+          33.1892
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAKMA",
+        "type": "Non-Compulsory",
+        "name1": "タクマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.4164,
+          34.2528
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAKNE",
+        "type": "Non-Compulsory",
+        "name1": "タカネ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.4019,
+          35.8256
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAKRA",
+        "type": "Non-Compulsory",
+        "name1": "タクラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.6353,
+          38.2656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAKZO",
+        "type": "Non-Compulsory",
+        "name1": "タクゾ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          123.0775,
+          24.7039
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TALBA",
+        "type": "Non-Compulsory",
+        "name1": "タラバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6814,
+          45.3661
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TALMI",
+        "type": "Non-Compulsory",
+        "name1": "タルミ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.6239,
+          35.4711
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAMAK",
+        "type": "Non-Compulsory",
+        "name1": "タマック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.0981,
+          27.5314
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAMBA",
+        "type": "Non-Compulsory",
+        "name1": "タンバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.8122,
+          35.2492
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TANNO",
+        "type": "Non-Compulsory",
+        "name1": "タンノ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.1469,
+          44.0117
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TANSO",
+        "type": "Non-Compulsory",
+        "name1": "タンソ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.8594,
+          33.4686
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "TAPOP",
         "type": "Compulsory",
         "name1": "タポップ"
@@ -19,6 +274,66 @@
         "coordinates": [
           136.2728,
           32.3381
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAPPI",
+        "type": "Non-Compulsory",
+        "name1": "タッピ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1650,
+          41.1347
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TATSU",
+        "type": "Non-Compulsory",
+        "name1": "タツ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5767,
+          36.6728
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAVIS",
+        "type": "Non-Compulsory",
+        "name1": "タビス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.0544,
+          38.9542
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TAXIR",
+        "type": "Non-Compulsory",
+        "name1": "タキサー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7911,
+          41.4422
         ]
       }
     },
@@ -40,6 +355,66 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "TAYAS",
+        "type": "Non-Compulsory",
+        "name1": "タヤス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9503,
+          35.6047
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TEBEK",
+        "type": "Non-Compulsory",
+        "name1": "テベック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.8256,
+          25.1586
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TEBES",
+        "type": "Non-Compulsory",
+        "name1": "テベス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.1522,
+          43.9711
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TECHI",
+        "type": "Non-Compulsory",
+        "name1": "テーチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.7622,
+          28.5122
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "TEGOD",
         "type": "Compulsory",
         "name1": "テゴッド"
@@ -49,6 +424,471 @@
         "coordinates": [
           145.1967,
           21
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TEKKO",
+        "type": "Non-Compulsory",
+        "name1": "テッコー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0753,
+          42.5019
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TELMA",
+        "type": "Non-Compulsory",
+        "name1": "テルマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          123.8033,
+          24.0608
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TELOB",
+        "type": "Non-Compulsory",
+        "name1": "テロブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.8422,
+          34.7700
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TEMAR",
+        "type": "Non-Compulsory",
+        "name1": "テマー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1064,
+          33.3389
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TEMIP",
+        "type": "Non-Compulsory",
+        "name1": "テミップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.4203,
+          32.1186
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TEMIS",
+        "type": "Non-Compulsory",
+        "name1": "テミス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5733,
+          35.5339
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TENAG",
+        "type": "Non-Compulsory",
+        "name1": "テナグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2847,
+          35.8897
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TENRU",
+        "type": "Non-Compulsory",
+        "name1": "テンリュ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.0069,
+          35.6697
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TENSI",
+        "type": "Non-Compulsory",
+        "name1": "テンシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7097,
+          42.6658
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TENSO",
+        "type": "Non-Compulsory",
+        "name1": "テンソー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.8103,
+          32.2964
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TEPPO",
+        "type": "Non-Compulsory",
+        "name1": "テッポー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.1344,
+          30.7600
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TERAD",
+        "type": "Non-Compulsory",
+        "name1": "テラド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.4803,
+          37.6036
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TERAS",
+        "type": "Non-Compulsory",
+        "name1": "テラス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.6231,
+          32.9892
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TESAB",
+        "type": "Non-Compulsory",
+        "name1": "テサブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.6586,
+          31.7503
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TETRA",
+        "type": "Non-Compulsory",
+        "name1": "テトラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2656,
+          35.7739
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TEZAN",
+        "type": "Non-Compulsory",
+        "name1": "テザン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.9972,
+          24.9825
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "THETA",
+        "type": "Non-Compulsory",
+        "name1": "シータ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.5331,
+          26.3389
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TIDRI",
+        "type": "Non-Compulsory",
+        "name1": "チドリ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8486,
+          25.6064
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TIGER",
+        "type": "Non-Compulsory",
+        "name1": "タイガー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.1714,
+          34.6806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TIKYU",
+        "type": "Non-Compulsory",
+        "name1": "チキュー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1725,
+          41.6842
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TILAN",
+        "type": "Non-Compulsory",
+        "name1": "チラン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.4808,
+          31.3389
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOBBY",
+        "type": "Non-Compulsory",
+        "name1": "トビー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7597,
+          41.9186
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOGIL",
+        "type": "Non-Compulsory",
+        "name1": "トギル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.6436,
+          34.7083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOHNE",
+        "type": "Non-Compulsory",
+        "name1": "トウネ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8817,
+          36.0658
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOKUNOSHIMA",
+        "type": "Non-Compulsory",
+        "name1": "トクノシマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.8822,
+          27.8247
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOKUSHIMA",
+        "type": "Non-Compulsory",
+        "name1": "トクシマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.6086,
+          34.1297
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOLOT",
+        "type": "Non-Compulsory",
+        "name1": "トロット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.6531,
+          30.5444
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOMAM",
+        "type": "Non-Compulsory",
+        "name1": "トマム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.0344,
+          43.1392
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOMIE",
+        "type": "Non-Compulsory",
+        "name1": "トミエ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.7794,
+          32.5722
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOMOH",
+        "type": "Non-Compulsory",
+        "name1": "トモー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.0056,
+          34.2806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOMOL",
+        "type": "Non-Compulsory",
+        "name1": "トモル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.3303,
+          28.3164
         ]
       }
     },
@@ -70,6 +910,321 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "TONOH",
+        "type": "Non-Compulsory",
+        "name1": "トノー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.8358,
+          33.8803
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOPAT",
+        "type": "Non-Compulsory",
+        "name1": "トパト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.4569,
+          25.9728
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TORIK",
+        "type": "Non-Compulsory",
+        "name1": "トリック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.0933,
+          32.0381
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOSAR",
+        "type": "Non-Compulsory",
+        "name1": "トサー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.5986,
+          33.5006
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOSKO",
+        "type": "Non-Compulsory",
+        "name1": "トスコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.7358,
+          35.6042
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOTTORI",
+        "type": "Non-Compulsory",
+        "name1": "トットリ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.1650,
+          35.5272
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOUSE",
+        "type": "Non-Compulsory",
+        "name1": "トウセ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.4267,
+          43.7339
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOZAK",
+        "type": "Non-Compulsory",
+        "name1": "トザック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.8036,
+          31.1092
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TOZAN",
+        "type": "Non-Compulsory",
+        "name1": "トーザン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.4844,
+          35.2708
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TRACY",
+        "type": "Non-Compulsory",
+        "name1": "トレイシー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.7633,
+          34.6636
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TRIKE",
+        "type": "Non-Compulsory",
+        "name1": "トライク"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.2847,
+          34.7975
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TRUGA",
+        "type": "Non-Compulsory",
+        "name1": "ツルガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.2072,
+          35.7628
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TSUGA",
+        "type": "Non-Compulsory",
+        "name1": "ツガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1664,
+          35.6039
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TSUGU",
+        "type": "Non-Compulsory",
+        "name1": "ツグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.7308,
+          35.2947
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TSUKA",
+        "type": "Non-Compulsory",
+        "name1": "ツカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.7564,
+          43.8328
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TSUNO",
+        "type": "Non-Compulsory",
+        "name1": "ツノ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.1533,
+          35.3328
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TSURU",
+        "type": "Non-Compulsory",
+        "name1": "ツル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.4436,
+          40.9294
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TSUSHIMA",
+        "type": "Non-Compulsory",
+        "name1": "ツシマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.3369,
+          34.2814
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TUBAS",
+        "type": "Non-Compulsory",
+        "name1": "ツバス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.1919,
+          25.7572
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TUJUN",
+        "type": "Non-Compulsory",
+        "name1": "ツジュン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.9114,
+          32.8661
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TUMGI",
+        "type": "Non-Compulsory",
+        "name1": "ツムギ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.8836,
+          28.7325
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "TUNTO",
         "type": "Compulsory",
         "name1": "タント"
@@ -79,6 +1234,21 @@
         "coordinates": [
           129.0814,
           23.0044
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TUTMI",
+        "type": "Non-Compulsory",
+        "name1": "ツツミ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.4494,
+          33.3006
         ]
       }
     }
