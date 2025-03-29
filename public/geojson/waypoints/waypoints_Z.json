@@ -1,0 +1,116 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZAKMI",
+        "type": "Non-Compulsory",
+        "name1": "ザキミ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6200,
+          26.4078
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZAIHO",
+        "type": "Non-Compulsory",
+        "name1": "ザイホー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.8339,
+          31.6336
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZAKRO",
+        "type": "Non-Compulsory",
+        "name1": "ザクロ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.6514,
+          33.9750
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZARON",
+        "type": "Non-Compulsory",
+        "name1": "ザロン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.8072,
+          32.2617
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZELBU",
+        "type": "Non-Compulsory",
+        "name1": "ゼルブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.4769,
+          43.6089
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZOHRA",
+        "type": "Non-Compulsory",
+        "name1": "ゾーラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.0883,
+          34.3225
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ZUSHI",
+        "type": "Non-Compulsory",
+        "name1": "ズシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.5239,
+          35.0572
+        ]
+      }
+    }
+  ]
+} 

@@ -1327,6 +1327,96 @@
           31.1164
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PAKMU",
+        "type": "Non-Compulsory",
+        "name1": "パクム"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.5903,
+          32.0669
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PEKAN",
+        "type": "Non-Compulsory",
+        "name1": "ペカン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.5742,
+          31.8800
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POTET",
+        "type": "Non-Compulsory",
+        "name1": "ポテト"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.0397,
+          32.2800
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PUDOG",
+        "type": "Non-Compulsory",
+        "name1": "プドッグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.9253,
+          30.4611
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYUGU",
+        "type": "Non-Compulsory",
+        "name1": "リューグー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.0344,
+          32.0461
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYUMO",
+        "type": "Non-Compulsory",
+        "name1": "リュウモ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.7753,
+          31.7206
+        ]
+      }
     }
   ]
 }

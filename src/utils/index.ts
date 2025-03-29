@@ -325,15 +325,12 @@ export function calculateAirspeeds(
       if (T0_K <= 0) return null; // Avoid division by zero or log of non-positive
       const base = 1 + LAMBDA_KPM * hM / T0_K;
       if (base <= 0) return null; // Avoid power of non-positive base if exponent is not integer
-      if (R_AIR === 0 || LAMBDA_KPM === 0) return null; // Avoid division by zero
       pAltPa = P0_PA * Math.pow(base, -G0_MPS2 / (R_AIR * LAMBDA_KPM));
     } else {
       if (T0_K <= 0 || T_TROP_K <= 0) return null; // Avoid invalid temperature values
       const pTropBase = T_TROP_K / T0_K;
       if (pTropBase <= 0) return null; // Avoid power of non-positive base
-      if (R_AIR === 0 || LAMBDA_KPM === 0) return null; // Avoid division by zero
       const pTrop = P0_PA * Math.pow(pTropBase, -G0_MPS2 / (R_AIR * LAMBDA_KPM));
-      if (R_AIR === 0 || T_TROP_K === 0) return null; // Avoid division by zero
       pAltPa = pTrop * Math.exp(-G0_MPS2 * (hM - H_TROP_M) / (R_AIR * T_TROP_K));
     }
     if (isNaN(pAltPa) || pAltPa < 0) return null; // Pressure must be non-negative
@@ -372,7 +369,7 @@ export function calculateAirspeeds(
   let tasKt: number;
   let rhoAltKgm3: number;
   try {
-    if (R_AIR === 0 || tAltK === 0) return null; // Avoid division by zero
+    if (tAltK === 0) return null; // Avoid division by zero
     rhoAltKgm3 = pAltPa / (R_AIR * tAltK);
     if (isNaN(rhoAltKgm3) || rhoAltKgm3 <= 0 || RHO0_KGM3 <= 0) return null; // Density must be positive
 
@@ -452,21 +449,17 @@ export function calculateCASFromTASPrecise(
 
   // Step 4: 飛行高度の静圧
   let pAltPa: number;
-   try {
+  try {
     if (hM <= H_TROP_M) {
       if (T0_K <= 0) return null;
       const base = 1 + LAMBDA_KPM * hM / T0_K;
       if (base <= 0) return null;
-      if (R_AIR === 0 || LAMBDA_KPM === 0) return null;
       pAltPa = P0_PA * Math.pow(base, -G0_MPS2 / (R_AIR * LAMBDA_KPM));
     } else {
       if (T0_K <= 0 || T_TROP_K <= 0) return null;
       const pTropBase = T_TROP_K / T0_K;
       if (pTropBase <= 0) return null;
-      if (R_AIR === 0 || LAMBDA_KPM === 0) return null;
-      const pTrop = P0_PA * Math.pow(pTropBase, -G0_MPS2 / (R_AIR * LAMBDA_KPM));
-      if (R_AIR === 0 || T_TROP_K === 0) return null;
-      pAltPa = pTrop * Math.exp(-G0_MPS2 * (hM - H_TROP_M) / (R_AIR * T_TROP_K));
+      pAltPa = P0_PA * Math.pow(pTropBase, -G0_MPS2 / (R_AIR * LAMBDA_KPM));
     }
     if (isNaN(pAltPa) || pAltPa < 0) return null;
   } catch (e) {
@@ -477,7 +470,7 @@ export function calculateCASFromTASPrecise(
   // Step 6 の逆算 (TAS -> EAS)
   let easMps: number;
   try {
-    if (R_AIR === 0 || tAltK === 0) return null;
+    if (tAltK === 0) return null;
     const rhoAltKgm3 = pAltPa / (R_AIR * tAltK);
     if (isNaN(rhoAltKgm3) || rhoAltKgm3 <= 0 || RHO0_KGM3 <= 0) return null;
     const sigma = rhoAltKgm3 / RHO0_KGM3;
@@ -493,11 +486,9 @@ export function calculateCASFromTASPrecise(
   try {
     if (RHO0_KGM3 <= 0) return null;
     const qC = 0.5 * RHO0_KGM3 * Math.pow(easMps, 2);
-    if (P0_PA === 0) return null;
     const pressureRatio = qC / P0_PA + 1;
     // Check if base for power is valid and exponent is valid
     if (pressureRatio <= 0 && (GAMMA - 1) / GAMMA % 1 !== 0) return null; // Base must be positive for non-integer exponent
-    if (GAMMA === 0) return null; // Avoid division by zero in exponent
     const exponent = (GAMMA - 1) / GAMMA;
     const insideTermBase = Math.pow(pressureRatio, exponent);
     if (isNaN(insideTermBase)) return null;

@@ -787,6 +787,111 @@
           33.6525
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PANAS",
+        "type": "Non-Compulsory",
+        "name1": "パナス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.7314,
+          34.7861
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PILIV",
+        "type": "Non-Compulsory",
+        "name1": "ピリブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.1125,
+          34.3656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POPAI",
+        "type": "Non-Compulsory",
+        "name1": "ポパイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.2831,
+          34.2819
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PRADA",
+        "type": "Non-Compulsory",
+        "name1": "プラダ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8267,
+          34.7703
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PROBE",
+        "type": "Non-Compulsory",
+        "name1": "プローブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8697,
+          34.5897
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROKKO",
+        "type": "Non-Compulsory",
+        "name1": "ロッコー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3003,
+          35.1169
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUNEX",
+        "type": "Non-Compulsory",
+        "name1": "ルネックス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.5697,
+          34.4514
+        ]
+      }
     }
   ]
 }

@@ -1492,6 +1492,201 @@
           42.8161
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PALVA",
+        "type": "Non-Compulsory",
+        "name1": "パルバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.2172,
+          40.5356
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PANKE",
+        "type": "Non-Compulsory",
+        "name1": "パンケ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.0836,
+          43.1553
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PATRA",
+        "type": "Non-Compulsory",
+        "name1": "パトラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.5131,
+          41.8447
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PONAP",
+        "type": "Non-Compulsory",
+        "name1": "ポナップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.0989,
+          43.1106
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PONTO",
+        "type": "Non-Compulsory",
+        "name1": "ポント"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.1431,
+          44.0439
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PUNCH",
+        "type": "Non-Compulsory",
+        "name1": "パンチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6603,
+          42.9672
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RACKO",
+        "type": "Non-Compulsory",
+        "name1": "ラッコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.4839,
+          42.1925
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RAKNO",
+        "type": "Non-Compulsory",
+        "name1": "ラクノー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.4772,
+          42.7200
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RAUSU",
+        "type": "Non-Compulsory",
+        "name1": "ラウス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.3478,
+          44.0578
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RIPPU",
+        "type": "Non-Compulsory",
+        "name1": "リップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0292,
+          45.2108
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROMNY",
+        "type": "Non-Compulsory",
+        "name1": "ロムニー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.1803,
+          43.7014
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUMOI",
+        "type": "Non-Compulsory",
+        "name1": "ルモイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7292,
+          43.6994
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUNPA",
+        "type": "Non-Compulsory",
+        "name1": "ランパ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.7506,
+          42.9772
+        ]
+      }
     }
   ]
 }

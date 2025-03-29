@@ -1762,6 +1762,216 @@
           36.6069
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PAPNA",
+        "type": "Non-Compulsory",
+        "name1": "パプナ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.0231,
+          36.6228
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PEARS",
+        "type": "Non-Compulsory",
+        "name1": "ペアーズ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.0325,
+          35.5483
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PIXIE",
+        "type": "Non-Compulsory",
+        "name1": "ピクシー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8839,
+          34.5906
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PIXUS",
+        "type": "Non-Compulsory",
+        "name1": "ピクサス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1764,
+          36.1189
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POKER",
+        "type": "Non-Compulsory",
+        "name1": "ポーカー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.5331,
+          35.1278
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "POROT",
+        "type": "Non-Compulsory",
+        "name1": "ポロット"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.2281,
+          35.9297
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "PUKUK",
+        "type": "Non-Compulsory",
+        "name1": "プクック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.4514,
+          35.3772
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RAISU",
+        "type": "Non-Compulsory",
+        "name1": "ライス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.2300,
+          37.9517
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RASYA",
+        "type": "Non-Compulsory",
+        "name1": "ラシャ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8356,
+          33.9022
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RINTU",
+        "type": "Non-Compulsory",
+        "name1": "リンツ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8586,
+          36.4578
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RONIE",
+        "type": "Non-Compulsory",
+        "name1": "ロニー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6794,
+          35.6858
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROUSY",
+        "type": "Non-Compulsory",
+        "name1": "ルーシー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9444,
+          35.3733
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUGBY",
+        "type": "Non-Compulsory",
+        "name1": "ラグビー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6161,
+          35.7742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUMED",
+        "type": "Non-Compulsory",
+        "name1": "ルムド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.4536,
+          35.2619
+        ]
+      }
     }
   ]
 }

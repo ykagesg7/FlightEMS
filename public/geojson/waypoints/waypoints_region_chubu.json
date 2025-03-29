@@ -1672,6 +1672,81 @@
           34.2914
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RAIKO",
+        "type": "Non-Compulsory",
+        "name1": "ライコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8592,
+          35.3544
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RALPH",
+        "type": "Non-Compulsory",
+        "name1": "ラルフ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.7878,
+          34.9314
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RIPSI",
+        "type": "Non-Compulsory",
+        "name1": "リプシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.6925,
+          35.8944
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RITTO",
+        "type": "Non-Compulsory",
+        "name1": "リットー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.4833,
+          35.1672
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYUDO",
+        "type": "Non-Compulsory",
+        "name1": "リュウドー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.0314,
+          35.0403
+        ]
+      }
     }
   ]
 }

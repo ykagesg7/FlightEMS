@@ -10,6 +10,21 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "VABLU",
+        "type": "Non-Compulsory",
+        "name1": "ヴァブル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.5800,
+          40.5886
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "VACKY",
         "type": "Compulsory",
         "name1": "バッキー"
@@ -25,6 +40,36 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "VADAR",
+        "type": "Non-Compulsory",
+        "name1": "ベイダー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8622,
+          35.0992
+        ]
+      }
+    },  
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VASHU",
+        "type": "Non-Compulsory",
+        "name1": "バシュ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.6347,
+          25.9756
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "VASKO",
         "type": "Compulsory",
         "name1": "バスコ"
@@ -34,6 +79,66 @@
         "coordinates": [
           142.0369,
           25.0044
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VELLA",
+        "type": "Non-Compulsory",
+        "name1": "ベラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.0744,
+          34.4461
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VELNO",
+        "type": "Non-Compulsory",
+        "name1": "ベルノ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.3094,
+          25.8964
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VIGER",
+        "type": "Non-Compulsory",
+        "name1": "ビガー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.5908,
+          25.9622
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VIRGO",
+        "type": "Non-Compulsory",
+        "name1": "バーゴ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.4903,
+          35.6050
         ]
       }
     }

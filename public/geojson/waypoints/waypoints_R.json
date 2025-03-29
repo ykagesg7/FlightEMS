@@ -10,6 +10,366 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "RACKO",
+        "type": "Non-Compulsory",
+        "name1": "ラッコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.4839,
+          42.1925
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RAIKO",
+        "type": "Non-Compulsory",
+        "name1": "ライコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8592,
+          35.3544
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RAISU",
+        "type": "Non-Compulsory",
+        "name1": "ライス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.2300,
+          37.9517
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RAKNO",
+        "type": "Non-Compulsory",
+        "name1": "ラクノー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.4772,
+          42.7200
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RALPH",
+        "type": "Non-Compulsory",
+        "name1": "ラルフ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.7878,
+          34.9314
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RASYA",
+        "type": "Non-Compulsory",
+        "name1": "ラシャ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8356,
+          33.9022
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RAUSU",
+        "type": "Non-Compulsory",
+        "name1": "ラウス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.3478,
+          44.0578
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RENAU",
+        "type": "Non-Compulsory",
+        "name1": "ルノー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.8981,
+          34.4678
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "REPOG",
+        "type": "Non-Compulsory",
+        "name1": "レポグ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.4933,
+          33.2664
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RIASU",
+        "type": "Non-Compulsory",
+        "name1": "リアス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.6567,
+          38.7733
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RINDO",
+        "type": "Non-Compulsory",
+        "name1": "リンドー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.7122,
+          32.5197
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RINGO",
+        "type": "Non-Compulsory",
+        "name1": "リンゴ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9447,
+          40.8853
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RINTU",
+        "type": "Non-Compulsory",
+        "name1": "リンツ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.8586,
+          36.4578
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RIPPU",
+        "type": "Non-Compulsory",
+        "name1": "リップ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0292,
+          45.2108
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RIPSI",
+        "type": "Non-Compulsory",
+        "name1": "リプシ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.6925,
+          35.8944
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RISBA",
+        "type": "Non-Compulsory",
+        "name1": "リスバ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          153.1906,
+          22.4078
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RITTO",
+        "type": "Non-Compulsory",
+        "name1": "リットー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.4833,
+          35.1672
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROBIN",
+        "type": "Non-Compulsory",
+        "name1": "ロビン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.5394,
+          33.9411
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROCKY",
+        "type": "Non-Compulsory",
+        "name1": "ロッキー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.0939,
+          33.7142
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROKKO",
+        "type": "Non-Compulsory",
+        "name1": "ロッコー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3003,
+          35.1169
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROMNY",
+        "type": "Non-Compulsory",
+        "name1": "ロムニー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.1803,
+          43.7014
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RONIE",
+        "type": "Non-Compulsory",
+        "name1": "ロニー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6794,
+          35.6858
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ROUSY",
+        "type": "Non-Compulsory",
+        "name1": "ルーシー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9444,
+          35.3733
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUGBY",
+        "type": "Non-Compulsory",
+        "name1": "ラグビー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6161,
+          35.7742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "RUGMA",
         "type": "Compulsory",
         "name1": "ラグマ"
@@ -40,6 +400,96 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "RUMED",
+        "type": "Non-Compulsory",
+        "name1": "ルムド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.4536,
+          35.2619
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUMOI",
+        "type": "Non-Compulsory",
+        "name1": "ルモイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7292,
+          43.6994
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUNEX",
+        "type": "Non-Compulsory",
+        "name1": "ルネックス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.5697,
+          34.4514
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUNID",
+        "type": "Non-Compulsory",
+        "name1": "ルニッド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8106,
+          39.0028
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RUNPA",
+        "type": "Non-Compulsory",
+        "name1": "ランパ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.7506,
+          42.9772
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RURIK",
+        "type": "Non-Compulsory",
+        "name1": "ルリック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.2144,
+          29.2997
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "RUSAR",
         "type": "Compulsory",
         "name1": "ルサー"
@@ -49,6 +499,111 @@
         "coordinates": [
           127.8372,
           29.865
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYOMA",
+        "type": "Non-Compulsory",
+        "name1": "リョウマ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.3761,
+          33.5103
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYOSA",
+        "type": "Non-Compulsory",
+        "name1": "リョーサ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.5058,
+          25.5200
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYUDO",
+        "type": "Non-Compulsory",
+        "name1": "リュウドー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.0314,
+          35.0403
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYUGU",
+        "type": "Non-Compulsory",
+        "name1": "リューグー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.0344,
+          32.0461
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYUKI",
+        "type": "Non-Compulsory",
+        "name1": "リュウキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.2422,
+          27.6242
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYUMO",
+        "type": "Non-Compulsory",
+        "name1": "リュウモ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.7753,
+          31.7206
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RYUOH",
+        "type": "Non-Compulsory",
+        "name1": "リューオー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.4917,
+          34.6725
         ]
       }
     }

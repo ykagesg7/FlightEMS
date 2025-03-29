@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlightPlan, RouteSegment } from '../types';
+import { FlightPlan, RouteSegment, Airport, Waypoint } from '../types';
 import { formatTime, calculateDistance, calculateETE, calculateETA, groupBy, calculateTAS, calculateMach, calculateAirspeeds } from '../utils';
 import { calculateMagneticBearing } from '../utils/bearing';
 import { formatBearing } from '../utils/format';
@@ -131,8 +131,12 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
         
         // ルートセグメント情報を追加
         routeSegments.push({
-          from: currentPoint.id,
-          to: nextPoint.id,
+          from: 'id' in currentPoint 
+            ? (currentPoint as Waypoint).id 
+            : (currentPoint as Airport).properties?.id || (currentPoint as Airport).value,
+          to: 'id' in nextPoint 
+            ? (nextPoint as Waypoint).id 
+            : (nextPoint as Airport).properties?.id || (nextPoint as Airport).value,
           speed: flightPlan.speed,
           bearing: bearing,
           altitude: flightPlan.altitude,

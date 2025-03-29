@@ -10,6 +10,51 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "YACHI",
+        "type": "Non-Compulsory",
+        "name1": "ヤチ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.6681,
+          40.4903
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YADAR",
+        "type": "Non-Compulsory",
+        "name1": "ヤダー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8036,
+          35.4436
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YAESU",
+        "type": "Non-Compulsory",
+        "name1": "ヤエス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0792,
+          39.6194
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "YAMAGATA",
         "type": "Compulsory",
         "name1": "ヤマガタ"
@@ -19,6 +64,291 @@
         "coordinates": [
           140.3581,
           38.3886
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YAMEK",
+        "type": "Non-Compulsory",
+        "name1": "ヤメック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.5944,
+          33.3517
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YAMGA",
+        "type": "Non-Compulsory",
+        "name1": "ヤムガ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.7519,
+          33.1017
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YANAI",
+        "type": "Non-Compulsory",
+        "name1": "ヤナイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.9881,
+          33.7731
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YAOKO",
+        "type": "Non-Compulsory",
+        "name1": "ヤオコ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.0139,
+          36.1039
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YARII",
+        "type": "Non-Compulsory",
+        "name1": "ヤリイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.2147,
+          36.2706
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YASAK",
+        "type": "Non-Compulsory",
+        "name1": "ヤサカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.6975,
+          34.2231
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YASYE",
+        "type": "Non-Compulsory",
+        "name1": "ヤシー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.7475,
+          33.4803
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YAYOI",
+        "type": "Non-Compulsory",
+        "name1": "ヤヨイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.9928,
+          39.3194
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YEELY",
+        "type": "Non-Compulsory",
+        "name1": "イーリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          123.0956,
+          24.4950
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YODAI",
+        "type": "Non-Compulsory",
+        "name1": "ヨウダイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7222,
+          42.6161
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YODOH",
+        "type": "Non-Compulsory",
+        "name1": "ヨド"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135.3597,
+          34.6606
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YOJIL",
+        "type": "Non-Compulsory",
+        "name1": "ヨージル"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          125.1281,
+          24.9042
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YOKKA",
+        "type": "Non-Compulsory",
+        "name1": "ヨッカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.4614,
+          35.0111
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YOKOH",
+        "type": "Non-Compulsory",
+        "name1": "ヨウコウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7544,
+          42.4364
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YONAGO",
+        "type": "Non-Compulsory",
+        "name1": "ヨナゴ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.2572,
+          35.5014
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YONEX",
+        "type": "Non-Compulsory",
+        "name1": "ヨネックス"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.2961,
+          38.0761
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YOROI",
+        "type": "Non-Compulsory",
+        "name1": "ヨロイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7856,
+          45.0086
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YORON",
+        "type": "Non-Compulsory",
+        "name1": "ヨロン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.3981,
+          27.0444
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YOSEI",
+        "type": "Non-Compulsory",
+        "name1": "ヨウセイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7133,
+          42.6658
         ]
       }
     },
@@ -40,6 +370,171 @@
     {
       "type": "Feature",
       "properties": {
+        "id": "YOTEI",
+        "type": "Non-Compulsory",
+        "name1": "ヨウテイ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7394,
+          42.5167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YOZAN",
+        "type": "Non-Compulsory",
+        "name1": "ヨーザン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.1561,
+          38.1047
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YUBAR",
+        "type": "Non-Compulsory",
+        "name1": "ユバー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.5864,
+          35.0144
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YUCCA",
+        "type": "Non-Compulsory",
+        "name1": "ユッカ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0256,
+          38.1519
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YUDAR",
+        "type": "Non-Compulsory",
+        "name1": "ユダ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          131.4858,
+          34.1753
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YUKII",
+        "type": "Non-Compulsory",
+        "name1": "ユキ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.7511,
+          42.4342
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YUMII",
+        "type": "Non-Compulsory",
+        "name1": "ユミー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.3606,
+          35.5417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YURAH",
+        "type": "Non-Compulsory",
+        "name1": "ユラ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.5361,
+          38.7756
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YURRY",
+        "type": "Non-Compulsory",
+        "name1": "ユリー"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.6383,
+          33.4394
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YUTAN",
+        "type": "Non-Compulsory",
+        "name1": "ユタン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.6853,
+          36.5756
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YUUNO",
+        "type": "Non-Compulsory",
+        "name1": "ユーノ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.8486,
+          34.6783
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": "YUWA",
         "type": "Compulsory",
         "name1": "ユウワ"
@@ -49,6 +544,21 @@
         "coordinates": [
           140.1869,
           39.6172
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "YUWAN",
+        "type": "Non-Compulsory",
+        "name1": "ユワン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.4592,
+          28.1858
         ]
       }
     }
