@@ -65,6 +65,10 @@ MIT
 ### 2024年7月16日
 - 以下のNon-Compulsoryウェイポイントを追加：
   - Zで始まるウェイポイント: ZAIHO, ZAKMI, ZAKRO, ZARON, ZELBU, ZOHRA, ZUSHI
+- Navaidの表示機能を改善：
+  - マウスオーバー時のツールチップにID、日本語名、英語名を表示（例：AHT（芦屋 ASHIYA））
+  - クリック時のポップアップ表示を「ID（日本語名 英語名）」形式に変更
+  - ポップアップに詳細情報（Type, CH, Freq, Position）を表示するように整理
 
 ### 2024年7月15日
 - 以下のNon-Compulsoryウェイポイントを追加：
