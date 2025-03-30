@@ -495,7 +495,7 @@
         "name2": "KADENA",
         "id": "KAD",
         "ch": "57x",
-        "freq": 112
+        "freq": 112.0
       },
       "geometry": {
         "type": "Point",
@@ -613,8 +613,8 @@
         "name1": "小松",
         "name2": "KOMATSU",
         "id": "KMC",
-        "ch": null,
-        "freq": 112
+        "ch": "57x",
+        "freq": 112.0
       },
       "geometry": {
         "type": "Point",
@@ -628,8 +628,7 @@
         "name1": "小松島",
         "name2": "KOMATSUSHIMA",
         "id": "KJT",
-        "ch": "82y",
-        "freq": null
+        "ch": "82y"
       },
       "geometry": {
         "type": "Point",
@@ -643,8 +642,7 @@
         "name1": "河和",
         "name2": "KOWA",
         "id": "XMT",
-        "ch": "82x",
-        "freq": null
+        "ch": "82x"
       },
       "geometry": {
         "type": "Point",
@@ -658,8 +656,7 @@
         "name1": "玖珂",
         "name2": "KUGA",
         "id": "IWT",
-        "ch": "90x",
-        "freq": null
+        "ch": "90x"
       },
       "geometry": {
         "type": "Point",
@@ -688,7 +685,7 @@
         "name1": "久米島",
         "name2": "KUMEJIMA",
         "id": "KXC",
-        "ch": null,
+        "ch": "114x",
         "freq": 116.7
       },
       "geometry": {
@@ -703,7 +700,7 @@
         "name1": "串本",
         "name2": "KUSHIMOTO",
         "id": "KEC",
-        "ch": null,
+        "ch": "76x",
         "freq": 112.9
       },
       "geometry": {
@@ -733,8 +730,7 @@
         "name1": "舞鶴",
         "name2": "MAIZURU",
         "id": "MZT",
-        "ch": "33y",
-        "freq": null
+        "ch": "33y"
       },
       "geometry": {
         "type": "Point",
@@ -793,8 +789,7 @@
         "name1": "美保",
         "name2": "MIHO",
         "id": "JET",
-        "ch": "114x",
-        "freq": null
+        "ch": "114x"
       },
       "geometry": {
         "type": "Point",
@@ -823,8 +818,7 @@
         "name1": "南鳥島",
         "name2": "MINAMITORISHIMA",
         "id": "MLT",
-        "ch": "23x",
-        "freq": null
+        "ch": "23x"
       },
       "geometry": {
         "type": "Point",
@@ -838,7 +832,7 @@
         "name1": "三沢",
         "name2": "MISAWA",
         "id": "MIS",
-        "ch": null,
+        "ch": "101x",
         "freq": 115.4
       },
       "geometry": {
@@ -853,8 +847,7 @@
         "name1": "見島",
         "name2": "MISHIMA",
         "id": "MIT",
-        "ch": "43x",
-        "freq": null
+        "ch": "43x"
       },
       "geometry": {
         "type": "Point",
@@ -864,7 +857,7 @@
     {
       "type": "Feature",
       "properties": {
-        "type": "VOR/DME",
+        "type": "VOR",
         "name1": "宮古",
         "name2": "MIYAKO",
         "id": "MQE",
@@ -883,7 +876,7 @@
         "name1": "宮古島",
         "name2": "MIYAKOJIMA",
         "id": "MJC",
-        "ch": null,
+        "ch": "81y",
         "freq": 113.45
       },
       "geometry": {
@@ -988,7 +981,7 @@
         "name1": "名古屋",
         "name2": "NAGOYA",
         "id": "KCC",
-        "ch": null,
+        "ch": "89x",
         "freq": 114.2
       },
       "geometry": {
@@ -1003,7 +996,7 @@
         "name1": "那覇",
         "name2": "NAHA",
         "id": "NHC",
-        "ch": null,
+        "ch": "112x",
         "freq": 116.5
       },
       "geometry": {
@@ -1078,7 +1071,7 @@
         "name1": "新潟",
         "name2": "NIIGATA",
         "id": "GTC",
-        "ch": null,
+        "ch": "102x",
         "freq": 115.5
       },
       "geometry": {
@@ -1108,8 +1101,7 @@
         "name1": "新田原",
         "name2": "NYUTABARU",
         "id": "NHT",
-        "ch": "97x",
-        "freq": null
+        "ch": "97x"
       },
       "geometry": {
         "type": "Point",
@@ -1183,8 +1175,7 @@
         "name1": "大湊",
         "name2": "OMINATO",
         "id": "OMT",
-        "ch": "95y",
-        "freq": null
+        "ch": "95y"
       },
       "geometry": {
         "type": "Point",
@@ -1198,8 +1189,7 @@
         "name1": "大村",
         "name2": "OMURA",
         "id": "JBT",
-        "ch": "87y",
-        "freq": null
+        "ch": "87y"
       },
       "geometry": {
         "type": "Point",
@@ -1213,8 +1203,7 @@
         "name1": "御宿",
         "name2": "ONJUKU",
         "id": "OJT",
-        "ch": "104x",
-        "freq": null
+        "ch": "104x"
       },
       "geometry": {
         "type": "Point",
@@ -1258,8 +1247,7 @@
         "name1": "小月",
         "name2": "OZUKI",
         "id": "OCT",
-        "ch": "58y",
-        "freq": null
+        "ch": "58y"
       },
       "geometry": {
         "type": "Point",
@@ -1304,7 +1292,7 @@
         "name2": "SEKIYADO",
         "id": "SYE",
         "ch": "117x",
-        "freq": 117
+        "freq": 117.0
       },
       "geometry": {
         "type": "Point",
@@ -1348,8 +1336,7 @@
         "name1": "下総",
         "name2": "SHIMOFUSA",
         "id": "SHT",
-        "ch": "19x",
-        "freq": null
+        "ch": "19x"
       },
       "geometry": {
         "type": "Point",
@@ -1363,8 +1350,7 @@
         "name1": "静浜",
         "name2": "SHIZUHAMA",
         "id": "YZT",
-        "ch": "29x",
-        "freq": null
+        "ch": "29x"
       },
       "geometry": {
         "type": "Point",
@@ -1423,8 +1409,7 @@
         "name1": "館山",
         "name2": "TATEYAMA",
         "id": "TET",
-        "ch": "25x",
-        "freq": null
+        "ch": "25x"
       },
       "geometry": {
         "type": "Point",
@@ -1438,8 +1423,7 @@
         "name1": "十勝",
         "name2": "TOKACHI",
         "id": "TKT",
-        "ch": "55x",
-        "freq": null
+        "ch": "55x"
       },
       "geometry": {
         "type": "Point",
@@ -1483,8 +1467,7 @@
         "name1": "築城",
         "name2": "TSUIKI",
         "id": "TQT",
-        "ch": "41x",
-        "freq": null
+        "ch": "41x"
       },
       "geometry": {
         "type": "Point",
@@ -1513,8 +1496,7 @@
         "name1": "宇都宮",
         "name2": "UTSUNOMIYA",
         "id": "JDT",
-        "ch": "58y",
-        "freq": null
+        "ch": "58y"
       },
       "geometry": {
         "type": "Point",
