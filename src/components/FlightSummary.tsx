@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FlightPlan, RouteSegment } from '../types';
 import { formatBearing } from '../utils/format';
+import { calculateTAS, calculateAirspeeds } from '../utils';
 
 interface FlightSummaryProps {
   flightPlan: FlightPlan;
@@ -133,8 +134,40 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
     });
   }, []);
 
-  // 諸元更新ボタンが押された時の処理
-  const handleUpdateSpecs = useCallback(() => {
+  // セグメントごとのETE計算（高精度）
+  const calculateSegmentETE = useCallback((segment: RouteSegment): string => {
+    if (!segment.distance || !segment.speed || isNaN(segment.speed) || segment.speed <= 0 || isNaN(segment.distance)) {
+      return '--:--:--';
+    }
+
+    // 高度に基づいたTASの計算
+    let tas = segment.speed; // デフォルトCASをTASとして使用
+
+    // 高度が指定されている場合は、TASを計算
+    if (segment.altitude && !isNaN(segment.altitude) && segment.altitude > 0) {
+      // 高精度計算モデル使用
+      const airspeedsResult = calculateAirspeeds(
+        segment.speed, 
+        segment.altitude, 
+        flightPlan.groundTempC || 15, // デフォルト値として15℃を使用
+        flightPlan.groundElevationFt || 0 // デフォルト値として0ftを使用
+      );
+      
+      // 高精度計算が成功した場合はそのTASを使用
+      if (airspeedsResult) {
+        tas = airspeedsResult.tasKt;
+      } else {
+        // 簡易的なTAS計算を使用
+        tas = calculateTAS(segment.speed, segment.altitude);
+      }
+    }
+
+    // ETEを計算（距離をTASで割る）
+    return formatDuration(segment.distance, tas);
+  }, [formatDuration, flightPlan.groundTempC, flightPlan.groundElevationFt]);
+
+  // ルートセグメントの再計算
+  const recalculateETAs = useCallback(() => {
     if (!editableSegments || editableSegments.length === 0 || !flightPlan.departureTime) {
         console.warn("Calculation prerequisites not met.");
         return;
@@ -149,40 +182,40 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
     let totalDurationSeconds = 0;
 
     const calculatedSegments = editableSegments.map((segment) => {
-      if (segment.distance && segment.speed && !isNaN(segment.speed) && segment.speed > 0 && !isNaN(segment.distance)) {
-        const durationString = formatDuration(segment.distance, segment.speed);
-        if (durationString === '--:--:--') {
-             console.warn("Invalid duration calculated for segment:", segment);
-             return { ...segment, eta: '--:--:--' };
-        }
-        const [hours, minutes, seconds] = durationString.split(':').map(Number);
-        const durationSeconds = hours * 3600 + minutes * 60 + seconds;
-
-        if (isNaN(durationSeconds)) {
-            console.warn("NaN durationSeconds for segment:", segment);
-            return { ...segment, eta: '--:--:--' };
-        }
-
-        const segmentEndTime = addTime(currentTime, durationString);
-
-        if (isNaN(segmentEndTime.getTime())) {
-             console.error("Invalid ETA calculated for segment:", segment, "CurrentTime:", currentTime, "Duration:", durationString);
-             return { ...segment, eta: '--:--:--' };
-        }
-
-        const formattedEta = formatTime(segmentEndTime);
-        totalDurationSeconds += durationSeconds;
-        currentTime = segmentEndTime;
-
-        return {
-          ...segment,
-          eta: formattedEta,
-        };
+      // セグメントごとのETEを計算（高精度）
+      const durationString = calculateSegmentETE(segment);
+      
+      if (durationString === '--:--:--') {
+         console.warn("Invalid duration calculated for segment:", segment);
+         return { ...segment, eta: '--:--:--' };
       }
-      console.warn("Segment skipped in calculation:", segment);
-      return { ...segment, eta: '--:--:--' };
+      
+      const [hours, minutes, seconds] = durationString.split(':').map(Number);
+      const durationSeconds = hours * 3600 + minutes * 60 + seconds;
+
+      if (isNaN(durationSeconds)) {
+          console.warn("NaN durationSeconds for segment:", segment);
+          return { ...segment, eta: '--:--:--' };
+      }
+
+      const segmentEndTime = addTime(currentTime, durationString);
+
+      if (isNaN(segmentEndTime.getTime())) {
+           console.error("Invalid ETA calculated for segment:", segment, "CurrentTime:", currentTime, "Duration:", durationString);
+           return { ...segment, eta: '--:--:--' };
+      }
+
+      const formattedEta = formatTime(segmentEndTime);
+      totalDurationSeconds += durationSeconds;
+      currentTime = segmentEndTime;
+
+      return {
+        ...segment,
+        eta: formattedEta,
+      };
     });
 
+    // 総所要時間を hh:mm:ss 形式に変換
     const totalHours = Math.floor(totalDurationSeconds / 3600);
     const totalMinutes = Math.floor((totalDurationSeconds % 3600) / 60);
     const totalSeconds = totalDurationSeconds % 60;
@@ -197,13 +230,46 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
         ete: formattedEte,
     });
 
-    setFlightPlan(prev => ({
-      ...prev,
+    return {
       routeSegments: calculatedSegments,
       eta: finalEta,
       ete: formattedEte,
-    }));
-  }, [editableSegments, flightPlan.departureTime, setFlightPlan, formatDuration, parseTimeString, addTime, formatTime]);
+    };
+  }, [editableSegments, flightPlan.departureTime, parseTimeString, addTime, formatTime, calculateSegmentETE]);
+
+  // 諸元更新ボタンが押された時の処理
+  const handleUpdateSpecs = useCallback(() => {
+    const updatedPlan = recalculateETAs();
+    if (updatedPlan) {
+      setFlightPlan(prev => ({
+        ...prev,
+        routeSegments: updatedPlan.routeSegments,
+        eta: updatedPlan.eta,
+        ete: updatedPlan.ete,
+      }));
+    }
+  }, [recalculateETAs, setFlightPlan]);
+
+  // パラメータが変更された時に自動的にETAを再計算
+  useEffect(() => {
+    // フライトパラメータが完全に初期化された後にのみ実行
+    if (flightPlan.departureTime && editableSegments && editableSegments.length > 0) {
+      // 自動計算を制限するためのタイマーを設定（頻繁な再計算を防ぐ）
+      const timer = setTimeout(() => {
+        const updatedPlan = recalculateETAs();
+        if (updatedPlan) {
+          setFlightPlan(prev => ({
+            ...prev,
+            routeSegments: updatedPlan.routeSegments,
+            eta: updatedPlan.eta,
+            ete: updatedPlan.ete,
+          }));
+        }
+      }, 500); // 500msのディレイを設定
+      
+      return () => clearTimeout(timer);
+    }
+  }, [flightPlan.departureTime, editableSegments, recalculateETAs, setFlightPlan]);
 
   return (
     <div className="bg-gray-800 shadow-sm rounded-lg p-4 md:p-6">
@@ -219,19 +285,19 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
           <div className="bg-gray-700 p-2 md:p-3 rounded-md">
             <div className="text-xs text-gray-300">予想飛行時間</div>
             <div className="text-sm md:text-base font-medium text-gray-100">
-              {flightPlan.ete || '--'}
+              {flightPlan.ete || '--:--:--'}
             </div>
           </div>
           <div className="bg-gray-700 p-2 md:p-3 rounded-md">
             <div className="text-xs text-gray-300">出発時刻</div>
             <div className="text-sm md:text-base font-medium text-gray-100">
-              {flightPlan.departureTime || '--'}
+              {flightPlan.departureTime || '--:--:--'}
             </div>
           </div>
           <div className="bg-gray-700 p-2 md:p-3 rounded-md">
             <div className="text-xs text-gray-300">到着予定時刻</div>
             <div className="text-sm md:text-base font-medium text-gray-100">
-              {flightPlan.eta || '--'}
+              {flightPlan.eta || '--:--:--'}
             </div>
           </div>
         </div>
@@ -304,7 +370,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
                       </td>
                       <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">{segment.distance?.toFixed(1)} nm</td>
                       <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">
-                        {flightPlan.routeSegments?.[index]?.eta || '--:--:--'}
+                        {segment.eta || '--:--:--'}
                       </td>
                     </tr>
                   ))}
