@@ -108,48 +108,6 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
     }
   }, [flightPlan.routeSegments, editableSegments]);
 
-  // 速度変更時の処理 (editableSegmentsを更新)
-  const handleSpeedChange = useCallback((index: number, newSpeed: string) => {
-    const speed = parseInt(newSpeed, 10);
-    if (newSpeed === '' || (isNaN(speed) || speed <= 0)) {
-       setEditableSegments(prev => {
-         const newSegments = [...prev];
-         newSegments[index] = { ...newSegments[index], speed: NaN };
-         return newSegments;
-       });
-       userEditedRef.current = true; // ユーザー編集フラグをセット
-       return;
-    }
-
-    setEditableSegments(prev => {
-      const newSegments = [...prev];
-      newSegments[index] = { ...newSegments[index], speed };
-      return newSegments;
-    });
-    userEditedRef.current = true; // ユーザー編集フラグをセット
-  }, []);
-
-  // 高度変更時の処理 (editableSegmentsを更新)
-  const handleAltitudeChange = useCallback((index: number, newAltitude: string) => {
-    const altitude = parseInt(newAltitude, 10);
-    if (newAltitude === '' || (isNaN(altitude) || altitude < 0)) {
-       setEditableSegments(prev => {
-         const newSegments = [...prev];
-         newSegments[index] = { ...newSegments[index], altitude: NaN };
-         return newSegments;
-       });
-       userEditedRef.current = true; // ユーザー編集フラグをセット
-       return;
-    }
-
-    setEditableSegments(prev => {
-      const newSegments = [...prev];
-      newSegments[index] = { ...newSegments[index], altitude };
-      return newSegments;
-    });
-    userEditedRef.current = true; // ユーザー編集フラグをセット
-  }, []);
-
   // ルートセグメントの再計算
   const recalculateETAs = useCallback(() => {
     if (!editableSegments || editableSegments.length === 0 || !flightPlan.departureTime) {
@@ -273,6 +231,102 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
     };
   }, [editableSegments, flightPlan.departureTime, flightPlan.groundTempC, flightPlan.groundElevationFt, parseTimeString, formatTime, calculateTAS, calculateAirspeeds]);
 
+  // 速度変更時の処理 (editableSegmentsを更新)
+  const handleSpeedChange = useCallback((index: number, newSpeed: string) => {
+    const speed = parseInt(newSpeed, 10);
+    if (newSpeed === '' || (isNaN(speed) || speed <= 0)) {
+       setEditableSegments(prev => {
+         const newSegments = [...prev];
+         newSegments[index] = { ...newSegments[index], speed: NaN };
+         return newSegments;
+       });
+       userEditedRef.current = true; // ユーザー編集フラグをセット
+       
+       // 速度が変更されたので、遅延なしですぐに再計算を実行
+       setTimeout(() => {
+        const updatedPlan = recalculateETAs();
+        if (updatedPlan) {
+          setFlightPlan(prev => ({
+            ...prev,
+            routeSegments: updatedPlan.routeSegments,
+            eta: updatedPlan.eta,
+            ete: updatedPlan.ete,
+          }));
+        }
+       }, 10);
+       
+       return;
+    }
+
+    setEditableSegments(prev => {
+      const newSegments = [...prev];
+      newSegments[index] = { ...newSegments[index], speed };
+      return newSegments;
+    });
+    userEditedRef.current = true; // ユーザー編集フラグをセット
+    
+    // 速度が変更されたので、遅延なしですぐに再計算を実行
+    setTimeout(() => {
+      const updatedPlan = recalculateETAs();
+      if (updatedPlan) {
+        setFlightPlan(prev => ({
+          ...prev,
+          routeSegments: updatedPlan.routeSegments,
+          eta: updatedPlan.eta,
+          ete: updatedPlan.ete,
+        }));
+      }
+    }, 10);
+  }, [recalculateETAs, setFlightPlan]);
+
+  // 高度変更時の処理 (editableSegmentsを更新)
+  const handleAltitudeChange = useCallback((index: number, newAltitude: string) => {
+    const altitude = parseInt(newAltitude, 10);
+    if (newAltitude === '' || (isNaN(altitude) || altitude < 0)) {
+       setEditableSegments(prev => {
+         const newSegments = [...prev];
+         newSegments[index] = { ...newSegments[index], altitude: NaN };
+         return newSegments;
+       });
+       userEditedRef.current = true; // ユーザー編集フラグをセット
+       
+       // 高度が変更されたので、遅延なしですぐに再計算を実行
+       setTimeout(() => {
+        const updatedPlan = recalculateETAs();
+        if (updatedPlan) {
+          setFlightPlan(prev => ({
+            ...prev,
+            routeSegments: updatedPlan.routeSegments,
+            eta: updatedPlan.eta,
+            ete: updatedPlan.ete,
+          }));
+        }
+       }, 10);
+       
+       return;
+    }
+
+    setEditableSegments(prev => {
+      const newSegments = [...prev];
+      newSegments[index] = { ...newSegments[index], altitude };
+      return newSegments;
+    });
+    userEditedRef.current = true; // ユーザー編集フラグをセット
+    
+    // 高度が変更されたので、遅延なしですぐに再計算を実行
+    setTimeout(() => {
+      const updatedPlan = recalculateETAs();
+      if (updatedPlan) {
+        setFlightPlan(prev => ({
+          ...prev,
+          routeSegments: updatedPlan.routeSegments,
+          eta: updatedPlan.eta,
+          ete: updatedPlan.ete,
+        }));
+      }
+    }, 10);
+  }, [recalculateETAs, setFlightPlan]);
+
   // パラメータが変更された時に自動的にETAを再計算
   useEffect(() => {
     // フライトパラメータが完全に初期化された後にのみ実行
@@ -290,7 +344,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
           // 計算後はユーザー編集フラグをリセット
           userEditedRef.current = false;
         }
-      }, 500); // 500msのディレイを設定
+      }, 1000); // 遅延を500msから1000msに
       
       return () => clearTimeout(timer);
     }
