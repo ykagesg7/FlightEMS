@@ -5,7 +5,7 @@ import PlanningTab from './PlanningTab';
 import MapTab from './MapTab';
 import { FlightPlan } from '../types';
 import { calculateTAS, calculateMach, formatTime, calculateAirspeeds } from '../utils';
-import ExamTab from './ExamTab';
+import LearningTab from './LearningTab';
 
 const Tabs = TabsPrimitive.Root;
 
@@ -98,10 +98,10 @@ const TabsComponent: React.FC<TabsProps> = () => {
             Map
           </button>
           <button
-            className={`${activeTab === 'exam' ? 'border-indigo-500 text-indigo-500' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
-            onClick={() => setActiveTab('exam')}
+            className={`${activeTab === 'learning' ? 'border-indigo-500 text-indigo-500' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
+            onClick={() => setActiveTab('learning')}
           >
-            Exam
+            Learning
           </button>
         </nav>
       </div>
@@ -116,8 +116,8 @@ const TabsComponent: React.FC<TabsProps> = () => {
         {activeTab === 'map' && (
           <MapTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
         )}
-        {activeTab === 'exam' && (
-          <ExamTab />
+        {activeTab === 'learning' && (
+          <LearningTab />
         )}
       </div>
     </div>
