@@ -13,22 +13,6 @@ interface FlightSummaryProps {
  * 総距離、ETE、ETAの表示を行う
  */
 const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan }) => {
-  // 所要時間を計算して「hh:mm:ss」形式でフォーマットする関数
-  const formatDuration = useCallback((distance?: number, speed?: number): string => {
-    if (!distance || !speed || speed === 0) return '--:--:--';
-    
-    // 距離（NM）÷ 速度（kt）で時間（時間）を計算
-    const hours = distance / speed;
-    const totalSeconds = Math.round(hours * 3600);
-    
-    // hh:mm:ss 形式
-    const h = Math.floor(totalSeconds / 3600);
-    const m = Math.floor((totalSeconds % 3600) / 60);
-    const s = totalSeconds % 60;
-    
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  }, []);
-
   // 時間文字列をDate型に変換する関数
   const parseTimeString = useCallback((timeStr: string): Date => {
     // 不正な入力や空文字列は無効なDateとして扱う
@@ -68,16 +52,6 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
     }
 
     return date;
-  }, []);
-
-  // 時間を加算する関数
-  const addTime = useCallback((time: Date, duration: string): Date => {
-    const [hours, minutes, seconds] = duration.split(':').map(Number);
-    const result = new Date(time);
-    result.setHours(result.getHours() + hours);
-    result.setMinutes(result.getMinutes() + minutes);
-    result.setSeconds(result.getSeconds() + seconds);
-    return result;
   }, []);
 
   // 時間を「hh:mm:ss」形式でフォーマットする関数
@@ -133,38 +107,6 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
       return newSegments;
     });
   }, []);
-
-  // セグメントごとのETE計算（高精度）
-  const calculateSegmentETE = useCallback((segment: RouteSegment): string => {
-    if (!segment.distance || !segment.speed || isNaN(segment.speed) || segment.speed <= 0 || isNaN(segment.distance)) {
-      return '--:--:--';
-    }
-
-    // 高度に基づいたTASの計算
-    let tas = segment.speed; // デフォルトCASをTASとして使用
-
-    // 高度が指定されている場合は、TASを計算
-    if (segment.altitude && !isNaN(segment.altitude) && segment.altitude > 0) {
-      // 高精度計算モデル使用
-      const airspeedsResult = calculateAirspeeds(
-        segment.speed, 
-        segment.altitude, 
-        flightPlan.groundTempC || 15, // デフォルト値として15℃を使用
-        flightPlan.groundElevationFt || 0 // デフォルト値として0ftを使用
-      );
-      
-      // 高精度計算が成功した場合はそのTASを使用
-      if (airspeedsResult) {
-        tas = airspeedsResult.tasKt;
-      } else {
-        // 簡易的なTAS計算を使用
-        tas = calculateTAS(segment.speed, segment.altitude);
-      }
-    }
-
-    // ETEを計算（距離をTASで割る）
-    return formatDuration(segment.distance, tas);
-  }, [formatDuration, flightPlan.groundTempC, flightPlan.groundElevationFt]);
 
   // ルートセグメントの再計算
   const recalculateETAs = useCallback(() => {
@@ -288,19 +230,6 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
       ete: formattedEte,
     };
   }, [editableSegments, flightPlan.departureTime, flightPlan.groundTempC, flightPlan.groundElevationFt, parseTimeString, formatTime, calculateTAS, calculateAirspeeds]);
-
-  // 諸元更新ボタンが押された時の処理
-  const handleUpdateSpecs = useCallback(() => {
-    const updatedPlan = recalculateETAs();
-    if (updatedPlan) {
-      setFlightPlan(prev => ({
-        ...prev,
-        routeSegments: updatedPlan.routeSegments,
-        eta: updatedPlan.eta,
-        ete: updatedPlan.ete,
-      }));
-    }
-  }, [recalculateETAs, setFlightPlan]);
 
   // パラメータが変更された時に自動的にETAを再計算
   useEffect(() => {
