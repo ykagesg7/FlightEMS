@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { FlightPlan, RouteSegment } from '../types';
 import { formatBearing } from '../utils/format';
 import { calculateTAS, calculateAirspeeds } from '../utils';
@@ -64,11 +64,49 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
 
   // 状態として保持するルートセグメント (編集用)
   const [editableSegments, setEditableSegments] = useState<RouteSegment[]>(flightPlan.routeSegments || []);
+  
+  // 前回のrouteSegmentsの長さを記録
+  const prevSegmentsLengthRef = useRef<number>(flightPlan.routeSegments?.length || 0);
+  // ユーザーによる編集が行われたかどうかのフラグ
+  const userEditedRef = useRef<boolean>(false);
+
+  // コンポーネントのマウント時に一度だけ実行される初期化処理
+  useEffect(() => {
+    // 初期マウント時に現在のrouteSegmentsの長さを記録
+    prevSegmentsLengthRef.current = flightPlan.routeSegments?.length || 0;
+    console.log('FlightSummaryコンポーネントが初期化されました');
+  }, []);
 
   // flightPlan.routeSegmentsが外部から変更された場合にeditableSegmentsを同期
+  // ただし、ルートの数が変わった場合やルート自体が初期化された場合のみ同期する
   useEffect(() => {
-    setEditableSegments(flightPlan.routeSegments || []);
-  }, [flightPlan.routeSegments]);
+    const currentLength = flightPlan.routeSegments?.length || 0;
+    const prevLength = prevSegmentsLengthRef.current;
+    
+    // ルートの数が変わった場合やルートが初期化された時のみ同期する
+    if (currentLength !== prevLength || currentLength === 0) {
+      console.log(`ルートセグメント数が変更されました: ${prevLength} -> ${currentLength}、同期します`);
+      setEditableSegments(flightPlan.routeSegments || []);
+      prevSegmentsLengthRef.current = currentLength;
+      userEditedRef.current = false; // 同期されたためフラグをリセット
+    } else if (flightPlan.routeSegments && !userEditedRef.current) {
+      // ユーザー編集がなく、かつフライトプランのルートに変更がある場合
+      // ルートの構造的な変更（出発地/到着地変更など）があった可能性があるので同期
+      const hasStructuralChanges = flightPlan.routeSegments.some((segment, index) => {
+        const editableSegment = editableSegments[index];
+        return !editableSegment || 
+               segment.from !== editableSegment.from || 
+               segment.to !== editableSegment.to ||
+               segment.distance !== editableSegment.distance ||
+               segment.bearing !== editableSegment.bearing;
+      });
+      
+      if (hasStructuralChanges) {
+        console.log('ルートセグメントの構造的変更を検出しました、同期します');
+        setEditableSegments(flightPlan.routeSegments);
+      }
+    }
+  }, [flightPlan.routeSegments, editableSegments]);
 
   // 速度変更時の処理 (editableSegmentsを更新)
   const handleSpeedChange = useCallback((index: number, newSpeed: string) => {
@@ -79,6 +117,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
          newSegments[index] = { ...newSegments[index], speed: NaN };
          return newSegments;
        });
+       userEditedRef.current = true; // ユーザー編集フラグをセット
        return;
     }
 
@@ -87,6 +126,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
       newSegments[index] = { ...newSegments[index], speed };
       return newSegments;
     });
+    userEditedRef.current = true; // ユーザー編集フラグをセット
   }, []);
 
   // 高度変更時の処理 (editableSegmentsを更新)
@@ -98,6 +138,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
          newSegments[index] = { ...newSegments[index], altitude: NaN };
          return newSegments;
        });
+       userEditedRef.current = true; // ユーザー編集フラグをセット
        return;
     }
 
@@ -106,6 +147,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
       newSegments[index] = { ...newSegments[index], altitude };
       return newSegments;
     });
+    userEditedRef.current = true; // ユーザー編集フラグをセット
   }, []);
 
   // ルートセグメントの再計算
@@ -245,6 +287,8 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
             eta: updatedPlan.eta,
             ete: updatedPlan.ete,
           }));
+          // 計算後はユーザー編集フラグをリセット
+          userEditedRef.current = false;
         }
       }, 500); // 500msのディレイを設定
       
