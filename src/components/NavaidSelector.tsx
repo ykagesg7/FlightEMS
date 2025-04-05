@@ -16,7 +16,7 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
 
   const handleAdd = () => {
     if (selectedNavaid) {
-      const navaidName = selectedNavaid.label.split(' ')[0];
+      const navaidName = selectedNavaid.label.split('(')[0];
       const navaidId = selectedNavaid.value;
       const formattedBearing = bearing.padStart(3, '0');
       

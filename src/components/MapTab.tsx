@@ -1265,9 +1265,51 @@ const MapContent: React.FC<{
           fillOpacity={0.6}
         >
           <Popup>
-            <div>
-              <h2 className="font-bold text-lg">{waypoint.name}</h2>
-              <p className="text-sm text-gray-500">Waypoint</p>
+            <div className="waypoint-popup">
+              <div className="waypoint-popup-header">ウェイポイント</div>
+              <div className="p-2">
+                <div className="mb-2">
+                  <label className="block text-xs font-medium text-gray-400 mb-1">名前</label>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      value={waypoint.name}
+                      onChange={(e) => {
+                        const newWaypoints = [...flightPlan.waypoints];
+                        newWaypoints[index] = {
+                          ...waypoint,
+                          name: e.target.value
+                        };
+                        setFlightPlan({
+                          ...flightPlan,
+                          waypoints: newWaypoints
+                        });
+                      }}
+                      className="block w-full rounded-md border-gray-600 shadow-sm bg-gray-700 text-gray-50 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 py-1 text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="mb-2">
+                  <p className="text-xs text-gray-400">ID: {waypoint.id}</p>
+                  <p className="text-xs text-gray-400">タイプ: {waypoint.type}</p>
+                  <p className="text-xs text-gray-400">位置: {waypoint.latitude.toFixed(4)}°N, {waypoint.longitude.toFixed(4)}°E</p>
+                </div>
+                <div className="flex justify-end mt-2">
+                  <button
+                    onClick={() => {
+                      const newWaypoints = [...flightPlan.waypoints];
+                      newWaypoints.splice(index, 1);
+                      setFlightPlan({
+                        ...flightPlan,
+                        waypoints: newWaypoints
+                      });
+                    }}
+                    className="bg-red-600 hover:bg-red-700 text-white text-xs font-medium py-1 px-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                  >
+                    削除
+                  </button>
+                </div>
+              </div>
             </div>
           </Popup>
         </CircleMarker>

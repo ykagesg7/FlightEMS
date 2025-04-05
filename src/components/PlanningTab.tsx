@@ -56,7 +56,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
         const geojsonData = await response.json();
         const navaidList = geojsonData.features.map((feature: any) => ({
           value: feature.properties.id,
-          label: `${feature.properties.name} (${feature.properties.id})`,
+          label: `${feature.properties.name1}(${feature.properties.name2})(${feature.properties.id})`,
           type: feature.properties.type,
           latitude: feature.geometry.coordinates[1],
           longitude: feature.geometry.coordinates[0],
@@ -223,7 +223,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
 
       <div className="md:col-span-1 px-2 md:px-0">
         {/* FlightSummary コンポーネントを配置 */}
-        <FlightSummary flightPlan={flightPlan} />
+        <FlightSummary flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
       </div>
     </div>
   );
