@@ -1464,10 +1464,7 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
   // アイコン表示部分
   const iconUrl = current.condition.icon ? `https:${current.condition.icon}` : '';
   const iconHtml = iconUrl ? `<img src="${iconUrl}" alt="${conditionText}" class="weather-icon">` : '';
-  
-  // 空港情報の簡略化バージョン
-  const simplifiedAirportInfo = simplifiedAirportInfoContent(airportProps);
-  
+    
   return `
     <div class="airport-popup airport-weather-popup">
       <div class="airport-popup-header">

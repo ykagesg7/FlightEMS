@@ -358,15 +358,6 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
           <div className="mt-4">
             <h3 className="text-sm md:text-base font-medium text-gray-200 mb-2">ルートセグメント</h3>
             
-            <div className="mb-3">
-              <button
-                onClick={handleUpdateSpecs}
-                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                再計算
-              </button>
-            </div>
-            
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-600 text-xs md:text-sm">
                 <thead className="bg-gray-700">
