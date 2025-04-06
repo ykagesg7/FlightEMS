@@ -309,15 +309,15 @@ const LearningTab: React.FC = () => {
         
         {/* スライド7 */}
         <div className={`slide p-8 min-h-[500px] relative ${currentSlide === 7 ? 'block' : 'hidden'} bg-white`}>
-          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">旋回再会合: 旋回内側 (2番機)</h1>
+          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">Turning Join-up（２番機）</h1>
           <div className="content text-lg text-gray-800">
             <ol className="list-decimal pl-6 space-y-2 my-4">
-              <li>リードの信号と旋回の後、同じ方向に旋回を開始</li>
-              <li>リードパーシュート（先行追尾）で30ノットの追い越し速度を確立</li>
-              <li>リードの下方約50フィートの垂直間隔を確保</li>
-              <li>適度なアスペクト角を維持するためにリードとラグパーシュートを調整</li>
-              <li>パーシュートカーブと出力を調整して接近速度を制御</li>
-              <li>ルートポジションからの再編成と同様にフィンガーチップへの再会合を完了</li>
+              <li>長機の視覚信号の後、長機と同方向に旋回を開始</li>
+              <li>１機長の機高差を確立</li>
+              <li>Lead Pursuit(L.P)でAspect Angle（AA）を増加させる。</li>
+              <li>5AAとなったら、Lead量を減らし、AAを維持して接近する。</li>
+              <li>1,000ftに近づいたら、Lead量を増やし、AAを5から6AAに増加させる。</li>
+              <li>6AAとなったら、再度Lead量を減少させ、Finger-tip隊形へ占位する。</li>
             </ol>
             <div className="relative h-[300px] w-full bg-blue-100 rounded-lg my-6 p-4">
               <div className="absolute w-[250px] h-[250px] border-2 border-dashed border-indigo-800 rounded-full top-[25px] left-[325px]"></div>
@@ -334,100 +334,61 @@ const LearningTab: React.FC = () => {
         
         {/* スライド8 */}
         <div className={`slide p-8 min-h-[500px] relative ${currentSlide === 8 ? 'block' : 'hidden'} bg-white`}>
-          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">旋回再会合におけるアスペクト角</h1>
+          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">旋回時のAA</h1>
           <div className="content text-lg text-gray-800">
-            <p>旋回再会合ではアスペクト角の理解が重要です:</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-lg font-bold mb-2 text-indigo-800">アスペクト視点</h3>
-                <ul className="list-disc pl-6 space-y-2 my-4">
-                  <li><strong>低アスペクト:</strong> リードの機体がより後方から見える</li>
-                  <li><strong>中アスペクト:</strong> リードの機体がより側面から見える</li>
-                  <li><strong>高アスペクト:</strong> リードの機体がより正面から見える</li>
-                </ul>
-                <p>アスペクト角が安全な追い越し速度を決定します:</p>
-                <ul className="list-disc pl-6 space-y-2 my-4">
-                  <li>低アスペクト: 最大50ノット</li>
-                  <li>中アスペクト: 最大30ノット</li>
-                  <li>高アスペクト: 最大10ノット</li>
-                </ul>
-              </div>
-              <div>
-                <div className="mt-5 text-center">
-                  <div className="my-5">
-                    <div className="inline-block w-[40px] h-[40px] bg-indigo-800 transform rotate-0" style={{clipPath: 'polygon(50% 0%, 85% 50%, 50% 100%, 15% 50%)'}}></div>
-                    <span className="ml-2">高アスペクト</span>
-                  </div>
-                  <div className="my-5">
-                    <div className="inline-block w-[40px] h-[40px] bg-indigo-800 transform rotate-45" style={{clipPath: 'polygon(50% 0%, 85% 50%, 50% 100%, 15% 50%)'}}></div>
-                    <span className="ml-2">中アスペクト</span>
-                  </div>
-                  <div className="my-5">
-                    <div className="inline-block w-[40px] h-[40px] bg-indigo-800 transform rotate-90" style={{clipPath: 'polygon(50% 0%, 85% 50%, 50% 100%, 15% 50%)'}}></div>
-                    <span className="ml-2">低アスペクト</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <p className="mb-4">旋回を利用した空中集合には、AAの理解が重要です。</p>
+            <ul className="list-disc pl-6 space-y-2 my-4">
+              <li><strong>低AA：</strong>Tail(長機の真後ろ)～6AA</li>
+              <li><strong>中AA：</strong>7～11AA</li>
+              <li><strong>高AA：</strong>12～Hot(真正面)</li>
+            </ul>
+            <p>6AAから接近するのは、長機が監視しやすく、かつAspectのコントロールが容易だからです。</p>
           </div>
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">8/20</div>
         </div>
         
         {/* スライド9 */}
         <div className={`slide p-8 min-h-[500px] relative ${currentSlide === 9 ? 'block' : 'hidden'} bg-white`}>
-          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">旋回再会合: 旋回外側 (3番機と4番機)</h1>
+          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">Turning Join-up (3/4番機)</h1>
           <div className="content text-lg text-gray-800">
-            <h3 className="text-lg font-bold mb-2 text-indigo-800">主要ポイント:</h3>
-            <ul className="list-disc pl-6 space-y-2 my-4">
-              <li>航空機は適切な数値順序で再会合</li>
-              <li>2番機は旋回内側に合流</li>
-              <li>3番機と4番機は旋回外側に合流</li>
-              <li>ルート位置で安定するまで先行機から最低500フィートの間隔を維持</li>
-              <li>最小限の機首-尾部間隔を保ちながら先行機のジェット後流の下を横切る</li>
-              <li>過度の接近速度がないか先行機の再会合を監視</li>
-            </ul>
-            <div className="relative h-[300px] w-full bg-blue-100 rounded-lg my-6 p-4">
-              <div className="absolute w-[250px] h-[250px] border-2 border-dashed border-indigo-800 rounded-full top-[25px] left-[325px]"></div>
-              <div className="absolute top-[25px] left-[450px] w-[40px] h-[40px] bg-indigo-800 transform -rotate-30" style={{clipPath: 'polygon(50% 0%, 85% 50%, 50% 100%, 15% 50%)'}}></div>
-              <div className="absolute top-[125px] left-[200px] w-[40px] h-[40px] bg-red-700 transform rotate-30" style={{clipPath: 'polygon(50% 0%, 85% 50%, 50% 100%, 15% 50%)'}}></div>
-              <div className="absolute top-[25px] left-[200px] w-[40px] h-[40px] bg-green-700 transform -rotate-75" style={{clipPath: 'polygon(50% 0%, 85% 50%, 50% 100%, 15% 50%)'}}></div>
-              <div className="absolute top-[0px] left-[470px] text-sm text-indigo-900 font-semibold">リード</div>
-              <div className="absolute top-[150px] left-[160px] text-sm text-red-800 font-semibold">2番機</div>
-              <div className="absolute top-[0px] left-[140px] text-sm text-green-800 font-semibold">3番機</div>
-              <div className="absolute top-[25px] left-[250px] text-green-800 text-sm font-semibold">外側再会合</div>
-            </div>
+            <h3 className="text-lg font-bold mb-2 text-indigo-800">実行手順:</h3>
+            <ol className="list-decimal pl-6 space-y-2 my-4">
+              <li>当初、3/4番機は2番機と同様に、長機の旋回内側から接近を開始します。</li>
+              <li>2番機との安全な距離（最低500ft以上）を維持することが重要です。</li>
+              <li>2番機が長機への集合（Finger-tip隊形への移行）を完了するまで、旋回内側の安全な距離で待機します。</li>
+              <li>2番機の集合完了後、長機の下方を通過し（Nose-Tail Clearanceを確保）、旋回外側へ移動します。</li>
+              <li>旋回外側で、所定の隊形に占位します。</li>
+            </ol>
           </div>
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">9/20</div>
         </div>
         
         {/* スライド10 */}
         <div className={`slide p-8 min-h-[500px] relative ${currentSlide === 10 ? 'block' : 'hidden'} bg-white`}>
-          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">再会合中のコミュニケーション</h1>
+          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">Rejoin時のCommunication</h1>
           <div className="content text-lg text-gray-800">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h3 className="text-lg font-bold mb-2 text-indigo-800">視覚信号:</h3>
                 <ul className="list-disc pl-6 space-y-2 my-4">
-                  <li><strong>直進再会合:</strong> ウイングロック</li>
-                  <li><strong>旋回再会合:</strong> 旋回方向に最初の傾きを持つウイングロック</li>
+                  <li>ウイングロック</li>
                 </ul>
                 <p>各ウイングマンは後続機のために信号を繰り返します。</p>
               </div>
               <div>
                 <h3 className="text-lg font-bold mb-2 text-indigo-800">無線通信:</h3>
                 <ul className="list-disc pl-6 space-y-2 my-4">
-                  <li>視覚信号が実用的でない場合、リードは無線で再会合を開始することがある</li>
-                  <li>リードは標準外のパラメータを伝えるべき</li>
-                  <li>ウイングマンは再会合の準備が整ったら「ready」と通報</li>
+                  <li>視覚信号が実用的でない場合、長機は無線でRejoinを指示する場合がある。</li>
+                  <li>標準と異なる場合、長機はパラメータを伝えるべき</li>
                 </ul>
               </div>
             </div>
             <div className="important-box bg-amber-50 border-l-4 border-amber-500 p-4 my-6 text-amber-900">
               <p><strong>無線通信例:</strong></p>
               <ul className="list-disc pl-6 my-2">
-                <li>"Viper 1, rejoin left"</li>
-                <li>"Viper 1, rejoin right, 350 knots"</li>
-                <li>"Viper 2, ready"</li>
+                <li>"DA-K, rejoin left"</li>
+                <li>"DA-K, rejoin right, 350 knots"</li>
+                <li>"DA-K, Straight Join-up, left side, 360°, 300kt."</li>
               </ul>
             </div>
           </div>
@@ -436,21 +397,27 @@ const LearningTab: React.FC = () => {
         
         {/* スライド11 */}
         <div className={`slide p-8 min-h-[500px] relative ${currentSlide === 11 ? 'block' : 'hidden'} bg-white`}>
-          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">オーバーシュートの紹介</h1>
+          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">Overshoot: 概念と重要性</h1>
           <div className="content text-lg text-gray-800">
-            <h3 className="text-lg font-bold mb-2 text-indigo-800">オーバーシュートの目的:</h3>
-            <p>オーバーシュートの目的は、再会合中の<strong>過度の追い越し速度を安全に消散させる</strong>、または<strong>過度の角度ずれを減少させる</strong>ことです。</p>
-            
-            <h3 className="text-lg font-bold mt-4 mb-2 text-indigo-800">主要ポイント:</h3>
+            <h3 className="text-lg font-bold mb-2 text-indigo-800">Overshootとは？</h3>
+            <p className="mb-4">Overshootは、Rejoin (再会合) 中に長機に対する**過度な接近率 (Vc)** や**不適切な角度 (AA/HCA)** が発生し、安全な集合が困難と判断した場合に、これを解消するために行う意図的な機動です。</p>
+
+            <h3 className="text-lg font-bold mt-4 mb-2 text-indigo-800">なぜOvershootが必要か？</h3>
             <ul className="list-disc pl-6 space-y-2 my-4">
-              <li>再会合を「救う」ためにオーバーシュートを遅らせない</li>
-              <li>常にリードと先行機を視界に入れる</li>
-              <li>早めにオーバーシュートの判断をする</li>
-              <li>オーバーシュートを他の編隊メンバーに伝える</li>
+              <li>衝突のリスクを回避するため。</li>
+              <li>無理な修正操作による危険な状況 (例: 視界喪失、失速) を防ぐため。</li>
+              <li>安全かつ確実にRejoinを完了させるための、プロフェッショナルな判断と技術です。</li>
             </ul>
-            
+
+            <h3 className="text-lg font-bold mt-6 mb-2 text-indigo-800">実行時の共通重要事項:</h3>
+            <ul className="list-disc pl-6 space-y-2 my-4">
+              <li>**早期判断:** 「危ないかも」と感じたら、Overshootの実行をためらわない。Rejoinを無理に「救おう」としないこと。</li>
+              <li>**視界確保:** 常にリード（長機）と先行機を視界内に維持する。</li>
+              <li>**伝達:** Overshootを行う際は、他の編隊メンバーに無線等で明確に伝える。（例: "DA-K 2, Overshooting"）</li>
+            </ul>
+
             <div className="important-box bg-amber-50 border-l-4 border-amber-500 p-4 my-6 text-amber-900">
-              <p><strong>安全第一:</strong> 適切に実行されたオーバーシュートは、過度の接近速度や角度ずれで無理に再会合するよりも安全でプロフェッショナルです。</p>
+              <p><strong>安全第一:</strong> 適切に実行されたOvershootは、危険を認識しながら無理な操作を続けるよりも、はるかに安全で正しい選択です。</p>
             </div>
           </div>
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">11/20</div>
@@ -458,18 +425,20 @@ const LearningTab: React.FC = () => {
         
         {/* スライド12 */}
         <div className={`slide p-8 min-h-[500px] relative ${currentSlide === 12 ? 'block' : 'hidden'} bg-white`}>
-          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">直進再会合のオーバーシュート</h1>
+          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">Overshoot: 直進時の実行手順</h1>
           <div className="content text-lg text-gray-800">
-            <h3 className="text-lg font-bold mb-2 text-indigo-800">実行:</h3>
+            <p className="mb-4">直進Rejoin中のOvershootは、主に**過度な接近率 (Vc)** が原因で発生します。</p>
+            <h3 className="text-lg font-bold mb-2 text-indigo-800">実行手順:</h3>
             <ol className="list-decimal pl-6 space-y-2 my-4">
-              <li>過度の追い越し速度を認識したら、すぐにアイドルとスピードブレーキ（必要な場合）を選択</li>
-              <li>結果として、数機分の機体幅の外側で純粋な対気速度オーバーシュートになるはず</li>
-              <li>わずかに離反するベクトルを維持</li>
-              <li>肩越しにリードを見ながら、リードに向かって旋回しないよう注意</li>
-              <li>等速に達する直前にスピードブレーキを格納し、出力を上げる</li>
-              <li>エネルギー管理により後方に落ちることを防止</li>
+              <li>過度の接近速度を認識したら、**直ちにアイドルパワーを選択**し、必要に応じて**スピードブレーキを使用**します。</li>
+              <li>機首をわずかに長機から離れる方向（Joinしていたサイド）に向け、**数機幅分オフセットした平行経路**を取ります。</li>
+              <li>長機を追い越す際は、**わずかに離れていくベクトル**を維持します。</li>
+              <li>**肩越しに長機を視認**し続け、不用意に長機へ向かわないように注意します。</li>
+              <li>長機と**同速になる直前**にスピードブレーキを格納し、**パワーを追加**して後方に落ちないようにエネルギーを管理します。</li>
+              <li>安全な間隔と速度になったら、再度Join-upを試みるか、指示を待ちます。</li>
             </ol>
-            
+
+            {/* 図はそのまま流用 */}
             <div className="relative h-[300px] w-full bg-blue-100 rounded-lg my-6 p-4">
               <div className="absolute top-[150px] left-[400px] w-[40px] h-[40px] bg-indigo-800 transform rotate-0" style={{clipPath: 'polygon(50% 0%, 85% 50%, 50% 100%, 15% 50%)'}}></div>
               <div className="absolute top-[170px] left-[500px] w-[40px] h-[40px] bg-red-700 transform rotate-15" style={{clipPath: 'polygon(50% 0%, 85% 50%, 50% 100%, 15% 50%)'}}></div>
@@ -484,29 +453,47 @@ const LearningTab: React.FC = () => {
         
         {/* スライド13 */}
         <div className={`slide p-8 min-h-[500px] relative ${currentSlide === 13 ? 'block' : 'hidden'} bg-white`}>
-          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">旋回再会合のオーバーシュート</h1>
+          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">Overshoot: 旋回時の判断と基本操作</h1>
           <div className="content text-lg text-gray-800">
-            <h3 className="text-lg font-bold mb-2 text-indigo-800">実行:</h3>
-            <ol className="list-decimal pl-6 space-y-2 my-4">
-              <li>早めにオーバーシュートの判断をする</li>
-              <li>約2機分の機体長の間隔を保ちながらリードの低い6時方向を横切る</li>
-              <li>機首-尾部の間隔が維持されていることを確認</li>
-              <li>必要に応じてアイドルとスピードブレーキを選択</li>
-              <li>旋回の外側に出たら、バンクとバックスティック圧を使用してルートエシェロンで安定させる</li>
-              <li>オーバーシュート中はルートエシェロンより高い位置を飛行しない</li>
-            </ol>
-            
+            <p className="mb-4">旋回Rejoin中のOvershootは、**過度な接近率 (Vc)** に加え、**不適切なアスペクトアングル (AA)** や**角度ずれ (HCA)** が複合的に絡むことが多いです。</p>
+
+            <h3 className="text-lg font-bold mt-4 mb-2 text-indigo-800">Overshootを判断する主な状況:</h3>
+            <ul className="list-disc pl-6 space-y-2 my-4">
+              <li>現在のVcやAAのままでは、安全に減速・修正して目標位置に入れないと予測される場合。</li>
+              <li>接近率を抑えるためにバンクを深くすると、長機が視界から隠れてしまう（ブラインドになる）リスクが高い場合。</li>
+              <li>長機に対するAAが大きくなりすぎ（High AA）、適切なパーシュートカーブを描けない場合。</li>
+            </ul>
+
+            <h3 className="text-lg font-bold mt-4 mb-2 text-indigo-800">基本的な操作方針:</h3>
+            <ul className="list-disc pl-6 space-y-2 my-4">
+              <li>**旋回外側へ機動:** 安全な間隔と視界を確保するため、通常は長機の旋回円の外側へ移動します。</li>
+              <li>**パワー＆バンク調整:** アイドルパワーやスピードブレーキを使用し、バンク角を調整して接近率と角度ずれを制御します。</li>
+              <li>**高度維持:** 基本的に長機より低い高度を維持し、上昇して視界を失わないようにします。</li>
+            </ul>
+             <p className="mt-6">具体的な実行手順は次のスライドで詳しく見ていきます。</p>
+
             <div className="important-box bg-amber-50 border-l-4 border-amber-500 p-4 my-6 text-amber-900">
-              <p><strong>重要概念:</strong> 対気速度や角度ずれが大きいほど、問題を解決するために必要な旋回半径も大きくなります。</p>
-            </div>
+               <p><strong>重要概念:</strong> 対気速度や角度ずれが大きいほど、問題を安全に解決するために必要な旋回半径（スペース）も大きくなります。早めの判断が重要です。</p>
+             </div>
           </div>
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">13/20</div>
         </div>
         
         {/* スライド14 */}
         <div className={`slide p-8 min-h-[500px] relative ${currentSlide === 14 ? 'block' : 'hidden'} bg-white`}>
-          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">旋回再会合オーバーシュート: 視覚化</h1>
+          <h1 className="slide-title text-2xl text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">Overshoot: 旋回時の実行手順と視覚化</h1>
           <div className="content text-lg text-gray-800">
+            <h3 className="text-lg font-bold mb-2 text-indigo-800">実行手順 (旋回外側へ):</h3>
+            <ol className="list-decimal pl-6 space-y-2 my-4">
+              <li>Overshootをコールし、アイドルパワー、必要ならスピードブレーキを使用。</li>
+              <li>バンク角をやや浅くするか、一時的に逆バンクを入れるなどして、長機の**低い6時方向 (Low Six)** を目指して横切ります。</li>
+              <li>横切る際は、**最低2機長程度の機首-尾部間隔 (Nose-Tail Clearance)** を確保します。</li>
+              <li>長機の旋回円の外側に出たら、バンクとG（バックスティック圧）を調整し、長機と**平行な飛行経路**を維持しつつ安定させます (通常、Route Echelonの位置関係)。</li>
+              <li>長機より高くならないように注意します。</li>
+              <li>接近率と角度ずれがコントロールできたら、パワーを追加し、再度旋回内側へ移動して適切なAAを再確立し、Rejoinを完了させます。</li>
+            </ol>
+
+             {/* 図はそのまま流用 */}
             <div className="relative h-[300px] w-full bg-blue-100 rounded-lg my-6 p-4">
               <div className="absolute w-[250px] h-[250px] border-2 border-dashed border-indigo-800 rounded-full top-[25px] left-[325px]"></div>
               <div className="absolute top-[25px] left-[450px] w-[40px] h-[40px] bg-indigo-800 transform -rotate-30" style={{clipPath: 'polygon(50% 0%, 85% 50%, 50% 100%, 15% 50%)'}}></div>
@@ -515,14 +502,11 @@ const LearningTab: React.FC = () => {
               <div className="absolute top-[170px] left-[460px] text-sm text-red-800 font-semibold">ウイングマン</div>
               <div className="absolute w-[100px] h-[100px] border-2 border-dashed border-red-600 rounded-full top-[100px] left-[400px]"></div>
               <div className="absolute top-[210px] left-[410px] text-red-800 text-sm font-semibold">オーバーシュート経路</div>
-              <div className="absolute top-[60px] left-[500px] text-sm text-indigo-900 font-semibold">1. 過度の接近速度を認識</div>
-              <div className="absolute top-[180px] left-[500px] text-sm text-indigo-900 font-semibold">2. リードの6時方向を横切る</div>
+              <div className="absolute top-[60px] left-[500px] text-sm text-indigo-900 font-semibold">1. Vc/AA過大を認識</div>
+              <div className="absolute top-[180px] left-[500px] text-sm text-indigo-900 font-semibold">2. リードのLow Sixを横切る</div>
               <div className="absolute top-[250px] left-[400px] text-sm text-indigo-900 font-semibold">3. 旋回外側で安定</div>
             </div>
-            
-            <div className="important-box bg-amber-50 border-l-4 border-amber-500 p-4 my-6 text-amber-900">
-              <p><strong>覚えておくこと:</strong> 距離、視線、角度ずれが制御できたら、リードの旋回内側に戻り、適切なアスペクト角を再確立し、再会合を完了します。</p>
-            </div>
+
           </div>
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">14/20</div>
         </div>
