@@ -6,6 +6,57 @@ interface SlideCategory {
   slides: number[];
 }
 
+// マニューバービューアコンポーネント
+interface ManeuverViewerProps {
+  slideNumber: number;
+  isVisible: boolean;
+}
+
+const ManeuverViewer: React.FC<ManeuverViewerProps> = ({ slideNumber, isVisible }) => {
+  // スライド番号に基づいて表示するHTMLファイルを決定
+  const getManeuverFile = (slideNum: number): string => {
+    // 特定のスライドに対応するマニューバーファイルをマッピング
+    const maneuverMap: Record<number, string> = {
+      5: '/maneuver/straight_join.html', // 例：スライド5にはstraight_join.htmlを表示
+      7: '/maneuver/turning_join.html',  // 例：スライド7にはturning_join.htmlを表示
+      12: '/maneuver/straight_overshoot.html',
+      14: '/maneuver/turning_overshoot.html',
+      18: '/maneuver/breakout.html',
+      // 必要に応じて他のスライドとファイルのマッピングを追加
+    };
+
+    return maneuverMap[slideNum] || '';
+  };
+
+  const maneuverFile = getManeuverFile(slideNumber);
+
+  if (!isVisible || !maneuverFile) {
+    return null;
+  }
+
+  return (
+    <div className="maneuver-viewer mt-4 border-2 border-indigo-200 rounded-lg overflow-hidden">
+      <div className="bg-indigo-50 py-2 px-4 font-semibold text-indigo-800 flex justify-between items-center">
+        <span>詳細図解ビューア</span>
+        <a 
+          href={maneuverFile}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700"
+        >
+          別ウィンドウで開く
+        </a>
+      </div>
+      <iframe 
+        src={maneuverFile} 
+        className="w-full h-[500px]"
+        title={`Maneuver Visualization for Slide ${slideNumber}`}
+        allowFullScreen
+      />
+    </div>
+  );
+};
+
 // スライドカテゴリー定義
 const slideCategories: SlideCategory[] = [
   {
@@ -33,6 +84,7 @@ const slideCategories: SlideCategory[] = [
 const LearningTab: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(1);
   const [showContentSelector, setShowContentSelector] = useState(false);
+  const [showManeuver, setShowManeuver] = useState(false);
   const totalSlides = 20;
 
   const nextSlide = () => {
@@ -62,6 +114,17 @@ const LearningTab: React.FC = () => {
       setCurrentSlide(category.slides[0]);
       setShowContentSelector(false);
     }
+  };
+
+  // 特定のスライドにマニューバービューアが利用可能かチェック
+  const hasManeuverViewer = (slideNum: number): boolean => {
+    const slidesWithManeuvers = [5, 7, 12, 14, 18]; // マニューバー対応スライド
+    return slidesWithManeuvers.includes(slideNum);
+  };
+
+  // トグルマニューバービューア
+  const toggleManeuverViewer = () => {
+    setShowManeuver(!showManeuver);
   };
 
   useEffect(() => {
@@ -99,12 +162,22 @@ const LearningTab: React.FC = () => {
               次へ
             </button>
           </div>
-          <button 
-            className="nav-btn bg-amber-400 text-indigo-900 border-none px-4 py-2 mx-1 cursor-pointer rounded font-bold hover:bg-amber-300"
-            onClick={() => setShowContentSelector(!showContentSelector)}
-          >
-            目次
-          </button>
+          <div>
+            {hasManeuverViewer(currentSlide) && (
+              <button 
+                className="nav-btn bg-green-500 text-white border-none px-4 py-2 mx-1 cursor-pointer rounded font-bold hover:bg-green-600 mr-2"
+                onClick={toggleManeuverViewer}
+              >
+                {showManeuver ? '図解を隠す' : '図解を表示'}
+              </button>
+            )}
+            <button 
+              className="nav-btn bg-amber-400 text-indigo-900 border-none px-4 py-2 mx-1 cursor-pointer rounded font-bold hover:bg-amber-300"
+              onClick={() => setShowContentSelector(!showContentSelector)}
+            >
+              目次
+            </button>
+          </div>
         </div>
 
         {/* コンテンツセレクター */}
@@ -158,6 +231,7 @@ const LearningTab: React.FC = () => {
               <p><strong>安全第一:</strong> 編隊飛行は正確な操縦、適切な判断、明確なコミュニケーションが必要です。常に手順よりも安全を優先してください。</p>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">1/20</div>
         </div>
         
@@ -182,6 +256,7 @@ const LearningTab: React.FC = () => {
               </ul>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">2/20</div>
         </div>
         
@@ -217,6 +292,7 @@ const LearningTab: React.FC = () => {
               <p><strong>注意:</strong> これらは標準諸元です。長機はこれらの標準から逸脱する際は、僚機にその旨を伝えるべきです。</p>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">3/20</div>
         </div>
         
@@ -246,6 +322,7 @@ const LearningTab: React.FC = () => {
               <p><strong>コミュニケーションが重要:</strong> すべての視覚信号は、後続機のために各ウイングマンが繰り返すべきです。</p>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">4/20</div>
         </div>
         
@@ -269,6 +346,7 @@ const LearningTab: React.FC = () => {
               <div className="absolute top-[140px] left-[150px] w-[400px] border-t-2 border-dashed border-gray-600"></div>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">5/20</div>
         </div>
         
@@ -304,6 +382,7 @@ const LearningTab: React.FC = () => {
               <p><strong>エネルギー管理:</strong> 速度（Vc）管理は常に行ってください。オーバーシュートを避けるには、出力低減のタイミングが重要です。</p>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">6/20</div>
         </div>
         
@@ -329,6 +408,7 @@ const LearningTab: React.FC = () => {
               <div className="absolute top-[50px] left-[400px] transform -rotate-30 text-sm text-indigo-900 font-semibold">旋回円</div>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">7/20</div>
         </div>
         
@@ -344,6 +424,7 @@ const LearningTab: React.FC = () => {
             </ul>
             <p>6AAから接近するのは、長機が監視しやすく、かつAspectのコントロールが容易だからです。</p>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">8/20</div>
         </div>
         
@@ -360,6 +441,7 @@ const LearningTab: React.FC = () => {
               <li>旋回外側で、所定の隊形に占位します。</li>
             </ol>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">9/20</div>
         </div>
         
@@ -392,6 +474,7 @@ const LearningTab: React.FC = () => {
               </ul>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">10/20</div>
         </div>
         
@@ -420,6 +503,7 @@ const LearningTab: React.FC = () => {
               <p><strong>安全第一:</strong> 適切に実行されたOvershootは、危険を認識しながら無理な操作を続けるよりも、はるかに安全で正しい選択です。</p>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">11/20</div>
         </div>
         
@@ -448,6 +532,7 @@ const LearningTab: React.FC = () => {
               <div className="absolute h-[40px] top-[180px] left-[520px] border-l-2 border-dashed border-red-600 transform rotate-75"></div>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">12/20</div>
         </div>
         
@@ -476,6 +561,7 @@ const LearningTab: React.FC = () => {
                <p><strong>重要概念:</strong> 対気速度や角度ずれが大きいほど、問題を安全に解決するために必要な旋回半径（スペース）も大きくなります。早めの判断が重要です。</p>
              </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">13/20</div>
         </div>
         
@@ -508,6 +594,7 @@ const LearningTab: React.FC = () => {
             </div>
 
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">14/20</div>
         </div>
         
@@ -540,6 +627,7 @@ const LearningTab: React.FC = () => {
               <p><strong>実際には:</strong> ほとんどのオーバーシュートは対気速度と角度の両方の問題が組み合わさっています。</p>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">15/20</div>
         </div>
         
@@ -575,6 +663,7 @@ const LearningTab: React.FC = () => {
               <div className="absolute top-[150px] left-[250px] text-green-800 text-sm font-semibold">500フィートの間隔を維持</div>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">16/20</div>
         </div>
         
@@ -598,6 +687,7 @@ const LearningTab: React.FC = () => {
               <li>再会合が可能な場合、ウイングマンに明確な指示を与える</li>
             </ul>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">17/20</div>
         </div>
         
@@ -624,6 +714,7 @@ const LearningTab: React.FC = () => {
               </ul>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">18/20</div>
         </div>
         
@@ -658,6 +749,7 @@ const LearningTab: React.FC = () => {
               <p><strong>心がけること:</strong> スムーズで制御された再会合は、過度に高速または攻撃的な再会合よりも常にプロフェッショナルです。</p>
             </div>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">19/20</div>
         </div>
         
@@ -687,6 +779,7 @@ const LearningTab: React.FC = () => {
             
             <p className="text-center mt-6 font-bold">安全かつ効果的な編隊飛行のために、継続的な練習と適切な監督が必要です。</p>
           </div>
+          <ManeuverViewer slideNumber={currentSlide} isVisible={showManeuver} />
           <div className="absolute bottom-2 right-4 text-sm text-gray-600">20/20</div>
         </div>
         
