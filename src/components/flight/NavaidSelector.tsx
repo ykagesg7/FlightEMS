@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactSelect from 'react-select';
-import { calculateOffsetPoint } from '../utils/offset';
-import { reactSelectStyles } from '../utils/reactSelectStyles';
+import { calculateOffsetPoint } from '../../utils/offset';
+import { reactSelectStyles } from '../../utils/reactSelectStyles';
 
 interface NavaidSelectorProps {
   options: any[];

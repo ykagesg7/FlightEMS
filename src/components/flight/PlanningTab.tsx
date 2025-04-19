@@ -1,11 +1,10 @@
 import React from 'react';
-import { FlightPlan, RouteSegment, Airport, Waypoint } from '../types';
-import { formatTime, calculateDistance, calculateETE, calculateETA, groupBy, calculateTAS, calculateMach, calculateAirspeeds } from '../utils';
-import { calculateMagneticBearing } from '../utils/bearing';
-import { formatBearing } from '../utils/format';
+import { FlightPlan, RouteSegment, Airport, Waypoint } from '../../types';
+import { formatTime, calculateDistance, calculateETE, calculateETA, groupBy, calculateTAS, calculateMach, calculateAirspeeds } from '../../utils';
+import { calculateMagneticBearing } from '../../utils/bearing';
 import FlightParameters from './FlightParameters';
 import RoutePlanning from './RoutePlanning';
-import FlightSummary from './FlightSummary';
+import { FlightSummary } from './FlightSummary';
 
 interface PlanningTabProps {
   flightPlan: FlightPlan;
@@ -80,87 +79,66 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
     let cumulativeEte = 0;
 
     // 出発地、経由地点、到着地を含む配列を作成
-    const allPoints = flightPlan.departure 
-      ? [
-          flightPlan.departure, 
-          ...flightPlan.waypoints, 
-          flightPlan.arrival
-        ].filter(Boolean)
+    const allPoints = flightPlan.departure
+      ? [flightPlan.departure, ...flightPlan.waypoints, flightPlan.arrival].filter(Boolean)
       : [];
 
     // 各セグメントごとに距離、方位、到着時刻を計算
     for (let i = 0; i < allPoints.length - 1; i++) {
       const currentPoint = allPoints[i];
       const nextPoint = allPoints[i + 1];
-      
-      if (currentPoint && nextPoint) {
-        // 距離を計算
-        const distance = calculateDistance(
-          currentPoint.latitude,
-          currentPoint.longitude,
-          nextPoint.latitude,
-          nextPoint.longitude
-        );
-        
-        // 磁方位を計算
-        const bearing = calculateMagneticBearing(
-          currentPoint.latitude,
-          currentPoint.longitude,
-          nextPoint.latitude,
-          nextPoint.longitude
-        );
-        
-        // TASを計算 - 高精度計算モデル使用
-        const airspeedsResult = calculateAirspeeds(
-          flightPlan.speed, 
-          flightPlan.altitude, 
-          flightPlan.groundTempC, 
-          flightPlan.groundElevationFt
-        );
-        // 高精度計算が失敗した場合は従来の計算方法で代替
-        const tas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(flightPlan.speed, flightPlan.altitude);
-        
-        // このセグメントのETEを計算（分単位）
-        const segmentEteMinutes = calculateETE(distance, tas);
-        
-        // 累積ETEを更新
-        cumulativeEte += segmentEteMinutes;
-        
-        // このセグメントのETAを計算
-        const segmentEta = calculateETA(flightPlan.departureTime, cumulativeEte);
-        
-        // ルートセグメント情報を追加
-        routeSegments.push({
-          from: 'id' in currentPoint 
-            ? (currentPoint as Waypoint).id 
-            : (currentPoint as Airport).properties?.id || (currentPoint as Airport).value,
-          to: 'id' in nextPoint 
-            ? (nextPoint as Waypoint).id 
-            : (nextPoint as Airport).properties?.id || (nextPoint as Airport).value,
-          speed: flightPlan.speed,
-          bearing: bearing,
-          altitude: flightPlan.altitude,
-          eta: segmentEta,
-          distance: distance
-        });
-        
-        // 総距離を累積
-        totalDistance += distance;
-      }
+      if (!currentPoint || !nextPoint) continue;
+
+      const distance = calculateDistance(
+        currentPoint.latitude,
+        currentPoint.longitude,
+        nextPoint.latitude,
+        nextPoint.longitude
+      );
+      const bearing = calculateMagneticBearing(
+        currentPoint.latitude,
+        currentPoint.longitude,
+        nextPoint.latitude,
+        nextPoint.longitude
+      );
+      const airspeedsResult = calculateAirspeeds(
+        flightPlan.speed,
+        flightPlan.altitude,
+        flightPlan.groundTempC,
+        flightPlan.groundElevationFt
+      );
+      const tas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(flightPlan.speed, flightPlan.altitude);
+      const segmentEteMinutes = calculateETE(distance, tas);
+      cumulativeEte += segmentEteMinutes;
+      const segmentEta = calculateETA(flightPlan.departureTime, cumulativeEte);
+      routeSegments.push({
+        from: 'id' in currentPoint
+          ? (currentPoint as Waypoint).id
+          : (currentPoint as Airport).properties?.id || (currentPoint as Airport).value,
+        to: 'id' in nextPoint
+          ? (nextPoint as Waypoint).id
+          : (nextPoint as Airport).properties?.id || (nextPoint as Airport).value,
+        speed: flightPlan.speed,
+        bearing,
+        altitude: flightPlan.altitude,
+        eta: segmentEta,
+        distance,
+      });
+      totalDistance += distance;
     }
 
-    // 全体のTAS、Mach計算 - 高精度計算モデル使用
+    // 全体TAS、Mach計算
     const airspeedsResult = calculateAirspeeds(
       flightPlan.speed, 
       flightPlan.altitude, 
       flightPlan.groundTempC, 
       flightPlan.groundElevationFt
     );
-    // 高精度計算が失敗した場合は従来の計算方法で代替
+    // 高精度計算が失敗した場合、従来の計算方法で代替
     const tas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(flightPlan.speed, flightPlan.altitude);
     const mach = airspeedsResult ? airspeedsResult.mach : calculateMach(tas, flightPlan.altitude);
 
-    // 全体のETE、ETAを計算
+    // 全体ETE、ETAを計算
     const eteMinutes = calculateETE(totalDistance, tas);
     const eteFormatted = formatTime(eteMinutes);
     const etaFormatted = calculateETA(flightPlan.departureTime, eteMinutes);

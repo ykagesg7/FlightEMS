@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import TabsComponent from './components/Tabs';
+import TabsComponent from './components/ui/Tabs';
 import './index.css';
 import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
-import MDXTester from './components/MDXTester';
+import MDXTester from './components/mdx/MDXTester';
 
 function App() {
   const [showMDXTester, setShowMDXTester] = useState(false);

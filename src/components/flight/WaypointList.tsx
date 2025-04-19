@@ -1,9 +1,9 @@
 import React, { useReducer } from 'react';
-import { FlightPlan, Waypoint } from '../types';
+import { FlightPlan, Waypoint } from '../../types';
 import { MapPin, ChevronUp, ChevronDown } from 'lucide-react';
-import { formatDMS, decimalToDMS, dmsToDecimal } from '../utils';
-import { formatBearing, formatDistance } from '../utils/format';
-import { calculateOffsetPoint as offsetCalculateOffsetPoint } from '../utils/offset';
+import { formatDMS, decimalToDMS, dmsToDecimal } from '../../utils';
+import { formatBearing, formatDistance } from '../../utils/format';
+import { calculateOffsetPoint as offsetCalculateOffsetPoint } from '../../utils/offset';
 
 interface WaypointListProps {
   flightPlan: FlightPlan;
@@ -152,7 +152,7 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
         const distanceNum = parseFloat(editingDistance);
 
         if (isNaN(bearingNum) || isNaN(distanceNum)) {
-          console.error('[ERROR] 無効な数値入力:', { bearing: editingBearing, distance: editingDistance });
+          console.error('[ERROR] 無効な数値入力', { bearing: editingBearing, distance: editingDistance });
           return;
         }
 
@@ -179,7 +179,7 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
           };
           // IDと名前を更新 (formattedBearingを使用)
           updatedWaypoint.id = `${updatedWaypoint.metadata!.baseNavaid}_${formattedBearing}/${formattedDistance}`;
-          updatedWaypoint.name = `${updatedWaypoint.name.split(' ')[0]} (${formattedBearing}/${formattedDistance})`;
+          updatedWaypoint.name = `${updatedWaypoint.name?.split(' ')[0]} (${formattedBearing}/${formattedDistance})`; // 名前の存在をチェック
         }
       }
     } else if (editingMode === 'position') {
@@ -244,7 +244,7 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
                 )}
               </div>
 
-              {/* 編集モードの場合、保存とキャンセルボタンを表示（共通） */}
+              {/* 編集モードの場合、保存とキャンセルボタンを表示 */}
               {editingMode !== null && editingIndex === index && (
                 <div className="space-x-2">
                   <button onClick={handleSaveEdit} className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">保存</button>
@@ -252,7 +252,7 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
                 </div>
               )}
 
-              {/* ウェイポイントの移動と削除ボタン（共通） */}
+              {/* ウェイポイントの移動と削除ボタン */}
               <div className="flex items-center space-x-2">
                 <button onClick={() => handleMoveWaypointUp(index)} className="p-1 rounded-full hover:bg-gray-700 text-gray-50" aria-label="Move Waypoint Up"><ChevronUp className="w-4 h-4" /></button>
                 <button onClick={() => handleMoveWaypointDown(index)} className="p-1 rounded-full hover:bg-gray-700 text-gray-50" aria-label="Move Waypoint Down"><ChevronDown className="w-4 h-4" /></button>
@@ -267,7 +267,7 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
               {/* ID (2行目) - 編集モード */}
               {editingMode === 'id' && editingIndex === index ? (
                 <div className="space-y-2">
-                  {/* 磁方位と距離の入力 (オフセットWaypointのみ) - 常に表示 */}
+                  {/* 磁方位と距離の入力(オフセットWaypointのみ) - 常に表示 */}
                   <>
                     <div>
                       <label className="block text-sm font-medium text-gray-400">磁方位(°)</label>
@@ -333,7 +333,7 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
                   <div onClick={() => handleStartEdit(index, 'position')} className="cursor-pointer hover:underline inline-block">
                     {formatDMS(waypoint.latitude, waypoint.longitude)}
                   </div>
-                  <div>位置(Degree)： {waypoint.longitude.toFixed(4)}, {waypoint.latitude.toFixed(4)}</div>
+                  <div>位置(Degree): {waypoint.longitude.toFixed(4)}, {waypoint.latitude.toFixed(4)}</div>
                 </div>
               )}
             </div>

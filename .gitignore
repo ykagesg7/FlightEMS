@@ -33,3 +33,9 @@ dist-ssr
 # local env files
 .env*.local
 .env.production
+
+# Ignore temporary and backup files
+temp/
+*.txt
+*.ps1
+*-original.tsx

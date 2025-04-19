@@ -1,16 +1,16 @@
 import React, { useCallback, useMemo, useEffect, useState } from 'react';
-import { FlightPlan } from '../types';
+import { FlightPlan } from '../../types';
 import { 
   parseTimeString, 
   SPEED_INCREMENT, 
   ALTITUDE_INCREMENT,
   calculateAirspeeds,
   calculateCASIncrementForMach
-} from '../utils';
+} from '../../utils';
 import { ChevronUp, ChevronDown, Clock, Gauge, BarChart, Thermometer } from 'lucide-react';
 import { toZonedTime, format } from 'date-fns-tz';
-import { fetchWeatherData } from '../api/weather';
-import { useWeatherCache, CACHE_DURATION, WeatherData } from '../contexts/WeatherCacheContext';
+import { fetchWeatherData } from '../../api/weather';
+import { useWeatherCache, CACHE_DURATION, WeatherData } from '../../contexts/WeatherCacheContext';
 
 interface FlightParametersProps {
   flightPlan: FlightPlan;
@@ -77,7 +77,6 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
       flightPlan.groundTempC, 
       flightPlan.groundElevationFt
     ) * 10; // 0.001 -> 0.01へ変更のため10倍
-    
     setFlightPlan(prev => ({ ...prev, speed: Math.round(prev.speed + increment) }));
   }, [flightPlan, setFlightPlan]);
 
@@ -88,7 +87,6 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
       flightPlan.groundTempC, 
       flightPlan.groundElevationFt
     ) * 10; // 0.001 -> 0.01へ変更のため10倍
-    
     setFlightPlan(prev => ({ ...prev, speed: Math.max(0, Math.round(prev.speed - increment)) }));
   }, [flightPlan, setFlightPlan]);
 
@@ -99,24 +97,24 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
       const elevation = flightPlan.departure.properties?.["Elev(ft)"];
       
       if (elevation !== undefined) {
-        console.log(`空港「${flightPlan.departure.name}」の標高 ${elevation}ft を設定しました`);
+        console.log(`空港、${flightPlan.departure.name}の標高${elevation}ft を設定しました`);
         setFlightPlan(prev => ({
           ...prev,
           groundElevationFt: Number(elevation)
         }));
       }
 
-      // 地上気温の設定 (キャッシュ確認と利用)
+      // 地上気温の設定(キャッシュ確認と利用)
       if (flightPlan.departure.latitude && flightPlan.departure.longitude) {
         const airportId = flightPlan.departure.value; // 空港ID
         const cachedEntry = weatherCache[airportId];
         const now = Date.now();
         
-        // キャッシュが存在し、かつ有効期限内の場合はキャッシュを使用
+        // キャッシュが存在し、かつ有効期限内の場合、キャッシュを使用
         if (cachedEntry && (now - cachedEntry.timestamp < CACHE_DURATION)) {
           const cachedTemp = cachedEntry.data.current?.temp_c;
           if (cachedTemp !== undefined) {
-            console.log(`キャッシュから空港「${flightPlan.departure.name}」の地上気温 ${cachedTemp}℃ を設定しました`);
+            console.log(`キャッシュから空港、${flightPlan.departure.name}の地上気温 ${cachedTemp}°Cを設定しました`);
             setFlightPlan(prev => ({
               ...prev,
               groundTempC: Math.round(cachedTemp)
@@ -125,13 +123,13 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
           }
         }
         
-        // キャッシュがないか期限切れの場合はAPIから取得
+        // キャッシュがないか期限切れの場合、APIから取得
         setIsLoading(true);
         fetchWeatherData(flightPlan.departure.latitude, flightPlan.departure.longitude)
           .then((weatherData: WeatherData) => {
             if (weatherData.current?.temp_c !== undefined) {
               const temp_c = weatherData.current.temp_c;
-              console.log(`APIから空港「${flightPlan.departure?.name}」の地上気温 ${temp_c}℃ を取得・設定しました`);
+              console.log(`APIから空港、${flightPlan.departure?.name}の地上気温 ${temp_c}°Cを取得・設定しました`);
               setFlightPlan(prev => ({
                 ...prev,
                 groundTempC: Math.round(temp_c)
@@ -199,10 +197,10 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   const airportName = useMemo(() => {
     if (!flightPlan.departure) return "未選択";
     
-    return flightPlan.departure.name || 
-      flightPlan.departure.label || 
-      flightPlan.departure.properties?.name1 || 
-      flightPlan.departure.properties?.id || 
+    return flightPlan.departure.name ||
+      flightPlan.departure.label ||
+      flightPlan.departure.properties?.name1 ||
+      flightPlan.departure.properties?.id ||
       "未選択";
   }, [flightPlan.departure]);
 
@@ -251,34 +249,29 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
             <label className="block text-sm font-medium text-gray-300 mb-1">
               <Gauge size={16} className="inline-block mr-1" /> MACH
             </label>
-            <div className="flex">
-              <div className="px-2 py-1 border border-gray-600 rounded-l-md w-full bg-gray-700">
-                <span className="text-sm text-gray-50">{displayMach}</span>
-              </div>
+            <div className="flex items-center px-2 py-1 border border-gray-600 rounded-md bg-gray-700 text-gray-50">
+              <span className="flex-grow text-sm">{displayMach}</span>
               <div className="flex flex-col">
-                <button 
-                  className="bg-gray-600 px-2 text-gray-200 border-t border-r border-gray-600 rounded-tr-md hover:bg-gray-500"
+                <button
+                  className="px-1 text-gray-200 hover:text-white"
                   onClick={handleMachIncrement}
-                  aria-label="Increase MACH by 0.01"
+                  aria-label="Increase Mach"
                 >
                   <ChevronUp size={14} />
                 </button>
-                <button 
-                  className="bg-gray-600 px-2 text-gray-200 border-b border-r border-gray-600 rounded-br-md hover:bg-gray-500"
+                <button
+                  className="px-1 text-gray-200 hover:text-white"
                   onClick={handleMachDecrement}
-                  aria-label="Decrease MACH by 0.01"
+                  aria-label="Decrease Mach"
                 >
                   <ChevronDown size={14} />
                 </button>
               </div>
             </div>
-            <div className="mt-1 text-xs text-gray-400">
-              マッハ数（±0.01）
-            </div>
           </div>
         </div>
 
-        {/* 中央: 高度関連のパラメータ */}
+        {/* 中央: 高度と気温 */}
         <div className="space-y-3">
           <div className="mb-1">
             <label htmlFor="altitude" className="block text-sm font-medium text-gray-300 mb-1">
@@ -294,14 +287,14 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 onChange={(e) => handleAltitudeChange(parseInt(e.target.value, 10))}
               />
               <div className="flex flex-col">
-                <button 
+                <button
                   className="bg-gray-600 px-2 text-gray-200 border-t border-r border-gray-600 rounded-tr-md hover:bg-gray-500"
                   onClick={handleAltitudeIncrement}
                   aria-label="Increase altitude"
                 >
                   <ChevronUp size={14} />
                 </button>
-                <button 
+                <button
                   className="bg-gray-600 px-2 text-gray-200 border-b border-r border-gray-600 rounded-br-md hover:bg-gray-500"
                   onClick={handleAltitudeDecrement}
                   aria-label="Decrease altitude"
@@ -311,69 +304,69 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
               </div>
             </div>
             <div className="mt-1 text-xs text-gray-400">
-              <Thermometer size={12} className="inline-block mr-1" /> 当該高度気温: {displayAltitudeTemp}°C
+              高度気温: {displayAltitudeTemp}°C
             </div>
           </div>
 
-          <div className="mb-1">
-            <label htmlFor="groundElevationFt" className="block text-sm font-medium text-gray-300 mb-1">
-              <BarChart size={16} className="inline-block mr-1" /> 地上標高 (ft)
-            </label>
-            <input
-              type="number"
-              id="groundElevationFt"
-              name="groundElevationFt"
-              className="px-2 py-1 w-full border border-gray-600 rounded-md text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
-              value={flightPlan.groundElevationFt}
-              onChange={handleGroundElevationChange}
-            />
-            <div className="mt-1 text-xs text-gray-400">
-              出発: {airportName}
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label htmlFor="groundTemp" className="block text-sm font-medium text-gray-300 mb-1">
+                <Thermometer size={16} className="inline-block mr-1" /> 地上気温(°C)
+              </label>
+              <input
+                type="number"
+                id="groundTemp"
+                name="groundTemp"
+                className="px-2 py-1 w-full border border-gray-600 rounded-md text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
+                value={flightPlan.groundTempC}
+                onChange={handleGroundTempChange}
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="groundElevation" className="block text-sm font-medium text-gray-300 mb-1">
+                <BarChart size={16} className="inline-block mr-1" /> 地上標高(ft)
+              </label>
+              <input
+                type="number"
+                id="groundElevation"
+                name="groundElevation"
+                className="px-2 py-1 w-full border border-gray-600 rounded-md text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
+                value={flightPlan.groundElevationFt}
+                onChange={handleGroundElevationChange}
+              />
             </div>
           </div>
         </div>
 
-        {/* 右側: 時間/温度関連のパラメータ */}
+        {/* 右側: 時間設定 */}
         <div className="space-y-3">
-          <div className="mb-1">
-            <label htmlFor="departureTime" className="block text-sm font-medium text-gray-300 mb-1">
-              <Clock size={16} className="inline-block mr-1" /> 出発時刻
+          <div>
+            <label htmlFor="departure-time" className="block text-sm font-medium text-gray-300 mb-1">
+              <Clock size={16} className="inline-block mr-1" /> 出発時刻 (JST)
             </label>
             <input
               type="time"
-              id="departureTime"
-              name="departureTime"
+              id="departure-time"
+              name="departure-time"
               className="px-2 py-1 w-full border border-gray-600 rounded-md text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
               value={flightPlan.departureTime}
               onChange={handleDepartureTimeChange}
             />
             <div className="mt-1 text-xs text-gray-400">
-              UTC: {utcTime}
+              UTC時間: {utcTime}
             </div>
           </div>
-
-          <div className="mb-1">
-            <label htmlFor="groundTempC" className="block text-sm font-medium text-gray-300 mb-1">
-              <Thermometer size={16} className="inline-block mr-1" /> 地上気温 (°C)
-            </label>
-            <div className="relative">
-              <input
-                type="number"
-                id="groundTempC"
-                name="groundTempC"
-                className={`px-2 py-1 w-full border border-gray-600 rounded-md text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500 ${isLoading ? 'opacity-70' : ''}`}
-                value={flightPlan.groundTempC}
-                onChange={handleGroundTempChange}
-                disabled={isLoading}
-              />
-              {isLoading && (
-                <div className="absolute inset-y-0 right-2 flex items-center">
-                  <div className="animate-spin h-4 w-4 border-2 border-blue-500 rounded-full border-t-transparent"></div>
-                </div>
-              )}
+          
+          {/* 飛行場情報表示部分 */}
+          <div>
+            <h3 className="text-sm font-medium text-gray-300 mb-1">出発空港</h3>
+            <div className="px-2 py-1 border border-gray-600 rounded-md bg-gray-700 text-sm text-gray-50">
+              {airportName}
+              {isLoading && <span className="ml-2 text-xs text-blue-400">天気データ取得中...</span>}
             </div>
             <div className="mt-1 text-xs text-gray-400">
-              {flightPlan.departure ? `${airportName}の現在気温` : 'ISA: 15°C'}
+              標高: {flightPlan.groundElevationFt}ft | 気温: {flightPlan.groundTempC}°C
             </div>
           </div>
         </div>

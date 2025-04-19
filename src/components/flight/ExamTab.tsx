@@ -1,7 +1,7 @@
 import React from "react";
-import { useExam } from "../hooks/useExam";
-import QuestionCard from "../components/QuestionCard";
-import AnswerFeedback from "../components/AnswerFeedback";
+import { useExam } from "../../hooks/useExam";
+import QuestionCard from "../ui/QuestionCard";
+import AnswerFeedback from "../ui/AnswerFeedback";
 
 const ExamTab: React.FC = () => {
   const { questions, currentQuestionIndex, selectOption, isAnswered, selectedOption, nextQuestion } = useExam();

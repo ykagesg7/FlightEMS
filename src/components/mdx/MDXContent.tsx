@@ -1,6 +1,6 @@
 import React from 'react';
 import { MDXProvider } from '@mdx-js/react';
-import * as MDXComponents from './mdx';
+import * as MDXComponents from './index';
 
 // MDXでカスタマイズできるコンポーネント
 const components = {

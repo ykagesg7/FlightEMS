@@ -1,5 +1,5 @@
 import React from "react";
-import { ExamQuestion } from "../types";
+import { ExamQuestion } from "../../types";
 
 interface QuestionCardProps {
   question: ExamQuestion;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { FlightPlan, RouteSegment } from '../types';
-import { formatBearing } from '../utils/format';
-import { calculateTAS, calculateAirspeeds } from '../utils';
+import { FlightPlan, RouteSegment } from '../../types';
+import { formatBearing } from '../../utils/format';
+import { calculateTAS, calculateAirspeeds } from '../../utils';
 
 interface FlightSummaryProps {
   flightPlan: FlightPlan;
@@ -12,45 +12,40 @@ interface FlightSummaryProps {
  * Flight Summary コンポーネント
  * 総距離、ETE、ETAの表示を行う
  */
-const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan }) => {
-  // 時間文字列をDate型に変換する関数
+export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan }) => {
+  // 時刻文字列をDate型に変換する関数
   const parseTimeString = useCallback((timeStr: string): Date => {
-    // 不正な入力や空文字列は無効なDateとして扱う
     if (!timeStr || timeStr === '--' || typeof timeStr !== 'string') {
-        console.warn("Invalid or empty time string provided:", timeStr);
-        return new Date(NaN); // 無効なDateを返す
+      console.warn('Invalid or empty time string provided:', timeStr);
+      return new Date(NaN);
     }
-
-    const parts = timeStr.split(':').map(Number);
-    const date = new Date(); // 現在の日付で初期化
-
-    // hh:mm 形式か hh:mm:ss 形式かを判定し、数値が有効か確認
-    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-      // hh:mm 形式の場合、秒は0とする
-      date.setHours(parts[0], parts[1], 0, 0); // 時、分、秒(0)、ミリ秒(0)を設定
-       if (isNaN(date.getTime())) { // setHoursが失敗する場合がある (例: 25時など)
-         console.error("Failed to set hours/minutes (hh:mm):", timeStr);
-         return new Date(NaN);
-       }
-    } else if (parts.length === 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) {
-      // hh:mm:ss 形式の場合
-      date.setHours(parts[0], parts[1], parts[2], 0); // 時、分、秒、ミリ秒(0)を設定
-       if (isNaN(date.getTime())) { // setHoursが失敗する場合がある
-          console.error("Failed to set hours/minutes/seconds (hh:mm:ss):", timeStr);
-         return new Date(NaN);
-       }
-    } else {
-      // 上記以外の不正な形式の場合
-      console.error("Invalid time format detected:", timeStr);
-      return new Date(NaN); // 無効なDateを返す
-    }
-
-    // 最終的なDateオブジェクトが有効か確認 (冗長かもしれないが念のため)
-    if (isNaN(date.getTime())) {
-        console.error("Resulting date is invalid after parsing:", timeStr);
+    const parts = timeStr.split(':').map((p) => parseInt(p, 10));
+    const now = new Date();
+    const date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (parts.length === 2) {
+      const [h, m] = parts;
+      if (!isNaN(h) && !isNaN(m)) {
+        date.setHours(h, m, 0, 0);
+      } else {
+        console.error('Failed to parse hh:mm:', timeStr);
         return new Date(NaN);
+      }
+    } else if (parts.length === 3) {
+      const [h, m, s] = parts;
+      if (!isNaN(h) && !isNaN(m) && !isNaN(s)) {
+        date.setHours(h, m, s, 0);
+      } else {
+        console.error('Failed to parse hh:mm:ss:', timeStr);
+        return new Date(NaN);
+      }
+    } else {
+      console.error('Invalid time format detected:', timeStr);
+      return new Date(NaN);
     }
-
+    if (isNaN(date.getTime())) {
+      console.error('Resulting date is invalid after parsing:', timeStr);
+      return new Date(NaN);
+    }
     return date;
   }, []);
 
@@ -62,7 +57,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
     return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
   }, []);
 
-  // 状態として保持するルートセグメント (編集用)
+  // 状態として保持するルートセグメント(編集用)
   const [editableSegments, setEditableSegments] = useState<RouteSegment[]>(flightPlan.routeSegments || []);
   
   // 前回のrouteSegmentsの長さを記録
@@ -78,12 +73,12 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
   }, []);
 
   // flightPlan.routeSegmentsが外部から変更された場合にeditableSegmentsを同期
-  // ただし、ルートの数が変わった場合やルート自体が初期化された場合のみ同期する
+  // ただし、ルート数が変わった場合やルート自体が初期化された場合のみ同期する
   useEffect(() => {
     const currentLength = flightPlan.routeSegments?.length || 0;
     const prevLength = prevSegmentsLengthRef.current;
     
-    // ルートの数が変わった場合やルートが初期化された時のみ同期する
+    // ルート数が変わった場合やルートが初期化された時のみ同期する
     if (currentLength !== prevLength || currentLength === 0) {
       console.log(`ルートセグメント数が変更されました: ${prevLength} -> ${currentLength}、同期します`);
       setEditableSegments(flightPlan.routeSegments || []);
@@ -91,36 +86,35 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
       userEditedRef.current = false; // 同期されたためフラグをリセット
     } else if (flightPlan.routeSegments && !userEditedRef.current) {
       // ユーザー編集がなく、かつフライトプランのルートに変更がある場合
-      // ルートの構造的な変更（出発地/到着地変更など）があった可能性があるので同期
+      // ルートの構造的な変更（出発地/到着地変更など）があった可能性があるため同期
       const hasStructuralChanges = flightPlan.routeSegments.some((segment, index) => {
         const editableSegment = editableSegments[index];
-        return !editableSegment || 
-               segment.from !== editableSegment.from || 
+        return !editableSegment ||
+               segment.from !== editableSegment.from ||
                segment.to !== editableSegment.to ||
                segment.distance !== editableSegment.distance ||
                segment.bearing !== editableSegment.bearing;
       });
       
       if (hasStructuralChanges) {
-        console.log('ルートセグメントの構造的変更を検出しました、同期します');
+        console.log('ルートセグメント構造変更を検出しました、同期します');
         setEditableSegments(flightPlan.routeSegments);
       }
     }
   }, [flightPlan.routeSegments, editableSegments]);
 
-  // ルートセグメントの再計算
+  // ルートセグメントの計算
   const recalculateETAs = useCallback(() => {
     if (!editableSegments || editableSegments.length === 0 || !flightPlan.departureTime) {
-        console.warn("計算に必要な前提条件が揃っていません。");
-        return;
-    };
-
-    console.log("ETAs再計算を開始します...");
+      console.warn('計算に必要な前提条件が揃っていません');
+      return;
+    }
+    console.log('ETAs再計算を開始します.');
     
     // 出発時刻をパース
     let currentTime = parseTimeString(flightPlan.departureTime);
     if (isNaN(currentTime.getTime())) {
-        console.error("無効な出発時刻です:", flightPlan.departureTime);
+        console.error("無効な出発時刻です", flightPlan.departureTime);
         return;
     }
 
@@ -128,7 +122,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
     
     // 各セグメントを処理
     const calculatedSegments = editableSegments.map((segment, index) => {
-      console.log(`セグメント[${index}]を計算: ${segment.from} → ${segment.to}`, {
+      console.log(`セグメント[${index}]を計算 ${segment.from} -> ${segment.to}`, {
         distance: segment.distance,
         speed: segment.speed,
         altitude: segment.altitude
@@ -136,25 +130,25 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
       
       // 必須パラメータのチェック
       if (!segment.distance || isNaN(segment.distance) || segment.distance <= 0) {
-        console.warn(`セグメント[${index}]の距離が無効です:`, segment.distance);
+        console.warn(`セグメント[${index}]の距離が無効です`, segment.distance);
         return { ...segment, eta: '--:--:--' };
       }
       
       if (!segment.speed || isNaN(segment.speed) || segment.speed <= 0) {
-        console.warn(`セグメント[${index}]の速度が無効です:`, segment.speed);
+        console.warn(`セグメント[${index}]の速度が無効です`, segment.speed);
         return { ...segment, eta: '--:--:--' };
       }
       
-      // 高度に基づいてTASを計算 (高精度)
+      // 高度に基づくTASを計算(高精度)
       let tas = segment.speed; // デフォルトはCAS=TASと仮定
       
       if (segment.altitude && !isNaN(segment.altitude) && segment.altitude > 0) {
         // 高精度計算モデルを使用
         const airspeedsResult = calculateAirspeeds(
-          segment.speed, 
-          segment.altitude, 
-          flightPlan.groundTempC || 15, // デフォルト値として15℃
-          flightPlan.groundElevationFt || 0 // デフォルト値として0ft
+          segment.speed,
+          segment.altitude,
+          flightPlan.groundTempC ?? 15, // デフォルト値として15°C
+          flightPlan.groundElevationFt ?? 0 // デフォルト値として0ft
         );
         
         if (airspeedsResult) {
@@ -166,7 +160,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
             altitude: segment.altitude
           });
         } else {
-          // 高精度計算が失敗した場合は簡易計算を使用
+          // 高精度計算が失敗した場合、簡易計算を使用
           tas = calculateTAS(segment.speed, segment.altitude);
           console.log(`セグメント[${index}]のTAS簡易計算結果:`, {
             cas: segment.speed,
@@ -175,7 +169,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
           });
         }
       } else {
-        console.log(`セグメント[${index}]は高度指定がないため、CAS=TASとして計算:`, segment.speed);
+        console.log(`セグメント[${index}]は高度情報がないため、CAS=TASとして計算`, segment.speed);
       }
       
       // 所要時間の計算（分単位）
@@ -231,7 +225,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
     };
   }, [editableSegments, flightPlan.departureTime, flightPlan.groundTempC, flightPlan.groundElevationFt, parseTimeString, formatTime, calculateTAS, calculateAirspeeds]);
 
-  // 速度変更時の処理 (editableSegmentsを更新)
+  // 速度変更時の処理(editableSegmentsを更新)
   const handleSpeedChange = useCallback((index: number, newSpeed: string) => {
     const speed = parseInt(newSpeed, 10);
     if (newSpeed === '' || (isNaN(speed) || speed <= 0)) {
@@ -279,7 +273,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
     }, 10);
   }, [recalculateETAs, setFlightPlan]);
 
-  // 高度変更時の処理 (editableSegmentsを更新)
+  // 高度変更時の処理(editableSegmentsを更新)
   const handleAltitudeChange = useCallback((index: number, newAltitude: string) => {
     const altitude = parseInt(newAltitude, 10);
     if (newAltitude === '' || (isNaN(altitude) || altitude < 0)) {
@@ -331,7 +325,7 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
   useEffect(() => {
     // フライトパラメータが完全に初期化された後にのみ実行
     if (flightPlan.departureTime && editableSegments && editableSegments.length > 0) {
-      // 自動計算を制限するためのタイマーを設定（頻繁な再計算を防ぐ）
+      // 自動計算を制限するためタイマーを設定（頻繁な再計算を防ぐ）
       const timer = setTimeout(() => {
         const updatedPlan = recalculateETAs();
         if (updatedPlan) {
@@ -341,10 +335,10 @@ const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan
             eta: updatedPlan.eta,
             ete: updatedPlan.ete,
           }));
-          // 計算後はユーザー編集フラグをリセット
+          // 計算後のユーザー編集フラグをリセット
           userEditedRef.current = false;
         }
-      }, 1000); // 遅延を500msから1000msに
+      }, 1000); // 念のため500msから1000msに
       
       return () => clearTimeout(timer);
     }

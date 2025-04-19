@@ -1,11 +1,11 @@
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { cn } from '../utils';
+import { cn } from '../../utils';
 import React from 'react';
-import PlanningTab from './PlanningTab';
-import MapTab from './MapTab';
-import { FlightPlan } from '../types';
-import { calculateTAS, calculateMach, formatTime, calculateAirspeeds } from '../utils';
-import LearningTabMDX from './LearningTabMDX';
+import PlanningTab from '../flight/PlanningTab';
+import MapTab from '../map/MapTab';
+import { FlightPlan } from '../../types';
+import { calculateTAS, calculateMach, formatTime, calculateAirspeeds } from '../../utils';
+import LearningTabMDX from '../mdx/LearningTabMDX';
 
 const Tabs = TabsPrimitive.Root;
 
@@ -45,24 +45,26 @@ interface TabsProps {
 const TabsComponent: React.FC<TabsProps> = () => {
   const [activeTab, setActiveTab] = React.useState<string>('planning');
 
-  // FlightPlan Stateの初期化処理をTabsコンポーネントに移動
   const [flightPlan, setFlightPlan] = React.useState<FlightPlan>(() => {
+    // 初期設定値
     const initialSpeed = 250;
     const initialAltitude = 30000;
-    const initialGroundTempC = 15; // ISA標準 地上気温
-    const initialGroundElevationFt = 0; // 海面高度
+    const initialGroundTempC = 15;
+    const initialGroundElevationFt = 0;
 
     // 高精度計算モデルで各種値を計算
-    const airspeedsResult = calculateAirspeeds(
-      initialSpeed, 
-      initialAltitude, 
-      initialGroundTempC, 
-      initialGroundElevationFt
-    );
+    const airspeedsResult = calculateAirspeeds(initialSpeed, initialAltitude, initialGroundTempC, initialGroundElevationFt);
 
     // 高精度計算が失敗した場合は従来の計算方法で代替
-    const initialTas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(initialSpeed, initialAltitude);
-    const initialMach = airspeedsResult ? airspeedsResult.mach : calculateMach(initialTas, initialAltitude);
+    const initialTas = airspeedsResult
+      ? airspeedsResult.tasKt
+      : calculateTAS(initialSpeed, initialAltitude);
+    const initialMach = airspeedsResult
+      ? airspeedsResult.mach
+      : calculateMach(initialTas, initialAltitude);
+    const departureTime = formatTime(
+      new Date().getHours() * 60 + new Date().getMinutes()
+    );
 
     return {
       departure: null,
@@ -75,7 +77,7 @@ const TabsComponent: React.FC<TabsProps> = () => {
       totalDistance: 0,
       ete: undefined,
       eta: undefined,
-      departureTime: formatTime(new Date().getHours() * 60 + new Date().getMinutes()),
+      departureTime,
       groundTempC: initialGroundTempC,
       groundElevationFt: initialGroundElevationFt,
     };

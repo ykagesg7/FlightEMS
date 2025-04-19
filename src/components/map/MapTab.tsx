@@ -1,22 +1,23 @@
-import React, { useEffect, useRef, useMemo, useState, useCallback } from 'react';
 import { MapContainer, Popup, Polyline, CircleMarker } from 'react-leaflet';
-import { FlightPlan, Waypoint } from '../types';
+import { FlightPlan, Waypoint } from '../../types';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
 import 'leaflet-groupedlayercontrol';
 import L from 'leaflet';
 import icon from '/images/marker-icon.png';
 import iconShadow from '/images/marker-shadow.png';
-import { DEFAULT_CENTER, DEFAULT_ZOOM, getNavaidColor, formatDMS } from '../utils';
-import { calculateMagneticBearing } from '../utils/bearing';
-import { formatBearing } from '../utils/format';
+import { DEFAULT_CENTER, DEFAULT_ZOOM, getNavaidColor, formatDMS } from '../../utils';
+import { calculateMagneticBearing } from '../../utils/bearing';
+import { formatBearing } from '../../utils/format';
 import type { LatLng } from 'leaflet';
 // 天気情報取得のためのAPIクライアントをインポート
-import { fetchWeatherData } from '../api/weather';
-import { useWeatherCache, WeatherCache, CACHE_DURATION } from '../contexts/WeatherCacheContext';
+import { fetchWeatherData } from '../../api/weather';
+import { useWeatherCache, WeatherCache, CACHE_DURATION } from '../../contexts/WeatherCacheContext';
 
 // Waypoint用のツールチップスタイルを追加
 import './mapStyles.css';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useState } from 'react';
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -51,7 +52,7 @@ interface Region {
 }
 
 const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
-  const [map, setMap] = useState<L.Map | null>(null);
+  const [map, setMap] = useState<L.Map | null>(null); 
   const [cursorPosition, setCursorPosition] = useState<L.LatLng | null>(null);
   // Navaid の GeoJSON から取得したデータを保持
   const [navaidData, setNavaidData] = useState<MapNavaid[]>([]);

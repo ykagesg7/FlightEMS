@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { calculateOffsetPoint } from '../utils/offset'; // Import from offset.ts
-import { FlightPlan } from '../types';
-import { dmsToDecimal } from '../utils/dms'; // ユーティリティ関数をインポート
+import { calculateOffsetPoint } from '../../utils/offset'; // Import from offset.ts
+import { FlightPlan } from '../../types';
+import { dmsToDecimal } from '../../utils/dms'; // ユーティリティ関数をインポート
 
 interface WaypointFormProps {
   flightPlan: FlightPlan;
@@ -27,10 +27,10 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
 
   const validateDMS = (value: string, isLatitude: boolean) => {
     if (isLatitude) {
-      // 緯度：先頭または末尾にN/Sが付いていればOK、数字部分は6桁
+      // 緯度は先頭または末尾にN/Sが付いていればOK、数字部分は6桁
       return /^(?:[NS])?\d{6}(?:[NS])?$/i.test(value);
     } else {
-      // 経度：先頭または末尾にE/Wが付いていればOK、数字部分は7桁
+      // 経度は先頭または末尾にE/Wが付いていればOK、数字部分は7桁
       return /^(?:[EW])?\d{7}(?:[EW])?$/i.test(value);
     }
   };
@@ -55,8 +55,8 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
 
       if (!latValid || !lonValid) {
         setErrors({
-          lat: latValid ? '' : "有効な緯度を入力してください（例: N354336\"）",
-          lon: lonValid ? '' : "有効な経度を入力してください（例: E1394500\"）"
+          lat: latValid ? '' : "有効な緯度を入力してください（例: N354336）",
+          lon: lonValid ? '' : "有効な経度を入力してください（例: E1394500）"
         });
         return;
       }
@@ -69,8 +69,8 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
 
       if (!latValid || !lonValid) {
         setErrors({
-          lat: latValid ? '' : '有効な緯度を入力してください（-90〜90）',
-          lon: lonValid ? '' : '有効な経度を入力してください（-180〜180）'
+          lat: latValid ? '' : '有効な緯度を入力してください（±90、±0）',
+          lon: lonValid ? '' : '有効な経度を入力してください（±180、±0）'
         });
         return;
       }
@@ -128,17 +128,17 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
         let latRaw = parts[0];
         let lonRaw = parts[1];
 
-        // 緯度：NまたはSが含まれていなければデフォルトで「N」を付与
+        // 緯度にNまたはSが含まれていなければデフォルトで「N」を付ける
         if (!/^[NnSs]/.test(latRaw) && !/[NnSs]$/.test(latRaw)) {
           latRaw = "N" + latRaw;
         }
 
-        // 経度：EまたはWが含まれていなければデフォルトで「E」を付与
+        // 経度にEまたはWが含まれていなければデフォルトで「E」を付ける
         if (!/^[EeWw]/.test(lonRaw) && !/[EeWw]$/.test(lonRaw)) {
           lonRaw = "E" + lonRaw;
         }
 
-        // 桁数の検証（ヘミスフィア記号を除いた部分）
+        // 桁数の検証（半球記号を除いた部分）
         const latDigits = latRaw.replace(/[NnSs]/g, '');
         const lonDigits = lonRaw.replace(/[EeWw]/g, '');
         if (latDigits.length === 6 && lonDigits.length === 7) {
@@ -266,7 +266,7 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
         <h4 className="text-sm font-medium text-gray-400">オフセット (オプション)</h4>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="block text-sm font-medium text-gray-400">方位 (度)</label>
+            <label className="block text-sm font-medium text-gray-400">方位(度)</label>
             <input
               type="number"
               value={bearing}
@@ -301,7 +301,7 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
 
       <div>
         <label className="block text-sm font-medium text-gray-400">
-          連続DMS入力 (例: N334005,E1234005)
+          連続DMS入力(例: N334005,E1234005)
         </label>
         <input 
           type="text" 
