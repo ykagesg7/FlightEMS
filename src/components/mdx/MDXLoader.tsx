@@ -16,7 +16,7 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ filePath, showPath }) => {
     const loadMDX = async () => {
       try {
         setLoading(true);
-        const module = await import(`../content/${filePath}.mdx`);
+        const module = await import(`@content/${filePath}.mdx`);
         setContent(() => module.default);
         setError(null);
       } catch (err) {

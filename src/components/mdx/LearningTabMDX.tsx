@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import MDXLoader from './MDXLoader';
 
 // 利用可能なMDXコンテンツのリスト
 const mdxContents = [
-  { id: '1.1-計器飛行の定義', title: '計器飛行の定義', category: '計器飛行' },
-  { id: '1.2-基本原理', title: '計器飛行の基本原理', category: '計器飛行' },
-  { id: '1.3-主要な計器', title: '主要な計器', category: '計器飛行' },
-  { id: '1.4-計器スキャン', title: '計器スキャン', category: '計器飛行' },
-  { id: '1.5-計器飛行の基本操作', title: '計器飛行の基本操作', category: '計器飛行' },
-  { id: '2計器離陸', title: '計器離陸', category: '計器飛行' },
-  { id: '3基本的な計器飛行操作', title: '基本的な計器飛行操作', category: '計器飛行' },
-  { id: '4基本計器飛行', title: '基本計器飛行', category: '計器飛行' },
+  { id: '1.1-DefinitionOfInstrumentFlight', title: '計器飛行の定義', category: '計器飛行' },
+  { id: '1.2-BasicPrinciples', title: '計器飛行の基本原理', category: '計器飛行' },
+  { id: '1.3-MajorInstruments', title: '主要な計器', category: '計器飛行' },
+  { id: '1.4-InstrumentScan', title: '計器スキャン', category: '計器飛行' },
+  { id: '1.5-InstrumentFlightBasicOperations', title: '計器飛行の基本操作', category: '計器飛行' },
+  { id: '2-InstrumentTakeoff', title: '計器離陸', category: '計器飛行' },
+  { id: '3-BasicInstrumentFlightOperations', title: '基本的な計器飛行操作', category: '計器飛行' },
+  { id: '4-InstrumentFlight', title: '基本計器飛行', category: '計器飛行' },
 ];
 
 // カテゴリのリスト

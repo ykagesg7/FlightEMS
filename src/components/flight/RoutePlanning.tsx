@@ -1,7 +1,6 @@
 import React from 'react';
 import { FlightPlan, Waypoint } from '../../types';
 import WaypointList from './WaypointList';
-import AirportSelect from './AirportSelect';
 import NavaidSelector from './NavaidSelector';
 import WaypointForm from './WaypointForm';
 import { reactSelectStyles } from '../../utils/reactSelectStyles';

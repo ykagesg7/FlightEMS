@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 // @ts-ignore
-import mermaid from 'mermaid';
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
 // MermaidのDOMコンテナタイプ
 interface MermaidContainerProps {
