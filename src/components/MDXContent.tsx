@@ -22,6 +22,7 @@ const components = {
   // カスタムコンポーネント
   Image: MDXComponents.ImageComponent,
   Callout: MDXComponents.CalloutBox,
+  CalloutBox: MDXComponents.CalloutBox,
   Code: MDXComponents.CodeBlock,
   Quiz: MDXComponents.QuizComponent,
   Diagram: MDXComponents.DiagramComponent,
