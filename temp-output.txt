@@ -1,0 +1,252 @@
+﻿import React, { useState, useEffect, useCallback } from 'react';
+import { FlightPlan } from '../types';
+import { formatBearing } from '../utils/format';
+
+interface FlightSummaryProps {
+  flightPlan: FlightPlan;
+  setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
+}
+
+/**
+ * Flight Summary コンポーネント
+ * 総距離、ETE、ETAの表示を行う
+ */
+const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan }) => {
+  // 所要時間を計算して「hh:mm:ss」形式でフォーマットする関数
+  const formatDuration = useCallback((distance?: number, speed?: number): string => {
+    if (!distance || !speed || speed === 0) return '--:--:--';
+    
+    // 距離（NM）÷ 速度（kt）で時間（時間）を計算
+    const hours = distance / speed;
+    const totalSeconds = Math.round(hours * 3600);
+    
+    // hh:mm:ss 形式
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }, []);
+
+  // 時間文字列をDate型に変換する関数
+  const parseTimeString = useCallback((timeStr: string): Date => {
+    if (!timeStr || timeStr === '--') return new Date();
+    
+    const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, seconds);
+    return date;
+  }, []);
+
+  // 時間を加算する関数
+  const addTime = useCallback((time: Date, duration: string): Date => {
+    const [hours, minutes, seconds] = duration.split(':').map(Number);
+    const result = new Date(time);
+    result.setHours(result.getHours() + hours);
+    result.setMinutes(result.getMinutes() + minutes);
+    result.setSeconds(result.getSeconds() + seconds);
+    return result;
+  }, []);
+
+  // 時間を「hh:mm:ss」形式でフォーマットする関数
+  const formatTime = useCallback((date: Date): string => {
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+  }, []);
+
+  // ETAを再計算する関数
+  const recalculateETAs = useCallback((segments: typeof flightPlan.routeSegments) => {
+    if (!segments || segments.length === 0 || !flightPlan.departureTime) return;
+    
+    let currentTime = parseTimeString(flightPlan.departureTime);
+    let totalDuration = 0;
+    
+    // 各セグメントのETAを計算
+    const updatedSegments = segments.map((segment, index) => {
+      if (segment.distance && segment.speed && segment.speed > 0) {
+        const duration = formatDuration(segment.distance, segment.speed);
+        currentTime = addTime(currentTime, duration);
+        
+        // 所要時間を累積
+        const [hours, minutes, seconds] = duration.split(':').map(Number);
+        totalDuration += hours * 3600 + minutes * 60 + seconds;
+        
+        return {
+          ...segment,
+          eta: formatTime(currentTime)
+        };
+      }
+      return segment;
+    });
+    
+    // 最終的なETAとETEをフライトプランに設定
+    if (updatedSegments.length > 0) {
+      const lastSegment = updatedSegments[updatedSegments.length - 1];
+      
+      // 合計所要時間をhh:mm:ss形式に変換
+      const totalHours = Math.floor(totalDuration / 3600);
+      const totalMinutes = Math.floor((totalDuration % 3600) / 60);
+      const totalSeconds = totalDuration % 60;
+      const formattedEte = `${totalHours.toString().padStart(2, '0')}:${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
+      
+      setFlightPlan(prev => ({
+        ...prev,
+        routeSegments: updatedSegments,
+        eta: lastSegment.eta || '--:--:--',
+        ete: formattedEte || '--:--:--'
+      }));
+    }
+  }, [flightPlan.departureTime, formatDuration, parseTimeString, addTime, formatTime, setFlightPlan]);
+
+  // 速度変更時の処理
+  const handleSpeedChange = useCallback((index: number, newSpeed: string) => {
+    if (!flightPlan.routeSegments) return;
+    
+    const speed = parseInt(newSpeed, 10);
+    if (isNaN(speed) || speed <= 0) return;
+    
+    const newSegments = [...flightPlan.routeSegments];
+    newSegments[index] = {
+      ...newSegments[index],
+      speed
+    };
+    
+    // ETAを再計算
+    recalculateETAs(newSegments);
+    
+    setFlightPlan(prev => ({
+      ...prev,
+      routeSegments: newSegments
+    }));
+  }, [flightPlan.routeSegments, recalculateETAs, setFlightPlan]);
+
+  // 高度変更時の処理
+  const handleAltitudeChange = useCallback((index: number, newAltitude: string) => {
+    if (!flightPlan.routeSegments) return;
+    
+    const altitude = parseInt(newAltitude, 10);
+    if (isNaN(altitude) || altitude < 0) return;
+    
+    const newSegments = [...flightPlan.routeSegments];
+    newSegments[index] = {
+      ...newSegments[index],
+      altitude
+    };
+    
+    // ETAを再計算
+    recalculateETAs(newSegments);
+    
+    setFlightPlan(prev => ({
+      ...prev,
+      routeSegments: newSegments
+    }));
+  }, [flightPlan.routeSegments, recalculateETAs, setFlightPlan]);
+
+  // 初期表示時にETAを計算
+  useEffect(() => {
+    if (flightPlan.routeSegments && flightPlan.routeSegments.length > 0 && flightPlan.departureTime) {
+      recalculateETAs(flightPlan.routeSegments);
+    }
+  }, [flightPlan.departureTime, flightPlan.routeSegments, recalculateETAs]);
+
+  return (
+    <div className="bg-gray-800 shadow-sm rounded-lg p-4 md:p-6">
+      <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-gray-50">フライトサマリー</h2>
+      <div className="space-y-3 md:space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-gray-700 p-2 md:p-3 rounded-md">
+            <div className="text-xs text-gray-300">合計距離</div>
+            <div className="text-sm md:text-base font-medium text-gray-100">
+              {flightPlan.totalDistance ? `${flightPlan.totalDistance.toFixed(1)} nm` : '--'}
+            </div>
+          </div>
+          <div className="bg-gray-700 p-2 md:p-3 rounded-md">
+            <div className="text-xs text-gray-300">予想飛行時間</div>
+            <div className="text-sm md:text-base font-medium text-gray-100">
+              {flightPlan.ete || '--'}
+            </div>
+          </div>
+          <div className="bg-gray-700 p-2 md:p-3 rounded-md">
+            <div className="text-xs text-gray-300">出発時刻</div>
+            <div className="text-sm md:text-base font-medium text-gray-100">
+              {flightPlan.departureTime || '--'}
+            </div>
+          </div>
+          <div className="bg-gray-700 p-2 md:p-3 rounded-md">
+            <div className="text-xs text-gray-300">到着予定時刻</div>
+            <div className="text-sm md:text-base font-medium text-gray-100">
+              {flightPlan.eta || '--'}
+            </div>
+          </div>
+        </div>
+        
+        {flightPlan.routeSegments && flightPlan.routeSegments.length > 0 && (
+          <div className="mt-4">
+            <h3 className="text-sm md:text-base font-medium text-gray-200 mb-2">ルートセグメント</h3>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-600 text-xs md:text-sm">
+                <thead className="bg-gray-700">
+                  <tr>
+                    <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      From
+                    </th>
+                    <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      To
+                    </th>
+                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      CAS
+                    </th>
+                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      磁方位
+                    </th>
+                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      高度
+                    </th>
+                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      距離
+                    </th>
+                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      ETA
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-gray-800 divide-y divide-gray-600">
+                  {flightPlan.routeSegments.map((segment, index) => (
+                    <tr key={index} className={index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'}>
+                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200">{segment.from}</td>
+                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200">{segment.to}</td>
+                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">
+                        <input
+                          type="number"
+                          min="1"
+                          value={segment.speed}
+                          onChange={(e) => handleSpeedChange(index, e.target.value)}
+                          className="w-16 bg-gray-600 text-gray-100 text-right rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        />
+                        <span className="ml-1">kt</span>
+                      </td>
+                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">{formatBearing(segment.bearing)}°</td>
+                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">
+                        <input
+                          type="number"
+                          min="0"
+                          value={segment.altitude}
+                          onChange={(e) => handleAltitudeChange(index, e.target.value)}
+                          className="w-16 bg-gray-600 text-gray-100 text-right rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        />
+                        <span className="ml-1">ft</span>
+                      </td>
+                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">{segment.distance?.toFixed(1)} nm</td>
+                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">{segment.eta}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FlightSummary; 

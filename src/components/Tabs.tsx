@@ -5,7 +5,7 @@ import PlanningTab from './PlanningTab';
 import MapTab from './MapTab';
 import { FlightPlan } from '../types';
 import { calculateTAS, calculateMach, formatTime, calculateAirspeeds } from '../utils';
-import LearningTab from './LearningTab';
+import LearningTabMDX from './LearningTabMDX';
 
 const Tabs = TabsPrimitive.Root;
 
@@ -117,7 +117,7 @@ const TabsComponent: React.FC<TabsProps> = () => {
           <MapTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
         )}
         {activeTab === 'learning' && (
-          <LearningTab />
+          <LearningTabMDX />
         )}
       </div>
     </div>

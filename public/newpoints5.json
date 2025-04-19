@@ -1,0 +1,182 @@
+[
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "VOR/DME",
+      "name1": "能登",
+      "name2": "NOTO",
+      "id": "NTE",
+      "ch": "51y",
+      "freq": 111.45
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        136.962911,
+        37.290000
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "TACAN",
+      "name1": "新田原",
+      "name2": "NYUTABARU",
+      "id": "NHT",
+      "ch": "97x",
+      "freq": null
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        131.453783,
+        32.080411
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "VOR/DME",
+      "name1": "帯広",
+      "name2": "OBIHIRO",
+      "id": "OBE",
+      "ch": "33y",
+      "freq": 109.65
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        143.220453,
+        42.733964
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "VOR/DME",
+      "name1": "大館",
+      "name2": "ODATE",
+      "id": "ODE",
+      "ch": "94y",
+      "freq": 114.75
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        140.361856,
+        40.198342
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "VOR/DME",
+      "name1": "隠岐",
+      "name2": "OKI",
+      "id": "OIE",
+      "ch": "29y",
+      "freq": 109.25
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        133.322822,
+        36.176742
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "VOR/DME",
+      "name1": "奥尻",
+      "name2": "OKUSHIRI",
+      "id": "ORE",
+      "ch": "35y",
+      "freq": 109.85
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        139.443403,
+        42.070303
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "TACAN",
+      "name1": "大湊",
+      "name2": "OMINATO",
+      "id": "OMT",
+      "ch": "95y",
+      "freq": null
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        141.135833,
+        41.230833
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "TACAN",
+      "name1": "大村",
+      "name2": "OMURA",
+      "id": "JBT",
+      "ch": "87y",
+      "freq": null
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        129.932222,
+        32.925833
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "TACAN",
+      "name1": "御宿",
+      "name2": "ONJUKU",
+      "id": "OJT",
+      "ch": "104x",
+      "freq": null
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        140.371428,
+        35.184136
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "VOR/DME",
+      "name1": "大島",
+      "name2": "OSHIMA",
+      "id": "XAC",
+      "ch": null,
+      "freq": 113.1
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        139.414017,
+        34.712253
+      ]
+    }
+  }
+] 
