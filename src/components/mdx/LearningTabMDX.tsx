@@ -3,14 +3,18 @@ import MDXLoader from './MDXLoader';
 
 // 利用可能なMDXコンテンツのリスト
 const mdxContents = [
+  { id: '0.1-AviationRegulations', title: '航空法規', category: '基本知識' },
   { id: '1.1-DefinitionOfInstrumentFlight', title: '計器飛行の定義', category: '計器飛行' },
-  { id: '1.2-BasicPrinciples', title: '計器飛行の基本原理', category: '計器飛行' },
-  { id: '1.3-MajorInstruments', title: '主要な計器', category: '計器飛行' },
-  { id: '1.4-InstrumentScan', title: '計器スキャン', category: '計器飛行' },
-  { id: '1.5-InstrumentFlightBasicOperations', title: '計器飛行の基本操作', category: '計器飛行' },
-  { id: '2-InstrumentTakeoff', title: '計器離陸', category: '計器飛行' },
-  { id: '3-BasicInstrumentFlightOperations', title: '基本的な計器飛行操作', category: '計器飛行' },
-  { id: '4-InstrumentFlight', title: '基本計器飛行', category: '計器飛行' },
+  // { id: '1.2-BasicPrinciples', title: '計器飛行の基本原理', category: '計器飛行' },
+  // { id: '1.3-MajorInstruments', title: '主要な計器', category: '計器飛行' },
+  // { id: '1.4-InstrumentScan', title: '計器スキャン', category: '計器飛行' },
+  // { id: '1.5-InstrumentFlightBasicOperations', title: '計器飛行の基本操作', category: '計器飛行' },
+  // { id: '1.6-InstrumentFlightProcedures', title: '計器飛行の手順', category: '計器飛行' },
+  // { id: '1.7-InstrumentApproachProcedures', title: '計器進入の手順', category: '計器飛行' },
+  // { id: '1.8-InstrumentFlightEmergencies', title: '計器飛行の緊急事態', category: '計器飛行' },
+  // { id: '2-InstrumentTakeoff', title: '計器離陸', category: '計器飛行' },
+  // { id: '3-BasicInstrumentFlightOperations', title: '基本的な計器飛行操作', category: '計器飛行' },
+  // { id: '4-InstrumentFlight', title: '基本計器飛行', category: '計器飛行' },
 ];
 
 // カテゴリのリスト
@@ -24,6 +28,7 @@ const LearningTabMDX: React.FC = () => {
   // コンテンツを選択した時の処理
   const selectContent = (contentId: string) => {
     setSelectedContent(contentId);
+    window.scrollTo(0, 0); // ページ上部にスクロール
   };
 
   // 前へボタンの処理
@@ -32,6 +37,7 @@ const LearningTabMDX: React.FC = () => {
       const currentIndex = mdxContents.findIndex(c => c.id === selectedContent);
       if (currentIndex > 0) {
         setSelectedContent(mdxContents[currentIndex - 1].id);
+        window.scrollTo(0, 0);
       }
     }
   };
@@ -42,6 +48,7 @@ const LearningTabMDX: React.FC = () => {
       const currentIndex = mdxContents.findIndex(c => c.id === selectedContent);
       if (currentIndex < mdxContents.length - 1) {
         setSelectedContent(mdxContents[currentIndex + 1].id);
+        window.scrollTo(0, 0);
       }
     }
   };
@@ -118,7 +125,9 @@ const LearningTabMDX: React.FC = () => {
           </div>
         ) : (
           <>
-            <MDXLoader filePath={selectedContent} showPath={false} />
+            <div className="bg-white p-8">
+              <MDXLoader filePath={selectedContent} showPath={false} />
+            </div>
             <div className="navigation bg-indigo-800 text-center p-4 flex justify-between items-center mt-4">
               <div className="flex items-center">
                 <button 
