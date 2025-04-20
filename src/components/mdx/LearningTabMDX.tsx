@@ -5,7 +5,7 @@ import MDXLoader from './MDXLoader';
 const mdxContents = [
   { id: '0.1-AviationRegulations', title: '航空法規', category: '基本知識' },
   { id: '1.1-DefinitionOfInstrumentFlight', title: '計器飛行の定義', category: '計器飛行' },
-  // { id: '1.2-BasicPrinciples', title: '計器飛行の基本原理', category: '計器飛行' },
+  { id: '1.2-BasicPrinciples', title: '計器飛行の基本原理', category: '計器飛行' },
   // { id: '1.3-MajorInstruments', title: '主要な計器', category: '計器飛行' },
   // { id: '1.4-InstrumentScan', title: '計器スキャン', category: '計器飛行' },
   // { id: '1.5-InstrumentFlightBasicOperations', title: '計器飛行の基本操作', category: '計器飛行' },
