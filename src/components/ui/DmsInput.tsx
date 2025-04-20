@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { parseDMSValue, formatDMSValue } from '../utils';
+import { parseDMSValue, formatDMSValue } from '../../utils';
 
 interface DmsInputProps {
     label: string;

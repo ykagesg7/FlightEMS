@@ -10,12 +10,7 @@ const availableMDXFiles = [
 ];
 
 const MDXTester: React.FC = () => {
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [showFilePath, setShowFilePath] = useState(true);
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedFile(event.target.value);
-  };
+  const [selectedFile, setSelectedFile] = useState<string>('');
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
