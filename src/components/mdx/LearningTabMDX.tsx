@@ -4,6 +4,7 @@ import MDXLoader from './MDXLoader';
 // 利用可能なMDXコンテンツのリスト
 const mdxContents = [
   { id: '0.1-AviationRegulations', title: '航空法規', category: '基本知識' },
+  { id: '0.2_Mentality', title: '【悩みと考える】たったこれだけの違いで、人生って結構変わる話。', category: 'マインドセット' },
   { id: '1.1-DefinitionOfInstrumentFlight', title: '計器飛行の定義', category: '計器飛行' },
   { id: '1.2-BasicPrinciples', title: '計器飛行の基本原理', category: '計器飛行' },
   { id: '1.3-MajorInstruments', title: '主要な計器', category: '計器飛行' },
@@ -99,27 +100,49 @@ const LearningTabMDX: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredContents.map(content => (
-                <div 
-                  key={content.id}
-                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-500 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-lg"
-                  onClick={() => selectContent(content.id)}
-                >
-                  <h3 className="font-semibold text-lg text-indigo-800 mb-2">{content.title}</h3>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">{content.category}</span>
-                    <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">
-                      {content.id}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {filteredContents.length === 0 && (
+            {filteredContents.length === 0 && !searchTerm && !selectedCategory ? (
               <div className="text-center p-8 text-gray-500">
-                検索条件に一致するコンテンツがありません。
+                利用可能な学習コンテンツがありません。
+              </div>
+            ) : (
+              (selectedCategory ? [selectedCategory] : categories).map(category => {
+                const contentsInCategory = filteredContents.filter(content => content.category === category);
+                if (contentsInCategory.length === 0) {
+                  // 選択されたカテゴリ、または検索結果がそのカテゴリにない場合は何も表示しない
+                  // ただし、全体で filteredContents.length === 0 の場合は後続のメッセージが表示される
+                  return null; 
+                }
+                return (
+                  <div key={category} className="mb-8">
+                    <h2 className="text-xl font-semibold text-indigo-800 border-b border-indigo-200 pb-2 mb-4">
+                      {category}
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {contentsInCategory.map(content => (
+                        <div 
+                          key={content.id}
+                          className="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-500 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-lg"
+                          onClick={() => selectContent(content.id)}
+                        >
+                          <h3 className="font-semibold text-lg text-indigo-800 mb-2">{content.title}</h3>
+                          <div className="flex justify-between items-center">
+                            {/* カテゴリ名はヘッダーで表示しているのでここでは不要かも */}
+                            {/* <span className="text-sm text-gray-600">{content.category}</span> */}
+                            <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">
+                              {content.id}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+
+            {filteredContents.length === 0 && (searchTerm || selectedCategory) && (
+              <div className="text-center p-8 text-gray-500">
+                検索条件または選択したカテゴリに一致するコンテンツがありません。
               </div>
             )}
           </div>

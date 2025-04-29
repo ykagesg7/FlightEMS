@@ -38,7 +38,7 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
           src={src}
           alt={alt}
           className={`mx-auto object-contain rounded-lg transition-all duration-200 ${
-            isEnlarged ? 'max-h-screen max-w-screen p-4' : `max-w-full ${className}`
+            isEnlarged ? 'max-h-screen max-w-screen p-4' : `max-w-full h-auto block ${className}`
           }`}
           style={{ width: isEnlarged ? 'auto' : width }}
         />
