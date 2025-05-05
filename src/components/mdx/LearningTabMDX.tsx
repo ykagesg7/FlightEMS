@@ -5,6 +5,7 @@ import MDXLoader from './MDXLoader';
 const mdxContents = [
   { id: '0.1-AviationRegulations', title: '航空法規', category: '基本知識' },
   { id: '0.2_Mentality', title: '【悩みと考える】たったこれだけの違いで、人生って結構変わる話。', category: 'マインドセット' },
+  { id: '0.3_UnconsciousSuccess', title: '「なんか知らんけど上手くいった」…それ、ホントに偶然？', category: 'マインドセット' },
   { id: '1.1-DefinitionOfInstrumentFlight', title: '計器飛行の定義', category: '計器飛行' },
   { id: '1.2-BasicPrinciples', title: '計器飛行の基本原理', category: '計器飛行' },
   { id: '1.3-MajorInstruments', title: '主要な計器', category: '計器飛行' },
