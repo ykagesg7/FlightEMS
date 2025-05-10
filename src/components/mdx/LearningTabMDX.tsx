@@ -5,6 +5,7 @@ import MDXLoader from './MDXLoader';
 const mdxContents = [
   { id: '0.1-AviationRegulations', title: '航空法規', category: '基本知識' },
   { id: '0.2_Mentality', title: '【悩みと考える】たったこれだけの違いで、人生って結構変わる話。', category: 'マインドセット' },
+  { id: '0.2.2_Mentality2', title: '【モチベーション】夢を追いかける勇気と決意', category: 'マインドセット' },
   { id: '0.3_UnconsciousSuccess', title: '「なんか知らんけど上手くいった」…それ、ホントに偶然？', category: 'マインドセット' },
   { id: '0.4_ConcreteAbstract', title: '未来のパイロットたちへ。記憶のモヤモヤ、ワシがバッサリ斬ったるわ！【具体と抽象】', category: '思考法' },
   { id: '1.1-DefinitionOfInstrumentFlight', title: '計器飛行の定義', category: '計器飛行' },
