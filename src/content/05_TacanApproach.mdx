@@ -1,0 +1,32 @@
+import React from 'react'
+
+{/*
+---
+title: "TACANアプローチ"
+date: "2025-05-15"  // 仮の日付
+author: "しゃどー"
+tags: ["計器飛行", "TACAN", "アプローチ", "進入方式"]
+---
+*/}
+
+# TACANアプローチ
+
+<div className="relative">
+  <div className={`w-full h-[1200px] overflow-auto rounded-lg shadow-lg my-4`}>
+    <iframe 
+      src="/content/05_TacanApproach.html" 
+      className="w-full h-full border-0" 
+      title="T-4練習機 TACANアプローチ教育資料"
+    />
+  </div>
+  <div className="absolute top-2 right-2 flex gap-2">
+    <button 
+      onClick={() => window.open('/content/05_TacanApproach.html', '_blank')}
+      className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-md text-sm font-medium shadow-md"
+    >
+      新規タブで開く
+    </button>
+  </div>
+</div>
+
+export default ({ children }) => <>{children}</>

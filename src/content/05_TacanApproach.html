@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TACANアプローチ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .sidebar {
+            width: 300px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #1f2937; /* Tailwind gray-800 */
+            padding: 1.5rem;
+            overflow-y: auto;
+            color: #d1d5db; /* Tailwind gray-300 */
+        }
+        .sidebar a {
+            display: block;
+            color: #9ca3af; /* Tailwind gray-400 */
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.25rem;
+            border-radius: 0.375rem; /* Tailwind rounded-md */
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #374151; /* Tailwind gray-700 */
+            color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        .sidebar .sub-menu a {
+            padding-left: 2rem;
+            font-size: 0.875rem; /* Tailwind text-sm */
+        }
+        .content {
+            margin-left: 300px;
+            padding: 2rem;
+            background-color: #f9fafb; /* Tailwind gray-50 */
+            min-height: 100vh;
+        }
+        .content h1, .content h2, .content h3, .content h4 {
+            color: #111827; /* Tailwind gray-900 */
+            margin-bottom: 1rem;
+            padding-top: 1rem; /* For scrollspy offset */
+        }
+        .content h1 { font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem; } /* Tailwind text-4xl font-bold */
+        .content h2 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 600; margin-top: 2rem; } /* Tailwind text-3xl font-semibold */
+        .content h3 { font-size: 1.5rem; line-height: 2rem; font-weight: 600; margin-top: 1.5rem; } /* Tailwind text-2xl font-semibold */
+        .content h4 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; margin-top: 1rem; } /* Tailwind text-xl font-semibold */
+        .content p {
+            margin-bottom: 1rem;
+            line-height: 1.75;
+            color: #374151; /* Tailwind gray-700 */
+        }
+        .content ul, .content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            list-style-position: outside;
+        }
+        .content ul li, .content ol li {
+            margin-bottom: 0.5rem;
+            color: #374151; /* Tailwind gray-700 */
+        }
+        .content ul { list-style-type: disc; }
+        .content ol { list-style-type: decimal; }
+        .content strong { color: #1f2937; /* Tailwind gray-800 */ }
+        .content .note {
+            background-color: #eef2ff; /* Tailwind indigo-50 */
+            border-left: 4px solid #6366f1; /* Tailwind indigo-500 */
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+        .content .warning {
+            background-color: #fffbeb; /* Tailwind amber-50 */
+            border-left: 4px solid #f59e0b; /* Tailwind amber-500 */
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+        .content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tailwind shadow-md */
+        }
+        .accordion-button {
+            background-color: #e5e7eb; /* Tailwind gray-200 */
+            color: #1f2937; /* Tailwind gray-800 */
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: background-color 0.3s ease;
+            font-size: 1.125rem; /* Tailwind text-lg */
+            font-weight: 600;
+            border-radius: 0.375rem; /* Tailwind rounded-md */
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-button:hover {
+            background-color: #d1d5db; /* Tailwind gray-300 */
+        }
+        .accordion-button.active {
+             background-color: #9ca3af; /* Tailwind gray-400 */
+             color: #fff;
+        }
+        .accordion-button .icon::before {
+            content: '+';
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .accordion-button.active .icon::before {
+            content: '-';
+        }
+        .accordion-content {
+            padding: 0 1rem;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+            border-top: none;
+            border-radius: 0 0 0.375rem 0.375rem; /* Tailwind rounded-b-md */
+        }
+        .accordion-content div {
+            padding: 1rem 0;
+        }
+        .toc-main-item { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 class="text-xl font-semibold text-white mb-6">目次</h2>
+        <nav id="toc">
+            </nav>
+    </div>
+
+    <div class="content">
+        <h1>TACANアプローチ</h1>
+
+        <section id="section1">
+            <button class="accordion-button">1. TACANアプローチ入門 <span class="icon"></span></button>
+            <div class="accordion-content">
+                <div>
+                    <h3 id="section1-1">1.1. TACANとは何か？</h3>
+                    <p>TACANは、Tactical Air Navigation system（戦術航空航法システム）の略称です<sup>1</sup>。このシステムは主に軍用機によって使用される航法システムであり<sup>3</sup>、地上または艦船に設置された局からの方位（アジマス）と距離（スランレンジ）の情報をパイロットに提供します<sup>1</sup>。TACANは、飛行場への進入だけでなく、艦船のような移動するプラットフォームへの進入にも利用されるなど、その用途は多岐にわたります<sup>2</sup>。民間航空で用いられるVOR/DME（超短波全方向式無線標識/距離測定装置）と比較すると、TACANはより高い精度を持つ軍事用のシステムと見なされることが多く<sup>2</sup>、TACANのみを装備した航空機はVORのみの局からの方位情報を受信できない点に注意が必要です<sup>3</sup>。</p>
+                    <p>TACANとVOR/DMEはどちらも方位と距離の情報を提供しますが、TACANは特に軍事的な要求を満たすように設計されており、より困難な環境や移動するプラットフォームでの運用能力を含んでいます<sup>16</sup>。この違いを理解することは、航空自衛隊がTACANに依存する理由を理解する上で重要です。多くの資料がTACANの軍事起源と、艦船での運用を含む海軍作戦への適合性を強調しています<sup>2</sup>。VOR/DMEとの比較では、TACANの精度向上と、VOR/DMEが軍事目的には効果的でない可能性のある状況での運用能力が一貫して指摘されています<sup>2</sup>。</p>
+                    <p>また、TACANとVORの施設が同一の場所に設置されている場合（VORTACと呼ばれる）<sup>2</sup>、民間機と軍用機が距離情報（DME）を共有して利用することができます<sup>2</sup>。しかし、T-4の学生は、TACANからの方位情報は軍用のTACAN受信機に特有のものであることを理解しておく必要があります。多くの資料で、VORTACはVORとTACANシステムが併設された施設として言及されています<sup>2</sup>。これらの資料はまた、DME受信機を装備した民間航空機はVORTACのTACAN局から距離情報を受信できますが<sup>2</sup>、TACANからの方位情報を受信するには軍用航空機に搭載されているTACANアビオニクスが必要であることを明確にしています<sup>3</sup>。</p>
+
+                    <h3 id="section1-2">1.2. TACANアプローチの目的と重要性</h3>
+                    <p>TACANアプローチは、特に視界不良時などの悪天候条件下で必要となります<sup>14</sup>。悪天候時に視覚的な手がかりが不明瞭な場合でも、TACANはパイロットが目的地まで安全に航行し着陸するための信頼性の高い手段を提供します。これは、天候に左右されずに作戦行動を維持し、任務の成功を保証する上で非常に重要です。TACANは、遠隔地の飛行場や洋上の艦船に到達する軍事作戦においても重要な役割を果たします<sup>2</sup>。TACANの携帯性と艦船への搭載互換性により、軍事力の展開と多様な場所での作戦支援に不可欠なものとなっています。計器飛行手順のより広い範囲の中で、TACANアプローチの位置づけを理解することも重要です<sup>25</sup>。TACANアプローチは、有視界飛行方式（VFR）が不可能な場合に、パイロットが雲の下まで安全に降下して着陸することを可能にする、特定の種類の計器進入方式です。</p>
+                    <p>TACANアプローチは、悪天候や戦術的なシナリオにおいて、軍用機の作戦能力を拡張する上で非常に重要な技能です<sup>14</sup>。学生は、ILSが精密進入にしばしば好まれる一方で、TACANは特に軍事特有のニーズに対して堅牢な代替手段を提供することを理解する必要があります。多くの資料が、低視界でのTACANの有用性を強調しており、「空の灯台」として機能しています<sup>14</sup>。艦船での運用を含む軍事用途への設計も強調されています<sup>2</sup>。ILSとの比較<sup>14</sup>は、ILSが利用できない場合や軍事的要求に適さない場合に、TACANが不可欠なツールとして役立つことを示しています。</p>
+                    <p>TACANは低視界での進入を容易にすることができますが、一般的にILSのような精密進入と比較して、より高い最低気象条件を持つ非精密進入と見なされます<sup>14</sup>。この制限は、MDAと着陸に必要な条件を明確に理解する必要性を意味します。いくつかの資料は、TACANアプローチは通常非精密進入であり<sup>14</sup>、ILSのような精密進入と比較して、より高い最低降下高度（MDA）を持つことが多いことを明示しています<sup>14</sup>。この違いは、標準的なTACANアプローチには垂直方向のガイダンスがないためです。</p>
+
+                    <h3 id="section1-3">1.3. 関連する計器の概要 (T-4練習機のコックピットを想定)</h3>
+                    <p>T-4練習機のコックピットにおけるTACANアプローチに関連する主要な計器は以下の通りです。</p>
+                    <img src="https://placehold.co/600x400/e2e8f0/4a5568?text=T-4練習機コックピット計器のイメージ" alt="T-4練習機コックピット計器のイメージ" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e2e8f0/4a5568?text=画像読込エラー';">
+                    <ul>
+                        <li><strong>EHSI (Electronic Horizontal Situation Indicator) または HSI:</strong> TACANの方位とコースの情報を視覚的に表示します<sup>47</sup>。通常、コンパスローズ、コース偏差指示計（CDI）、ベアリングポインターが含まれます。
+                            <ul>
+                                <li><strong>CDI（コース偏差指示計）:</strong> 選択されたTACANコースに対する航空機の左右の位置偏差を示します<sup>49</sup>。針の振れ幅は、コースからの角度距離に対応します。</li>
+                                <li>考察: EHSI/HSIは、TACANを使用した水平方向の航法における主要な計器です<sup>47</sup>。学生は、CDIが選択されたTACANコースに対する航空機の位置をどのように反映するかを理解する必要があります。</li>
+                            </ul>
+                        </li>
+                        <li><strong>DME (Distance Measuring Equipment) 表示器:</strong> TACAN局からの距離情報は、DME表示器にスランレンジ（直線距離）として海里単位で表示されます<sup>47</sup>。T-4では、EHSIに統合表示されるか、専用のDMEインジケーターに表示される可能性があります。
+                            <ul>
+                                <li>考察: DMEはTACANアプローチにおいて重要な距離情報を提供し、パイロットはフィックスを識別し、TACAN局からの距離を監視することができます<sup>47</sup>。学生はスランレンジの概念を理解する必要があります<sup>56</sup>。</li>
+                            </ul>
+                        </li>
+                        <li><strong>RMI (Radio Magnetic Indicator) / ベアリングポインター（装備されていれば）:</strong> RMIまたはベアリングポインターは、TACAN局に対する相対方位を表示します<sup>59</sup>。RMIの針はTACAN局を直接指し、磁北に対する航空機のベアリングを視覚的に示します。
+                            <ul>
+                                <li>考察: RMI/ベアリングポインターは、TACAN局に対する航空機のベアリングを視覚的に示すことで、EHSI/HSIを補完し、状況認識を高めます<sup>59</sup>。</li>
+                            </ul>
+                        </li>
+                        <li><strong>EADI (Electronic Attitude Director Indicator) または ADI:</strong> EADI/ADIは、航空機のピッチとバンクの姿勢を表示する主要な計器です<sup>63</sup>。IMC（計器気象状態）での制御に不可欠です。
+                            <ul>
+                                <li>考察: EADI/ADIは、TACANアプローチにおける重要な降下と旋回を含む、飛行の全段階で航空機の姿勢を制御するために不可欠です<sup>64</sup>。</li>
+                            </ul>
+                        </li>
+                        <li><strong>高度計、昇降計（VVI）、対気速度計:</strong>
+                            <ul>
+                                <li>高度計: MDAまでの降下中に高度を監視する役割を果たします<sup>68</sup>。</li>
+                                <li>VVI（垂直速度指示計）: 降下率を示します<sup>68</sup>。</li>
+                                <li>対気速度計: アプローチのさまざまなセグメントで適切な速度を維持するのに役立ちます<sup>68</sup>。</li>
+                                <li>考察: これらの基本的な飛行計器は、TACANアプローチ全体を通して航空機の垂直方向のプロファイルと速度を監視および制御するために不可欠です<sup>68</sup>。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p class="note">T-4練習機のコックピットに関する情報と画像を提供している資料を参照してください<sup>73</sup>。これらの計器のT-4コックピット内の配置を示す視覚的な補助教材を統合することで、学生の学習体験を大幅に向上させることができます。計器の説明を実際のT-4コックピットのレイアウトに関連付ける視覚的な補助教材は、学生の理解と記憶を大幅に向上させます<sup>73</sup>。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section2">
+            <button class="accordion-button">2. アプローチチャートの解読 (TACANアプローチに特化して) <span class="icon"></span></button>
+            <div class="accordion-content">
+                <div>
+                    <h3 id="section2-1">2.1. チャートの全体像</h3>
+                    <p>航空自衛隊で使用するTACANアプローチチャートは、標準的な計器進入方式図と同様に、ブリーフィングストリップ、プランビュー、プロファイルビュー、ミニマセクションなどの構成要素を含んでいます<sup>2</sup>。これらの各要素を理解することが、アプローチを安全かつ正確に実行するための基礎となります。</p>
+                    <ul>
+                        <li><strong>プランビュー:</strong> アプローチを上から見た水平方向の図であり、TACAN局、初期進入フィックス（IAF）、中間フィックス（IF）、最終進入フィックス（FAF）または最終進入ポイント（FAP）、インバウンドコース、DMEアーク、ホールディングパターン、関連する航空路やトランジションなどが示されています<sup>107</sup>。</li>
+                        <li><strong>プロファイルビュー:</strong> アプローチを横から見た垂直方向の図であり、各フィックスでの維持高度、降下勾配、MDAまたはDA、ミストアプローチ手順などが示されています<sup>107</sup>。</li>
+                        <li><strong>ミニマセクション:</strong> 航空機のカテゴリーに応じた最低降下高度（MDA）または決心高度（DA）と、必要な視程を提供します<sup>107</sup>。</li>
+                    </ul>
+                    <p>JASDFのTACANチャートに特有のその他の関連セクションとしては、軍事作戦に関連する特定の注記、無線周波数、空港情報などが含まれる場合があります。TACANアプローチチャートのレイアウトを理解することは、アプローチを安全に実行するための基礎です<sup>2</sup>。学生は、さまざまなビューの間を移動し、それらが互いにどのように関連しているかを理解する必要があります。</p>
+                    <img src="https://placehold.co/800x600/e2e8f0/4a5568?text=TACANアプローチチャートのサンプルイメージ" alt="TACANアプローチチャートのサンプルイメージ" onerror="this.onerror=null;this.src='https://placehold.co/800x600/e2e8f0/4a5568?text=画像読込エラー';">
+
+                    <h3 id="section2-2">2.2. 重要な情報の見つけ方</h3>
+                    <p>チャート上で見つけるべき重要な情報は以下の通りです。</p>
+                    <ul>
+                        <li><strong>TACANチャンネルと識別符号:</strong> 通常ブリーフィングストリップまたはプランビューのTACAN局のシンボルの近くに記載されています<sup>2</sup>。</li>
+                        <li><strong>初期進入フィックス（IAF）、中間フィックス（IF）、最終進入フィックス（FAF）/最終進入ポイント（FAP）:</strong> これらのフィックスは通常、プランビューに特定のシンボルと名前で示されています<sup>107</sup>。FAF/FAPは、非精密進入の場合はマルタ十字（✠）、垂直方向のガイダンスがある進入の場合は稲妻のシンボルでマークされます。</li>
+                        <li><strong>インバウンドコース（最終進入コース）とDMEアーク（半径と中心付き）:</strong> インバウンドコースはFAF/FAPから滑走路まで伸びる実線としてプランビューに示され、磁気ベアリングが示されています<sup>107</sup>。DMEアークは、TACAN局を中心とした指定された半径（海里単位）の曲線として描かれています。</li>
+                        <li><strong>各セグメントの最低高度とFAF/FAP通過高度:</strong> これらの高度は通常、プロファイルビューとプランビューに示されており、多くの場合、下線付きの数値は最低高度を示しています<sup>107</sup>。</li>
+                        <li><strong>MDA（最低降下高度）またはDA（決心高度）:</strong> MDAまたはDAはチャートのミニマセクションに記載されており、航空機のカテゴリーと進入の種類に固有のものです<sup>45</sup>。</li>
+                        <li><strong>ミスアプローチポイント（MAP）とミスアプローチ手順:</strong> MAPはプロファイルビューに通常破線で始まる点として示されています<sup>45</sup>。初期のヘディング、高度、旋回を含むミスアプローチ手順は、テキストで、場合によってはプロファイルビューに図示されています。</li>
+                        <li><strong>ホールディングパターンの情報（ホールディングフィックス、インバウンドコース、旋回方向、制限速度など）:</strong> ホールディングパターンは通常、プランビューに競馬場のシンボルで示されており、関連情報はシンボルの横または専用のホールディングパターンセクションに記載されています<sup>107</sup>。</li>
+                    </ul>
+                    <p class="note">(航空自衛隊で使用する実際のTACANアプローチチャートのサンプルを部分的に示し、各情報を指し示しながら解説することが実際的な理解のために非常に重要です。入手可能なリサーチから実際のチャートのサンプルを使用するか、代表的なチャートを作成して、各ポイントを説明してください。)</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section3">
+            <button class="accordion-button">3. 進入前の準備 <span class="icon"></span></button>
+            <div class="accordion-content">
+                <div>
+                    <h3 id="section3-1">3.1. フライトプランニング</h3>
+                    <p>適切なTACANアプローチを選択する際には、使用する滑走路、風の状況、航空機の装備などの要因に基づいて行うことが重要です<sup>2</sup>。選択されたアプローチは、可能な限り追い風着陸を容易にするために、アクティブな滑走路と卓越風に合致する必要があります。天候条件（視程、雲底、風）を確認し、選択したアプローチの航空機とパイロットの制限内であることを保証する必要があります<sup>2</sup>。着陸が不可能になった場合に備えて、代替空港を検討することの重要性を強調する必要があります<sup>2</sup>。天候が着陸の最低条件を下回っている代替空港と、適切な進入方式を事前に計画しておく必要があります。</p>
+                    <p class="note">TACANアプローチの安全な実行には、徹底的なフライトプランニングが不可欠です<sup>2</sup>。学生は、アプローチの選択、天候の評価、代替案の計画が単なる手順ではなく、リスク管理の重要な要素であることを理解する必要があります。</p>
+                    <h4>考慮事項詳細</h4>
+                    <ul>
+                        <li><strong>天候条件:</strong> 選択したアプローチと航空機カテゴリーの雲底高度と視程の最低条件</li>
+                        <li><strong>航空機の制限:</strong> TACAN装備の運用状態、燃料要件</li>
+                        <li><strong>滑走路の状態:</strong> 長さ、表面状態</li>
+                        <li><strong>代替空港の基準:</strong> 天候が最低条件以上、適切な進入方式がある</li>
+                    </ul>
+
+                    <h3 id="section3-2">3.2. 機材のセットアップ (T-4練習機を想定した具体的な手順)</h3>
+                    <p>T-4練習機における機材のセットアップ手順は以下の通りです。</p>
+                    <ol>
+                        <li><strong>TACAN航法モードの選択:</strong> アビオニクスパネルの適切なNAVソースを選択し、「TACAN」または「TCN」と表示されたボタンを押します<sup>15</sup>。</li>
+                        <li><strong>チャンネル入力と識別:</strong> アプローチチャートに記載されている正しいチャンネル番号をチャンネルセレクターノブを使用して入力し、TACAN局のモールス符号識別信号を聴いて、正しいチューニングを確認します<sup>15</sup>。</li>
+                        <li><strong>コース設定:</strong> TACANアプローチチャートに示されている最終進入コースを、EHSI/HSIのコースセレクターノブを使用して設定します<sup>15</sup>。</li>
+                        <li><strong>高度計規正:</strong> ATISまたはATCから入手した現在の高度計規正値を高度計に入力し、利用可能な場合は既知の飛行場標高と高度計の読み取り値をクロスチェックします<sup>15</sup>。</li>
+                        <li><strong>フライトディレクターの起動（装備されていれば）:</strong> T-4にTACAN航法ソースに結合できるフライトディレクターシステムが装備されている場合は、それを起動して、アプローチに従うための指示を解釈します<sup>15</sup>。</li>
+                    </ol>
+                    <p class="note">正確な航空機の設定は、TACANアプローチを成功させ、安全に行うために最も重要です<sup>15</sup>。T-4専用のステップバイステップの手順を提供することで、学生は計器を正確に構成できるようになります。</p>
+
+                    <h3 id="section3-3">3.3. ブリーフィング</h3>
+                    <p>特に単独操縦の場合には、徹底的なアプローチブリーフィングの重要性を強調します<sup>42</sup>。適切なブリーフィングは、パイロットがアプローチのすべての重要な側面を理解していることを保証します。</p>
+                    <h4>ブリーフィングに含めるべき主要な要素<sup>42</sup>:</h4>
+                    <ul>
+                        <li>アプローチ名（例：TACAN滑走路XX）</li>
+                        <li>TACANチャンネルと識別符号</li>
+                        <li>滑走路情報（長さ、標高）</li>
+                        <li>周波数（ATIS、アプローチ、タワー）</li>
+                        <li>インバウンドコース</li>
+                        <li>高度（IAF通過高度、ステップダウンフィックス、MDA）</li>
+                        <li>最低気象条件（T-4カテゴリーのMDAと視程の要件）</li>
+                        <li>ミストアプローチ手順（初期ヘディング、高度、旋回を含む）</li>
+                        <li>チャート上の特定の注記や警告</li>
+                    </ul>
+                    <p>計画されたアプローチを詳細に検討する必要性を強調します。これには、地形、障害物、または非標準手順などの潜在的な課題や複雑さも含まれます<sup>42</sup>。着陸が不可能になった場合に必要となる行動を明確に理解するために、ミストアプローチ手順と高度制限を確認することの重要性を強調します<sup>42</sup>。単独操縦の場合には、自己ブリーフィングとアプローチの精神的なリハーサルの必要性を強調します。これには、飛行経路と潜在的な緊急事態の視覚化が含まれます<sup>152</sup>。</p>
+                    <p class="note">包括的なブリーフィングは、適切に実行されたTACANアプローチの準備となります<sup>42</sup>。学生は、すべての重要な情報が確認され、理解されるように、標準化されたブリーフィング手順を開発する必要があります。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section4">
+            <button class="accordion-button">4. TACANアプローチの標準的な手順 (段階的に説明) <span class="icon"></span></button>
+            <div class="accordion-content">
+                <div>
+                    <h3 id="section4-1">4.1. IAFへの航行とホールディング</h3>
+                    <p>IAF（Initial Approach Fix：初期進入フィックス）への航法には、ATCからのレーダーベクターや、エンルートの航法援助施設を使用したパイロット自身による航法など、さまざまな方法があります<sup>14</sup>。標準的なホールディングパターンへの進入方法には、ダイレクト、パラレル、ティアドロップの3種類があります<sup>137</sup>。どの進入方法を選択するかは、ホールディングフィックスへの進入時の航空機のヘディングと、インバウンドホールディングコースとの関係によって決まります。</p>
+                    <h4>ホールディングパターンの手順:</h4>
+                    <ul>
+                        <li><strong>進入方法:</strong> 航空機がホールディングフィックスにどのように接近するかに基づいて決定されます<sup>137</sup>（ダイレクト、パラレル、ティアドロップ）。</li>
+                        <li><strong>速度管理:</strong> 異なる高度での標準ホールディング速度に言及し、T-4固有のガイダンスがない場合は、一般的な軍事/ICAOガイドラインを使用します<sup>137</sup>。</li>
+                        <li><strong>高度維持:</strong> 指示された高度を維持します。</li>
+                        <li><strong>タイミング:</strong> インバウンドレグのタイミングは、14,000フィートMSL以下の場合は通常1分、それ以上の場合は1.5分です<sup>137</sup>。</li>
+                    </ul>
+                    <p class="note">IAFへの適切な航法とホールディングパターンの実行は、計器進入の基本的な技能です<sup>14</sup>。学生は、異なるホールディングへの進入方法と、特に風の影響を考慮して、ホールディングパターンを正確に維持するためのテクニックを習得する必要があります。</p>
+
+                    <h3 id="section4-2">4.2. ペネトレーションターン / 降下 (DMEアーク、ラジアルインターセプトなど、具体的な飛行経路の例を挙げて)</h3>
+                    <p>ペネトレーションターンは、IAFから中間または最終進入セグメントへの移行を目的とした旋回であり<sup>120</sup>、コースを反転させ、航空機を最終進入コースに合わせるために使用される手続き上の機動です。IAFから次のセグメントに適した高度まで降下する手順を説明します<sup>120</sup>。T-4の飛行マニュアルに概説されている推奨降下率と対気速度を遵守しながら、安全かつ制御された降下率（通常800〜1000フィート/分）を維持します。</p>
+                    <h4>具体的な飛行経路の例:</h4>
+                    <ul>
+                        <li><strong>DMEアーク:</strong> EHSI/HSIとDMEを使用してDMEアークを飛行する方法を説明します。これには、正しい半径を維持するためのテクニック、最終進入コースをインターセプトするための旋回（リードポイント）の予測、および風の影響の補正が含まれます<sup>120</sup>。
+                            <ul>
+                                <li>考察: DMEアークの飛行には、ヘディング、バンク角、DMEの読み取り値の正確な調整が必要です<sup>120</sup>。学生は、アークを維持するための「10度旋回、10度ツイスト」または同様のテクニックを理解する必要があります。</li>
+                            </ul>
+                        </li>
+                        <li><strong>ラジアルインターセプト:</strong> TACAN局への特定のインバウンドラジアルをインターセプトして最終進入コースに乗る手順を説明します。これには、EHSI/HSIにコースを設定し、RMI/ベアリングポインターをガイダンスとして使用することが含まれます<sup>14</sup>。
+                            <ul>
+                                <li>考察: ラジアルをインターセプトするには、航空機のヘディング、目的のコース、EHSI/HSIとRMIの指示の関係を理解する必要があります<sup>14</sup>。</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h3 id="section4-3">4.3. 最終進入セグメント</h3>
+                    <p>FAF/FAP（最終進入フィックス/ポイント）をDMEまたはその他のチャート情報を使用して識別し、通過する方法を説明します<sup>120</sup>。FAF/FAPは、MDAへの最終降下が始まる重要なポイントです。FAF/FAPからMDA（最低降下高度）までの安定した降下の手順を説明します。これには、一定の降下率の維持、対気速度の制御（T-4固有のガイダンスがない場合は、一般的な軍事ガイドラインを使用<sup>43</sup>）、およびピッチ/パワー/トリムの協調が含まれます<sup>120</sup>。</p>
+                    <h4>最終進入セグメントでの留意点:</h4>
+                    <ul>
+                        <li><strong>コース維持:</strong> EHSI/HSIを使用してコースからの逸脱を継続的に監視し修正することの重要性を強調します<sup>120</sup>。CDIを中央に保ちます。</li>
+                        <li><strong>風の補正:</strong> 最終進入セグメント中の風の影響（クラブ角）を補正する方法を説明します<sup>120</sup>。</li>
+                    </ul>
+                    <p class="note">最終セグメント中の安定した進入を維持することは、安全な着陸にとって非常に重要です<sup>120</sup>。学生は、降下率、対気速度、コースを制御しながら風を補正することの重要性を理解する必要があります。</p>
+
+                    <h3 id="section4-4">4.4. MDAでの判断と着陸/ミスアプローチ</h3>
+                    <p>MDA（最低降下高度）での判断基準を説明します。これには、滑走路環境（規制で必要な特定の視覚的手がかり）との視覚的な接触が含まれます<sup>45</sup>。MDAに到達すると、着陸を継続するためには、パイロットは滑走路、進入灯、またはその他の視覚的な手がかりを目視で確認できている必要があります。</p>
+                    <h4>判断後の手順:</h4>
+                    <ul>
+                        <li><strong>着陸:</strong> 必要な視覚的参照が確立された後、目視による着陸に移行する手順を説明します<sup>45</sup>。</li>
+                        <li><strong>ミスアプローチ:</strong> MDAで必要な視覚的参照が確立されていない場合、または安全な着陸が不可能な場合に、ミスアプローチを実行する手順を詳述します<sup>45</sup>。MAP（ミスアプローチポイント）でミスアプローチ手順を開始し、公開されているミスアプローチ手順に従うことの重要性を強調します<sup>45</sup>。</li>
+                    </ul>
+                    <p class="note">MDAでの判断は、安全な結果を得るために非常に重要です<sup>45</sup>。学生は、着陸の可否を判断するための基準を理解し、MDAからの着陸と公開されているミスアプローチ手順の両方を実行する能力を習得する必要があります。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section5">
+            <button class="accordion-button">5. T-4練習機におけるTACANアプローチの操縦技術と留意点 <span class="icon"></span></button>
+            <div class="accordion-content">
+                <div>
+                    <h3 id="section5-1">5.1. 速度管理</h3>
+                    <p>T-4の飛行マニュアルと標準的な運用手順を参照して、TACANアプローチのさまざまな段階でのT-4の具体的な目標速度と出力設定を提供します<sup>43</sup>。</p>
+                    <ul>
+                        <li><strong>IAF:</strong> 高度に応じたホールディング速度<sup>139</sup></li>
+                        <li><strong>降下:</strong> T-4マニュアルに従った機動速度を維持</li>
+                        <li><strong>最終進入:</strong> T-4マニュアルの着陸構成速度を参照</li>
+                        <li><strong>ミストアプローチ:</strong> T-4マニュアルに従った離陸出力と対気速度で上昇を開始</li>
+                    </ul>
+                    <p class="note">T-4では、特に計器進入中は正確な速度制御が非常に重要です<sup>43</sup>。特に最終進入やミストアプローチなどの重要な段階での安定性と性能を確保するために、これらの速度を維持することの重要性を強調します<sup>175</sup>。</p>
+
+                    <h3 id="section5-2">5.2. 計器のクロスチェック</h3>
+                    <p>T-4におけるTACANアプローチの効果的な計器スキャンパターンを説明します。姿勢指示計への主要な焦点と、他の関連計器（コースと方位のためのEHSI/HSI、距離のためのDME、垂直プロファイルのための高度計とVVI、速度制御のための対気速度計）の定期的なチェックを強調します<sup>185</sup>。一般的なスキャンパターンには、論理的な順序で各計器を体系的にチェックし、姿勢制御の主要な参照として姿勢指示計に頻繁に戻ることが含まれます。</p>
+                    <h4>スキャン中に各計器から抽出する情報<sup>185</sup>:</h4>
+                    <ul>
+                        <li><strong>姿勢指示計:</strong> ピッチとバンク</li>
+                        <li><strong>EHSI/HSI:</strong> コース偏差とTACAN局へのベアリング</li>
+                        <li><strong>DME:</strong> 局までの距離</li>
+                        <li><strong>高度計とVVI:</strong> 垂直プロファイル</li>
+                        <li><strong>対気速度計:</strong> 所望の速度を維持</li>
+                    </ul>
+                    <p class="note">特にIMC（計器気象状態）でのTACANアプローチ中には、規律ある計器スキャンが状況認識を維持し、航空機を正確に制御するために不可欠です<sup>185</sup>。</p>
+
+                    <h3 id="section5-3">5.3. SA (Situational Awareness) の維持方法</h3>
+                    <p>TACAN局とアプローチフィックスに対する航空機の位置を常に把握し、次の手順（降下、旋回など）を理解し、天候やATC通信を含む飛行状況全体を認識することの重要性を強調します<sup>191</sup>。</p>
+                    <h4>SA維持戦略<sup>191</sup>:</h4>
+                    <ul>
+                        <li>今後の機動の予測</li>
+                        <li>タスクの優先順位付けによるコックピットワークロードの効果的な管理</li>
+                        <li>チャート、チェックリスト、ATCなどの利用可能なすべてのリソースの活用</li>
+                    </ul>
+                    <p class="note">強力な状況認識を維持することは、安全な計器飛行に不可欠です<sup>191</sup>。学生は、環境とアプローチの進行状況を継続的に理解するための習慣を身につける必要があります。</p>
+
+                    <h3 id="section5-4">5.4. 風の影響と補正</h3>
+                    <p>風がTACANアプローチのさまざまな段階で航空機にどのような影響を与えるか（所望のコースからのドリフト、対地速度への影響、したがってタイミングへの影響）を説明します<sup>143</sup>。インバウンドコースで所望のトラックを維持するために、ヘディング調整（風上へのクラブ角の適用）を使用して風によるドリフトを補正するテクニックと、正しい半径を維持するためにDMEアーク中に同様の補正を行うテクニックを説明します<sup>143</sup>。</p>
+                    <p class="note">風は計器飛行における重要な要素であり、TACANアプローチ中に意図した飛行経路を維持するためには、正確な風の補正が不可欠です<sup>143</sup>。</p>
+
+                    <h3 id="section5-5">5.5. コックピットワークロード管理</h3>
+                    <p>TACANアプローチ中のワークロードを管理するための戦略を提供します<sup>197</sup>。</p>
+                    <ul>
+                        <li>タスクの優先順位付け（アビエイト、ナビゲート、コミュニケート）</li>
+                        <li>教官との同乗飛行時のタスクの委任</li>
+                        <li>オートパイロットやフライトディレクターなどの利用可能な自動化機能の活用（訓練段階で装備され適切であれば）</li>
+                    </ul>
+                    <p>今後の手順に備え、同時に複数のアクションを実行しようとしないことで、タスクの飽和を避けることによって、航空機の先を行くことの重要性を強調します<sup>197</sup>。</p>
+                    <p class="note">効果的なコックピットワークロード管理は、計器飛行中の安全性と効率性を維持するために不可欠です<sup>197</sup>。</p>
+
+                    <h3 id="section5-6">5.6. 初学者が陥りやすいエラーとその対策</h3>
+                    <p>TACANアプローチ中に初心者が陥りやすい一般的なエラーをリストアップします<sup>45</sup>。</p>
+                    <ul>
+                        <li>コースからの逸脱（特に旋回やラジアルインターセプト中のオーバーシュートまたはアンダーシュート）</li>
+                        <li>高度からの逸脱（早すぎる降下または降下不足、MDAでの水平飛行の失敗）</li>
+                        <li>DMEアークでの正しい半径の維持の難しさ</li>
+                        <li>必要な場合のミスアプローチ開始の遅延</li>
+                    </ul>
+                    <h4>エラー回避のためのアドバイス<sup>45</sup>:</h4>
+                    <ul>
+                        <li>小さくスムーズな操縦桿の操作</li>
+                        <li>旋回の予測</li>
+                        <li>一貫した計器スキャンの維持</li>
+                        <li>高度の頻繁なクロスチェック</li>
+                        <li>DMEアーク飛行テクニックの練習</li>
+                        <li>着陸基準が満たされない場合にタイムリーにミスアプローチを行う決断</li>
+                    </ul>
+                    <p class="note">一般的なエラーとその原因を理解することは、それらを防ぐために不可欠です<sup>45</sup>。</p>
+
+                    <h3 id="section5-7">5.7. ヒューマンファクター</h3>
+                    <p>疲労、ストレス、過信などの要因が、計器飛行中のパイロットの判断とパフォーマンスに与える影響について説明します。これらはTACANアプローチの実行におけるエラーにつながる可能性があります<sup>203</sup>。</p>
+                    <h4>ヒューマンファクターの悪影響を軽減するための戦略<sup>203</sup>:</h4>
+                    <ul>
+                        <li>十分な休息を確保する</li>
+                        <li>適切な計画とテクニックを通じてストレスを管理する</li>
+                        <li>自分のスキルと限界を現実的に評価する</li>
+                    </ul>
+                    <p>基本的なCRM（クルー・リソース・マネジメント）の原則と、単独操縦の場合でもそれらがどのように適用されるか（自己認識、リスク評価、意思決定）を説明します<sup>199</sup>。</p>
+                    <p class="note">ヒューマンファクターは航空安全において重要な役割を果たします<sup>203</sup>。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section6">
+            <button class="accordion-button">6. 緊急時の対応 <span class="icon"></span></button>
+            <div class="accordion-content">
+                <div>
+                    <h3 id="section6-1">6.1. TACAN受信不良時の対応</h3>
+                    <p>TACAN受信機の故障または信号喪失の兆候（方位および/または距離情報の喪失、不安定な表示、故障フラグ）を説明します<sup>2</sup>。</p>
+                    <h4>取るべき措置<sup>2</sup>:</h4>
+                    <ol>
+                        <li>機器の設定（チャンネル、モード）の確認</li>
+                        <li>局の再チューニングの試行（適切な場合）</li>
+                        <li>ATCへの問題の通知</li>
+                        <li>他の利用可能な航法援助施設（VOR/DMEが利用可能な場合など）を使用してアプローチを継続するか、ミスアプローチを実行する</li>
+                    </ol>
+                    <p class="note">TACAN信号の喪失には、迅速かつ断固たる行動が必要です<sup>2</sup>。</p>
+
+                    <h3 id="section6-2">6.2. 計器故障時の対応（部分的な故障も含む）</h3>
+                    <p>TACANアプローチ中に他の重要な計器の故障に対処する手順を説明します。</p>
+                    <ul>
+                        <li><strong>EHSI/HSI故障:</strong> 方位にはRMIまたはスタンバイコンパスに頼る</li>
+                        <li><strong>姿勢指示計故障:</strong> 姿勢情報には旋回計、対気速度、高度計に頼る（部分計器飛行<sup>211</sup>）</li>
+                        <li><strong>対気速度計故障:</strong> 現在の飛行段階の既知のピッチとパワー設定を維持<sup>45</sup></li>
+                    </ul>
+                    <p>残りの計器（部分計器飛行）を使用して航空機の制御を維持することの重要性を強調します<sup>211</sup>。計器故障の場合のATCとの通信手順を概説します<sup>213</sup>。</p>
+                    <p class="note">IMCでの計器故障は重大な緊急事態となる可能性があります<sup>45</sup>。</p>
+
+                    <h3 id="section6-3">6.3. 予期せぬ気象変化への対応</h3>
+                    <p>進入中に悪化する気象条件（視程の低下、雲底の低下、乱気流、風の急変）の兆候を認識する方法を説明します<sup>225</sup>。</p>
+                    <h4>対応手順<sup>225</sup>:</h4>
+                    <ol>
+                        <li>変化する天候に基づいて、進入を継続するか、ミスアプローチを実行するか、代替空港にダイバートするかを決定する</li>
+                        <li>個人的な最低気象条件を遵守し、悪化する天候下では慎重な判断を下す</li>
+                    </ol>
+                    <p class="note">天候は急速に変化する可能性があり、パイロットは計器進入中に計画を適応させる準備ができている必要があります<sup>225</sup>。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section7">
+            <button class="accordion-button">7. まとめとキーポイントの再確認 <span class="icon"></span></button>
+            <div class="accordion-content">
+                <div>
+                    <p>T-4でTACANアプローチを安全かつ効果的に行うための最も重要なポイントをまとめます。</p>
+                    <ul>
+                        <li>徹底的な事前飛行計画</li>
+                        <li>正確な計器設定</li>
+                        <li>詳細な進入ブリーフィング</li>
+                        <li>手順の正確な実行</li>
+                        <li>効果的なワークロード管理</li>
+                        <li>緊急事態への備え</li>
+                    </ul>
+                    <p>TACANアプローチと計器飛行の熟練度を維持するための継続的な学習と定期的な練習の必要性を再確認します。</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Accordion functionality
+        const accordionButtons = document.querySelectorAll('.accordion-button');
+        accordionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const accordionContent = button.nextElementSibling;
+                button.classList.toggle('active');
+                if (button.classList.contains('active')) {
+                    accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
+                } else {
+                    accordionContent.style.maxHeight = 0;
+                }
+            });
+        });
+
+        // Table of Contents (TOC) generation and smooth scroll
+        const tocContainer = document.getElementById('toc');
+        const sections = document.querySelectorAll('.content section');
+        let tocHTML = '';
+
+        sections.forEach((section, index) => {
+            const mainTitleElement = section.querySelector('.accordion-button');
+            const mainTitle = mainTitleElement.textContent.replace(/\s*<span class="icon"><\/span>\s*$/, '').trim(); // Remove icon text
+            const mainId = section.id;
+            
+            tocHTML += `<a href="#${mainId}" class="toc-main-item">${mainTitle}</a>`;
+
+            const subheadings = section.querySelectorAll('h3');
+            if (subheadings.length > 0) {
+                tocHTML += '<div class="sub-menu">';
+                subheadings.forEach(subheading => {
+                    const subTitle = subheading.textContent;
+                    const subId = subheading.id;
+                    tocHTML += `<a href="#${subId}">${subTitle}</a>`;
+                });
+                tocHTML += '</div>';
+            }
+        });
+        tocContainer.innerHTML = tocHTML;
+
+        // Smooth scroll for TOC links
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    // If it's a main section, open its accordion
+                    if (targetElement.tagName.toLowerCase() === 'section') {
+                        const button = targetElement.querySelector('.accordion-button');
+                        const content = targetElement.querySelector('.accordion-content');
+                        if (button && !button.classList.contains('active')) {
+                            button.classList.add('active');
+                            content.style.maxHeight = content.scrollHeight + 'px';
+                        }
+                    } else if (targetElement.tagName.toLowerCase() === 'h3') {
+                        // If it's a subheading, open its parent accordion
+                        const parentSection = targetElement.closest('section');
+                        if (parentSection) {
+                             const button = parentSection.querySelector('.accordion-button');
+                             const content = parentSection.querySelector('.accordion-content');
+                             if (button && !button.classList.contains('active')) {
+                                button.classList.add('active');
+                                content.style.maxHeight = content.scrollHeight + 'px';
+                            }
+                        }
+                    }
+                    
+                    // Wait for accordion to open before scrolling
+                    setTimeout(() => {
+                        const headerOffset = 80; // Adjust as needed if you have a fixed header
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+                    }, 350); // Corresponds to accordion transition time
+                }
+            });
+        });
+
+        // Active link highlighting for sidebar (basic version based on scroll)
+        // More advanced scrollspy would require checking viewport visibility of sections
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 90) { // Adjusted offset
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.sidebar a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').substring(1) === current) {
+                    a.classList.add('active');
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
