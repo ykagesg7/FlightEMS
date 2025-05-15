@@ -1,24 +1,35 @@
 import React, { useState } from 'react';
 import MDXLoader from './MDXLoader';
 
+// MDXコンテンツの型定義
+interface MDXContent {
+  id: string;
+  title: string;
+  category: string;
+  directHtml?: boolean;
+  htmlUrl?: string;
+}
+
 // 利用可能なMDXコンテンツのリスト
-const mdxContents = [
+const mdxContents: MDXContent[] = [
   { id: '0.1-AviationRegulations', title: '航空法規', category: '基本知識' },
   { id: '0.2_Mentality', title: '【悩みと考える】たったこれだけの違いで、人生って結構変わる話。', category: 'マインドセット' },
   { id: '0.2.2_Mentality2', title: '【モチベーション】夢を追いかける勇気と決意', category: 'マインドセット' },
-  { id: '0.3_UnconsciousSuccess', title: '「なんか知らんけど上手くいった」…それ、ホントに偶然？', category: 'マインドセット' },
+  { id: '0.3.1_UnconsciousSuccess', title: '「なんか知らんけど上手くいった」…それ、ホントに偶然？', category: 'マインドセット' },
+  { id: '0.3.2_EndWithFuture', title: '終わりを思い描くことから始める～清正公の熊本よかとこラジオ局～', category: 'マインドセット' },
   { id: '0.4_ConcreteAbstract', title: '未来のパイロットたちへ。記憶のモヤモヤ、ワシがバッサリ斬ったるわ！【具体と抽象】', category: '思考法' },
   { id: '1.1-DefinitionOfInstrumentFlight', title: '計器飛行の定義', category: '計器飛行' },
   { id: '1.2-BasicPrinciples', title: '計器飛行の基本原理', category: '計器飛行' },
   { id: '1.3-MajorInstruments', title: '主要な計器', category: '計器飛行' },
   { id: '1.4-InstrumentScan', title: '計器スキャン', category: '計器飛行' },
   { id: '1.5-InstrumentFlightBasicOperations', title: '計器飛行の基本操作', category: '計器飛行' },
+  { id: '4-InstrumentFlight', title: '計器飛行の応用的な操作 - 基礎知識', category: '計器飛行' },
+  { id: '05_TacanApproach', title: 'T-4練習機 TACANアプローチ教育資料', category: '計器飛行', directHtml: true, htmlUrl: '/content/05_TacanApproach.html' },
   // { id: '1.6-InstrumentFlightProcedures', title: '計器飛行の手順', category: '計器飛行' },
   // { id: '1.7-InstrumentApproachProcedures', title: '計器進入の手順', category: '計器飛行' },
   // { id: '1.8-InstrumentFlightEmergencies', title: '計器飛行の緊急事態', category: '計器飛行' },
   // { id: '2-InstrumentTakeoff', title: '計器離陸', category: '計器飛行' },
   // { id: '3-BasicInstrumentFlightOperations', title: '基本的な計器飛行操作', category: '計器飛行' },
-  // { id: '4-InstrumentFlight', title: '基本計器飛行', category: '計器飛行' },
 ];
 
 // カテゴリのリスト
@@ -28,9 +39,40 @@ const LearningTabMDX: React.FC = () => {
   const [selectedContent, setSelectedContent] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showHtmlDialog, setShowHtmlDialog] = useState(false);
+  const [pendingHtmlContent, setPendingHtmlContent] = useState<MDXContent | null>(null);
+
+  // HTMLを開くダイアログを表示
+  const showHtmlOpenDialog = (content: MDXContent) => {
+    setPendingHtmlContent(content);
+    setShowHtmlDialog(true);
+  };
+
+  // HTMLを開く
+  const openHtml = () => {
+    if (pendingHtmlContent?.htmlUrl) {
+      window.location.href = pendingHtmlContent.htmlUrl;
+    }
+    setShowHtmlDialog(false);
+    setPendingHtmlContent(null);
+  };
+
+  // ダイアログをキャンセル
+  const cancelDialog = () => {
+    setShowHtmlDialog(false);
+    setPendingHtmlContent(null);
+  };
 
   // コンテンツを選択した時の処理
   const selectContent = (contentId: string) => {
+    // HTMLへの直接遷移が指定されている場合
+    const content = mdxContents.find(c => c.id === contentId);
+    if (content?.directHtml && content.htmlUrl) {
+      showHtmlOpenDialog(content);
+      return;
+    }
+    
+    // 通常のMDXコンテンツの場合
     setSelectedContent(contentId);
     window.scrollTo(0, 0); // ページ上部にスクロール
   };
@@ -72,6 +114,32 @@ const LearningTabMDX: React.FC = () => {
 
   return (
     <div className="bg-gray-50 rounded-lg shadow-lg overflow-hidden">
+      {showHtmlDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              「{pendingHtmlContent?.title}」を開く
+            </h3>
+            <p className="mb-4 text-gray-700">
+              このコンテンツはHTMLページとして表示されます。
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button 
+                onClick={cancelDialog}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100"
+              >
+                キャンセル
+              </button>
+              <button 
+                onClick={openHtml}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                開く
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto">
         {!selectedContent ? (
           <div className="p-8 bg-white">
