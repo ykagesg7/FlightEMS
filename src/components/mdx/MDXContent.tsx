@@ -4,13 +4,13 @@ import * as MDXComponents from './index';
 
 // MDXでカスタマイズできるコンポーネント
 const components = {
-  h1: (props: any) => <h1 className="text-3xl font-bold text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6 break-words" {...props} />,
-  h2: (props: any) => <h2 className="text-2xl font-bold mb-4 text-indigo-800 mt-8 break-words" {...props} />,
-  h3: (props: any) => <h3 className="text-xl font-bold mt-6 mb-3 text-indigo-800 break-words" {...props} />,
-  p: (props: any) => <p className="mb-4 text-gray-800 leading-7 break-words text-base" {...props} />,
+  h1: (props: any) => <h1 className="text-2xl sm:text-3xl font-bold text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6 break-words tracking-tight" {...props} />,
+  h2: (props: any) => <h2 className="text-xl sm:text-2xl font-bold mb-4 text-indigo-800 mt-8 break-words tracking-tight" {...props} />,
+  h3: (props: any) => <h3 className="text-lg sm:text-xl font-bold mt-6 mb-3 text-indigo-800 break-words tracking-tight" {...props} />,
+  p: (props: any) => <p className="mb-5 text-gray-800 leading-7 sm:leading-8 break-words text-base tracking-wide" {...props} />,
   ul: (props: any) => <ul className="list-disc pl-6 space-y-2 my-4 text-gray-800" {...props} />,
   ol: (props: any) => <ol className="list-decimal pl-6 space-y-2 my-4 text-gray-800" {...props} />,
-  li: (props: any) => <li className="text-gray-800 leading-7 break-words text-base" {...props} />,
+  li: (props: any) => <li className="text-gray-800 leading-7 sm:leading-8 break-words text-base mb-1" {...props} />,
   blockquote: (props: any) => (
     <div className="important-box bg-amber-50 border-l-4 border-amber-500 p-4 my-6 text-amber-900 rounded-r-lg shadow-sm break-words" {...props} />
   ),
@@ -18,7 +18,9 @@ const components = {
   th: (props: any) => <th className="border border-gray-300 p-3 text-left bg-indigo-800 text-white break-words" {...props} />,
   td: (props: any) => <td className="border border-gray-300 p-3 break-words" {...props} />,
   tr: (props: any) => <tr className="bg-white even:bg-gray-50" {...props} />,
-  a: (props: any) => <a className="text-blue-600 hover:text-blue-800 break-all" {...props} />,
+  a: (props: any) => <a className="text-blue-600 hover:text-blue-800 break-all underline" {...props} />,
+  strong: (props: any) => <strong className="font-bold text-gray-900" {...props} />,
+  em: (props: any) => <em className="italic text-gray-800" {...props} />,
   
   // カスタムコンポーネント
   Image: MDXComponents.ImageComponent,
@@ -77,8 +79,10 @@ const MDXContent: React.FC<MDXContentProps> = ({ children }) => {
 
   return (
     <MDXProvider components={components}>
-      <div className="prose prose-lg max-w-none bg-white p-2 sm:p-4 md:p-6 rounded-lg shadow-md transition-all duration-300 break-words overflow-hidden text-base leading-7">
-        {filteredChildren}
+      <div className="prose max-w-none bg-white p-2 sm:p-4 md:p-6 rounded-lg shadow-md transition-all duration-300 break-words overflow-hidden text-base leading-7 sm:leading-8">
+        <div className="max-w-3xl mx-auto">
+          {filteredChildren}
+        </div>
       </div>
     </MDXProvider>
   );
