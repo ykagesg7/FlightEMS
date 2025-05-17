@@ -7,10 +7,10 @@ const components = {
   h1: (props: any) => <h1 className="text-3xl font-bold text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6 break-words" {...props} />,
   h2: (props: any) => <h2 className="text-2xl font-bold mb-4 text-indigo-800 mt-8 break-words" {...props} />,
   h3: (props: any) => <h3 className="text-xl font-bold mt-6 mb-3 text-indigo-800 break-words" {...props} />,
-  p: (props: any) => <p className="mb-4 text-gray-800 leading-relaxed break-words" {...props} />,
+  p: (props: any) => <p className="mb-4 text-gray-800 leading-7 break-words text-base" {...props} />,
   ul: (props: any) => <ul className="list-disc pl-6 space-y-2 my-4 text-gray-800" {...props} />,
   ol: (props: any) => <ol className="list-decimal pl-6 space-y-2 my-4 text-gray-800" {...props} />,
-  li: (props: any) => <li className="text-gray-800 leading-relaxed break-words" {...props} />,
+  li: (props: any) => <li className="text-gray-800 leading-7 break-words text-base" {...props} />,
   blockquote: (props: any) => (
     <div className="important-box bg-amber-50 border-l-4 border-amber-500 p-4 my-6 text-amber-900 rounded-r-lg shadow-sm break-words" {...props} />
   ),
@@ -77,7 +77,7 @@ const MDXContent: React.FC<MDXContentProps> = ({ children }) => {
 
   return (
     <MDXProvider components={components}>
-      <div className="prose prose-lg max-w-none bg-white p-2 sm:p-4 md:p-6 rounded-lg shadow-md transition-all duration-300 break-words overflow-hidden">
+      <div className="prose prose-lg max-w-none bg-white p-2 sm:p-4 md:p-6 rounded-lg shadow-md transition-all duration-300 break-words overflow-hidden text-base leading-7">
         {filteredChildren}
       </div>
     </MDXProvider>
