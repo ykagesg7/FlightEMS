@@ -5,6 +5,7 @@ import './index.css';
 import PlanningMapPage from './pages/PlanningMapPage';
 import LearningPage from './pages/LearningPage';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { ProgressProvider } from './contexts/ProgressContext';
 
 // NavLinkコンポーネントを作成して現在のパスをチェック
 const NavLink = ({ to, children }: { to: string, children: React.ReactNode }) => {
@@ -146,9 +147,11 @@ const AppLayout = () => {
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <AppLayout />
-      </Router>
+      <ProgressProvider>
+        <Router>
+          <AppLayout />
+        </Router>
+      </ProgressProvider>
     </ThemeProvider>
   );
 }

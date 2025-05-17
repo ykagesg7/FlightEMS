@@ -7,6 +7,9 @@ interface MDXLoaderProps {
   showPath?: boolean; // ファイルパスを表示するかどうか
 }
 
+// コンテンツ読み込みが完了したときに発火するカスタムイベント
+export const MDX_CONTENT_LOADED_EVENT = 'mdx-content-loaded';
+
 const MDXLoader: React.FC<MDXLoaderProps> = ({ filePath, showPath }) => {
   const [Content, setContent] = useState<React.ComponentType | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +33,21 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ filePath, showPath }) => {
 
     loadMDX();
   }, [filePath]);
+
+  // コンテンツの読み込みが完了したときにイベントを発火
+  useEffect(() => {
+    if (!loading && Content) {
+      // 少し遅延させてコンテンツがDOMに反映された後にイベントを発火
+      const timer = setTimeout(() => {
+        window.dispatchEvent(new CustomEvent(MDX_CONTENT_LOADED_EVENT, { 
+          detail: { contentId: filePath }
+        }));
+        console.log(`コンテンツの読み込みが完了しました: ${filePath}`);
+      }, 200);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [loading, Content, filePath]);
 
   if (loading) {
     return (
