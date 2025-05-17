@@ -1,7 +1,8 @@
 .highlight {
   background: none;
   position: relative;
-  display: inline-block;
+  display: inline;
+  white-space: nowrap;
 }
 
 .highlight::after {

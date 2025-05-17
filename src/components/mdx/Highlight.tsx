@@ -21,14 +21,15 @@ const Highlight: React.FC<Props> = ({ children }) => {
       });
     };
     const observer = new window.IntersectionObserver(handleIntersect, {
-      threshold: 1.0,
+      threshold: 0.5,
+      rootMargin: "0px 0px -10% 0px"
     });
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
   return (
-    <span ref={ref} className="highlight">{children}</span>
+    <span ref={ref} className="highlight" style={{ display: 'inline' }}>{children}</span>
   );
 };
 

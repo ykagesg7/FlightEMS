@@ -26,6 +26,7 @@ const components = {
   Code: MDXComponents.CodeBlock,
   Quiz: MDXComponents.QuizComponent,
   Diagram: MDXComponents.DiagramComponent,
+  Highlight: MDXComponents.Highlight,
 
   // HTMLのimg要素をオーバーライドする代わりに、標準のimg要素を使用
   // img: MDXComponents.ImageComponent, // 型エラーが発生するため削除
@@ -75,7 +76,7 @@ const MDXContent: React.FC<MDXContentProps> = ({ children }) => {
 
   return (
     <MDXProvider components={components}>
-      <div className="prose prose-lg max-w-none bg-white p-8 rounded-lg shadow-md transition-all duration-300">
+      <div className="prose prose-lg max-w-none bg-white p-2 sm:p-4 md:p-6 rounded-lg shadow-md transition-all duration-300">
         {filteredChildren}
       </div>
     </MDXProvider>

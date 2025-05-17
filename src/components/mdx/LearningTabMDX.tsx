@@ -220,7 +220,7 @@ const LearningTabMDX: React.FC = () => {
           </div>
         ) : (
           <>
-            <div className="bg-white p-3 sm:p-4 md:p-6">
+            <div className="bg-white p-1 sm:p-2 md:p-4">
               <MDXLoader filePath={selectedContent} showPath={false} />
             </div>
             <div className="navigation bg-indigo-800 text-center p-2 sm:p-4 flex justify-between items-center mt-2 sm:mt-4">
