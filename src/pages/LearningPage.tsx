@@ -4,7 +4,7 @@ import LearningTabMDX from '../components/mdx/LearningTabMDX';
 function LearningPage() {
   return (
     <div className="bg-gradient-to-br from-indigo-100 to-purple-100 min-h-screen">
-      <div className="container mx-auto p-4 md:p-8">
+      <div className="container mx-auto p-2 sm:p-4 md:p-6">
         <LearningTabMDX />
       </div>
     </div>

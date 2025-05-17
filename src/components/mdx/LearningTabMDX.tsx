@@ -143,8 +143,8 @@ const LearningTabMDX: React.FC = () => {
       )}
       <div className="max-w-7xl mx-auto">
         {!selectedContent ? (
-          <div className="p-8 bg-white">
-            <h1 className="text-2xl font-bold text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-6">
+          <div className="p-3 sm:p-4 md:p-6 bg-white">
+            <h1 className="text-xl sm:text-2xl font-bold text-indigo-900 border-b-2 border-indigo-800 pb-2 mb-4 sm:mb-6">
               学習コンテンツ一覧
             </h1>
 
@@ -220,35 +220,35 @@ const LearningTabMDX: React.FC = () => {
           </div>
         ) : (
           <>
-            <div className="bg-white p-8">
+            <div className="bg-white p-3 sm:p-4 md:p-6">
               <MDXLoader filePath={selectedContent} showPath={false} />
             </div>
-            <div className="navigation bg-indigo-800 text-center p-4 flex justify-between items-center mt-4">
+            <div className="navigation bg-indigo-800 text-center p-2 sm:p-4 flex justify-between items-center mt-2 sm:mt-4">
               <div className="flex items-center">
                 <button 
-                  className="nav-btn bg-white text-indigo-800 px-4 py-2 mx-1 rounded font-bold hover:bg-indigo-100 disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-105" 
+                  className="nav-btn bg-white text-indigo-800 px-2 py-1 sm:px-4 sm:py-2 mx-1 rounded text-sm sm:text-base font-bold hover:bg-indigo-100 disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-105" 
                   onClick={goBack}
                   disabled={getCurrentIndex() <= 0}
                 >
                   前へ
                 </button>
                 <button 
-                  className="nav-btn bg-white text-indigo-800 px-4 py-2 mx-1 rounded font-bold hover:bg-indigo-100 disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-105" 
+                  className="nav-btn bg-white text-indigo-800 px-2 py-1 sm:px-4 sm:py-2 mx-1 rounded text-sm sm:text-base font-bold hover:bg-indigo-100 disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-105" 
                   onClick={goForward}
                   disabled={getCurrentIndex() >= mdxContents.length - 1}
                 >
                   次へ
                 </button>
               </div>
-              <div className="text-white font-semibold text-lg">
+              <div className="text-white font-semibold text-sm sm:text-base md:text-lg max-w-[40%] truncate">
                 {mdxContents.find(c => c.id === selectedContent)?.title || 'コンテンツの表示中'}
               </div>
               <div>
                 <button 
-                  className="nav-btn bg-amber-400 text-indigo-900 px-4 py-2 mx-1 rounded font-bold hover:bg-amber-300 transition-transform duration-200 hover:scale-105"
+                  className="nav-btn bg-amber-400 text-indigo-900 px-2 py-1 sm:px-4 sm:py-2 mx-1 rounded text-sm sm:text-base font-bold hover:bg-amber-300 transition-transform duration-200 hover:scale-105"
                   onClick={() => setSelectedContent(null)}
                 >
-                  コンテンツ一覧
+                  一覧
                 </button>
               </div>
             </div>
