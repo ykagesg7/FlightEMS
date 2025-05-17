@@ -205,21 +205,21 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   }, [flightPlan.departure]);
 
   return (
-    <div className="bg-gray-800 shadow-sm rounded-lg p-4 md:p-6">
-      <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-gray-50">フライトパラメータ</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-3 md:gap-4">
+    <div className="bg-gray-800 shadow-sm rounded-lg p-3 sm:p-4 md:p-6">
+      <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 text-gray-50">フライトパラメータ</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
         {/* 左側: 速度計関連のパラメータ */}
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           <div className="mb-1">
-            <label htmlFor="speed" className="block text-sm font-medium text-gray-300 mb-1">
-              <Gauge size={16} className="inline-block mr-1" /> 速度 (CAS/kt)
+            <label htmlFor="speed" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
+              <Gauge size={14} className="inline-block mr-1" /> 速度 (CAS/kt)
             </label>
             <div className="flex">
               <input
                 type="number"
                 id="speed"
                 name="speed"
-                className="px-2 py-1 w-full border border-gray-600 rounded-l-md text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
+                className="px-2 py-1 w-full border border-gray-600 rounded-l-md text-xs sm:text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
                 value={flightPlan.speed}
                 onChange={handleSpeedChange}
               />
@@ -229,144 +229,142 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                   onClick={handleSpeedIncrement}
                   aria-label="Increase speed"
                 >
-                  <ChevronUp size={14} />
+                  <ChevronUp size={12} />
                 </button>
                 <button 
                   className="bg-gray-600 px-2 text-gray-200 border-b border-r border-gray-600 rounded-br-md hover:bg-gray-500"
                   onClick={handleSpeedDecrement}
                   aria-label="Decrease speed"
                 >
-                  <ChevronDown size={14} />
+                  <ChevronDown size={12} />
                 </button>
               </div>
             </div>
-            <div className="mt-1 text-xs text-gray-400">
+            <div className="mt-1 text-2xs sm:text-xs text-gray-400">
               TAS: {displayTAS} kt | EAS: {displayEAS} kt
             </div>
           </div>
 
           <div className="mb-1">
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              <Gauge size={16} className="inline-block mr-1" /> MACH
+            <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
+              <Gauge size={14} className="inline-block mr-1" /> MACH
             </label>
-            <div className="flex items-center px-2 py-1 border border-gray-600 rounded-md bg-gray-700 text-gray-50">
-              <span className="flex-grow text-sm">{displayMach}</span>
-              <div className="flex flex-col">
-                <button
-                  className="px-1 text-gray-200 hover:text-white"
+            <div className="flex justify-between items-center bg-gray-700 rounded-md px-2 py-1 border border-gray-600">
+              <span className="text-xs sm:text-sm text-gray-50">{displayMach}</span>
+              <div className="flex space-x-1">
+                <button 
+                  className="bg-gray-600 px-1 text-gray-200 rounded hover:bg-gray-500 focus:outline-none"
                   onClick={handleMachIncrement}
-                  aria-label="Increase Mach"
+                  aria-label="Increase MACH"
                 >
-                  <ChevronUp size={14} />
+                  <ChevronUp size={12} />
                 </button>
-                <button
-                  className="px-1 text-gray-200 hover:text-white"
+                <button 
+                  className="bg-gray-600 px-1 text-gray-200 rounded hover:bg-gray-500 focus:outline-none"
                   onClick={handleMachDecrement}
-                  aria-label="Decrease Mach"
+                  aria-label="Decrease MACH"
                 >
-                  <ChevronDown size={14} />
+                  <ChevronDown size={12} />
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 中央: 高度と気温 */}
-        <div className="space-y-3">
+        {/* 中央: 高度と時間パラメータ */}
+        <div className="space-y-2 sm:space-y-3">
           <div className="mb-1">
-            <label htmlFor="altitude" className="block text-sm font-medium text-gray-300 mb-1">
-              <BarChart size={16} className="inline-block mr-1" /> 高度 (ft)
+            <label htmlFor="altitude" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
+              <BarChart size={14} className="inline-block mr-1" /> 高度 (ft)
             </label>
             <div className="flex">
               <input
                 type="number"
                 id="altitude"
                 name="altitude"
-                className="px-2 py-1 w-full border border-gray-600 rounded-l-md text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
+                className="px-2 py-1 w-full border border-gray-600 rounded-l-md text-xs sm:text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
                 value={flightPlan.altitude}
-                onChange={(e) => handleAltitudeChange(parseInt(e.target.value, 10))}
+                onChange={(e) => handleAltitudeChange(parseInt(e.target.value, 10) || 0)}
               />
               <div className="flex flex-col">
-                <button
+                <button 
                   className="bg-gray-600 px-2 text-gray-200 border-t border-r border-gray-600 rounded-tr-md hover:bg-gray-500"
                   onClick={handleAltitudeIncrement}
                   aria-label="Increase altitude"
                 >
-                  <ChevronUp size={14} />
+                  <ChevronUp size={12} />
                 </button>
-                <button
+                <button 
                   className="bg-gray-600 px-2 text-gray-200 border-b border-r border-gray-600 rounded-br-md hover:bg-gray-500"
                   onClick={handleAltitudeDecrement}
                   aria-label="Decrease altitude"
                 >
-                  <ChevronDown size={14} />
+                  <ChevronDown size={12} />
                 </button>
               </div>
             </div>
-            <div className="mt-1 text-xs text-gray-400">
-              高度気温: {displayAltitudeTemp}°C
+            <div className="mt-1 text-2xs sm:text-xs text-gray-400">
+              気温(高度): {displayAltitudeTemp}℃
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label htmlFor="groundTemp" className="block text-sm font-medium text-gray-300 mb-1">
-                <Thermometer size={16} className="inline-block mr-1" /> 地上気温(°C)
-              </label>
+          <div className="mb-1">
+            <label htmlFor="departureTime" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
+              <Clock size={14} className="inline-block mr-1" /> 出発時刻（JST/UTC）
+            </label>
+            <div className="flex items-center space-x-2">
               <input
-                type="number"
-                id="groundTemp"
-                name="groundTemp"
-                className="px-2 py-1 w-full border border-gray-600 rounded-md text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
-                value={flightPlan.groundTempC}
-                onChange={handleGroundTempChange}
+                type="time"
+                id="departureTime"
+                name="departureTime"
+                className="px-2 py-1 w-3/5 border border-gray-600 rounded-md text-xs sm:text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
+                value={flightPlan.departureTime}
+                onChange={handleDepartureTimeChange}
               />
-            </div>
-            
-            <div>
-              <label htmlFor="groundElevation" className="block text-sm font-medium text-gray-300 mb-1">
-                <BarChart size={16} className="inline-block mr-1" /> 地上標高(ft)
-              </label>
-              <input
-                type="number"
-                id="groundElevation"
-                name="groundElevation"
-                className="px-2 py-1 w-full border border-gray-600 rounded-md text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
-                value={flightPlan.groundElevationFt}
-                onChange={handleGroundElevationChange}
-              />
+              <span className="text-xs sm:text-sm text-gray-400">{utcTime}Z</span>
             </div>
           </div>
         </div>
 
-        {/* 右側: 時間設定 */}
-        <div className="space-y-3">
-          <div>
-            <label htmlFor="departure-time" className="block text-sm font-medium text-gray-300 mb-1">
-              <Clock size={16} className="inline-block mr-1" /> 出発時刻 (JST)
-            </label>
-            <input
-              type="time"
-              id="departure-time"
-              name="departure-time"
-              className="px-2 py-1 w-full border border-gray-600 rounded-md text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
-              value={flightPlan.departureTime}
-              onChange={handleDepartureTimeChange}
-            />
-            <div className="mt-1 text-xs text-gray-400">
-              UTC時間: {utcTime}
+        {/* 右側: 地上気象パラメータ */}
+        <div className="space-y-2 sm:space-y-3">
+          <div className="mb-1">
+            <div className="flex items-center justify-between mb-1">
+              <label htmlFor="groundTemp" className="block text-xs sm:text-sm font-medium text-gray-300">
+                <Thermometer size={14} className="inline-block mr-1" /> 地上気温 (℃)
+              </label>
+              {isLoading && (
+                <div className="animate-spin h-3 w-3 border border-t-2 border-gray-300 rounded-full"></div>
+              )}
+            </div>
+            <div className="flex">
+              <input
+                type="number"
+                id="groundTemp"
+                name="groundTemp"
+                className="px-2 py-1 w-full border border-gray-600 rounded-md text-xs sm:text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
+                value={flightPlan.groundTempC}
+                onChange={handleGroundTempChange}
+              />
             </div>
           </div>
-          
-          {/* 飛行場情報表示部分 */}
-          <div>
-            <h3 className="text-sm font-medium text-gray-300 mb-1">出発空港</h3>
-            <div className="px-2 py-1 border border-gray-600 rounded-md bg-gray-700 text-sm text-gray-50">
-              {airportName}
-              {isLoading && <span className="ml-2 text-xs text-blue-400">天気データ取得中...</span>}
+
+          <div className="mb-1">
+            <label htmlFor="groundElevation" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
+              <BarChart size={14} className="inline-block mr-1" /> 地上標高 (ft)
+            </label>
+            <div className="flex">
+              <input
+                type="number"
+                id="groundElevation"
+                name="groundElevation"
+                className="px-2 py-1 w-full border border-gray-600 rounded-md text-xs sm:text-sm bg-gray-700 text-gray-50 focus:ring-1 focus:ring-blue-500"
+                value={flightPlan.groundElevationFt}
+                onChange={handleGroundElevationChange}
+              />
             </div>
-            <div className="mt-1 text-xs text-gray-400">
-              標高: {flightPlan.groundElevationFt}ft | 気温: {flightPlan.groundTempC}°C
+            <div className="mt-1 text-2xs sm:text-xs text-gray-400">
+              空港: {airportName}
             </div>
           </div>
         </div>

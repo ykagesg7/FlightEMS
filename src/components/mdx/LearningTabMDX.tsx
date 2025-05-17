@@ -25,7 +25,7 @@ const mdxContents: MDXContent[] = [
   { id: '1.4-InstrumentScan', title: '計器スキャン', category: '計器飛行' },
   { id: '1.5-InstrumentFlightBasicOperations', title: '計器飛行の基本操作', category: '計器飛行' },
   { id: '4-InstrumentFlight', title: '計器飛行の応用的な操作 - 基礎知識', category: '計器飛行' },
-  { id: '05_TacanApproach', title: 'T-4練習機 TACANアプローチ教育資料', category: '計器飛行', directHtml: true, htmlUrl: '/content/05_TacanApproach.html' },
+  { id: '05_TacanApproach', title: 'TACANアプローチ', category: '計器飛行', directHtml: true, htmlUrl: '/content/05_TacanApproach.html' },
   // { id: '1.6-InstrumentFlightProcedures', title: '計器飛行の手順', category: '計器飛行' },
   // { id: '1.7-InstrumentApproachProcedures', title: '計器進入の手順', category: '計器飛行' },
   // { id: '1.8-InstrumentFlightEmergencies', title: '計器飛行の緊急事態', category: '計器飛行' },

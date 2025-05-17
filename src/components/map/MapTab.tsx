@@ -149,7 +149,7 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
   }, [cursorPosition, navaidData]);
 
   return (
-    <div className="relative h-[calc(100vh-7rem)] bg-white rounded-lg shadow-sm overflow-hidden">
+    <div className="relative h-[calc(100vh-4rem)] bg-white rounded-lg shadow-sm overflow-hidden">
       <MapContainer
         center={[DEFAULT_CENTER.lat, DEFAULT_CENTER.lng]}
         zoom={DEFAULT_ZOOM}

@@ -180,8 +180,8 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
   ]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-      <div className="md:col-span-2 space-y-4 md:space-y-6 px-2 md:px-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+      <div className="lg:col-span-2 space-y-3 sm:space-y-4 md:space-y-6">
         {/* FlightParameters コンポーネントを配置 */}
         <FlightParameters
           flightPlan={flightPlan}
@@ -199,9 +199,9 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
         />
       </div>
 
-      <div className="md:col-span-1 px-2 md:px-0">
+      <div className="space-y-3 sm:space-y-4 md:space-y-6">
         {/* FlightSummary コンポーネントを配置 */}
-        <FlightSummary flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
+        <FlightSummary flightPlan={flightPlan} />
       </div>
     </div>
   );
