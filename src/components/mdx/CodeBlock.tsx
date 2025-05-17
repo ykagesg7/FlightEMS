@@ -61,7 +61,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
                       <td className="text-right pr-4 text-gray-500 select-none w-10 text-xs">
                         {i + 1}
                       </td>
-                      <td className="font-mono whitespace-pre">
+                      <td className="font-mono whitespace-pre-wrap break-words">
                         {line || ' '}
                       </td>
                     </tr>
@@ -69,7 +69,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
                 </tbody>
               </table>
             ) : (
-              <div className="font-mono whitespace-pre">{children}</div>
+              <div className="font-mono whitespace-pre-wrap break-words">{children}</div>
             )}
           </code>
         </pre>

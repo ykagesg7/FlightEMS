@@ -2,7 +2,6 @@
   background: none;
   position: relative;
   display: inline;
-  white-space: nowrap;
 }
 
 .highlight::after {

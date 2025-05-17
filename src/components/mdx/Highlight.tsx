@@ -29,7 +29,7 @@ const Highlight: React.FC<Props> = ({ children }) => {
   }, []);
 
   return (
-    <span ref={ref} className="highlight" style={{ display: 'inline' }}>{children}</span>
+    <span ref={ref} className="highlight">{children}</span>
   );
 };
 
