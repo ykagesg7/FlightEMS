@@ -1,15 +1,18 @@
 # FlightAcademyTsx - 開発ガイド
 
-このドキュメントは、FlightAcademyTsxプロジェクトの開発に参加するための包括的なガイドラインを提供します。コードの構造、開発状況、コントリビューションの方法について解説します。
+このドキュメントは、FlightAcademyTsxプロジェクトの開発に参加するための包括的なガイドラインを提供します。開発状況、技術的課題、GitHub連携について解説します。
 
 ## 目次
 
 1. [開発状況](#開発状況)
-2. [プロジェクト構造](#プロジェクト構造)
-3. [開発環境のセットアップ](#開発環境のセットアップ)
-4. [コーディング規約](#コーディング規約)
-5. [Git/GitHub連携](#githubの連携)
-6. [Issue・PRの作成方法](#issueprの作成方法)
+2. [技術的課題](#技術的課題)
+3. [開発計画](#開発計画)
+4. [プロジェクト構造](#プロジェクト構造)
+5. [開発環境のセットアップ](#開発環境のセットアップ)
+6. [データベース接続](#データベース接続)
+7. [Git/GitHub連携](#githubの連携)
+8. [Issue・PRの作成方法](#issueprの作成方法)
+9. [トラブルシューティング](#トラブルシューティング)
 
 ## 開発状況
 
@@ -30,16 +33,22 @@
 - マニューバービューア機能
 
 #### 最近追加された機能
+- React Routerを導入したタブベースからページ分割方式への構造変更
+- モバイル表示の余白調整
+- ハイライト表示の修正
+- テキスト表示の改善
+- ダークモードの実装
+- 進捗管理機能の実装
+- カードレイアウトの改良によるUI/UX向上
 - 「ルートに追加」ボタンによるマップ上からのウェイポイント追加
 - セグメントごとの詳細情報の計算と表示
 - 空港マーカーと気象情報表示の改善
 - TASとMachの微調整機能
-- UI/UXの改善
 - ウェイポイントデータの管理改善
 - 飛行場データの活用強化
 - mermaidライブラリの追加によるダイアグラム描画機能
 
-### 技術的課題
+## 技術的課題
 
 - **API管理**: 環境変数によるAPIキー管理の改善
 - **CORS対応**: WeatherAPIへの直接アクセスのCORS問題
@@ -47,28 +56,16 @@
 - **パフォーマンス**: 大量のウェイポイントを扱う際の最適化、マニューバーアニメーションの最適化
 - **型安全性**: イベントハンドラやコンポーネント間のデータ受け渡しの改善
 - **エラーハンドリング**: 気象データ取得失敗時のユーザー向けエラー表示の改善
+- **React Componentsのエラー**: 一般的なエラー（未使用の関数や変数）、レンダリングエラー（MDX CalloutBox未定義）、Hooks 使用順序エラーなどの対応
 
-### 開発計画
+## 開発計画
 
-#### 短期計画（〜1ヶ月）
-- APIキー管理の改善
-- UIの改善（空港アイコン、気象情報ポップアップなど）
-- ウェイポイント機能の強化
-- ウェイポイントデータ管理の改善
-- マニューバービューアの機能強化
+開発計画の詳細は[ROADMAP.md](./ROADMAP.md)を参照してください。概要は以下の通りです：
 
-#### 中期計画（1〜3ヶ月）
-- フライトプラン機能の強化（保存/読み込み、詳細設定）
-- 気象情報の拡張（予報データ、METARとTAFの統合）
-- ドキュメント整備
-- マニューバーシミュレーション拡張（3D表示など）
-
-#### 長期計画（3ヶ月〜）
-- フライトシミュレーターとの連携
-- コミュニティ機能の実装
-- テスト強化とCI/CDパイプラインの充実
-- モバイル対応（レスポンシブ、PWA）
-- 高度な訓練シミュレーション
+- **フェーズ1**: UI/UX改善（コンテンツ一覧表示、ナビゲーション）
+- **フェーズ2**: LMS機能の拡張（進捗管理、インタラクティブ要素、コミュニティ機能）
+- **フェーズ3**: パフォーマンスとスケーラビリティ（バックエンド/フロントエンド最適化、インフラ改善）
+- **フェーズ4**: 新機能開発（モバイルアプリ、高度な分析機能、統合機能）
 
 ## プロジェクト構造
 
@@ -77,7 +74,9 @@ FlightAcademyTsx/
 ├── docs/                   # ドキュメント
 │   ├── README.md           # プロジェクト概要
 │   ├── DEVELOPMENT.md      # 開発ガイド（このファイル）
+│   ├── CONTRIBUTING.md     # コントリビューションガイド
 │   ├── ADVANCED.md         # 高度な機能・トラブルシューティング
+│   ├── ROADMAP.md          # 開発ロードマップ
 │   └── troubleshooting/    # トラブルシューティングガイド
 ├── public/                 # 静的ファイル
 │   ├── geojson/            # 地理データ
@@ -90,6 +89,7 @@ FlightAcademyTsx/
 │   ├── hooks/              # カスタムフック
 │   ├── types/              # TypeScript型定義
 │   ├── utils/              # ユーティリティ関数
+│   ├── pages/              # ページコンポーネント
 │   └── App.tsx             # メインアプリケーション
 ├── .env.example            # 環境変数テンプレート
 ├── package.json            # プロジェクト依存関係
@@ -98,54 +98,143 @@ FlightAcademyTsx/
 
 ## 開発環境のセットアップ
 
-### クイックスタート
+### 必要条件
+- Node.js 16.x以上
+- npm 7.x以上
+- Cursor IDE (推奨)
 
-1. リポジトリをフォークする
-2. フォークしたリポジトリをクローンする：`git clone https://github.com/あなたのユーザー名/FlightAcademyTsx.git`
-3. 依存関係をインストールする：`npm install`
-4. 環境変数を設定する：`.env.local`ファイルを作成
-5. 開発サーバーを起動する：`npm run dev`
-
-### 環境変数の設定
-
-`.env.example`ファイルを参照し、必要な環境変数を`.env.local`に設定してください：
-
-```
-VITE_WEATHER_API_KEY=your_weather_api_key
+### 開発環境の構築
+1. リポジトリのクローン
+```bash
+git clone https://github.com/yourusername/FlightAcademyTsx.git
+cd FlightAcademyTsx
 ```
 
-**重要**: APIキーなどの機密情報をコードに直接ハードコードしないでください。
+2. 依存関係のインストール
+```bash
+npm install
+```
 
-## コーディング規約
+3. 開発サーバーの起動
+```bash
+npm run dev
+```
 
-### 命名規則
+## データベース接続
 
-- **コンポーネント**: PascalCase（例: `FlightParameters.tsx`）
-- **関数**: camelCase（例: `calculateDistance`）
-- **変数**: camelCase（例: `totalDistance`）
-- **定数**: UPPER_SNAKE_CASE（例: `MAX_ALTITUDE`）
-- **ファイル名**: コンポーネントはPascalCase、その他はcamelCase
+FlightAcademyTsxは、ユーザーデータとコンテンツの管理にSupabaseを使用しています。
 
-### TypeScript
+### Supabase設定
 
-- 可能な限り`any`型を避け、具体的な型または型定義を使用する
-- 複雑なデータ構造には適切なインターフェイスを定義する
-- optional chainingを活用して型安全性を確保する
-- 非同期操作には適切なエラーハンドリングを実装する
+- **プロジェクト名**: FlightAcademy
+- **プロジェクトID**: fstynltdfdetpyvbrswr
+- **リージョン**: ap-northeast-1（東京）
+- **PostgreSQLバージョン**: 15.8.1.085
 
-### ファイル構成
+### テーブル構造
 
-- 関連するロジックは適切なディレクトリに配置する
-- コンポーネントはできるだけ小さく、再利用可能にする
-- ビジネスロジックとUI表示を分離する
-- ユーティリティ関数は`utils`ディレクトリに配置する
+FlightAcademyのデータベースには以下の主要テーブルがあります：
 
-### スタイリング
+1. **profiles** - ユーザープロファイル情報
+   - 主要フィールド: id, username, email, full_name, avatar_url, roll（Student/Teacher/Admin）
+   - 関連テーブル: コメント、投稿、いいね、クイズ結果と関連付け
 
-- Tailwind CSSのユーティリティクラスを活用する
-- コンポーネント特有のスタイルは適切に名前空間を分ける
-- レスポンシブデザインを考慮する
-- アクセシビリティガイドラインに従う
+2. **quiz_questions** - クイズ問題（515問）
+   - 主要フィールド: id, category, question, answer1-4, correct, explanation
+   - 説明: 航空関連知識のクイズ問題
+
+3. **user_quiz_results** - ユーザーのクイズ回答結果
+   - 主要フィールド: id, user_id, question_id, is_correct, answered_at, category
+   - 機能: ユーザーのクイズ履歴と成績の追跡
+
+4. **user_progress** - ユーザーの学習進捗
+   - 主要フィールド: id, user_id, completed_units, created_at, updated_at
+   - 機能: カリキュラムにおけるユーザーの進捗状況の管理
+
+5. **posts** - コミュニティ投稿
+   - 主要フィールド: id, user_id, title, content, created_at
+   - 関連テーブル: コメント、いいねと関連付け
+
+6. **comments** - コメント情報
+   - 主要フィールド: id, post_id, user_id, content, created_at
+   - 機能: 投稿に対するコメントの管理
+
+7. **likes** - いいね情報
+   - 主要フィールド: id, post_id, user_id, created_at
+   - 機能: 投稿に対するいいねの管理
+
+8. **announcements** - お知らせ情報
+   - 主要フィールド: id, title, date
+   - 機能: 管理者からのお知らせの管理
+
+### Cursorでのデータベース接続
+
+FlightAcademyTsxプロジェクトでは、Cursor IDEのMCP（Model Context Protocol）機能を使用してSupabaseデータベースに接続できます。
+
+```json
+// .cursor/mcp.json
+{
+  "mcpServers": {
+    "my_supabase_project": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "YOUR_SUPABASE_ACCESS_TOKEN"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "YOUR_SUPABASE_ACCESS_TOKEN",
+        "SUPABASE_PROJECT_ID": "fstynltdfdetpyvbrswr"
+      }
+    }
+  }
+}
+```
+
+### データベースアクセスコード例
+
+Supabaseクライアントを使用してデータにアクセスする基本的なコード例：
+
+```typescript
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = 'https://fstynltdfdetpyvbrswr.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// ユーザープロファイルを取得する例
+async function getUserProfiles() {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('roll', 'Student')
+    .limit(10);
+    
+  if (error) {
+    console.error('Error fetching profiles:', error);
+    return null;
+  }
+  
+  return data;
+}
+
+// クイズ問題を取得する例
+async function getQuizQuestions(category: string) {
+  const { data, error } = await supabase
+    .from('quiz_questions')
+    .select('*')
+    .eq('category', category)
+    .limit(20);
+    
+  if (error) {
+    console.error('Error fetching quiz questions:', error);
+    return null;
+  }
+  
+  return data;
+}
+```
 
 ## GitHubの連携
 
@@ -216,18 +305,21 @@ VITE_WEATHER_API_KEY=your_weather_api_key
 機能を理解するために役立つ情報やスクリーンショットを追加してください
 ```
 
-### プルリクエストチェックリスト
+## トラブルシューティング
 
-プルリクエストを提出する前に、以下のチェックリストを確認してください：
+開発中に発生する可能性のある一般的な問題と解決策については、以下を参照してください：
 
-- [ ] コードはTypeScriptの型安全性に準拠している
-- [ ] 新しいコンポーネントはコンポーネント命名規則に従っている
-- [ ] コードは既存のスタイルガイドに従っている
-- [ ] すべての不要なコンソールログとデバッグコードが削除されている
-- [ ] 既存の機能が損なわれていないことを確認した
-- [ ] ドキュメントが更新されている（必要な場合）
-- [ ] 環境変数の変更がある場合は`.env.example`が更新されている
+- [React コンポーネント トラブルシューティング](./troubleshooting/REACT_COMPONENTS.md)
+- 詳細なトラブルシューティングガイドは[ADVANCED.md](./ADVANCED.md)にもあります
+
+### 一般的な問題と解決策
+
+1. **起動時のエラー**: node_modulesを削除し、npm installを再実行してください
+2. **APIキーの問題**: 環境変数が正しく設定されているか確認してください
+3. **マップが表示されない**: ネットワーク接続やレイヤー設定を確認してください
+4. **パッケージの依存関係エラー**: 依存関係を確認し、必要に応じて更新してください
+5. **mermaidライブラリの問題**: 必要な依存関係がインストールされているか確認してください
 
 ---
 
-最終更新日: 2025年4月19日
+最終更新日: 2024年7月10日

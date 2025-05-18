@@ -81,16 +81,147 @@ React では、Hooks はコンポーネント関数のトップレベルでの�
 
 ## 状態管理の問題
 
-（ここに具体的な状態管理の問題と解決策を追記してください。）
+### エラー内容
+
+```
+Warning: Cannot update a component while rendering a different component.
+```
+
+または
+
+```
+Error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+```
+
+### 原因
+
+一般的に以下の問題が考えられます：
+- コンポーネントのレンダリング中に状態更新関数（setState）を直接呼び出している
+- useEffect の依存配列が適切に設定されていない
+- 親コンポーネントから受け取るpropsの変更に対して過剰に反応している
+
+### 解決策
+
+- 状態更新は必ずイベントハンドラかuseEffect内で行う
+- useEffectの依存配列を適切に設定する
+- memo関数を使用して不要な再レンダリングを防ぐ
+
+**例**: WeatherInfoコンポーネントでは、気象データ取得のuseEffectの依存配列を以下のように修正しました：
+
+```jsx
+useEffect(() => {
+  if (airport) {
+    fetchWeatherData(airport.lat, airport.lon);
+  }
+}, [airport?.id]); // airport全体ではなく、id属性のみを依存関係に含める
+```
 
 ## パフォーマンスの問題
 
-（ここにパフォーマンス関連の問題点と改善策を追記してください。）
+### エラー内容
+
+パフォーマンスの問題は明示的なエラーメッセージを伴わないことが多いですが、以下のような症状があります：
+
+- UIの応答が遅い
+- スクロールが滑らかでない
+- コンソールに「React was blocked for XXXms」といった警告が表示される
+
+### 原因
+
+- 大量のデータを一度に描画している
+- 不要な再レンダリングが発生している
+- メモ化されていない高コストな計算が行われている
+
+### 解決策
+
+- React.memo/useMemoを使用して不要な再レンダリングを防ぐ
+- useCallbackを使ってイベントハンドラをメモ化する
+- 大きなリストには仮想化ライブラリ（react-window, react-virtualizedなど）を使用する
+- コンポーネントを細かく分割し、必要な部分だけ再レンダリングされるようにする
+
+**例**: WaypointListコンポーネントでは、大量のウェイポイントリストに対して以下の最適化を行いました：
+
+```jsx
+// データをフィルタリングするロジックをuseMemoでキャッシュ
+const filteredWaypoints = useMemo(() => {
+  return waypoints.filter(wp => 
+    wp.properties.name1.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    wp.properties.id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+}, [waypoints, searchQuery]);
+
+// リスト項目のレンダラーをuseCallbackでメモ化
+const renderWaypointItem = useCallback(({ index, style }) => {
+  const waypoint = filteredWaypoints[index];
+  return (
+    <div style={style}>
+      <WaypointItem 
+        key={waypoint.properties.id}
+        waypoint={waypoint}
+        onSelect={handleSelectWaypoint}
+      />
+    </div>
+  );
+}, [filteredWaypoints, handleSelectWaypoint]);
+```
 
 ## コード品質の改善
 
-（ここにコード品質向上に関する改善策を追記してください。）
+### エラー内容
+
+コード品質に関する問題は、通常、ESLintやTypeScriptによる警告として現れます：
+
+```
+React Hook useEffect has a missing dependency: 'someProp'
+```
+
+または
+
+```
+No duplicate keys: React children must have unique keys
+```
+
+### 原因
+
+- Reactのベストプラクティスに従っていない
+- 型安全性が十分でない
+- キー属性が適切に設定されていない
+
+### 解決策
+
+- ESLintの警告に従って修正する
+- 適切な型定義を追加する
+- マップ処理で生成される要素には一意のキーを設定する
+- コードフォーマッタ（Prettier）を使用して一貫性を維持する
+
+**例**: RouteSegmentsコンポーネントでは、以下の改善を行いました：
+
+```jsx
+// Before
+{segments.map(segment => (
+  <div className="segment-item">
+    {segment.name}
+  </div>
+))}
+
+// After
+{segments.map(segment => (
+  <div key={`${segment.from}-${segment.to}`} className="segment-item">
+    {segment.name}
+  </div>
+))}
+```
 
 ## まとめと注意点
 
 各エラーについて、原因と解決策を明確に示しました。エラー発生時には、エラーメッセージを正確に把握し、適切な対策を講じるとともに、コード全体の見直しを行うことが推奨されます。チーム内で情報共有し、同じエラーの再発防止に努めてください。
+
+以下のポイントは特に注意が必要です：
+
+1. Hooks のルールを厳格に守る
+2. 状態更新はイベントハンドラかuseEffect内で行う
+3. 不要な再レンダリングを避けるためにメモ化を適切に使用する
+4. 大量のデータ処理は最適化する
+5. TypeScriptの型定義を適切に行い、型安全性を確保する
+
+最終更新日: 2024年7月10日
