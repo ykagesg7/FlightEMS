@@ -1,0 +1,7 @@
+
+{
+  "name": "Section4. TACAN Approach",
+  "description": "パイロット訓練生向けのTACAN進入方式を教えるインタラクティブ教育アプリです。TACAN進入の基本、ペネトレーション、アーク飛行、VDPについて学びます。",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
