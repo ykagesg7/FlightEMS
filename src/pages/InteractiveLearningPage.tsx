@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { APP_CONTENT } from '../InteractiveLearning/constants';
-import { Section as SectionType, Question as QuestionTypeData, Step, UserQuizAnswer, QuestionType } from '../InteractiveLearning/types';
-import { SectionComponent } from '../InteractiveLearning/components/SectionComponent';
-import { QuizComponent } from '../InteractiveLearning/components/QuizComponent';
+import { APP_CONTENT } from '@/InteractiveLearning/constants';
+import { Section as SectionType, Question as QuestionTypeData, Step, UserQuizAnswer, QuestionType } from '@/InteractiveLearning/types';
+import { SectionComponent } from '@/InteractiveLearning/components/SectionComponent';
+import { QuizComponent } from '@/InteractiveLearning/components/QuizComponent';
 
 enum AppState {
   INTRODUCTION, // Now serves as Table of Contents
