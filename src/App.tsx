@@ -4,6 +4,7 @@ import './App.css';
 import './index.css';
 import PlanningMapPage from './pages/PlanningMapPage';
 import LearningPage from './pages/LearningPage';
+import InteractiveLearningPage from './pages/InteractiveLearningPage';
 import AuthPage from './pages/AuthPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
@@ -236,6 +237,7 @@ const AppLayout = () => {
         <Routes>
           <Route path="/" element={<PlanningMapPage />} />
           <Route path="/learning" element={<LearningPage />} />
+          <Route path="/interactive-learning" element={<InteractiveLearningPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/profile" element={
             <SafeRequireAuth>

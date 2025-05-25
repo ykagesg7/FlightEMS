@@ -133,6 +133,20 @@ function LearningPage() {
           </div>
         ) : (
           <>
+            {/* インタラクティブ学習へのリンク */}
+            <div className="mb-6 p-4 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold text-white mb-2">🎯 インタラクティブ学習</h3>
+              <p className="text-sky-100 text-sm mb-3">
+                TACAN進入方式を実際に操作しながら学べるインタラクティブな授業です。
+              </p>
+              <Link 
+                to="/interactive-learning" 
+                className="inline-block px-4 py-2 bg-white text-sky-600 font-semibold rounded-md hover:bg-sky-50 transition-colors duration-200 shadow-sm"
+              >
+                インタラクティブ学習を開始 →
+              </Link>
+            </div>
+
             {displayContents.length > 0 ? (
               <LearningMenuSidebar 
                 contents={displayContents}

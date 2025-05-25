@@ -16,9 +16,14 @@ FlightAcademyTsxは、以下の機能を提供します：
 - 進捗管理機能
 - ページ分割方式によるナビゲーション（React Router）
 - ダークモード対応
+- **インタラクティブ学習ページ（TACAN進入方式の実践授業）**
 
 ## 最近の更新
 
+- インタラクティブ学習（TACAN進入方式）ページを新規追加し、Learningページからアクセス可能に
+- 既存のFlightAcademyTsxプロジェクトにInteractiveLearningの機能を統合
+- ルーティング（/interactive-learning）を追加
+- 重複していた設定ファイル等を整理
 - React Routerを導入したタブベースからページ分割方式への構造変更
 - モバイル表示の余白調整
 - ハイライト表示の修正
