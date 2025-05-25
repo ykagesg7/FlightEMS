@@ -235,11 +235,7 @@ const AppLayout = () => {
       <main className="container mx-auto flex-grow">
         <Routes>
           <Route path="/" element={<PlanningMapPage />} />
-          <Route path="/learning" element={
-            <SafeRequireAuth>
-              <LearningPage />
-            </SafeRequireAuth>
-          } />
+          <Route path="/learning" element={<LearningPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/profile" element={
             <SafeRequireAuth>

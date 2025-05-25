@@ -183,7 +183,7 @@
 
 ## 更新履歴
 
-- 2025-05-24: Learning記事「1.5_WinWinThinking.mdx」新規追加。記事構造・装飾・画像挿入コメントを含む完全版を作成し、learning_contentsテーブルに登録。最新3記事（1.3, 1.4, 1.5）がフリーミアム対象となるようuseFreemiumAccess.ts等を更新。
+- 2025-05-25: Learning記事「1.5_WinWinThinking.mdx」新規追加。記事構造・装飾・画像挿入コメントを含む完全版を作成し、learning_contentsテーブルに登録。最新3記事（1.3, 1.4, 1.5）がフリーミアム対象となるようuseFreemiumAccess.ts等を更新。
 - 2024-03-10: 初版作成
 - 2024-07-17: Supabase認証機能を実装、ユーザー認証関連の項目を更新
 - 2024-07-10: UI/UX改善計画の詳細化
