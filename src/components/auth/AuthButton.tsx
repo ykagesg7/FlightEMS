@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuthStore } from '../../stores/authStore';
 import { useTheme } from '../../contexts/ThemeContext';
 import ProfileMenu from './ProfileMenu';
 
 const AuthButton = () => {
-  const { user, profile, loading } = useAuth();
+  const user = useAuthStore(state => state.user);
+  const profile = useAuthStore(state => state.profile);
+  const loading = useAuthStore(state => state.loading);
   const { theme } = useTheme();
   const [loadingTimeout, setLoadingTimeout] = useState(false);
   const [debugMode] = useState(true); // デバッグモードを有効化

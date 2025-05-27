@@ -11,28 +11,40 @@ const isDevelopment = process.env.NODE_ENV === 'development' || window.location.
 
 // シングルトンパターンによるクライアント管理
 let browserSupabaseClient: ReturnType<typeof createBrowserClient<Database>> | undefined;
+let adminSupabaseClient: ReturnType<typeof createClient<Database>> | undefined;
 
 // ブラウザ環境用のSupabaseクライアント（@supabase/ssrパッケージ使用）
 export const createBrowserSupabaseClient = () => {
   if (!browserSupabaseClient) {
+    console.log('新しいSupabaseブラウザクライアントを作成します');
     browserSupabaseClient = createBrowserClient<Database>(supabaseUrl, supabaseKey, {
       auth: {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
+        storageKey: 'supabase.auth.token', // 明示的にストレージキーを設定
       },
     });
   }
   return browserSupabaseClient;
 };
 
-// サーバーサイド用のSupabaseクライアント
-export const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
+// サーバーサイド用のSupabaseクライアント（シングルトン）
+export const getSupabaseAdmin = () => {
+  if (!adminSupabaseClient) {
+    console.log('新しいSupabase管理者クライアントを作成します');
+    adminSupabaseClient = createClient<Database>(supabaseUrl, supabaseKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      }
+    });
   }
-});
+  return adminSupabaseClient;
+};
+
+// 後方互換性のため
+export const supabaseAdmin = getSupabaseAdmin();
 
 // ブラウザ用のデフォルトクライアント
 const supabase = createBrowserSupabaseClient();
@@ -49,7 +61,7 @@ export const bypassEmailVerification = async (email: string) => {
     console.log('開発環境: メール検証をバイパスします', { email });
     
     // メール検証リンク取得 (開発環境のみ)
-    const { data, error } = await supabaseAdmin.auth.admin.generateLink({
+    const { data, error } = await getSupabaseAdmin().auth.admin.generateLink({
       type: 'magiclink',
       email: email,
     });

@@ -3,6 +3,9 @@ import MDXLoader, { MDX_CONTENT_LOADED_EVENT } from './MDXLoader';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useProgress } from '../../contexts/ProgressContext';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
+import { useFreemiumAccess } from '../../hooks/useFreemiumAccess';
+import LearningContentInteraction from '../learning/LearningContentInteraction';
+import { useLearningContentStats } from '../../hooks/useLearningContentStats';
 
 // MDXコンテンツの型定義
 interface MDXContent {
@@ -43,6 +46,12 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
     markAsCompleted, 
     getLastReadInfo
   } = useLearningProgress();
+
+  const { isFreemiumContent } = useFreemiumAccess();
+
+  // いいね・コメント統計を取得
+  const contentIds = learningContents.map(content => content.id);
+  const { getStatsForContent } = useLearningContentStats(contentIds);
 
   // コンポーネントのマウント時にコンテンツをロード
   useEffect(() => {
@@ -384,6 +393,8 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
             {renderNavigation()}
             {/* MDXローダーコンポーネント */}
             <MDXLoader contentId={selectedContent} />
+            {/* いいね・コメント機能 */}
+            <LearningContentInteraction contentId={selectedContent} />
             {/* 下部ナビゲーションボタン（ページ末尾） */}
             {renderNavigation()}
             {/* トップに戻るボタン */}
@@ -465,6 +476,12 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
                           const lastReadInfo = getLastReadInfo(content.id);
                           const hasReadBefore = lastReadInfo !== null;
                           
+                          // いいね・コメント統計を取得
+                          const stats = getStatsForContent(content.id);
+                          
+                          // フリーミアム記事かどうかを判定
+                          const isFreemium = isFreemiumContent(content.id);
+                          
                           return (
                             <div 
                               key={content.id}
@@ -474,13 +491,16 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
                                   : theme === 'dark' ? 'border-gray-600' : 'border-gray-200'
                               } hover:border-indigo-500 transition-all duration-200 hover:shadow-lg`}
                             >
-                              <h3 className={`font-semibold text-lg ${subHeadingColor} mb-2`}>{content.title}</h3>
-                              <div className="flex flex-col space-y-2">
-                                <div className="flex justify-between items-center">
-                                  <span className={`text-xs ${theme === 'dark' ? 'bg-indigo-900 text-indigo-200' : 'bg-indigo-100 text-indigo-800'} px-2 py-1 rounded`}>
-                                    {content.id.length > 30 ? `${content.id.substring(0, 8)}...` : content.id}
+                              <div className="flex justify-between items-start mb-2">
+                                <h3 className={`font-semibold text-lg ${subHeadingColor} flex-1`}>{content.title}</h3>
+                                {isFreemium && (
+                                  <span className="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full ml-2">
+                                    フリーミアム
                                   </span>
-                                  
+                                )}
+                              </div>
+                              <div className="flex flex-col space-y-2">
+                                <div className="flex justify-end items-center">
                                   {/* 進捗表示 */}
                                   {progressPercentage > 0 && (
                                     <span className={`text-xs px-2 py-1 rounded-full ${
@@ -504,11 +524,11 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
                                 )}
                                 
                                 {/* ボタン */}
-                                <div className="flex justify-between mt-3">
+                                <div className="flex justify-between items-center mt-3">
                                   {hasReadBefore && !completed ? (
                                     <button 
                                       onClick={() => selectContent(content.id)}
-                                      className={`text-xs px-2 py-1 ${
+                                      className={`text-xs px-3 py-2 ${
                                         theme === 'dark' 
                                           ? 'bg-indigo-600 text-white hover:bg-indigo-500' 
                                           : 'bg-indigo-500 text-white hover:bg-indigo-400'
@@ -523,7 +543,7 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
                                   ) : (
                                     <button 
                                       onClick={() => selectContent(content.id)}
-                                      className={`text-xs px-2 py-1 ${
+                                      className={`text-xs px-3 py-2 ${
                                         completed
                                           ? theme === 'dark'
                                             ? 'bg-green-700 text-white hover:bg-green-600'
@@ -543,6 +563,22 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
                                       {new Date(lastReadInfo.date).toLocaleDateString('ja-JP')}
                                     </span>
                                   )}
+                                </div>
+                                
+                                {/* いいね・コメント数 */}
+                                <div className="flex items-center gap-4 mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-red-500">❤️</span>
+                                    <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                                      {stats.likesCount}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-blue-500">💬</span>
+                                    <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                                      {stats.commentsCount}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             </div>

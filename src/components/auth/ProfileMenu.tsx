@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuthStore } from '../../stores/authStore';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Link, useNavigate } from 'react-router-dom';
 import supabase, { getProfileWithRetry } from '../../utils/supabase';
 
 const ProfileMenu = () => {
-  const { user, profile, signOut } = useAuth();
+  const user = useAuthStore(state => state.user);
+  const profile = useAuthStore(state => state.profile);
+  const signOut = useAuthStore(state => state.signOut);
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);

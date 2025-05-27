@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useState, useEffect } from 'react';
+import { useAuthStore } from '../stores/authStore';
 import { useLearningProgress } from './useLearningProgress';
+import supabase from '../utils/supabase';
 
 interface LearningContent {
   id: string;
@@ -15,57 +16,83 @@ interface LearningContent {
 }
 
 export const useFreemiumAccess = () => {
-  const { user } = useAuth();
+  const user = useAuthStore(state => state.user);
   const { learningContents } = useLearningProgress();
+  const [freemiumContentIds, setFreemiumContentIds] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // 無料公開対象の記事ID一覧
-  const freeContentIds = [
-    '1.3_EndWithFuture',
-    '1.4_PrioritizingMostImportant',
-    '1.5_WinWinThinking'
-  ];
+  // フリーミアム記事のIDを動的に取得
+  useEffect(() => {
+    const fetchFreemiumContents = async () => {
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('learning_contents')
+          .select('id')
+          .eq('is_freemium', true);
+
+        if (error) throw error;
+
+        const ids = data?.map(item => item.id) || [];
+        setFreemiumContentIds(ids);
+      } catch (error) {
+        console.error('フリーミアム記事の取得に失敗しました:', error);
+        setFreemiumContentIds([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFreemiumContents();
+  }, []);
   
   // 無料公開記事を取得
-  const previewContents = useMemo((): LearningContent[] => {
-    return learningContents.filter(content => 
-      freeContentIds.includes(content.id)
-    );
-  }, [learningContents]);
+  const previewContents = learningContents.filter(content => 
+    freemiumContentIds.includes(content.id)
+  );
   
   // コンテンツアクセス権限をチェック
   const canAccessContent = (contentId: string): boolean => {
-    // ログインユーザーは全アクセス可能
-    if (user) return true; 
+    // ログインしているユーザーは全てのコンテンツにアクセス可能
+    if (user) {
+      return true;
+    }
     
-    // 未ログインユーザーは指定された無料記事のみアクセス可能
-    return freeContentIds.includes(contentId);
+    // 未ログインユーザーはフリーミアム記事のみアクセス可能
+    return freemiumContentIds.includes(contentId);
   };
   
   // 表示するコンテンツリストを決定
-  const displayContents = useMemo((): LearningContent[] => {
-    return user ? learningContents : previewContents;
-  }, [user, learningContents, previewContents]);
+  const displayContents = learningContents.filter(content => 
+    canAccessContent(content.id)
+  );
   
   // フリーミアム状態の情報を提供
-  const freemiumInfo = useMemo(() => ({
+  const freemiumInfo = {
     isLoggedIn: !!user,
-    previewLimit: freeContentIds.length,
+    previewLimit: previewContents.length,
     totalContents: learningContents.length,
     availableContents: displayContents.length,
     lockedContents: learningContents.length - previewContents.length
-  }), [user, learningContents, displayContents, previewContents]);
+  };
+
+  const isFreemiumContent = (contentId: string): boolean => {
+    return freemiumContentIds.includes(contentId);
+  };
 
   return {
     // コンテンツ情報
     previewContents,
     displayContents,
     canAccessContent,
+    isFreemiumContent,
+    freemiumContentIds,
     
     // フリーミアム状態
     freemiumInfo,
     
     // ヘルパー関数
     isPreviewMode: !user,
-    isPremiumContent: (contentId: string) => !canAccessContent(contentId)
+    isLoading
   };
 }; 

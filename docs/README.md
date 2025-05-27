@@ -20,6 +20,15 @@ FlightAcademyTsxは、以下の機能を提供します：
 
 ## 最近の更新
 
+### 2025年5月の主要アップデート
+- **新記事追加**: 1.6_SeekFirstToUnderstand.mdx（メンタリティーカテゴリー）
+- **ソーシャル機能**: 学習記事にいいね・コメント機能を実装
+- **フリーミアム機能**: 1.4, 1.5, 1.6記事を無料公開対象に設定
+- **認証システム統一**: AuthContextからZustand AuthStoreへの移行完了
+- **Supabaseセキュリティ強化**: RLSポリシー、関数のsearch_path設定
+- **UI/UX改善**: Learning一覧画面にいいね・コメント数表示、フリーミアムバッジ
+
+### 過去のアップデート
 - インタラクティブ学習（TACAN進入方式）ページを新規追加し、Learningページからアクセス可能に
 - 既存のFlightAcademyTsxプロジェクトにInteractiveLearningの機能を統合
 - ルーティング（/interactive-learning）を追加
@@ -134,6 +143,8 @@ FlightAcademyTsxでは3つのユーザーロールを定義しています：
 - **CONTRIBUTING.md**: コントリビューションガイド、コーディング規約
 - **ADVANCED.md**: 高度な機能、図表作成機能、AIエージェント自動化
 - **ROADMAP.md**: 今後の開発計画と長期的なロードマップ
+- **FEATURES.md**: 機能詳細ガイド、ソーシャル機能、フリーミアム機能
+- **troubleshooting/authentication-issues.md**: 認証関連のトラブルシューティング
 
 ## ライセンス
 
@@ -141,4 +152,4 @@ FlightAcademyTsxでは3つのユーザーロールを定義しています：
 
 ---
 
-最終更新日: 2024年7月17日
+最終更新日: 2025年5月27日

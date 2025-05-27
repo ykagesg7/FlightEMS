@@ -24,7 +24,7 @@ const LearningMenuSidebar: React.FC<LearningMenuSidebarProps> = ({
   showFreemiumBadges = false
 }) => {
   const { getProgress, isCompleted } = useLearningProgress();
-  const { canAccessContent } = useFreemiumAccess();
+  const { canAccessContent, isFreemiumContent } = useFreemiumAccess();
   
   // カテゴリーでグループ化
   const groupedContents: Record<string, LearningContent[]> = {};
@@ -80,8 +80,13 @@ const LearningMenuSidebar: React.FC<LearningMenuSidebarProps> = ({
                       
                       <div className="flex items-center space-x-1">
                         {/* フリーミアムバッジ */}
-                        {showFreemiumBadges && !hasAccess && (
+                        {showFreemiumBadges && isFreemiumContent(content.id) && (
                           <span className="text-xs bg-yellow-400 text-yellow-900 px-1.5 py-0.5 rounded-full">
+                            フリーミアム
+                          </span>
+                        )}
+                        {showFreemiumBadges && !hasAccess && !isFreemiumContent(content.id) && (
+                          <span className="text-xs bg-red-400 text-red-900 px-1.5 py-0.5 rounded-full">
                             🔒
                           </span>
                         )}
