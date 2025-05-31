@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import supabase from '../utils/supabase';
 
 interface ContentStats {
@@ -12,15 +12,21 @@ export const useLearningContentStats = (contentIds: string[]) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isCancelled = false; // クリーンアップ用フラグ
+
     const fetchStats = async () => {
       if (contentIds.length === 0) {
-        setStats([]);
-        setIsLoading(false);
+        if (!isCancelled) {
+          setStats([]);
+          setIsLoading(false);
+        }
         return;
       }
 
       try {
-        setIsLoading(true);
+        if (!isCancelled) {
+          setIsLoading(true);
+        }
 
         // いいね数を取得
         const { data: likesData, error: likesError } = await supabase
@@ -38,37 +44,49 @@ export const useLearningContentStats = (contentIds: string[]) => {
 
         if (commentsError) throw commentsError;
 
-        // 各コンテンツの統計を計算
-        const statsMap = contentIds.map(contentId => {
-          const likesCount = likesData?.filter(like => like.content_id === contentId).length || 0;
-          const commentsCount = commentsData?.filter(comment => comment.content_id === contentId).length || 0;
+        // キャンセルされていない場合のみ状態を更新
+        if (!isCancelled) {
+          // 各コンテンツの統計を計算
+          const statsMap = contentIds.map(contentId => {
+            const likesCount = likesData?.filter(like => like.content_id === contentId).length || 0;
+            const commentsCount = commentsData?.filter(comment => comment.content_id === contentId).length || 0;
 
-          return {
-            contentId,
-            likesCount,
-            commentsCount
-          };
-        });
+            return {
+              contentId,
+              likesCount,
+              commentsCount
+            };
+          });
 
-        setStats(statsMap);
+          setStats(statsMap);
+        }
       } catch (error) {
-        console.error('統計データの取得に失敗しました:', error);
-        setStats([]);
+        if (!isCancelled) {
+          console.error('統計データの取得に失敗しました:', error);
+          setStats([]);
+        }
       } finally {
-        setIsLoading(false);
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchStats();
-  }, [contentIds]);
 
-  const getStatsForContent = (contentId: string) => {
+    // クリーンアップ関数
+    return () => {
+      isCancelled = true;
+    };
+  }, [contentIds.length, contentIds.join(',')]); // より安全な依存関係
+
+  const getStatsForContent = useCallback((contentId: string) => {
     return stats.find(stat => stat.contentId === contentId) || {
       contentId,
       likesCount: 0,
       commentsCount: 0
     };
-  };
+  }, [stats]);
 
   return {
     stats,

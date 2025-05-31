@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import MDXLoader, { MDX_CONTENT_LOADED_EVENT } from './MDXLoader';
 import { useTheme } from '../../contexts/ThemeContext';
-import { useProgress } from '../../contexts/ProgressContext';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
 import { useFreemiumAccess } from '../../hooks/useFreemiumAccess';
 import LearningContentInteraction from '../learning/LearningContentInteraction';
@@ -18,10 +17,13 @@ interface MDXContent {
 
 interface LearningTabMDXProps {
   contentId: string;
+  onBackToList?: () => void;
+  onContentSelect?: (contentId: string) => void;
 }
 
-const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
-  const [selectedContent, setSelectedContent] = useState<string | null>(contentId);
+const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList, onContentSelect }) => {
+  // contentIdが空文字の場合は必ずnullに設定
+  const [selectedContent, setSelectedContent] = useState<string | null>(contentId && contentId.trim() !== '' ? contentId : null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showHtmlDialog, setShowHtmlDialog] = useState(false);
@@ -31,55 +33,78 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   
   const { theme } = useTheme();
-  const { 
-    learningContents,
-    isLoading,
-    error,
-    loadLearningContents,
-    getAllCategories 
-  } = useProgress();
 
   const { 
     updateProgress, 
     getProgress, 
     isCompleted, 
     markAsCompleted, 
-    getLastReadInfo
+    getLastReadInfo,
+    loadLearningContents
   } = useLearningProgress();
 
-  const { isFreemiumContent } = useFreemiumAccess();
+  const { 
+    displayContents, 
+    canAccessContent, 
+    isFreemiumContent,
+    isLoading
+  } = useFreemiumAccess();
 
-  // いいね・コメント統計を取得
-  const contentIds = learningContents.map(content => content.id);
+  // いいね・コメント統計を取得 - contentIds配列をuseMemoで最適化
+  const contentIds = useMemo(() => {
+    return displayContents.map(content => content.id);
+  }, [displayContents]);
+  
+  // 修正したuseLearningContentStatsを使用
   const { getStatsForContent } = useLearningContentStats(contentIds);
-
+  
   // コンポーネントのマウント時にコンテンツをロード
   useEffect(() => {
     loadLearningContents();
   }, []);
+
+  // contentId（props）が変わったらselectedContentも同期する
+  useEffect(() => {
+    // contentIdが空文字または空白の場合は必ずnullに設定
+    setSelectedContent(contentId && contentId.trim() !== '' ? contentId : null);
+  }, [contentId]);
   
   // コンテンツ一覧からMDXContent型に変換する
-  const mdxContents: MDXContent[] = learningContents.map(content => {
-    // 特別なケース: TACANアプローチのようなHTMLコンテンツの処理
-    if (content.id === '05_TacanApproach') {
+  const mdxContents: MDXContent[] = useMemo(() => {
+    return displayContents.map(content => {
+      // 特別なケース: TACANアプローチのようなHTMLコンテンツの処理
+      if (content.id === '05_TacanApproach') {
+        return {
+          id: content.id,
+          title: content.title,
+          category: content.category,
+          directHtml: true,
+          htmlUrl: '/content/05_TacanApproach.html'
+        };
+      }
+      
       return {
         id: content.id,
         title: content.title,
-        category: content.category,
-        directHtml: true,
-        htmlUrl: '/content/05_TacanApproach.html'
+        category: content.category
       };
-    }
-    
-    return {
-      id: content.id,
-      title: content.title,
-      category: content.category
-    };
-  });
+    });
+  }, [displayContents]);
 
-  // カテゴリのリスト（Supabaseから取得）
-  const categories = getAllCategories();
+  // カテゴリのリスト（displayContentsから取得）
+  const categories = useMemo(() => {
+    return Array.from(new Set(displayContents.map(content => content.category))).sort();
+  }, [displayContents]);
+
+  // フィルタリングされたコンテンツ
+  const filteredContents = useMemo(() => {
+    return mdxContents.filter(content => {
+      const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          content.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory ? content.category === selectedCategory : true;
+      return matchesSearch && matchesCategory;
+    });
+  }, [mdxContents, searchTerm, selectedCategory]);
 
   // スクロール位置を保存する関数
   const saveScrollPosition = (contentId: string) => {
@@ -216,20 +241,34 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
     }
     setSelectedContent(null);
     window.scrollTo(0, 0);
+    if (onBackToList) {
+      onBackToList();
+    }
   };
 
   // 続きを読むかどうかのプロンプトを表示し、選択した結果に応じて処理
   const handleResumeReading = (contentId: string, resumed: boolean) => {
     setShowResumePrompt(false);
+    setSelectedContent(contentId);
     
     if (resumed) {
-      // 続きから読む場合
-      setSelectedContent(contentId);
-      // ロードイベントでスクロール位置が復元されるので、ここでは何もしない
+      // 前回の位置へスクロール（遅延実行）
+      setTimeout(() => {
+        const lastReadInfo = getLastReadInfo(contentId);
+        if (lastReadInfo && lastReadInfo.position > 0) {
+          window.scrollTo({
+            top: lastReadInfo.position,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
     } else {
-      // 最初から読む場合
-      setSelectedContent(contentId);
+      // 最初からの場合はトップへ
       window.scrollTo(0, 0);
+    }
+    
+    if (onContentSelect) {
+      onContentSelect(contentId);
     }
   };
 
@@ -260,6 +299,10 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
       setSelectedContent(contentId);
       window.scrollTo(0, 0);
     }
+
+    if (onContentSelect) {
+      onContentSelect(contentId);
+    }
   };
 
   // トップにスクロールする関数
@@ -280,6 +323,10 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
       }
       setSelectedContent(prevContent.id);
       window.scrollTo(0, 0);
+      
+      if (onContentSelect) {
+        onContentSelect(prevContent.id);
+      }
     }
   };
 
@@ -293,6 +340,10 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
       }
       setSelectedContent(nextContent.id);
       window.scrollTo(0, 0);
+      
+      if (onContentSelect) {
+        onContentSelect(nextContent.id);
+      }
     }
   };
 
@@ -302,22 +353,9 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
     return mdxContents.findIndex(content => content.id === selectedContent);
   };
 
-  // 検索フィルタリング
-  const filteredContents = mdxContents.filter(content => {
-    // カテゴリフィルター（選択されている場合）
-    const categoryMatch = !selectedCategory || content.category === selectedCategory;
-    
-    // 検索語句フィルター
-    const searchMatch = !searchTerm || 
-      content.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      content.category.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    return categoryMatch && searchMatch;
-  });
-
   // ナビゲーションボタン部分を関数化
   const renderNavigation = () => (
-    <div className="flex justify-between items-center my-4 sticky top-0 z-10 py-2 px-1 sm:px-2 md:px-4 bg-opacity-75 backdrop-blur-md rounded border-b border-gray-200 dark:border-gray-700"
+    <div className="flex justify-between items-center my-4 sticky top-16 z-10 py-2 px-1 sm:px-2 md:px-4 bg-opacity-75 backdrop-blur-md rounded border-b border-gray-200 dark:border-gray-700"
       style={{
         background: theme === 'dark' 
           ? 'rgba(17, 24, 39, 0.75)' 
@@ -366,23 +404,6 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
     );
   }
 
-  // エラー表示
-  if (error) {
-    return (
-      <div className={`p-4 rounded-lg ${
-        theme === 'dark' ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
-      }`}>
-        <p className="font-semibold">コンテンツの読み込み中にエラーが発生しました</p>
-        <p className="text-sm mt-1">{error.message}</p>
-      </div>
-    );
-  }
-
-  // contentId（props）が変わったらselectedContentも同期する
-  useEffect(() => {
-    setSelectedContent(contentId);
-  }, [contentId]);
-
   return (
     <div className={`${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>
       {/* MDXコンテンツ表示エリア */}
@@ -395,8 +416,6 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
             <MDXLoader contentId={selectedContent} />
             {/* いいね・コメント機能 */}
             <LearningContentInteraction contentId={selectedContent} />
-            {/* 下部ナビゲーションボタン（ページ末尾） */}
-            {renderNavigation()}
             {/* トップに戻るボタン */}
             {showBackToTopButton && (
               <button
@@ -475,6 +494,7 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
                           const completed = isCompleted(content.id);
                           const lastReadInfo = getLastReadInfo(content.id);
                           const hasReadBefore = lastReadInfo !== null;
+                          const hasAccess = canAccessContent(content.id);
                           
                           // いいね・コメント統計を取得
                           const stats = getStatsForContent(content.id);
@@ -489,20 +509,36 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
                                 hasReadBefore
                                   ? theme === 'dark' ? 'border-indigo-500' : 'border-indigo-300'
                                   : theme === 'dark' ? 'border-gray-600' : 'border-gray-200'
-                              } hover:border-indigo-500 transition-all duration-200 hover:shadow-lg`}
+                              } hover:border-indigo-500 transition-all duration-200 hover:shadow-lg ${
+                                !hasAccess ? 'opacity-60' : ''
+                              }`}
                             >
                               <div className="flex justify-between items-start mb-2">
-                                <h3 className={`font-semibold text-lg ${subHeadingColor} flex-1`}>{content.title}</h3>
-                                {isFreemium && (
-                                  <span className="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full ml-2">
-                                    フリーミアム
-                                  </span>
-                                )}
+                                <h3 className={`font-semibold text-lg ${subHeadingColor} flex-1 ${
+                                  !hasAccess ? 'line-through' : ''
+                                }`}>{content.title}</h3>
+                                
+                                <div className="flex items-center space-x-1 ml-2">
+                                  {/* フリーミアムバッジ */}
+                                  {isFreemium && (
+                                    <span className="bg-green-100 text-green-700 border border-green-200 px-2 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                      Free
+                                    </span>
+                                  )}
+                                  {/* 鍵マーク（アクセス不可の場合） */}
+                                  {!hasAccess && !isFreemium && (
+                                    <span className={`px-2 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                                      theme === 'dark'
+                                        ? 'border border-gray-600 bg-gray-700 text-gray-400'
+                                        : 'border border-gray-300 bg-gray-100 text-gray-400'
+                                    }`}>🔒</span>
+                                  )}
+                                </div>
                               </div>
                               <div className="flex flex-col space-y-2">
                                 <div className="flex justify-end items-center">
-                                  {/* 進捗表示 */}
-                                  {progressPercentage > 0 && (
+                                  {/* 進捗表示（アクセス可能な場合のみ） */}
+                                  {hasAccess && progressPercentage > 0 && (
                                     <span className={`text-xs px-2 py-1 rounded-full ${
                                       completed 
                                         ? 'bg-green-600 text-white' 
@@ -513,8 +549,8 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
                                   )}
                                 </div>
                                 
-                                {/* 進捗バー */}
-                                {progressPercentage > 0 && (
+                                {/* 進捗バー（アクセス可能な場合のみ） */}
+                                {hasAccess && progressPercentage > 0 && (
                                   <div className="w-full bg-gray-300 rounded-full h-1.5 mt-1">
                                     <div 
                                       className={`${completed ? 'bg-green-600' : 'bg-indigo-600'} h-1.5 rounded-full`} 
@@ -525,61 +561,73 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId }) => {
                                 
                                 {/* ボタン */}
                                 <div className="flex justify-between items-center mt-3">
-                                  {hasReadBefore && !completed ? (
-                                    <button 
-                                      onClick={() => selectContent(content.id)}
-                                      className={`text-xs px-3 py-2 ${
-                                        theme === 'dark' 
-                                          ? 'bg-indigo-600 text-white hover:bg-indigo-500' 
-                                          : 'bg-indigo-500 text-white hover:bg-indigo-400'
-                                      } rounded transition-colors duration-200 flex items-center space-x-1`}
-                                    >
-                                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                      </svg>
-                                      <span>続きから</span>
-                                    </button>
+                                  {hasAccess ? (
+                                    hasReadBefore && !completed ? (
+                                      <button 
+                                        onClick={() => selectContent(content.id)}
+                                        className={`text-xs px-3 py-2 ${
+                                          theme === 'dark' 
+                                            ? 'bg-indigo-600 text-white hover:bg-indigo-500' 
+                                            : 'bg-indigo-500 text-white hover:bg-indigo-400'
+                                        } rounded transition-colors duration-200 flex items-center space-x-1`}
+                                      >
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span>続きから</span>
+                                      </button>
+                                    ) : (
+                                      <button 
+                                        onClick={() => selectContent(content.id)}
+                                        className={`text-xs px-3 py-2 ${
+                                          completed
+                                            ? theme === 'dark'
+                                              ? 'bg-green-700 text-white hover:bg-green-600'
+                                              : 'bg-green-600 text-white hover:bg-green-500'
+                                            : theme === 'dark'
+                                              ? 'bg-blue-700 text-white hover:bg-blue-600'
+                                              : 'bg-blue-600 text-white hover:bg-blue-500'
+                                        } rounded transition-colors duration-200`}
+                                      >
+                                        {completed ? '復習する' : '読む'}
+                                      </button>
+                                    )
                                   ) : (
-                                    <button 
-                                      onClick={() => selectContent(content.id)}
-                                      className={`text-xs px-3 py-2 ${
-                                        completed
-                                          ? theme === 'dark'
-                                            ? 'bg-green-700 text-white hover:bg-green-600'
-                                            : 'bg-green-600 text-white hover:bg-green-500'
-                                          : theme === 'dark'
-                                            ? 'bg-blue-700 text-white hover:bg-blue-600'
-                                            : 'bg-blue-600 text-white hover:bg-blue-500'
-                                      } rounded transition-colors duration-200`}
-                                    >
-                                      {completed ? '復習する' : '読む'}
-                                    </button>
+                                    <span className={`text-xs px-3 py-2 rounded cursor-not-allowed ${
+                                      theme === 'dark'
+                                        ? 'bg-gray-700 text-gray-400'
+                                        : 'bg-gray-200 text-gray-500'
+                                    }`}>
+                                      ログインが必要
+                                    </span>
                                   )}
                                   
                                   {/* 最終閲覧日時 */}
-                                  {hasReadBefore && (
+                                  {hasReadBefore && hasAccess && (
                                     <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                                       {new Date(lastReadInfo.date).toLocaleDateString('ja-JP')}
                                     </span>
                                   )}
                                 </div>
                                 
-                                {/* いいね・コメント数 */}
-                                <div className="flex items-center gap-4 mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
-                                  <div className="flex items-center gap-1">
-                                    <span className="text-red-500">❤️</span>
-                                    <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                                      {stats.likesCount}
-                                    </span>
+                                {/* いいね・コメント数（アクセス可能な場合のみ） */}
+                                {hasAccess && (
+                                  <div className="flex items-center gap-4 mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
+                                    <div className="flex items-center gap-1">
+                                      <span className="text-red-500">❤️</span>
+                                      <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                                        {stats.likesCount}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <span className="text-blue-500">💬</span>
+                                      <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                                        {stats.commentsCount}
+                                      </span>
+                                    </div>
                                   </div>
-                                  <div className="flex items-center gap-1">
-                                    <span className="text-blue-500">💬</span>
-                                    <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                                      {stats.commentsCount}
-                                    </span>
-                                  </div>
-                                </div>
+                                )}
                               </div>
                             </div>
                           );
