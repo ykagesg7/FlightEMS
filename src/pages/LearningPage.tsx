@@ -53,23 +53,7 @@ function LearningPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 relative">
-      {/* フリーミアム案内バナー */}
-      {isPreviewMode && (
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 text-center sticky top-0 z-20">
-          <div className="max-w-4xl mx-auto">
-            <p className="text-sm">
-              🎓 厳選された{freemiumInfo.previewLimit}記事を無料でお試しいただけます（{freemiumInfo.availableContents}/{freemiumInfo.totalContents}記事表示中）</p>
-            <p className="text-sm">
-              <Link to="/auth" className="underline font-semibold ml-2 hover:text-indigo-200">
-                ログイン/登録
-              </Link>
-              で全{freemiumInfo.totalContents}記事と進捗管理をご利用ください。登録は無料です。
-            </p>
-          </div>
-        </div>
-      )}
-      
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 relative">     
       {/* サイドバートグル（モバイル用） */}
       <button
         className="md:hidden fixed top-4 left-4 z-50 bg-indigo-500 text-white p-2 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -93,106 +77,37 @@ function LearningPage() {
       )}
       <div
         className={`
-          fixed top-0 left-0 h-full w-4/5 max-w-xs bg-white shadow-lg z-50 transform transition-transform duration-300 md:static md:translate-x-0 md:w-1/4 md:max-w-none md:shadow-md md:p-4
+          md:sticky md:top-16
+          fixed left-0 h-full w-4/5 max-w-xs ${
+            theme === 'dark' 
+              ? 'bg-gray-800 border-gray-700' 
+              : 'bg-gray-50 border-gray-100'
+          } rounded-xl shadow-md z-50 transform transition-transform duration-300
+          md:static md:translate-x-0 md:w-1/4 md:max-w-none md:shadow-md md:p-4
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           md:translate-x-0
-          p-4
+          p-4 border
         `}
-        style={{ 
+        style={{
           minHeight: '100vh',
-          marginTop: isPreviewMode && window.innerWidth >= 768 ? '60px' : '0px'
+          top: isPreviewMode ? '76px' : '64px',
+          marginTop: 0
         }}
         tabIndex={-1}
         aria-label="学習メニュー"
       >
-        {/* 閉じるボタン（モバイル用） */}
-        <div className="flex justify-between items-center mb-2 md:hidden">
-          <span className="text-lg font-bold text-indigo-700">
-            メニュー
-            {isPreviewMode && (
-              <span className="text-sm font-normal text-gray-500 ml-2">
-                (無料版)
-              </span>
-            )}
-          </span>
-          <button
-            className="text-gray-600 hover:text-indigo-500 p-2 rounded focus:outline-none"
-            onClick={() => setSidebarOpen(false)}
-            aria-label="メニューを閉じる"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        
-        {isLoading ? (
-          <div className="flex justify-center items-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
-            <p className="ml-2">学習コンテンツを読み込んでいます...</p>
-          </div>
-        ) : (
-          <>
-            {/* インタラクティブ学習へのリンク */}
-            <div className="mb-6 p-4 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold text-white mb-2">🎯 インタラクティブ学習</h3>
-              <p className="text-sky-100 text-sm mb-3">
-                TACAN進入方式を実際に操作しながら学べるインタラクティブな授業です。
-              </p>
-              <Link 
-                to="/interactive-learning" 
-                className="inline-block px-4 py-2 bg-white text-sky-600 font-semibold rounded-md hover:bg-sky-50 transition-colors duration-200 shadow-sm"
-              >
-                インタラクティブ学習を開始 →
-              </Link>
-            </div>
-
-            {displayContents.length > 0 ? (
-              <LearningMenuSidebar 
-                contents={displayContents}
-                selectedId={selectedTab}
-                onSelectItem={handleMenuItemClick}
-                showFreemiumBadges={isPreviewMode}
-              />
-            ) : (
-              <div className="text-center p-4">
-                {isPreviewMode ? (
-                  <div>
-                    <p className="text-gray-600 mb-4">無料公開コンテンツが読み込まれていません。</p>
-                    <p className="text-sm text-gray-500 mb-4">
-                      管理者がコンテンツを公開するか、ログインして全コンテンツにアクセスしてください。
-                    </p>
-                    <Link 
-                      to="/auth" 
-                      className="inline-block px-4 py-2 bg-indigo-500 text-white text-sm rounded hover:bg-indigo-600 transition-colors"
-                    >
-                      ログイン/登録
-                    </Link>
-                  </div>
-                ) : (
-                  <div>
-                    <p className="text-gray-600 mb-4">学習コンテンツがありません。</p>
-                    <p className="text-sm text-gray-500 mb-2">
-                      MDXファイルを管理者ページからSupabaseに同期する必要があります。
-                    </p>
-                    {user && user.email ? (
-                      <Link 
-                        to="/admin" 
-                        className="inline-block px-4 py-2 bg-indigo-500 text-white text-sm rounded hover:bg-indigo-600 transition-colors"
-                      >
-                        管理者ページへ
-                      </Link>
-                    ) : (
-                      <p className="text-sm text-gray-500">
-                        ログインして管理者権限を持つアカウントでアクセスしてください。
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
+        <LearningMenuSidebar 
+          contents={displayContents}
+          selectedId={selectedTab}
+          onSelectItem={handleMenuItemClick}
+          onClose={() => setSidebarOpen(false)}
+          showFreemiumBadges={isPreviewMode}
+          isLoading={isLoading}
+          user={user}
+          theme={theme}
+          freemiumInfo={freemiumInfo}
+          isPreviewMode={isPreviewMode}
+        />
       </div>
 
       {/* コンテンツ表示エリア */}
