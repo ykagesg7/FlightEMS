@@ -116,7 +116,7 @@ const ExamTab: React.FC = () => {
         {state.phase === 'results' && state.sessionId && (
           <QuizResults
             sessionId={state.sessionId}
-            onStartNewQuiz={handleStartNewQuiz}
+            onRestartQuiz={handleStartNewQuiz}
             onBackToSelection={handleBackToSelection}
           />
         )}
