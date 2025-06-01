@@ -5,6 +5,7 @@ import './index.css';
 import PlanningMapPage from './pages/PlanningMapPage';
 import LearningPage from './pages/LearningPage';
 import InteractiveLearningPage from './pages/InteractiveLearningPage';
+import TestPage from './pages/TestPage';
 import AuthPage from './pages/AuthPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
@@ -189,6 +190,7 @@ const AppLayout = () => {
               <nav className="flex flex-col space-y-2">
                 <NavLink to="/" onClick={() => setMenuOpen(false)}>Planning/Map</NavLink>
                 <NavLink to="/learning" onClick={() => setMenuOpen(false)}>Learning</NavLink>
+                <NavLink to="/test" onClick={() => setMenuOpen(false)}>Test</NavLink>
                 {isAdmin && (
                   <NavLink to="/admin" onClick={() => setMenuOpen(false)}>
                     <span className="flex items-center">
@@ -211,6 +213,7 @@ const AppLayout = () => {
               <nav className="flex space-x-2">
                 <NavLink to="/">Planning/Map</NavLink>
                 <NavLink to="/learning">Learning</NavLink>
+                <NavLink to="/test">Test</NavLink>
                 {isAdmin && (
                   <NavLink to="/admin">
                     <span className="flex items-center">
@@ -238,6 +241,11 @@ const AppLayout = () => {
           <Route path="/" element={<PlanningMapPage />} />
           <Route path="/learning" element={<LearningPage />} />
           <Route path="/interactive-learning" element={<InteractiveLearningPage />} />
+          <Route path="/test" element={
+            <SafeRequireAuth>
+              <TestPage />
+            </SafeRequireAuth>
+          } />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/profile" element={
             <SafeRequireAuth>

@@ -1,0 +1,19 @@
+-- FlightAcademyプロジェクトに既に存在する想定のテーブル。
+-- Supabase Authのusersテーブルと連携していることを前提とします。
+-- CREATE TABLE public.profiles (
+--     id uuid NOT NULL PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+--     username text UNIQUE,
+--     full_name text,
+--     email text UNIQUE, -- Supabase Authのemailと同期 or profiles側で持つ
+--     updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+--     avatar_url text,
+--     website text,
+--     roll text CHECK (roll IN ('Admin', 'Teacher', 'Student')), -- ロール管理
+--     created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+-- );
+
+-- RLSポリシー例 (既存設定に準じるが、基本方針として)
+-- ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+-- CREATE POLICY "Users can view their own profile." ON public.profiles FOR SELECT USING (auth.uid() = id);
+-- CREATE POLICY "Users can update their own profile." ON public.profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+-- CREATE POLICY "Admins can view all profiles." ON public.profiles FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND roll = 'Admin'));

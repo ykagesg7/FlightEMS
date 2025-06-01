@@ -95,11 +95,3 @@ export interface GeoJSONFeature {
 export interface GeoJSONData extends L.GeoJSON {
   features: GeoJSONFeature[];
 }
-
-export interface ExamQuestion {
-  id: string;
-  question: string;
-  options: string[];
-  correctOptionIndex: number;
-  explanation: string;
-}
