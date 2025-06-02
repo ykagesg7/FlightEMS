@@ -52,10 +52,9 @@ function AdminPage() {
     setSyncStatus({ loading: true, message: 'コンテンツを確認中...' });
     
     try {
-      // まず既存のメンタリティーコンテンツを確認
+      // 既存のコンテンツを確認
       const { data: existingContents, error: fetchError } = await (supabase.from as any)('learning_contents')
-        .select('id')
-        .eq('category', 'メンタリティー');
+        .select('id');
       
       if (fetchError) {
         throw fetchError;
@@ -63,17 +62,20 @@ function AdminPage() {
       
       // すでに存在するコンテンツIDのリスト
       const existingIds = existingContents?.map((item: { id: string }) => item.id) || [];
-      console.log('既存のメンタリティーコンテンツ:', existingIds);
+      console.log('既存のコンテンツ:', existingIds);
       
-      // メンタリティー関連のコンテンツを追加
-      const mentalityContents = [
+      // 全学習コンテンツリスト
+      const allContents = [
+        // メンタリティーカテゴリ
         {
-          id: '0.2_Mentality',
-          title: '【悩みと考える】たったこれだけの違いで、人生って結構変わる話。',
+          id: '1.1_Mentality',
+          title: '【ガネーシャと学ぶメンタリティー】"夢を追うのが苦しい？当たり前やん！"',
           category: 'メンタリティー',
-          description: '「悩む」と「考える」の違いを理解し、前向きな思考法を身につける',
-          order_index: 2,
+          description: 'ガネーシャが語る、夢を追う時の苦しさとの向き合い方',
+          order_index: 1,
           content_type: 'text',
+          is_freemium: true,
+          is_published: true,
           updated_at: new Date().toISOString()
         },
         {
@@ -81,50 +83,119 @@ function AdminPage() {
           title: 'トム兄貴も応援中やで！ 戦闘機乗りの卵、エンジン全開や！',
           category: 'メンタリティー',
           description: '戦闘機パイロットを目指す人へのモチベーションメッセージ',
+          order_index: 2,
+          content_type: 'text',
+          is_freemium: true,
+          is_published: true,
+          updated_at: new Date().toISOString()
+        },
+        
+        // 思考法カテゴリ
+        {
+          id: '2.1_Thinking',
+          title: '【悩みと考える】たったこれだけの違いで、人生って結構変わる話。',
+          category: '思考法',
+          description: '「悩む」と「考える」の違いを理解し、前向きな思考法を身につける',
+          order_index: 1,
+          content_type: 'text',
+          is_freemium: true,
+          is_published: true,
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: '2.2_ConcreteAbstract',
+          title: '【具体と抽象】記憶のモヤモヤ、ワシがバッサリ斬ったるわ！',
+          category: '思考法',
+          description: '具体と抽象の思考法を用いた効果的な学習方法',
+          order_index: 2,
+          content_type: 'text',
+          is_freemium: true,
+          is_published: true,
+          updated_at: new Date().toISOString()
+        },
+        
+        // ７つの習慣カテゴリ
+        {
+          id: '1.2_UnconsciousSuccess',
+          title: '【７つの習慣】その１、道真公と学ぶ「主体性」',
+          category: '７つの習慣',
+          description: '"考えるな、行動しろ！"だけじゃない？道真が読み解く７つの習慣',
+          order_index: 1,
+          content_type: 'text',
+          is_freemium: true,
+          is_published: true,
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: '1.3_EndWithFuture',
+          title: '【７つの習慣】その２、清正公の熊本余暇とこラジオ～終わりを思い描くことから始める～',
+          category: '７つの習慣',
+          description: '加藤清正が語る目標設定と未来志向の重要性',
+          order_index: 2,
+          content_type: 'text',
+          is_freemium: true,
+          is_published: true,
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: '1.4_PrioritizingMostImportant',
+          title: '【７つの習慣】その３、緊急指令！最優先で「第３の習慣」をマスターせよ！',
+          category: '７つの習慣',
+          description: '「第３の習慣：最優先事項を優先する」の解説と実践方法',
           order_index: 3,
           content_type: 'text',
+          is_freemium: true,
+          is_published: true,
           updated_at: new Date().toISOString()
         },
         {
-          id: '0.3.1_UnconsciousSuccess',
-          title: '"考えるな、行動しろ！"…だけじゃない？道真が読み解く『７つの習慣』その１',
-          category: 'メンタリティー',
-          description: '菅原道真が語る主体性の重要性と行動の秘訣',
+          id: '1.5_WinWinThinking',
+          title: '【７つの習慣】その４、黄門様珍道中～Win-Winについて考える～',
+          category: '７つの習慣',
+          description: 'Win-Win思考による協力関係の構築',
           order_index: 4,
           content_type: 'text',
+          is_freemium: true,
+          is_published: true,
           updated_at: new Date().toISOString()
         },
         {
-          id: '0.3.2_EndWithFuture',
-          title: '終わりを思い描くことから始める～清正公の熊本よかとこラジオ～',
-          category: 'メンタリティー',
-          description: '加藤清正が語る目標設定と未来志向の重要性',
+          id: '1.6_SeekFirstToUnderstand',
+          title: '【７つの習慣】その５、まず理解に徹し、そして理解される～ZOZOマリンスタジアム特別放送席より～',
+          category: '７つの習慣',
+          description: '効果的なコミュニケーションのための傾聴の技術',
           order_index: 5,
           content_type: 'text',
+          is_freemium: true,
+          is_published: true,
           updated_at: new Date().toISOString()
         },
         {
-          id: '0.3.3_PrioritizingMostImportant',
-          title: '【緊急指令】最優先で「第３の習慣」をマスターせよ！',
-          category: 'メンタリティー',
-          description: '「第３の習慣：最優先事項を優先する」の解説と実践方法',
+          id: '1.7_Synergize',
+          title: '【７つの習慣】その６、「シナジーを創り出す」～最強のチームとは～',
+          category: '７つの習慣',
+          description: 'チームワークによるシナジー効果の創出',
           order_index: 6,
           content_type: 'text',
+          is_freemium: true,
+          is_published: true,
           updated_at: new Date().toISOString()
         },
         {
-          id: '0.4_ConcreteAbstract',
-          title: '記憶のモヤモヤ、ワシがバッサリ斬ったるわ！',
-          category: 'メンタリティー',
-          description: '具体と抽象の思考法を用いた効果的な学習方法',
+          id: '1.8_RightPeopleOnBoard',
+          title: '【ビジョナリー・カンパニー】「誰ば飛行機（ふね）に乗せるか」酔いどれ道真の人選術！',
+          category: '７つの習慣',
+          description: 'チーム構築における人選の重要性とリーダーシップの本質',
           order_index: 7,
           content_type: 'text',
+          is_freemium: true,
+          is_published: true,
           updated_at: new Date().toISOString()
         }
       ];
       
       // 存在しないコンテンツのみをフィルタリング
-      const contentsToAdd = mentalityContents.filter(
+      const contentsToAdd = allContents.filter(
         content => !existingIds.includes(content.id)
       );
       
@@ -132,7 +203,7 @@ function AdminPage() {
         setSyncStatus({
           loading: false,
           success: true,
-          message: `すべてのメンタリティーコンテンツはすでに追加されています`,
+          message: `すべての学習コンテンツはすでに追加されています`,
           count: 0
         });
         return;
@@ -153,7 +224,7 @@ function AdminPage() {
       setSyncStatus({
         loading: false,
         success: true,
-        message: `新しいメンタリティーコンテンツを追加しました`,
+        message: `新しい学習コンテンツを追加しました`,
         count: contentsToAdd.length
       });
       
@@ -192,7 +263,7 @@ function AdminPage() {
             <h3 className="text-lg font-semibold mb-2">コンテンツをSupabaseに追加</h3>
             <p className="mb-4 text-sm">
               ブラウザ環境ではファイルシステムに直接アクセスできないため、MDXファイルを自動的に同期することはできません。<br />
-              代わりに、メンタリティー関連の6つのコンテンツを手動でデータベースに追加します。
+              代わりに、メンタリティーと７つの習慣関連の学習コンテンツを手動でデータベースに追加します。
             </p>
             
             <button
@@ -206,7 +277,7 @@ function AdminPage() {
                     : 'bg-indigo-500 hover:bg-indigo-600'
               } text-white transition-colors`}
             >
-              {syncStatus.loading ? '追加中...' : 'メンタリティーコンテンツを追加'}
+              {syncStatus.loading ? '追加中...' : '学習コンテンツを追加'}
             </button>
             
             {/* 同期状態の表示 */}
