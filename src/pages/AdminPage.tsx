@@ -191,6 +191,17 @@ function AdminPage() {
           is_freemium: true,
           is_published: true,
           updated_at: new Date().toISOString()
+        },
+        {
+          id: '1.9_GiveAndTake',
+          title: '【GIVE&TAKEの極意】与える者は空を制す！～せいしょこさんの熊本よかとこラジオ・超豪華ゲストSP～',
+          category: '７つの習慣',
+          description: 'GIVE&TAKEの極意と自己犠牲の罠を避ける方法',
+          order_index: 8,
+          content_type: 'text',
+          is_freemium: true,
+          is_published: true,
+          updated_at: new Date().toISOString()
         }
       ];
       

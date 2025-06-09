@@ -72,42 +72,9 @@ function LearningPage() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 relative">     
-      {/* サイドバー表示/非表示切り替えボタン（記事詳細表示時のみ） */}
-      {selectedTab && (
-        <button
-          className={`fixed top-20 left-4 z-50 p-2 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-200 ${
-            sidebarVisible 
-              ? theme === 'dark' ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-700'
-              : 'bg-indigo-500 text-white'
-          }`}
-          onClick={toggleSidebar}
-          aria-label={sidebarVisible ? 'サイドバーを隠す' : 'サイドバーを表示'}
-          style={{ top: isPreviewMode ? '100px' : '80px' }}
-        >
-          {sidebarVisible ? (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-            </svg>
-          ) : (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-            </svg>
-          )}
-        </button>
-      )}
+      {/* サイドバー表示/非表示切り替えボタン（記事詳細表示時のみ） - 非表示 */}
 
-      {/* サイドバートグル（モバイル用） */}
-      <button
-        className="md:hidden fixed top-4 left-4 z-50 bg-indigo-500 text-white p-2 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        onClick={() => setSidebarOpen(true)}
-        aria-label="メニューを開く"
-        style={{ top: isPreviewMode ? '76px' : '16px' }}
-      >
-        {/* ハンバーガーアイコン */}
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
+      {/* サイドバートグル（モバイル用） - 非表示 */}
 
       {/* サイドバー（PC:常時表示, モバイル:ドロワー） */}
       {/* オーバーレイ（モバイル時のみ） */}
