@@ -71,10 +71,7 @@ function LearningPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 relative">     
-      {/* サイドバー表示/非表示切り替えボタン（記事詳細表示時のみ） - 非表示 */}
-
-      {/* サイドバートグル（モバイル用） - 非表示 */}
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 relative">
 
       {/* サイドバー（PC:常時表示, モバイル:ドロワー） */}
       {/* オーバーレイ（モバイル時のみ） */}

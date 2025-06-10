@@ -24,7 +24,6 @@ interface LearningTabMDXProps {
 const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList, onContentSelect }) => {
   // contentIdが空文字の場合は必ずnullに設定
   const [selectedContent, setSelectedContent] = useState<string | null>(contentId && contentId.trim() !== '' ? contentId : null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showHtmlDialog, setShowHtmlDialog] = useState(false);
   const [pendingHtmlContent, setPendingHtmlContent] = useState<MDXContent | null>(null);
@@ -99,12 +98,10 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
   // フィルタリングされたコンテンツ
   const filteredContents = useMemo(() => {
     return mdxContents.filter(content => {
-      const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          content.category.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory ? content.category === selectedCategory : true;
-      return matchesSearch && matchesCategory;
+      return matchesCategory;
     });
-  }, [mdxContents, searchTerm, selectedCategory]);
+  }, [mdxContents, selectedCategory]);
 
   // スクロール位置を保存する関数
   const saveScrollPosition = (contentId: string) => {
@@ -432,22 +429,56 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
           </>
         ) : (
           <div>
-            {/* 検索フィルター */}
-            <div className="mb-6 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-              <div className="flex-grow">
-                <input
-                  type="text"
-                  placeholder="タイトルまたはカテゴリで検索..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className={`w-full px-4 py-2 rounded-lg border ${
-                    theme === 'dark' 
-                      ? 'bg-gray-800 border-gray-700 text-gray-200 placeholder-gray-400' 
-                      : 'bg-white border-gray-300 text-gray-800 placeholder-gray-500'
-                  } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
-                />
+            {/* 新着記事お知らせ */}
+            <div className="mb-6">
+              <div className={`p-4 rounded-lg border-l-4 ${
+                theme === 'dark' 
+                  ? 'bg-blue-900/30 border-blue-400 text-blue-200' 
+                  : 'bg-blue-50 border-blue-400 text-blue-800'
+              }`}>
+                <div className="flex items-center mb-2">
+                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  <h3 className="font-semibold">最新記事のお知らせ</h3>
+                </div>
+                <p className="text-sm mb-3">
+                  新しい記事が追加されました！ロジカル思考術シリーズで、プレゼンテーション能力を向上させましょう。
+                </p>
+                <div className="space-y-2">
+                  {displayContents
+                    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                    .slice(0, 3)
+                    .map(content => (
+                      <div 
+                        key={content.id}
+                        className={`text-sm px-3 py-2 rounded cursor-pointer hover:opacity-80 transition-opacity ${
+                          theme === 'dark' 
+                            ? 'bg-blue-800/50 text-blue-100 hover:bg-blue-700/50' 
+                            : 'bg-blue-100 text-blue-900 hover:bg-blue-200'
+                        }`}
+                        onClick={() => {
+                          const contentElement = document.getElementById(`content-${content.id}`);
+                          if (contentElement) {
+                            contentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          }
+                        }}
+                      >
+                        <div className="flex justify-between items-start mb-1">
+                          <span className="font-medium">📝 {content.title}</span>
+                        </div>
+                        <div className="flex justify-between text-xs opacity-75">
+                          <span className="bg-opacity-50 bg-gray-500 text-white px-2 py-0.5 rounded">
+                            {content.category}
+                          </span>
+                          <span>{new Date(content.created_at).toLocaleDateString('ja-JP')}</span>
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
               </div>
-              <div>
+              <div className="mt-4">
                 <select
                   value={selectedCategory || ''}
                   onChange={(e) => setSelectedCategory(e.target.value || null)}
@@ -505,6 +536,7 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
                           return (
                             <div 
                               key={content.id}
+                              id={`content-${content.id}`}
                               className={`${cardBgColor} p-4 rounded-lg border ${
                                 hasReadBefore
                                   ? theme === 'dark' ? 'border-indigo-500' : 'border-indigo-300'
