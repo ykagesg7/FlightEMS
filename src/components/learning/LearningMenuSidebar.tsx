@@ -34,9 +34,7 @@ const LearningMenuSidebar: React.FC<LearningMenuSidebarProps> = ({
   isLoading = false,
   user,
   theme,
-  freemiumInfo,
-  isPreviewMode = false,
-  onBackToList
+  isPreviewMode = false
 }) => {
   const { getProgress, isCompleted } = useLearningProgress();
   const { canAccessContent, isFreemiumContent } = useFreemiumAccess();

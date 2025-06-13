@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { QuizQuestion, QuestionType, Option, UserQuizAnswer } from '../types';
+import { QuizQuestion, QuestionType, UserQuizAnswer } from '../types/quiz';
 import { QuestionComponent } from './QuestionComponent'; // Reusing for individual question rendering
 
 interface QuizComponentProps {

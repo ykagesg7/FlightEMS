@@ -40,7 +40,20 @@ export default defineConfig(({ mode }) => {
       // 環境変数の置換を確実に行う
       rollupOptions: {
         output: {
-          manualChunks: undefined
+          manualChunks: {
+            // React関連ライブラリを分離
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            // 地図関連ライブラリを分離
+            'map-vendor': ['leaflet', 'react-leaflet', 'leaflet-groupedlayercontrol'],
+            // UI関連ライブラリを分離
+            'ui-vendor': ['@headlessui/react', '@radix-ui/react-tabs', 'react-select', 'lucide-react'],
+            // データ関連ライブラリを分離
+            'data-vendor': ['@tanstack/react-query', 'react-query', 'zustand'],
+            // Supabase関連を分離
+            'supabase-vendor': ['@supabase/supabase-js', '@supabase/auth-helpers-react', '@supabase/ssr'],
+            // その他のライブラリを分離
+            'utils-vendor': ['axios', 'clsx', 'tailwind-merge', 'date-fns-tz', 'mermaid']
+          }
         }
       }
     },

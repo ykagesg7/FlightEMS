@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { calculateOffsetPoint } from '../../utils/offset'; // Import from offset.ts
-import { FlightPlan } from '../../types';
+import { FlightPlan } from '../../types/index';
 import { dmsToDecimal } from '../../utils/dms'; // ユーティリティ関数をインポート
 
 interface WaypointFormProps {

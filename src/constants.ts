@@ -1,4 +1,4 @@
-import { AppContentData, QuestionType } from './types';
+import { AppContentData, QuestionType } from './types/quiz';
 
 export const APP_CONTENT: AppContentData = {
   appName: "Section4. TACAN Approach",

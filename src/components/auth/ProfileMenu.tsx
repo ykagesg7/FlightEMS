@@ -13,7 +13,7 @@ const ProfileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [localProfile, setLocalProfile] = useState<any>(null);
+  const [localProfile, setLocalProfile] = useState<Record<string, unknown> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // プロフィール情報がない場合は取得を試みる
@@ -157,7 +157,8 @@ const ProfileMenu = () => {
   // ユーザー名の頭文字をアバターとして表示
   const getInitial = () => {
     if (!effectiveProfile) return user.email?.[0]?.toUpperCase() || 'U';
-    return effectiveProfile.username ? effectiveProfile.username.charAt(0).toUpperCase() : 'U';
+    const username = effectiveProfile.username as string;
+    return username ? username.charAt(0).toUpperCase() : 'U';
   };
 
   return (
@@ -172,7 +173,7 @@ const ProfileMenu = () => {
           <div className="flex items-center space-x-1">
             {effectiveProfile?.avatar_url ? (
               <img
-                src={effectiveProfile.avatar_url}
+                src={effectiveProfile.avatar_url as string}
                 alt="プロフィール画像"
                 className="w-8 h-8 rounded-full object-cover border-2 border-indigo-300"
                 onError={(e) => {
@@ -188,7 +189,7 @@ const ProfileMenu = () => {
               </div>
             )}
             <span className={`${theme === 'dark' ? 'text-white' : 'text-gray-700'} hidden sm:inline-block max-w-[100px] truncate`}>
-              {effectiveProfile?.username || user.email?.split('@')[0] || 'ユーザー'}
+              {(effectiveProfile?.username as string) || user.email?.split('@')[0] || 'ユーザー'}
             </span>
             <svg
               className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} transition-transform ${isOpen ? 'rotate-180' : ''}`}
@@ -209,13 +210,13 @@ const ProfileMenu = () => {
             <div className={`px-4 py-3 text-sm border-b ${
               theme === 'dark' ? 'text-gray-300 border-gray-700' : 'text-gray-700 border-gray-200'
             }`}>
-              <p className="font-semibold">{effectiveProfile?.full_name || effectiveProfile?.username || user.email?.split('@')[0] || 'ユーザー'}</p>
+              <p className="font-semibold">{(effectiveProfile?.full_name as string) || (effectiveProfile?.username as string) || user.email?.split('@')[0] || 'ユーザー'}</p>
               <p className="text-xs truncate">{user.email}</p>
-              {effectiveProfile?.roll && (
+              {(effectiveProfile?.roll as string) && (
                 <p className={`text-xs mt-1 inline-block px-2 py-1 rounded-full ${
                   theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
                 }`}>
-                  {effectiveProfile.roll === 'Student' ? '学生' : effectiveProfile.roll === 'Teacher' ? '教師' : effectiveProfile.roll}
+                  {(effectiveProfile?.roll as string) === 'Student' ? '学生' : (effectiveProfile?.roll as string) === 'Teacher' ? '教師' : (effectiveProfile?.roll as string)}
                 </p>
               )}
             </div>

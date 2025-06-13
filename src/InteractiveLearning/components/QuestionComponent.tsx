@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Question, QuestionType, Option } from '../types';
+import { Question, QuestionType } from '../../types/quiz';
 
 interface QuestionComponentProps {
   question: Question;
@@ -52,28 +52,31 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
         return (
           <fieldset className="space-y-3">
             <legend className="sr-only">{question.text}</legend> {/* For screen readers, associating options with the question */}
-            {question.options?.map((option) => (
-              <label
-                key={option.id}
-                className={`block p-3 rounded-lg border transition-all duration-150 cursor-pointer ${
-                  currentAnswer === option.id
-                    ? 'bg-sky-500 border-sky-400 ring-2 ring-sky-300'
-                    : 'bg-slate-700 border-slate-600 hover:bg-slate-600'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name={question.id}
-                  value={option.id}
-                  checked={currentAnswer === option.id}
-                  onChange={(e) => setCurrentAnswer(e.target.value)}
-                  className="opacity-0 w-0 h-0 absolute" // Hidden, label is clickable
-                  disabled={feedback !== undefined}
-                  aria-labelledby={`${questionTextId} option-text-${option.id}`}
-                />
-                <span id={`option-text-${option.id}`}>{option.text}</span>
-              </label>
-            ))}
+            {question.options?.map((opt, idx) => {
+              const option = typeof opt === 'string' ? { id: String(idx), text: opt } : opt;
+              return (
+                <label
+                  key={option.id}
+                  className={`block p-3 rounded-lg border transition-all duration-150 cursor-pointer ${
+                    currentAnswer === option.id
+                      ? 'bg-sky-500 border-sky-400 ring-2 ring-sky-300'
+                      : 'bg-slate-700 border-slate-600 hover:bg-slate-600'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name={question.id}
+                    value={option.id}
+                    checked={currentAnswer === option.id}
+                    onChange={(e) => setCurrentAnswer(e.target.value)}
+                    className="opacity-0 w-0 h-0 absolute" // Hidden, label is clickable
+                    disabled={feedback !== undefined}
+                    aria-labelledby={`${questionTextId} option-text-${option.id}`}
+                  />
+                  <span id={`option-text-${option.id}`}>{option.text}</span>
+                </label>
+              );
+            })}
           </fieldset>
         );
       case QuestionType.NUMBER_INPUT:

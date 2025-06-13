@@ -13,7 +13,7 @@ const NewAuthButton = () => {
   
   const { theme } = useTheme();
   const [isLoadingTimeout, setIsLoadingTimeout] = useState(false);
-  const [isDebugMode] = useState(process.env.NODE_ENV === 'development'); // 本番ではデバッグログを出さない
+  const [isDebugMode] = useState(import.meta.env.MODE === 'development'); // 本番ではデバッグログを出さない
   const navigate = useNavigate();
 
   // ローディングのタイムアウト処理

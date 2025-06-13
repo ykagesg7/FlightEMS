@@ -1,5 +1,5 @@
 import React from 'react';
-import { Section, Step, Question, QuestionType, Option } from '../types';
+import { Section, Question } from '../../types/quiz';
 import { QuestionComponent } from './QuestionComponent';
 
 interface SectionComponentProps {

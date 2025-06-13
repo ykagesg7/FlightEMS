@@ -65,16 +65,17 @@ export function calculateETE(totalDistance: number, tas: number | undefined): nu
 export function calculateETA(departureTime: string | null | undefined, eteMinutes: number): string {
   if (departureTime && eteMinutes > 0) {
     const [hours, minutes] = departureTime.split(':').map(Number);
-    let departureTimeInMinutes = hours * 60 + minutes;
-    let etaMinutes = departureTimeInMinutes + eteMinutes;
+    const departureTimeInMinutes = hours * 60 + minutes;
+    const etaMinutes = departureTimeInMinutes + eteMinutes;
     return formatTime(etaMinutes);
   }
   return '--:--';
 }
 
-export const groupBy = (items: any[], key: string) =>
-  items.reduce((result: any, item: any) => {
-    (result[item[key]] = result[item[key]] || []).push(item);
+export const groupBy = <T extends Record<string, unknown>>(items: T[], key: keyof T) =>
+  items.reduce((result: Record<string, T[]>, item: T) => {
+    const keyValue = String(item[key]);
+    (result[keyValue] = result[keyValue] || []).push(item);
     return result;
   }, {});
 
@@ -153,7 +154,7 @@ export const dmsToDecimal = (dms: string, isLatitude: boolean): number | null =>
     return null;
   }
 
-  let decimal = degrees + minutes / 60 + seconds / 3600;
+  const decimal = degrees + minutes / 60 + seconds / 3600;
   return (hemisphere === 'S' || hemisphere === 'W') ? -decimal : decimal;
 };
 

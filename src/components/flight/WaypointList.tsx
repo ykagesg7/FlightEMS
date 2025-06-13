@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import { FlightPlan, Waypoint } from '../../types';
+import { FlightPlan, Waypoint } from '../../types/index';
 import { MapPin, ChevronUp, ChevronDown } from 'lucide-react';
 import { formatDMS, decimalToDMS, dmsToDecimal } from '../../utils';
 import { formatBearing, formatDistance } from '../../utils/format';

@@ -1,5 +1,5 @@
 import { MapContainer, Popup, Polyline, CircleMarker } from 'react-leaflet';
-import { FlightPlan, Waypoint } from '../../types';
+import { FlightPlan, Waypoint } from '../../types/index';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
 import 'leaflet-groupedlayercontrol';
@@ -19,7 +19,7 @@ import './mapStyles.css';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useState } from 'react';
 
-let DefaultIcon = L.icon({
+const DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
   iconSize: [25, 41],
@@ -86,7 +86,7 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
         type: 'custom' as 'custom',  // 例えば、カスタムウェイポイントとして設定
         coordinates: [lng, lat] as [number, number],  // タプルとしてキャスト
       };
-      setFlightPlan(prev => ({
+      setFlightPlan((prev: FlightPlan) => ({
         ...prev,
         waypoints: [...prev.waypoints, newWaypoint],
       }));
@@ -114,7 +114,7 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
       .then(data => {
         const navaids = data.features.map((feat: any): MapNavaid => {
           const [lng, lat] = feat.geometry.coordinates;
-          return { coordinates: L.latLng(lat, lng), id: feat.properties.id, name: feat.properties.name };
+          return { coordinates: L.latLng(lat, lng), id: feat.properties?.id || '', name: feat.properties?.name || '' };
         });
         setNavaidData(navaids);
       })
@@ -219,7 +219,7 @@ const MapContent: React.FC<{
   // Waypointのポップアップ設定関数
   const waypointPopup = useCallback((feature: any, layer: L.Layer, setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>, map: L.Map | null) => {
     const coords = (feature.geometry as GeoJSON.Point).coordinates;
-    let popupContent = `<div class="waypoint-popup">
+    const popupContent = `<div class="waypoint-popup">
       <div class="waypoint-popup-header">${feature.properties.id}</div>
       <div class="p-2">
         <p class="text-xs font-bold">${feature.properties.name1 || '未設定'}</p>
@@ -266,7 +266,7 @@ const MapContent: React.FC<{
               longitude: coords[0]
             };
             
-            setFlightPlan(prev => ({
+            setFlightPlan((prev: FlightPlan) => ({
               ...prev,
               waypoints: [...prev.waypoints, newWaypoint]
             }));
@@ -331,7 +331,7 @@ const MapContent: React.FC<{
         onEachFeature: (feature, layer) => {
           const coords = (feature.geometry as GeoJSON.Point).coordinates;
           
-          let popupContent = `<div class="navaid-popup">
+          const popupContent = `<div class="navaid-popup">
             <div class="navaid-popup-header">${feature.properties.id}（${feature.properties.name1} ${feature.properties.name2}）</div>
             <div class="p-2">
               <p class="text-xs text-gray-600">Type: ${feature.properties.type}</p>
@@ -381,7 +381,7 @@ const MapContent: React.FC<{
                     longitude: coords[0]
                   };
                   
-                  setFlightPlan(prev => ({
+                  setFlightPlan((prev: FlightPlan) => ({
                     ...prev,
                     waypoints: [...prev.waypoints, newWaypoint]
                   }));
@@ -693,16 +693,12 @@ const MapContent: React.FC<{
               }
             });
             
-            // 空港レイヤーを"Common Layers"の"空港"として置き換える
-            (overlayLayers["Common Layers"]["空港"] as L.GeoJSON) = airportsLayer;
+            // 既存プレースホルダー "空港" レイヤーにデータを追加する。
+            const airportsPlaceholder = overlayLayers["Common Layers"]["空港"] as L.GeoJSON;
+            airportsPlaceholder.clearLayers();
+            airportsPlaceholder.addLayer(airportsLayer);
             
-            // マップがすでに初期化されていて、サイズが有効であることを確認してから追加
-            if (map.getContainer() && map.getContainer().clientWidth > 0 && map.getContainer().clientHeight > 0) {
-              // 空港レイヤーを表示状態にする
-              if (layerControlRef.current) {
-                airportsLayer.addTo(map);
-              }
-            }
+            // 自動的にマップへ追加しない。
           } catch (error) {
             console.error('Airportsデータの処理中にエラーが発生しました:', error);
           }
@@ -1049,14 +1045,8 @@ const MapContent: React.FC<{
           osmLayer.addTo(map);
         }
         
-        // 初期のオーバーレイとして「空港」、「制限空域」、「高高度訓練空域」を追加する
-        const defaultOverlays = ["空港", "制限空域", "高高度訓練空域"];
-        defaultOverlays.forEach(overlayName => {
-          const layer = (overlayLayers["Common Layers"] as Record<string, L.Layer>)[overlayName];
-          if (layer && !map.hasLayer(layer)) {
-            layer.addTo(map);
-          }
-        });
+        // --- 初期状態ではオーバーレイを追加しない ---
+        // ユーザーがレイヤーコントロールで選択した際にのみ表示されるようにする。
         
         // Waypointsの地域レイヤー名を取得（「すべて」を除く）
         const waypointRegions = Object.keys((overlayLayers["Waypoints"] as Record<string, L.Layer>))
@@ -1175,7 +1165,7 @@ const MapContent: React.FC<{
     completeRoute.push([flightPlan.departure.latitude, flightPlan.departure.longitude]);
   }
   if (flightPlan.waypoints && flightPlan.waypoints.length > 0) {
-    flightPlan.waypoints.forEach(wp => {
+    (flightPlan.waypoints as Waypoint[]).forEach((wp: Waypoint) => {
       completeRoute.push([wp.latitude, wp.longitude]);
     });
   }
@@ -1281,10 +1271,10 @@ const MapContent: React.FC<{
                           ...waypoint,
                           name: e.target.value
                         };
-                        setFlightPlan({
-                          ...flightPlan,
+                        setFlightPlan((prev: FlightPlan) => ({
+                          ...prev,
                           waypoints: newWaypoints
-                        });
+                        }));
                       }}
                       className="block w-full rounded-md border-gray-600 shadow-sm bg-gray-700 text-gray-50 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 py-1 text-sm"
                     />
@@ -1300,10 +1290,10 @@ const MapContent: React.FC<{
                     onClick={() => {
                       const newWaypoints = [...flightPlan.waypoints];
                       newWaypoints.splice(index, 1);
-                      setFlightPlan({
-                        ...flightPlan,
+                      setFlightPlan((prev: FlightPlan) => ({
+                        ...prev,
                         waypoints: newWaypoints
-                      });
+                      }));
                     }}
                     className="bg-red-600 hover:bg-red-700 text-white text-xs font-medium py-1 px-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                   >

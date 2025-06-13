@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { WeatherCacheProvider } from '../contexts/WeatherCacheContext';
 import PlanningTab from '../components/flight/PlanningTab';
 import MapTab from '../components/map/MapTab';
-import { FlightPlan } from '../types';
+import { FlightPlan } from '../types/index';
 import { calculateTAS, calculateMach, formatTime, calculateAirspeeds } from '../utils';
 
 type TabKey = 'planning' | 'map';

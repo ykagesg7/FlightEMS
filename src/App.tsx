@@ -1,14 +1,7 @@
-import React, { useState, Component, ErrorInfo, ReactNode } from 'react';
+import React, { useState, Component, ErrorInfo, ReactNode, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import './App.css';
 import './index.css';
-import PlanningMapPage from './pages/PlanningMapPage';
-import LearningPage from './pages/LearningPage';
-import InteractiveLearningPage from './pages/InteractiveLearningPage';
-import TestPage from './pages/TestPage';
-import AuthPage from './pages/AuthPage';
-import ProfilePage from './pages/ProfilePage';
-import AdminPage from './pages/AdminPage';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { ProgressProvider } from './contexts/ProgressContext';
 import { AuthProvider } from './providers/AuthProvider';
@@ -17,6 +10,15 @@ import NewAuthButton from './components/auth/NewAuthButton';
 import RequireAuth from './components/auth/RequireAuth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+// 動的インポートでコード分割
+const PlanningMapPage = lazy(() => import('./pages/PlanningMapPage'));
+const LearningPage = lazy(() => import('./pages/LearningPage'));
+const InteractiveLearningPage = lazy(() => import('./pages/InteractiveLearningPage'));
+const TestPage = lazy(() => import('./pages/TestPage'));
+const AuthPage = lazy(() => import('./pages/AuthPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+
 // エラーバウンダリーコンポーネント
 class ErrorBoundary extends Component<{ children: ReactNode, fallback?: ReactNode }, { hasError: boolean }> {
   constructor(props: { children: ReactNode, fallback?: ReactNode }) {
@@ -24,7 +26,7 @@ class ErrorBoundary extends Component<{ children: ReactNode, fallback?: ReactNod
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(_: Error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
@@ -107,6 +109,25 @@ const SafeAuthButton = () => {
     }>
       <NewAuthButton />
     </ErrorBoundary>
+  );
+};
+
+// ローディングコンポーネント
+const LoadingSpinner = () => {
+  const { theme } = useTheme();
+  return (
+    <div className="flex justify-center items-center min-h-[400px]">
+      <div className="flex flex-col items-center space-y-4">
+        <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 ${
+          theme === 'dark' ? 'border-indigo-400' : 'border-indigo-600'
+        }`}></div>
+        <p className={`text-sm ${
+          theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+        }`}>
+          ページを読み込んでいます...
+        </p>
+      </div>
+    </div>
   );
 };
 
@@ -237,30 +258,32 @@ const AppLayout = () => {
         </div>
       </header>
       <main className="container mx-auto flex-grow">
-        <Routes>
-          <Route path="/" element={<PlanningMapPage />} />
-          <Route path="/learning" element={<LearningPage />} />
-          <Route path="/interactive-learning" element={<InteractiveLearningPage />} />
-          <Route path="/test" element={
-            <SafeRequireAuth>
-              <TestPage />
-            </SafeRequireAuth>
-          } />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/profile" element={
-            <SafeRequireAuth>
-              <ProfilePage />
-            </SafeRequireAuth>
-          } />
-          <Route 
-            path="/admin" 
-            element={
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+            <Route path="/" element={<PlanningMapPage />} />
+            <Route path="/learning" element={<LearningPage />} />
+            <Route path="/interactive-learning" element={<InteractiveLearningPage />} />
+            <Route path="/test" element={
               <SafeRequireAuth>
-                <AdminPage />
+                <TestPage />
               </SafeRequireAuth>
-            } 
-          />
-        </Routes>
+            } />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/profile" element={
+              <SafeRequireAuth>
+                <ProfilePage />
+              </SafeRequireAuth>
+            } />
+            <Route 
+              path="/admin" 
+              element={
+                <SafeRequireAuth>
+                  <AdminPage />
+                </SafeRequireAuth>
+              } 
+            />
+          </Routes>
+        </Suspense>
       </main>
       <footer className={`${
         theme === 'dark' ? 'bg-gray-800' : 'bg-indigo-900'

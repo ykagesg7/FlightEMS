@@ -47,8 +47,8 @@ const RegisterForm = () => {
         setConfirmPassword('');
         setUsername('');
       }
-    } catch (err: any) {
-      setError(err.message || '登録中にエラーが発生しました');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : '登録中にエラーが発生しました');
     } finally {
       setLoading(false);
     }

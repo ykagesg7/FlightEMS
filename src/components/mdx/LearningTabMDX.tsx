@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import MDXLoader, { MDX_CONTENT_LOADED_EVENT } from './MDXLoader';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useLearningProgress } from '../../hooks/useLearningProgress';

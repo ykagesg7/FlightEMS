@@ -17,7 +17,7 @@ export interface Airport {
     RWY3?: string;
     RWY4?: string;
     "MAG Var"?: number;
-    [key: string]: any;
+    [key: string]: string | number | boolean | null | undefined;
   };
 }
 

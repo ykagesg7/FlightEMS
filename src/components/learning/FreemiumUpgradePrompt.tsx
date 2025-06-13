@@ -7,7 +7,7 @@ interface FreemiumUpgradePromptProps {
   contentId: string;
 }
 
-const FreemiumUpgradePrompt: React.FC<FreemiumUpgradePromptProps> = ({ contentId }) => {
+const FreemiumUpgradePrompt: React.FC<FreemiumUpgradePromptProps> = () => {
   const { theme } = useTheme();
   const { freemiumInfo } = useFreemiumAccess();
   

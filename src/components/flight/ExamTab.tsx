@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
-import { QuizSettings, Question } from '../../types/quiz';
-import supabase from '../../lib/supabase';
+import { QuizSettings } from '../../types/quiz';
 import DeckSelector from '../quiz/DeckSelector';
 import QuizSession from '../quiz/QuizSession';
 import QuizResults from '../quiz/QuizResults';

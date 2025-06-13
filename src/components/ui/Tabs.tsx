@@ -3,7 +3,7 @@ import { cn } from '../../utils';
 import React from 'react';
 import PlanningTab from '../flight/PlanningTab';
 import MapTab from '../map/MapTab';
-import { FlightPlan } from '../../types';
+import { FlightPlan } from '../../types/index';
 import { calculateTAS, calculateMach, formatTime, calculateAirspeeds } from '../../utils';
 import LearningTabMDX from '../mdx/LearningTabMDX';
 

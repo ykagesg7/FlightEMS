@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlightPlan, Waypoint } from '../../types';
+import { FlightPlan, Waypoint } from '../../types/index';
 import WaypointList from './WaypointList';
 import NavaidSelector from './NavaidSelector';
 import WaypointForm from './WaypointForm';

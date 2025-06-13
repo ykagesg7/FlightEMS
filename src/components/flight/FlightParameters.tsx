@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useEffect, useState } from 'react';
-import { FlightPlan } from '../../types';
+import { FlightPlan } from '../../types/index';
 import { 
   parseTimeString, 
   SPEED_INCREMENT, 
@@ -31,42 +31,42 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
 
   const handleSpeedChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newSpeed = parseInt(event.target.value, 10);
-    setFlightPlan({ ...flightPlan, speed: newSpeed });
-  }, [flightPlan, setFlightPlan]);
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, speed: newSpeed }));
+  }, [setFlightPlan]);
 
   const handleAltitudeChange = useCallback((newAltitude: number) => {
-    setFlightPlan({ ...flightPlan, altitude: newAltitude });
-  }, [flightPlan, setFlightPlan]);
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, altitude: newAltitude }));
+  }, [setFlightPlan]);
 
   const handleDepartureTimeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const jstTime = event.target.value;
-    setFlightPlan({ ...flightPlan, departureTime: jstTime });
-  }, [flightPlan, setFlightPlan]);
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, departureTime: jstTime }));
+  }, [setFlightPlan]);
 
   const handleGroundTempChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newTemp = parseInt(event.target.value, 10);
-    setFlightPlan({ ...flightPlan, groundTempC: newTemp });
-  }, [flightPlan, setFlightPlan]);
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, groundTempC: newTemp }));
+  }, [setFlightPlan]);
 
   const handleGroundElevationChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newElevation = parseInt(event.target.value, 10);
-    setFlightPlan({ ...flightPlan, groundElevationFt: newElevation });
-  }, [flightPlan, setFlightPlan]);
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, groundElevationFt: newElevation }));
+  }, [setFlightPlan]);
 
   const handleSpeedIncrement = useCallback(() => {
-    setFlightPlan(prev => ({ ...prev, speed: prev.speed + SPEED_INCREMENT }));
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, speed: prev.speed + SPEED_INCREMENT }));
   }, [setFlightPlan]);
 
   const handleSpeedDecrement = useCallback(() => {
-    setFlightPlan(prev => ({ ...prev, speed: Math.max(0, prev.speed - SPEED_INCREMENT) }));
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, speed: Math.max(0, prev.speed - SPEED_INCREMENT) }));
   }, [setFlightPlan]);
 
   const handleAltitudeIncrement = useCallback(() => {
-    setFlightPlan(prev => ({ ...prev, altitude: prev.altitude + ALTITUDE_INCREMENT }));
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, altitude: prev.altitude + ALTITUDE_INCREMENT }));
   }, [setFlightPlan]);
 
   const handleAltitudeDecrement = useCallback(() => {
-    setFlightPlan(prev => ({ ...prev, altitude: Math.max(0, prev.altitude - ALTITUDE_INCREMENT) }));
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, altitude: Math.max(0, prev.altitude - ALTITUDE_INCREMENT) }));
   }, [setFlightPlan]);
 
   // MACHの変更ハンドラ (0.01単位で調整)
@@ -77,7 +77,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
       flightPlan.groundTempC, 
       flightPlan.groundElevationFt
     ) * 10; // 0.001 -> 0.01へ変更のため10倍
-    setFlightPlan(prev => ({ ...prev, speed: Math.round(prev.speed + increment) }));
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, speed: Math.round(prev.speed + increment) }));
   }, [flightPlan, setFlightPlan]);
 
   const handleMachDecrement = useCallback(() => {
@@ -87,7 +87,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
       flightPlan.groundTempC, 
       flightPlan.groundElevationFt
     ) * 10; // 0.001 -> 0.01へ変更のため10倍
-    setFlightPlan(prev => ({ ...prev, speed: Math.max(0, Math.round(prev.speed - increment)) }));
+    setFlightPlan((prev: FlightPlan) => ({ ...prev, speed: Math.max(0, Math.round(prev.speed - increment)) }));
   }, [flightPlan, setFlightPlan]);
 
   // 出発空港が選択されたら、その標高と地上気温を自動設定する
@@ -98,7 +98,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
       
       if (elevation !== undefined) {
         console.log(`空港、${flightPlan.departure.name}の標高${elevation}ft を設定しました`);
-        setFlightPlan(prev => ({
+        setFlightPlan((prev: FlightPlan) => ({
           ...prev,
           groundElevationFt: Number(elevation)
         }));
@@ -115,7 +115,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
           const cachedTemp = cachedEntry.data.current?.temp_c;
           if (cachedTemp !== undefined) {
             console.log(`キャッシュから空港、${flightPlan.departure.name}の地上気温 ${cachedTemp}°Cを設定しました`);
-            setFlightPlan(prev => ({
+            setFlightPlan((prev: FlightPlan) => ({
               ...prev,
               groundTempC: Math.round(cachedTemp)
             }));
@@ -130,13 +130,13 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
             if (weatherData.current?.temp_c !== undefined) {
               const temp_c = weatherData.current.temp_c;
               console.log(`APIから空港、${flightPlan.departure?.name}の地上気温 ${temp_c}°Cを取得・設定しました`);
-              setFlightPlan(prev => ({
+              setFlightPlan((prev: FlightPlan) => ({
                 ...prev,
                 groundTempC: Math.round(temp_c)
               }));
               
               // 取得したデータをキャッシュに保存
-              setWeatherCache(prevCache => ({
+              setWeatherCache((prevCache) => ({
                 ...prevCache,
                 [airportId]: { data: weatherData, timestamp: Date.now() }
               }));

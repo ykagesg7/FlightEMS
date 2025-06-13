@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { APP_CONTENT } from '@/InteractiveLearning/constants';
-import { Section as SectionType, Question as QuestionTypeData, Step, UserQuizAnswer, QuestionType } from '@/InteractiveLearning/types';
-import { SectionComponent } from '@/InteractiveLearning/components/SectionComponent';
-import { QuizComponent } from '@/InteractiveLearning/components/QuizComponent';
+import { APP_CONTENT } from '../constants';
+import { UserQuizAnswer, QuestionType } from '../types/quiz';
+import { SectionComponent } from '../components/SectionComponent';
+import { QuizComponent } from '../components/QuizComponent';
 
 enum AppState {
   INTRODUCTION, // Now serves as Table of Contents
@@ -48,7 +48,7 @@ const InteractiveLearningPage: React.FC = () => {
   
   const handleAnswerSubmitInSection = useCallback((questionId: string, answer: string | number) => {
     if (!currentStep || typeof currentStep.content === 'string') return;
-    const question = currentStep.content as QuestionTypeData;
+    const question = currentStep.content as any; // Using any temporarily for compatibility
 
     let isCorrect = false;
     if (question.type === QuestionType.NUMBER_INPUT) {
@@ -122,7 +122,7 @@ const InteractiveLearningPage: React.FC = () => {
             <h2 className="text-3xl font-bold text-center text-sky-400 mb-4">{generalMessages.tableOfContents}</h2>
             <p className="text-slate-300 whitespace-pre-line leading-relaxed mb-8 text-center">{generalMessages.appOverview}</p>
             <div className="space-y-4">
-              {sections.map((section, index) => {
+              {sections.map((section: any, index: number) => {
                 const isCompleted = completedSections.includes(section.id);
                 return (
                   <button
@@ -220,7 +220,7 @@ const InteractiveLearningPage: React.FC = () => {
           </>
         );
 
-      case AppState.QUIZ_RESULTS:
+      case AppState.QUIZ_RESULTS: {
         const score = quizUserAnswers.filter(ans => ans.isCorrect).length;
         const totalQuizQuestions = quizQuestions.length;
         return (
@@ -230,7 +230,7 @@ const InteractiveLearningPage: React.FC = () => {
               {generalMessages.yourScore}: <span className="font-bold text-amber-400">{score}</span> / {totalQuizQuestions}
             </p>
             <div className="space-y-4 my-6 text-left max-h-96 overflow-y-auto p-3 bg-slate-900/50 rounded-md border border-slate-700">
-              {quizQuestions.map((q, index) => {
+              {quizQuestions.map((q: any, index: number) => {
                 const userAnswer = quizUserAnswers.find(a => a.questionId === q.id);
                 return (
                   <div key={q.id} className={`p-3 rounded-md border ${userAnswer?.isCorrect ? 'border-green-600 bg-green-700/20' : 'border-red-600 bg-red-700/20'}`}>
@@ -265,6 +265,7 @@ const InteractiveLearningPage: React.FC = () => {
             <p className="mt-8 text-slate-300">{generalMessages.finalThoughts}</p>
           </div>
         );
+      }
       default:
         return <p className="text-center text-red-400">不明な状態です。</p>;
     }

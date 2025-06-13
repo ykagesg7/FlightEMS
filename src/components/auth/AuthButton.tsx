@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -10,7 +10,7 @@ const AuthButton = () => {
   const loading = useAuthStore(state => state.loading);
   const { theme } = useTheme();
   const [loadingTimeout, setLoadingTimeout] = useState(false);
-  const [debugMode] = useState(true); // デバッグモードを有効化
+  const [debugMode] = useState(import.meta.env.MODE === 'development'); // 開発環境でのみデバッグモードを有効化
 
   // ローディングのタイムアウト処理
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactSelect, { StylesConfig } from 'react-select';
-import { Airport } from '../../types';
+import { Airport } from '../../types/index';
 
 interface AirportSelectProps {
   label: string;

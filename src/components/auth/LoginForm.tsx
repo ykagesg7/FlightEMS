@@ -32,9 +32,9 @@ const LoginForm = () => {
         console.error('ログインエラー詳細:', error);
         setError(error.message || 'ログインに失敗しました');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('ログイン例外発生:', err);
-      setError(err.message || 'ログイン中にエラーが発生しました');
+      setError(err instanceof Error ? err.message : 'ログイン中にエラーが発生しました');
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlightPlan, RouteSegment, Airport, Waypoint } from '../../types';
+import { FlightPlan, RouteSegment, Airport, Waypoint } from '../../types/index';
 import { formatTime, calculateDistance, calculateETE, calculateETA, groupBy, calculateTAS, calculateMach, calculateAirspeeds } from '../../utils';
 import { calculateMagneticBearing } from '../../utils/bearing';
 import FlightParameters from './FlightParameters';
@@ -144,7 +144,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
     const etaFormatted = calculateETA(flightPlan.departureTime, eteMinutes);
 
     // FlightPlanステートを更新
-    setFlightPlan(prevFlightPlan => ({
+    setFlightPlan((prevFlightPlan: FlightPlan) => ({
       ...prevFlightPlan,
       totalDistance: totalDistance,
       ete: eteFormatted,

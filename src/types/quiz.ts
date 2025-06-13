@@ -27,6 +27,17 @@ export interface CardDeck {
   question_count?: number;
 }
 
+export enum QuestionType {
+  MULTIPLE_CHOICE,
+  NUMBER_INPUT,
+  TEXT_INPUT,
+}
+
+export interface Option {
+  id: string;
+  text: string;
+}
+
 export interface Question {
   id: string;
   deck_id: string;
@@ -40,6 +51,13 @@ export interface Question {
   updated_at: string;
   // リレーション
   deck?: CardDeck;
+  type: QuestionType;
+  correctAnswer: string | number;
+  reference?: string;
+  imagePlaceholder?: string;
+  // フロントエンド互換フィールド（旧版コンポーネント用）
+  text?: string;            // = question_text
+  options?: Option[];       // 詳細型オプション（id,text）
 }
 
 export interface LearningRecord {
@@ -251,7 +269,7 @@ export interface QuestionConverter {
 export interface QuizError {
   code: string;
   message: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 export type QuizErrorCode = 
@@ -307,4 +325,66 @@ export interface LearningStats {
     accuracy: number;
     questions_answered: number;
   }>;
-} 
+}
+
+export interface Step {
+  id: string;
+  type: 'text' | 'question';
+  title?: string;
+  content: string | Question;
+  imagePlaceholder?: string;
+  reference?: string;
+}
+
+export interface Section {
+  id: string;
+  title: string;
+  introduction?: string;
+  steps: Step[];
+}
+
+export interface QuizQuestion extends Question {}
+
+export interface AppContentData {
+  appName: string;
+  sections: Section[];
+  quizTitle: string;
+  quizQuestions: QuizQuestion[];
+  generalMessages: {
+    startLearning: string;
+    nextStep: string;
+    previousStep: string;
+    submitAnswer: string;
+    correct: string;
+    incorrect: string;
+    viewExplanation: string;
+    nextSection: string;
+    backToSections: string;
+    backToContents: string;
+    startQuiz: string;
+    quizSummary: string;
+    yourScore: string;
+    retakeQuiz: string;
+    finalThoughts: string;
+    showAnswer: string;
+    hideAnswer: string;
+    tableOfContents: string;
+    appOverview: string;
+    selectSectionToStart: string;
+    nextQuestion: string;
+    finishQuiz: string;
+    unanswered: string;
+  };
+}
+
+export interface UserQuizAnswer {
+  questionId: string;
+  answer: string | number;
+  isCorrect: boolean;
+}
+
+// 空のインターフェースを削除し、必要に応じて適切な型を定義
+export interface EmptyInterface {
+  // 将来的に拡張される可能性がある場合のプレースホルダー
+  [key: string]: never;
+}

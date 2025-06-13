@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { FlightPlan, RouteSegment } from '../../types';
+import { FlightPlan, RouteSegment } from '../../types/index';
 import { formatBearing } from '../../utils/format';
 import { calculateTAS, calculateAirspeeds } from '../../utils';
 
@@ -240,7 +240,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
        setTimeout(() => {
         const updatedPlan = recalculateETAs();
         if (updatedPlan) {
-          setFlightPlan(prev => ({
+          setFlightPlan((prev: FlightPlan) => ({
             ...prev,
             routeSegments: updatedPlan.routeSegments,
             eta: updatedPlan.eta,
@@ -263,7 +263,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
     setTimeout(() => {
       const updatedPlan = recalculateETAs();
       if (updatedPlan) {
-        setFlightPlan(prev => ({
+        setFlightPlan((prev: FlightPlan) => ({
           ...prev,
           routeSegments: updatedPlan.routeSegments,
           eta: updatedPlan.eta,
@@ -288,7 +288,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
        setTimeout(() => {
         const updatedPlan = recalculateETAs();
         if (updatedPlan) {
-          setFlightPlan(prev => ({
+          setFlightPlan((prev: FlightPlan) => ({
             ...prev,
             routeSegments: updatedPlan.routeSegments,
             eta: updatedPlan.eta,
@@ -311,7 +311,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
     setTimeout(() => {
       const updatedPlan = recalculateETAs();
       if (updatedPlan) {
-        setFlightPlan(prev => ({
+        setFlightPlan((prev: FlightPlan) => ({
           ...prev,
           routeSegments: updatedPlan.routeSegments,
           eta: updatedPlan.eta,
@@ -329,7 +329,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       const timer = setTimeout(() => {
         const updatedPlan = recalculateETAs();
         if (updatedPlan) {
-          setFlightPlan(prev => ({
+          setFlightPlan((prev: FlightPlan) => ({
             ...prev,
             routeSegments: updatedPlan.routeSegments,
             eta: updatedPlan.eta,

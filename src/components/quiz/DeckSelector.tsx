@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { QuestionCategory, CardDeck, QuizSettings } from '../../types/quiz';
 import { useTheme } from '../../contexts/ThemeContext';
-import supabase from '../../lib/supabase';
-import { useAuthStore } from '../../stores/authStore';
+import { QuestionCategory, CardDeck, QuizSettings } from '../../types/quiz';
+import supabase from '../../utils/supabase';
 
 interface DeckSelectorProps {
   onStartQuiz: (settings: QuizSettings) => void;
@@ -10,7 +9,7 @@ interface DeckSelectorProps {
 
 const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartQuiz }) => {
   const { theme } = useTheme();
-  const { user } = useAuthStore();
+
   const [categories, setCategories] = useState<QuestionCategory[]>([]);
   const [decks, setDecks] = useState<CardDeck[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { QuizResult, QuizAnswer, LearningRecord } from '../../types/quiz';
+import { QuizResult, QuizAnswer } from '../../types/quiz';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
-import supabase from '../../lib/supabase';
+import supabase from '../../utils/supabase';
 
 interface QuizResultsProps {
   sessionId: string;
@@ -99,7 +99,7 @@ const QuizResults: React.FC<QuizResultsProps> = ({
         });
 
         // QuizAnswerに変換
-        const answers: QuizAnswer[] = learningRecords.map((record, index) => ({
+        const answers: QuizAnswer[] = learningRecords.map((record) => ({
           question_id: record.question_id,
           selected_option_index: record.is_correct ? record.question?.correct_option_index || 0 : -1,
           is_correct: record.is_correct,

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { QuizSettings, Question, QuizAnswer, QuizResult } from '../../types/quiz';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
-import supabase from '../../lib/supabase';
+import supabase from '../../utils/supabase';
 import QuestionDisplay from './QuestionDisplay';
 import Timer from './Timer';
 import ProgressBar from './ProgressBar';

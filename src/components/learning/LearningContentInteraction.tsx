@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../../stores/authStore';
 import supabase from '../../utils/supabase';
 import { useTheme } from '../../contexts/ThemeContext';
+import logger from '../../utils/logger';
 
 interface LearningContentInteractionProps {
   contentId: string;
@@ -39,7 +40,7 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      console.log('fetchData開始', { contentId });
+      logger.log('fetchData開始', { contentId });
 
       // いいねを取得
       const { data: likesData, error: likesError } = await supabase
@@ -51,20 +52,20 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
         console.error('いいね取得エラー:', likesError);
         throw likesError;
       }
-      console.log('いいね取得成功:', likesData);
+              logger.log('いいね取得成功:', likesData);
 
-      // コメントを取得
-      const { data: commentsData, error: commentsError } = await supabase
-        .from('learning_content_comments')
-        .select('*')
-        .eq('content_id', contentId)
-        .order('created_at', { ascending: true });
+        // コメントを取得
+        const { data: commentsData, error: commentsError } = await supabase
+          .from('learning_content_comments')
+          .select('*')
+          .eq('content_id', contentId)
+          .order('created_at', { ascending: true });
 
-      if (commentsError) {
-        console.error('コメント取得エラー:', commentsError);
-        throw commentsError;
-      }
-      console.log('コメント取得成功:', commentsData);
+        if (commentsError) {
+          console.error('コメント取得エラー:', commentsError);
+          throw commentsError;
+        }
+        logger.log('コメント取得成功:', commentsData);
 
       // プロフィール情報を別途取得
       const commentsWithProfiles = [];
@@ -98,7 +99,7 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
   };
 
   useEffect(() => {
-    console.log('LearningContentInteraction useEffect triggered', { 
+    logger.log('LearningContentInteraction useEffect triggered', { 
       contentId, 
       user: user ? { id: user.id, email: user.email } : null 
     });
@@ -108,16 +109,16 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
   // いいねの切り替え
   const toggleLike = async () => {
     if (!user) {
-      console.log('ユーザーがログインしていません');
+      logger.log('ユーザーがログインしていません');
       return;
     }
 
-    console.log('いいねボタンがクリックされました', { contentId, userId: user.id, isLiked });
+    logger.log('いいねボタンがクリックされました', { contentId, userId: user.id, isLiked });
 
     try {
       if (isLiked) {
         // いいねを削除
-        console.log('いいねを削除中...', { contentId, userId: user.id });
+        logger.log('いいねを削除中...', { contentId, userId: user.id });
         const { error } = await supabase
           .from('learning_content_likes')
           .delete()
@@ -129,12 +130,12 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
           throw error;
         }
 
-        console.log('いいね削除成功');
+        logger.log('いいね削除成功');
         setLikes(prev => prev.filter(like => like.user_id !== user.id));
         setIsLiked(false);
       } else {
         // いいねを追加
-        console.log('いいねを追加中...', { contentId, userId: user.id });
+        logger.log('いいねを追加中...', { contentId, userId: user.id });
         const { data, error } = await supabase
           .from('learning_content_likes')
           .insert({
@@ -149,7 +150,7 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
           throw error;
         }
 
-        console.log('いいね追加成功:', data);
+        logger.log('いいね追加成功:', data);
         setLikes(prev => [...prev, data]);
         setIsLiked(true);
       }
@@ -162,13 +163,13 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
   // コメントを投稿
   const submitComment = async () => {
     if (!user || !newComment.trim()) {
-      console.log('コメント投稿条件が満たされていません', { user: !!user, comment: newComment.trim() });
+      logger.log('コメント投稿条件が満たされていません', { user: !!user, comment: newComment.trim() });
       return;
     }
 
     try {
       setIsSubmitting(true);
-      console.log('コメント投稿中...', { contentId, userId: user.id, content: newComment.trim() });
+      logger.log('コメント投稿中...', { contentId, userId: user.id, content: newComment.trim() });
 
       const { data, error } = await supabase
         .from('learning_content_comments')
@@ -185,7 +186,7 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
         throw error;
       }
 
-      console.log('コメント投稿成功:', data);
+      logger.log('コメント投稿成功:', data);
 
       // プロフィール情報を取得
       const { data: profileData, error: profileError } = await supabase
@@ -246,7 +247,7 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
         </button>
         
         {/* デバッグ情報（開発時のみ表示） */}
-        {process.env.NODE_ENV === 'development' && (
+        {import.meta.env.MODE === 'development' && (
           <div className="text-xs text-gray-500">
             Debug: User={user ? 'logged in' : 'not logged in'}, Likes={likes.length}, IsLiked={isLiked}
           </div>
@@ -290,7 +291,7 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
             </button>
             
             {/* デバッグ情報（開発時のみ表示） */}
-            {process.env.NODE_ENV === 'development' && (
+            {import.meta.env.MODE === 'development' && (
               <div className="text-xs text-gray-500 ml-2 self-center">
                 Debug: Comment="{newComment.trim()}", Submitting={isSubmitting}
               </div>

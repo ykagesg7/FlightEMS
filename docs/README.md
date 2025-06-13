@@ -138,13 +138,25 @@ FlightAcademyTsxでは3つのユーザーロールを定義しています：
 
 本プロジェクトのドキュメントは以下のように構成されています：
 
+### プロジェクト基本情報
 - **README.md** (本ドキュメント): プロジェクト概要、セットアップ、基本的な使い方
+- **FEATURES.md**: 機能詳細ガイド、ソーシャル機能、フリーミアム機能
+- **ROADMAP.md**: 今後の開発計画と長期的なロードマップ
+
+### 開発者向けドキュメント (`development/`)
 - **DEVELOPMENT.md**: 開発プロセス、Git連携、Supabase連携
 - **CONTRIBUTING.md**: コントリビューションガイド、コーディング規約
 - **ADVANCED.md**: 高度な機能、図表作成機能、AIエージェント自動化
-- **ROADMAP.md**: 今後の開発計画と長期的なロードマップ
-- **FEATURES.md**: 機能詳細ガイド、ソーシャル機能、フリーミアム機能
-- **troubleshooting/authentication-issues.md**: 認証関連のトラブルシューティング
+- **process/**: 詳細な開発プロセスドキュメント（要件定義、DB設計、API仕様等）
+
+### ガイド・チュートリアル (`guides/`)
+- **LOGICAL_PRESENTATION_SQL_GUIDE.md**: SQLガイド
+- **MANUAL_SQL_EXECUTION.md**: 手動SQL実行ガイド
+- **MARKITDOWN_SETUP.md**: MarkItDownセットアップガイド
+
+### トラブルシューティング (`troubleshooting/`)
+- **authentication-issues.md**: 認証関連のトラブルシューティング
+- **REACT_COMPONENTS.md**: Reactコンポーネント関連の問題解決
 
 ## ライセンス
 
