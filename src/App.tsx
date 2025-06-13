@@ -13,11 +13,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // 動的インポートでコード分割
 const PlanningMapPage = lazy(() => import('./pages/PlanningMapPage'));
 const LearningPage = lazy(() => import('./pages/LearningPage'));
-const InteractiveLearningPage = lazy(() => import('./pages/InteractiveLearningPage'));
+const ArticlesPage = lazy(() => import('./pages/ArticlesPage'));
 const TestPage = lazy(() => import('./pages/TestPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
+const ArticleStatsTestPage = lazy(() => import('./pages/ArticleStatsTestPage'));
 
 // エラーバウンダリーコンポーネント
 class ErrorBoundary extends Component<{ children: ReactNode, fallback?: ReactNode }, { hasError: boolean }> {
@@ -211,6 +212,7 @@ const AppLayout = () => {
               <nav className="flex flex-col space-y-2">
                 <NavLink to="/" onClick={() => setMenuOpen(false)}>Planning/Map</NavLink>
                 <NavLink to="/learning" onClick={() => setMenuOpen(false)}>Learning</NavLink>
+                <NavLink to="/articles" onClick={() => setMenuOpen(false)}>Articles</NavLink>
                 <NavLink to="/test" onClick={() => setMenuOpen(false)}>Test</NavLink>
                 {isAdmin && (
                   <NavLink to="/admin" onClick={() => setMenuOpen(false)}>
@@ -234,6 +236,7 @@ const AppLayout = () => {
               <nav className="flex space-x-2">
                 <NavLink to="/">Planning/Map</NavLink>
                 <NavLink to="/learning">Learning</NavLink>
+                <NavLink to="/articles">Articles</NavLink>
                 <NavLink to="/test">Test</NavLink>
                 {isAdmin && (
                   <NavLink to="/admin">
@@ -262,7 +265,7 @@ const AppLayout = () => {
           <Routes>
             <Route path="/" element={<PlanningMapPage />} />
             <Route path="/learning" element={<LearningPage />} />
-            <Route path="/interactive-learning" element={<InteractiveLearningPage />} />
+            <Route path="/articles" element={<ArticlesPage />} />
             <Route path="/test" element={
               <SafeRequireAuth>
                 <TestPage />
@@ -282,6 +285,7 @@ const AppLayout = () => {
                 </SafeRequireAuth>
               } 
             />
+            <Route path="/test-stats" element={<ArticleStatsTestPage />} />
           </Routes>
         </Suspense>
       </main>

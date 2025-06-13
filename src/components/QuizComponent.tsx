@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { QuizQuestion, QuestionType, UserQuizAnswer } from '../types/quiz';
 import { QuestionComponent } from './QuestionComponent'; // Reusing for individual question rendering
+import { useTheme } from '../contexts/ThemeContext';
 
 interface QuizComponentProps {
   quizTitle: string;
@@ -21,6 +22,7 @@ interface QuizComponentProps {
 }
 
 export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questions, onSubmitQuiz, generalMessages }) => {
+  const { theme } = useTheme();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserQuizAnswer[]>([]);
   const [feedback, setFeedback] = useState<{ [key: string]: { isCorrect: boolean; explanation: string; userAnswer?: string | number } }>({});
@@ -75,9 +77,15 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   const currentFeedback = feedback[currentQuestion.id];
 
   return (
-    <div className="bg-slate-800 p-6 md:p-8 rounded-lg shadow-2xl animate-fadeIn">
+    <div className={`p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn border ${
+      theme === 'dark' 
+        ? 'bg-slate-800 border-slate-700' 
+        : 'bg-white border-gray-200'
+    }`}>
       <h2 className="text-2xl font-bold text-center text-sky-400 mb-6">{quizTitle}</h2>
-      <p className="text-center text-slate-400 mb-6">質問 {currentQuestionIndex + 1} / {questions.length}</p>
+      <p className={`text-center mb-6 ${
+        theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+      }`}>質問 {currentQuestionIndex + 1} / {questions.length}</p>
       
       <QuestionComponent
         question={currentQuestion}
@@ -91,7 +99,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
       {currentFeedback && (
         <button
           onClick={handleNextQuestion}
-          className="mt-6 w-full bg-sky-600 hover:bg-sky-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-150 ease-in-out transform hover:scale-105"
+          className="mt-6 w-full bg-sky-600 hover:bg-sky-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-105"
         >
           {currentQuestionIndex < questions.length - 1 ? generalMessages.nextQuestion : generalMessages.finishQuiz}
         </button>

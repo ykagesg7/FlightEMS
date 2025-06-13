@@ -3,6 +3,7 @@ import MDXLoader, { MDX_CONTENT_LOADED_EVENT } from './MDXLoader';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
 import { useFreemiumAccess } from '../../hooks/useFreemiumAccess';
+import { useArticleStats } from '../../hooks/useArticleStats';
 import LearningContentInteraction from '../learning/LearningContentInteraction';
 import { useLearningContentStats } from '../../hooks/useLearningContentStats';
 
@@ -49,6 +50,9 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
     isLoading
   } = useFreemiumAccess();
 
+  // 記事統計フック
+  const { recordView } = useArticleStats();
+
   // いいね・コメント統計を取得 - contentIds配列をuseMemoで最適化
   const contentIds = useMemo(() => {
     return displayContents.map(content => content.id);
@@ -66,7 +70,12 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
   useEffect(() => {
     // contentIdが空文字または空白の場合は必ずnullに設定
     setSelectedContent(contentId && contentId.trim() !== '' ? contentId : null);
-  }, [contentId]);
+    
+    // 記事詳細ページに遷移した時に閲覧数を記録
+    if (contentId && contentId.trim() !== '') {
+      recordView({ article_id: contentId });
+    }
+  }, [contentId, recordView]);
   
   // コンテンツ一覧からMDXContent型に変換する
   const mdxContents: MDXContent[] = useMemo(() => {
