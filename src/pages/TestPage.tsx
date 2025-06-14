@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { QuestionCategory, CardDeck, QuizSettings } from '../types/quiz';
+import { QuizSettings } from '../types/quiz';
 import DeckSelector from '../components/quiz/DeckSelector';
 import QuizSession from '../components/quiz/QuizSession';
 import QuizResults from '../components/quiz/QuizResults';
@@ -43,6 +43,7 @@ const TestPage: React.FC = () => {
   });
   const [enhancedQuizResults, setEnhancedQuizResults] = useState<QuizResultSubmission[]>([]);
   const [userStats, setUserStats] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [dataQuality, setDataQuality] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -201,7 +202,7 @@ const TestPage: React.FC = () => {
   if (!user) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${
-        theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
+        theme === 'dark' ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-800 text-white' : 'bg-gradient-to-br from-blue-50 via-indigo-50 via-purple-50 to-pink-50 text-gray-900'
       }`}>
         <div className="text-center">
           <div className="mb-4">
@@ -224,7 +225,7 @@ const TestPage: React.FC = () => {
 
   return (
     <div className={`min-h-screen ${
-      theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
+      theme === 'dark' ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-800 text-white' : 'bg-gradient-to-br from-blue-50 via-indigo-50 via-purple-50 to-pink-50 text-gray-900'
     }`}>
       <div className="container mx-auto px-4 py-8">
         {/* ヘッダー */}
@@ -285,8 +286,10 @@ const TestPage: React.FC = () => {
               {/* ユーザー統計 */}
               {userStats && (
                 <div className={`${
-                  theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-                } rounded-lg shadow-lg p-6`}>
+                  theme === 'dark' ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900' : 'bg-gradient-to-r from-blue-50 to-indigo-50'
+                } rounded-lg shadow-lg border ${
+                  theme === 'dark' ? 'border-slate-700/50' : 'border-blue-200'
+                } p-6`}>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                     📊 あなたの学習統計
                   </h2>
@@ -317,8 +320,10 @@ const TestPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* 新しいクイズ機能 */}
                 <div className={`${
-                  theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-                } rounded-lg shadow-lg p-6`}>
+                  theme === 'dark' ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900' : 'bg-gradient-to-r from-blue-50 to-indigo-50'
+                } rounded-lg shadow-lg border ${
+                  theme === 'dark' ? 'border-slate-700/50' : 'border-blue-200'
+                } p-6`}>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                     🚀 515問クイズ（推奨）
                   </h2>
@@ -377,8 +382,10 @@ const TestPage: React.FC = () => {
 
                 {/* 既存のクイズ機能 */}
                 <div className={`${
-                  theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-                } rounded-lg shadow-lg p-6`}>
+                  theme === 'dark' ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900' : 'bg-gradient-to-r from-blue-50 to-indigo-50'
+                } rounded-lg shadow-lg border ${
+                  theme === 'dark' ? 'border-slate-700/50' : 'border-blue-200'
+                } p-6`}>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                     📋 従来のクイズ
                   </h2>
@@ -678,11 +685,13 @@ const TestPage: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                  <QuizResults 
-                    sessionId={quizSessionId} 
-                    onBackToSelection={handleBackToSelection}
-                    onRestartQuiz={handleRestartQuiz}
-                  />
+                  {quizSessionId && (
+                    <QuizResults 
+                      sessionId={quizSessionId} 
+                      onBackToSelection={handleBackToSelection}
+                      onRestartQuiz={handleRestartQuiz}
+                    />
+                  )}
                 </div>
               )}
             </div>

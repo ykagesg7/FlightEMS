@@ -159,12 +159,12 @@ const AppLayout = () => {
   return (
     <div className={`App min-h-screen flex flex-col ${
       theme === 'dark' 
-        ? 'bg-gray-900 text-gray-100' 
-        : 'bg-gradient-to-br from-indigo-100 to-purple-100 text-gray-900'
+        ? 'bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 text-gray-100' 
+        : 'bg-gradient-to-br from-blue-50 via-indigo-50 via-purple-50 to-pink-50 text-gray-900'
     }`}>
       <header className={`${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-indigo-900'
-      } text-white shadow-lg sticky top-0 z-30`}>
+        theme === 'dark' ? 'bg-gradient-to-r from-gray-900 to-slate-900' : 'bg-gradient-to-r from-indigo-900 to-purple-900'
+      } text-white shadow-xl sticky top-0 z-30 backdrop-blur-sm`}>
         <div className="container mx-auto px-4 py-2 md:py-3">
           {/* モバイル向けナビゲーション */}
           <div className="flex items-center justify-between md:hidden">
@@ -290,8 +290,8 @@ const AppLayout = () => {
         </Suspense>
       </main>
       <footer className={`${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-indigo-900'
-      } text-white text-center py-3 text-sm sm:text-base`}>
+        theme === 'dark' ? 'bg-gradient-to-r from-gray-900 to-slate-900' : 'bg-gradient-to-r from-indigo-900 to-purple-900'
+      } text-white text-center py-3 text-sm sm:text-base shadow-lg`}>
         <p>&copy; 2024 Flight Academy. All rights reserved.</p>
       </footer>
     </div>

@@ -9,10 +9,47 @@ import { ArticleStatsBar } from '../components/articles/ArticleStatsBar';
 import { CommentsModal } from '../components/articles/CommentsModal';
 import { useTheme } from '../contexts/ThemeContext';
 
+// ハイライト効果用のスタイル
+const highlightStyle = `
+  .highlight-article {
+    animation: highlight-pulse 2s ease-in-out;
+    transform: scale(1.02);
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3) !important;
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  @keyframes highlight-pulse {
+    0% {
+      transform: scale(1);
+      border-color: inherit;
+      box-shadow: inherit;
+    }
+    50% {
+      transform: scale(1.02);
+      border-color: #8b5cf6;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    }
+    100% {
+      transform: scale(1.02);
+      border-color: #8b5cf6;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    }
+  }
+`;
+
 function ArticlesPage() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user } = useAuth();
   const { theme } = useTheme();
   const { 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     learningContents, 
     isLoading,
     loadLearningContents
@@ -21,6 +58,7 @@ function ArticlesPage() {
   const { 
     displayContents, 
     canAccessContent, 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     freemiumInfo,
     isPreviewMode
   } = useFreemiumAccess();
@@ -56,6 +94,17 @@ function ArticlesPage() {
       loadArticleStats(articleIds);
     }
   }, [displayContents, loadArticleStats]); // useCallbackで最適化済み
+
+  // スタイルタグを動的に追加
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = highlightStyle;
+    document.head.appendChild(styleElement);
+    
+    return () => {
+      document.head.removeChild(styleElement);
+    };
+  }, []);
 
   // 記事が選択されたときの処理
   const handleContentSelect = (contentId: string) => {
@@ -98,6 +147,44 @@ function ArticlesPage() {
   // カテゴリーの順序を保持
   const categories = Object.keys(groupedContents).sort();
 
+  // 最新記事3つを取得（更新日時順）
+  const latestArticles = displayContents
+    .filter(content => canAccessContent(content.id))
+    .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+    .slice(0, 3);
+
+  // 記事IDから記事のカテゴリを取得する関数
+  const findArticleCategory = (articleId: string) => {
+    for (const content of displayContents) {
+      if (content.id === articleId) {
+        return content.category;
+      }
+    }
+    return null;
+  };
+
+  // 最新記事にジャンプする関数
+  const handleJumpToArticle = (articleId: string) => {
+    const category = findArticleCategory(articleId);
+    if (category) {
+      // 対象記事のDOM要素にスクロール
+      setTimeout(() => {
+        const articleElement = document.getElementById(`article-${articleId}`);
+        if (articleElement) {
+          articleElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+          // 一時的にハイライト効果を追加
+          articleElement.classList.add('highlight-article');
+          setTimeout(() => {
+            articleElement.classList.remove('highlight-article');
+          }, 2000);
+        }
+      }, 100);
+    }
+  };
+
   if (selectedTab) {
     return (
           <div className={`min-h-screen ${
@@ -123,7 +210,7 @@ function ArticlesPage() {
   return (
     <div className={`min-h-screen ${
       theme === 'dark' 
-        ? 'bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100' 
+        ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-800 text-gray-100' 
         : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50 text-gray-900'
     }`}>
       <div className="container mx-auto px-4 py-6">
@@ -152,13 +239,100 @@ function ArticlesPage() {
           </div>
         ) : (
           <div className="max-w-4xl mx-auto">
+            {/* 最新記事セクション */}
+            {latestArticles.length > 0 && (
+              <div className={`${
+                theme === 'dark' ? 'bg-gradient-to-r from-violet-900 via-purple-900 to-indigo-900' : 'bg-gradient-to-r from-indigo-100 to-purple-100'
+              } rounded-xl shadow-xl border ${
+                theme === 'dark' ? 'border-violet-600/50' : 'border-indigo-200'
+              } p-6 mb-8`}>
+                <div className="flex items-center mb-6">
+                  <div className="text-2xl mr-3">🆕</div>
+                  <div>
+                                         <h2 className={`text-2xl font-bold ${
+                       theme === 'dark' ? 'text-violet-100' : 'text-indigo-800'
+                     }`}>
+                       最新記事
+                     </h2>
+                     <p className={`text-sm ${
+                       theme === 'dark' ? 'text-violet-200/80' : 'text-indigo-600'
+                     }`}>
+                       最近更新された記事をチェック
+                     </p>
+                  </div>
+                </div>
+                
+                <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+                  {latestArticles.map(content => {
+                    const updatedDate = new Date(content.updated_at);
+                    const daysAgo = Math.floor((Date.now() - updatedDate.getTime()) / (1000 * 60 * 60 * 24));
+                    
+                    return (
+                      <div
+                        key={content.id}
+                        onClick={() => handleJumpToArticle(content.id)}
+                        className={`
+                          p-4 rounded-lg border transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-[1.02]
+                          ${theme === 'dark'
+                            ? 'bg-gradient-to-br from-violet-800/60 to-purple-800/40 border-violet-500/30 hover:from-violet-700/70 hover:to-purple-700/50 hover:border-violet-400/50'
+                            : 'bg-white border-indigo-200 hover:bg-indigo-50'}
+                        `}
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className={`font-semibold text-sm leading-tight line-clamp-2 ${
+                            theme === 'dark' ? 'text-violet-100' : 'text-indigo-800'
+                          }`}>
+                            {content.title}
+                          </h3>
+                        </div>
+                        
+                        <div className="flex justify-between items-center mt-3">
+                                                     <span className={`text-xs px-2 py-1 rounded-full ${
+                             theme === 'dark'
+                               ? 'bg-violet-700/60 text-violet-100 border border-violet-500/30'
+                               : 'bg-indigo-200 text-indigo-700'
+                           }`}>
+                            {content.category}
+                          </span>
+                          
+                          <div className="flex flex-col items-end">
+                                                         <span className={`text-xs ${
+                               theme === 'dark' ? 'text-violet-200' : 'text-indigo-600'
+                             }`}>
+                               {daysAgo === 0 ? '今日更新' : daysAgo === 1 ? '昨日更新' : `${daysAgo}日前更新`}
+                             </span>
+                             <span className={`text-xs opacity-75 ${
+                               theme === 'dark' ? 'text-violet-300' : 'text-indigo-500'
+                             }`}>
+                              {updatedDate.toLocaleDateString('ja-JP', {
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                        
+                                                 <div className="mt-2 flex items-center text-xs">
+                           <span className={`${
+                             theme === 'dark' ? 'text-violet-200' : 'text-indigo-600'
+                           }`}>
+                             記事にジャンプ →
+                           </span>
+                         </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {categories.length > 0 ? (
               <div className="space-y-8">
                 {categories.map(category => (
                   <div key={category} className={`${
-                    theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+                    theme === 'dark' ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900' : 'bg-gradient-to-r from-blue-50 to-indigo-50'
                   } rounded-xl shadow-xl border ${
-                    theme === 'dark' ? 'border-gray-700' : 'border-gray-100'
+                    theme === 'dark' ? 'border-slate-700/50' : 'border-blue-200'
                   } p-6`}>
                     <h2 className={`text-2xl font-bold mb-6 border-b pb-3 ${
                       theme === 'dark' 
@@ -178,15 +352,16 @@ function ArticlesPage() {
                           return (
                             <div
                               key={content.id}
+                              id={`article-${content.id}`}
                               onClick={() => hasAccess && handleContentSelect(content.id)}
                               className={`
                                 p-4 rounded-xl border transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg
                                 ${hasAccess
                                   ? theme === 'dark'
-                                    ? 'bg-gray-700 border-gray-600 hover:bg-gray-600 hover:border-indigo-500'
+                                    ? 'bg-gradient-to-br from-slate-800 to-gray-800 border-slate-600/40 hover:from-slate-700 hover:to-gray-700 hover:border-purple-500/50'
                                     : 'bg-white border-gray-200 hover:bg-blue-50 hover:border-blue-300'
                                   : theme === 'dark'
-                                    ? 'bg-gray-750 border-gray-600 cursor-not-allowed opacity-60'
+                                    ? 'bg-gradient-to-br from-slate-800/60 to-gray-800/60 border-slate-600/30 cursor-not-allowed opacity-60'
                                     : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'}
                               `}
                             >
@@ -232,7 +407,7 @@ function ArticlesPage() {
                                 <>
                                   <div className="mt-3 flex items-center text-sm">
                                     <span className={`${
-                                      theme === 'dark' ? 'text-indigo-400' : 'text-indigo-700'
+                                      theme === 'dark' ? 'text-purple-300' : 'text-indigo-700'
                                     }`}>
                                       記事を読む →
                                     </span>

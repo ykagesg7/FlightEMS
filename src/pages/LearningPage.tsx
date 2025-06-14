@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuthStore } from '../stores/authStore';
 import { APP_CONTENT } from '../constants';
@@ -16,6 +16,7 @@ enum LearningState {
 
 function LearningPage() {
   const { theme } = useTheme();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user } = useAuthStore();
   const { appName, sections, quizTitle, quizQuestions, generalMessages } = APP_CONTENT;
 
@@ -124,9 +125,9 @@ function LearningPage() {
       case LearningState.INTRODUCTION:
         return (
           <div className={`${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+            theme === 'dark' ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900' : 'bg-gradient-to-r from-blue-50 to-indigo-50'
           } p-6 md:p-8 rounded-xl shadow-xl border ${
-            theme === 'dark' ? 'border-gray-700' : 'border-gray-100'
+            theme === 'dark' ? 'border-slate-700/50' : 'border-blue-200'
           } animate-fadeIn`}>
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-sky-400 mb-4">
@@ -233,7 +234,7 @@ function LearningPage() {
 
               {/* Test ページへのリンク */}
               <div className={`p-6 rounded-xl shadow-lg ${
-                theme === 'dark' ? 'bg-indigo-900/20 border border-indigo-800' : 'bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200'
+                theme === 'dark' ? 'bg-gradient-to-r from-violet-900/50 to-purple-900/50 border border-violet-600/30' : 'bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200'
               }`}>
                 <h3 className="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-3">
                   🎯 学習後は知識確認へ
@@ -474,8 +475,8 @@ function LearningPage() {
   return (
     <div className={`min-h-screen flex flex-col items-center p-4 ${
       theme === 'dark' 
-        ? 'bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100' 
-        : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50 text-gray-900'
+        ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-800 text-gray-100' 
+        : 'bg-gradient-to-br from-blue-50 via-indigo-50 via-purple-50 to-pink-50 text-gray-900'
     }`}>
       <header className="w-full max-w-4xl mx-auto my-6 md:my-8 text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-300 py-2">
