@@ -111,6 +111,8 @@ function ArticlesPage() {
     setSelectedTab(contentId);
     // 閲覧数を記録
     recordView({ article_id: contentId });
+    // ページ上部にスクロール
+    window.scrollTo(0, 0);
   };
 
   // 記事一覧に戻る処理

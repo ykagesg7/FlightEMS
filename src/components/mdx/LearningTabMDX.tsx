@@ -74,6 +74,8 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
     // 記事詳細ページに遷移した時に閲覧数を記録
     if (contentId && contentId.trim() !== '') {
       recordView({ article_id: contentId });
+      // ページ上部にスクロール
+      window.scrollTo(0, 0);
     }
   }, [contentId, recordView]);
   
