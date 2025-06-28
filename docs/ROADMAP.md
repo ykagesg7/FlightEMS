@@ -53,6 +53,19 @@
   - フリーミアムバッジの表示
   - レスポンシブデザインの改善
 
+### 5. CPL航空法シリーズコンテンツ作成（2025年6月）
+- **新カテゴリ追加**: CPL航空法シリーズの開始
+  - 戦闘機パイロット向け航空法教育コンテンツ
+  - キャラクター設定（トム兄ぃ、浪速のゾウさん）による魅力的なストーリーテリング
+- **4記事同時リリース**:
+  - 3.0_AviationLegal0.mdx（Mission 0: 完全攻略ブリーフィング）- フリーミアム
+  - 3.1_AviationLegal1.mdx（Mission 1-1: 技能証明）- プレミアム
+  - 3.2_AviationLegal2.mdx（Mission 1-2: 航空身体検査証明）- プレミアム
+  - 3.3_AviationLegal3.mdx（Mission 2-1: 耐空証明）- プレミアム
+- **MDXシステム統合**: 既存のMDXローダー・表示システムとの完全統合
+- **learning_contentsデータベース統合**: 新しいカテゴリとコンテンツの管理システム統合
+- **フリーミアム戦略**: Mission 0を無料公開として新規ユーザー獲得を図る
+
 ## フェーズ1: UI/UX改善（1-2ヶ月）
 
 ### 1. コンテンツ一覧表示の改善
@@ -76,7 +89,115 @@
 
 ## フェーズ2: LMS機能の拡張（2-3ヶ月）
 
-### 1. 進捗管理システムの強化
+### 1. Learning-Test連携機能の実装 ★新機能★
+#### Phase 1: 基本連携機能（2週間）
+- **相互ナビゲーション機能**
+  - Learning記事の最後に「関連テストを受ける」ボタン追加
+  - Test結果画面で「復習記事を読む」リンク追加
+  - 学習記事とテスト問題のマッピングテーブル実装
+  
+- **データベース設計拡張**
+  ```sql
+  -- 学習テスト連携テーブル
+  CREATE TABLE learning_test_mapping (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    learning_content_id varchar NOT NULL,
+    test_question_ids text[], -- 配列で複数問題ID
+    difficulty_level integer DEFAULT 1,
+    topic_category varchar,
+    created_at timestamp DEFAULT now()
+  );
+  ```
+
+#### Phase 2: 試験逆算学習システム（拡張版・5週間） ★アップグレード★
+- **CPL試験データ管理システム** ★新規追加★
+  - CPL学科試験PDFデータの体系的収集・整理
+  - MarkItDownによる一括マークダウン変換プロセス
+  - 変換品質の検証・校正システム
+  ```sql
+  -- 試験問題メタデータテーブル
+  CREATE TABLE exam_questions_metadata (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    exam_year integer,
+    exam_month integer,
+    question_number integer,
+    subject_category varchar, -- 7科目分類
+    sub_category varchar,     -- 詳細分野
+    difficulty_level integer, -- 1-5の難易度
+    appearance_frequency integer, -- 過去の出題回数
+    source_document varchar,  -- 元PDFファイル名
+    markdown_content text,    -- 変換されたMarkdown
+    created_at timestamp DEFAULT now()
+  );
+  ```
+
+- **出題傾向分析システム** ★新規追加★
+  - 年度別・科目別出題統計の自動生成
+  - 重要度スコアリング算出（出題頻度×難易度×最新性）
+  - トレンド分析（新規出題パターンの検出）
+  - 分析結果のマークダウンレポート自動生成
+  - 記事作成優先度の定量的ガイダンス
+
+- **CPL試験問題分析機能**
+  - 過去問データベースの構築（PDF→Markdown→DB統合フロー）
+  - 問題カテゴリ分類システム（7科目×詳細分野）
+  - 出題頻度・重要度の数値化
+  
+- **データドリブン記事作成支援** ★新規追加★
+  ```typescript
+  interface ContentAnalysis {
+    subjectCategory: string;
+    examCoverage: number;        // 0-100%
+    articleCount: number;
+    missingTopics: string[];
+    priorityScore: number;       // 1-10
+    recommendedArticles: {
+      title: string;
+      estimatedImpact: number;
+      targetQuestions: string[];
+    }[];
+  }
+  ```
+  - 出題頻度データに基づく重点記事テーマ提案
+  - 科目別カバレッジ分析（記事⇔試験問題のマッピング）
+  - 記事の試験対策効果測定・最適化
+
+- **学習記事のタグ付け強化**
+  - 各Learning記事への試験問題カテゴリ紐付け
+  - 学習進捗と試験対策の連携強化
+  - 科目別・分野別の習熟度可視化
+
+#### Phase 3: 適応的学習パス（4週間）
+- **弱点分析エンジン**
+  - Test結果の詳細分析
+  - 苦手分野の自動特定
+  - 対応するLearning記事の自動推薦
+  
+- **パーソナライズド学習フロー**
+  ```typescript
+  interface LearningRecommendation {
+    userId: string;
+    contentId: string;
+    contentType: 'learning' | 'test';
+    recommendationReason: string;
+    priorityScore: number;    // 1-10の重要度
+    estimatedStudyTime: number; // 分
+    difficultyLevel: number;  // 1-5の難易度
+  }
+  ```
+
+#### Phase 4: 進捗統合管理（2週間）
+- **統合ダッシュボード**
+  - 学習記事完了率とテスト正答率の統合表示
+  - CPL合格可能性の予測指標
+  - 「CPL合格まであと○○日」機能
+  
+- **学習科学の適用**
+  - 分散学習（Spaced Repetition）システム
+  - 間違えた問題の関連記事を時間差で再推薦
+  - 記憶定着度を考慮した復習タイミング最適化
+
+### 2. 進捗管理システムの強化
 - 詳細な進捗トラッキング
   - セクションごとの完了率
   - 学習時間の計測
@@ -84,7 +205,7 @@
 - 学習目標の設定と管理
 - カスタム学習パスの作成
 
-### 2. インタラクティブ要素の追加
+### 3. インタラクティブ要素の追加
 - クイズ機能の実装
   - 多肢選択問題
   - 記述式問題
@@ -94,12 +215,12 @@
   - ケーススタディ
   - グループワーク
 
-### 3. コミュニティ機能
+### 4. コミュニティ機能
 - ディスカッションフォーラム
 - ピアレビューシステム
 - メンターシップ機能
 
-### 4. データベース連携の強化
+### 5. データベース連携の強化
 - Supabaseとの連携強化
   - リアルタイムデータの活用
   - ロール別権限管理の実装

@@ -4,8 +4,13 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
 import { useFreemiumAccess } from '../../hooks/useFreemiumAccess';
 import { useArticleStats } from '../../hooks/useArticleStats';
+import { useAuthStore } from '../../stores/authStore';
 import LearningContentInteraction from '../learning/LearningContentInteraction';
 import { useLearningContentStats } from '../../hooks/useLearningContentStats';
+import RelatedTestButton from '../learning/RelatedTestButton';
+import { useLearningSessionTracker } from '../../hooks/useLearningSessionTracker';
+import AdaptiveLearningDashboard from '../learning/AdaptiveLearningDashboard';
+import LearningAnalyticsDashboard from '../learning/LearningAnalyticsDashboard';
 
 // MDXコンテンツの型定義
 interface MDXContent {
@@ -20,9 +25,10 @@ interface LearningTabMDXProps {
   contentId: string;
   onBackToList?: () => void;
   onContentSelect?: (contentId: string) => void;
+  contentType?: 'learning' | 'articles';
 }
 
-const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList, onContentSelect }) => {
+const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList, onContentSelect, contentType }) => {
   // contentIdが空文字の場合は必ずnullに設定
   const [selectedContent, setSelectedContent] = useState<string | null>(contentId && contentId.trim() !== '' ? contentId : null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -33,6 +39,7 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
   const contentRef = useRef<HTMLDivElement>(null);
   
   const { theme } = useTheme();
+  const { user } = useAuthStore();
 
   const { 
     updateProgress, 
@@ -48,10 +55,19 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
     canAccessContent, 
     isFreemiumContent,
     isLoading
-  } = useFreemiumAccess();
+  } = useFreemiumAccess(contentType);
 
   // 記事統計フック
   const { recordView } = useArticleStats();
+
+  // 学習セッション追跡フック
+  const {
+    startSession,
+    endSession,
+    currentSession,
+    isTracking,
+    updateComprehensionScore
+  } = useLearningSessionTracker();
 
   // いいね・コメント統計を取得 - contentIds配列をuseMemoで最適化
   const contentIds = useMemo(() => {
@@ -158,6 +174,9 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
         // 90%以上スクロールした場合、コンテンツを完了としてマーク
         if (scrollPercentage > 90) {
           markAsCompleted(contentId);
+          // 理解度スコアを更新（スクロール率に基づく）
+          const comprehensionScore = Math.min(scrollPercentage / 100, 1.0);
+          updateComprehensionScore(comprehensionScore);
         }
         
         // 「トップに戻る」ボタン表示の制御
@@ -255,7 +274,7 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
   };
 
   // 続きを読むかどうかのプロンプトを表示し、選択した結果に応じて処理
-  const handleResumeReading = (contentId: string, resumed: boolean) => {
+  const handleResumeReading = async (contentId: string, resumed: boolean) => {
     setShowResumePrompt(false);
     setSelectedContent(contentId);
     
@@ -275,16 +294,28 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
       window.scrollTo(0, 0);
     }
     
+    // 学習セッションを開始
+    const content = mdxContents.find(c => c.id === contentId);
+    await startSession('reading', contentId, 'article', {
+      articleTitle: content?.title || 'Unknown',
+      articleCategory: content?.category || 'Unknown',
+      resumedFromPosition: resumed
+    });
+    
     if (onContentSelect) {
       onContentSelect(contentId);
     }
   };
 
   // コンテンツを選択する関数
-  const selectContent = (contentId: string) => {
+  const selectContent = async (contentId: string) => {
     // 現在のコンテンツの読書位置を保存
     if (selectedContent) {
       saveScrollPosition(selectedContent);
+      // 現在のセッションを終了
+      if (currentSession) {
+        await endSession();
+      }
     }
     
     // コンテンツを探す
@@ -306,6 +337,12 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
       // 初めて読む場合や、進行していない場合は最初から表示
       setSelectedContent(contentId);
       window.scrollTo(0, 0);
+      
+      // 学習セッションを開始
+      await startSession('reading', contentId, 'article', {
+        articleTitle: content?.title || 'Unknown',
+        articleCategory: content?.category || 'Unknown'
+      });
     }
 
     if (onContentSelect) {
@@ -424,6 +461,16 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
             <MDXLoader contentId={selectedContent} />
             {/* いいね・コメント機能 */}
             <LearningContentInteraction contentId={selectedContent} />
+            
+            {/* 記事読了時の関連テストボタン */}
+            {isCompleted(selectedContent) && (
+              <div className="mt-8">
+                <RelatedTestButton 
+                  contentId={selectedContent}
+                  contentTitle={mdxContents.find(c => c.id === selectedContent)?.title || 'Unknown'}
+                />
+              </div>
+            )}
             {/* トップに戻るボタン */}
             {showBackToTopButton && (
               <button
@@ -440,6 +487,20 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
           </>
         ) : (
           <div>
+            {/* 適応的学習ダッシュボード */}
+            {user && (
+              <div className="mb-8">
+                <AdaptiveLearningDashboard />
+              </div>
+            )}
+            
+            {/* 学習分析ダッシュボード */}
+            {user && (
+              <div className="mb-8">
+                <LearningAnalyticsDashboard />
+              </div>
+            )}
+            
             {/* 新着記事お知らせ */}
             <div className="mb-6">
               <div className={`p-4 rounded-lg border-l-4 ${
@@ -460,9 +521,9 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
                   {displayContents
                     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                     .slice(0, 3)
-                    .map(content => (
+                    .map((content, index) => (
                       <div 
-                        key={content.id}
+                        key={`recent-${contentType || 'default'}-${content.id}-${index}`}
                         className={`text-sm px-3 py-2 rounded cursor-pointer hover:opacity-80 transition-opacity ${
                           theme === 'dark' 
                             ? 'bg-blue-800/50 text-blue-100 hover:bg-blue-700/50' 
@@ -525,12 +586,12 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
                   const cardBgColor = theme === 'dark' ? 'bg-gray-800' : 'bg-white';
                   
                   return (
-                    <div key={category} className="mb-8">
+                    <div key={`${contentType || 'default'}-${category}`} className="mb-8">
                       <h2 className={`text-xl font-semibold ${subHeadingColor} border-b ${theme === 'dark' ? 'border-indigo-700' : 'border-indigo-200'} pb-2 mb-4`}>
                         {category}
                       </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {contentsInCategory.map(content => {
+                        {contentsInCategory.map((content, index) => {
                           // 進捗率の取得
                           const progressPercentage = getProgress(content.id);
                           const completed = isCompleted(content.id);
@@ -546,7 +607,7 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({ contentId, onBackToList
                           
                           return (
                             <div 
-                              key={content.id}
+                              key={`${contentType || 'default'}-${category}-${content.id}-${index}`}
                               id={`content-${content.id}`}
                               className={`${cardBgColor} p-4 rounded-lg border ${
                                 hasReadBefore

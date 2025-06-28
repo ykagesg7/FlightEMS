@@ -23,6 +23,25 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/prefer-as-const': 'error',
+      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-empty-object-type': 'error',
+      '@typescript-eslint/ban-ts-comment': 'error',
+      'prefer-const': 'error',
+      'no-case-declarations': 'error',
+      'no-useless-catch': 'error',
+      'import/order': ['error', {
+        'newlines-between': 'always',
+        'groups': [
+          'builtin',
+          'external', 
+          'internal',
+          'parent',
+          'sibling',
+          'index'
+        ]
+      }],
     },
   }
 );

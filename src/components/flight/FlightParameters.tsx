@@ -1,16 +1,16 @@
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
+import { format, toZonedTime } from 'date-fns-tz';
+import { BarChart, ChevronDown, ChevronUp, Clock, Gauge, Thermometer } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { fetchWeatherData } from '../../api/weather';
+import { CACHE_DURATION, useWeatherCache } from '../../contexts/WeatherCacheContext';
 import { FlightPlan } from '../../types/index';
-import { 
-  parseTimeString, 
-  SPEED_INCREMENT, 
+import {
   ALTITUDE_INCREMENT,
   calculateAirspeeds,
-  calculateCASIncrementForMach
+  calculateCASIncrementForMach,
+  parseTimeString,
+  SPEED_INCREMENT
 } from '../../utils';
-import { ChevronUp, ChevronDown, Clock, Gauge, BarChart, Thermometer } from 'lucide-react';
-import { toZonedTime, format } from 'date-fns-tz';
-import { fetchWeatherData } from '../../api/weather';
-import { useWeatherCache, CACHE_DURATION, WeatherData } from '../../contexts/WeatherCacheContext';
 
 interface FlightParametersProps {
   flightPlan: FlightPlan;
@@ -72,9 +72,9 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   // MACHの変更ハンドラ (0.01単位で調整)
   const handleMachIncrement = useCallback(() => {
     const increment = calculateCASIncrementForMach(
-      flightPlan.speed, 
-      flightPlan.altitude, 
-      flightPlan.groundTempC, 
+      flightPlan.speed,
+      flightPlan.altitude,
+      flightPlan.groundTempC,
       flightPlan.groundElevationFt
     ) * 10; // 0.001 -> 0.01へ変更のため10倍
     setFlightPlan((prev: FlightPlan) => ({ ...prev, speed: Math.round(prev.speed + increment) }));
@@ -82,9 +82,9 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
 
   const handleMachDecrement = useCallback(() => {
     const increment = calculateCASIncrementForMach(
-      flightPlan.speed, 
-      flightPlan.altitude, 
-      flightPlan.groundTempC, 
+      flightPlan.speed,
+      flightPlan.altitude,
+      flightPlan.groundTempC,
       flightPlan.groundElevationFt
     ) * 10; // 0.001 -> 0.01へ変更のため10倍
     setFlightPlan((prev: FlightPlan) => ({ ...prev, speed: Math.max(0, Math.round(prev.speed - increment)) }));
@@ -95,7 +95,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
     if (flightPlan.departure) {
       // Airport型のpropertiesから標高データを取得
       const elevation = flightPlan.departure.properties?.["Elev(ft)"];
-      
+
       if (elevation !== undefined) {
         console.log(`空港、${flightPlan.departure.name}の標高${elevation}ft を設定しました`);
         setFlightPlan((prev: FlightPlan) => ({
@@ -109,7 +109,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
         const airportId = flightPlan.departure.value; // 空港ID
         const cachedEntry = weatherCache[airportId];
         const now = Date.now();
-        
+
         // キャッシュが存在し、かつ有効期限内の場合、キャッシュを使用
         if (cachedEntry && (now - cachedEntry.timestamp < CACHE_DURATION)) {
           const cachedTemp = cachedEntry.data.current?.temp_c;
@@ -122,11 +122,12 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
             return; // API呼び出しをスキップ
           }
         }
-        
+
         // キャッシュがないか期限切れの場合、APIから取得
         setIsLoading(true);
         fetchWeatherData(flightPlan.departure.latitude, flightPlan.departure.longitude)
-          .then((weatherData: WeatherData) => {
+          .then((weatherData: FilteredWeatherData | null) => {
+            if (!weatherData) return;
             if (weatherData.current?.temp_c !== undefined) {
               const temp_c = weatherData.current.temp_c;
               console.log(`APIから空港、${flightPlan.departure?.name}の地上気温 ${temp_c}°Cを取得・設定しました`);
@@ -134,7 +135,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 ...prev,
                 groundTempC: Math.round(temp_c)
               }));
-              
+
               // 取得したデータをキャッシュに保存
               setWeatherCache((prevCache) => ({
                 ...prevCache,
@@ -153,34 +154,34 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   }, [flightPlan.departure, setFlightPlan, weatherCache, setWeatherCache]);
 
   // 高精度計算モデルによる速度計算結果
-  const airspeedResults = useMemo(() => 
+  const airspeedResults = useMemo(() =>
     calculateAirspeeds(
-      flightPlan.speed, 
-      flightPlan.altitude, 
-      flightPlan.groundTempC, 
+      flightPlan.speed,
+      flightPlan.altitude,
+      flightPlan.groundTempC,
       flightPlan.groundElevationFt
     ),
     [flightPlan.speed, flightPlan.altitude, flightPlan.groundTempC, flightPlan.groundElevationFt]
   );
 
   // 表示用の値を取得（高精度モデルの結果のみを使用）
-  const displayTAS = useMemo(() => 
+  const displayTAS = useMemo(() =>
     airspeedResults ? airspeedResults.tasKt.toFixed(0) : "-",
     [airspeedResults]
   );
-  
-  const displayMach = useMemo(() => 
+
+  const displayMach = useMemo(() =>
     airspeedResults ? airspeedResults.mach.toFixed(2) : "-", // 小数点第2位まで表示に変更
     [airspeedResults]
   );
 
-  const displayEAS = useMemo(() => 
+  const displayEAS = useMemo(() =>
     airspeedResults ? airspeedResults.easKt.toFixed(0) : "-",
     [airspeedResults]
   );
 
   // 高度での気温計算（ケルビンから摂氏に変換）
-  const displayAltitudeTemp = useMemo(() => 
+  const displayAltitudeTemp = useMemo(() =>
     airspeedResults ? (airspeedResults.satK - 273.15).toFixed(1) : "-",
     [airspeedResults]
   );
@@ -196,7 +197,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   // 飛行場名の表示用
   const airportName = useMemo(() => {
     if (!flightPlan.departure) return "未選択";
-    
+
     return flightPlan.departure.name ||
       flightPlan.departure.label ||
       flightPlan.departure.properties?.name1 ||
@@ -224,14 +225,14 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 onChange={handleSpeedChange}
               />
               <div className="flex flex-col">
-                <button 
+                <button
                   className="bg-gray-600 px-2 text-gray-200 border-t border-r border-gray-600 rounded-tr-md hover:bg-gray-500"
                   onClick={handleSpeedIncrement}
                   aria-label="Increase speed"
                 >
                   <ChevronUp size={12} />
                 </button>
-                <button 
+                <button
                   className="bg-gray-600 px-2 text-gray-200 border-b border-r border-gray-600 rounded-br-md hover:bg-gray-500"
                   onClick={handleSpeedDecrement}
                   aria-label="Decrease speed"
@@ -252,14 +253,14 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
             <div className="flex justify-between items-center bg-gray-700 rounded-md px-2 py-1 border border-gray-600">
               <span className="text-xs sm:text-sm text-gray-50">{displayMach}</span>
               <div className="flex space-x-1">
-                <button 
+                <button
                   className="bg-gray-600 px-1 text-gray-200 rounded hover:bg-gray-500 focus:outline-none"
                   onClick={handleMachIncrement}
                   aria-label="Increase MACH"
                 >
                   <ChevronUp size={12} />
                 </button>
-                <button 
+                <button
                   className="bg-gray-600 px-1 text-gray-200 rounded hover:bg-gray-500 focus:outline-none"
                   onClick={handleMachDecrement}
                   aria-label="Decrease MACH"
@@ -287,14 +288,14 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 onChange={(e) => handleAltitudeChange(parseInt(e.target.value, 10) || 0)}
               />
               <div className="flex flex-col">
-                <button 
+                <button
                   className="bg-gray-600 px-2 text-gray-200 border-t border-r border-gray-600 rounded-tr-md hover:bg-gray-500"
                   onClick={handleAltitudeIncrement}
                   aria-label="Increase altitude"
                 >
                   <ChevronUp size={12} />
                 </button>
-                <button 
+                <button
                   className="bg-gray-600 px-2 text-gray-200 border-b border-r border-gray-600 rounded-br-md hover:bg-gray-500"
                   onClick={handleAltitudeDecrement}
                   aria-label="Decrease altitude"
@@ -373,4 +374,4 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   );
 };
 
-export default FlightParameters; 
+export default FlightParameters;

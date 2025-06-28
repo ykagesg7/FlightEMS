@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import supabase from '../utils/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { cplAviationLawContents } from '../utils/testLearningData';
 
 interface LearningProgress {
   id: string;
@@ -37,6 +38,8 @@ export const useLearningProgress = () => {
   // 学習コンテンツをロード
   const loadLearningContents = async () => {
     try {
+      setIsLoading(true);
+      
       // ユーザーのチェックを一時的に無効化（コンテンツ表示のため）
       // if (!user) {
       //   console.log('ユーザーが未ログインのため、コンテンツをロードできません');
@@ -54,14 +57,23 @@ export const useLearningProgress = () => {
         throw error;
       }
 
-      if (data) {
-        setLearningContents(data);
+      if (data && data.length > 0) {
+        // 既存のコンテンツにCPL航空法記事を追加
+        const combinedContents = [...data, ...cplAviationLawContents];
+        setLearningContents(combinedContents);
+        console.log('学習コンテンツをロードしました:', combinedContents.length, '件');
       } else {
-        setLearningContents([]);
+        // データベースが空の場合はCPL航空法記事のみ表示
+        setLearningContents(cplAviationLawContents);
+        console.log('CPL航空法記事のみ表示:', cplAviationLawContents.length, '件');
       }
     } catch (err) {
       console.error('学習コンテンツのロードエラー:', err);
       setError(err instanceof Error ? err : new Error('学習コンテンツのロード中に不明なエラーが発生しました'));
+      // エラーが発生した場合でもCPL記事は表示
+      setLearningContents(cplAviationLawContents);
+    } finally {
+      setIsLoading(false);
     }
   };
 

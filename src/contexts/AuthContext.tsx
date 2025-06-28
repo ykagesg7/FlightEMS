@@ -1,29 +1,18 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import supabase, { getProfileWithRetry } from '../utils/supabase';
-
-interface UserProfile {
-  id: string;
-  username: string | null;
-  full_name?: string | null;
-  avatar_url?: string | null;
-  email?: string | null;
-  roll?: string | null;
-  updated_at?: string | null;
-  created_at?: string | null;
-  website?: string | null;
-}
+import { UserProfile, AuthError, toAppError } from '../types';
 
 interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
   session: Session | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any | null }>;
-  signUp: (email: string, password: string, username: string) => Promise<{ error: any | null, user: User | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  signUp: (email: string, password: string, username: string) => Promise<{ error: AuthError | null, user: User | null }>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<{ error: any | null }>;
-  updateProfile: (updates: Partial<UserProfile>) => Promise<{ error: any | null }>;
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  updateProfile: (updates: Partial<UserProfile>) => Promise<{ error: AuthError | null }>;
 }
 
 // デフォルト値を提供してundefinedにならないようにする

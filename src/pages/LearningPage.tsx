@@ -6,12 +6,32 @@ import { UserQuizAnswer, QuestionType } from '../types/quiz';
 import { SectionComponent } from '../components/SectionComponent';
 import { QuizComponent } from '../components/QuizComponent';
 import { Link } from 'react-router-dom';
+import RelatedTestButton from '../components/learning/RelatedTestButton';
+import ReviewContentLink from '../components/learning/ReviewContentLink';
+import { QuizQuestion, LearningContent } from '../types';
 
 enum LearningState {
   INTRODUCTION, // 目次・概要
   LEARNING,     // 学習セクション
   QUIZ,         // 小テスト
   QUIZ_RESULTS  // 結果
+}
+
+// QuestionContent型定義
+interface QuestionContent {
+  type: 'question';
+  question: string;
+  options: string[];
+  correct: number;
+  explanation?: string;
+}
+
+// StepContent型定義
+interface StepContent {
+  type: 'text' | 'image' | 'video' | 'question' | 'quiz';
+  content: string | QuestionContent | QuizQuestion;
+  title?: string;
+  description?: string;
 }
 
 function LearningPage() {
@@ -319,6 +339,14 @@ function LearningPage() {
               toggleShowAnswer={toggleShowSectionTextAnswer}
               generalMessages={generalMessages}
             />
+            
+            {/* セクション完了時に関連テストボタンを表示 */}
+            {currentStepIndex === totalSteps - 1 && (
+              <RelatedTestButton 
+                contentId={currentSection.id}
+                contentTitle={currentSection.title}
+              />
+            )}
           </>
         );
       
@@ -421,6 +449,13 @@ function LearningPage() {
                 );
               })}
             </div>
+            
+            {/* 復習コンテンツリンクの表示 */}
+            <ReviewContentLink 
+              subjectCategory="基礎知識"
+              accuracy={Math.round((score / totalQuizQuestions) * 100)}
+              questionIds={quizQuestions.map(q => q.id)}
+            />
             
             <div className="flex flex-col sm:flex-row justify-center gap-3">
                 <button

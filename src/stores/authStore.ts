@@ -1,33 +1,34 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { User } from '@supabase/supabase-js'
+import { User, Session, AuthError } from '@supabase/supabase-js'
 import supabase from '../utils/supabase'
 import { Database } from '../types/database.types'
 
 export type Profile = Database['public']['Tables']['profiles']['Row']
+export type AuthErrorResult = AuthError | Error | null
 
 interface AuthState {
   user: User | null
   profile: Profile | null
-  session: any | null
+  session: Session | null
   loading: boolean
   
   // アクション
   setUser: (user: User | null) => void
   setProfile: (profile: Profile | null) => void
-  setSession: (session: any | null) => void
+  setSession: (session: Session | null) => void
   setLoading: (loading: boolean) => void
   
   // 認証アクション
-  signIn: (email: string, password: string) => Promise<{ error: any | null }>
-  signUp: (email: string, password: string, username: string) => Promise<{ error: any | null, user: User | null, emailConfirmRequired: boolean }>
+  signIn: (email: string, password: string) => Promise<{ error: AuthErrorResult }>
+  signUp: (email: string, password: string, username: string) => Promise<{ error: AuthErrorResult, user: User | null, emailConfirmRequired: boolean }>
   signOut: () => Promise<void>
-  resetPassword: (email: string) => Promise<{ error: any | null }>
+  resetPassword: (email: string) => Promise<{ error: AuthErrorResult }>
   
   // プロフィールアクション
-  updateProfile: (updates: Partial<Profile>) => Promise<{ error: any | null }>
+  updateProfile: (updates: Partial<Profile>) => Promise<{ error: AuthErrorResult }>
   fetchProfile: (userId: string) => Promise<void>
-  createProfile: (userId: string, username: string, email: string) => Promise<{ error: any | null }>
+  createProfile: (userId: string, username: string, email: string) => Promise<{ error: AuthErrorResult }>
 }
 
 export const useAuthStore = create<AuthState>()(

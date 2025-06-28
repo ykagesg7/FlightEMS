@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useTheme } from '../contexts/ThemeContext';
 import supabase from '../utils/supabase';
+import { toAppError } from '../types/error';
 
 const ProfilePage = () => {
   // Zustandストアから個別に値を取得
@@ -75,8 +76,9 @@ const ProfilePage = () => {
         // 3秒後にメッセージを消す
         setTimeout(() => setSuccess(null), 3000);
       }
-    } catch (err: any) {
-      setError(err.message || '更新中にエラーが発生しました');
+    } catch (err: unknown) {
+      const appError = toAppError(err);
+      setError(appError.message || '更新中にエラーが発生しました');
     } finally {
       setFormLoading(false);
     }
@@ -143,8 +145,9 @@ const ProfilePage = () => {
           setShowPasswordForm(false);
         }, 3000);
       }
-    } catch (err: any) {
-      setPasswordError(err.message || 'パスワード更新中にエラーが発生しました');
+    } catch (err: unknown) {
+      const appError = toAppError(err);
+      setPasswordError(appError.message || 'パスワード更新中にエラーが発生しました');
     } finally {
       setPasswordLoading(false);
     }

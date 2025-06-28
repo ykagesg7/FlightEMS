@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useTheme } from '../contexts/ThemeContext';
 import { bypassEmailVerification } from '../utils/supabase';
+import { toAppError } from '../types/error';
 
 interface LocationState {
   from?: {
@@ -84,9 +85,10 @@ const AuthPage: React.FC = () => {
       } else {
         setError(`検証リンクの生成に失敗しました: ${result.error?.message || '不明なエラー'}`);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLoading(false);
-      setError(`検証バイパス中にエラーが発生しました: ${err.message || '不明なエラー'}`);
+      const appError = toAppError(err);
+      setError(`検証バイパス中にエラーが発生しました: ${appError.message || '不明なエラー'}`);
     }
   }, [email]);
 
@@ -111,8 +113,9 @@ const AuthPage: React.FC = () => {
       } else {
         setSuccess('ログインに成功しました。リダイレクトします...');
       }
-    } catch (err: any) {
-      console.error('ログイン例外:', err);
+    } catch (err: unknown) {
+      const appError = toAppError(err);
+      console.error('ログイン例外:', appError);
       setError('ログイン処理中にエラーが発生しました。');
     }
   }, [email, password, signIn]);
@@ -157,8 +160,9 @@ const AuthPage: React.FC = () => {
         setSuccess('アカウント登録に成功しました。リダイレクトします...');
         // useEffectでリダイレクトを処理（user && sessionの条件）
       }
-    } catch (err: any) {
-      console.error('アカウント登録例外:', err);
+    } catch (err: unknown) {
+      const appError = toAppError(err);
+      console.error('アカウント登録例外:', appError);
       setError('アカウント登録処理中にエラーが発生しました。');
     }
   }, [email, password, confirmPassword, username, signUp]);
@@ -184,8 +188,9 @@ const AuthPage: React.FC = () => {
       } else {
         setSuccess('パスワードリセット手順をメールで送信しました。メールをご確認ください。');
       }
-    } catch (err: any) {
-      console.error('パスワードリセット例外:', err);
+    } catch (err: unknown) {
+      const appError = toAppError(err);
+      console.error('パスワードリセット例外:', appError);
       setError('パスワードリセット処理中にエラーが発生しました。');
     }
   }, [email, resetPassword]);

@@ -405,4 +405,102 @@ async function getQuizQuestions(category: string) {
 
 ---
 
-最終更新日: 2025年1月12日
+最終更新日: 2025年6月14日
+
+## データベーススキーマ
+
+### Learning-Test連携用テーブル
+
+以下のSQLスキーマは、Learning-Test連携機能の実装で使用されます：
+
+```sql
+-- プロファイルテーブル（既存）
+CREATE TABLE IF NOT EXISTS profiles (
+  id uuid REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+  username text UNIQUE,
+  full_name text,
+  avatar_url text,
+  website text,
+  roll text DEFAULT 'student'::text
+);
+
+-- 問題カテゴリテーブル
+CREATE TABLE IF NOT EXISTS question_categories (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name varchar(255) NOT NULL,
+  description text,
+  parent_category_id uuid REFERENCES question_categories(id),
+  display_order integer DEFAULT 0,
+  created_at timestamp DEFAULT now(),
+  updated_at timestamp DEFAULT now()
+);
+
+-- カードデッキテーブル
+CREATE TABLE IF NOT EXISTS card_decks (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name varchar(255) NOT NULL,
+  description text,
+  category_id uuid REFERENCES question_categories(id),
+  difficulty_level integer DEFAULT 1,
+  is_active boolean DEFAULT true,
+  created_by uuid REFERENCES profiles(id),
+  created_at timestamp DEFAULT now(),
+  updated_at timestamp DEFAULT now()
+);
+
+-- 問題テーブル
+CREATE TABLE IF NOT EXISTS questions (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  deck_id uuid REFERENCES card_decks(id) ON DELETE CASCADE,
+  question_text text NOT NULL,
+  option_a text NOT NULL,
+  option_b text NOT NULL,
+  option_c text NOT NULL,
+  option_d text NOT NULL,
+  correct_answer char(1) NOT NULL CHECK (correct_answer IN ('A', 'B', 'C', 'D')),
+  explanation text,
+  difficulty_level integer DEFAULT 1,
+  tags text[],
+  image_urls text[],
+  created_at timestamp DEFAULT now(),
+  updated_at timestamp DEFAULT now()
+);
+
+-- 学習記録テーブル
+CREATE TABLE IF NOT EXISTS learning_records (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES profiles(id) ON DELETE CASCADE,
+  question_id uuid REFERENCES questions(id) ON DELETE CASCADE,
+  user_answer char(1) CHECK (user_answer IN ('A', 'B', 'C', 'D')),
+  is_correct boolean,
+  answer_time_seconds integer,
+  session_id uuid,
+  created_at timestamp DEFAULT now()
+);
+
+-- SRS（間隔反復学習）ステータステーブル
+CREATE TABLE IF NOT EXISTS user_question_srs_status (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES profiles(id) ON DELETE CASCADE,
+  question_id uuid REFERENCES questions(id) ON DELETE CASCADE,
+  ease_factor real DEFAULT 2.5,
+  interval_days integer DEFAULT 1,
+  repetitions integer DEFAULT 0,
+  next_review_date date DEFAULT CURRENT_DATE,
+  last_review_date date,
+  created_at timestamp DEFAULT now(),
+  updated_at timestamp DEFAULT now(),
+  UNIQUE(user_id, question_id)
+);
+
+-- Learning-Test連携マッピングテーブル（新規）
+CREATE TABLE IF NOT EXISTS learning_test_mapping (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  learning_content_id varchar NOT NULL,
+  test_question_ids text[],
+  difficulty_level integer DEFAULT 1,
+  topic_category varchar,
+  created_at timestamp DEFAULT now()
+);
+```

@@ -86,4 +86,78 @@ export const dmsToDecimal = (value: string, isLatitude: boolean): number => {
     decimal *= -1;
   }
   return decimal;
+};
+
+// テスト用の新しい関数群
+export const dmsToDd = (
+  degrees: number,
+  minutes: number,
+  seconds: number,
+  direction: 'N' | 'S' | 'E' | 'W'
+): number => {
+  const decimal = degrees + minutes / 60 + seconds / 3600;
+  const result = (direction === 'S' || direction === 'W') ? -decimal : decimal;
+  // 負のゼロを正のゼロに変換
+  return result === 0 ? 0 : result;
+};
+
+export const ddToDms = (
+  decimal: number,
+  isLatitude: boolean
+): { degrees: number; minutes: number; seconds: number; direction: 'N' | 'S' | 'E' | 'W' } => {
+  const isNegative = decimal < 0;
+  const absoluteValue = Math.abs(decimal);
+  
+  const degrees = Math.floor(absoluteValue);
+  const minutesFloat = (absoluteValue - degrees) * 60;
+  const minutes = Math.floor(minutesFloat);
+  const seconds = Math.round((minutesFloat - minutes) * 60);
+  
+  let direction: 'N' | 'S' | 'E' | 'W';
+  if (isLatitude) {
+    direction = isNegative ? 'S' : 'N';
+  } else {
+    direction = isNegative ? 'W' : 'E';
+  }
+  
+  return { degrees, minutes, seconds, direction };
+};
+
+export const parseDmsInput = (
+  input: string
+): { degrees: number; minutes: number; seconds: number; direction: 'N' | 'S' | 'E' | 'W' } | null => {
+  if (!input || typeof input !== 'string') {
+    return null;
+  }
+  
+  // 様々なDMS形式をパース
+  const patterns = [
+    // 35°39'29"N
+    /^(\d+)°(\d+)'([\d.]+)"([NSEW])$/,
+    // 35°39'29N
+    /^(\d+)°(\d+)'([\d.]+)([NSEW])$/,
+    // 35 39 29 N
+    /^(\d+)\s+(\d+)\s+([\d.]+)\s+([NSEW])$/,
+    // 35°39'29.5"N
+    /^(\d+)°(\d+)'([\d.]+)"([NSEW])$/,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = input.trim().match(pattern);
+    if (match) {
+      const degrees = parseInt(match[1], 10);
+      const minutes = parseInt(match[2], 10);
+      const seconds = parseFloat(match[3]);
+      const direction = match[4] as 'N' | 'S' | 'E' | 'W';
+      
+      // 妥当性チェック
+      if (minutes >= 60 || seconds >= 60) {
+        return null;
+      }
+      
+      return { degrees, minutes, seconds, direction };
+    }
+  }
+  
+  return null;
 }; 

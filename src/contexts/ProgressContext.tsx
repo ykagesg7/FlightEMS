@@ -1,5 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useLearningProgress } from '../hooks/useLearningProgress';
+import { supabase } from '../utils/supabase';
+import { useAuth } from './AuthContext';
+import { LearningContent, ProgressStats } from '../types';
 
 interface Progress {
   [contentId: string]: {
@@ -11,21 +14,20 @@ interface Progress {
 }
 
 interface ProgressContextType {
-  progress: any;
-  updateProgress: (contentId: string, position: number) => void;
-  markAsCompleted: (contentId: string) => void;
-  getProgress: (contentId: string) => number; // 0-100の%で進捗を返す
-  isCompleted: (contentId: string) => boolean;
-  getLastReadInfo: (contentId: string) => { position: number, date: string } | null;
-  resetProgress: (contentId: string) => void;
-  // 新しい機能
-  learningContents: any[];
-  isLoading: boolean;
-  error: Error | null;
-  loadUserProgress: () => Promise<void>;
-  loadLearningContents: () => Promise<void>;
-  getContentsByCategory: (category?: string) => any[];
-  getAllCategories: () => string[];
+  progress: ProgressStats | null;
+  updateProgress: (unitId: string) => void;
+  getProgress: () => number;
+  isUnitCompleted: (unitId: string) => boolean;
+  completedUnits: string[];
+  userStats: {
+    totalLessons: number;
+    completedLessons: number;
+  };
+  learningContents: LearningContent[];
+  loading: boolean;
+  error: string | null;
+  getContentsByCategory: (category?: string) => LearningContent[];
+  refreshContents: () => Promise<void>;
 }
 
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);

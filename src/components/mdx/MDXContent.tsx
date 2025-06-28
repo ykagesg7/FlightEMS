@@ -3,6 +3,36 @@ import { MDXProvider } from '@mdx-js/react';
 import * as MDXComponents from './index';
 import { useTheme } from '../../contexts/ThemeContext';
 
+// HTML要素のプロップス型定義
+interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {}
+interface ParagraphProps extends React.HTMLAttributes<HTMLParagraphElement> {}
+interface ListProps extends React.HTMLAttributes<HTMLUListElement | HTMLOListElement> {}
+interface ListItemProps extends React.HTMLAttributes<HTMLLIElement> {}
+interface TableProps extends React.HTMLAttributes<HTMLTableElement> {}
+interface TableCellProps extends React.HTMLAttributes<HTMLTableCellElement> {}
+interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {}
+interface AnchorProps extends React.HTMLAttributes<HTMLAnchorElement> {}
+interface BlockquoteProps extends React.HTMLAttributes<HTMLElement> {}
+
+// MDXコンポーネント型定義
+export interface MDXComponents {
+  h1: React.ComponentType<HeadingProps>;
+  h2: React.ComponentType<HeadingProps>;
+  h3: React.ComponentType<HeadingProps>;
+  p: React.ComponentType<ParagraphProps>;
+  ul: React.ComponentType<ListProps>;
+  ol: React.ComponentType<ListProps>;
+  li: React.ComponentType<ListItemProps>;
+  blockquote: React.ComponentType<BlockquoteProps>;
+  table: React.ComponentType<TableProps>;
+  th: React.ComponentType<TableCellProps>;
+  td: React.ComponentType<TableCellProps>;
+  tr: React.ComponentType<TableRowProps>;
+  a: React.ComponentType<AnchorProps>;
+  strong: React.ComponentType<React.HTMLAttributes<HTMLElement>>;
+  em: React.ComponentType<React.HTMLAttributes<HTMLElement>>;
+}
+
 // MDXでカスタマイズできるコンポーネント
 const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { theme } = useTheme();
@@ -20,24 +50,24 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
   const blockquoteBorderColor = theme === 'dark' ? 'border-amber-400' : 'border-amber-500';
   const blockquoteTextColor = theme === 'dark' ? 'text-amber-100' : 'text-amber-900';
   
-  const components = {
-    h1: (props: any) => <h1 className={`text-2xl sm:text-3xl font-bold ${headingColor} border-b-2 ${theme === 'dark' ? 'border-indigo-700' : 'border-indigo-800'} pb-2 mb-6 break-words tracking-tight`} {...props} />,
-    h2: (props: any) => <h2 className={`text-xl sm:text-2xl font-bold mb-4 ${subHeadingColor} mt-8 break-words tracking-tight`} {...props} />,
-    h3: (props: any) => <h3 className={`text-lg sm:text-xl font-bold mt-6 mb-3 ${subHeadingColor} break-words tracking-tight`} {...props} />,
-    p: (props: any) => <p className={`mb-5 ${textColor} leading-7 sm:leading-8 break-words text-base tracking-wide`} {...props} />,
-    ul: (props: any) => <ul className={`list-disc pl-6 space-y-2 my-4 ${textColor}`} {...props} />,
-    ol: (props: any) => <ol className={`list-decimal pl-6 space-y-2 my-4 ${textColor}`} {...props} />,
-    li: (props: any) => <li className={`${textColor} leading-7 sm:leading-8 break-words text-base mb-1`} {...props} />,
-    blockquote: (props: any) => (
+  const components: MDXComponents = {
+    h1: (props: HeadingProps) => <h1 className={`text-2xl sm:text-3xl font-bold ${headingColor} border-b-2 ${theme === 'dark' ? 'border-indigo-700' : 'border-indigo-800'} pb-2 mb-6 break-words tracking-tight`} {...props} />,
+    h2: (props: HeadingProps) => <h2 className={`text-xl sm:text-2xl font-bold mb-4 ${subHeadingColor} mt-8 break-words tracking-tight`} {...props} />,
+    h3: (props: HeadingProps) => <h3 className={`text-lg sm:text-xl font-bold mt-6 mb-3 ${subHeadingColor} break-words tracking-tight`} {...props} />,
+    p: (props: ParagraphProps) => <p className={`mb-5 ${textColor} leading-7 sm:leading-8 break-words text-base tracking-wide`} {...props} />,
+    ul: (props: ListProps) => <ul className={`list-disc pl-6 space-y-2 my-4 ${textColor}`} {...props} />,
+    ol: (props: ListProps) => <ol className={`list-decimal pl-6 space-y-2 my-4 ${textColor}`} {...props} />,
+    li: (props: ListItemProps) => <li className={`${textColor} leading-7 sm:leading-8 break-words text-base mb-1`} {...props} />,
+    blockquote: (props: BlockquoteProps) => (
       <div className={`important-box ${blockquoteBgColor} border-l-4 ${blockquoteBorderColor} p-4 my-6 ${blockquoteTextColor} rounded-r-lg shadow-sm break-words`} {...props} />
     ),
-    table: (props: any) => <table className="w-full border-collapse my-6 shadow-sm" {...props} />,
-    th: (props: any) => <th className={`border ${borderColor} p-3 text-left ${theme === 'dark' ? 'bg-indigo-900 text-white' : 'bg-indigo-800 text-white'} break-words`} {...props} />,
-    td: (props: any) => <td className={`border ${borderColor} p-3 break-words ${textColor}`} {...props} />,
-    tr: (props: any) => <tr className={`${theme === 'dark' ? 'bg-gray-800 even:bg-gray-750' : 'bg-white even:bg-gray-50'}`} {...props} />,
-    a: (props: any) => <a className={`${linkColor} ${linkHoverColor} break-all underline`} {...props} />,
-    strong: (props: any) => <strong className={`font-bold ${strongColor}`} {...props} />,
-    em: (props: any) => <em className={`italic ${textColor}`} {...props} />,
+    table: (props: TableProps) => <table className="w-full border-collapse my-6 shadow-sm" {...props} />,
+    th: (props: TableCellProps) => <th className={`border ${borderColor} p-3 text-left ${theme === 'dark' ? 'bg-indigo-900 text-white' : 'bg-indigo-800 text-white'} break-words`} {...props} />,
+    td: (props: TableCellProps) => <td className={`border ${borderColor} p-3 break-words ${textColor}`} {...props} />,
+    tr: (props: TableRowProps) => <tr className={`${theme === 'dark' ? 'bg-gray-800 even:bg-gray-750' : 'bg-white even:bg-gray-50'}`} {...props} />,
+    a: (props: AnchorProps) => <a className={`${linkColor} ${linkHoverColor} break-all underline`} {...props} />,
+    strong: (props: React.HTMLAttributes<HTMLElement>) => <strong className={`font-bold ${strongColor}`} {...props} />,
+    em: (props: React.HTMLAttributes<HTMLElement>) => <em className={`italic ${textColor}`} {...props} />,
     
     // カスタムコンポーネント
     Image: MDXComponents.ImageComponent,

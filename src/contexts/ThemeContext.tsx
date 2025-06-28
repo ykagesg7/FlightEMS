@@ -1,77 +1,84 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'auto';
 
 interface ThemeContextType {
   theme: Theme;
-  toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
+  effectiveTheme: 'light' | 'dark';
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // ローカルストレージから初期テーマ設定を取得（なければシステム設定に従う）
-  const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme && (savedTheme === 'dark' || savedTheme === 'light')) {
-      return savedTheme;
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  // 初期テーマの取得
+  const getInitialTheme = (): Theme => {
+    if (typeof window === 'undefined') return 'auto';
+    try {
+      const saved = localStorage.getItem('theme') as Theme;
+      return saved && ['light', 'dark', 'auto'].includes(saved) ? saved : 'auto';
+    } catch {
+      return 'auto';
     }
-    
-    // システム設定に従う
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    
-    return 'light';
-  });
-
-  // テーマを切り替える関数
-  const toggleTheme = () => {
-    setTheme(prevTheme => {
-      const newTheme = prevTheme === 'light' ? 'dark' : 'light';
-      localStorage.setItem('theme', newTheme); // ローカルストレージに保存
-      return newTheme;
-    });
   };
 
-  // テーマが変更されたときにHTML要素のクラスを更新
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>('light');
+
+  // 実効テーマの更新
   useEffect(() => {
-    const root = window.document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
+    if (typeof window === 'undefined') return;
+
+    const updateEffectiveTheme = () => {
+      if (theme === 'auto') {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        setEffectiveTheme(mediaQuery.matches ? 'dark' : 'light');
+      } else {
+        setEffectiveTheme(theme);
+      }
+    };
+
+    updateEffectiveTheme();
+
+    // メディアクエリリスナーの設定
+    if (theme === 'auto') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = () => updateEffectiveTheme();
+      mediaQuery.addEventListener('change', listener);
+      return () => mediaQuery.removeEventListener('change', listener);
     }
   }, [theme]);
 
-  // システムのテーマ設定変更を監視
+  // テーマの保存とDOMの更新
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      // ユーザーが既に手動でテーマを設定していなければ、システム設定に従う
-      if (!localStorage.getItem('theme')) {
-        setTheme(e.matches ? 'dark' : 'light');
-      }
-    };
-    
-    mediaQuery.addEventListener('change', handleChange);
-    
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+    if (typeof window === 'undefined') return;
+
+    try {
+      localStorage.setItem('theme', theme);
+      document.documentElement.setAttribute('data-theme', effectiveTheme);
+      document.documentElement.className = effectiveTheme;
+    } catch (error) {
+      console.warn('テーマの保存に失敗しました:', error);
+    }
+  }, [theme, effectiveTheme]);
+
+  const value: ThemeContextType = {
+    theme,
+    setTheme,
+    effectiveTheme,
+  };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
-};
+}
 
-// テーマコンテキストを使用するためのカスタムフック
-export const useTheme = (): ThemeContextType => {
+export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
-}; 
+} 

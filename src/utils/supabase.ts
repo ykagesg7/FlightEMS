@@ -49,6 +49,9 @@ export const supabaseAdmin = getSupabaseAdmin();
 // ブラウザ用のデフォルトクライアント
 const supabase = createBrowserSupabaseClient();
 
+// 名前付きエクスポートとしても提供（互換性のため）
+export { supabase };
+
 // 開発環境用の認証検証バイパス
 // 注意: 本番環境では使用しないでください！
 export const bypassEmailVerification = async (email: string) => {

@@ -197,7 +197,8 @@ function ArticlesPage() {
         <div className="container mx-auto px-4 py-6">
           {canAccessContent(selectedTab) ? (
             <LearningTabMDX 
-              contentId={selectedTab} 
+              contentId={selectedTab}
+              contentType="articles" 
               onBackToList={handleBackToList} 
               onContentSelect={handleContentSelect} 
             />

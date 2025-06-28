@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuthStore } from '../stores/authStore';
 import { useProgress } from '../contexts/ProgressContext';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../utils/supabase';
+import { LearningContent, Database } from '../types';
+
+// Supabase クライアントの型安全なラッパー
+type SupabaseClient = typeof supabase;
+type LearningContentsTable = Database['public']['Tables']['learning_contents'];
 
 function AdminPage() {
   const { theme } = useTheme();
@@ -20,6 +25,12 @@ function AdminPage() {
   }>({
     loading: false
   });
+  
+  const [contents, setContents] = useState<LearningContent[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState<Record<string, boolean>>({});
   
   // 管理者権限チェック - 権限がない場合はリダイレクト
   if (!user || !profile || !['teacher', 'admin'].includes((profile.roll || '').toLowerCase())) {
@@ -53,8 +64,10 @@ function AdminPage() {
     
     try {
       // 既存のコンテンツを確認
-      const { data: existingContents, error: fetchError } = await (supabase.from as any)('learning_contents')
-        .select('id');
+      const { data: existingContents, error: fetchError } = await supabase
+        .from('learning_contents')
+        .select<'*', LearningContent>('*')
+        .order('order_index', { ascending: true });
       
       if (fetchError) {
         throw fetchError;
@@ -223,7 +236,8 @@ function AdminPage() {
       setSyncStatus({ loading: true, message: `${contentsToAdd.length}件のコンテンツを追加中...` });
       
       // Supabaseに一括でデータを登録
-      const { error } = await (supabase.from as any)('learning_contents')
+      const { error } = await supabase
+        .from('learning_contents')
         .upsert(contentsToAdd, {
           onConflict: 'id'
         });
@@ -249,6 +263,69 @@ function AdminPage() {
         success: false,
         message: error instanceof Error ? error.message : String(error)
       });
+    }
+  };
+  
+  useEffect(() => {
+    const fetchContents = async () => {
+      try {
+        setLoading(true);
+        
+        // 型安全なSupabaseクエリ
+        const { data: existingContents, error: fetchError } = await supabase
+          .from('learning_contents')
+          .select<'*', LearningContent>('*')
+          .order('order_index', { ascending: true });
+
+        if (fetchError) {
+          console.error('Error fetching learning contents:', fetchError);
+          setError('学習コンテンツの取得に失敗しました');
+          return;
+        }
+
+        setContents(existingContents || []);
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        setError('予期しないエラーが発生しました');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContents();
+  }, []);
+
+  const handleDeleteContent = async (contentId: string) => {
+    if (!confirm('このコンテンツを削除してもよろしいですか？')) {
+      return;
+    }
+
+    try {
+      setDeleteLoading(prev => ({ ...prev, [contentId]: true }));
+      
+      // 型安全なSupabase削除クエリ
+      const { error } = await supabase
+        .from('learning_contents')
+        .delete()
+        .eq('id', contentId);
+
+      if (error) {
+        console.error('Delete error:', error);
+        setError('削除に失敗しました');
+        return;
+      }
+
+      // 成功時にローカル状態を更新
+      setContents(prev => prev.filter(content => content.id !== contentId));
+      setSuccess('コンテンツを削除しました');
+      
+      // 3秒後にメッセージを消す
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err) {
+      console.error('Unexpected delete error:', err);
+      setError('削除処理中にエラーが発生しました');
+    } finally {
+      setDeleteLoading(prev => ({ ...prev, [contentId]: false }));
     }
   };
   

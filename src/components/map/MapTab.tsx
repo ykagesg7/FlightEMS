@@ -1,23 +1,22 @@
-import { MapContainer, Popup, Polyline, CircleMarker } from 'react-leaflet';
-import { FlightPlan, Waypoint } from '../../types/index';
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
-import 'leaflet-groupedlayercontrol';
+import type { LatLng } from 'leaflet';
 import L from 'leaflet';
-import icon from '/images/marker-icon.png';
-import iconShadow from '/images/marker-shadow.png';
-import { DEFAULT_CENTER, DEFAULT_ZOOM, getNavaidColor, formatDMS } from '../../utils';
+import 'leaflet-groupedlayercontrol';
+import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
+import 'leaflet/dist/leaflet.css';
+import { CircleMarker, MapContainer, Polyline, Popup } from 'react-leaflet';
+import { FlightPlan, Waypoint } from '../../types/index';
+import { DEFAULT_CENTER, DEFAULT_ZOOM, formatDMS, getNavaidColor } from '../../utils';
 import { calculateMagneticBearing } from '../../utils/bearing';
 import { formatBearing } from '../../utils/format';
-import type { LatLng } from 'leaflet';
+import icon from '/images/marker-icon.png';
+import iconShadow from '/images/marker-shadow.png';
 // 天気情報取得のためのAPIクライアントをインポート
 import { fetchWeatherData } from '../../api/weather';
-import { useWeatherCache, WeatherCache, CACHE_DURATION } from '../../contexts/WeatherCacheContext';
+import { CACHE_DURATION, useWeatherCache, WeatherCache } from '../../contexts/WeatherCacheContext';
 
 // Waypoint用のツールチップスタイルを追加
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './mapStyles.css';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useState } from 'react';
 
 const DefaultIcon = L.icon({
   iconUrl: icon,
@@ -52,7 +51,7 @@ interface Region {
 }
 
 const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
-  const [map, setMap] = useState<L.Map | null>(null); 
+  const [map, setMap] = useState<L.Map | null>(null);
   const [cursorPosition, setCursorPosition] = useState<L.LatLng | null>(null);
   // Navaid の GeoJSON から取得したデータを保持
   const [navaidData, setNavaidData] = useState<MapNavaid[]>([]);
@@ -83,7 +82,7 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
         name: `Waypoint (${lat.toFixed(4)}, ${lng.toFixed(4)})`,
         latitude: lat,
         longitude: lng,
-        type: 'custom' as 'custom',  // 例えば、カスタムウェイポイントとして設定
+        type: 'custom' as const,  // 例えば、カスタムウェイポイントとして設定
         coordinates: [lng, lat] as [number, number],  // タプルとしてキャスト
       };
       setFlightPlan((prev: FlightPlan) => ({
@@ -130,10 +129,10 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
     const calculations = navaidData.map(navaid => {
       const dist = cursorPosition.distanceTo(navaid.coordinates);
       const bearing = calculateMagneticBearing(
-         navaid.coordinates.lat,
-         navaid.coordinates.lng,
-         cursorPosition.lat,
-         cursorPosition.lng
+        navaid.coordinates.lat,
+        navaid.coordinates.lng,
+        cursorPosition.lat,
+        cursorPosition.lng
       );
       return { navaid, bearing, distance: dist };
     });
@@ -156,10 +155,10 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
         className="h-full w-full"
         ref={setMap}
       >
-        <MapContent 
-          flightPlan={flightPlan} 
-          map={map} 
-          setFlightPlan={setFlightPlan} 
+        <MapContent
+          flightPlan={flightPlan}
+          map={map}
+          setFlightPlan={setFlightPlan}
           regions={regions}
         />
       </MapContainer>
@@ -180,15 +179,15 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
   );
 };
 
-const MapContent: React.FC<{ 
-  flightPlan: FlightPlan, 
-  map: L.Map | null, 
+const MapContent: React.FC<{
+  flightPlan: FlightPlan,
+  map: L.Map | null,
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>,
   regions: Region[]
 }> = ({ flightPlan, map, setFlightPlan, regions }) => {
   const layerControlRef = useRef<L.Control.Layers | null>(null) as LayerControlRef;
   // 各地域のWaypointレイヤーを保持する参照
-  const regionLayersRef = useRef<{[key: string]: L.GeoJSON}>({});
+  const regionLayersRef = useRef<{ [key: string]: L.GeoJSON }>({});
   // すべてのWaypointレイヤーを保持する参照
   const allWaypointsLayerRef = useRef<L.GeoJSON | null>(null);
   // Context経由でキャッシュデータにアクセス
@@ -228,7 +227,7 @@ const MapContent: React.FC<{
         <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
       </div>
     </div>`;
-    
+
     // ポップアップにカスタムクラスを付与
     const popup = L.popup({
       className: 'waypoint-custom-popup',
@@ -236,18 +235,18 @@ const MapContent: React.FC<{
     });
     popup.setContent(popupContent);
     layer.bindPopup(popup);
-    
+
     // マウスオーバー時のツールチップ表示
     layer.bindTooltip(feature.properties.id, {
       permanent: false,
       direction: 'top',
       className: 'waypoint-tooltip'
     });
-    
+
     // クリックイベントを追加
     layer.on('click', () => {
       console.log(`Waypoint clicked: ${feature.properties.id}`);
-      
+
       // ポップアップが表示された後に「ルートに追加」ボタンにイベントリスナーを追加
       setTimeout(() => {
         const addButton = document.querySelector('.waypoint-custom-popup .add-to-route-btn');
@@ -255,7 +254,7 @@ const MapContent: React.FC<{
           addButton.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
+
             // Waypointをウェイポイントとして追加
             const newWaypoint: Waypoint = {
               id: feature.properties.id,
@@ -265,12 +264,12 @@ const MapContent: React.FC<{
               latitude: coords[1],
               longitude: coords[0]
             };
-            
+
             setFlightPlan((prev: FlightPlan) => ({
               ...prev,
               waypoints: [...prev.waypoints, newWaypoint]
             }));
-            
+
             // 成功メッセージを表示
             if (map) {
               const successMsg = L.DomUtil.create('div', 'success-message');
@@ -284,14 +283,14 @@ const MapContent: React.FC<{
               successMsg.style.padding = '10px 20px';
               successMsg.style.borderRadius = '4px';
               successMsg.style.zIndex = '1000';
-              
+
               document.body.appendChild(successMsg);
-              
+
               // 3秒後にメッセージを削除
               setTimeout(() => {
                 document.body.removeChild(successMsg);
               }, 3000);
-              
+
               // ポップアップを閉じる
               map.closePopup();
             }
@@ -304,7 +303,7 @@ const MapContent: React.FC<{
   // overlayLayers を useMemo で安定したオブジェクトとして生成
   const overlayLayers = useMemo(() => {
     // 共通レイヤーの定義
-    const commonLayers: {[key: string]: L.Layer} = {
+    const commonLayers: { [key: string]: L.Layer } = {
       "空港": L.geoJSON(null, {
         pointToLayer: (_, latlng) => {
           const circle = L.circle(latlng, { radius: 9260, color: 'cyan', weight: 2, dashArray: '5, 5', fillOpacity: 0.1 });
@@ -330,7 +329,7 @@ const MapContent: React.FC<{
         }),
         onEachFeature: (feature, layer) => {
           const coords = (feature.geometry as GeoJSON.Point).coordinates;
-          
+
           const popupContent = `<div class="navaid-popup">
             <div class="navaid-popup-header">${feature.properties.id}（${feature.properties.name1} ${feature.properties.name2}）</div>
             <div class="p-2">
@@ -341,7 +340,7 @@ const MapContent: React.FC<{
               <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
             </div>
           </div>`;
-          
+
           // ポップアップにカスタムクラスを付与
           const popup = L.popup({
             className: 'navaid-custom-popup',
@@ -349,18 +348,18 @@ const MapContent: React.FC<{
           });
           popup.setContent(popupContent);
           layer.bindPopup(popup);
-          
+
           // マウスオーバー時のツールチップ表示
           layer.bindTooltip(`${feature.properties.id}（${feature.properties.name1} ${feature.properties.name2}）`, {
             permanent: false,
             direction: 'top',
             className: 'navaid-tooltip'
           });
-          
+
           // クリックイベントの処理を追加
           layer.on('click', () => {
             console.log(`Navaid clicked: ${feature.properties.id}`);
-            
+
             // ポップアップが表示された後に「ルートに追加」ボタンにイベントリスナーを追加
             setTimeout(() => {
               const addButton = document.querySelector('.navaid-custom-popup .add-to-route-btn');
@@ -368,7 +367,7 @@ const MapContent: React.FC<{
                 addButton.addEventListener('click', (e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  
+
                   // Navaidをウェイポイントとして追加
                   const newWaypoint: Waypoint = {
                     id: feature.properties.id,
@@ -380,12 +379,12 @@ const MapContent: React.FC<{
                     latitude: coords[1],
                     longitude: coords[0]
                   };
-                  
+
                   setFlightPlan((prev: FlightPlan) => ({
                     ...prev,
                     waypoints: [...prev.waypoints, newWaypoint]
                   }));
-                  
+
                   // 成功メッセージを表示
                   if (map) {
                     const successMsg = L.DomUtil.create('div', 'success-message');
@@ -399,14 +398,14 @@ const MapContent: React.FC<{
                     successMsg.style.padding = '10px 20px';
                     successMsg.style.borderRadius = '4px';
                     successMsg.style.zIndex = '1000';
-                    
+
                     document.body.appendChild(successMsg);
-                    
+
                     // 3秒後にメッセージを削除
                     setTimeout(() => {
                       document.body.removeChild(successMsg);
                     }, 3000);
-                    
+
                     // ポップアップを閉じる
                     map.closePopup();
                   }
@@ -416,61 +415,61 @@ const MapContent: React.FC<{
           });
         }
       }),
-      "制限空域": L.geoJSON(null, { 
+      "制限空域": L.geoJSON(null, {
         style: { color: 'red', weight: 2, opacity: 0.7, dashArray: '4' },
-        onEachFeature: onEachFeaturePopup 
+        onEachFeature: onEachFeaturePopup
       }),
-      "高高度訓練空域": L.geoJSON(null, { 
+      "高高度訓練空域": L.geoJSON(null, {
         style: { color: 'purple', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup 
+        onEachFeature: onEachFeaturePopup
       }),
-      "低高度訓練空域": L.geoJSON(null, { 
+      "低高度訓練空域": L.geoJSON(null, {
         style: { color: 'yellow', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup 
+        onEachFeature: onEachFeaturePopup
       }),
-      "民間訓練空域": L.geoJSON(null, { 
+      "民間訓練空域": L.geoJSON(null, {
         style: { color: 'brown', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup 
+        onEachFeature: onEachFeaturePopup
       }),
-      "RAPCON": L.geoJSON(null, { 
+      "RAPCON": L.geoJSON(null, {
         style: { color: 'orange', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup 
+        onEachFeature: onEachFeaturePopup
       }),
-      "ACC-Sector High": L.geoJSON(null, { 
+      "ACC-Sector High": L.geoJSON(null, {
         style: { color: 'blue', weight: 2, opacity: 0.7 },
         onEachFeature: onEachFeaturePopup
       }),
-      "ACC-Sector Low": L.geoJSON(null, { 
+      "ACC-Sector Low": L.geoJSON(null, {
         style: { color: 'green', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup 
+        onEachFeature: onEachFeaturePopup
       })
     };
 
     // Waypointsグループの作成
-    const waypointLayers: {[key: string]: L.Layer} = {};
-    
+    const waypointLayers: { [key: string]: L.Layer } = {};
+
     // すべてのウェイポイントを表示するレイヤーを作成
     const allWaypointsLayer = L.geoJSON(null, {
       pointToLayer: (feature, latlng) => L.circleMarker(latlng, waypointStyle(feature)),
       onEachFeature: (feature, layer) => waypointPopup(feature, layer, setFlightPlan, map)
     });
-    
+
     // すべてのウェイポイントレイヤーを参照に保存
     allWaypointsLayerRef.current = allWaypointsLayer;
-    
+
     // すべてのウェイポイントを表示するレイヤーをリストに追加
     waypointLayers["すべて"] = allWaypointsLayer;
-    
+
     // 地域ごとのウェイポイントレイヤーを作成
     regions.forEach(region => {
       const regionLayer = L.geoJSON(null, {
         pointToLayer: (feature, latlng) => L.circleMarker(latlng, waypointStyle(feature)),
         onEachFeature: (feature, layer) => waypointPopup(feature, layer, setFlightPlan, map)
       });
-      
+
       // 地域レイヤーをリストに追加
       waypointLayers[region.name] = regionLayer;
-      
+
       // 地域レイヤーを参照に保存
       regionLayersRef.current[region.id] = regionLayer;
     });
@@ -495,15 +494,15 @@ const MapContent: React.FC<{
     if (regionLayer.getLayers().length > 0) return;
 
     const filePath = `/geojson/waypoints/waypoints_region_${regionId}.json`;
-    
+
     fetch(filePath)
       .then(res => res.json())
       .then(data => {
         console.log(`${regionId}ウェイポイントデータを読み込みました。ポイント数: ${data.features.length}`);
-        
+
         // GeoJSONデータを地域レイヤーに追加
         regionLayer.addData(data);
-        
+
         // 地域レイヤーにカスタムクラスを追加
         regionLayer.eachLayer(layer => {
           if (layer instanceof L.Path) {
@@ -529,10 +528,10 @@ const MapContent: React.FC<{
       .then(res => res.json())
       .then(data => {
         console.log(`すべてのウェイポイントデータを読み込みました。ポイント数: ${data.features.length}`);
-        
+
         // GeoJSONデータを追加
         allWaypointsLayer.addData(data);
-        
+
         // カスタムクラスを追加
         allWaypointsLayer.eachLayer(layer => {
           if (layer instanceof L.Path) {
@@ -618,7 +617,7 @@ const MapContent: React.FC<{
       .then(data => {
         if (map && map.getContainer() && map.getContainer().clientWidth > 0) {
           console.log(`Airports データを読み込みました。ポイント数: ${data.features.length}`);
-          
+
           try {
             // 空港レイヤーを作成 - より見やすく改善
             const airportsLayer = L.geoJSON(data, {
@@ -632,7 +631,7 @@ const MapContent: React.FC<{
                   opacity: 1.0,
                   fillOpacity: 1.0
                 });
-                
+
                 // 管制圏を表す円 (5nm = 9260m)
                 const controlZone = L.circle(latlng, {
                   radius: 9260,
@@ -643,14 +642,14 @@ const MapContent: React.FC<{
                   fillOpacity: 0.1,
                   dashArray: '5, 5'
                 });
-                
+
                 // マウスオーバー時のツールチップ表示
                 circleMarker.bindTooltip(`${feature.properties.id} - ${feature.properties.name1}`, {
                   permanent: false,
                   direction: 'top',
                   className: 'airport-tooltip'
                 });
-                
+
                 // 黒丸マーカーに直接クリックイベントを追加
                 circleMarker.on('click', () => {
                   if (map) {
@@ -658,7 +657,7 @@ const MapContent: React.FC<{
                     fetchAirportWeather(feature, map, weatherCache, setWeatherCache);
                   }
                 });
-                
+
                 // マーカーと管制圏の円をレイヤーグループにまとめる
                 return L.layerGroup([controlZone, circleMarker]);
               },
@@ -674,7 +673,7 @@ const MapContent: React.FC<{
                   ${feature.properties.RWY3 ? `<p class="text-sm">Runway3: ${feature.properties.RWY3}</p>` : ''}
                   ${feature.properties.RWY4 ? `<p class="text-sm">Runway4: ${feature.properties.RWY4}</p>` : ''}
                 </div>`;
-                
+
                 // ポップアップを作成して設定
                 const popup = L.popup({
                   className: 'airport-custom-popup',
@@ -682,7 +681,7 @@ const MapContent: React.FC<{
                 });
                 popup.setContent(popupContent);
                 layer.bindPopup(popup);
-                
+
                 // レイヤーグループへのクリックイベントも残しておく
                 layer.on('click', () => {
                   if (map) {
@@ -692,12 +691,12 @@ const MapContent: React.FC<{
                 });
               }
             });
-            
+
             // 既存プレースホルダー "空港" レイヤーにデータを追加する。
             const airportsPlaceholder = overlayLayers["Common Layers"]["空港"] as L.GeoJSON;
             airportsPlaceholder.clearLayers();
             airportsPlaceholder.addLayer(airportsLayer);
-            
+
             // 自動的にマップへ追加しない。
           } catch (error) {
             console.error('Airportsデータの処理中にエラーが発生しました:', error);
@@ -725,10 +724,10 @@ const MapContent: React.FC<{
         const rjfaLayer = overlayLayers["Local Layers"]["RJFA"] as L.LayerGroup;
         // 各グループごとに、{latlng, name} オブジェクトを蓄積するオブジェクト
         const groupPoints: { [group: string]: { latlng: L.LatLng, name: string }[] } = {};
-        
+
         // レイヤーを一度クリアする
         rjfaLayer.clearLayers();
-        
+
         data.features.forEach((feature: any) => {
           if (feature.geometry && feature.geometry.type === "Point") {
             const [lng, lat] = feature.geometry.coordinates;
@@ -741,7 +740,7 @@ const MapContent: React.FC<{
               fillOpacity: 0.6,
               className: 'local-marker-rjfa'
             });
-            
+
             // カスタムポップアップコンテンツを作成
             const popupContent = `
               <div class="local-layer-popup">
@@ -753,7 +752,7 @@ const MapContent: React.FC<{
                 </div>
               </div>
             `;
-            
+
             // ポップアップにカスタムクラスを付与
             const popup = L.popup({
               className: 'rjfa-custom-popup',
@@ -761,14 +760,14 @@ const MapContent: React.FC<{
             });
             popup.setContent(popupContent);
             marker.bindPopup(popup);
-            
+
             // マウスオーバー時のツールチップ表示
             marker.bindTooltip(`${feature.properties.name}`, {
               permanent: false,
               direction: 'top',
               className: 'rjfa-tooltip'
             });
-            
+
             marker.addTo(rjfaLayer);
             if (!groupPoints[group]) {
               groupPoints[group] = [];
@@ -776,14 +775,14 @@ const MapContent: React.FC<{
             groupPoints[group].push({ latlng: L.latLng(lat, lng), name: feature.properties.name });
           }
         });
-        
+
         // 各グループごとにPolyline生成（2点以上あれば）
         Object.keys(groupPoints).forEach(group => {
           const labeledPoints = groupPoints[group];
           if (labeledPoints.length > 1) {
             const latlngs = labeledPoints.map(pt => pt.latlng);
             const polyline = L.polyline(latlngs, { color: "blue", weight: 2 });
-            
+
             // クリック時のイベント処理
             polyline.on("click", (e: L.LeafletMouseEvent) => {
               if (!map) return;
@@ -801,7 +800,7 @@ const MapContent: React.FC<{
                   bestSegmentIndex = i;
                 }
               }
-              
+
               // 最も近いセグメントが見つかった場合
               if (bestSegmentIndex !== -1) {
                 const startObj = labeledPoints[bestSegmentIndex];
@@ -813,7 +812,7 @@ const MapContent: React.FC<{
                 const formattedBearing = formatBearing(bearing) + '°';
                 const distanceMeters = startObj.latlng.distanceTo(endObj.latlng);
                 const distanceNM = Math.round(distanceMeters / 1852);
-                
+
                 // カスタムポップアップコンテンツを作成
                 const popupContent = `
                   <div class="local-layer-popup">
@@ -829,7 +828,7 @@ const MapContent: React.FC<{
                     </div>
                   </div>
                 `;
-                
+
                 // ポップアップにカスタムクラスを付与して表示
                 const popup = L.popup({
                   className: 'rjfa-custom-popup',
@@ -837,14 +836,14 @@ const MapContent: React.FC<{
                 })
                   .setLatLng(e.latlng)
                   .setContent(popupContent);
-                
+
                 popup.openOn(map);
               }
             });
             polyline.addTo(rjfaLayer);
           }
         });
-        
+
         // 注意: 初期状態ではレイヤーはマップに追加しない
         // if (map.hasLayer(rjfaLayer)) {
         //   map.addLayer(rjfaLayer);
@@ -863,7 +862,7 @@ const MapContent: React.FC<{
         rjfzLayer.clearLayers();
         // 各ポイントをグループごとにまとめる
         const groupPoints: Record<string, { latlng: L.LatLng, name: string }[]> = {};
-        
+
         data.features.forEach((feature: any) => {
           if (feature.geometry && feature.geometry.type === "Point") {
             const [lng, lat] = feature.geometry.coordinates;
@@ -876,7 +875,7 @@ const MapContent: React.FC<{
               fillOpacity: 0.6,
               className: 'local-marker-rjfz'
             });
-            
+
             // カスタムポップアップコンテンツを作成
             const popupContent = `
               <div class="local-layer-popup">
@@ -888,7 +887,7 @@ const MapContent: React.FC<{
                 </div>
               </div>
             `;
-            
+
             // ポップアップにカスタムクラスを付与
             const popup = L.popup({
               className: 'rjfz-custom-popup',
@@ -896,16 +895,16 @@ const MapContent: React.FC<{
             });
             popup.setContent(popupContent);
             marker.bindPopup(popup);
-            
+
             // マウスオーバー時のツールチップ表示
             marker.bindTooltip(`${feature.properties.name}`, {
               permanent: false,
               direction: 'top',
               className: 'rjfz-tooltip'
             });
-            
+
             marker.addTo(rjfzLayer);
-            
+
             if (group) {
               if (!groupPoints[group]) {
                 groupPoints[group] = [];
@@ -921,7 +920,7 @@ const MapContent: React.FC<{
           if (points.length >= 2) {
             const latlngs = points.map(p => p.latlng);
             const polyline = L.polyline(latlngs, { color: 'orange', weight: 2 });
-            
+
             // クリック時のイベント処理
             polyline.on("click", (e: L.LeafletMouseEvent) => {
               if (!map) return;
@@ -933,13 +932,13 @@ const MapContent: React.FC<{
               let bestSegmentIndex = -1;
               let minDistance = Infinity;
               for (let i = 0; i < layerPoints.length - 1; i++) {
-                const dist = L.LineUtil.pointToSegmentDistance(clickPoint, layerPoints[i], layerPoints[i+1]);
+                const dist = L.LineUtil.pointToSegmentDistance(clickPoint, layerPoints[i], layerPoints[i + 1]);
                 if (dist < minDistance) {
                   minDistance = dist;
                   bestSegmentIndex = i;
                 }
               }
-              
+
               if (bestSegmentIndex !== -1) {
                 const startObj = labeledPoints[bestSegmentIndex];
                 const endObj = labeledPoints[bestSegmentIndex + 1];
@@ -950,7 +949,7 @@ const MapContent: React.FC<{
                 const formattedBearing = formatBearing(bearing) + '°';
                 const distanceMeters = startObj.latlng.distanceTo(endObj.latlng);
                 const distanceNM = Math.round(distanceMeters / 1852);
-                
+
                 // カスタムポップアップコンテンツを作成
                 const popupContent = `
                   <div class="local-layer-popup">
@@ -966,7 +965,7 @@ const MapContent: React.FC<{
                     </div>
                   </div>
                 `;
-                
+
                 // ポップアップにカスタムクラスを付与して表示
                 const popup = L.popup({
                   className: 'rjfz-custom-popup',
@@ -974,7 +973,7 @@ const MapContent: React.FC<{
                 })
                   .setLatLng(e.latlng)
                   .setContent(popupContent);
-                
+
                 popup.openOn(mapInstance);
               }
             });
@@ -986,7 +985,7 @@ const MapContent: React.FC<{
         // if (!map.hasLayer(rjfzLayer)) {
         //   rjfzLayer.addTo(map);
         // }
-        
+
         // RJFZの各要素を前面に表示して、Airportsレイヤーより上になるようにする
         rjfzLayer.eachLayer(layer => {
           if (typeof (layer as any).bringToFront === 'function') {
@@ -1035,39 +1034,39 @@ const MapContent: React.FC<{
           collapsed: true, // デフォルトで格納状態に変更
           position: 'topright'
         }) as any;
-        
+
         control.addTo(map);
         console.log("baseLayers in useEffect:", baseLayers);
         layerControlRef.current = control;
-        
+
         // 初期のベースレイヤーとして "地図" のタイルレイヤー (osmLayer) を追加する
         if (!map.hasLayer(osmLayer)) {
           osmLayer.addTo(map);
         }
-        
+
         // --- 初期状態ではオーバーレイを追加しない ---
         // ユーザーがレイヤーコントロールで選択した際にのみ表示されるようにする。
-        
+
         // Waypointsの地域レイヤー名を取得（「すべて」を除く）
         const waypointRegions = Object.keys((overlayLayers["Waypoints"] as Record<string, L.Layer>))
           .filter(name => name !== 'すべて');
-        
+
         // 「すべて」レイヤーが追加されたとき、他のすべてのWaypointレイヤーも追加
         map.on('overlayadd', (e: L.LayersControlEvent) => {
           const layerName = e.name;
-          
+
           // 「すべて」レイヤーが追加された場合
           if (layerName === 'すべて' && e.layer === (overlayLayers["Waypoints"] as Record<string, L.Layer>)['すべて']) {
             // すべてのウェイポイントデータを読み込む
             loadAllWaypointsData();
-            
+
             // 他のすべての地域レイヤーを追加（イベントの無限ループを防ぐためにtimeoutを使用）
             setTimeout(() => {
               waypointRegions.forEach(regionName => {
                 const regionLayer = (overlayLayers["Waypoints"] as Record<string, L.Layer>)[regionName];
                 if (regionLayer && !map.hasLayer(regionLayer)) {
                   regionLayer.addTo(map);
-                  
+
                   // 対応する地域のデータを読み込む
                   const region = regions.find(r => r.name === regionName);
                   if (region) {
@@ -1090,7 +1089,7 @@ const MapContent: React.FC<{
               }
             }
           }
-          
+
           // Waypointレイヤーが追加された場合、最前面に表示する
           setTimeout(() => {
             const layerObj = e.layer;
@@ -1103,11 +1102,11 @@ const MapContent: React.FC<{
             }
           }, 100);
         });
-        
+
         // 「すべて」レイヤーが削除されたとき、他のすべてのWaypointレイヤーも削除
         map.on('overlayremove', (e: L.LayersControlEvent) => {
           const layerName = e.name;
-          
+
           // 「すべて」レイヤーが削除された場合
           if (layerName === 'すべて' && e.layer === (overlayLayers["Waypoints"] as Record<string, L.Layer>)['すべて']) {
             // 他のすべての地域レイヤーを削除（イベントの無限ループを防ぐためにtimeoutを使用）
@@ -1120,7 +1119,7 @@ const MapContent: React.FC<{
               });
             }, 10);
           }
-          
+
           // ローカルレイヤーが削除された場合、レイヤーグループを完全にクリアする
           if (layerName === 'RJFA' || layerName === 'RJFZ') {
             const localLayer = (overlayLayers["Local Layers"] as Record<string, L.Layer>)[layerName] as L.LayerGroup;
@@ -1132,16 +1131,16 @@ const MapContent: React.FC<{
       } else {
         // 既存のレイヤーコントロールがある場合は更新する
         console.log("レイヤーコントロールを更新します");
-        
+
         // いったんコントロールを削除して再作成
         map.removeControl(layerControlRef.current);
-        
+
         // 新しいコントロールを作成して追加
         const control = L.control.groupedLayers(baseLayers, overlayLayers as any, {
           collapsed: true, // デフォルトで格納状態に変更
           position: 'topright'
         }) as any;
-        
+
         control.addTo(map);
         layerControlRef.current = control;
       }
@@ -1205,7 +1204,7 @@ const MapContent: React.FC<{
           />
         );
       })}
-      
+
       {/* 出発空港のマーカー */}
       {flightPlan.departure && (
         <CircleMarker
@@ -1311,19 +1310,19 @@ const MapContent: React.FC<{
 
 // 空港の気象情報を取得して表示する関数を更新
 const fetchAirportWeather = (
-  feature: GeoJSON.Feature, 
+  feature: GeoJSON.Feature,
   map: L.Map,
-  weatherCache: WeatherCache, 
+  weatherCache: WeatherCache,
   setWeatherCache: React.Dispatch<React.SetStateAction<WeatherCache>>
 ) => {
   if (!feature.properties || !feature.geometry) return;
-  
+
   const airportId = feature.properties.id;
   const geometry = feature.geometry as GeoJSON.Point;
   const [longitude, latitude] = geometry.coordinates;
-  
+
   console.log(`${airportId} 空港の気象情報を確認します`);
-  
+
   // 気象情報を取得中のポップアップを表示
   const loadingPopupContent = `
     <div class="airport-popup">
@@ -1337,7 +1336,7 @@ const fetchAirportWeather = (
       </div>
     </div>
   `;
-  
+
   try {
     const loadingPopup = L.popup({
       className: 'airport-custom-popup',
@@ -1346,11 +1345,11 @@ const fetchAirportWeather = (
       .setLatLng([latitude, longitude])
       .setContent(loadingPopupContent)
       .openOn(map);
-    
+
     // キャッシュの確認
     const cachedEntry = weatherCache[airportId];
     const now = Date.now();
-    
+
     // キャッシュが存在し、かつ有効期限内の場合
     if (cachedEntry && (now - cachedEntry.timestamp < CACHE_DURATION)) {
       console.log(`${airportId}の気象情報をキャッシュから取得しました`);
@@ -1359,17 +1358,18 @@ const fetchAirportWeather = (
       loadingPopup.update();
       return; // API呼び出しをスキップ
     }
-    
+
     // キャッシュがないか期限切れの場合は新しく取得
     console.log(`Weather APIを呼び出します: lat=${latitude}, lon=${longitude}`);
     fetchWeatherData(latitude, longitude)
-      .then(weatherData => {
+      .then((weatherData: FilteredWeatherData | null) => {
+        if (!weatherData) return;
         console.log(`${airportId}の気象情報をAPIから取得しました`, weatherData);
         // 気象情報ポップアップを作成して表示
         const weatherPopupContent = createWeatherPopupContent(feature.properties, weatherData);
         loadingPopup.setContent(weatherPopupContent);
         loadingPopup.update();
-        
+
         // キャッシュを更新
         setWeatherCache(prevCache => ({
           ...prevCache,
@@ -1378,7 +1378,7 @@ const fetchAirportWeather = (
       })
       .catch(error => {
         console.error('気象データの取得に失敗しました:', error);
-        
+
         // エラー時は基本情報のみのポップアップを表示
         const errorPopupContent = `
           <div class="airport-popup airport-weather-popup">
@@ -1388,7 +1388,7 @@ const fetchAirportWeather = (
             <div class="p-3">
               <div>
                 <p class="text-sm text-red-500 mb-3">気象情報の取得に失敗しました</p>
-                
+
                 <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
                 <div class="ml-2">
                   ${simplifiedAirportInfoContent(feature.properties)}
@@ -1397,7 +1397,7 @@ const fetchAirportWeather = (
             </div>
           </div>
         `;
-        
+
         loadingPopup.setContent(errorPopupContent);
         loadingPopup.update();
       });
@@ -1410,7 +1410,7 @@ const fetchAirportWeather = (
 const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
   // 気象データが正しく取得できたかチェック
   const current = weatherData?.current;
-  
+
   if (!current) {
     return `
       <div class="airport-popup airport-weather-popup">
@@ -1423,39 +1423,39 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
       </div>
     `;
   }
-  
+
   // フィルタリング済みのデータから日本語の天気状態を取得
   const conditionText = current.condition.japanese || current.condition.text;
   const temp = current.temp_c !== undefined ? `${current.temp_c}℃` : '取得できません';
-  
+
   // 風向を3桁の度数表示に変更 (例: "039°/10kt")
   const windDegree = current.wind.degree !== undefined ? current.wind.degree : null;
   const windSpeedKnots = current.wind.knots !== undefined ? current.wind.knots : null;
-  const windInfo = (windDegree !== null && windSpeedKnots !== null) 
+  const windInfo = (windDegree !== null && windSpeedKnots !== null)
     ? `${windDegree.toString().padStart(3, '0')}°/${windSpeedKnots}kt`
     : '取得できません';
-  
+
   // 気圧（inchHgフォーマット）
-  const pressureInch = current.pressure.inch !== undefined 
+  const pressureInch = current.pressure.inch !== undefined
     ? `${current.pressure.inch}inch`
     : '取得できません';
-  
+
   // 視程
   const visibility = current.visibility_km !== undefined ? `${current.visibility_km}km` : '取得できません';
-  
+
   // 日の出・日の入り時刻
   const astronomy = weatherData.astronomy;
   const sunrise = astronomy?.sunrise || '情報なし';
   const sunset = astronomy?.sunset || '情報なし';
   const sunriseSunset = `${sunrise}/${sunset}`;
-  
+
   // 最終更新日時
   const lastUpdated = current.last_updated || '不明';
-  
+
   // アイコン表示部分
   const iconUrl = current.condition.icon ? `https:${current.condition.icon}` : '';
   const iconHtml = iconUrl ? `<img src="${iconUrl}" alt="${conditionText}" class="weather-icon">` : '';
-    
+
   return `
     <div class="airport-popup airport-weather-popup">
       <div class="airport-popup-header">
@@ -1498,7 +1498,7 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
             </p>
           </div>
         </div>
-        
+
         <div>
           <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
           <div class="ml-2 airport-info-grid">
@@ -1515,7 +1515,7 @@ const simplifiedAirportInfoContent = (properties: any) => {
   // 滑走路情報をサンプルの形式に合わせる（例: 16-34(9187*197)）
   const formatRunway = (runwayInfo: string) => {
     if (!runwayInfo) return '';
-    
+
     // 通常、RWY1は "RWY16/34 9187*197" のような形式
     const match = runwayInfo.match(/RWY(\d+)\/(\d+)\s+(\d+)\*(\d+)/i);
     if (match) {
@@ -1525,26 +1525,26 @@ const simplifiedAirportInfoContent = (properties: any) => {
       const width = match[4];
       return `${rwy1}-${rwy2}(${length}*${width})`;
     }
-    
+
     return runwayInfo; // パターンにマッチしない場合はそのまま返す
   };
-  
+
   // 滑走路情報を取得（存在する場合）
-  const rwy1Info = properties.RWY1 
+  const rwy1Info = properties.RWY1
     ? `<p class="text-sm mb-2 airport-item">
          <span class="airport-label">・滑走路１</span>
          <span class="airport-value">${formatRunway(properties.RWY1)}</span>
-       </p>` 
+       </p>`
     : '';
-  
+
   // 空港標高を取得（存在する場合）
-  const elevInfo = properties["Elev(ft)"] 
+  const elevInfo = properties["Elev(ft)"]
     ? `<p class="text-sm mb-2 airport-item">
          <span class="airport-label">・標高</span>
          <span class="airport-value">${properties["Elev(ft)"]}ft</span>
-       </p>` 
+       </p>`
     : '';
-  
+
   return `
     ${rwy1Info}
     ${elevInfo}

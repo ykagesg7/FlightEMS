@@ -1,0 +1,37 @@
+{
+  "defaultModel": "gemini-2.5-pro",
+  "telemetry": false,
+  "yolo": false,
+  "debug": false,
+  "auth": {
+    "method": "google"
+  },
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    }
+  },
+  "tools": {
+    "search": true,
+    "filesystem": true
+  },
+  "context": {
+    "includeGitignore": true,
+    "maxFileSize": "1MB",
+    "excludePatterns": [
+      "node_modules",
+      "dist",
+      "build",
+      ".next",
+      "*.log",
+      "*.tmp"
+    ]
+  }
+} 

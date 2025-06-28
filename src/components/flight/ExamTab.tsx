@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
-import { QuizSettings } from '../../types/quiz';
-import DeckSelector from '../quiz/DeckSelector';
-import QuizSession from '../quiz/QuizSession';
-import QuizResults from '../quiz/QuizResults';
+import CPLExamSelector from '../quiz/CPLExamSelector';
+import CPLExamSession from '../quiz/CPLExamSession';
+import CPLExamResults from '../quiz/CPLExamResults';
+
+interface CPLExamSettings {
+  subjects: string[];
+  questionCount: number;
+  timeLimitMinutes: number;
+  shuffleQuestions: boolean;
+  reviewMode: boolean;
+}
 
 interface ExamTabState {
-  phase: 'selection' | 'quiz' | 'results';
+  phase: 'selection' | 'exam' | 'results';
   sessionId: string | null;
 }
 
@@ -15,7 +22,7 @@ const ExamTab: React.FC = () => {
   const { theme } = useTheme();
   const { user } = useAuthStore();
   const [state, setState] = useState<ExamTabState>({ phase: 'selection', sessionId: null });
-  const [settings, setSettings] = useState<QuizSettings | null>(null);
+  const [settings, setSettings] = useState<CPLExamSettings | null>(null);
 
   // 認証チェック
   useEffect(() => {
@@ -24,12 +31,12 @@ const ExamTab: React.FC = () => {
     }
   }, [user]);
 
-  const handleStartQuiz = (quizSettings: QuizSettings) => {
-    setSettings(quizSettings);
-    setState({ phase: 'quiz', sessionId: null });
+  const handleStartExam = (examSettings: CPLExamSettings) => {
+    setSettings(examSettings);
+    setState({ phase: 'exam', sessionId: null });
   };
 
-  const handleQuizComplete = (sessionId: string) => {
+  const handleExamComplete = (sessionId: string) => {
     setState({ phase: 'results', sessionId });
   };
 
@@ -38,9 +45,12 @@ const ExamTab: React.FC = () => {
     setSettings(null);
   };
 
-  const handleStartNewQuiz = () => {
-    setState({ phase: 'selection', sessionId: null });
-    setSettings(null);
+  const handleRestartExam = () => {
+    if (settings) {
+      setState({ phase: 'exam', sessionId: null });
+    } else {
+      setState({ phase: 'selection', sessionId: null });
+    }
   };
 
   // 認証が必要な旨を表示
@@ -58,10 +68,10 @@ const ExamTab: React.FC = () => {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            実技試験問題
+            CPL学科試験問題
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            実技試験問題にアクセスするには、まずログインしてください。
+            CPL学科試験問題にアクセスするには、まずログインしてください。
           </p>
           <button
             onClick={() => window.location.href = '/auth'}
@@ -81,18 +91,18 @@ const ExamTab: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            実技試験問題
+            CPL学科試験問題
           </h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            航空実技試験対策のための4択問題演習システム
+            事業用操縦士（飛行機）学科試験対策のための統合問題演習システム
           </p>
         </div>
 
         {state.phase === 'selection' && (
-          <DeckSelector onStartQuiz={handleStartQuiz} />
+          <CPLExamSelector onStartExam={handleStartExam} />
         )}
 
-        {state.phase === 'quiz' && settings && (
+        {state.phase === 'exam' && settings && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <button
@@ -105,17 +115,18 @@ const ExamTab: React.FC = () => {
                 問題選択に戻る
               </button>
             </div>
-            <QuizSession
+            <CPLExamSession
               settings={settings}
-              onComplete={handleQuizComplete}
+              onComplete={handleExamComplete}
+              onBack={handleBackToSelection}
             />
           </div>
         )}
 
         {state.phase === 'results' && state.sessionId && (
-          <QuizResults
+          <CPLExamResults
             sessionId={state.sessionId}
-            onRestartQuiz={handleStartNewQuiz}
+            onRestartExam={handleRestartExam}
             onBackToSelection={handleBackToSelection}
           />
         )}

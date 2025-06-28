@@ -39,3 +39,47 @@ temp/
 *.txt
 *.ps1
 *-original.tsx
+
+# Gemini CLI
+.gemini/auth/
+.gemini/cache/
+.gemini/logs/
+.env.gemini.local
+
+# Python virtual environment (CRITICAL FOR CURSOR PERFORMANCE)
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Large data directories that slow down Cursor
+cpl_exam_data/raw_pdfs/
+cpl_exam_data/converted_md/
+scripts/bulk_*.sql
+scripts/batch_*.sql
+scripts/unified_*.sql
+
+# Temporary processing files
+phase*.md
+*_completion_report_*.md
+batch_processing_*.json
+batch_processing_*.md

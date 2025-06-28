@@ -1,72 +1,71 @@
 import React, { useState } from 'react';
-import ReactSelect from 'react-select';
+import Select, { SingleValue } from 'react-select';
+import { SelectOption } from '../../utils/reactSelectStyles';
+import { Waypoint } from '../../types';
 import { calculateOffsetPoint } from '../../utils/offset';
 import { reactSelectStyles } from '../../utils/reactSelectStyles';
 
+interface NavaidOption extends SelectOption {
+  value: string;
+  label: string;
+  id: string;
+  name: string;
+  type: string;
+  latitude: number;
+  longitude: number;
+  ch?: string;
+  frequency?: string;
+}
+
 interface NavaidSelectorProps {
-  options: any[];
-  selectedNavaid: any;
-  setSelectedNavaid: React.Dispatch<React.SetStateAction<any>>;
-  onAdd: (waypoint: any) => void;
+  options: NavaidOption[];
+  selectedNavaid: NavaidOption | null;
+  setSelectedNavaid: (navaid: NavaidOption | null) => void;
+  onAdd: (waypoint: Waypoint) => void;
 }
 
 const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid, setSelectedNavaid, onAdd }) => {
   const [bearing, setBearing] = useState<string>('');
   const [distance, setDistance] = useState<string>('');
 
-  const handleAdd = () => {
-    if (selectedNavaid) {
-      const navaidName = selectedNavaid.label.split('(')[0];
-      const navaidId = selectedNavaid.value;
-      const formattedBearing = bearing.padStart(3, '0');
-      
-      let waypoint: any = {
-        id: navaidId,
-        name: navaidName,
-        type: selectedNavaid.type,
-        coordinates: selectedNavaid.coordinates,
-        ch: selectedNavaid.ch,
-        latitude: selectedNavaid.latitude,
-        longitude: selectedNavaid.longitude,
-      };
+  const handleAddWaypoint = () => {
+    if (!selectedNavaid || !bearing || !distance) return;
 
-      if (bearing && distance) {
-        const offset = calculateOffsetPoint(
-          selectedNavaid.latitude,
-          selectedNavaid.longitude,
-          parseFloat(bearing),
-          parseFloat(distance)
-        );
-        if (offset) {
-          waypoint = {
-            id: `${navaidId}_${formattedBearing}/${distance}`,
-            name: `${navaidName} (${formattedBearing}/${distance})`,
-            type: 'custom',
-            coordinates: [offset.lon, offset.lat],
-            latitude: offset.lat,
-            longitude: offset.lon,
-            metadata: {
-              baseNavaid: navaidId,
-              bearing: parseFloat(bearing),
-              distance: parseFloat(distance),
-              baseLatitude: selectedNavaid.latitude,
-              baseLongitude: selectedNavaid.longitude
-            }
-          };
-        }
+    const waypoint: Waypoint = {
+      id: `${selectedNavaid.id}-${bearing}-${distance}`,
+      name: `${selectedNavaid.name}/${bearing}°/${distance}nm`,
+      type: 'navaid',
+      sourceId: selectedNavaid.id,
+      ch: selectedNavaid.ch,
+      coordinates: [selectedNavaid.longitude, selectedNavaid.latitude], // GeoJSON format
+      latitude: selectedNavaid.latitude,
+      longitude: selectedNavaid.longitude,
+      nameEditable: true,
+      metadata: {
+        baseNavaid: selectedNavaid.name,
+        bearing: parseFloat(bearing),
+        distance: parseFloat(distance),
+        baseLatitude: selectedNavaid.latitude,
+        baseLongitude: selectedNavaid.longitude
       }
+    };
 
-      onAdd(waypoint);
-    }
+    onAdd(waypoint);
+    setBearing('');
+    setDistance('');
+  };
+
+  const handleNavaidChange = (newValue: SingleValue<NavaidOption>) => {
+    setSelectedNavaid(newValue);
   };
 
   return (
     <div>
       <label className="block text-sm font-medium text-gray-400 mb-1">NAVAID選択</label>
-      <ReactSelect
+      <Select
         options={options}
         value={selectedNavaid}
-        onChange={setSelectedNavaid}
+        onChange={handleNavaidChange}
         placeholder="Select NAVAID"
         isClearable
         styles={reactSelectStyles}
@@ -99,7 +98,7 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
       </div>
 
       <button
-        onClick={handleAdd}
+        onClick={handleAddWaypoint}
         className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
       >
         NAVAID をルートに追加

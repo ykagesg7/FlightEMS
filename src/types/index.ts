@@ -1,5 +1,24 @@
 import type * as L from 'leaflet';
 
+// エラー関連の型をエクスポート
+export * from './error';
+export * from './learning';
+export * from './map';
+export type { Database } from './database.types';
+
+// Profile型定義（既存のany型を置き換え）
+export interface UserProfile {
+  id: string;
+  username: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  website: string | null;
+  email: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  roll: string | null;
+}
+
 export interface Airport {
   value: string;
   name: string;

@@ -1,171 +1,96 @@
-# FlightAcademyTsx - プロジェクト概要
+# 📚 FlightAcademyTsx ドキュメント
 
-FlightAcademyTsxは、フライトプランニングとナビゲーション学習を支援するためのインタラクティブなWeb アプリケーションです。本ドキュメントでは、プロジェクトの概要、セットアップ方法、基本的な使い方について説明します。
+## 📋 ドキュメント構造
 
-## プロジェクトの概要
+### 🚀 [開発者向け (development/)](./development/)
+- **[DEVELOPMENT.md](./development/DEVELOPMENT.md)** - 開発環境セットアップ・基本操作
+- **[ADVANCED.md](./development/ADVANCED.md)** - 高度な開発・カスタマイズ
+- **[CONTRIBUTING.md](./development/CONTRIBUTING.md)** - コントリビューション手順
+- **[LEARNING_TEST_INTEGRATION.md](./development/LEARNING_TEST_INTEGRATION.md)** - 学習・テストシステム連携
 
-FlightAcademyTsxは、以下の機能を提供します：
+### 💡 [改善提案 (improvement-proposals/)](./improvement-proposals/)
 
-- インタラクティブな地図表示（Leaflet.jsベース）
-- フライトプランの作成と管理
-- 空港、ウェイポイント、NAVAIDの表示と操作
-- 気象データの取得と表示
-- フライトパラメータの計算
-- 学習コンテンツとマニューバービューア
-- ユーザー認証とプロファイル管理
-- 進捗管理機能
-- ページ分割方式によるナビゲーション（React Router）
-- ダークモード対応
-- **インタラクティブ学習ページ（TACAN進入方式の実践授業）**
+#### 📊 実装レポート（完了分）
+- **[Phase 1 完了報告](./improvement-proposals/implementation-report-phase1.md)** - 基盤強化完了
+- **[Phase 2 完了報告](./improvement-proposals/implementation-report-phase2.md)** - コンポーネント分割完了
+- **[Phase 3 進捗報告](./improvement-proposals/implementation-report-phase3-progress.md)** - 型安全性強化中
 
-## 最近の更新
+#### 🎯 戦略的提案
+- **[包括的改善計画](./improvement-proposals/comprehensive-improvement-plan.md)** - 全体戦略・KPI設定
+- **[2024年ロードマップ](./improvement-proposals/roadmap-2024.md)** - 4フェーズ実装計画
 
-### 2025年5月の主要アップデート
-- **Learning → Test フロー実装**: サイドメニューを廃止し、インタラクティブ学習をLearningページに統合
-- **Articlesページ新設**: 既存のブログ記事機能を独立したページに移動し、記事閲覧機能を維持
-- **学習体験の改善**: 明確な学習フロー（Learning: 知識インプット → Articles: 詳細記事 → Test: 知識確認）を実現
-- **UI/UX簡素化**: 複雑なサイドバーナビゲーションを削除し、直感的な学習体験を提供
-- **新記事追加**: 1.6_SeekFirstToUnderstand.mdx（メンタリティーカテゴリー）
-- **ソーシャル機能**: 学習記事にいいね・コメント機能を実装
-- **フリーミアム機能**: 1.4, 1.5, 1.6記事を無料公開対象に設定
-- **認証システム統一**: AuthContextからZustand AuthStoreへの移行完了
-- **Supabaseセキュリティ強化**: RLSポリシー、関数のsearch_path設定
-- **UI/UX改善**: Learning一覧画面にいいね・コメント数表示、フリーミアムバッジ
+#### 🔧 技術的改善提案
+- **[認証システム簡素化](./improvement-proposals/auth-simplification.md)** - 194行→100行削減
+- **[コード重複解決](./improvement-proposals/code-deduplication.md)** - 30%ファイル削減計画
+- **[パフォーマンス・UX最適化](./improvement-proposals/performance-ux-optimization.md)** - 50-70%速度改善
+- **[GeminiCLI統合](./improvement-proposals/gemini-cli-integration.md)** - AI支援開発体制
 
-### 過去のアップデート
-- インタラクティブ学習（TACAN進入方式）ページを新規追加し、Learningページからアクセス可能に
-- 既存のFlightAcademyTsxプロジェクトにInteractiveLearningの機能を統合
-- ルーティング（/interactive-learning）を追加
-- 重複していた設定ファイル等を整理
-- React Routerを導入したタブベースからページ分割方式への構造変更
-- モバイル表示の余白調整
-- ハイライト表示の修正
-- テキスト表示の改善
-- ダークモードの実装
-- 進捗管理機能の実装
-- カードレイアウトの改良によるUI/UX向上
-- mermaidライブラリの追加によるダイアグラム描画機能
-- Supabaseデータベース連携によるユーザー認証・プロファイル管理機能の実装
-- Cursor IDE MCPを活用したデータベース操作機能の追加
+### 🎨 [機能仕様 (FEATURES.md)](./FEATURES.md)
+航空学習システムの詳細機能仕様・技術要件
 
-## セットアップ方法
+### 🗺️ [開発ロードマップ (ROADMAP.md)](./ROADMAP.md)
+プロジェクト全体の長期戦略・マイルストーン
 
-### 必要条件
-- Node.js 16.x以上
-- npm 7.x以上
+### 📖 [ユーザーガイド (guides/)](./guides/)
+エンドユーザー向け使用方法・FAQ
 
-### インストール手順
-1. リポジトリのクローン：
-```bash
-git clone https://github.com/yourusername/FlightAcademyTsx.git
-cd FlightAcademyTsx
-```
-
-2. 依存関係のインストール：
-```bash
-npm install
-```
-
-3. 環境変数の設定：
-`.env.local`ファイルを作成し、以下の内容を追加します：
-```
-VITE_WEATHER_API_KEY=your_weather_api_key
-```
-
-4. 開発サーバーの起動：
-```bash
-npm run dev
-```
-
-5. ブラウザで以下のURLにアクセス：
-```
-http://localhost:5173/
-```
-
-## 基本的な使い方
-
-### マップの操作
-- ズームイン/アウト：マウスホイールまたは「+」「-」ボタン
-- 移動：マウスドラッグ
-- レイヤー切替：右上のレイヤーコントロール
-
-### フライトプランの作成
-1. 「Planning」ページに移動
-2. 出発空港を選択
-3. 目的空港を選択
-4. ウェイポイントを追加
-5. フライトパラメータを設定
-6. フライトサマリーを確認
-
-### 認証とユーザー機能
-1. 「ログイン」ボタンをクリック
-2. 既存アカウントでログインするか新規登録
-3. ログイン後、学習進捗が保存されます
-4. プロファイルメニューからプロファイル設定にアクセス可能
-5. Learning機能は認証ユーザーのみ利用可能
-
-### マニューバービューアの使用
-1. 「Learning」ページに移動
-2. マニューバーが含まれるスライドに移動
-3. ビューアで機動を確認し、再生/一時停止/リセットボタンで操作
-
-## 技術スタック
-
-- **フロントエンド**: React, TypeScript, Vite, Tailwind CSS
-- **マップ表示**: Leaflet.js
-- **状態管理**: React Context API
-- **ルーティング**: React Router
-- **データ形式**: GeoJSON
-- **APIクライアント**: Axios
-- **認証・データベース**: Supabase (PostgreSQL), Supabase Auth
-- **開発ツール**: Cursor IDE (MCP機能による直接DB操作)
-- **ドキュメント**: MDX, Mermaid
-
-## ユーザーロール
-
-FlightAcademyTsxでは3つのユーザーロールを定義しています：
-
-1. **Student** - 学生ユーザー（デフォルト）
-   - 学習コンテンツへのアクセス
-   - 進捗の追跡
-   - クイズの受験
-
-2. **Teacher** - 教師ユーザー
-   - 学生の進捗の確認
-   - フィードバックの提供
-
-3. **Admin** - 管理者ユーザー
-   - システム全体の管理
-   - お知らせの投稿
-
-## ドキュメント構成
-
-本プロジェクトのドキュメントは以下のように構成されています：
-
-### プロジェクト基本情報
-- **README.md** (本ドキュメント): プロジェクト概要、セットアップ、基本的な使い方
-- **FEATURES.md**: 機能詳細ガイド、ソーシャル機能、フリーミアム機能
-- **ROADMAP.md**: 今後の開発計画と長期的なロードマップ
-
-### 開発者向けドキュメント (`development/`)
-- **DEVELOPMENT.md**: 開発プロセス、Git連携、Supabase連携
-- **CONTRIBUTING.md**: コントリビューションガイド、コーディング規約
-- **ADVANCED.md**: 高度な機能、図表作成機能、AIエージェント自動化
-- **process/**: 詳細な開発プロセスドキュメント（要件定義、DB設計、API仕様等）
-
-### ガイド・チュートリアル (`guides/`)
-- **LOGICAL_PRESENTATION_SQL_GUIDE.md**: SQLガイド
-- **MANUAL_SQL_EXECUTION.md**: 手動SQL実行ガイド
-- **MARKITDOWN_SETUP.md**: MarkItDownセットアップガイド
-
-### トラブルシューティング (`troubleshooting/`)
-- **authentication-issues.md**: 認証関連のトラブルシューティング
-- **REACT_COMPONENTS.md**: Reactコンポーネント関連の問題解決
-
-## ライセンス
-
-本プロジェクトは[MIT License](../LICENSE)の下で公開されています。
+### 🔧 [トラブルシューティング (troubleshooting/)](./troubleshooting/)
+- **[認証問題](./troubleshooting/authentication-issues.md)** - 認証関連エラー解決
+- **[React コンポーネント](./troubleshooting/REACT_COMPONENTS.md)** - コンポーネント関連問題
 
 ---
 
-最終更新日: 2025年5月27日
+## 🎯 現在の開発状況
+
+### ✅ 完了済み (Phase 1-2)
+- **テストフレームワーク構築** - Vitest + React Testing Library
+- **認証システム簡素化** - useAuthカスタムフック導入
+- **App.tsx大幅削減** - 500行→150行 (70%削減)
+- **ESLint設定強化** - コード品質自動チェック
+
+### 🚧 進行中 (Phase 3)
+- **any型削除** - 147箇所→0箇所 (目標95%完了)
+- **型安全性強化** - Session/AuthError型導入
+- **テストカバレッジ拡大** - 80%目標
+
+### 📅 次期予定 (Phase 4)
+- **パフォーマンス最適化** - 仮想化・レンダリング改善
+- **UX改善** - ローディング状態・エラーハンドリング
+- **データベース最適化** - インデックス・クエリ改善
+
+---
+
+## 🚀 クイックスタート
+
+### 開発者
+1. [開発環境セットアップ](./development/DEVELOPMENT.md)
+2. [コントリビューション手順](./development/CONTRIBUTING.md)
+3. [高度な開発設定](./development/ADVANCED.md)
+
+### プロジェクト管理者
+1. [包括的改善計画](./improvement-proposals/comprehensive-improvement-plan.md)
+2. [2024年ロードマップ](./improvement-proposals/roadmap-2024.md)
+3. [最新実装レポート](./improvement-proposals/implementation-report-phase3-progress.md)
+
+---
+
+## 📊 プロジェクト KPI
+
+| 指標 | 現在値 | 目標値 | 進捗 |
+|------|--------|--------|------|
+| TypeScript型安全性 | 87% | 95% | 🟡 |
+| テストカバレッジ | 進行中 | 80% | 🟡 |
+| コンポーネント削減 | 70% | 30% | ✅ |
+| パフォーマンス改善 | 準備中 | 50-70% | 🟡 |
+
+---
+
+## 🤝 コントリビューション
+
+このプロジェクトは継続的に改善されています。  
+改善提案・バグ報告は [CONTRIBUTING.md](./development/CONTRIBUTING.md) をご参照ください。
+
+---
+
+**📅 最終更新**: 2025年1月21日  
+**📋 管理者**: FlightAcademy開発チーム
