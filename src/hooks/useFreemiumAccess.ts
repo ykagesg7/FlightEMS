@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { useLearningProgress } from './useLearningProgress';
 import supabase from '../utils/supabase';
+import { useLearningProgress } from './useLearningProgress';
 
 interface LearningContent {
   id: string;
@@ -17,15 +17,15 @@ interface LearningContent {
 
 export const useFreemiumAccess = (contentType?: 'learning' | 'articles') => {
   const { user } = useAuthStore();
-  const { learningContents } = useLearningProgress();
+  const { learningContents, isLoading: learningContentsLoading } = useLearningProgress();
   const [freemiumContentIds, setFreemiumContentIds] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  
+  const [freemiumLoading, setFreemiumLoading] = useState(true);
+
   // フリーミアム記事のIDを動的に取得
   useEffect(() => {
     const fetchFreemiumContents = async () => {
       try {
-        setIsLoading(true);
+        setFreemiumLoading(true);
         const { data, error } = await supabase
           .from('learning_contents')
           .select('id')
@@ -39,50 +39,50 @@ export const useFreemiumAccess = (contentType?: 'learning' | 'articles') => {
         console.error('フリーミアム記事の取得に失敗しました:', error);
         setFreemiumContentIds([]);
       } finally {
-        setIsLoading(false);
+        setFreemiumLoading(false);
       }
     };
 
     fetchFreemiumContents();
   }, []);
-  
+
   // コンテンツタイプに基づくフィルタリング
   const getFilteredContents = () => {
     if (!contentType) return learningContents;
-    
+
     return learningContents.filter(content => {
       if (contentType === 'learning') {
         // LearningタブではCPL関連のコンテンツのみ
-        return content.category?.includes('CPL') || 
-               content.category?.includes('航空') ||
-               content.id.startsWith('3.') ||
-               content.id.includes('Aviation') ||
-               content.id.includes('TacanApproach');
+        return content.category?.includes('CPL') ||
+          content.category?.includes('航空') ||
+          content.id.startsWith('3.') ||
+          content.id.includes('Aviation') ||
+          content.id.includes('TacanApproach');
       } else if (contentType === 'articles') {
         // Articlesタブではメンタリティー・思考法関連のコンテンツのみ（CPL記事を明確に除外）
         return (content.category?.includes('メンタリティー') ||
-                content.category?.includes('思考法') ||
-                content.category?.includes('自己啓発') ||
-                content.id.startsWith('1.') ||
-                content.id.startsWith('2.') ||
-                content.title?.includes('メンタリティー') ||
-                content.title?.includes('思考法') ||
-                content.title?.includes('７つの習慣')) &&
-               // CPL記事を明確に除外
-               !content.id.startsWith('3.') &&
-               !content.id.includes('Aviation') &&
-               !content.id.includes('TacanApproach') &&
-               !content.category?.includes('CPL') &&
-               !content.category?.includes('航空') &&
-               !content.title?.includes('CPL') &&
-               !content.title?.includes('航空法');
+          content.category?.includes('思考法') ||
+          content.category?.includes('自己啓発') ||
+          content.id.startsWith('1.') ||
+          content.id.startsWith('2.') ||
+          content.title?.includes('メンタリティー') ||
+          content.title?.includes('思考法') ||
+          content.title?.includes('７つの習慣')) &&
+          // CPL記事を明確に除外
+          !content.id.startsWith('3.') &&
+          !content.id.includes('Aviation') &&
+          !content.id.includes('TacanApproach') &&
+          !content.category?.includes('CPL') &&
+          !content.category?.includes('航空') &&
+          !content.title?.includes('CPL') &&
+          !content.title?.includes('航空法');
       }
       return true;
     });
   };
 
   const displayContents = getFilteredContents();
-  
+
   // フリーミアム状態の情報を提供
   const freemiumInfo = {
     isLoggedIn: !!user,
@@ -100,17 +100,13 @@ export const useFreemiumAccess = (contentType?: 'learning' | 'articles') => {
   const canAccessContent = (contentId: string): boolean => {
     // ログインユーザーは全コンテンツにアクセス可能
     if (user) return true;
-    
+
     // 未ログインユーザーはフリーミアムコンテンツのみアクセス可能
     return isFreemiumContent(contentId);
   };
 
-  useEffect(() => {
-    // コンテンツが読み込まれたらローディング状態を解除
-    if (learningContents.length > 0) {
-      setIsLoading(false);
-    }
-  }, [learningContents]);
+  // 両方のローディング状態を組み合わせ
+  const isLoading = learningContentsLoading || freemiumLoading;
 
   return {
     // コンテンツ情報
@@ -120,11 +116,11 @@ export const useFreemiumAccess = (contentType?: 'learning' | 'articles') => {
     isLoading,
     hasAccess: !!user,
     freemiumContentIds,
-    
+
     // フリーミアム状態
     freemiumInfo,
-    
+
     // ヘルパー関数
     isPreviewMode: !user
   };
-}; 
+};

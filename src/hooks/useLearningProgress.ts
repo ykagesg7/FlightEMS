@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import supabase from '../utils/supabase';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import supabase from '../utils/supabase';
 import { cplAviationLawContents } from '../utils/testLearningData';
 
 interface LearningProgress {
@@ -38,8 +38,6 @@ export const useLearningProgress = () => {
   // 学習コンテンツをロード
   const loadLearningContents = async () => {
     try {
-      setIsLoading(true);
-      
       // ユーザーのチェックを一時的に無効化（コンテンツ表示のため）
       // if (!user) {
       //   console.log('ユーザーが未ログインのため、コンテンツをロードできません');
@@ -61,28 +59,33 @@ export const useLearningProgress = () => {
         // 既存のコンテンツにCPL航空法記事を追加
         const combinedContents = [...data, ...cplAviationLawContents];
         setLearningContents(combinedContents);
-        console.log('学習コンテンツをロードしました:', combinedContents.length, '件');
+        // 開発環境でのみログを出力
+        if (import.meta.env.MODE === 'development') {
+          console.log('学習コンテンツをロードしました:', combinedContents.length, '件');
+        }
       } else {
         // データベースが空の場合はCPL航空法記事のみ表示
         setLearningContents(cplAviationLawContents);
-        console.log('CPL航空法記事のみ表示:', cplAviationLawContents.length, '件');
+        // 開発環境でのみログを出力
+        if (import.meta.env.MODE === 'development') {
+          console.log('CPL航空法記事のみ表示:', cplAviationLawContents.length, '件');
+        }
       }
     } catch (err) {
       console.error('学習コンテンツのロードエラー:', err);
       setError(err instanceof Error ? err : new Error('学習コンテンツのロード中に不明なエラーが発生しました'));
       // エラーが発生した場合でもCPL記事は表示
       setLearningContents(cplAviationLawContents);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   // 進捗データをロード
   const loadUserProgress = async () => {
     try {
-      if (!user) return;
-
-      setIsLoading(true);
+      if (!user) {
+        setUserProgress({});
+        return;
+      }
 
       const { data, error } = await supabase
         .from('learning_progress')
@@ -104,24 +107,38 @@ export const useLearningProgress = () => {
     } catch (err) {
       console.error('学習進捗のロードエラー:', err);
       setError(err instanceof Error ? err : new Error('学習進捗のロード中に不明なエラーが発生しました'));
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  // ユーザー認証の変更を監視
+  // 初期化フラグと前回のユーザーIDを記録
+  const [initialized, setInitialized] = useState(false);
+  const [lastUserId, setLastUserId] = useState<string | null>(null);
+
+  // ユーザー認証の変更を監視（重複呼び出しを防ぐ）
   useEffect(() => {
-    // ユーザーの有無に関わらずコンテンツをロード
-    loadLearningContents();
-    
-    // ユーザーがいる場合のみ進捗をロード
-    if (user) {
-      loadUserProgress();
-    } else {
-      setUserProgress({});
-      setIsLoading(false); // ユーザーがnullの場合でもローディング状態を解除
+    const currentUserId = user?.id || null;
+
+    // 初回ロードまたはユーザーが変更された場合のみ実行
+    if (!initialized || lastUserId !== currentUserId) {
+      const loadData = async () => {
+        setIsLoading(true);
+
+        // コンテンツは一度だけロード
+        if (!initialized) {
+          await loadLearningContents();
+          setInitialized(true);
+        }
+
+        // ユーザーがいる場合のみ進捗をロード
+        await loadUserProgress();
+
+        setIsLoading(false);
+      };
+
+      loadData();
+      setLastUserId(currentUserId);
     }
-  }, [user]);
+  }, [user, initialized, lastUserId]);
 
   // 進捗の更新
   const updateProgress = async (contentId: string, position: number) => {
@@ -130,15 +147,15 @@ export const useLearningProgress = () => {
 
       // 既存の進捗データを取得
       const existingProgress = userProgress[contentId];
-      
+
       // 進捗率を計算（簡易的な計算 - 実際の実装では調整が必要）
       const totalHeight = document.body.scrollHeight - window.innerHeight;
       const progressPercentage = Math.round((position / totalHeight) * 100);
-      
+
       // 同じ位置の場合や小さすぎる変化は無視
-      if (existingProgress && 
-          (existingProgress.last_position === position || 
-           Math.abs(existingProgress.last_position - position) < 10)) {
+      if (existingProgress &&
+        (existingProgress.last_position === position ||
+          Math.abs(existingProgress.last_position - position) < 10)) {
         return;
       }
 
@@ -275,7 +292,7 @@ export const useLearningProgress = () => {
     learningContents,
     isLoading,
     error,
-    
+
     // アクション
     updateProgress,
     markAsCompleted,
@@ -285,9 +302,9 @@ export const useLearningProgress = () => {
     resetProgress,
     loadUserProgress,
     loadLearningContents,
-    
+
     // ヘルパー関数
     getContentsByCategory,
     getAllCategories
   };
-}; 
+};

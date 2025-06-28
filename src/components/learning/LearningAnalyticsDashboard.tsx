@@ -99,6 +99,9 @@ const LearningAnalyticsDashboard: React.FC = () => {
   useEffect(() => {
     if (user) {
       loadAnalyticsData();
+    } else {
+      // ユーザーがログインしていない場合はローディング状態を解除
+      setLoading(false);
     }
   }, [user, timeRange]);
 
@@ -163,7 +166,9 @@ const LearningAnalyticsDashboard: React.FC = () => {
 
       // プロファイルエラーをログ出力（必須ではないため継続）
       if (profileResult.error) {
-        console.warn('User profile loading failed:', profileResult.error);
+        if (import.meta.env.MODE === 'development') {
+          console.warn('User profile loading failed:', profileResult.error);
+        }
       }
 
       const sessions = sessionsResult.data || [];
