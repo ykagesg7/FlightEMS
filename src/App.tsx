@@ -1,39 +1,57 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { AuthProvider } from './providers/AuthProvider';
-import { ProgressProvider } from './contexts/ProgressContext';
-import { ErrorBoundary } from './components/ui/ErrorBoundary';
-import { AppLayout } from './components/layout/AppLayout';
-import './App.css';
-import './index.css';
 
-// ReactQueryのクライアント作成
+// Contexts
+import { ProgressProvider } from './contexts/ProgressContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
+import { AuthProvider } from './providers/AuthProvider';
+
+// Enhanced Error Boundary and Layout
+import { AppLayout } from './components/layout/AppLayout';
+import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
+
+// React Query Client設定
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5分
+      gcTime: 10 * 60 * 1000, // 10分
       retry: 1,
+      refetchOnWindowFocus: false,
     },
   },
 });
 
-const App = () => {
+// アプリケーション全体のプロバイダーをラップ
+const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <EnhancedErrorBoundary>
+        <AuthProvider>
+          <ThemeProvider>
             <ProgressProvider>
-              <Router>
-                <AppLayout />
-              </Router>
+              <WeatherCacheProvider>
+                {children}
+                <ReactQueryDevtools initialIsOpen={false} />
+              </WeatherCacheProvider>
             </ProgressProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+          </ThemeProvider>
+        </AuthProvider>
+      </EnhancedErrorBoundary>
+    </QueryClientProvider>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <Router>
+      <AppProviders>
+        <AppLayout />
+      </AppProviders>
+    </Router>
   );
 };
 

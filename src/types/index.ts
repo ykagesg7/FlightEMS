@@ -1,10 +1,10 @@
 import type * as L from 'leaflet';
 
 // エラー関連の型をエクスポート
+export type { Database } from './database.types';
 export * from './error';
 export * from './learning';
 export * from './map';
-export type { Database } from './database.types';
 
 // Profile型定義（既存のany型を置き換え）
 export interface UserProfile {
@@ -113,4 +113,87 @@ export interface GeoJSONFeature {
 
 export interface GeoJSONData extends L.GeoJSON {
   features: GeoJSONFeature[];
+}
+
+// 学習システム型
+export type {
+  LearningAnalytics, LearningContent,
+  LearningContentType,
+  LearningProgress,
+  LearningSession, SessionMetadata, SubjectStats, TestSessionStats, UserWeakArea
+} from './learning';
+
+
+// Weather API型定義
+export interface WeatherCondition {
+  text: string;
+  japanese: string;
+  icon: string;
+}
+
+export interface WeatherWind {
+  degree: number;
+  kph: number;
+  knots: number;
+}
+
+export interface WeatherPressure {
+  mb: number;
+  inch: string;
+}
+
+export interface WeatherAstronomy {
+  sunrise: string;
+  sunset: string;
+}
+
+export interface WeatherLocation {
+  name: string;
+  region: string;
+  country: string;
+  localtime: string;
+}
+
+export interface CurrentWeather {
+  condition: WeatherCondition;
+  temp_c: number;
+  wind: WeatherWind;
+  pressure: WeatherPressure;
+  visibility_km: number;
+  humidity: number;
+  last_updated: string;
+}
+
+export interface WeatherAPIResponse {
+  current: CurrentWeather;
+  astronomy: WeatherAstronomy | null;
+  location: WeatherLocation;
+}
+
+// 外部Weather API生レスポンス型
+export interface ExternalWeatherData {
+  current: {
+    condition: { text: string; icon: string };
+    temp_c: number;
+    wind_degree: number;
+    wind_kph: number;
+    pressure_mb: number;
+    vis_km: number;
+    humidity: number;
+    last_updated: string;
+  };
+  location: {
+    name: string;
+    region: string;
+    country: string;
+    localtime: string;
+  };
+  forecast?: {
+    forecastday?: Array<{
+      astro?: {
+        sunrise: string;
+        sunset: string;
+      };
+    }>;
+  };
 }

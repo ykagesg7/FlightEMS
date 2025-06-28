@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../utils/supabase';
-import EnhancedMistakeReview from './EnhancedMistakeReview';
+// import EnhancedMistakeReview from './EnhancedMistakeReview'; // TODO: コンポーネント作成時に有効化
 import { QuizAnswer } from '../../types';
 import ReviewContentLink from '../learning/ReviewContentLink';
 
@@ -36,10 +36,10 @@ interface SubjectStats {
   percentage: number;
 }
 
-const CPLExamResults: React.FC<CPLExamResultsProps> = ({ 
-  sessionId, 
-  onRestartExam, 
-  onBackToSelection 
+const CPLExamResults: React.FC<CPLExamResultsProps> = ({
+  sessionId,
+  onRestartExam,
+  onBackToSelection
 }) => {
   const { theme } = useTheme();
   const [session, setSession] = useState<ExamSession | null>(null);
@@ -51,7 +51,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
     const loadResults = async () => {
       try {
         setLoading(true);
-        
+
         // セッション結果を取得
         const { data: sessionData, error: sessionError } = await supabase
           .from('quiz_sessions')
@@ -66,7 +66,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
         if (sessionData.answers && Array.isArray(sessionData.answers)) {
           // 問題IDから科目情報を取得
           const questionIds = sessionData.answers.map((a: QuizAnswer) => a.questionId);
-          
+
           if (questionIds.length > 0) {
             const { data: questionsData, error: questionsError } = await supabase
               .from('unified_cpl_questions')
@@ -77,7 +77,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
 
             // 科目別統計を集計
             const statsMap: { [key: string]: { total: number; correct: number } } = {};
-            
+
             sessionData.answers.forEach((answer: QuizAnswer) => {
               const question = questionsData.find((q: { id: string; main_subject: string; sub_subject: string }) => q.id === answer.questionId);
               if (question) {
@@ -155,20 +155,17 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
 
       {/* 総合結果 */}
       <div className="mb-8">
-        <div className={`p-6 rounded-lg border-2 ${
-          isPassed 
-            ? 'border-green-500 bg-green-50 dark:bg-green-900/20' 
+        <div className={`p-6 rounded-lg border-2 ${isPassed
+            ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
             : 'border-red-500 bg-red-50 dark:bg-red-900/20'
-        }`}>
+          }`}>
           <div className="text-center">
-            <div className={`text-6xl font-bold mb-2 ${
-              isPassed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-            }`}>
+            <div className={`text-6xl font-bold mb-2 ${isPassed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+              }`}>
               {scorePercentage}%
             </div>
-            <div className={`text-2xl font-semibold mb-2 ${
-              isPassed ? 'text-green-800 dark:text-green-300' : 'text-red-800 dark:text-red-300'
-            }`}>
+            <div className={`text-2xl font-semibold mb-2 ${isPassed ? 'text-green-800 dark:text-green-300' : 'text-red-800 dark:text-red-300'
+              }`}>
               {isPassed ? '合格' : '不合格'}
             </div>
             <div className="text-gray-600 dark:text-gray-300">
@@ -201,7 +198,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
           </h2>
           <div className="space-y-3">
             {subjectStats.map((stat, index) => (
-              <div 
+              <div
                 key={index}
                 className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
               >
@@ -215,18 +212,16 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-32 bg-gray-200 rounded-full h-2 dark:bg-gray-600">
-                    <div 
-                      className={`h-2 rounded-full ${
-                        stat.percentage >= 70 ? 'bg-green-500' : 'bg-red-500'
-                      }`}
+                    <div
+                      className={`h-2 rounded-full ${stat.percentage >= 70 ? 'bg-green-500' : 'bg-red-500'
+                        }`}
                       style={{ width: `${Math.min(stat.percentage, 100)}%` }}
                     ></div>
                   </div>
-                  <div className={`font-semibold min-w-[3rem] text-right ${
-                    stat.percentage >= 70 
-                      ? 'text-green-600 dark:text-green-400' 
+                  <div className={`font-semibold min-w-[3rem] text-right ${stat.percentage >= 70
+                      ? 'text-green-600 dark:text-green-400'
                       : 'text-red-600 dark:text-red-400'
-                  }`}>
+                    }`}>
                     {stat.percentage}%
                   </div>
                 </div>
@@ -264,7 +259,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
           {subjectStats
             .filter(stat => stat.percentage < 70)
             .map((stat, index) => (
-              <ReviewContentLink 
+              <ReviewContentLink
                 key={index}
                 subjectCategory={stat.subject.split(' - ')[0]} // メイン科目のみ使用
                 accuracy={stat.percentage}
@@ -283,7 +278,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
         >
           同じ設定で再挑戦
         </button>
-        
+
         <button
           onClick={onBackToSelection}
           className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 font-medium"
@@ -311,4 +306,4 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
   );
 };
 
-export default CPLExamResults; 
+export default CPLExamResults;

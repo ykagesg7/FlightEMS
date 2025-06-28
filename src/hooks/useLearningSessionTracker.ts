@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
+import type { SessionMetadata } from '../types';
 import supabase from '../utils/supabase';
 
 export interface LearningSessionData {
@@ -13,7 +14,7 @@ export interface LearningSessionData {
   difficultyPerceived?: number; // 1-5
   satisfactionRating?: number; // 1-5
   notes?: string;
-  metadata?: Record<string, any>;
+  metadata?: SessionMetadata;
 }
 
 export interface SessionMetrics {
@@ -36,7 +37,7 @@ export const useLearningSessionTracker = () => {
     sessionType: LearningSessionData['sessionType'],
     contentId: string,
     contentType: LearningSessionData['contentType'],
-    metadata?: Record<string, any>
+    metadata?: SessionMetadata
   ) => {
     if (!user) return null;
 
@@ -129,7 +130,7 @@ export const useLearningSessionTracker = () => {
 
     // マウス移動、キーボード、スクロールイベントの監視
     const activityEvents = ['mousemove', 'keydown', 'scroll', 'click'];
-    
+
     const trackActivity = () => {
       lastActivity = Date.now();
       lastActivityRef.current = new Date();
@@ -143,7 +144,7 @@ export const useLearningSessionTracker = () => {
     sessionIntervalRef.current = setInterval(() => {
       const now = Date.now();
       const timeSinceActivity = now - lastActivity;
-      
+
       // 30秒以上非アクティブの場合、エンゲージメントを下げる
       if (timeSinceActivity > 30000) {
         engagementScore = Math.max(0.1, engagementScore - 0.1);
@@ -196,7 +197,7 @@ export const useLearningSessionTracker = () => {
 
       // ストリーク計算
       let currentStreak = profile?.current_streak_days || 0;
-      const lastSessionDate = profile?.updated_at ? 
+      const lastSessionDate = profile?.updated_at ?
         new Date(profile.updated_at).toISOString().split('T')[0] : null;
 
       if (lastSessionDate) {
@@ -227,11 +228,11 @@ export const useLearningSessionTracker = () => {
       // プロファイル更新
       const { error: updateError } = await supabase
         .from('user_learning_profiles')
-        .upsert({ 
-          user_id: user.id, 
-          ...updateData 
-        }, { 
-          onConflict: 'user_id' 
+        .upsert({
+          user_id: user.id,
+          ...updateData
+        }, {
+          onConflict: 'user_id'
         });
 
       if (updateError) throw updateError;
@@ -257,13 +258,13 @@ export const useLearningSessionTracker = () => {
       if (error) throw error;
 
       if (sessions && sessions.length > 0) {
-        const totalTime = sessions.reduce((sum, session) => 
+        const totalTime = sessions.reduce((sum, session) =>
           sum + (session.duration_minutes || 0), 0);
-        
+
         const validEngagementScores = sessions
           .filter(s => s.engagement_score !== null)
           .map(s => s.engagement_score);
-        
+
         const averageEngagement = validEngagementScores.length > 0
           ? validEngagementScores.reduce((sum, score) => sum + score, 0) / validEngagementScores.length
           : 0;
@@ -352,19 +353,19 @@ export const useLearningSessionTracker = () => {
     currentSession,
     isTracking,
     sessionMetrics,
-    
+
     // セッション制御
     startSession,
     endSession,
     pauseSession,
     resumeSession,
-    
+
     // セッションデータ更新
     updateComprehensionScore,
     updateDifficultyPerception,
     updateSatisfactionRating,
-    
+
     // メトリクス
     loadSessionMetrics
   };
-}; 
+};

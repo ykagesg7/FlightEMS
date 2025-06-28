@@ -1,124 +1,83 @@
-# Scripts フォルダ - 自動化スクリプト集
+# Scripts Directory
 
-このディレクトリには、プロジェクトの各種自動化処理スクリプトが含まれています。
+FlightAcademyTsxプロジェクトの各種処理スクリプトを機能別に整理しています。
 
-## 📁 フォルダ構成
+## 📁 ディレクトリ構造
 
-### 🚁 **ウェイポイント管理** (航空データ処理)
-航空ナビゲーションで使用するウェイポイントデータの管理・変換スクリプト
-
-#### 🔄 マージ・統合
-- `mergeWaypoints.cjs` - 個別ウェイポイントファイルを`Waypoints.json`に統合
-- `mergeWaypoints.js` - 同上（JavaScript版）
-
-#### 📐 座標変換・正規化
-- `convertCoordinates.cjs` - 度分秒 → 10進数座標変換
-- `normalizeCoordinates.cjs` - 座標の小数点以下4桁統一
-
-#### ➕ ウェイポイント追加
-- `addWaypoints.cjs` - waypoints_A.json更新
-- `addWaypointB.cjs` - waypoints_B.json更新
-- `addWaypointsO.cjs` - waypoints_O.json更新
-
-#### 📊 ソート・整理
-- `sortWaypoints.cjs` - 基本ソート機能
-- `sortWaypointsB.cjs` - waypoints_B.jsonアルファベットソート
-- `sortWaypointsC.cjs` - waypoints_C.jsonアルファベットソート
-- `sortWaypointsO.cjs` - waypoints_O.jsonアルファベットソート
-
-#### 🔧 データ修正
-- `updateName1.cjs` - ウェイポイント名称修正（例: オオムタ→オームタ）
-- `checkWaypoint.cjs` - ウェイポイントデータ検証
-
-### ✈️ **CPL試験データ処理** (事業用操縦士試験)
-事業用操縦士学科試験の過去問データベース構築・分析
-
-#### 📄 PDF変換・処理
-- `convert_cpl_exam.py` - CPL試験PDF → 構造化データ変換
-- `convert_new_pdfs_to_unified.py` - 新規PDF処理・統合
-- `process_all_cpl_pdfs.py` - 一括PDF処理
-- `batch_import_new_pdfs.py` - PDF一括インポート
-
-#### 🗄️ データベース処理
-- `bulk_import_exam_data.py` - 試験データ一括インポート
-- `execute_bulk_insertion.py` - バルクSQL実行
-- `phase4_automated_insertion.py` - 自動化INSERT処理
+### 📊 cpl_exam/
+事業用操縦士（CPL）試験関連の処理スクリプト
+- `analyze_cpl_exam_trends.py` - CPL試験傾向分析
+- `process_all_cpl_pdfs.py` - PDF一括処理
+- `convert_cpl_exam.py` - 試験データ変換
 - `import_exam_data.py` - 試験データインポート
-- `import_real_exam_data.py` - 実試験データ処理
-
-#### 📊 分析・レポート
-- `analyze_cpl_exam_trends.py` - CPL試験トレンド分析（16KB, 383行）
-- `analyze_exam_trends.py` - 汎用試験分析（21KB）
-- `generate_analysis_report.py` - 分析レポート生成（12KB）
-
-#### 🧪 テスト・検証
-- `test_db_import.py` - DB処理テスト
+- `import_real_exam_data.py` - 実試験データインポート
+- `bulk_import_exam_data.py` - 一括インポート
+- `batch_import_new_pdfs.py` - PDF一括インポート
 - `test_real_pdf_conversion.py` - PDF変換テスト
-- `simple_pdf_test.py` - 簡易PDF処理テスト
-
-### 📝 **MarkItDown処理** (ドキュメント変換)
-PDF・Word等 → Markdown自動変換システム
-- `markitdown_basic_mcp.py` - 基本MCP変換（5.7KB）
-- `markitdown_simple_mcp.py` - 簡易MCP変換（5.2KB）
-
-### ⚙️ **SQL実行ファイル** (データベース)
-
-#### CPL試験データ (2022-2025年分)
-```
-batch_insert_*CPLTest.sql    - 月別CPL試験データ (23ファイル)
-unified_insert_*CPLTest.sql  - 統合CPL試験データ (12ファイル)
-```
-
-#### システム設定
-- `unified_cpl_schema_migration.sql` - CPLスキーマ移行（21KB）
-- `real_supabase_batch_insert.sql` - Supabase一括処理
-- `batch_insert_学科試験出題範囲（事業用）.sql` - 出題範囲データ（85KB）
+- `generate_analysis_report.py` - 分析レポート生成
 - `create_exam_analysis_tables.sql` - 分析テーブル作成
-- `migrate_exam_data.sql` - データ移行処理
+- `real_exam_data_insert.sql` - 実試験データ挿入
+- `migrate_exam_data.sql` - 試験データマイグレーション
+- `batch_insert_学科試験出題範囲（事業用）.sql` - 学科試験データ挿入
 
-### 🎯 **その他ユーティリティ**
-- `calcAirspeeds.js` - 航空速度計算（7.5KB）
-- `reset-article-stats.js` - 記事統計リセット（4.0KB）
+### 🗺️ waypoints/
+航空ナビゲーション地点（Waypoint）処理スクリプト
+- `addWaypoints.cjs` - Waypoint追加
+- `addWaypointB.cjs` - Waypoint B系統追加
+- `addWaypointsO.cjs` - Waypoint O系統追加
+- `sortWaypoints.cjs` - Waypoint並び替え
+- `sortWaypointsB.cjs` - Waypoint B系統並び替え
+- `sortWaypointsC.cjs` - Waypoint C系統並び替え
+- `sortWaypointsO.cjs` - Waypoint O系統並び替え
+- `mergeWaypoints.cjs` - Waypoint統合（CommonJS）
+- `mergeWaypoints.js` - Waypoint統合（ES Module）
+- `normalizeCoordinates.cjs` - 座標正規化
+- `convertCoordinates.cjs` - 座標変換
+- `checkWaypoint.cjs` - Waypoint検証
 
----
+### 🗄️ database/
+データベース関連処理スクリプト
+- `unified_cpl_schema_migration.sql` - 統合CPLスキーママイグレーション
+- `real_supabase_batch_insert.sql` - Supabase一括挿入
+- `reset-article-stats.js` - 記事統計リセット
 
-## 🚀 **使用方法**
+### 📝 markdown/
+マークダウン文書処理スクリプト
+- `markitdown_simple_mcp.py` - シンプルマークダウン処理
 
-### ✈️ ウェイポイント処理フロー
+### 🔧 utils/
+汎用ユーティリティスクリプト
+- `calcAirspeeds.js` - 航空速度計算
+- `updateName1.cjs` - 名前更新処理
+- `execute_bulk_insertion.py` - 一括挿入実行
+- `phase4_automated_insertion.py` - Phase4自動挿入
+- `test_db_import.py` - データベースインポートテスト
+- `simple_pdf_test.py` - シンプルPDFテスト
+
+## 🚀 使用方法
+
+各ディレクトリ内のスクリプトは、それぞれの機能に特化した処理を行います。
+実行前に適切なPython環境（`.venv`）をアクティブ化し、必要な依存関係をインストールしてください。
+
 ```bash
-# 1. 新しいウェイポイント追加
-node scripts/addWaypoints.cjs
+# Python環境のアクティブ化
+.venv\Scripts\activate
 
-# 2. ソート実行
-node scripts/sortWaypointsB.cjs
+# CPL試験データ処理例
+python scripts/cpl_exam/analyze_cpl_exam_trends.py
 
-# 3. 統合ファイル更新
-node scripts/mergeWaypoints.cjs
+# Waypoint処理例
+node scripts/waypoints/addWaypoints.cjs
 
-# 4. 地域分割実行
-node public/geojson/split-waypoints-regions.mjs
+# データベース処理例
+node scripts/database/reset-article-stats.js
 ```
 
-### 📊 CPL試験データ処理
-```bash
-# PDF → データベース一括処理
-python scripts/process_all_cpl_pdfs.py
+## 📋 注意事項
 
-# トレンド分析実行
-python scripts/analyze_cpl_exam_trends.py
-
-# レポート生成
-python scripts/generate_analysis_report.py
-```
-
-### 📄 MarkItDown変換
-```bash
-# 基本PDF変換
-python scripts/markitdown_basic_mcp.py [PDF_PATH]
-
-# 簡易変換
-python scripts/markitdown_simple_mcp.py [FILE_PATH]
-```
+- スクリプト実行前に必要な環境変数が設定されていることを確認
+- データベース関連スクリプトは本番環境での実行に注意
+- 大量データ処理時はリソース使用量に注意
 
 ---
 
@@ -128,13 +87,6 @@ python scripts/markitdown_simple_mcp.py [FILE_PATH]
 - **SQL処理データ**: CPL試験35ファイル（約8MB）
 - **Python処理**: 17スクリプト（約1.5MB）
 - **JavaScript処理**: 17スクリプト（約0.5MB）
-
----
-
-## ⚠️ **注意事項**
-- **CPL試験SQLファイル**: `phase4_automated_insertion.py`で参照中のため削除禁止
-- **座標変換**: 航空精度（小数点以下4桁）を維持すること
-- **バックアップ**: 大量データ処理前は必ずバックアップを取ること
 
 ---
 

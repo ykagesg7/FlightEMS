@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
+import type { SubjectStats, TestSessionStats } from '../types';
 import supabase from '../utils/supabase';
 
 export interface TestAnswer {
@@ -45,7 +46,7 @@ export const useTestResultTracker = () => {
     }
 
     setIsLoading(true);
-    
+
     try {
       // 1. 個別の回答を記録
       const testResults = answers.map(answer => ({
@@ -81,13 +82,13 @@ export const useTestResultTracker = () => {
           acc[category].correct++;
         }
         return acc;
-      }, {} as Record<string, { total: number; correct: number }>);
+      }, {} as Record<string, SubjectStats>);
 
       // 弱点分析の更新（トリガーが自動実行されるため、手動更新は不要）
       // しかし、推奨コンテンツの更新は手動で行う
       for (const [category, stats] of Object.entries(subjectStats)) {
         const accuracy = (stats.correct / stats.total) * 100;
-        
+
         if (accuracy < 70) { // 70%未満の場合は推奨コンテンツを設定
           const { data: mappings } = await supabase
             .from('learning_test_mapping')
@@ -182,7 +183,7 @@ export const useTestResultTracker = () => {
           acc[sessionId].correctAnswers++;
         }
         return acc;
-      }, {} as Record<string, any>) || {};
+      }, {} as Record<string, TestSessionStats>) || {};
 
       return Object.values(sessionStats)
         .map(session => ({
@@ -218,10 +219,10 @@ export const useTestResultTracker = () => {
       const recentResults = data.slice(-10);
       const earlyResults = data.slice(0, 10);
 
-      const recentAccuracy = earlyResults.length >= 10 
+      const recentAccuracy = earlyResults.length >= 10
         ? (recentResults.filter(r => r.is_correct).length / recentResults.length) * 100
         : overallAccuracy;
-      
+
       const earlyAccuracy = earlyResults.length >= 10
         ? (earlyResults.filter(r => r.is_correct).length / earlyResults.length) * 100
         : overallAccuracy;
@@ -248,4 +249,4 @@ export const useTestResultTracker = () => {
     getTestHistory,
     calculateProgress
   };
-}; 
+};

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js';
+import React, { useEffect, useState } from 'react';
+import { Bar } from 'react-chartjs-2';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
+import { ContentEffectiveness, LearningAnalytics, UserProfile } from '../../types';
 import supabase from '../../utils/supabase';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, LineElement, PointElement } from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
-import { StudySession, LearningAnalytics, ContentEffectiveness, UserProfile } from '../../types';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, LineElement, PointElement);
 
@@ -13,10 +13,9 @@ interface LearningSession {
   id: string;
   user_id: string;
   content_id: string;
-  duration: number;
-  completed: boolean;
+  duration_minutes: number;
+  comprehension_score: number;
   created_at: string;
-  progress_percentage: number;
 }
 
 // テスト結果型
@@ -25,8 +24,67 @@ interface TestResult {
   user_id: string;
   question_id: number;
   is_correct: boolean;
-  answered_at: string;
-  category: string;
+  created_at: string;
+  subject_category: string;
+  response_time_seconds: number;
+}
+
+// ユーザープロファイル型
+interface UserProfile {
+  id: string;
+  user_id: string;
+  current_streak_days: number;
+  longest_streak_days: number;
+  total_study_time_minutes: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// コンテンツ効果分析型
+interface ContentEffectiveness {
+  learning_content_id: string;
+  before_accuracy: number;
+  after_accuracy: number;
+  improvement_rate: number;
+  sample_size: number;
+  measurement_period_start: string;
+  measurement_period_end: string;
+  // プロセス後の型も含む
+  contentId?: string;
+  title?: string;
+  beforeAccuracy?: number;
+  afterAccuracy?: number;
+  improvement?: number;
+  sampleSize?: number;
+}
+
+// 学習分析データ型
+interface LearningAnalytics {
+  totalStudyTime: number;
+  averageTestScore: number;
+  completionRate: number;
+  subjectMastery: Record<string, number>;
+  weeklyProgress: Array<{
+    week: string;
+    minutes: number;
+    score: number;
+  }>;
+  weakAreas: Array<{
+    subject: string;
+    accuracy: number;
+    questionCount: number;
+  }>;
+  strongAreas: Array<{
+    subject: string;
+    accuracy: number;
+    questionCount: number;
+  }>;
+  learningVelocity: number;
+  retentionRate: number;
+  streakData: {
+    current: number;
+    longest: number;
+  };
 }
 
 const LearningAnalyticsDashboard: React.FC = () => {
@@ -49,7 +107,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
 
     try {
       setLoading(true);
-      
+
       // 期間の設定
       const now = new Date();
       let startDate = new Date();
@@ -75,24 +133,24 @@ const LearningAnalyticsDashboard: React.FC = () => {
         // 学習セッションデータ
         supabase
           .from('learning_sessions')
-          .select('duration_minutes, start_time, comprehension_score, content_id')
+          .select('duration_minutes, created_at, comprehension_score, content_id')
           .eq('user_id', user.id)
-          .gte('start_time', startDate.toISOString()),
-        
+          .gte('created_at', startDate.toISOString()),
+
         // テスト結果データ
         supabase
           .from('user_test_results')
           .select('is_correct, subject_category, created_at, response_time_seconds')
           .eq('user_id', user.id)
           .gte('created_at', startDate.toISOString()),
-        
-        // ユーザープロファイル
+
+        // ユーザープロファイル (存在しない場合はnullになる)
         supabase
           .from('user_learning_profiles')
           .select('*')
           .eq('user_id', user.id)
-          .single(),
-        
+          .maybeSingle(),
+
         // コンテンツ効果データ
         supabase
           .from('content_effectiveness')
@@ -102,6 +160,11 @@ const LearningAnalyticsDashboard: React.FC = () => {
 
       if (sessionsResult.error) throw sessionsResult.error;
       if (testResultsResult.error) throw testResultsResult.error;
+
+      // プロファイルエラーをログ出力（必須ではないため継続）
+      if (profileResult.error) {
+        console.warn('User profile loading failed:', profileResult.error);
+      }
 
       const sessions = sessionsResult.data || [];
       const testResults = testResultsResult.data || [];
@@ -184,11 +247,11 @@ const LearningAnalyticsDashboard: React.FC = () => {
       .slice(0, 5);
 
     // 学習速度（分あたりの問題正解数）
-    const learningVelocity = totalStudyTime > 0 
+    const learningVelocity = totalStudyTime > 0
       ? Math.round((testResults.filter(r => r.is_correct).length / totalStudyTime) * 60 * 100) / 100
       : 0;
 
-    // 定着率（初回正解率）  
+    // 定着率（初回正解率）
     const retentionRate = testResults.length > 0 ? averageTestScore : 0;
 
     return {
@@ -211,7 +274,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
   const calculateWeeklyProgress = (sessions: LearningSession[], testResults: TestResult[]) => {
     const weeks = [];
     const now = new Date();
-    
+
     for (let i = 6; i >= 0; i--) {
       const weekStart = new Date(now);
       weekStart.setDate(now.getDate() - (i * 7 + 6));
@@ -219,7 +282,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
       weekEnd.setDate(now.getDate() - (i * 7));
 
       const weekSessions = sessions.filter(s => {
-        const sessionDate = new Date(s.start_time);
+        const sessionDate = new Date(s.created_at);
         return sessionDate >= weekStart && sessionDate <= weekEnd;
       });
 
@@ -326,19 +389,18 @@ const LearningAnalyticsDashboard: React.FC = () => {
         <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
           📊 学習分析ダッシュボード
         </h1>
-        
+
         <div className="flex gap-2">
           {(['week', 'month', 'quarter'] as const).map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                timeRange === range
-                  ? 'bg-indigo-600 text-white'
-                  : theme === 'dark'
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${timeRange === range
+                ? 'bg-indigo-600 text-white'
+                : theme === 'dark'
                   ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
+                }`}
             >
               {range === 'week' ? '1週間' : range === 'month' ? '1ヶ月' : '3ヶ月'}
             </button>
@@ -354,21 +416,21 @@ const LearningAnalyticsDashboard: React.FC = () => {
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">総学習時間</div>
         </div>
-        
+
         <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
           <div className="text-2xl font-bold text-green-600 dark:text-green-400">
             {analytics.averageTestScore}%
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">平均正答率</div>
         </div>
-        
+
         <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
           <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
             {analytics.completionRate}%
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">理解度</div>
         </div>
-        
+
         <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
           <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
             {analytics.streakData.current}日
@@ -390,7 +452,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
           <div className="h-64">
             <Bar data={subjectMasteryData} options={chartOptions} />
           </div>
-          
+
           <div className="space-y-4">
             <div>
               <h3 className="font-semibold text-red-600 dark:text-red-400 mb-2">🔥 強化推奨分野</h3>
@@ -412,7 +474,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
                 </p>
               )}
             </div>
-            
+
             <div>
               <h3 className="font-semibold text-green-600 dark:text-green-400 mb-2">✅ 得意分野</h3>
               {analytics.strongAreas.length > 0 ? (
@@ -446,7 +508,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
           </div>
           <div className="text-xs text-gray-500">問題/時間</div>
         </div>
-        
+
         <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
           <h3 className="font-semibold mb-2">🧠 定着率</h3>
           <div className="text-xl font-bold text-green-600 dark:text-green-400">
@@ -454,7 +516,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
           </div>
           <div className="text-xs text-gray-500">初回正解率</div>
         </div>
-        
+
         <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
           <h3 className="font-semibold mb-2">🏆 最長記録</h3>
           <div className="text-xl font-bold text-purple-600 dark:text-purple-400">
@@ -470,9 +532,8 @@ const LearningAnalyticsDashboard: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">📚 学習コンテンツ効果分析</h2>
           <div className="space-y-3">
             {contentEffectiveness.slice(0, 5).map((content, index) => (
-              <div key={index} className={`p-3 rounded-lg ${
-                theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
-              }`}>
+              <div key={index} className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
+                }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="font-medium">{content.title}</div>
@@ -481,9 +542,8 @@ const LearningAnalyticsDashboard: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className={`text-lg font-bold ${
-                      content.improvement > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-500'
-                    }`}>
+                    <div className={`text-lg font-bold ${content.improvement > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-500'
+                      }`}>
                       {content.improvement > 0 ? '+' : ''}{content.improvement}%
                     </div>
                     <div className="text-xs text-gray-500">
@@ -500,4 +560,4 @@ const LearningAnalyticsDashboard: React.FC = () => {
   );
 };
 
-export default LearningAnalyticsDashboard; 
+export default LearningAnalyticsDashboard;

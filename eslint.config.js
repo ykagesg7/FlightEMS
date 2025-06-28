@@ -1,7 +1,7 @@
 import js from '@eslint/js';
-import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
@@ -31,17 +31,7 @@ export default tseslint.config(
       'prefer-const': 'error',
       'no-case-declarations': 'error',
       'no-useless-catch': 'error',
-      'import/order': ['error', {
-        'newlines-between': 'always',
-        'groups': [
-          'builtin',
-          'external', 
-          'internal',
-          'parent',
-          'sibling',
-          'index'
-        ]
-      }],
+      // 'import/order': プラグイン未インストールのため一時無効化
     },
   }
 );

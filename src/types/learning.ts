@@ -90,11 +90,16 @@ export interface StudySession {
   metadata?: SessionMetadata;
 }
 
+// 学習セッション メタデータ型定義
 export interface SessionMetadata {
-  device?: string;
-  platform?: string;
-  location?: string;
-  referrer?: string;
+  userAgent?: string;
+  screenResolution?: string;
+  timezone?: string;
+  deviceType?: 'mobile' | 'tablet' | 'desktop';
+  studyMode?: 'focused' | 'casual' | 'review';
+  contentLanguage?: 'ja' | 'en';
+  difficultyPreference?: number; // 1-5
+  customNotes?: string;
   [key: string]: string | number | boolean | undefined;
 }
 
@@ -116,4 +121,21 @@ export interface LearningPath {
   estimatedDuration: number;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   prerequisites?: string[];
-} 
+}
+
+// テスト結果統計型定義
+export interface TestSessionStats {
+  sessionId: string;
+  learningContentId?: string;
+  subjectCategory: string;
+  totalQuestions: number;
+  correctAnswers: number;
+  date: string;
+  accuracy: number;
+}
+
+// 科目別統計型定義
+export interface SubjectStats {
+  total: number;
+  correct: number;
+}

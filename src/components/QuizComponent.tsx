@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { QuizQuestion, QuestionType, UserQuizAnswer } from '../types/quiz';
-import { QuestionComponent } from './QuestionComponent'; // Reusing for individual question rendering
 import { useTheme } from '../contexts/ThemeContext';
+import { QuestionType, QuizQuestion, UserQuizAnswer } from '../types/quiz';
+import { QuestionComponent } from './QuestionComponent'; // Reusing for individual question rendering
 
 interface QuizComponentProps {
   quizTitle: string;
@@ -11,8 +11,8 @@ interface QuizComponentProps {
     submitAnswer: string;
     correct: string;
     incorrect: string;
-    startQuiz: string; 
-    quizSummary: string; 
+    startQuiz: string;
+    quizSummary: string;
     showAnswer: string;
     hideAnswer: string;
     // Added from parent (App.tsx -> constants.ts)
@@ -37,15 +37,15 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
     if (question.type === QuestionType.NUMBER_INPUT) {
       isCorrect = parseFloat(answer as string) === question.correctAnswer;
     } else if (question.type === QuestionType.TEXT_INPUT) {
-       isCorrect = (answer as string).trim().toLowerCase() === (question.correctAnswer as string).trim().toLowerCase();
+      isCorrect = (answer as string).trim().toLowerCase() === (question.correctAnswer as string).trim().toLowerCase();
     }
     else {
       isCorrect = answer === question.correctAnswer;
     }
-    
+
     setFeedback(prev => ({
-        ...prev,
-        [questionId]: { isCorrect, explanation: question.explanation, userAnswer: answer }
+      ...prev,
+      [questionId]: { isCorrect, explanation: question.explanation, userAnswer: answer }
     }));
 
     setUserAnswers(prevAnswers => {
@@ -77,16 +77,14 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   const currentFeedback = feedback[currentQuestion.id];
 
   return (
-    <div className={`p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn border ${
-      theme === 'dark' 
-        ? 'bg-slate-800 border-slate-700' 
+    <div className={`p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn border ${theme === 'dark'
+        ? 'bg-slate-800 border-slate-700'
         : 'bg-white border-gray-200'
-    }`}>
+      }`}>
       <h2 className="text-2xl font-bold text-center text-sky-400 mb-6">{quizTitle}</h2>
-      <p className={`text-center mb-6 ${
-        theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
-      }`}>質問 {currentQuestionIndex + 1} / {questions.length}</p>
-      
+      <p className={`text-center mb-6 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+        }`}>質問 {currentQuestionIndex + 1} / {questions.length}</p>
+
       <QuestionComponent
         question={currentQuestion}
         onSubmit={(answer) => handleAnswerSubmit(currentQuestion.id, answer)}

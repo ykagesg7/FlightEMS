@@ -2,7 +2,7 @@
   "defaultModel": "gemini-2.5-pro",
   "telemetry": false,
   "yolo": false,
-  "debug": false,
+  "debug": true,
   "auth": {
     "method": "google"
   },
@@ -31,7 +31,13 @@
       "build",
       ".next",
       "*.log",
-      "*.tmp"
+      "*.tmp",
+      ".venv"
     ]
+  },
+  "interaction": {
+    "maxPromptLength": 10000,
+    "enableAutoComplete": true,
+    "enableContextualSuggestions": true
   }
-} 
+}
