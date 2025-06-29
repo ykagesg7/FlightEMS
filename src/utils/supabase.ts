@@ -2,9 +2,14 @@ import { createBrowserClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../types/database.types';
 
-// Supabaseの設定
-export const supabaseUrl = 'https://fstynltdfdetpyvbrswr.supabase.co';
-export const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzdHlubHRkZmRldHB5dmJyc3dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1MzI1ODcsImV4cCI6MjAzOTEwODU4N30.vzbj7_IjPZPBhJPUHvYLTONpOySASM8npaZIvwUXVG8';
+// Supabaseの設定（環境変数から取得）
+export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+export const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// 環境変数の検証
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Supabase環境変数が設定されていません。VITE_SUPABASE_URLとVITE_SUPABASE_ANON_KEYを設定してください。');
+}
 
 // 環境設定
 const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost';
