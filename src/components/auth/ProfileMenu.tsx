@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
-import { useAuthStore } from '../../stores/authStore';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useAuthStore } from '../../stores/authStore';
 import supabase, { getProfileWithRetry } from '../../utils/supabase';
 
 const ProfileMenu = () => {
@@ -21,12 +21,12 @@ const ProfileMenu = () => {
     const fetchProfile = async () => {
       if (user && !profile && !localProfile && !isLoading) {
         setIsLoading(true);
-        console.log('プロフィール情報取得を試みます', { 
+        console.log('プロフィール情報取得を試みます', {
           userId: user.id,
           hasAuthContext: !!profile,
           hasLocalProfile: !!localProfile
         });
-        
+
         try {
           // セッション状態を確認
           const { data: sessionData } = await supabase.auth.getSession();
@@ -34,20 +34,20 @@ const ProfileMenu = () => {
             hasSession: !!sessionData.session,
             userId: sessionData.session?.user?.id
           });
-          
+
           // 拡張関数を使用してプロフィールを取得
           const { data, error, warning } = await getProfileWithRetry(user.id);
-          
+
           if (error) {
             console.error('ProfileMenu: プロフィール取得エラー:', error);
-            
+
             // 認証状態をリフレッシュして再試行
             console.log('ProfileMenu: 認証状態をリフレッシュして再取得を試みます');
             await supabase.auth.refreshSession();
-            
+
             // リフレッシュ後の再取得を試みる
             const retryResult = await getProfileWithRetry(user.id);
-            
+
             if (!retryResult.error && retryResult.data) {
               console.log('ProfileMenu: リフレッシュ後のプロフィール取得成功:', retryResult.data);
               setLocalProfile(retryResult.data);
@@ -81,7 +81,7 @@ const ProfileMenu = () => {
         }
       }
     };
-    
+
     fetchProfile();
   }, [user, profile, localProfile, isLoading]);
 
@@ -92,7 +92,7 @@ const ProfileMenu = () => {
         setIsOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -128,11 +128,10 @@ const ProfileMenu = () => {
   // ユーザー情報もプロフィールもない場合のフォールバック
   if (!user) {
     return (
-      <div className={`px-4 py-2 rounded-md transition-colors ${
-        theme === 'dark'
-          ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-          : 'bg-indigo-500 hover:bg-indigo-600 text-white'
-      }`}>
+      <div className={`px-4 py-2 rounded-md transition-colors ${theme === 'dark'
+        ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+        : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+        }`}>
         ログイン
       </div>
     );
@@ -141,11 +140,10 @@ const ProfileMenu = () => {
   // ユーザー情報はあるがプロフィールがロード中の場合
   if (isLoading) {
     return (
-      <div className={`px-4 py-2 rounded-md transition-colors ${
-        theme === 'dark'
-          ? 'bg-indigo-800 text-white'
-          : 'bg-indigo-700 text-white'
-      }`}>
+      <div className={`px-4 py-2 rounded-md transition-colors ${theme === 'dark'
+        ? 'bg-indigo-800 text-white'
+        : 'bg-indigo-700 text-white'
+        }`}>
         <div className="flex items-center space-x-2">
           <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
           <span>ロード中...</span>
@@ -161,6 +159,14 @@ const ProfileMenu = () => {
     return username ? username.charAt(0).toUpperCase() : 'U';
   };
 
+  // 画像エラー状態管理（無限ループ防止）
+  const [imageError, setImageError] = useState(false);
+
+  // プロフィールが変更されたらエラー状態をリセット
+  useEffect(() => {
+    setImageError(false);
+  }, [effectiveProfile?.avatar_url]);
+
   return (
     <>
       <div className="relative z-40" ref={dropdownRef}>
@@ -171,20 +177,19 @@ const ProfileMenu = () => {
           aria-label="ユーザーメニュー"
         >
           <div className="flex items-center space-x-1">
-            {effectiveProfile?.avatar_url ? (
+            {effectiveProfile?.avatar_url && !imageError ? (
               <img
                 src={effectiveProfile.avatar_url as string}
                 alt="プロフィール画像"
                 className="w-8 h-8 rounded-full object-cover border-2 border-indigo-300"
                 onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = 'https://via.placeholder.com/40?text=' + getInitial();
+                  console.warn('アバター画像の読み込みに失敗しました:', effectiveProfile.avatar_url);
+                  setImageError(true);
                 }}
               />
             ) : (
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                theme === 'dark' ? 'bg-indigo-600 border-indigo-400' : 'bg-indigo-500 border-indigo-300'
-              } text-white font-semibold`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${theme === 'dark' ? 'bg-indigo-600 border-indigo-400' : 'bg-indigo-500 border-indigo-300'
+                } text-white font-semibold`}>
                 {getInitial()}
               </div>
             )}
@@ -204,30 +209,26 @@ const ProfileMenu = () => {
         </button>
 
         {isOpen && (
-          <div className={`absolute right-0 mt-2 w-56 rounded-md shadow-lg py-1 z-50 ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          } ring-1 ring-black ring-opacity-5 transform origin-top-right transition-all duration-200`}>
-            <div className={`px-4 py-3 text-sm border-b ${
-              theme === 'dark' ? 'text-gray-300 border-gray-700' : 'text-gray-700 border-gray-200'
-            }`}>
+          <div className={`absolute right-0 mt-2 w-56 rounded-md shadow-lg py-1 z-50 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+            } ring-1 ring-black ring-opacity-5 transform origin-top-right transition-all duration-200`}>
+            <div className={`px-4 py-3 text-sm border-b ${theme === 'dark' ? 'text-gray-300 border-gray-700' : 'text-gray-700 border-gray-200'
+              }`}>
               <p className="font-semibold">{(effectiveProfile?.full_name as string) || (effectiveProfile?.username as string) || user.email?.split('@')[0] || 'ユーザー'}</p>
               <p className="text-xs truncate">{user.email}</p>
               {(effectiveProfile?.roll as string) && (
-                <p className={`text-xs mt-1 inline-block px-2 py-1 rounded-full ${
-                  theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
-                }`}>
+                <p className={`text-xs mt-1 inline-block px-2 py-1 rounded-full ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+                  }`}>
                   {(effectiveProfile?.roll as string) === 'Student' ? '学生' : (effectiveProfile?.roll as string) === 'Teacher' ? '教師' : (effectiveProfile?.roll as string)}
                 </p>
               )}
             </div>
-            
+
             <Link
               to="/profile"
-              className={`block px-4 py-2 text-sm ${
-                theme === 'dark' 
-                  ? 'text-gray-300 hover:bg-gray-700' 
-                  : 'text-gray-700 hover:bg-gray-100'
-              } flex items-center`}
+              className={`block px-4 py-2 text-sm ${theme === 'dark'
+                ? 'text-gray-300 hover:bg-gray-700'
+                : 'text-gray-700 hover:bg-gray-100'
+                } flex items-center`}
               onClick={() => setIsOpen(false)}
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -235,14 +236,13 @@ const ProfileMenu = () => {
               </svg>
               プロフィール設定
             </Link>
-            
+
             <Link
               to="/learning"
-              className={`block px-4 py-2 text-sm ${
-                theme === 'dark' 
-                  ? 'text-gray-300 hover:bg-gray-700' 
-                  : 'text-gray-700 hover:bg-gray-100'
-              } flex items-center`}
+              className={`block px-4 py-2 text-sm ${theme === 'dark'
+                ? 'text-gray-300 hover:bg-gray-700'
+                : 'text-gray-700 hover:bg-gray-100'
+                } flex items-center`}
               onClick={() => setIsOpen(false)}
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -250,14 +250,13 @@ const ProfileMenu = () => {
               </svg>
               学習コンテンツ
             </Link>
-            
+
             <button
               onClick={confirmLogout}
-              className={`block w-full text-left px-4 py-2 text-sm ${
-                theme === 'dark' 
-                  ? 'text-red-400 hover:bg-gray-700' 
-                  : 'text-red-600 hover:bg-gray-100'
-              } flex items-center`}
+              className={`block w-full text-left px-4 py-2 text-sm ${theme === 'dark'
+                ? 'text-red-400 hover:bg-gray-700'
+                : 'text-red-600 hover:bg-gray-100'
+                } flex items-center`}
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -271,19 +270,17 @@ const ProfileMenu = () => {
       {/* ログアウト確認ダイアログ */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className={`${
-            theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
-          } p-6 rounded-lg shadow-xl max-w-md w-full mx-4`}>
+          <div className={`${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
+            } p-6 rounded-lg shadow-xl max-w-md w-full mx-4`}>
             <h3 className="text-lg font-semibold mb-3">ログアウトの確認</h3>
             <p className="mb-4">ログアウトしてもよろしいですか？</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={cancelLogout}
-                className={`px-4 py-2 rounded-md ${
-                  theme === 'dark'
-                    ? 'bg-gray-700 hover:bg-gray-600'
-                    : 'bg-gray-200 hover:bg-gray-300'
-                }`}
+                className={`px-4 py-2 rounded-md ${theme === 'dark'
+                  ? 'bg-gray-700 hover:bg-gray-600'
+                  : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
               >
                 キャンセル
               </button>
@@ -301,4 +298,4 @@ const ProfileMenu = () => {
   );
 };
 
-export default ProfileMenu; 
+export default ProfileMenu;
