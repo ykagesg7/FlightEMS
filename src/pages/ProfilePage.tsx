@@ -167,7 +167,7 @@ const ProfilePage = () => {
       let finalImageUrl = publicUrl;
 
       // パブリックアクセスが失敗した場合は署名付きURLを生成
-      if (!accessTestResult.canAccess && !bucketData?.public) {
+      if (!accessTestResult.canAccess) {
         console.log('🔐 パブリックアクセス失敗。署名付きURLを生成中...');
 
         const { data: signedUrlData, error: signedError } = await supabase
