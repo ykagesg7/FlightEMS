@@ -64,6 +64,22 @@ const ProfilePage = () => {
     }
   }, [profile]);
 
+  // 画像アクセステスト関数
+  const testImageAccess = async (imageUrl: string): Promise<{ canAccess: boolean; error?: string }> => {
+    try {
+      const response = await fetch(imageUrl, { method: 'HEAD' });
+      return {
+        canAccess: response.ok,
+        error: response.ok ? undefined : `HTTP ${response.status}: ${response.statusText}`
+      };
+    } catch (error) {
+      return {
+        canAccess: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  };
+
   // アバター画像アップロード処理
   const handleAvatarUpload = useCallback(async (file: File) => {
     if (!file || !user) return;
@@ -115,11 +131,57 @@ const ProfilePage = () => {
         .from('avatars')
         .getPublicUrl(uploadData.path);
 
+      console.log('📁 ストレージURL生成:', {
+        path: uploadData.path,
+        publicUrl: publicUrl,
+        hasPublicUrl: !!publicUrl
+      });
+
       if (!publicUrl) {
         throw new Error('アップロードしたファイルのURLを取得できませんでした');
       }
 
+      // ストレージバケット情報を確認
+      let bucketData: any = null;
+      try {
+        const { data: bucketInfo, error: bucketError } = await supabase
+          .storage
+          .getBucket('avatars');
+
+        bucketData = bucketInfo;
+        console.log('🪣 avatarsバケット情報:', {
+          bucket: bucketData,
+          error: bucketError,
+          isPublic: bucketData?.public
+        });
+      } catch (bucketErr) {
+        console.warn('バケット情報取得エラー:', bucketErr);
+      }
+
       setUploadProgress(80);
+
+      // 画像アクセステストを実行
+      const accessTestResult = await testImageAccess(publicUrl);
+      console.log('🔍 画像アクセステスト結果:', accessTestResult);
+
+      let finalImageUrl = publicUrl;
+
+      // パブリックアクセスが失敗した場合は署名付きURLを生成
+      if (!accessTestResult.canAccess && !bucketData?.public) {
+        console.log('🔐 パブリックアクセス失敗。署名付きURLを生成中...');
+
+        const { data: signedUrlData, error: signedError } = await supabase
+          .storage
+          .from('avatars')
+          .createSignedUrl(uploadData.path, 60 * 60 * 24 * 365); // 1年間有効
+
+        if (signedError) {
+          console.warn('署名付きURL生成エラー:', signedError);
+        } else if (signedUrlData?.signedUrl) {
+          finalImageUrl = signedUrlData.signedUrl;
+          console.log('✅ 署名付きURL生成成功:', finalImageUrl);
+        }
+      }
 
       // プロフィールの存在確認と更新
       const { data: existingProfile, error: selectError } = await supabase
@@ -165,14 +227,16 @@ const ProfilePage = () => {
 
       setUploadProgress(90);
 
-      // 画像キャッシュ回避のため、URLにタイムスタンプを追加
-      const timestampedUrl = `${publicUrl}?t=${Date.now()}`;
+      // 画像キャッシュ回避のため、使用するURLにタイムスタンプを追加
+      const timestampedUrl = `${finalImageUrl}?t=${Date.now()}`;
 
       console.log('🖼️ アバター画像アップロード完了:', {
         originalUrl: publicUrl,
+        finalImageUrl: finalImageUrl,
         timestampedUrl: timestampedUrl,
         fileName: fileName,
-        uploadPath: uploadData.path
+        uploadPath: uploadData.path,
+        isSignedUrl: finalImageUrl !== publicUrl
       });
 
       // 状態を更新
@@ -181,11 +245,12 @@ const ProfilePage = () => {
 
       console.log('📝 ローカル状態を更新:', {
         tempAvatarUrl: timestampedUrl,
-        avatarUrl: timestampedUrl
+        avatarUrl: timestampedUrl,
+        urlType: finalImageUrl !== publicUrl ? 'signed' : 'public'
       });
 
-      // プロフィールストアを更新（データベースには元のURLを保存）
-      const updateResult = await updateProfile({ avatar_url: publicUrl });
+      // プロフィールストアを更新（データベースにはfinalImageUrlを保存）
+      const updateResult = await updateProfile({ avatar_url: finalImageUrl });
 
       console.log('🔄 プロフィールストア更新結果:', updateResult);
 
