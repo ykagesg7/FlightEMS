@@ -50,6 +50,12 @@ const ProfilePage = () => {
   // プロフィール情報の初期化
   useEffect(() => {
     if (profile) {
+      console.log('ProfilePage: プロフィール情報を更新:', {
+        username: profile.username,
+        full_name: profile.full_name,
+        avatar_url: profile.avatar_url,
+        hasAvatar: !!profile.avatar_url
+      });
       setUsername(profile.username || '');
       setFullName(profile.full_name || '');
       const currentAvatarUrl = profile.avatar_url || '';
@@ -162,12 +168,26 @@ const ProfilePage = () => {
       // 画像キャッシュ回避のため、URLにタイムスタンプを追加
       const timestampedUrl = `${publicUrl}?t=${Date.now()}`;
 
+      console.log('🖼️ アバター画像アップロード完了:', {
+        originalUrl: publicUrl,
+        timestampedUrl: timestampedUrl,
+        fileName: fileName,
+        uploadPath: uploadData.path
+      });
+
       // 状態を更新
       setTempAvatarUrl(timestampedUrl);
       setAvatarUrl(timestampedUrl);
 
+      console.log('📝 ローカル状態を更新:', {
+        tempAvatarUrl: timestampedUrl,
+        avatarUrl: timestampedUrl
+      });
+
       // プロフィールストアを更新（データベースには元のURLを保存）
-      updateProfile({ avatar_url: publicUrl });
+      const updateResult = await updateProfile({ avatar_url: publicUrl });
+
+      console.log('🔄 プロフィールストア更新結果:', updateResult);
 
       setUploadProgress(100);
       setSuccess('プロフィール画像を更新しました');
@@ -506,12 +526,15 @@ const ProfilePage = () => {
                       alt="プロフィール画像"
                       className="w-full h-full rounded-full object-cover border-4 border-indigo-400 shadow-lg transition-transform duration-300 group-hover:scale-105"
                       onError={() => {
-                        console.warn('Avatar image failed to load:', tempAvatarUrl);
+                        console.error('アバター画像の読み込みに失敗:', tempAvatarUrl);
+                        console.error('tempAvatarUrl:', tempAvatarUrl);
+                        console.error('avatarUrl:', avatarUrl);
+                        console.error('profile.avatar_url:', profile?.avatar_url);
                         setTempAvatarUrl('');
                         setAvatarUrl('');
                       }}
                       onLoad={() => {
-                        console.log('Avatar image loaded successfully:', tempAvatarUrl);
+                        console.log('✅ アバター画像の読み込み成功:', tempAvatarUrl);
                       }}
                     />
                   ) : (
@@ -520,6 +543,16 @@ const ProfilePage = () => {
                       : 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white'
                       }`}>
                       <span className="text-3xl font-bold">{getInitial()}</span>
+                    </div>
+                  )}
+
+                  {/* デバッグ情報表示（開発環境のみ） */}
+                  {import.meta.env.MODE === 'development' && (
+                    <div className="absolute -bottom-32 left-0 right-0 text-xs bg-black/80 text-white p-2 rounded max-w-xs break-all">
+                      <div>tempAvatarUrl: {tempAvatarUrl || '未設定'}</div>
+                      <div>avatarUrl: {avatarUrl || '未設定'}</div>
+                      <div>profile.avatar_url: {profile?.avatar_url || '未設定'}</div>
+                      <div>条件: {tempAvatarUrl ? 'true (画像表示)' : 'false (イニシャル表示)'}</div>
                     </div>
                   )}
 

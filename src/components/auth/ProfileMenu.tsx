@@ -201,6 +201,14 @@ const ProfileMenu = () => {
             <span className={`${theme === 'dark' ? 'text-white' : 'text-gray-700'} hidden sm:inline-block max-w-[100px] truncate`}>
               {(effectiveProfile?.username as string) || user.email?.split('@')[0] || 'ユーザー'}
             </span>
+
+            {/* デバッグ情報（開発環境のみ） */}
+            {import.meta.env.MODE === 'development' && (
+              <div className="hidden lg:block text-xs opacity-50">
+                Avatar: {effectiveProfile?.avatar_url ? '有り' : '無し'}
+                {imageError && ' (エラー)'}
+              </div>
+            )}
             <svg
               className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} transition-transform ${isOpen ? 'rotate-180' : ''}`}
               fill="none"
