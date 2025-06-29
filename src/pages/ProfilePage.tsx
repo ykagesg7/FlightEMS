@@ -159,11 +159,14 @@ const ProfilePage = () => {
 
       setUploadProgress(90);
 
-      // 状態を更新
-      setTempAvatarUrl(publicUrl);
-      setAvatarUrl(publicUrl);
+      // 画像キャッシュ回避のため、URLにタイムスタンプを追加
+      const timestampedUrl = `${publicUrl}?t=${Date.now()}`;
 
-      // プロフィールストアを更新
+      // 状態を更新
+      setTempAvatarUrl(timestampedUrl);
+      setAvatarUrl(timestampedUrl);
+
+      // プロフィールストアを更新（データベースには元のURLを保存）
       updateProfile({ avatar_url: publicUrl });
 
       setUploadProgress(100);
@@ -498,6 +501,7 @@ const ProfilePage = () => {
                 <div className="relative w-32 h-32 mx-auto">
                   {tempAvatarUrl ? (
                     <img
+                      key={tempAvatarUrl} // keyを追加してReactが強制的に再レンダリングするように
                       src={tempAvatarUrl}
                       alt="プロフィール画像"
                       className="w-full h-full rounded-full object-cover border-4 border-indigo-400 shadow-lg transition-transform duration-300 group-hover:scale-105"

@@ -165,7 +165,11 @@ const ProfileMenu = () => {
   // プロフィールが変更されたらエラー状態をリセット
   useEffect(() => {
     setImageError(false);
-  }, [effectiveProfile?.avatar_url]);
+    // プロフィール更新時にlocalProfileもクリアして最新情報を取得
+    if (effectiveProfile?.avatar_url && effectiveProfile?.avatar_url !== localProfile?.avatar_url) {
+      setLocalProfile(null);
+    }
+  }, [effectiveProfile?.avatar_url, localProfile?.avatar_url]);
 
   return (
     <>
@@ -179,6 +183,7 @@ const ProfileMenu = () => {
           <div className="flex items-center space-x-1">
             {effectiveProfile?.avatar_url && !imageError ? (
               <img
+                key={effectiveProfile.avatar_url} // keyを追加してReactが強制的に再レンダリングするように
                 src={effectiveProfile.avatar_url as string}
                 alt="プロフィール画像"
                 className="w-8 h-8 rounded-full object-cover border-2 border-indigo-300"
