@@ -230,4 +230,170 @@ export const refreshAuthState = async () => {
   }
 };
 
+// アバター画像アップロード関数
+export const uploadAvatarImage = async (file: File, userId: string): Promise<{ success: boolean; url?: string; error?: string }> => {
+  try {
+    // ファイル形式チェック
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      return {
+        success: false,
+        error: '対応していないファイル形式です。JPEG、PNG、GIF、WebPのみ対応しています。'
+      };
+    }
+
+    // ファイルサイズチェック (5MB制限)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      return {
+        success: false,
+        error: 'ファイルサイズが大きすぎます。5MB以下にしてください。'
+      };
+    }
+
+    // 既存のアバター削除
+    const { data: existingFiles } = await supabase.storage
+      .from('avatars')
+      .list(userId);
+
+    if (existingFiles && existingFiles.length > 0) {
+      const filesToDelete = existingFiles.map(file => `${userId}/${file.name}`);
+      await supabase.storage
+        .from('avatars')
+        .remove(filesToDelete);
+    }
+
+    // 新しいファイル名を作成（タイムスタンプ付き）
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${userId}/avatar_${Date.now()}.${fileExt}`;
+
+    // ファイルアップロード
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      return {
+        success: false,
+        error: `アップロードエラー: ${uploadError.message}`
+      };
+    }
+
+    // パブリックURLを取得
+    const { data: urlData } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(uploadData.path);
+
+    if (!urlData?.publicUrl) {
+      return {
+        success: false,
+        error: 'アップロード後のURL取得に失敗しました。'
+      };
+    }
+
+    return {
+      success: true,
+      url: urlData.publicUrl
+    };
+
+  } catch (error) {
+    console.error('Avatar upload error:', error);
+    return {
+      success: false,
+      error: '予期しないエラーが発生しました。'
+    };
+  }
+};
+
+// プロフィール更新関数
+export const updateUserProfile = async (userId: string, updates: {
+  username?: string;
+  full_name?: string;
+  avatar_url?: string;
+  website?: string;
+}): Promise<{ success: boolean; error?: string; data?: any }> => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Profile update error:', error);
+      return {
+        success: false,
+        error: `プロフィール更新エラー: ${error.message}`
+      };
+    }
+
+    return {
+      success: true,
+      data
+    };
+
+  } catch (error) {
+    console.error('Profile update error:', error);
+    return {
+      success: false,
+      error: '予期しないエラーが発生しました。'
+    };
+  }
+};
+
+// アバター削除関数
+export const deleteAvatar = async (userId: string, avatarUrl?: string): Promise<{ success: boolean; error?: string }> => {
+  try {
+    // Storage上のファイル削除
+    const { data: existingFiles } = await supabase.storage
+      .from('avatars')
+      .list(userId);
+
+    if (existingFiles && existingFiles.length > 0) {
+      const filesToDelete = existingFiles.map(file => `${userId}/${file.name}`);
+      const { error: deleteError } = await supabase.storage
+        .from('avatars')
+        .remove(filesToDelete);
+
+      if (deleteError) {
+        console.error('Delete error:', deleteError);
+      }
+    }
+
+    // プロフィールのavatar_urlをクリア
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        avatar_url: null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId);
+
+    if (updateError) {
+      console.error('Profile update error:', updateError);
+      return {
+        success: false,
+        error: `プロフィール更新エラー: ${updateError.message}`
+      };
+    }
+
+    return { success: true };
+
+  } catch (error) {
+    console.error('Avatar delete error:', error);
+    return {
+      success: false,
+      error: '予期しないエラーが発生しました。'
+    };
+  }
+};
+
 export default supabase;
