@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FlightPlan, RouteSegment } from '../../types/index';
+import { calculateAirspeeds, calculateTAS } from '../../utils';
 import { formatBearing } from '../../utils/format';
-import { calculateTAS, calculateAirspeeds } from '../../utils';
 
 interface FlightSummaryProps {
   flightPlan: FlightPlan;
@@ -52,14 +52,14 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
   // 時間を「hh:mm:ss」形式でフォーマットする関数
   const formatTime = useCallback((date: Date): string => {
     if (isNaN(date.getTime())) {
-        return '--:--:--';
+      return '--:--:--';
     }
     return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
   }, []);
 
   // 状態として保持するルートセグメント(編集用)
   const [editableSegments, setEditableSegments] = useState<RouteSegment[]>(flightPlan.routeSegments || []);
-  
+
   // 前回のrouteSegmentsの長さを記録
   const prevSegmentsLengthRef = useRef<number>(flightPlan.routeSegments?.length || 0);
   // ユーザーによる編集が行われたかどうかのフラグ
@@ -69,7 +69,9 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
   useEffect(() => {
     // 初期マウント時に現在のrouteSegmentsの長さを記録
     prevSegmentsLengthRef.current = flightPlan.routeSegments?.length || 0;
-    console.log('FlightSummaryコンポーネントが初期化されました');
+    if (import.meta.env.MODE === 'development') {
+      console.log('FlightSummaryコンポーネントが初期化されました');
+    }
   }, []);
 
   // flightPlan.routeSegmentsが外部から変更された場合にeditableSegmentsを同期
@@ -77,10 +79,12 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
   useEffect(() => {
     const currentLength = flightPlan.routeSegments?.length || 0;
     const prevLength = prevSegmentsLengthRef.current;
-    
+
     // ルート数が変わった場合やルートが初期化された時のみ同期する
     if (currentLength !== prevLength || currentLength === 0) {
-      console.log(`ルートセグメント数が変更されました: ${prevLength} -> ${currentLength}、同期します`);
+      if (import.meta.env.MODE === 'development') {
+        console.log(`ルートセグメント数が変更されました: ${prevLength} -> ${currentLength}、同期します`);
+      }
       setEditableSegments(flightPlan.routeSegments || []);
       prevSegmentsLengthRef.current = currentLength;
       userEditedRef.current = false; // 同期されたためフラグをリセット
@@ -90,14 +94,16 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       const hasStructuralChanges = flightPlan.routeSegments.some((segment, index) => {
         const editableSegment = editableSegments[index];
         return !editableSegment ||
-               segment.from !== editableSegment.from ||
-               segment.to !== editableSegment.to ||
-               segment.distance !== editableSegment.distance ||
-               segment.bearing !== editableSegment.bearing;
+          segment.from !== editableSegment.from ||
+          segment.to !== editableSegment.to ||
+          segment.distance !== editableSegment.distance ||
+          segment.bearing !== editableSegment.bearing;
       });
-      
+
       if (hasStructuralChanges) {
-        console.log('ルートセグメント構造変更を検出しました、同期します');
+        if (import.meta.env.MODE === 'development') {
+          console.log('ルートセグメント構造変更を検出しました、同期します');
+        }
         setEditableSegments(flightPlan.routeSegments);
       }
     }
@@ -110,16 +116,16 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       return;
     }
     console.log('ETAs再計算を開始します.');
-    
+
     // 出発時刻をパース
     let currentTime = parseTimeString(flightPlan.departureTime);
     if (isNaN(currentTime.getTime())) {
-        console.error("無効な出発時刻です", flightPlan.departureTime);
-        return;
+      console.error("無効な出発時刻です", flightPlan.departureTime);
+      return;
     }
 
     let totalDurationSeconds = 0;
-    
+
     // 各セグメントを処理
     const calculatedSegments = editableSegments.map((segment, index) => {
       console.log(`セグメント[${index}]を計算 ${segment.from} -> ${segment.to}`, {
@@ -127,21 +133,21 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
         speed: segment.speed,
         altitude: segment.altitude
       });
-      
+
       // 必須パラメータのチェック
       if (!segment.distance || isNaN(segment.distance) || segment.distance <= 0) {
         console.warn(`セグメント[${index}]の距離が無効です`, segment.distance);
         return { ...segment, eta: '--:--:--' };
       }
-      
+
       if (!segment.speed || isNaN(segment.speed) || segment.speed <= 0) {
         console.warn(`セグメント[${index}]の速度が無効です`, segment.speed);
         return { ...segment, eta: '--:--:--' };
       }
-      
+
       // 高度に基づくTASを計算(高精度)
       let tas = segment.speed; // デフォルトはCAS=TASと仮定
-      
+
       if (segment.altitude && !isNaN(segment.altitude) && segment.altitude > 0) {
         // 高精度計算モデルを使用
         const airspeedsResult = calculateAirspeeds(
@@ -150,7 +156,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
           flightPlan.groundTempC ?? 15, // デフォルト値として15°C
           flightPlan.groundElevationFt ?? 0 // デフォルト値として0ft
         );
-        
+
         if (airspeedsResult) {
           tas = airspeedsResult.tasKt;
           console.log(`セグメント[${index}]のTAS計算結果:`, {
@@ -171,53 +177,53 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       } else {
         console.log(`セグメント[${index}]は高度情報がないため、CAS=TASとして計算`, segment.speed);
       }
-      
+
       // 所要時間の計算（分単位）
       const eteMinutes = (segment.distance / tas) * 60;
       console.log(`セグメント[${index}]の所要時間(分):`, eteMinutes);
-      
+
       // hh:mm:ss 形式に変換
       const eteHours = Math.floor(eteMinutes / 60);
       const eteMins = Math.floor(eteMinutes % 60);
       const eteSecs = Math.floor((eteMinutes - Math.floor(eteMinutes)) * 60);
       const durationString = `${eteHours.toString().padStart(2, '0')}:${eteMins.toString().padStart(2, '0')}:${eteSecs.toString().padStart(2, '0')}`;
       console.log(`セグメント[${index}]の所要時間(hh:mm:ss):`, durationString);
-      
+
       // 時間を秒単位に変換
       const durationSeconds = eteHours * 3600 + eteMins * 60 + eteSecs;
-      
+
       // 到着時刻を計算
       const segmentEndTime = new Date(currentTime.getTime() + durationSeconds * 1000);
-      
+
       // 時刻をフォーマット
       const formattedEta = formatTime(segmentEndTime);
       console.log(`セグメント[${index}]の到着時刻:`, formattedEta);
-      
+
       // 累積時間を更新
       totalDurationSeconds += durationSeconds;
       currentTime = segmentEndTime;
-      
+
       // 更新されたセグメントを返す
       return {
         ...segment,
         eta: formattedEta,
       };
     });
-    
+
     // 総所要時間を hh:mm:ss 形式に変換
     const totalHours = Math.floor(totalDurationSeconds / 3600);
     const totalMinutes = Math.floor((totalDurationSeconds % 3600) / 60);
     const totalSeconds = totalDurationSeconds % 60;
     const formattedEte = `${totalHours.toString().padStart(2, '0')}:${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
     console.log("総所要時間:", formattedEte);
-    
+
     // 最終目的地の到着時刻
     const lastCalculatedSegment = calculatedSegments.length > 0 ? calculatedSegments[calculatedSegments.length - 1] : null;
     const finalEta = lastCalculatedSegment?.eta || '--:--:--';
     console.log("最終到着時刻:", finalEta);
-    
+
     console.log("ETAs再計算完了");
-    
+
     return {
       routeSegments: calculatedSegments,
       eta: finalEta,
@@ -229,15 +235,15 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
   const handleSpeedChange = useCallback((index: number, newSpeed: string) => {
     const speed = parseInt(newSpeed, 10);
     if (newSpeed === '' || (isNaN(speed) || speed <= 0)) {
-       setEditableSegments(prev => {
-         const newSegments = [...prev];
-         newSegments[index] = { ...newSegments[index], speed: NaN };
-         return newSegments;
-       });
-       userEditedRef.current = true; // ユーザー編集フラグをセット
-       
-       // 速度が変更されたので、遅延なしですぐに再計算を実行
-       setTimeout(() => {
+      setEditableSegments(prev => {
+        const newSegments = [...prev];
+        newSegments[index] = { ...newSegments[index], speed: NaN };
+        return newSegments;
+      });
+      userEditedRef.current = true; // ユーザー編集フラグをセット
+
+      // 速度が変更されたので、遅延なしですぐに再計算を実行
+      setTimeout(() => {
         const updatedPlan = recalculateETAs();
         if (updatedPlan) {
           setFlightPlan((prev: FlightPlan) => ({
@@ -247,9 +253,9 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
             ete: updatedPlan.ete,
           }));
         }
-       }, 10);
-       
-       return;
+      }, 10);
+
+      return;
     }
 
     setEditableSegments(prev => {
@@ -258,7 +264,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       return newSegments;
     });
     userEditedRef.current = true; // ユーザー編集フラグをセット
-    
+
     // 速度が変更されたので、遅延なしですぐに再計算を実行
     setTimeout(() => {
       const updatedPlan = recalculateETAs();
@@ -277,15 +283,15 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
   const handleAltitudeChange = useCallback((index: number, newAltitude: string) => {
     const altitude = parseInt(newAltitude, 10);
     if (newAltitude === '' || (isNaN(altitude) || altitude < 0)) {
-       setEditableSegments(prev => {
-         const newSegments = [...prev];
-         newSegments[index] = { ...newSegments[index], altitude: NaN };
-         return newSegments;
-       });
-       userEditedRef.current = true; // ユーザー編集フラグをセット
-       
-       // 高度が変更されたので、遅延なしですぐに再計算を実行
-       setTimeout(() => {
+      setEditableSegments(prev => {
+        const newSegments = [...prev];
+        newSegments[index] = { ...newSegments[index], altitude: NaN };
+        return newSegments;
+      });
+      userEditedRef.current = true; // ユーザー編集フラグをセット
+
+      // 高度が変更されたので、遅延なしですぐに再計算を実行
+      setTimeout(() => {
         const updatedPlan = recalculateETAs();
         if (updatedPlan) {
           setFlightPlan((prev: FlightPlan) => ({
@@ -295,9 +301,9 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
             ete: updatedPlan.ete,
           }));
         }
-       }, 10);
-       
-       return;
+      }, 10);
+
+      return;
     }
 
     setEditableSegments(prev => {
@@ -306,7 +312,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       return newSegments;
     });
     userEditedRef.current = true; // ユーザー編集フラグをセット
-    
+
     // 高度が変更されたので、遅延なしですぐに再計算を実行
     setTimeout(() => {
       const updatedPlan = recalculateETAs();
@@ -339,7 +345,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
           userEditedRef.current = false;
         }
       }, 1000); // 念のため500msから1000msに
-      
+
       return () => clearTimeout(timer);
     }
   }, [flightPlan.departureTime, editableSegments, recalculateETAs, setFlightPlan]);
@@ -374,11 +380,11 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
             </div>
           </div>
         </div>
-        
+
         {editableSegments && editableSegments.length > 0 && (
           <div className="mt-4">
             <h3 className="text-sm md:text-base font-medium text-gray-200 mb-2">ルートセグメント</h3>
-            
+
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-600 text-xs md:text-sm">
                 <thead className="bg-gray-700">
@@ -448,4 +454,4 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
   );
 };
 
-export default FlightSummary; 
+export default FlightSummary;

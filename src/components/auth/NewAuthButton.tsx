@@ -48,13 +48,14 @@ const NewAuthButton = () => {
 
       const prevState = prevStateRef.current;
 
-      // 重要な状態変化の場合のみログ出力
-      if (
+      // 重要な状態変化の場合のみログ出力（より厳密な条件）
+      const hasSignificantChange =
         currentState.hasUser !== prevState.hasUser ||
         currentState.hasProfile !== prevState.hasProfile ||
         currentState.userId !== prevState.userId ||
-        (!prevState.loading && !currentState.loading) // ローディング完了時のみ
-      ) {
+        (prevState.loading && !currentState.loading); // ローディング完了時のみ
+
+      if (hasSignificantChange) {
         console.log('NewAuthButton: 重要な状態変化', {
           前回の状態: {
             ユーザー: prevState.hasUser ? '有り' : '無し',
@@ -65,10 +66,12 @@ const NewAuthButton = () => {
             ユーザー: currentState.hasUser ? '有り' : '無し',
             プロフィール: currentState.hasProfile ? '有り' : '無し',
             userId: currentState.userId,
-            username: profile?.username
+            username: profile?.username,
+            ローディング: currentState.loading
           }
         });
 
+        // 状態を更新
         prevStateRef.current = currentState;
       }
     }
@@ -84,17 +87,6 @@ const NewAuthButton = () => {
 
   // ログイン済みならProfileMenuを表示
   if (user) {
-    // デバッグモードの場合は表示状態を確認
-    if (isDebugMode) {
-      return (
-        <div className="flex items-center space-x-2">
-          <span className="text-xs bg-green-500 text-white px-2 py-1 rounded">
-            {profile ? `${profile.username}` : `ユーザーのみ`}
-          </span>
-          <ProfileMenu />
-        </div>
-      );
-    }
     return (
       <div className="relative z-40">
         <ProfileMenu />
@@ -107,8 +99,8 @@ const NewAuthButton = () => {
     <Link
       to="/auth"
       className={`px-4 py-2 rounded-md transition-colors ${theme === 'dark'
-          ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-          : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+        ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+        : 'bg-indigo-500 hover:bg-indigo-600 text-white'
         }`}
     >
       {isDebugMode ? `未ログイン状態` : 'ログイン'}

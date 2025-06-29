@@ -16,7 +16,7 @@ const ArticlesPage = lazy(() => import('../../pages/ArticlesPage'));
 const ExamTab = lazy(() => import('../../components/flight/ExamTab'));
 const AuthPage = lazy(() => import('../../pages/AuthPage'));
 const ProfilePage = lazy(() => import('../../pages/ProfilePage'));
-const AdminPage = lazy(() => import('../../pages/AdminPage'));
+
 const ArticleStatsTestPage = lazy(() => import('../../pages/ArticleStatsTestPage'));
 
 // 学習カテゴリの定義
@@ -247,8 +247,8 @@ export const AppLayout: React.FC = () => {
       : 'bg-gradient-to-br from-blue-50 via-indigo-50 via-purple-50 to-pink-50 text-gray-900'
       }`}>
       <header className={`${effectiveTheme === 'dark'
-        ? 'bg-gradient-to-r from-gray-900/95 to-slate-900/95'
-        : 'bg-gradient-to-r from-indigo-900/95 to-purple-900/95'
+        ? 'bg-gradient-to-r from-slate-900/95 to-blue-900/95'
+        : 'bg-gradient-to-r from-slate-700/95 to-blue-700/95'
         } text-white shadow-xl sticky top-0 z-30 backdrop-blur-lg border-b border-white/10`}>
         <div className="container mx-auto px-4 py-2 md:py-3">
           {/* モバイル向けナビゲーション */}
@@ -384,17 +384,7 @@ export const AppLayout: React.FC = () => {
                 <NavLink to="/test" onClick={() => setMenuOpen(false)} className="px-4 py-3 rounded-lg hover:bg-white/10 transition-all duration-200 text-white">
                   📝 Test
                 </NavLink>
-                {isAdmin && (
-                  <NavLink to="/admin" onClick={() => setMenuOpen(false)} className="px-4 py-3 rounded-lg hover:bg-white/10 transition-all duration-200 text-white">
-                    <span className="flex items-center">
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      管理者ページ
-                    </span>
-                  </NavLink>
-                )}
+
               </nav>
             </div>
           )}
@@ -422,20 +412,7 @@ export const AppLayout: React.FC = () => {
                   <span>📝</span>
                   <span>Test</span>
                 </NavLink>
-                {isAdmin && (
-                  <NavLink
-                    to="/admin"
-                    className="px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-white"
-                  >
-                    <span className="flex items-center space-x-2">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.5 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      <span>管理者</span>
-                    </span>
-                  </NavLink>
-                )}
+
               </nav>
             </div>
             <div className="flex items-center space-x-4 z-40">
@@ -466,21 +443,14 @@ export const AppLayout: React.FC = () => {
                 <ProfilePage />
               </SafeRequireAuth>
             } />
-            <Route
-              path="/admin"
-              element={
-                <SafeRequireAuth>
-                  <AdminPage />
-                </SafeRequireAuth>
-              }
-            />
+
             <Route path="/test-stats" element={<ArticleStatsTestPage />} />
           </Routes>
         </Suspense>
       </main>
       <footer className={`${effectiveTheme === 'dark'
-        ? 'bg-gradient-to-r from-gray-900/95 to-slate-900/95'
-        : 'bg-gradient-to-r from-indigo-900/95 to-purple-900/95'
+        ? 'bg-gradient-to-r from-slate-900/95 to-blue-900/95'
+        : 'bg-gradient-to-r from-slate-700/95 to-blue-700/95'
         } text-white text-center py-4 text-sm sm:text-base shadow-lg backdrop-blur-sm border-t border-white/10`}>
         <p>&copy; 2024 Flight Academy. All rights reserved.</p>
       </footer>

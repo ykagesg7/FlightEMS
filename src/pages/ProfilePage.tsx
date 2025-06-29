@@ -11,7 +11,7 @@ const ProfilePage = () => {
   const loading = useAuthStore(state => state.loading);
   const updateProfile = useAuthStore(state => state.updateProfile);
 
-  const { theme } = useTheme();
+  const { theme, setTheme, effectiveTheme } = useTheme();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -40,6 +40,9 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
 
+  // 管理者権限チェック
+  const isAdmin = typeof profile?.roll === 'string' && ['admin', 'teacher'].includes(profile.roll.toLowerCase());
+
   // 未ログインならリダイレクト
   useEffect(() => {
     if (!loading && !user) {
@@ -50,12 +53,7 @@ const ProfilePage = () => {
   // プロフィール情報の初期化
   useEffect(() => {
     if (profile) {
-      console.log('ProfilePage: プロフィール情報を更新:', {
-        username: profile.username,
-        full_name: profile.full_name,
-        avatar_url: profile.avatar_url,
-        hasAvatar: !!profile.avatar_url
-      });
+      // プロフィール情報更新完了
       setUsername(profile.username || '');
       setFullName(profile.full_name || '');
       const currentAvatarUrl = profile.avatar_url || '';
@@ -131,38 +129,17 @@ const ProfilePage = () => {
         .from('avatars')
         .getPublicUrl(uploadData.path);
 
-      console.log('📁 ストレージURL生成:', {
-        path: uploadData.path,
-        publicUrl: publicUrl,
-        hasPublicUrl: !!publicUrl
-      });
+      // ストレージURL生成完了
 
       if (!publicUrl) {
         throw new Error('アップロードしたファイルのURLを取得できませんでした');
-      }
-
-      // ストレージバケット情報を確認
-      let bucketData: any = null;
-      try {
-        const { data: bucketInfo, error: bucketError } = await supabase
-          .storage
-          .getBucket('avatars');
-
-        bucketData = bucketInfo;
-        console.log('🪣 avatarsバケット情報:', {
-          bucket: bucketData,
-          error: bucketError,
-          isPublic: bucketData?.public
-        });
-      } catch (bucketErr) {
-        console.warn('バケット情報取得エラー:', bucketErr);
       }
 
       setUploadProgress(80);
 
       // 画像アクセステストを実行
       const accessTestResult = await testImageAccess(publicUrl);
-      console.log('🔍 画像アクセステスト結果:', accessTestResult);
+      // 画像アクセステスト完了
 
       let finalImageUrl = publicUrl;
 
@@ -230,29 +207,18 @@ const ProfilePage = () => {
       // 画像キャッシュ回避のため、使用するURLにタイムスタンプを追加
       const timestampedUrl = `${finalImageUrl}?t=${Date.now()}`;
 
-      console.log('🖼️ アバター画像アップロード完了:', {
-        originalUrl: publicUrl,
-        finalImageUrl: finalImageUrl,
-        timestampedUrl: timestampedUrl,
-        fileName: fileName,
-        uploadPath: uploadData.path,
-        isSignedUrl: finalImageUrl !== publicUrl
-      });
+      // アバター画像アップロード完了
 
       // 状態を更新
       setTempAvatarUrl(timestampedUrl);
       setAvatarUrl(timestampedUrl);
 
-      console.log('📝 ローカル状態を更新:', {
-        tempAvatarUrl: timestampedUrl,
-        avatarUrl: timestampedUrl,
-        urlType: finalImageUrl !== publicUrl ? 'signed' : 'public'
-      });
+      // ローカル状態更新完了
 
       // プロフィールストアを更新（データベースにはfinalImageUrlを保存）
       const updateResult = await updateProfile({ avatar_url: finalImageUrl });
 
-      console.log('🔄 プロフィールストア更新結果:', updateResult);
+      // プロフィールストア更新完了
 
       setUploadProgress(100);
       setSuccess('プロフィール画像を更新しました');
@@ -485,13 +451,14 @@ const ProfilePage = () => {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark'
-        ? 'bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900'
-        : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
-        }`}>
+      <div className={`min-h-screen flex items-center justify-center ${effectiveTheme === 'dark'
+          ? 'bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800'
+          : 'bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100'
+        } py-8`}>
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-transparent border-indigo-500"></div>
-          <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`text-lg ${effectiveTheme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+            }`}>
             プロフィールを読み込み中...
           </p>
         </div>
@@ -500,42 +467,25 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className={`min-h-screen transition-all duration-300 ${theme === 'dark'
-      ? 'bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900'
-      : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
-      }`}>
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* ヘッダー */}
-        <div className="mb-8">
-          <button
-            onClick={() => navigate(-1)}
-            className={`inline-flex items-center space-x-2 mb-4 px-4 py-2 rounded-lg transition-all duration-200 ${theme === 'dark'
-              ? 'text-gray-300 hover:text-white hover:bg-white/10'
-              : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
-              }`}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            <span>戻る</span>
-          </button>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className={`text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
-                プロフィール設定
-              </h1>
-              <p className={`text-lg ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                あなたの情報を管理しましょう
-              </p>
-            </div>
-          </div>
+    <div className={`min-h-screen ${effectiveTheme === 'dark'
+        ? 'bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800'
+        : 'bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100'
+      } py-8`}>
+      <div className="container mx-auto px-4 max-w-6xl">
+        {/* ページヘッダー */}
+        <div className="text-center mb-8">
+          <h1 className={`text-4xl font-bold mb-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
+            }`}>
+            プロフィール設定
+          </h1>
+          <p className={`text-lg ${effectiveTheme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+            }`}>
+            あなたの情報を管理しましょう
+          </p>
         </div>
 
         {/* タブナビゲーション */}
-        <div className={`backdrop-blur-xl rounded-2xl p-2 mb-8 shadow-lg border ${theme === 'dark'
+        <div className={`backdrop-blur-xl rounded-2xl p-2 mb-8 shadow-lg border ${effectiveTheme === 'dark'
           ? 'bg-white/5 border-white/10'
           : 'bg-white/80 border-white/20'
           }`}>
@@ -543,16 +493,17 @@ const ProfilePage = () => {
             {[
               { id: 'profile', name: 'プロフィール', icon: '👤' },
               { id: 'security', name: 'セキュリティ', icon: '🔒' },
-              { id: 'preferences', name: '設定', icon: '⚙️' }
+              { id: 'preferences', name: '設定', icon: '⚙️' },
+              ...(isAdmin ? [{ id: 'admin', name: '管理者機能', icon: '⚙️' }] : [])
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-200 ${activeTab === tab.id
-                  ? theme === 'dark'
+                  ? effectiveTheme === 'dark'
                     ? 'bg-indigo-600 text-white shadow-lg'
                     : 'bg-indigo-500 text-white shadow-lg'
-                  : theme === 'dark'
+                  : effectiveTheme === 'dark'
                     ? 'text-gray-400 hover:text-white hover:bg-white/10'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
                   }`}
@@ -566,7 +517,7 @@ const ProfilePage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* プロフィールカード */}
-          <div className={`lg:col-span-1 backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${theme === 'dark'
+          <div className={`lg:col-span-1 backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${effectiveTheme === 'dark'
             ? 'bg-white/5 border-white/10'
             : 'bg-white/80 border-white/20'
             }`}>
@@ -603,7 +554,7 @@ const ProfilePage = () => {
                       }}
                     />
                   ) : (
-                    <div className={`w-full h-full rounded-full flex items-center justify-center border-4 border-indigo-400 shadow-lg transition-all duration-300 group-hover:scale-105 ${theme === 'dark'
+                    <div className={`w-full h-full rounded-full flex items-center justify-center border-4 border-indigo-400 shadow-lg transition-all duration-300 group-hover:scale-105 ${effectiveTheme === 'dark'
                       ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white'
                       : 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white'
                       }`}>
@@ -611,15 +562,7 @@ const ProfilePage = () => {
                     </div>
                   )}
 
-                  {/* デバッグ情報表示（開発環境のみ） */}
-                  {import.meta.env.MODE === 'development' && (
-                    <div className="absolute -bottom-32 left-0 right-0 text-xs bg-black/80 text-white p-2 rounded max-w-xs break-all">
-                      <div>tempAvatarUrl: {tempAvatarUrl || '未設定'}</div>
-                      <div>avatarUrl: {avatarUrl || '未設定'}</div>
-                      <div>profile.avatar_url: {profile?.avatar_url || '未設定'}</div>
-                      <div>条件: {tempAvatarUrl ? 'true (画像表示)' : 'false (イニシャル表示)'}</div>
-                    </div>
-                  )}
+
 
                   {/* オーバーレイ */}
                   <div className={`absolute inset-0 rounded-full flex items-center justify-center transition-opacity duration-300 ${'opacity-0 group-hover:opacity-100'
@@ -661,28 +604,16 @@ const ProfilePage = () => {
                 />
               </div>
 
-              <h2 className={`text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
-                {fullName || username || 'ユーザー'}
-              </h2>
+              {/* シンプルなアバター中心のヘッダー */}
+              <div className="text-center">
+                <h2 className={`text-xl font-semibold mb-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  {fullName || username || 'ユーザー'}
+                </h2>
+              </div>
 
-              <p className={`text-sm mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                {user?.email}
-              </p>
-
-              {profile?.roll && (
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${theme === 'dark'
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-indigo-100 text-indigo-800'
-                  }`}>
-                  {profile.roll === 'Student' ? '学生' : profile.roll === 'Teacher' ? '教師' : profile.roll}
-                </span>
-              )}
-
-              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <p className={`text-xs mb-4 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>
-                  画像をクリックまたはドラッグ&ドロップでアップロード
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p className={`text-xs text-center ${effectiveTheme === 'dark' ? 'text-gray-500' : 'text-slate-400'}`}>
+                  画像をクリックしてアップロード
                 </p>
 
                 {/* アバター削除ボタン */}
@@ -692,7 +623,7 @@ const ProfilePage = () => {
                     disabled={isUploadingAvatar}
                     className={`w-full px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isUploadingAvatar
                       ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
-                      : theme === 'dark'
+                      : effectiveTheme === 'dark'
                         ? 'bg-red-600 hover:bg-red-700 text-white'
                         : 'bg-red-500 hover:bg-red-600 text-white'
                       }`}
@@ -719,12 +650,12 @@ const ProfilePage = () => {
           {/* メインコンテンツ */}
           <div className="lg:col-span-2 space-y-6">
             {activeTab === 'profile' && (
-              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${theme === 'dark'
+              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${effectiveTheme === 'dark'
                 ? 'bg-white/5 border-white/10'
                 : 'bg-white/80 border-white/20'
                 }`}>
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  <h3 className={`text-2xl font-bold ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
                     }`}>
                     基本情報
                   </h3>
@@ -754,7 +685,7 @@ const ProfilePage = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                      <label className={`block text-sm font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'
                         }`}>
                         ユーザー名 *
                       </label>
@@ -764,19 +695,19 @@ const ProfilePage = () => {
                         onChange={(e) => setUsername(e.target.value)}
                         disabled={!isEditing}
                         className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isEditing
-                          ? theme === 'dark'
+                          ? effectiveTheme === 'dark'
                             ? 'bg-gray-800 border-gray-600 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                            : 'bg-white border-gray-300 text-gray-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                          : theme === 'dark'
+                            : 'bg-white border-gray-300 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                          : effectiveTheme === 'dark'
                             ? 'bg-gray-800/50 border-gray-700 text-gray-400 cursor-not-allowed'
-                            : 'bg-gray-50 border-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-gray-50 border-gray-300 text-slate-500 cursor-not-allowed'
                           }`}
                         placeholder="ユーザー名を入力"
                       />
                     </div>
 
                     <div>
-                      <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                      <label className={`block text-sm font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'
                         }`}>
                         フルネーム
                       </label>
@@ -786,12 +717,12 @@ const ProfilePage = () => {
                         onChange={(e) => setFullName(e.target.value)}
                         disabled={!isEditing}
                         className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isEditing
-                          ? theme === 'dark'
+                          ? effectiveTheme === 'dark'
                             ? 'bg-gray-800 border-gray-600 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                            : 'bg-white border-gray-300 text-gray-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                          : theme === 'dark'
+                            : 'bg-white border-gray-300 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                          : effectiveTheme === 'dark'
                             ? 'bg-gray-800/50 border-gray-700 text-gray-400 cursor-not-allowed'
-                            : 'bg-gray-50 border-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-gray-50 border-gray-300 text-slate-500 cursor-not-allowed'
                           }`}
                         placeholder="フルネームを入力"
                       />
@@ -799,7 +730,7 @@ const ProfilePage = () => {
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    <label className={`block text-sm font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'
                       }`}>
                       メールアドレス
                     </label>
@@ -807,12 +738,12 @@ const ProfilePage = () => {
                       type="email"
                       value={user?.email || ''}
                       disabled
-                      className={`w-full px-4 py-3 rounded-lg border cursor-not-allowed ${theme === 'dark'
+                      className={`w-full px-4 py-3 rounded-lg border cursor-not-allowed ${effectiveTheme === 'dark'
                         ? 'bg-gray-800/50 border-gray-700 text-gray-400'
-                        : 'bg-gray-50 border-gray-300 text-gray-500'
+                        : 'bg-gray-50 border-gray-300 text-slate-500'
                         }`}
                     />
-                    <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                    <p className={`text-xs mt-1 ${effectiveTheme === 'dark' ? 'text-gray-500' : 'text-slate-400'
                       }`}>
                       メールアドレスは変更できません
                     </p>
@@ -846,12 +777,12 @@ const ProfilePage = () => {
             )}
 
             {activeTab === 'security' && (
-              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${theme === 'dark'
+              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${effectiveTheme === 'dark'
                 ? 'bg-white/5 border-white/10'
                 : 'bg-white/80 border-white/20'
                 }`}>
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  <h3 className={`text-2xl font-bold ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
                     }`}>
                     セキュリティ設定
                   </h3>
@@ -882,7 +813,7 @@ const ProfilePage = () => {
 
                     <form onSubmit={handlePasswordChange} className="space-y-6">
                       <div>
-                        <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                        <label className={`block text-sm font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'
                           }`}>
                           現在のパスワード
                         </label>
@@ -891,16 +822,16 @@ const ProfilePage = () => {
                             type={showPassword ? 'text' : 'password'}
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
-                            className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 ${theme === 'dark'
+                            className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 ${effectiveTheme === 'dark'
                               ? 'bg-gray-800 border-gray-600 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                              : 'bg-white border-gray-300 text-gray-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                              : 'bg-white border-gray-300 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
                               }`}
                             placeholder="現在のパスワードを入力"
                           />
                           <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className={`absolute right-3 top-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                            className={`absolute right-3 top-3 ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-slate-600'
                               }`}
                           >
                             {showPassword ? (
@@ -918,7 +849,7 @@ const ProfilePage = () => {
                       </div>
 
                       <div>
-                        <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                        <label className={`block text-sm font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'
                           }`}>
                           新しいパスワード
                         </label>
@@ -926,16 +857,16 @@ const ProfilePage = () => {
                           type="password"
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
-                          className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${theme === 'dark'
+                          className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${effectiveTheme === 'dark'
                             ? 'bg-gray-800 border-gray-600 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                            : 'bg-white border-gray-300 text-gray-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                            : 'bg-white border-gray-300 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
                             }`}
                           placeholder="新しいパスワードを入力（8文字以上）"
                         />
                       </div>
 
                       <div>
-                        <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                        <label className={`block text-sm font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'
                           }`}>
                           パスワード確認
                         </label>
@@ -943,9 +874,9 @@ const ProfilePage = () => {
                           type="password"
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${theme === 'dark'
+                          className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${effectiveTheme === 'dark'
                             ? 'bg-gray-800 border-gray-600 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                            : 'bg-white border-gray-300 text-gray-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                            : 'bg-white border-gray-300 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
                             }`}
                           placeholder="新しいパスワードを再入力"
                         />
@@ -976,17 +907,17 @@ const ProfilePage = () => {
 
                 {!showPasswordForm && (
                   <div className="space-y-4">
-                    <div className={`p-6 border rounded-lg ${theme === 'dark'
+                    <div className={`p-6 border rounded-lg ${effectiveTheme === 'dark'
                       ? 'border-gray-700 bg-gray-800/50'
                       : 'border-gray-200 bg-gray-50'
                       }`}>
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                          <h4 className={`font-medium ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
                             }`}>
                             パスワード
                           </h4>
-                          <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                          <p className={`text-sm ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-slate-600'
                             }`}>
                             最後に更新: 不明
                           </p>
@@ -1000,69 +931,205 @@ const ProfilePage = () => {
             )}
 
             {activeTab === 'preferences' && (
-              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${theme === 'dark'
+              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${effectiveTheme === 'dark'
                 ? 'bg-white/5 border-white/10'
                 : 'bg-white/80 border-white/20'
                 }`}>
-                <h3 className={`text-2xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                <h3 className={`text-2xl font-bold mb-6 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
                   }`}>
                   設定
                 </h3>
 
                 <div className="space-y-6">
-                  <div className={`p-6 border rounded-lg ${theme === 'dark'
+                  <div className={`p-6 border rounded-lg ${effectiveTheme === 'dark'
                     ? 'border-gray-700 bg-gray-800/50'
                     : 'border-gray-200 bg-gray-50'
                     }`}>
-                    <h4 className={`font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    <h4 className={`font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
                       }`}>
                       テーマ設定
                     </h4>
-                    <p className={`text-sm mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                    <p className={`text-sm mb-4 ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-slate-600'
                       }`}>
-                      ライトモードまたはダークモードを選択
+                      ライトモード、ダークモード、または自動選択
                     </p>
-                    <div className="flex space-x-4">
-                      <button className={`px-4 py-2 rounded-lg ${theme === 'light'
-                        ? 'bg-indigo-500 text-white'
-                        : 'bg-gray-200 text-gray-700'
-                        }`}>
-                        ライト
+                    <div className="flex flex-wrap gap-3">
+                      <button
+                        onClick={() => setTheme('light')}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${theme === 'light'
+                          ? 'bg-indigo-500 text-white shadow-lg transform scale-105'
+                          : theme === 'dark'
+                            ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                          }`}
+                      >
+                        🌞 ライト
                       </button>
-                      <button className={`px-4 py-2 rounded-lg ${theme === 'dark'
-                        ? 'bg-indigo-500 text-white'
-                        : 'bg-gray-200 text-gray-700'
-                        }`}>
-                        ダーク
+                      <button
+                        onClick={() => setTheme('dark')}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${theme === 'dark'
+                          ? 'bg-indigo-500 text-white shadow-lg transform scale-105'
+                          : theme === 'dark'
+                            ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                          }`}
+                      >
+                        🌙 ダーク
+                      </button>
+                      <button
+                        onClick={() => setTheme('auto')}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${theme === 'auto'
+                          ? 'bg-indigo-500 text-white shadow-lg transform scale-105'
+                          : theme === 'dark'
+                            ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                          }`}
+                      >
+                        🔄 自動
                       </button>
                     </div>
+                    {theme === 'auto' && (
+                      <div className={`mt-3 p-3 rounded-md ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-slate-600'}`}>
+                          現在: {effectiveTheme === 'dark' ? '�� ダークモード' : '🌞 ライトモード'}
+                          (システム設定に従います)
+                        </p>
+                      </div>
+                    )}
                   </div>
 
-                  <div className={`p-6 border rounded-lg ${theme === 'dark'
+                  <div className={`p-6 border rounded-lg ${effectiveTheme === 'dark'
                     ? 'border-gray-700 bg-gray-800/50'
                     : 'border-gray-200 bg-gray-50'
                     }`}>
-                    <h4 className={`font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    <h4 className={`font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
                       }`}>
                       通知設定
                     </h4>
-                    <p className={`text-sm mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                    <p className={`text-sm mb-4 ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-slate-600'
                       }`}>
                       学習の進捗やお知らせに関する通知
                     </p>
                     <div className="space-y-3">
                       <label className="flex items-center">
                         <input type="checkbox" className="mr-3" defaultChecked />
-                        <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
+                        <span className={effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'}>
                           学習の進捗通知
                         </span>
                       </label>
                       <label className="flex items-center">
                         <input type="checkbox" className="mr-3" defaultChecked />
-                        <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
+                        <span className={effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'}>
                           新しいコンテンツの通知
                         </span>
                       </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'admin' && isAdmin && (
+              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${effectiveTheme === 'dark'
+                ? 'bg-white/5 border-white/10'
+                : 'bg-white/80 border-white/20'
+                }`}>
+                <h3 className={`text-2xl font-bold mb-6 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
+                  }`}>
+                  管理者機能
+                </h3>
+
+                <div className="space-y-6">
+                  {/* 管理者情報 */}
+                  <div className={`p-6 rounded-lg shadow-md ${effectiveTheme === 'dark' ? 'bg-gray-800/50 text-gray-200' : 'bg-white text-gray-800'
+                    } border ${effectiveTheme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <h4 className="text-xl font-semibold mb-4">管理者情報</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <span className="font-medium">ユーザー名:</span>
+                        <span className="ml-2">{profile?.username || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">フルネーム:</span>
+                        <span className="ml-2">{profile?.full_name || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">ロール:</span>
+                        <span className="ml-2 capitalize">{profile?.roll || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">メールアドレス:</span>
+                        <span className="ml-2">{profile?.email || 'N/A'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* システム管理 */}
+                  <div className={`p-6 rounded-lg shadow-md ${effectiveTheme === 'dark' ? 'bg-gray-800/50 text-gray-200' : 'bg-white text-gray-800'
+                    } border ${effectiveTheme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <h4 className="text-xl font-semibold mb-4">システム管理</h4>
+                    <div className="space-y-4">
+                      <div className={`p-4 rounded-md ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
+                        }`}>
+                        <h5 className="font-semibold mb-2">コンテンツ管理</h5>
+                        <p className="text-sm mb-3">
+                          学習コンテンツの管理は、SupabaseMCPを使用して直接データベースを操作できます。
+                          これにより、より柔軟で効率的なコンテンツ管理が可能です。
+                        </p>
+                        <div className="flex flex-wrap gap-2 text-sm">
+                          <span className={`px-2 py-1 rounded ${effectiveTheme === 'dark' ? 'bg-green-800 text-green-200' : 'bg-green-100 text-green-800'
+                            }`}>
+                            SupabaseMCP対応
+                          </span>
+                          <span className={`px-2 py-1 rounded ${effectiveTheme === 'dark' ? 'bg-blue-800 text-blue-200' : 'bg-blue-100 text-blue-800'
+                            }`}>
+                            リアルタイム更新
+                          </span>
+                          <span className={`px-2 py-1 rounded ${effectiveTheme === 'dark' ? 'bg-purple-800 text-purple-200' : 'bg-purple-100 text-purple-800'
+                            }`}>
+                            SQL直接実行
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ユーザー管理 */}
+                  <div className={`p-6 rounded-lg shadow-md ${effectiveTheme === 'dark' ? 'bg-gray-800/50 text-gray-200' : 'bg-white text-gray-800'
+                    } border ${effectiveTheme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <h4 className="text-xl font-semibold mb-4">ユーザー管理</h4>
+                    <div className={`p-4 rounded-md ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
+                      }`}>
+                      <p className="text-sm mb-2">
+                        ユーザー管理機能は準備中です。
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        SupabaseMCPでprofilesテーブルを直接操作することで、
+                        ユーザー情報の管理が可能です。
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 統計情報 */}
+                  <div className={`p-6 rounded-lg shadow-md ${effectiveTheme === 'dark' ? 'bg-gray-800/50 text-gray-200' : 'bg-white text-gray-800'
+                    } border ${effectiveTheme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <h4 className="text-xl font-semibold mb-4">システム統計</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className={`p-4 rounded-md text-center ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
+                        }`}>
+                        <div className="text-2xl font-bold text-blue-500">30+</div>
+                        <div className="text-sm">学習コンテンツ</div>
+                      </div>
+                      <div className={`p-4 rounded-md text-center ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
+                        }`}>
+                        <div className="text-2xl font-bold text-green-500">451</div>
+                        <div className="text-sm">CPL試験問題</div>
+                      </div>
+                      <div className={`p-4 rounded-md text-center ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
+                        }`}>
+                        <div className="text-2xl font-bold text-purple-500">9+</div>
+                        <div className="text-sm">登録ユーザー</div>
+                      </div>
                     </div>
                   </div>
                 </div>

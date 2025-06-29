@@ -180,45 +180,23 @@ const ProfileMenu = () => {
           aria-expanded={isOpen}
           aria-label="ユーザーメニュー"
         >
-          <div className="flex items-center space-x-1">
-            {effectiveProfile?.avatar_url && !imageError ? (
-              <img
-                key={effectiveProfile.avatar_url} // keyを追加してReactが強制的に再レンダリングするように
-                src={effectiveProfile.avatar_url as string}
-                alt="プロフィール画像"
-                className="w-8 h-8 rounded-full object-cover border-2 border-indigo-300"
-                onError={(e) => {
-                  console.warn('アバター画像の読み込みに失敗しました:', effectiveProfile.avatar_url);
-                  setImageError(true);
-                }}
-              />
-            ) : (
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${theme === 'dark' ? 'bg-indigo-600 border-indigo-400' : 'bg-indigo-500 border-indigo-300'
-                } text-white font-semibold`}>
-                {getInitial()}
-              </div>
-            )}
-            <span className={`${theme === 'dark' ? 'text-white' : 'text-gray-700'} hidden sm:inline-block max-w-[100px] truncate`}>
-              {(effectiveProfile?.username as string) || user.email?.split('@')[0] || 'ユーザー'}
-            </span>
-
-            {/* デバッグ情報（開発環境のみ） */}
-            {import.meta.env.MODE === 'development' && (
-              <div className="hidden lg:block text-xs opacity-50">
-                Avatar: {effectiveProfile?.avatar_url ? '有り' : '無し'}
-                {imageError && ' (エラー)'}
-              </div>
-            )}
-            <svg
-              className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} transition-transform ${isOpen ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
+          {effectiveProfile?.avatar_url && !imageError ? (
+            <img
+              key={effectiveProfile.avatar_url}
+              src={effectiveProfile.avatar_url as string}
+              alt="プロフィール画像"
+              className="w-8 h-8 rounded-full object-cover border-2 border-indigo-300"
+              onError={(e) => {
+                console.warn('アバター画像の読み込みに失敗しました:', effectiveProfile.avatar_url);
+                setImageError(true);
+              }}
+            />
+          ) : (
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${theme === 'dark' ? 'bg-indigo-600 border-indigo-400' : 'bg-indigo-500 border-indigo-300'
+              } text-white font-semibold`}>
+              {getInitial()}
+            </div>
+          )}
         </button>
 
         {isOpen && (

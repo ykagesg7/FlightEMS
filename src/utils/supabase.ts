@@ -18,18 +18,28 @@ const isDevelopment = process.env.NODE_ENV === 'development' || window.location.
 let browserSupabaseClient: ReturnType<typeof createBrowserClient<Database>> | undefined;
 let adminSupabaseClient: ReturnType<typeof createClient<Database>> | undefined;
 
+// ログ制御フラグ
+let browserClientLogged = false;
+let adminClientLogged = false;
+
 // ブラウザ環境用のSupabaseクライアント（@supabase/ssrパッケージ使用）
 export const createBrowserSupabaseClient = () => {
   if (!browserSupabaseClient) {
-    if (isDevelopment) {
+    if (isDevelopment && !browserClientLogged) {
       console.log('新しいSupabaseブラウザクライアントを作成します');
+      browserClientLogged = true;
     }
     browserSupabaseClient = createBrowserClient<Database>(supabaseUrl, supabaseKey, {
       auth: {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
-        storageKey: 'supabase.auth.token', // 明示的にストレージキーを設定
+        storageKey: 'flightacademy.auth.token', // プロジェクト固有のストレージキー
+        storage: {
+          getItem: (key: string) => localStorage.getItem(key),
+          setItem: (key: string, value: string) => localStorage.setItem(key, value),
+          removeItem: (key: string) => localStorage.removeItem(key),
+        },
       },
     });
   }
@@ -39,8 +49,9 @@ export const createBrowserSupabaseClient = () => {
 // サーバーサイド用のSupabaseクライアント（シングルトン）
 export const getSupabaseAdmin = () => {
   if (!adminSupabaseClient) {
-    if (isDevelopment) {
+    if (isDevelopment && !adminClientLogged) {
       console.log('新しいSupabase管理者クライアントを作成します');
+      adminClientLogged = true;
     }
     adminSupabaseClient = createClient<Database>(supabaseUrl, supabaseKey, {
       auth: {

@@ -53,7 +53,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
-    "@stagewise/toolbar": "^0.2.1",
+    "@stagewise/toolbar": "^0.4.9",
+    "@stagewise/toolbar-react": "^0.4.9",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/react-query-devtools": "^5.81.5",
     "@testing-library/jest-dom": "^6.6.3",

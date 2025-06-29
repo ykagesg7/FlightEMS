@@ -47,64 +47,105 @@ export default defineConfig(({ mode }) => {
       // 環境変数をクライアントで利用可能にする
       'import.meta.env.VITE_WEATHER_API_KEY': JSON.stringify(weatherApiKey)
     },
+    // Experimental features
+    experimental: {
+      buildAdvanced: true,
+    },
     build: {
       // ソースマップを無効化（本番環境ではAPIキーを隠すため）
       sourcemap: mode !== 'production',
       // チャンクサイズ警告を調整
       chunkSizeWarningLimit: 600,
-      // 環境変数の置換を確実に行う
+      // 段階的ビルド設定
       rollupOptions: {
+        // Stagewise build configuration
+        experimental: {
+          stagewise: true,
+        },
         output: {
-          // より詳細なチャンク分割戦略
+          // より詳細なチャンク分割戦略（stagewise対応）
           manualChunks: (id) => {
-            // React関連
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'react-vendor';
+            // Critical path (最優先読み込み)
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'critical-react';
             }
 
-            // 地図関連ライブラリ
-            if (id.includes('leaflet') || id.includes('mapbox')) {
-              return 'map-vendor';
+            // Essential routing (第二優先)
+            if (id.includes('react-router')) {
+              return 'essential-routing';
             }
 
-            // UI/アニメーションライブラリ
+            // Core utilities (第三優先)
+            if (id.includes('zustand') || id.includes('@tanstack/react-query')) {
+              return 'core-state';
+            }
+
+            // Authentication & Database (第四優先)
+            if (id.includes('@supabase') || id.includes('supabase')) {
+              return 'auth-db';
+            }
+
+            // UI Components (遅延読み込み可能)
             if (id.includes('@headlessui') || id.includes('@radix-ui') || id.includes('framer-motion') ||
               id.includes('react-select') || id.includes('lucide-react')) {
-              return 'ui-vendor';
+              return 'ui-components';
             }
 
-            // データ関連ライブラリ
-            if (id.includes('@tanstack/react-query') || id.includes('zustand') || id.includes('axios')) {
-              return 'data-vendor';
+            // Map functionality (必要時読み込み)
+            if (id.includes('leaflet') || id.includes('mapbox')) {
+              return 'map-features';
             }
 
-            // Supabase関連
-            if (id.includes('@supabase') || id.includes('supabase')) {
-              return 'supabase-vendor';
-            }
-
-            // MDX関連
+            // Content processing (必要時読み込み)
             if (id.includes('@mdx-js') || id.includes('mdx')) {
-              return 'mdx-vendor';
+              return 'content-processing';
             }
 
-            // その他のnode_modules
+            // Utility libraries (遅延読み込み)
             if (id.includes('node_modules')) {
-              return 'utils-vendor';
+              return 'utility-vendor';
             }
           },
-          // ファイル名にハッシュを追加
-          entryFileNames: 'assets/[name]-[hash].js',
-          chunkFileNames: 'assets/[name]-[hash].js',
+          // Progressive loading対応のファイル名戦略
+          entryFileNames: (chunkInfo) => {
+            const name = chunkInfo.name;
+            if (name === 'critical-react') {
+              return 'assets/critical-[hash].js';
+            }
+            return 'assets/[name]-[hash].js';
+          },
+          chunkFileNames: (chunkInfo) => {
+            const name = chunkInfo.name;
+            // Priority-based naming for stagewise loading
+            if (name?.includes('critical')) {
+              return 'assets/critical/[name]-[hash].js';
+            }
+            if (name?.includes('essential')) {
+              return 'assets/essential/[name]-[hash].js';
+            }
+            if (name?.includes('core')) {
+              return 'assets/core/[name]-[hash].js';
+            }
+            return 'assets/lazy/[name]-[hash].js';
+          },
           assetFileNames: 'assets/[name]-[hash].[ext]',
         }
       },
-      // 最適化設定
+      // 最適化設定（stagewise対応）
       minify: 'terser',
       terserOptions: {
         compress: {
           drop_console: mode === 'production',
           drop_debugger: mode === 'production',
+          // Stagewise用の最適化
+          passes: 2,
+          pure_funcs: mode === 'production' ? ['console.log', 'console.debug'] : [],
+        },
+        mangle: {
+          safari10: true,
+        },
+        format: {
+          comments: false,
         },
       },
     },
@@ -121,7 +162,12 @@ export default defineConfig(({ mode }) => {
         '@supabase/supabase-js',
         'react-window'
       ],
-      exclude: ['@mdx-js/react']
+      exclude: ['@mdx-js/react'],
+      // Stagewise対応の依存関係最適化
+      esbuildOptions: {
+        target: 'esnext',
+        treeShaking: true,
+      }
     },
     resolve: {
       alias: {
@@ -134,10 +180,20 @@ export default defineConfig(({ mode }) => {
         '@stores': resolve(__dirname, 'src/stores'),
       }
     },
-    // パフォーマンス監視設定
+    // パフォーマンス監視設定（stagewise対応）
     esbuild: {
       // プロダクションビルドでのコンソール削除
       drop: mode === 'production' ? ['console', 'debugger'] : [],
+      // Stagewise用のtree shaking強化
+      treeShaking: true,
+      target: 'esnext',
+    },
+    // CSS最適化（stagewise対応）
+    css: {
+      devSourcemap: mode !== 'production',
+      modules: {
+        generateScopedName: mode === 'production' ? '[hash:base64:5]' : '[name]__[local]___[hash:base64:5]',
+      },
     },
   };
 });

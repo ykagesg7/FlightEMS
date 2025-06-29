@@ -1,7 +1,6 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext';
+import { useNavigate, useParams } from 'react-router-dom';
 import LearningTabMDX from '../components/mdx/LearningTabMDX';
+import { useTheme } from '../contexts/ThemeContext';
 
 function NewLearningPage() {
   const { theme } = useTheme();
@@ -19,25 +18,24 @@ function NewLearningPage() {
   };
 
   return (
-    <div className={`min-h-screen ${
-      theme === 'dark' 
-        ? 'bg-gradient-to-br from-gray-900 to-gray-800' 
-        : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50'
-    }`}>
+    <div className={`min-h-screen ${theme === 'dark'
+        ? 'bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800'
+        : 'bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100'
+      }`}>
       <div className="container mx-auto px-4 py-6">
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-300 mb-4">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 mb-4">
             📚 Learning Center
           </h1>
-          <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-slate-700'}`}>
+          <p className={`text-lg ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
             CPL試験対策記事で知識を深めよう
           </p>
         </div>
-        
-        <LearningTabMDX 
-          contentId={contentId || ""} 
-          onBackToList={handleBackToList} 
-          onContentSelect={handleContentSelect} 
+
+        <LearningTabMDX
+          contentId={contentId || ""}
+          onBackToList={handleBackToList}
+          onContentSelect={handleContentSelect}
           contentType="learning"
         />
       </div>
@@ -45,4 +43,4 @@ function NewLearningPage() {
   );
 }
 
-export default NewLearningPage; 
+export default NewLearningPage;
