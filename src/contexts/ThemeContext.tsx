@@ -1,84 +1,146 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export type Theme = 'light' | 'dark' | 'auto';
+type Theme = 'military' | 'dark' | 'auto';
+type EffectiveTheme = 'military' | 'dark';
 
 interface ThemeContextType {
   theme: Theme;
+  effectiveTheme: EffectiveTheme;
   setTheme: (theme: Theme) => void;
-  effectiveTheme: 'light' | 'dark';
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  // 初期テーマの取得
-  const getInitialTheme = (): Theme => {
-    if (typeof window === 'undefined') return 'auto';
-    try {
-      const saved = localStorage.getItem('theme') as Theme;
-      return saved && ['light', 'dark', 'auto'].includes(saved) ? saved : 'auto';
-    } catch {
-      return 'auto';
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('theme') as Theme) || 'auto';
     }
-  };
+    return 'auto';
+  });
 
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
-  const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>('light');
+  const [effectiveTheme, setEffectiveTheme] = useState<EffectiveTheme>('military');
 
-  // 実効テーマの更新
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    let newEffectiveTheme: EffectiveTheme;
 
-    const updateEffectiveTheme = () => {
-      if (theme === 'auto') {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        setEffectiveTheme(mediaQuery.matches ? 'dark' : 'light');
-      } else {
-        setEffectiveTheme(theme);
-      }
-    };
+    if (theme === 'auto') {
+      // autoモードでは、システムのダークモード設定に基づいて決定
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      newEffectiveTheme = prefersDark ? 'dark' : 'military';
+    } else {
+      newEffectiveTheme = theme;
+    }
 
-    updateEffectiveTheme();
+    setEffectiveTheme(newEffectiveTheme);
 
-    // メディアクエリリスナーの設定
+    // DOMクラスの管理
+    document.documentElement.classList.remove('light', 'dark', 'military');
+
+    if (newEffectiveTheme === 'military') {
+      document.documentElement.classList.add('military');
+      document.body.classList.add('military-theme');
+      // デジタル迷彩背景を設定
+      document.body.style.backgroundImage = `
+        repeating-linear-gradient(
+          0deg,
+          #2a3441 0px,
+          #2a3441 32px,
+          #3d4a5a 32px,
+          #3d4a5a 64px,
+          #596980 64px,
+          #596980 96px,
+          #4a556b 96px,
+          #4a556b 128px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0px,
+          transparent 24px,
+          #374151 24px,
+          #374151 48px,
+          transparent 48px,
+          transparent 72px,
+          #2a3441 72px,
+          #2a3441 96px
+        )
+      `;
+      document.body.style.backgroundSize = '128px 128px, 96px 96px';
+    } else {
+      document.documentElement.classList.add('dark');
+      document.body.classList.remove('military-theme');
+      document.body.style.backgroundImage = '';
+      document.body.style.backgroundSize = '';
+    }
+
+    // localStorage に保存
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  // システムのダークモード設定の変更を監視
+  useEffect(() => {
     if (theme === 'auto') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const listener = () => updateEffectiveTheme();
-      mediaQuery.addEventListener('change', listener);
-      return () => mediaQuery.removeEventListener('change', listener);
+      const handleChange = () => {
+        const prefersDark = mediaQuery.matches;
+        const newEffectiveTheme = prefersDark ? 'dark' : 'military';
+        setEffectiveTheme(newEffectiveTheme);
+
+        // DOMクラスの更新
+        document.documentElement.classList.remove('light', 'dark', 'military');
+
+        if (newEffectiveTheme === 'military') {
+          document.documentElement.classList.add('military');
+          document.body.classList.add('military-theme');
+          document.body.style.backgroundImage = `
+            repeating-linear-gradient(
+              0deg,
+              #2a3441 0px,
+              #2a3441 32px,
+              #3d4a5a 32px,
+              #3d4a5a 64px,
+              #596980 64px,
+              #596980 96px,
+              #4a556b 96px,
+              #4a556b 128px
+            ),
+            repeating-linear-gradient(
+              90deg,
+              transparent 0px,
+              transparent 24px,
+              #374151 24px,
+              #374151 48px,
+              transparent 48px,
+              transparent 72px,
+              #2a3441 72px,
+              #2a3441 96px
+            )
+          `;
+          document.body.style.backgroundSize = '128px 128px, 96px 96px';
+        } else {
+          document.documentElement.classList.add('dark');
+          document.body.classList.remove('military-theme');
+          document.body.style.backgroundImage = '';
+          document.body.style.backgroundSize = '';
+        }
+      };
+
+      mediaQuery.addListener(handleChange);
+      return () => mediaQuery.removeListener(handleChange);
     }
   }, [theme]);
 
-  // テーマの保存とDOMの更新
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    try {
-      localStorage.setItem('theme', theme);
-      document.documentElement.setAttribute('data-theme', effectiveTheme);
-      document.documentElement.className = effectiveTheme;
-    } catch (error) {
-      console.warn('テーマの保存に失敗しました:', error);
-    }
-  }, [theme, effectiveTheme]);
-
-  const value: ThemeContextType = {
-    theme,
-    setTheme,
-    effectiveTheme,
-  };
-
   return (
-    <ThemeContext.Provider value={value}>
+    <ThemeContext.Provider value={{ theme, effectiveTheme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );
 }
 
-export function useTheme(): ThemeContextType {
+export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
-} 
+}

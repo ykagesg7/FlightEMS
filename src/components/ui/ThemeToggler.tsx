@@ -2,47 +2,66 @@ import React from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 export const ThemeToggler: React.FC = () => {
-  const { theme, setTheme, effectiveTheme } = useTheme();
-  
-  const cycleTheme = () => {
-    const themes: ('light' | 'dark' | 'auto')[] = ['light', 'dark', 'auto'];
+  const { theme, setTheme } = useTheme();
+
+  const themes = ['military', 'dark', 'auto'] as const;
+
+  const nextTheme = () => {
     const currentIndex = themes.indexOf(theme);
     const nextIndex = (currentIndex + 1) % themes.length;
     setTheme(themes[nextIndex]);
   };
-  
-  const getIcon = () => {
+
+  const getThemeIcon = () => {
     switch (theme) {
-      case 'light':
+      case 'military':
         return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2L4 7v3c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-8-5zM12 11L8 9v2l4 2 4-2V9l-4 2z" />
           </svg>
         );
       case 'dark':
         return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
           </svg>
         );
       case 'auto':
-      default:
         return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2V7L9 4L12 2ZM18 6V9H13V6H18ZM20 12A8 8 0 1 1 4 12A8 8 0 0 1 20 12ZM6 18V15H11V18H6ZM15 20L12 17L15 20Z" />
           </svg>
         );
+      default:
+        return null;
     }
   };
-  
+
+  const getThemeLabel = () => {
+    switch (theme) {
+      case 'military':
+        return 'Day'; // MilitaryテーマをDayテーマとして表示
+      case 'dark':
+        return 'Dark';
+      case 'auto':
+        return 'Auto';
+      default:
+        return '';
+    }
+  };
+
   return (
     <button
-      onClick={cycleTheme}
-      className="rounded-full p-2 text-indigo-200 hover:text-white focus:outline-none"
-      aria-label={`テーマを切り替える (現在: ${theme})`}
-      title={`テーマ: ${theme} (効果: ${effectiveTheme})`}
+      onClick={nextTheme}
+      className="relative flex items-center space-x-2 px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700"
+      title={`現在: ${getThemeLabel()}テーマ (クリックして切り替え)`}
     >
-      {getIcon()}
+      <span className="flex items-center justify-center">
+        {getThemeIcon()}
+      </span>
+      <span className="hidden sm:inline">
+        {getThemeLabel()}
+      </span>
     </button>
   );
-}; 
+};
