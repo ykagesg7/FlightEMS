@@ -5,6 +5,7 @@ import { useAuthStore } from '../../stores/authStore';
 import supabase, { getProfileWithRetry } from '../../utils/supabase';
 
 const ProfileMenu = () => {
+  // すべてのフックを先頭にまとめる
   const user = useAuthStore(state => state.user);
   const profile = useAuthStore(state => state.profile);
   const signOut = useAuthStore(state => state.signOut);
@@ -15,6 +16,7 @@ const ProfileMenu = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [localProfile, setLocalProfile] = useState<Record<string, unknown> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   // プロフィール情報がない場合は取得を試みる
   useEffect(() => {
@@ -99,6 +101,18 @@ const ProfileMenu = () => {
     };
   }, []);
 
+  // プロフィールが変更されたらエラー状態をリセット
+  useEffect(() => {
+    setImageError(false);
+    // プロフィール更新時にlocalProfileもクリアして最新情報を取得
+    if (profile?.avatar_url && profile?.avatar_url !== localProfile?.avatar_url) {
+      setLocalProfile(null);
+    }
+  }, [profile?.avatar_url, localProfile?.avatar_url]);
+
+  // 使用するプロフィールを決定（コンテキストからのプロフィールまたはローカルで取得したプロフィール）
+  const effectiveProfile = profile || localProfile;
+
   // ログアウト確認を表示
   const confirmLogout = () => {
     setIsOpen(false);
@@ -121,9 +135,6 @@ const ProfileMenu = () => {
   const cancelLogout = () => {
     setShowLogoutConfirm(false);
   };
-
-  // 使用するプロフィールを決定（コンテキストからのプロフィールまたはローカルで取得したプロフィール）
-  const effectiveProfile = profile || localProfile;
 
   // ユーザー情報もプロフィールもない場合のフォールバック
   if (!user) {
@@ -158,18 +169,6 @@ const ProfileMenu = () => {
     const username = effectiveProfile.username as string;
     return username ? username.charAt(0).toUpperCase() : 'U';
   };
-
-  // 画像エラー状態管理（無限ループ防止）
-  const [imageError, setImageError] = useState(false);
-
-  // プロフィールが変更されたらエラー状態をリセット
-  useEffect(() => {
-    setImageError(false);
-    // プロフィール更新時にlocalProfileもクリアして最新情報を取得
-    if (effectiveProfile?.avatar_url && effectiveProfile?.avatar_url !== localProfile?.avatar_url) {
-      setLocalProfile(null);
-    }
-  }, [effectiveProfile?.avatar_url, localProfile?.avatar_url]);
 
   return (
     <>

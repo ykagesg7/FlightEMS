@@ -10,7 +10,7 @@ interface ProgressStep {
 }
 
 interface ProgressIndicatorProps {
-  steps: ProgressStep[];
+  steps?: ProgressStep[];
   orientation?: 'horizontal' | 'vertical';
   showPercentage?: boolean;
   showLabels?: boolean;
@@ -18,12 +18,17 @@ interface ProgressIndicatorProps {
 }
 
 const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
-  steps,
+  steps = [],
   orientation = 'horizontal',
   showPercentage = true,
   showLabels = true,
   className = ''
 }) => {
+  // stepsが空の場合は何も表示しない
+  if (!steps.length) {
+    return null;
+  }
+
   const completedSteps = steps.filter(step => step.status === 'completed').length;
   const totalSteps = steps.length;
   const overallProgress = (completedSteps / totalSteps) * 100;
@@ -82,8 +87,8 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
             <div
               key={step.id}
               className={`flex items-start space-x-3 p-3 rounded-lg transition-all duration-200 ${step.status === 'current'
-                  ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
-                  : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
+                : 'hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
             >
               <div className="flex-shrink-0 mt-0.5">
@@ -94,10 +99,10 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                 {showLabels && (
                   <>
                     <h3 className={`text-sm font-medium ${step.status === 'completed'
-                        ? 'text-green-800 dark:text-green-300'
-                        : step.status === 'current'
-                          ? 'text-blue-800 dark:text-blue-300'
-                          : 'text-gray-600 dark:text-gray-400'
+                      ? 'text-green-800 dark:text-green-300'
+                      : step.status === 'current'
+                        ? 'text-blue-800 dark:text-blue-300'
+                        : 'text-gray-600 dark:text-gray-400'
                       }`}>
                       {step.title}
                     </h3>
@@ -167,10 +172,10 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
           <div key={step.id} className="flex items-center flex-shrink-0">
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-200 ${step.status === 'completed'
-                  ? 'bg-green-500 border-green-500'
-                  : step.status === 'current'
-                    ? 'bg-blue-500 border-blue-500'
-                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'
+                ? 'bg-green-500 border-green-500'
+                : step.status === 'current'
+                  ? 'bg-blue-500 border-blue-500'
+                  : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'
                 }`}
             >
               {step.status === 'completed' ? (
@@ -186,10 +191,10 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
             {showLabels && (
               <div className="ml-3 min-w-0">
                 <p className={`text-sm font-medium ${step.status === 'completed'
-                    ? 'text-green-600 dark:text-green-400'
-                    : step.status === 'current'
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : 'text-gray-400 dark:text-gray-500'
+                  ? 'text-green-600 dark:text-green-400'
+                  : step.status === 'current'
+                    ? 'text-blue-600 dark:text-blue-400'
+                    : 'text-gray-400 dark:text-gray-500'
                   }`}>
                   {step.title}
                 </p>
@@ -198,8 +203,8 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 
             {index < steps.length - 1 && (
               <div className={`w-16 h-0.5 mx-4 ${steps[index + 1].status === 'completed' || step.status === 'completed'
-                  ? 'bg-green-300'
-                  : 'bg-gray-300 dark:bg-gray-600'
+                ? 'bg-green-300'
+                : 'bg-gray-300 dark:bg-gray-600'
                 }`} />
             )}
           </div>

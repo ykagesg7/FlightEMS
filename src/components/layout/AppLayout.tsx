@@ -2,9 +2,9 @@ import React, { lazy, useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
-import { AuthButton } from '../auth/AuthButton';
+import AuthButton from '../auth/AuthButton';
 import { HUDTimeDisplay } from '../ui/HUDDashboard';
-import { ProgressIndicator } from '../ui/ProgressIndicator';
+import ProgressIndicator from '../ui/ProgressIndicator';
 import { ThemeToggler } from '../ui/ThemeToggler';
 
 // 動的インポートでコード分割
@@ -78,37 +78,18 @@ export const AppLayout: React.FC = () => {
     setMenuOpen(false);
   };
 
-
-
-  // Learningメニューのマウスイベントハンドラー
-  const handleLearningMouseEnter = () => {
-    if (learningCloseTimer) {
-      clearTimeout(learningCloseTimer);
-      setLearningCloseTimer(null);
-    }
-    setLearningDropdownOpen(true);
-  };
-
-  const handleLearningMouseLeave = () => {
-    const timer = setTimeout(() => {
-      setLearningDropdownOpen(false);
-    }, 300); // 300ms の遅延
-    setLearningCloseTimer(timer);
-  };
-
-  // デスクトップ版Learningメニューコンポーネント
+  // Learningメニュー
   const DesktopLearningMenu = () => (
-    <div
-      className="relative group"
-      onMouseEnter={handleLearningMouseEnter}
-      onMouseLeave={handleLearningMouseLeave}
-    >
+    <div className="relative group">
       <NavLink
-        to="/learning"
+        to="#"
+        onClick={() => setLearningDropdownOpen((prev) => !prev)}
         className={`flex items-center space-x-1 px-4 py-2 ${isMilitary
           ? 'fighter-nav-item hud-text border-none rounded-none'
           : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
           }`}
+        aria-expanded={learningDropdownOpen}
+        aria-haspopup="true"
       >
         <span>{isMilitary ? '🎖️' : '🎓'}</span>
         <span>{isMilitary ? 'TRAINING' : 'Learning'}</span>
@@ -121,22 +102,12 @@ export const AppLayout: React.FC = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </NavLink>
-
-      {/* ドロップダウンメニュー */}
       {learningDropdownOpen && (
         <div
-          className={`absolute top-full left-0 mt-1 w-64 ${isMilitary
-            ? 'hud-card border border-hud-accent'
-            : 'bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200/20 dark:border-gray-700/50'
-            } backdrop-blur-sm z-50 overflow-hidden`}
-          onMouseEnter={handleLearningMouseEnter}
-          onMouseLeave={handleLearningMouseLeave}
+          className="absolute top-full left-0 mt-1 w-64 bg-black/90 rounded-xl shadow-2xl border border-gray-200/20 dark:border-gray-700/50 backdrop-blur-sm z-50 overflow-hidden"
         >
           <div className="p-2">
-            <div className={`text-xs font-semibold px-3 py-2 uppercase tracking-wider ${isMilitary
-              ? 'text-hud-accent font-hud hud-text-blink'
-              : 'text-gray-500 dark:text-gray-400'
-              }`}>
+            <div className="text-xs font-semibold px-3 py-2 uppercase tracking-wider text-gray-500 dark:text-gray-400">
               {isMilitary ? '▶ TRAINING MODULES' : '学習カテゴリ'}
             </div>
             {learningCategories.map((category) => (
@@ -162,17 +133,11 @@ export const AppLayout: React.FC = () => {
               </button>
             ))}
           </div>
-          <div className={`p-2 ${isMilitary
-            ? 'border-t border-hud-accent'
-            : 'border-t border-gray-200/20 dark:border-gray-700/50'
-            }`}>
+          <div className="p-2 border-t border-gray-200/20 dark:border-gray-700/50">
             <NavLink
               to="/learning"
               onClick={() => setLearningDropdownOpen(false)}
-              className={`block w-full text-left px-3 py-2 text-sm font-medium transition-all duration-200 ${isMilitary
-                ? 'hud-button text-hud-secondary border-none rounded-none'
-                : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg'
-                }`}
+              className="block w-full text-left px-3 py-2 text-sm font-medium transition-all duration-200 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg"
             >
               {isMilitary ? '⚡ ALL MODULES' : '📊 すべて表示'}
             </NavLink>
@@ -182,35 +147,18 @@ export const AppLayout: React.FC = () => {
     </div>
   );
 
-  // Articlesメニューのマウスイベントハンドラー
-  const handleArticlesMouseEnter = () => {
-    if (articlesCloseTimer) {
-      clearTimeout(articlesCloseTimer);
-      setArticlesCloseTimer(null);
-    }
-    setArticlesDropdownOpen(true);
-  };
-
-  const handleArticlesMouseLeave = () => {
-    const timer = setTimeout(() => {
-      setArticlesDropdownOpen(false);
-    }, 300); // 300ms の遅延
-    setArticlesCloseTimer(timer);
-  };
-
-  // デスクトップ版Articlesメニューコンポーネント
+  // Articlesメニュー
   const DesktopArticlesMenu = () => (
-    <div
-      className="relative group"
-      onMouseEnter={handleArticlesMouseEnter}
-      onMouseLeave={handleArticlesMouseLeave}
-    >
+    <div className="relative group">
       <NavLink
-        to="/articles"
+        to="#"
+        onClick={() => setArticlesDropdownOpen((prev) => !prev)}
         className={`flex items-center space-x-1 px-4 py-2 ${isMilitary
           ? 'fighter-nav-item hud-text border-none rounded-none'
           : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
           }`}
+        aria-expanded={articlesDropdownOpen}
+        aria-haspopup="true"
       >
         <span>{isMilitary ? '📋' : '📖'}</span>
         <span>{isMilitary ? 'MANUAL' : 'Articles'}</span>
@@ -223,22 +171,12 @@ export const AppLayout: React.FC = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </NavLink>
-
-      {/* ドロップダウンメニュー */}
       {articlesDropdownOpen && (
         <div
-          className={`absolute top-full left-0 mt-1 w-64 ${isMilitary
-            ? 'hud-card border border-hud-accent'
-            : 'bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200/20 dark:border-gray-700/50'
-            } backdrop-blur-sm z-50 overflow-hidden`}
-          onMouseEnter={handleArticlesMouseEnter}
-          onMouseLeave={handleArticlesMouseLeave}
+          className="absolute top-full left-0 mt-1 w-64 bg-black/90 rounded-xl shadow-2xl border border-gray-200/20 dark:border-gray-700/50 backdrop-blur-sm z-50 overflow-hidden"
         >
           <div className="p-2">
-            <div className={`text-xs font-semibold px-3 py-2 uppercase tracking-wider ${isMilitary
-              ? 'text-hud-accent font-hud hud-text-blink'
-              : 'text-gray-500 dark:text-gray-400'
-              }`}>
+            <div className="text-xs font-semibold px-3 py-2 uppercase tracking-wider text-gray-500 dark:text-gray-400">
               {isMilitary ? '▶ OPERATION MANUAL' : '記事カテゴリ'}
             </div>
             {articleCategories.map((category) => (
@@ -264,17 +202,11 @@ export const AppLayout: React.FC = () => {
               </button>
             ))}
           </div>
-          <div className={`p-2 ${isMilitary
-            ? 'border-t border-hud-accent'
-            : 'border-t border-gray-200/20 dark:border-gray-700/50'
-            }`}>
+          <div className="p-2 border-t border-gray-200/20 dark:border-gray-700/50">
             <NavLink
               to="/articles"
               onClick={() => setArticlesDropdownOpen(false)}
-              className={`block w-full text-left px-3 py-2 text-sm font-medium transition-all duration-200 ${isMilitary
-                ? 'hud-button text-hud-secondary border-none rounded-none'
-                : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg'
-                }`}
+              className="block w-full text-left px-3 py-2 text-sm font-medium transition-all duration-200 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg"
             >
               {isMilitary ? '⚡ ALL MANUALS' : '📊 すべて表示'}
             </NavLink>
@@ -284,12 +216,37 @@ export const AppLayout: React.FC = () => {
     </div>
   );
 
+  // サブメニュー外クリックで閉じるuseEffectをAppLayout本体に追加
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        learningDropdownOpen || articlesDropdownOpen
+      ) {
+        const menuElements = document.querySelectorAll('.relative.group');
+        let clickedInside = false;
+        menuElements.forEach((el) => {
+          if (el.contains(event.target)) {
+            clickedInside = true;
+          }
+        });
+        if (!clickedInside) {
+          setLearningDropdownOpen(false);
+          setArticlesDropdownOpen(false);
+        }
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [learningDropdownOpen, articlesDropdownOpen]);
+
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isMilitary ? 'bg-military-fighter-panel text-hud-primary' : 'bg-gray-900 text-gray-100'
       }`}>
       {/* ヘッダー */}
       <header className={`border-b transition-all duration-300 ${isMilitary
-        ? 'fighter-header border-hud-accent bg-military-camo-dark'
+        ? 'border-hud-accent bg-black/40'
         : 'border-gray-700 bg-gray-800'
         }`}>
         <div className="container mx-auto px-4 py-4">
@@ -300,7 +257,7 @@ export const AppLayout: React.FC = () => {
                 ? 'hud-text-glow font-tactical tracking-wider'
                 : 'text-blue-400'
                 }`}>
-                {isMilitary ? '⚡ FLIGHT ACADEMY ⚡' : 'Flight Academy'}
+                {isMilitary ? 'FLIGHT ACADEMY' : 'Flight Academy'}
               </h1>
               {/* 時刻表示 */}
               {isMilitary && (
@@ -426,10 +383,10 @@ export const AppLayout: React.FC = () => {
       </header>
 
       {/* メインコンテンツ */}
-      <main className={`container mx-auto px-4 py-8 transition-all duration-300 ${isMilitary ? 'military:text-hud' : ''
+      <main className={`container mx-auto px-4 py-8 transition-all duration-300 ${isMilitary ? 'military:text-hud' : ''}
         }`}>
         <div className={`rounded-lg p-6 shadow-lg transition-all duration-300 ${isMilitary
-          ? 'camo-card hud-text shadow-hud-glow border border-hud-accent'
+          ? 'bg-black/60 text-[#00ff41] border border-hud-accent'
           : 'bg-gray-800 border border-gray-700'
           }`}>
           <Outlet />
@@ -447,9 +404,7 @@ export const AppLayout: React.FC = () => {
               ? 'hud-text font-tactical tracking-wider'
               : 'text-gray-400'
               }`}>
-              {isMilitary
-                ? '⚡ TACTICAL FLIGHT TRAINING SYSTEM - SECURE NETWORK ⚡'
-                : '© 2024 Flight Academy. All rights reserved.'}
+              {'Flight Academy'}
             </p>
           </div>
         </div>
