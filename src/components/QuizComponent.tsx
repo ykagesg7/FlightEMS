@@ -7,6 +7,8 @@ interface QuizComponentProps {
   quizTitle: string;
   questions: QuizQuestion[];
   onSubmitQuiz: (answers: UserQuizAnswer[]) => void;
+  onBackToContents: () => void;
+  theme: Theme;
   generalMessages: {
     submitAnswer: string;
     correct: string;
@@ -21,8 +23,8 @@ interface QuizComponentProps {
   }
 }
 
-export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questions, onSubmitQuiz, generalMessages }) => {
-  const { theme } = useTheme();
+export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questions, onSubmitQuiz, onBackToContents, theme, generalMessages }) => {
+  const { theme: contextTheme } = useTheme();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserQuizAnswer[]>([]);
   const [feedback, setFeedback] = useState<{ [key: string]: { isCorrect: boolean; explanation: string; userAnswer?: string | number } }>({});
@@ -78,8 +80,8 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
 
   return (
     <div className={`p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn border ${theme === 'dark'
-        ? 'bg-slate-800 border-slate-700'
-        : 'bg-white border-gray-200'
+      ? 'bg-slate-800 border-slate-700'
+      : 'bg-white border-gray-200'
       }`}>
       <h2 className="text-2xl font-bold text-center text-sky-400 mb-6">{quizTitle}</h2>
       <p className={`text-center mb-6 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'

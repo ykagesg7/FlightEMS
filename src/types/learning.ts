@@ -1,7 +1,6 @@
 import type { Database } from './database.types';
 
 // 学習コンテンツ関連型
-export type LearningContent = Database['public']['Tables']['learning_contents']['Row'];
 export type LearningProgress = Database['public']['Tables']['learning_progress']['Row'];
 
 // クイズ関連型
@@ -138,4 +137,17 @@ export interface TestSessionStats {
 export interface SubjectStats {
   total: number;
   correct: number;
+}
+
+export interface LearningContent {
+  id: string;
+  title: string;
+  category: string;
+  description: string | null;
+  order_index: number;
+  parent_id: string | null;
+  content_type: string;
+  created_at: string;
+  updated_at: string;
+  is_published: boolean;
 }

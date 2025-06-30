@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { LearningContent } from '../types';
 import supabase from '../utils/supabase';
 import { cplAviationLawContents } from '../utils/testLearningData';
 
@@ -12,18 +13,6 @@ interface LearningProgress {
   last_position: number;
   last_read_at: string;
   read_count: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface LearningContent {
-  id: string;
-  title: string;
-  category: string;
-  description: string | null;
-  order_index: number;
-  parent_id: string | null;
-  content_type: string;
   created_at: string;
   updated_at: string;
 }
