@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import React, { lazy, Suspense } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 // Contexts
 import { ProgressProvider } from './contexts/ProgressContext';
@@ -12,6 +12,16 @@ import { AuthProvider } from './providers/AuthProvider';
 // Enhanced Error Boundary and Layout
 import { AppLayout } from './components/layout/AppLayout';
 import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
+
+// ページのlazyインポート
+const PlanningMapPage = lazy(() => import('./pages/PlanningMapPage'));
+const LearningPage = lazy(() => import('./pages/LearningPage'));
+const ArticlesPage = lazy(() => import('./pages/ArticlesPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+// 必要に応じて他のページも追加
+
+// NotFoundPageの簡易実装
+const NotFoundPage = () => <div className="text-center text-red-500 py-12">ページが見つかりません</div>;
 
 // React Query Client設定
 const queryClient = new QueryClient({
@@ -49,7 +59,17 @@ const App: React.FC = () => {
   return (
     <Router>
       <AppProviders>
-        <AppLayout />
+        <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<PlanningMapPage />} />
+              <Route path="learning" element={<LearningPage />} />
+              <Route path="articles" element={<ArticlesPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+          </Routes>
+        </Suspense>
       </AppProviders>
     </Router>
   );
