@@ -12,7 +12,7 @@
 #### 1. **大量データの処理**
 ```typescript
 // 現状：全データを一度に処理
-const displayContents = allContents.filter(content => 
+const displayContents = allContents.filter(content =>
   content.category === selectedCategory
 );
 ```
@@ -110,11 +110,12 @@ const useProgressiveContentLoader = (contentIds: string[]) => {
 ### 4. **UX改善提案**
 
 #### A. **学習進捗の視覚化強化**
+{% raw %}
 ```typescript
 // 詳細な学習進捗インジケーター
 const EnhancedProgressIndicator: React.FC = ({ progress }) => (
   <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-    <div 
+    <div
       className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-1000 ease-out"
       style={{ width: `${progress.percentage}%` }}
     />
@@ -124,18 +125,19 @@ const EnhancedProgressIndicator: React.FC = ({ progress }) => (
   </div>
 );
 ```
+{% endraw %}
 
 #### B. **レスポンシブ設計の改善**
 ```typescript
 // Tailwindによる詳細なブレークポイント対応
 const ResponsiveQuizLayout: React.FC = ({ children }) => (
   <div className="
-    grid 
-    grid-cols-1 
-    md:grid-cols-2 
-    lg:grid-cols-3 
-    xl:grid-cols-4 
-    gap-4 
+    grid
+    grid-cols-1
+    md:grid-cols-2
+    lg:grid-cols-3
+    xl:grid-cols-4
+    gap-4
     p-4
     auto-rows-max
   ">
@@ -160,7 +162,7 @@ const ErrorBoundary: React.FC = ({ children, fallback }) => {
         <p className="text-red-600 mb-4">
           ページを再読み込みするか、しばらく待ってから再度お試しください。
         </p>
-        <button 
+        <button
           onClick={() => window.location.reload()}
           className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
         >
@@ -201,4 +203,4 @@ const ErrorBoundary: React.FC = ({ children, fallback }) => {
 ### 低優先度（1-2ヶ月）
 1. 高度なアナリティクス
 2. オフライン対応
-3. PWA化 
+3. PWA化
