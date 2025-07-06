@@ -77,6 +77,19 @@ export const cplAviationLawContents = [
     is_freemium: false,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
+  },
+  {
+    id: '4.1_FormationFlightTurningRejoin',
+    title: '【操縦法】編隊飛行その１、旋回リジョインをマスターせよ！',
+    category: '操縦法',
+    description: '編隊飛行の高等訓練科目「旋回リジョイン」の完全攻略ガイド。アスペクト・アングル、POM、追跡曲線、HCAの四つの基本概念から、三段階の実践フェーズまでを詳細解説。',
+    order_index: 10,
+    parent_id: null,
+    content_type: 'article',
+    is_published: true,
+    is_freemium: false,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   }
 ];
 
@@ -109,4 +122,4 @@ export const testLearningTestMappings = [
     relationship_type: 'direct',
     weight_score: 1.0
   }
-]; 
+];

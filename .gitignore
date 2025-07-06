@@ -34,11 +34,18 @@ dist-ssr
 .env*.local
 .env.production
 
+# Security: MCP configuration with sensitive data
+.cursor/mcp.json
+.cursor/mcp.json.backup*
+backup_mcp_*.json
+
 # Ignore temporary and backup files
 temp/
 *.txt
 *.ps1
 *-original.tsx
+*.backup*
+.env.local.backup*
 
 # Gemini CLI
 .gemini/auth/

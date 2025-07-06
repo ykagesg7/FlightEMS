@@ -50,6 +50,7 @@ const articleCategoryMapping: { [key: string]: string } = {
   'mentality': 'メンタリティー',
   'thinking': '思考法',
   'logical-thinking': '論理的思考',
+  'flight-control': '操縦',
   'others': 'その他'
 };
 
@@ -68,18 +69,29 @@ function ArticlesPage() {
   } = useLearningProgress();
 
   // Articles専用のコンテンツフィルタリング
-  const articleCategories = ['メンタリティー', '思考法'];
+  const articleCategories = ['メンタリティー', '思考法', '操縦'];
+
+  // デバッグ: learningContentsの中身を出力
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('learningContents:', learningContents);
+  }, [learningContents]);
 
   const articleContents = useMemo(() => {
+    // デバッグ: articleContentsの中身を出力
+    // eslint-disable-next-line no-console
+    console.log('articleContents (before filter by category):', learningContents.filter(content => content.is_published));
+    // eslint-disable-next-line no-console
+    console.log('articleContents (after filter by category):', learningContents.filter(content => content.is_published && articleCategories.includes(content.category)));
     return learningContents.filter(content =>
       content.is_published &&
       articleCategories.includes(content.category)
     );
-  }, [learningContents]);
+  }, [learningContents, articleCategories]);
 
   const {
-    displayContents,
-    canAccessContent,
+    // displayContents,
+    // canAccessContent,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     freemiumInfo,
     isPreviewMode
@@ -104,14 +116,37 @@ function ArticlesPage() {
   } = useArticleStats();
 
   // Articles専用コンテンツにFreemiumアクセス制御を適用
-  const accessibleArticleContents = useMemo(() => {
-    return articleContents.filter(content =>
-      displayContents.some(dc => dc.id === content.id)
-    );
-  }, [articleContents, displayContents]);
+  const accessibleArticleContents = articleContents; // 一時的にフリーミアムフィルタリングを無効化
 
   // カテゴリ別フィルタリング
   const filteredContents = useMemo(() => {
+    // デバッグ: filteredContentsの中身を出力
+    // eslint-disable-next-line no-console
+    console.log('filteredContents (before categoryFromUrl filter):', accessibleArticleContents);
+
+    const tempFilteredContents = accessibleArticleContents.filter(content => {
+      if (!categoryFromUrl || !articleCategoryMapping[categoryFromUrl]) {
+        return true;
+      }
+      const selectedCategory = articleCategoryMapping[categoryFromUrl];
+      if (selectedCategory === 'メンタリティー') {
+        return content.category?.includes('メンタリティー') || content.category?.includes('自己啓発') || content.id.startsWith('1.') || content.title?.includes('メンタリティー');
+      }
+      if (selectedCategory === '思考法') {
+        return content.category?.includes('思考法') || content.id.startsWith('2.') || content.title?.includes('思考法') || content.title?.includes('論理的');
+      }
+      if (selectedCategory === '論理的思考') {
+        return content.category?.includes('論理') || content.title?.includes('論理') || content.title?.includes('プレゼンテーション');
+      }
+      if (selectedCategory === '操縦') {
+        return content.category?.includes('操縦') || content.id.startsWith('4.') || content.title?.includes('操縦') || content.title?.includes('編隊飛行');
+      }
+      return content.category === selectedCategory;
+    });
+
+    // eslint-disable-next-line no-console
+    console.log('filteredContents (after categoryFromUrl filter):', tempFilteredContents);
+
     if (!categoryFromUrl || !articleCategoryMapping[categoryFromUrl]) {
       return accessibleArticleContents;
     }
@@ -134,6 +169,12 @@ function ArticlesPage() {
         return content.category?.includes('論理') ||
           content.title?.includes('論理') ||
           content.title?.includes('プレゼンテーション');
+      }
+      if (selectedCategory === '操縦') {
+        return content.category?.includes('操縦') ||
+          content.id.startsWith('4.') ||
+          content.title?.includes('操縦') ||
+          content.title?.includes('編隊飛行');
       }
 
       return content.category === selectedCategory;
@@ -210,7 +251,6 @@ function ArticlesPage() {
 
   // 最新記事3つを取得（更新日時順、フィルタリング後のコンテンツから）
   const latestArticles = filteredContents
-    .filter(content => canAccessContent(content.id))
     .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
     .slice(0, 3);
 
@@ -253,7 +293,7 @@ function ArticlesPage() {
         : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50'
         }`}>
         <div className="container mx-auto px-4 py-6">
-          {canAccessContent(selectedTab) ? (
+          {true ? ( // 一時的にアクセス制御を無効化
             <LearningTabMDX
               contentId={selectedTab}
               contentType="articles"
@@ -424,7 +464,7 @@ function ArticlesPage() {
                       {groupedContents[category]
                         .sort((a, b) => a.order_index - b.order_index)
                         .map(content => {
-                          const hasAccess = canAccessContent(content.id);
+                          const hasAccess = true; // 一時的にアクセス制御を無効化
                           const isFreemium = false; // フリーミアム判定は一時的に無効化
 
                           return (

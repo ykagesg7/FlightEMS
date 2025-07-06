@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { LearningContent } from '../types';
 import supabase from '../utils/supabase';
-import { cplAviationLawContents } from '../utils/testLearningData';
 
 interface LearningProgress {
   id: string;
@@ -25,14 +24,8 @@ export const useLearningProgress = () => {
   const [error, setError] = useState<Error | null>(null);
 
   // 学習コンテンツをロード
-  const loadLearningContents = async () => {
+  const loadLearningContents = useCallback(async () => {
     try {
-      // ユーザーのチェックを一時的に無効化（コンテンツ表示のため）
-      // if (!user) {
-      //   console.log('ユーザーが未ログインのため、コンテンツをロードできません');
-      //   return;
-      // }
-
       const { data, error } = await supabase
         .from('learning_contents')
         .select('*')
@@ -45,31 +38,27 @@ export const useLearningProgress = () => {
       }
 
       if (data && data.length > 0) {
-        // 既存のコンテンツにCPL航空法記事を追加
-        const combinedContents = [...data, ...cplAviationLawContents];
-        setLearningContents(combinedContents);
+        setLearningContents(data);
         // 開発環境でのみログを出力
         if (import.meta.env.MODE === 'development') {
-          console.log('学習コンテンツをロードしました:', combinedContents.length, '件');
+          console.log('学習コンテンツをロードしました:', data.length, '件');
         }
       } else {
-        // データベースが空の場合はCPL航空法記事のみ表示
-        setLearningContents(cplAviationLawContents);
+        setLearningContents([]);
         // 開発環境でのみログを出力
         if (import.meta.env.MODE === 'development') {
-          console.log('CPL航空法記事のみ表示:', cplAviationLawContents.length, '件');
+          console.log('データベースに公開された学習コンテンツはありません。');
         }
       }
     } catch (err) {
       console.error('学習コンテンツのロードエラー:', err);
       setError(err instanceof Error ? err : new Error('学習コンテンツのロード中に不明なエラーが発生しました'));
-      // エラーが発生した場合でもCPL記事は表示
-      setLearningContents(cplAviationLawContents);
+      setLearningContents([]);
     }
-  };
+  }, []);
 
   // 進捗データをロード
-  const loadUserProgress = async () => {
+  const loadUserProgress = useCallback(async () => {
     try {
       if (!user) {
         setUserProgress({});
@@ -86,7 +75,6 @@ export const useLearningProgress = () => {
       }
 
       if (data) {
-        // 進捗データをコンテンツIDをキーとするオブジェクトに変換
         const progressMap: Record<string, LearningProgress> = {};
         data.forEach(progress => {
           progressMap[progress.content_id] = progress;
@@ -97,37 +85,19 @@ export const useLearningProgress = () => {
       console.error('学習進捗のロードエラー:', err);
       setError(err instanceof Error ? err : new Error('学習進捗のロード中に不明なエラーが発生しました'));
     }
-  };
+  }, [user]);
 
-  // 初期化フラグと前回のユーザーIDを記録
-  const [initialized, setInitialized] = useState(false);
-  const [lastUserId, setLastUserId] = useState<string | null>(null);
-
-  // ユーザー認証の変更を監視（重複呼び出しを防ぐ）
+  // ユーザー認証の変更を監視し、コンテンツと進捗をロード
   useEffect(() => {
-    const currentUserId = user?.id || null;
+    const loadInitialData = async () => {
+      setIsLoading(true);
+      await loadLearningContents();
+      await loadUserProgress();
+      setIsLoading(false);
+    };
 
-    // 初回ロードまたはユーザーが変更された場合のみ実行
-    if (!initialized || lastUserId !== currentUserId) {
-      const loadData = async () => {
-        setIsLoading(true);
-
-        // コンテンツは一度だけロード
-        if (!initialized) {
-          await loadLearningContents();
-          setInitialized(true);
-        }
-
-        // ユーザーがいる場合のみ進捗をロード
-        await loadUserProgress();
-
-        setIsLoading(false);
-      };
-
-      loadData();
-      setLastUserId(currentUserId);
-    }
-  }, [user, initialized, lastUserId]);
+    loadInitialData();
+  }, [loadLearningContents, loadUserProgress]);
 
   // 進捗の更新
   const updateProgress = async (contentId: string, position: number) => {
