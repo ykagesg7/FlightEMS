@@ -66,7 +66,8 @@ export default defineConfig(({ mode }) => {
         },
         output: {
           // より詳細なチャンク分割戦略（stagewise対応）
-          manualChunks: (id) => {
+          // 本番ビルドでは循環依存による初期化順序問題を回避するため、manualChunks を無効化
+          manualChunks: mode === 'development' ? (id) => {
             // Critical path (最優先読み込み)
             if (id.includes('react') || id.includes('react-dom')) {
               return 'critical-react';
@@ -107,7 +108,7 @@ export default defineConfig(({ mode }) => {
             if (id.includes('node_modules')) {
               return 'utility-vendor';
             }
-          },
+          } : undefined,
           // Progressive loading対応のファイル名戦略
           entryFileNames: (chunkInfo) => {
             const name = chunkInfo.name;
