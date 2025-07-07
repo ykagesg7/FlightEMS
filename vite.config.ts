@@ -45,7 +45,9 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       // 環境変数をクライアントで利用可能にする
-      'import.meta.env.VITE_WEATHER_API_KEY': JSON.stringify(weatherApiKey)
+      'import.meta.env.VITE_WEATHER_API_KEY': JSON.stringify(weatherApiKey),
+      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
+      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
     },
     // Experimental features
     experimental: {

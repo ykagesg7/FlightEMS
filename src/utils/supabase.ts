@@ -12,7 +12,7 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 // 環境設定
-const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost';
+const isDevelopment = import.meta.env.MODE === 'development';
 
 // シングルトンパターンによるクライアント管理
 let browserSupabaseClient: ReturnType<typeof createBrowserClient<Database>> | undefined;
