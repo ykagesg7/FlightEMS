@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { ExternalWeatherData, WeatherAPIResponse } from '../src/types';
 
 export default async function handler(
   request: VercelRequest,
