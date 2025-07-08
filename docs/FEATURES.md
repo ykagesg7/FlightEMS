@@ -8,9 +8,10 @@
 2. [ソーシャル機能](#ソーシャル機能)
 3. [フリーミアム機能](#フリーミアム機能)
 4. [認証システム](#認証システム)
-5. [ユーザー管理](#ユーザー管理)
-6. [UI/UX機能](#uiux機能)
-7. [記事ページ機能](#記事ページ機能)
+5. [ルーティングシステム](#ルーティングシステム)
+6. [ユーザー管理](#ユーザー管理)
+7. [UI/UX機能](#uiux機能)
+8. [記事ページ機能](#記事ページ機能)
 
 ## 学習コンテンツ管理
 
@@ -41,8 +42,8 @@ import ImageWithComment from '../components/ImageWithComment';
 
 記事の内容...
 
-<ImageWithComment 
-  src="/images/example.jpg" 
+<ImageWithComment
+  src="/images/example.jpg"
   alt="説明画像"
   comment="画像の説明コメント"
 />
@@ -173,7 +174,7 @@ const canAccessContent = (contentId: string): boolean => {
   if (user) {
     return true;
   }
-  
+
   // 未ログインユーザーはフリーミアム記事のみ
   return freemiumContentIds.includes(contentId);
 };
@@ -199,7 +200,7 @@ interface AuthState {
   profile: Profile | null;
   session: Session | null;
   loading: boolean;
-  
+
   // アクション
   setUser: (user: User | null) => void;
   setProfile: (profile: Profile | null) => void;
@@ -224,12 +225,79 @@ interface AuthState {
 supabase.auth.onAuthStateChange((event, session) => {
   setSession(session);
   setUser(session?.user || null);
-  
+
   if (session?.user?.id) {
     fetchProfile(session.user.id);
   }
 });
 ```
+
+## ルーティングシステム
+
+### React Router による SPA ルーティング
+
+FlightAcademyTsxでは、React Router を使用したシングルページアプリケーション（SPA）のルーティングを実装しています。
+
+#### 主要なルート構成
+
+```jsx
+// src/App.tsx
+<Routes>
+  <Route path="/" element={<AppLayout />}>
+    <Route index element={<PlanningMapPage />} />
+    <Route path="learning" element={<LearningPage />} />
+    <Route path="articles" element={<ArticlesPage />} />
+    <Route path="profile" element={<ProfilePage />} />
+    <Route path="auth" element={<AuthPage />} />
+    <Route path="test" element={<ArticleStatsTestPage />} />
+    <Route path="*" element={<NotFoundPage />} />
+  </Route>
+</Routes>
+```
+
+#### 実装されているページ
+
+| パス | コンポーネント | 説明 |
+|------|---------------|------|
+| `/` | PlanningMapPage | ホーム画面（飛行計画マップ） |
+| `/learning` | LearningPage | 学習コンテンツ一覧・閲覧 |
+| `/articles` | ArticlesPage | 記事一覧・検索 |
+| `/profile` | ProfilePage | ユーザープロフィール管理 |
+| `/auth` | AuthPage | 認証（ログイン・登録） |
+| `/test` | ArticleStatsTestPage | 記事統計・テスト機能 |
+| `/*` | NotFoundPage | 404エラーページ |
+
+#### 技術的特徴
+
+- **コード分割**: `React.lazy()` による動的インポート
+- **Suspense**: ローディング状態の管理
+- **ネストルーティング**: AppLayoutによる共通レイアウト
+- **404ハンドリング**: 未定義パスの適切な処理
+
+#### 実装例
+
+```jsx
+// ページコンポーネントの遅延読み込み
+const AuthPage = lazy(() => import('./pages/AuthPage'));
+const ArticleStatsTestPage = lazy(() => import('./pages/ArticleStatsTestPage'));
+
+// Suspenseによるローディング管理
+<Suspense fallback={<div className="text-center py-12">Loading...</div>}>
+  <Routes>
+    {/* ルート定義 */}
+  </Routes>
+</Suspense>
+```
+
+#### トラブルシューティング
+
+新しいページを追加する際は、以下の手順を確認してください：
+
+1. `src/pages/` にページコンポーネントを作成
+2. `src/App.tsx` にlazyインポートを追加
+3. `<Routes>` 内に新しい `<Route>` を追加
+
+詳細は [React コンポーネント トラブルシューティング](../troubleshooting/REACT_COMPONENTS.md#ルーティングエラー-ページが見つかりません) を参照してください。
 
 ## ユーザー管理
 
@@ -260,7 +328,7 @@ interface Profile {
 export const getProfileWithRetry = async (userId: string) => {
   const maxRetries = 3;
   let retryCount = 0;
-  
+
   while (retryCount <= maxRetries) {
     // リトライロジック
     const { data, error } = await supabase
@@ -268,15 +336,15 @@ export const getProfileWithRetry = async (userId: string) => {
       .select('*')
       .eq('id', userId)
       .single();
-    
+
     if (!error) return { data, error: null };
-    
+
     retryCount++;
     if (retryCount <= maxRetries) {
       await new Promise(resolve => setTimeout(resolve, 500 * retryCount));
     }
   }
-  
+
   // フォールバック処理
   return createFallbackProfile(userId);
 };
@@ -292,8 +360,8 @@ export const getProfileWithRetry = async (userId: string) => {
 const { theme } = useTheme();
 
 const className = `${
-  theme === 'dark' 
-    ? 'bg-gray-800 text-white' 
+  theme === 'dark'
+    ? 'bg-gray-800 text-white'
     : 'bg-white text-gray-900'
 }`;
 ```
@@ -339,7 +407,7 @@ if (loading) {
 
 ```typescript
 // React.lazy による動的インポート
-const LearningContentInteraction = React.lazy(() => 
+const LearningContentInteraction = React.lazy(() =>
   import('./LearningContentInteraction')
 );
 
@@ -419,9 +487,9 @@ const handleJumpToArticle = (articleId: string) => {
   setTimeout(() => {
     const articleElement = document.getElementById(`article-${articleId}`);
     if (articleElement) {
-      articleElement.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
+      articleElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
       });
       // ハイライト効果
       articleElement.classList.add('highlight-article');
@@ -497,12 +565,12 @@ bg-gradient-to-r from-violet-900 via-purple-900 to-indigo-900
 ```typescript
 // 統一されたカードスタイル
 const cardStyles = `${
-  theme === 'dark' 
-    ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900' 
+  theme === 'dark'
+    ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900'
     : 'bg-gradient-to-r from-blue-50 to-indigo-50'
 } rounded-xl shadow-xl border ${
-  theme === 'dark' 
-    ? 'border-slate-700/50' 
+  theme === 'dark'
+    ? 'border-slate-700/50'
     : 'border-blue-200'
 } p-6`;
 ```
@@ -559,4 +627,4 @@ const cardStyles = `${
 
 - [DEVELOPMENT.md](./DEVELOPMENT.md) - 開発ガイド
 - [ROADMAP.md](./ROADMAP.md) - 開発ロードマップ
-- [troubleshooting/authentication-issues.md](./troubleshooting/authentication-issues.md) - 認証トラブルシューティング 
+- [troubleshooting/authentication-issues.md](./troubleshooting/authentication-issues.md) - 認証トラブルシューティング

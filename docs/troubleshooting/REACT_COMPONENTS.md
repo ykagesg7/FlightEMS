@@ -5,17 +5,82 @@
 ## 目次
 
 1. [概要](#概要)
-2. [一般的なエラー: 未使用の関数や変数](#一般的なエラー-未使用の関数や変数)
-3. [レンダリングエラー: MDX CalloutBox未定義](#レンダリングエラー-mdx-calloutbox未定義)
-4. [Hooks 使用順序エラー](#hooks-使用順序エラー)
-5. [状態管理の問題](#状態管理の問題)
-6. [パフォーマンスの問題](#パフォーマンスの問題)
-7. [コード品質の改善](#コード品質の改善)
-8. [まとめと注意点](#まとめと注意点)
+2. [ルーティングエラー: ページが見つかりません](#ルーティングエラー-ページが見つかりません)
+3. [一般的なエラー: 未使用の関数や変数](#一般的なエラー-未使用の関数や変数)
+4. [レンダリングエラー: MDX CalloutBox未定義](#レンダリングエラー-mdx-calloutbox未定義)
+5. [Hooks 使用順序エラー](#hooks-使用順序エラー)
+6. [状態管理の問題](#状態管理の問題)
+7. [パフォーマンスの問題](#パフォーマンスの問題)
+8. [コード品質の改善](#コード品質の改善)
+9. [まとめと注意点](#まとめと注意点)
 
 ## 概要
 
 Flight Academy プロジェクトで発生するReact関連のエラーとその対応策を、以下の各セクションで詳細に説明します。これにより、エラー発生時に迅速なトラブルシューティングが可能です。
+
+## ルーティングエラー: ページが見つかりません
+
+### エラー内容
+
+```
+ページが見つかりません
+```
+
+ブラウザで特定のページ（例: `/auth`、`/test`）にアクセスした際に、404エラーページが表示される。
+
+### 原因
+
+React Router の設定において、該当するパスへのルート定義が `src/App.tsx` に存在しないため。
+
+### 解決策
+
+1. **該当するページコンポーネントの確認**
+   - `src/pages/` ディレクトリに該当するページコンポーネントが存在することを確認
+
+2. **App.tsx へのルート追加**
+   - `src/App.tsx` にページコンポーネントのlazyインポートを追加
+   - `<Routes>` 内に新しい `<Route>` を追加
+
+### 実施例
+
+**問題**: `/auth` パスで「ページが見つかりません」エラーが発生
+
+**解決**:
+```jsx
+// src/App.tsx
+// ページのlazyインポート
+const AuthPage = lazy(() => import('./pages/AuthPage'));
+
+// ルート定義
+<Routes>
+  <Route path="/" element={<AppLayout />}>
+    <Route index element={<PlanningMapPage />} />
+    <Route path="learning" element={<LearningPage />} />
+    <Route path="articles" element={<ArticlesPage />} />
+    <Route path="profile" element={<ProfilePage />} />
+    <Route path="auth" element={<AuthPage />} /> {/* 追加 */}
+    <Route path="test" element={<ArticleStatsTestPage />} /> {/* 追加 */}
+    <Route path="*" element={<NotFoundPage />} />
+  </Route>
+</Routes>
+```
+
+**注意点**:
+- 新しいページを追加する際は、必ず `src/App.tsx` にルートを定義する
+- lazy インポートを使用してコード分割を維持する
+- ページコンポーネントは `src/pages/` ディレクトリに配置する
+
+### 関連する警告の対処
+
+**Supabase クライアント複数インスタンス警告**:
+```
+Multiple GoTrueClient instances detected in the same browser context.
+```
+
+この警告は直接的なエラーではありませんが、将来的にパフォーマンス問題を引き起こす可能性があります。対処方法は今後の課題として検討が必要です。
+
+**stagewise_toolbar-react.js 関連の警告**:
+これらの警告は開発ツール（Stagewise）の検出メカニズムによるものであり、アプリケーションの動作には影響しません。
 
 ## 一般的なエラー: 未使用の関数や変数
 
@@ -144,7 +209,7 @@ useEffect(() => {
 ```jsx
 // データをフィルタリングするロジックをuseMemoでキャッシュ
 const filteredWaypoints = useMemo(() => {
-  return waypoints.filter(wp => 
+  return waypoints.filter(wp =>
     wp.properties.name1.toLowerCase().includes(searchQuery.toLowerCase()) ||
     wp.properties.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -155,7 +220,7 @@ const renderWaypointItem = useCallback(({ index, style }) => {
   const waypoint = filteredWaypoints[index];
   return (
     <div style={style}>
-      <WaypointItem 
+      <WaypointItem
         key={waypoint.properties.id}
         waypoint={waypoint}
         onSelect={handleSelectWaypoint}
