@@ -63,9 +63,6 @@ export const getSupabaseAdmin = () => {
   return adminSupabaseClient;
 };
 
-// 後方互換性のため
-export const supabaseAdmin = getSupabaseAdmin();
-
 // ブラウザ用のデフォルトクライアント
 const supabase = createBrowserSupabaseClient();
 
