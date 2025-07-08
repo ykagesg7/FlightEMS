@@ -18,6 +18,8 @@ const PlanningMapPage = lazy(() => import('./pages/PlanningMapPage'));
 const LearningPage = lazy(() => import('./pages/LearningPage'));
 const ArticlesPage = lazy(() => import('./pages/ArticlesPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const AuthPage = lazy(() => import('./pages/AuthPage')); // AuthPageを追加
+const ArticleStatsTestPage = lazy(() => import('./pages/ArticleStatsTestPage')); // Testページを追加
 // 必要に応じて他のページも追加
 
 // NotFoundPageの簡易実装
@@ -66,6 +68,8 @@ const App: React.FC = () => {
               <Route path="learning" element={<LearningPage />} />
               <Route path="articles" element={<ArticlesPage />} />
               <Route path="profile" element={<ProfilePage />} />
+              <Route path="auth" element={<AuthPage />} /> {/* AuthPageへのルートを追加 */}
+              <Route path="test" element={<ArticleStatsTestPage />} /> {/* Testページへのルートを追加 */}
               <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Routes>
