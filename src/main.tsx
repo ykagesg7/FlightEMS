@@ -7,6 +7,6 @@ import './index.css';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
-    <StagewiseToolbar />
+    {import.meta.env.DEV && <StagewiseToolbar />}
   </StrictMode>
 );

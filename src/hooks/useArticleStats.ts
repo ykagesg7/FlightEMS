@@ -1,21 +1,20 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { createBrowserSupabaseClient } from '../utils/supabase';
-import { 
-  getSessionId, 
-  getAnonymousUserInfo, 
-  getLocalLikeState, 
-  setLocalLikeState,
+import {
+  ArticleComment,
+  ArticleStats,
+  CreateCommentRequest,
+  RecordViewRequest,
+  ToggleLikeRequest
+} from '../types/articles';
+import {
+  getAnonymousUserInfo,
+  getLocalLikeState,
   getLocalViewState,
+  setLocalLikeState,
   setLocalViewState
 } from '../utils/sessionUtils';
-import { 
-  ArticleStats, 
-  ArticleComment, 
-  CreateCommentRequest, 
-  ToggleLikeRequest,
-  RecordViewRequest 
-} from '../types/articles';
+import { supabase as supabaseClient } from '../utils/supabase';
 
 export function useArticleStats() {
   const { user } = useAuth();
@@ -24,7 +23,7 @@ export function useArticleStats() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadedArticleIds, setLoadedArticleIds] = useState<string[]>([]);
 
-  const supabase = createBrowserSupabaseClient();
+  const supabase = supabaseClient;
 
   // 記事統計を取得
   const loadArticleStats = useCallback(async (articleIds: string[]) => {
@@ -34,7 +33,7 @@ export function useArticleStats() {
     setIsLoading(true);
     try {
       const articleStats: Record<string, ArticleStats> = { ...stats };
-      
+
       // 各記事の統計を初期化
       newArticleIds.forEach(id => {
         articleStats[id] = {
@@ -205,7 +204,7 @@ export function useArticleStats() {
       } else {
         // 匿名ユーザーの場合：セッション管理
         const anonymousInfo = getAnonymousUserInfo();
-        
+
         if (currentStats.user_liked) {
           // いいね削除
           const { error } = await supabase
@@ -357,4 +356,4 @@ export function useArticleStats() {
     createComment,
     recordView
   };
-} 
+}
