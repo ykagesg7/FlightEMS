@@ -1,22 +1,10 @@
-import React, { lazy, useEffect, useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
-import { useAuthStore } from '../../stores/authStore';
 import AuthButton from '../auth/AuthButton';
 import { HUDTimeDisplay } from '../ui/HUDDashboard';
 import ProgressIndicator from '../ui/ProgressIndicator';
 import { ThemeToggler } from '../ui/ThemeToggler';
-
-// 動的インポートでコード分割
-const PlanningMapPage = lazy(() => import('../../pages/PlanningMapPage'));
-const LearningPage = lazy(() => import('../../pages/LearningPage'));
-const NewLearningPage = lazy(() => import('../../pages/NewLearningPage'));
-const ArticlesPage = lazy(() => import('../../pages/ArticlesPage'));
-const ExamTab = lazy(() => import('../../components/flight/ExamTab'));
-const AuthPage = lazy(() => import('../../pages/AuthPage'));
-const ProfilePage = lazy(() => import('../../pages/ProfilePage'));
-
-const ArticleStatsTestPage = lazy(() => import('../../pages/ArticleStatsTestPage'));
 
 // 学習カテゴリの定義
 const learningCategories = [
@@ -31,189 +19,24 @@ const learningCategories = [
 const articleCategories = [
   { name: 'メンタリティー', key: 'mentality', icon: '🧠' },
   { name: '思考法', key: 'thinking', icon: '💭' },
-  { name: '論理的思考', key: 'logical-thinking', icon: '🔍' },
   { name: 'その他', key: 'others', icon: '📖' }
 ];
 
 export const AppLayout: React.FC = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [learningDropdownOpen, setLearningDropdownOpen] = useState(false);
   const [articlesDropdownOpen, setArticlesDropdownOpen] = useState(false);
   const { effectiveTheme } = useTheme();
-  const profile = useAuthStore(state => state.profile);
-  const navigate = useNavigate();
 
   // ミリタリーテーマかどうかの判定
   const isMilitary = effectiveTheme === 'military';
 
-  // ドロップダウンメニューの遅延クローズ用タイマー
-  const [learningCloseTimer, setLearningCloseTimer] = useState<NodeJS.Timeout | null>(null);
-  const [articlesCloseTimer, setArticlesCloseTimer] = useState<NodeJS.Timeout | null>(null);
-
-  // コンポーネントアンマウント時のタイマークリーンアップ
-  useEffect(() => {
-    return () => {
-      if (learningCloseTimer) {
-        clearTimeout(learningCloseTimer);
-      }
-      if (articlesCloseTimer) {
-        clearTimeout(articlesCloseTimer);
-      }
-    };
-  }, [learningCloseTimer, articlesCloseTimer]);
-
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
-  const handleLearningCategorySelect = (categoryKey: string) => {
-    navigate(`/learning?category=${categoryKey}`);
+  const handleLearningCategorySelect = () => {
     setLearningDropdownOpen(false);
-    setMenuOpen(false);
   };
 
-  const handleArticleCategorySelect = (categoryKey: string) => {
-    navigate(`/articles?category=${categoryKey}`);
+  const handleArticleCategorySelect = () => {
     setArticlesDropdownOpen(false);
-    setMenuOpen(false);
   };
-
-  // Learningメニュー
-  const DesktopLearningMenu = () => (
-    <div className="relative group">
-      <NavLink
-        to="#"
-        onClick={() => setLearningDropdownOpen((prev) => !prev)}
-        className={`flex items-center space-x-1 px-4 py-2 ${isMilitary
-          ? 'fighter-nav-item hud-text border-none rounded-none'
-          : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
-          }`}
-        aria-expanded={learningDropdownOpen}
-        aria-haspopup="true"
-      >
-        <span>Learning</span>
-        <svg
-          className={`w-4 h-4 transition-transform duration-300 ${learningDropdownOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </NavLink>
-      {learningDropdownOpen && (
-        <div
-          className="absolute top-full left-0 mt-1 w-64 bg-black/90 rounded-xl shadow-2xl border border-gray-200/20 dark:border-gray-700/50 backdrop-blur-sm z-50 overflow-hidden"
-        >
-          <div className="p-2">
-            <div className="text-xs font-semibold px-3 py-2 uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              ▶ Categories
-            </div>
-            {learningCategories.map((category) => (
-              <button
-                key={category.key}
-                onClick={() => handleLearningCategorySelect(category.key)}
-                className={`w-full text-left px-3 py-3 transition-all duration-200 group/item ${isMilitary
-                  ? 'hud-button border-none rounded-none hover:bg-hud-dim'
-                  : 'rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30'
-                  }`}
-              >
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg group-hover/item:scale-110 transition-transform duration-200">
-                    {category.icon}
-                  </span>
-                  <span className={`font-medium transition-colors duration-200 ${isMilitary
-                    ? 'text-hud-primary group-hover/item:text-hud-glow font-hud'
-                    : 'text-gray-700 dark:text-gray-300 group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400'
-                    }`}>
-                    {isMilitary ? category.name.toUpperCase() : category.name}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-          <div className="p-2 border-t border-gray-200/20 dark:border-gray-700/50">
-            <NavLink
-              to="/learning"
-              onClick={() => setLearningDropdownOpen(false)}
-              className="block w-full text-left px-3 py-2 text-sm font-medium transition-all duration-200 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg"
-            >
-              {isMilitary ? '⚡ ALL MODULES' : '📊 すべて表示'}
-            </NavLink>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-
-  // Articlesメニュー
-  const DesktopArticlesMenu = () => (
-    <div className="relative group">
-      <NavLink
-        to="#"
-        onClick={() => setArticlesDropdownOpen((prev) => !prev)}
-        className={`flex items-center space-x-1 px-4 py-2 ${isMilitary
-          ? 'fighter-nav-item hud-text border-none rounded-none'
-          : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
-          }`}
-        aria-expanded={articlesDropdownOpen}
-        aria-haspopup="true"
-      >
-        <span>{isMilitary ? '📋' : '📖'}</span>
-        <span>{isMilitary ? 'MANUAL' : 'Articles'}</span>
-        <svg
-          className={`w-4 h-4 transition-transform duration-300 ${articlesDropdownOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </NavLink>
-      {articlesDropdownOpen && (
-        <div
-          className="absolute top-full left-0 mt-1 w-64 bg-black/90 rounded-xl shadow-2xl border border-gray-200/20 dark:border-gray-700/50 backdrop-blur-sm z-50 overflow-hidden"
-        >
-          <div className="p-2">
-            <div className="text-xs font-semibold px-3 py-2 uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              {isMilitary ? '▶ OPERATION MANUAL' : '記事カテゴリ'}
-            </div>
-            {articleCategories.map((category) => (
-              <button
-                key={category.key}
-                onClick={() => handleArticleCategorySelect(category.key)}
-                className={`w-full text-left px-3 py-3 transition-all duration-200 group/item ${isMilitary
-                  ? 'hud-button border-none rounded-none hover:bg-hud-dim'
-                  : 'rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30'
-                  }`}
-              >
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg group-hover/item:scale-110 transition-transform duration-200">
-                    {category.icon}
-                  </span>
-                  <span className={`font-medium transition-colors duration-200 ${isMilitary
-                    ? 'text-hud-primary group-hover/item:text-hud-glow font-hud'
-                    : 'text-gray-700 dark:text-gray-300 group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400'
-                    }`}>
-                    {isMilitary ? category.name.toUpperCase() : category.name}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-          <div className="p-2 border-t border-gray-200/20 dark:border-gray-700/50">
-            <NavLink
-              to="/articles"
-              onClick={() => setArticlesDropdownOpen(false)}
-              className="block w-full text-left px-3 py-2 text-sm font-medium transition-all duration-200 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg"
-            >
-              {isMilitary ? '⚡ ALL MANUALS' : '📊 すべて表示'}
-            </NavLink>
-          </div>
-        </div>
-      )}
-    </div>
-  );
 
   // サブメニュー外クリックで閉じるuseEffectをAppLayout本体に追加
   useEffect(() => {
@@ -306,7 +129,7 @@ export const AppLayout: React.FC = () => {
                         {articleCategories.map((category) => (
                           <button
                             key={category.key}
-                            onClick={() => handleArticleCategorySelect(category.key)}
+                            onClick={() => handleArticleCategorySelect()}
                             className={`w-full text-left px-3 py-3 transition-all duration-200 group/item ${isMilitary
                               ? 'hud-button border-none rounded-none hover:bg-hud-dim'
                               : 'rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30'
@@ -370,7 +193,7 @@ export const AppLayout: React.FC = () => {
                         {learningCategories.map((category) => (
                           <button
                             key={category.key}
-                            onClick={() => handleLearningCategorySelect(category.key)}
+                            onClick={() => handleLearningCategorySelect()}
                             className={`w-full text-left px-3 py-3 transition-all duration-200 group/item ${isMilitary
                               ? 'hud-button border-none rounded-none hover:bg-hud-dim'
                               : 'rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30'
@@ -455,7 +278,7 @@ export const AppLayout: React.FC = () => {
                   {articleCategories.map((category) => (
                     <button
                       key={category.key}
-                      onClick={() => handleArticleCategorySelect(category.key)}
+                      onClick={() => handleArticleCategorySelect()}
                       className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-sm flex items-center space-x-2 text-white"
                     >
                       <span>{category.icon}</span>
@@ -484,7 +307,7 @@ export const AppLayout: React.FC = () => {
                   {learningCategories.map((category) => (
                     <button
                       key={category.key}
-                      onClick={() => handleLearningCategorySelect(category.key)}
+                      onClick={() => handleLearningCategorySelect()}
                       className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-sm flex items-center space-x-2 text-white"
                     >
                       <span>{category.icon}</span>
