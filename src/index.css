@@ -248,6 +248,34 @@
   }
 }
 
+/* ===== DARK THEME (Red HUD) Overrides ===== */
+@layer utilities {
+  .dark .hud-text {
+    color: #ff4d4d;
+    text-shadow: 0 0 6px rgba(255, 0, 0, 0.8);
+  }
+
+  .dark .hud-text-glow {
+    color: #ff4d4d;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 1);
+  }
+
+  .dark .fighter-nav {
+    border-left: 3px solid rgba(255, 0, 0, 0.5);
+    border-right: 3px solid rgba(255, 0, 0, 0.5);
+  }
+
+  .dark .fighter-nav-item {
+    border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+  }
+
+  .dark .fighter-nav-item.active {
+    background-color: rgba(255, 0, 0, 0.15);
+    border-left: 4px solid rgba(255, 0, 0, 0.8);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+  }
+}
+
 /* モバイル対応のための追加スタイル */
 html {
   touch-action: manipulation;

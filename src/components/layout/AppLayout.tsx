@@ -91,8 +91,7 @@ export const AppLayout: React.FC = () => {
         aria-expanded={learningDropdownOpen}
         aria-haspopup="true"
       >
-        <span>{isMilitary ? '🎖️' : '🎓'}</span>
-        <span>{isMilitary ? 'TRAINING' : 'Learning'}</span>
+        <span>Learning</span>
         <svg
           className={`w-4 h-4 transition-transform duration-300 ${learningDropdownOpen ? 'rotate-180' : ''}`}
           fill="none"
@@ -108,7 +107,7 @@ export const AppLayout: React.FC = () => {
         >
           <div className="p-2">
             <div className="text-xs font-semibold px-3 py-2 uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              {isMilitary ? '▶ TRAINING MODULES' : '学習カテゴリ'}
+              ▶ Categories
             </div>
             {learningCategories.map((category) => (
               <button
@@ -218,14 +217,14 @@ export const AppLayout: React.FC = () => {
 
   // サブメニュー外クリックで閉じるuseEffectをAppLayout本体に追加
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         learningDropdownOpen || articlesDropdownOpen
       ) {
         const menuElements = document.querySelectorAll('.relative.group');
         let clickedInside = false;
         menuElements.forEach((el) => {
-          if (el.contains(event.target)) {
+          if (el.contains(event.target as Node)) {
             clickedInside = true;
           }
         });
@@ -257,43 +256,167 @@ export const AppLayout: React.FC = () => {
                 ? 'hud-text-glow font-tactical tracking-wider'
                 : 'text-blue-400'
                 }`}>
-                {isMilitary ? 'FLIGHT ACADEMY' : 'Flight Academy'}
+                FLIGHT ACADEMY
               </h1>
-              {/* 時刻表示 */}
-              {isMilitary && (
-                <HUDTimeDisplay className="ml-4" />
-              )}
+              {/* 時刻表示 (全テーマ表示) */}
+              <HUDTimeDisplay className="ml-4" />
             </div>
 
             {/* ナビゲーション・ユーティリティ */}
-            <div className="flex items-center space-x-4">
-              <div className={`hidden md:flex items-center space-x-1 ${isMilitary ? 'fighter-nav' : ''}`}>
+            <div className="flex items-center gap-8">
+              <div className={`hidden md:flex items-center gap-4 ${isMilitary ? 'fighter-nav' : ''}`}>
                 <NavLink
                   to="/"
-                  className={`flex items-center space-x-1 px-4 py-2 ${isMilitary
+                  className={`flex-1 flex items-center space-x-1 px-4 py-2 ${isMilitary
                     ? 'fighter-nav-item hud-text border-none rounded-none'
                     : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
                     }`}
                 >
-                  <span>{isMilitary ? '📡' : '🗺️'}</span>
-                  <span>{isMilitary ? 'PLANNING/MAP' : 'Planning/Map'}</span>
+                  <span>PLANNING</span>
                 </NavLink>
-                <DesktopArticlesMenu />
-                <DesktopLearningMenu />
+                <div className="relative group flex-1">
+                  <NavLink
+                    to="#"
+                    onClick={() => setArticlesDropdownOpen((prev) => !prev)}
+                    className={`flex items-center space-x-1 px-4 py-2 ${isMilitary
+                      ? 'fighter-nav-item hud-text border-none rounded-none'
+                      : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
+                      }`}
+                    aria-expanded={articlesDropdownOpen}
+                    aria-haspopup="true"
+                  >
+                    <span>ARTICLES</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-300 ${articlesDropdownOpen ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </NavLink>
+                  {articlesDropdownOpen && (
+                    <div
+                      className="absolute top-full left-0 mt-1 w-64 bg-black/90 rounded-xl shadow-2xl border border-gray-200/20 dark:border-gray-700/50 backdrop-blur-sm z-50 overflow-hidden"
+                    >
+                      <div className="p-2">
+                        <div className="text-xs font-semibold px-3 py-2 uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                          ▶ CATEGORIES
+                        </div>
+                        {articleCategories.map((category) => (
+                          <button
+                            key={category.key}
+                            onClick={() => handleArticleCategorySelect(category.key)}
+                            className={`w-full text-left px-3 py-3 transition-all duration-200 group/item ${isMilitary
+                              ? 'hud-button border-none rounded-none hover:bg-hud-dim'
+                              : 'rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30'
+                              }`}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <span className="text-lg group-hover/item:scale-110 transition-transform duration-200">
+                                {category.icon}
+                              </span>
+                              <span className={`font-medium transition-colors duration-200 ${isMilitary
+                                ? 'text-hud-primary group-hover/item:text-hud-glow font-hud'
+                                : 'text-gray-700 dark:text-gray-300 group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400'
+                                }`}>
+                                {isMilitary ? category.name.toUpperCase() : category.name}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                      <div className="p-2 border-t border-gray-200/20 dark:border-gray-700/50">
+                        <NavLink
+                          to="/articles"
+                          onClick={() => setArticlesDropdownOpen(false)}
+                          className="block w-full text-left px-3 py-2 text-sm font-medium transition-all duration-200 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg"
+                        >
+                          ALL
+                        </NavLink>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="relative group flex-1">
+                  <NavLink
+                    to="#"
+                    onClick={() => setLearningDropdownOpen((prev) => !prev)}
+                    className={`flex items-center space-x-1 px-4 py-2 ${isMilitary
+                      ? 'fighter-nav-item hud-text border-none rounded-none'
+                      : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
+                      }`}
+                    aria-expanded={learningDropdownOpen}
+                    aria-haspopup="true"
+                  >
+                    <span>LESSONS</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-300 ${learningDropdownOpen ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </NavLink>
+                  {learningDropdownOpen && (
+                    <div
+                      className="absolute top-full left-0 mt-1 w-64 bg-black/90 rounded-xl shadow-2xl border border-gray-200/20 dark:border-gray-700/50 backdrop-blur-sm z-50 overflow-hidden"
+                    >
+                      <div className="p-2">
+                        <div className="text-xs font-semibold px-3 py-2 uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                          ▶ Categories
+                        </div>
+                        {learningCategories.map((category) => (
+                          <button
+                            key={category.key}
+                            onClick={() => handleLearningCategorySelect(category.key)}
+                            className={`w-full text-left px-3 py-3 transition-all duration-200 group/item ${isMilitary
+                              ? 'hud-button border-none rounded-none hover:bg-hud-dim'
+                              : 'rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30'
+                              }`}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <span className="text-lg group-hover/item:scale-110 transition-transform duration-200">
+                                {category.icon}
+                              </span>
+                              <span className={`font-medium transition-colors duration-200 ${isMilitary
+                                ? 'text-hud-primary group-hover/item:text-hud-glow font-hud'
+                                : 'text-gray-700 dark:text-gray-300 group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400'
+                                }`}>
+                                {isMilitary ? category.name.toUpperCase() : category.name}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                      <div className="p-2 border-t border-gray-200/20 dark:border-gray-700/50">
+                        <NavLink
+                          to="/learning"
+                          onClick={() => setLearningDropdownOpen(false)}
+                          className="block w-full text-left px-3 py-2 text-sm font-medium transition-all duration-200 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg"
+                        >
+                          ALL
+                        </NavLink>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <NavLink
                   to="/test"
-                  className={`flex items-center space-x-1 px-4 py-2 ${isMilitary
+                  className={`flex-1 flex items-center space-x-1 px-4 py-2 ${isMilitary
                     ? 'fighter-nav-item hud-text border-none rounded-none'
                     : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
                     }`}
                 >
-                  <span>{isMilitary ? '🎯' : '📝'}</span>
-                  <span>{isMilitary ? 'COMBAT TEST' : 'Test'}</span>
+                  <span>TEST</span>
                 </NavLink>
               </div>
-              <ProgressIndicator />
-              <ThemeToggler />
-              <AuthButton />
+              <div className="flex items-center space-x-4">
+                <ProgressIndicator />
+                <ThemeToggler />
+                <AuthButton />
+              </div>
             </div>
           </div>
 
@@ -310,13 +433,14 @@ export const AppLayout: React.FC = () => {
                   : 'rounded-lg hover:bg-white/10 text-white'
                   }`}
               >
-                {isMilitary ? '📡 PLANNING/MAP' : '🗺️ Planning/Map'}
+                PLANNING
               </NavLink>
-              <button
+              <NavLink
+                to="/articles"
                 onClick={() => setArticlesDropdownOpen(!articlesDropdownOpen)}
                 className="w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-all duration-200 flex items-center justify-between text-white"
               >
-                <span>{isMilitary ? '📋 MANUAL' : '📖 Articles'}</span>
+                <span>ARTICLES</span>
                 <svg
                   className={`w-4 h-4 transition-transform duration-300 ${articlesDropdownOpen ? 'rotate-180' : ''}`}
                   fill="none"
@@ -325,7 +449,7 @@ export const AppLayout: React.FC = () => {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
+              </NavLink>
               {articlesDropdownOpen && (
                 <div className="ml-4 mt-2 space-y-1 border-l-2 border-white/20 pl-4">
                   {articleCategories.map((category) => (
@@ -340,11 +464,12 @@ export const AppLayout: React.FC = () => {
                   ))}
                 </div>
               )}
-              <button
+              <NavLink
+                to="/learning"
                 onClick={() => setLearningDropdownOpen(!learningDropdownOpen)}
                 className="w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-all duration-200 flex items-center justify-between text-white"
               >
-                <span>{isMilitary ? '🎖️ TRAINING' : '🎓 Learning'}</span>
+                <span>LESSONS</span>
                 <svg
                   className={`w-4 h-4 transition-transform duration-300 ${learningDropdownOpen ? 'rotate-180' : ''}`}
                   fill="none"
@@ -353,7 +478,7 @@ export const AppLayout: React.FC = () => {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
+              </NavLink>
               {learningDropdownOpen && (
                 <div className="ml-4 mt-2 space-y-1 border-l-2 border-white/20 pl-4">
                   {learningCategories.map((category) => (
@@ -375,7 +500,7 @@ export const AppLayout: React.FC = () => {
                   : 'rounded-lg hover:bg-white/10 text-white'
                   }`}
               >
-                {isMilitary ? '🎯 COMBAT TEST' : '📝 Test'}
+                TEST
               </NavLink>
             </nav>
           </div>

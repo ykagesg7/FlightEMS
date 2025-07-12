@@ -12,6 +12,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // --- 初期テーマ取得 ---
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('theme') as Theme) || 'auto';
@@ -19,114 +20,56 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return 'auto';
   });
 
+  // 実際に適用されるテーマ
   const [effectiveTheme, setEffectiveTheme] = useState<EffectiveTheme>('military');
 
-  useEffect(() => {
-    let newEffectiveTheme: EffectiveTheme;
-
-    if (theme === 'auto') {
-      // autoモードでは、システムのダークモード設定に基づいて決定
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      newEffectiveTheme = prefersDark ? 'dark' : 'military';
-    } else {
-      newEffectiveTheme = theme;
+  /**
+   * AUTO の場合は時刻で判定 (06:00–17:59 -> DAY, 18:00–05:59 -> DARK)
+   */
+  const resolveEffectiveTheme = (mode: Theme): EffectiveTheme => {
+    if (mode === 'auto') {
+      const hour = new Date().getHours();
+      return hour >= 6 && hour < 18 ? 'military' : 'dark';
     }
+    return mode;
+  };
 
+  useEffect(() => {
+    const newEffectiveTheme = resolveEffectiveTheme(theme);
     setEffectiveTheme(newEffectiveTheme);
 
-    // DOMクラスの管理
-    document.documentElement.classList.remove('light', 'dark', 'military');
+    // クラスおよび背景設定を更新
+    document.documentElement.classList.remove('dark', 'military');
 
     if (newEffectiveTheme === 'military') {
+      // === DAY THEME ===
       document.documentElement.classList.add('military');
       document.body.classList.add('military-theme');
-      // デジタル迷彩背景を設定
-      document.body.style.backgroundImage = `
-        repeating-linear-gradient(
-          0deg,
-          #2a3441 0px,
-          #2a3441 32px,
-          #3d4a5a 32px,
-          #3d4a5a 64px,
-          #596980 64px,
-          #596980 96px,
-          #4a556b 96px,
-          #4a556b 128px
-        ),
-        repeating-linear-gradient(
-          90deg,
-          transparent 0px,
-          transparent 24px,
-          #374151 24px,
-          #374151 48px,
-          transparent 48px,
-          transparent 72px,
-          #2a3441 72px,
-          #2a3441 96px
-        )
-      `;
-      document.body.style.backgroundSize = '128px 128px, 96px 96px';
+      // 背景をネイビーブルーに変更（迷彩無し）
+      document.body.style.backgroundImage = '';
+      document.body.style.backgroundSize = '';
+      document.body.style.backgroundColor = '#0b1d3a';
     } else {
+      // === DARK THEME ===
       document.documentElement.classList.add('dark');
       document.body.classList.remove('military-theme');
       document.body.style.backgroundImage = '';
       document.body.style.backgroundSize = '';
+      document.body.style.backgroundColor = '#000000';
     }
 
-    // localStorage に保存
+    // localStorage
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // システムのダークモード設定の変更を監視
+  // AUTO の場合に時刻が変わってもテーマが切り替わるよう 30分ごとに再判定
   useEffect(() => {
     if (theme === 'auto') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => {
-        const prefersDark = mediaQuery.matches;
-        const newEffectiveTheme = prefersDark ? 'dark' : 'military';
-        setEffectiveTheme(newEffectiveTheme);
-
-        // DOMクラスの更新
-        document.documentElement.classList.remove('light', 'dark', 'military');
-
-        if (newEffectiveTheme === 'military') {
-          document.documentElement.classList.add('military');
-          document.body.classList.add('military-theme');
-          document.body.style.backgroundImage = `
-            repeating-linear-gradient(
-              0deg,
-              #2a3441 0px,
-              #2a3441 32px,
-              #3d4a5a 32px,
-              #3d4a5a 64px,
-              #596980 64px,
-              #596980 96px,
-              #4a556b 96px,
-              #4a556b 128px
-            ),
-            repeating-linear-gradient(
-              90deg,
-              transparent 0px,
-              transparent 24px,
-              #374151 24px,
-              #374151 48px,
-              transparent 48px,
-              transparent 72px,
-              #2a3441 72px,
-              #2a3441 96px
-            )
-          `;
-          document.body.style.backgroundSize = '128px 128px, 96px 96px';
-        } else {
-          document.documentElement.classList.add('dark');
-          document.body.classList.remove('military-theme');
-          document.body.style.backgroundImage = '';
-          document.body.style.backgroundSize = '';
-        }
-      };
-
-      mediaQuery.addListener(handleChange);
-      return () => mediaQuery.removeListener(handleChange);
+      const interval = setInterval(() => {
+        const newTheme = resolveEffectiveTheme('auto');
+        setEffectiveTheme(newTheme);
+      }, 30 * 60 * 1000);
+      return () => clearInterval(interval);
     }
   }, [theme]);
 

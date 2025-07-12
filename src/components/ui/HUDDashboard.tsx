@@ -24,22 +24,11 @@ export const HUDTimeDisplay: React.FC<HUDTimeDisplayProps> = ({ className = '' }
     });
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).replace(/\//g, '.');
-  };
-
   return (
     <div className={`hud-time-display ${className}`}>
       <div className="text-center">
         <div className="text-lg font-bold">
           {formatTime(currentTime)}
-        </div>
-        <div className="text-xs opacity-80">
-          {formatDate(currentTime)}
         </div>
       </div>
     </div>
