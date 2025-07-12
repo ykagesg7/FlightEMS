@@ -25,6 +25,7 @@ const articleCategories = [
 export const AppLayout: React.FC = () => {
   const [learningDropdownOpen, setLearningDropdownOpen] = useState(false);
   const [articlesDropdownOpen, setArticlesDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { effectiveTheme } = useTheme();
 
   // ミリタリーテーマかどうかの判定
@@ -243,27 +244,80 @@ export const AppLayout: React.FC = () => {
             </div>
           </div>
 
-          {/* モバイル用ナビゲーション */}
-          <div className={`md:hidden mt-4 pt-4 border-t transition-all duration-300 ${isMilitary
-            ? 'border-hud-accent'
-            : 'border-gray-700'
-            }`}>
-            <nav className="flex flex-col space-y-1">
+          {/* モバイル用ハンバーガーメニューとユーティリティ */}
+          <div className="md:hidden flex items-center space-x-4">
+            <ProgressIndicator />
+            <ThemeToggler />
+            <AuthButton />
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`text-white p-2 rounded-lg transition-all duration-200 ${isMilitary
+                ? 'hud-button border-none rounded-none hover:bg-hud-dim'
+                : 'hover:bg-white/10'
+                }`}
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* モバイルメニュー（サイドバー） */}
+        {mobileMenuOpen && (
+          <div className={`fixed inset-y-0 right-0 w-64 ${isMilitary ? 'bg-military-fighter-panel border-l border-hud-accent' : 'bg-gray-900 border-l border-gray-700'} z-50 transform transition-transform duration-300 ease-in-out
+            `}>
+            <div className="flex justify-end p-4">
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className={`text-white p-2 rounded-lg transition-all duration-200 ${isMilitary
+                  ? 'hud-button border-none rounded-none hover:bg-hud-dim'
+                  : 'hover:bg-white/10'
+                  }`}
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <nav className="flex flex-col space-y-1 p-4">
               <NavLink
                 to="/"
+                onClick={() => setMobileMenuOpen(false)}
                 className={`px-4 py-3 transition-all duration-200 ${isMilitary
                   ? 'fighter-nav-item hud-text'
                   : 'rounded-lg hover:bg-white/10 text-white'
                   }`}
               >
-                PLANNING
+                <span>{isMilitary ? '📡' : '🗺️'}</span>
+                <span>{isMilitary ? 'PLANNING/MAP' : 'Planning/Map'}</span>
               </NavLink>
               <NavLink
                 to="/articles"
-                onClick={() => setArticlesDropdownOpen(!articlesDropdownOpen)}
+                onClick={() => {
+                  setArticlesDropdownOpen(!articlesDropdownOpen);
+                  // setMobileMenuOpen(false); // Do not close main menu on dropdown toggle
+                }}
                 className="w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-all duration-200 flex items-center justify-between text-white"
               >
-                <span>ARTICLES</span>
+                <span>{isMilitary ? '📋' : '📖'}</span>
+                <span>{isMilitary ? 'MANUAL' : 'Articles'}</span>
                 <svg
                   className={`w-4 h-4 transition-transform duration-300 ${articlesDropdownOpen ? 'rotate-180' : ''}`}
                   fill="none"
@@ -278,21 +332,35 @@ export const AppLayout: React.FC = () => {
                   {articleCategories.map((category) => (
                     <button
                       key={category.key}
-                      onClick={() => handleArticleCategorySelect()}
+                      onClick={() => {
+                        handleArticleCategorySelect();
+                        setMobileMenuOpen(false);
+                      }}
                       className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-sm flex items-center space-x-2 text-white"
                     >
                       <span>{category.icon}</span>
                       <span>{category.name}</span>
                     </button>
                   ))}
+                  <NavLink
+                    to="/articles"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block w-full text-left px-3 py-2 text-sm font-medium transition-all duration-200 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg"
+                  >
+                    {isMilitary ? '⚡ ALL MANUALS' : '📊 すべて表示'}
+                  </NavLink>
                 </div>
               )}
               <NavLink
                 to="/learning"
-                onClick={() => setLearningDropdownOpen(!learningDropdownOpen)}
+                onClick={() => {
+                  setLearningDropdownOpen(!learningDropdownOpen);
+                  // setMobileMenuOpen(false); // Do not close main menu on dropdown toggle
+                }}
                 className="w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-all duration-200 flex items-center justify-between text-white"
               >
-                <span>LESSONS</span>
+                <span>{isMilitary ? '🎖️' : '🎓'}</span>
+                <span>{isMilitary ? 'TRAINING' : 'Learning'}</span>
                 <svg
                   className={`w-4 h-4 transition-transform duration-300 ${learningDropdownOpen ? 'rotate-180' : ''}`}
                   fill="none"
@@ -307,27 +375,44 @@ export const AppLayout: React.FC = () => {
                   {learningCategories.map((category) => (
                     <button
                       key={category.key}
-                      onClick={() => handleLearningCategorySelect()}
+                      onClick={() => {
+                        handleLearningCategorySelect();
+                        setMobileMenuOpen(false);
+                      }}
                       className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-sm flex items-center space-x-2 text-white"
                     >
                       <span>{category.icon}</span>
                       <span>{category.name}</span>
                     </button>
                   ))}
+                  <NavLink
+                    to="/learning"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block w-full text-left px-3 py-2 text-sm font-medium transition-all duration-200 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg"
+                  >
+                    {isMilitary ? '⚡ ALL MODULES' : '📊 すべて表示'}
+                  </NavLink>
                 </div>
               )}
               <NavLink
                 to="/test"
+                onClick={() => setMobileMenuOpen(false)}
                 className={`px-4 py-3 transition-all duration-200 ${isMilitary
                   ? 'fighter-nav-item hud-text'
                   : 'rounded-lg hover:bg-white/10 text-white'
                   }`}
               >
-                TEST
+                <span>{isMilitary ? '🎯' : '📝'}</span>
+                <span>TEST</span>
               </NavLink>
+              <div className="flex items-center justify-center space-x-4 pt-4 border-t border-gray-700/50">
+                <ProgressIndicator />
+                <ThemeToggler />
+                <AuthButton />
+              </div>
             </nav>
           </div>
-        </div>
+        )}
       </header>
 
       {/* メインコンテンツ */}
