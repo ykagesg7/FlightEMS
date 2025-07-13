@@ -4,7 +4,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 export const ThemeToggler: React.FC = () => {
   const { theme, setTheme } = useTheme();
 
-  const themes = ['military', 'dark', 'auto'] as const;
+  const themes = ['day', 'dark', 'auto'] as const;
 
   const nextTheme = () => {
     const currentIndex = themes.indexOf(theme);
@@ -14,10 +14,11 @@ export const ThemeToggler: React.FC = () => {
 
   const getThemeIcon = () => {
     switch (theme) {
-      case 'military':
+      case 'day':
         return (
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2L4 7v3c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-8-5zM12 11L8 9v2l4 2 4-2V9l-4 2z" />
+            <path d="M12 4c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" />
+            <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z" />
           </svg>
         );
       case 'dark':
@@ -39,8 +40,8 @@ export const ThemeToggler: React.FC = () => {
 
   const getThemeLabel = () => {
     switch (theme) {
-      case 'military':
-        return 'Day'; // MilitaryテーマをDayテーマとして表示
+      case 'day':
+        return 'Day';
       case 'dark':
         return 'Dark';
       case 'auto':

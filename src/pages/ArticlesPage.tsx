@@ -4,7 +4,6 @@ import { ArticleStatsBar } from '../components/articles/ArticleStatsBar';
 import { CommentsModal } from '../components/articles/CommentsModal';
 import FreemiumUpgradePrompt from '../components/learning/FreemiumUpgradePrompt';
 import LearningTabMDX from '../components/mdx/LearningTabMDX';
-import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useArticleStats } from '../hooks/useArticleStats';
 import { useFreemiumAccess } from '../hooks/useFreemiumAccess';
@@ -59,7 +58,6 @@ function ArticlesPage() {
   const categoryFromUrl = searchParams.get('category');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { user } = useAuth();
   const { theme } = useTheme();
   const {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -93,7 +91,6 @@ function ArticlesPage() {
     // displayContents,
     // canAccessContent,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    freemiumInfo,
     isPreviewMode
   } = useFreemiumAccess('articles');
 
@@ -339,19 +336,6 @@ function ArticlesPage() {
               </ol>
             </nav>
           )}
-
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 py-2">
-              📚 {categoryFromUrl && articleCategoryMapping[categoryFromUrl]
-                ? `${articleCategoryMapping[categoryFromUrl]} 記事`
-                : '学習記事'}
-            </h1>
-            <p className={`mt-2 text-lg ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-              {categoryFromUrl && articleCategoryMapping[categoryFromUrl]
-                ? `${articleCategoryMapping[categoryFromUrl]}に関する記事をご覧いただけます`
-                : '航空知識を深める記事コレクション'}
-            </p>
-          </div>
         </div>
 
         {isLoading ? (

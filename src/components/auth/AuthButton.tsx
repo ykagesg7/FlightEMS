@@ -1,84 +1,53 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
+import React from 'react';
 import { useAuthStore } from '../../stores/authStore';
-import ProfileMenu from './ProfileMenu';
+import { supabase } from '../../utils/supabase';
 
-const AuthButton = () => {
-  const user = useAuthStore(state => state.user);
-  const profile = useAuthStore(state => state.profile);
-  const loading = useAuthStore(state => state.loading);
-  const { theme } = useTheme();
-  const [loadingTimeout, setLoadingTimeout] = useState(false);
-  const [debugMode] = useState(import.meta.env.MODE === 'development'); // 開発環境でのみデバッグモードを有効化
+interface AuthButtonProps {
+  iconOnly?: boolean;
+}
 
-  // ローディングのタイムアウト処理
-  useEffect(() => {
-    // すでにタイムアウトしている場合や、ユーザーがロードされた場合は何もしない
-    if (loadingTimeout || !loading || user) return;
+export const AuthButton: React.FC<AuthButtonProps> = ({ iconOnly }) => {
+  const profile = useAuthStore((state) => state.profile);
+  const session = useAuthStore((state) => state.session);
 
-    // タイマーを設定
-    const timer = window.setTimeout(() => {
-      setLoadingTimeout(true);
-    }, 3000); // 3秒後にタイムアウト
-
-    // クリーンアップ時にタイマーをクリア
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [loading, loadingTimeout, user]);
-
-  // loadingが終了したらタイムアウトフラグをリセット
-  useEffect(() => {
-    if (!loading && loadingTimeout) {
-      setLoadingTimeout(false);
-    }
-  }, [loading, loadingTimeout]);
-
-  // ユーザー状態の変化をログ出力（デバッグ用）
-  useEffect(() => {
-    if (debugMode) {
-      console.log('AuthButton: ユーザー状態更新', {
-        hasUser: !!user,
-        hasProfile: !!profile,
-        userId: user?.id,
-        profileId: profile?.id,
-        username: profile?.username,
-        loading,
-        loadingTimeout
+  const handleAuthClick = async () => {
+    if (session) {
+      // ユーザーがログインしている場合、ログアウト処理
+      await supabase.auth.signOut();
+    } else {
+      // ユーザーがログインしていない場合、ログインページへリダイレクト
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        },
       });
     }
-  }, [user, profile, loading, loadingTimeout, debugMode]);
+  };
 
-  // ローディング中はスケルトンを表示（ただしタイムアウトしたら表示しない）
-  if (loading && !user && !loadingTimeout) {
-    return (
-      <div className={`w-28 h-10 rounded-md animate-pulse ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-300'
-        }`}></div>
-    );
-  }
-
-  // ログイン済みならプロフィールメニューを表示
-  if (user) {
-    return (
-      <div className="relative z-40">
-        <ProfileMenu />
-      </div>
-    );
-  }
-
-  // 未ログインならログインボタンを表示
   return (
-    <Link
-      to="/auth"
-      className={`px-4 py-2 rounded-md transition-colors ${theme === 'dark'
-          ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-          : 'bg-indigo-500 hover:bg-indigo-600 text-white'
-        }`}
+    <button
+      onClick={handleAuthClick}
+      className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors duration-200"
     >
-      {debugMode ? `未ログイン状態` : 'ログイン'}
-    </Link>
+      {iconOnly ? (
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
+        </svg>
+      ) : (
+        session ? 'ログアウト' : 'ログイン'
+      )}
+    </button>
   );
 };
-
-export default AuthButton;
