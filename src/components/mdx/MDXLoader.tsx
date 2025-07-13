@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import { MDXProvider } from '@mdx-js/react';
+import React, { useEffect, useState } from 'react';
 import MDXContent from './MDXContent';
 
 interface MDXLoaderProps {
@@ -35,7 +35,7 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, showPath }) => {
       try {
         setLoading(true);
         console.log(`MDXファイルを読み込みます: ${contentId}.mdx`);
-        
+
         // ファイルパスを指定してimport
         // 注: コンテンツIDに基づいて動的にインポートするため、エラーが発生する可能性があります
         try {
@@ -71,12 +71,12 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, showPath }) => {
     if (!loading && Content) {
       // 少し遅延させてコンテンツがDOMに反映された後にイベントを発火
       const timer = setTimeout(() => {
-        window.dispatchEvent(new CustomEvent(MDX_CONTENT_LOADED_EVENT, { 
+        window.dispatchEvent(new CustomEvent(MDX_CONTENT_LOADED_EVENT, {
           detail: { contentId: contentId }
         }));
         console.log(`コンテンツの読み込みが完了しました: ${contentId}`);
       }, 200);
-      
+
       return () => clearTimeout(timer);
     }
   }, [loading, Content, contentId]);
@@ -118,4 +118,4 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, showPath }) => {
   );
 };
 
-export default MDXLoader; 
+export default MDXLoader;
