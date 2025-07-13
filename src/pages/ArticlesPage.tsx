@@ -301,7 +301,7 @@ function ArticlesPage() {
               onContentSelect={handleContentSelect}
             />
           ) : (
-            <FreemiumUpgradePrompt contentId={selectedTab} />
+            <FreemiumUpgradePrompt contentId={selectedTab!} />
           )}
         </div>
       </div>
