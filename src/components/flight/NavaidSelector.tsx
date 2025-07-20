@@ -1,26 +1,13 @@
 import React, { useState } from 'react';
 import Select, { SingleValue } from 'react-select';
-import { SelectOption } from '../../utils/reactSelectStyles';
-import { Waypoint } from '../../types';
+import { NavaidOption, Waypoint } from '../../types';
 import { calculateOffsetPoint } from '../../utils/offset';
 import { reactSelectStyles } from '../../utils/reactSelectStyles';
-
-interface NavaidOption extends SelectOption {
-  value: string;
-  label: string;
-  id: string;
-  name: string;
-  type: string;
-  latitude: number;
-  longitude: number;
-  ch?: string;
-  frequency?: string;
-}
 
 interface NavaidSelectorProps {
   options: NavaidOption[];
   selectedNavaid: NavaidOption | null;
-  setSelectedNavaid: (navaid: NavaidOption | null) => void;
+  setSelectedNavaid: React.Dispatch<React.SetStateAction<NavaidOption | null>>;
   onAdd: (waypoint: Waypoint) => void;
 }
 
@@ -32,10 +19,10 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
     if (!selectedNavaid || !bearing || !distance) return;
 
     const waypoint: Waypoint = {
-      id: `${selectedNavaid.id}-${bearing}-${distance}`,
+      id: `${selectedNavaid.value}-${bearing}-${distance}`,
       name: `${selectedNavaid.name}/${bearing}°/${distance}nm`,
       type: 'navaid',
-      sourceId: selectedNavaid.id,
+      sourceId: selectedNavaid.value,
       ch: selectedNavaid.ch,
       coordinates: [selectedNavaid.longitude, selectedNavaid.latitude], // GeoJSON format
       latitude: selectedNavaid.latitude,
@@ -70,7 +57,7 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
         isClearable
         styles={reactSelectStyles}
       />
-      
+
       <div className="mt-3 space-y-3">
         <div>
           <label className="block text-sm font-medium text-gray-400 mb-1">磁方位(°)</label>
@@ -107,4 +94,4 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
   );
 };
 
-export default NavaidSelector; 
+export default NavaidSelector;

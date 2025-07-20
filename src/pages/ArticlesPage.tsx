@@ -57,10 +57,10 @@ function ArticlesPage() {
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get('category');
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   const { theme } = useTheme();
   const {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     learningContents,
     isLoading,
     loadLearningContents
@@ -69,18 +69,7 @@ function ArticlesPage() {
   // Articles専用のコンテンツフィルタリング
   const articleCategories = ['メンタリティー', '思考法', '操縦'];
 
-  // デバッグ: learningContentsの中身を出力
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('learningContents:', learningContents);
-  }, [learningContents]);
-
   const articleContents = useMemo(() => {
-    // デバッグ: articleContentsの中身を出力
-    // eslint-disable-next-line no-console
-    console.log('articleContents (before filter by category):', learningContents.filter(content => content.is_published));
-    // eslint-disable-next-line no-console
-    console.log('articleContents (after filter by category):', learningContents.filter(content => content.is_published && articleCategories.includes(content.category)));
     return learningContents.filter(content =>
       content.is_published &&
       articleCategories.includes(content.category)
@@ -90,7 +79,7 @@ function ArticlesPage() {
   const {
     // displayContents,
     // canAccessContent,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     isPreviewMode
   } = useFreemiumAccess('articles');
 
@@ -117,33 +106,6 @@ function ArticlesPage() {
 
   // カテゴリ別フィルタリング
   const filteredContents = useMemo(() => {
-    // デバッグ: filteredContentsの中身を出力
-    // eslint-disable-next-line no-console
-    console.log('filteredContents (before categoryFromUrl filter):', accessibleArticleContents);
-
-    const tempFilteredContents = accessibleArticleContents.filter(content => {
-      if (!categoryFromUrl || !articleCategoryMapping[categoryFromUrl]) {
-        return true;
-      }
-      const selectedCategory = articleCategoryMapping[categoryFromUrl];
-      if (selectedCategory === 'メンタリティー') {
-        return content.category?.includes('メンタリティー') || content.category?.includes('自己啓発') || content.id.startsWith('1.') || content.title?.includes('メンタリティー');
-      }
-      if (selectedCategory === '思考法') {
-        return content.category?.includes('思考法') || content.id.startsWith('2.') || content.title?.includes('思考法') || content.title?.includes('論理的');
-      }
-      if (selectedCategory === '論理的思考') {
-        return content.category?.includes('論理') || content.title?.includes('論理') || content.title?.includes('プレゼンテーション');
-      }
-      if (selectedCategory === '操縦') {
-        return content.category?.includes('操縦') || content.id.startsWith('4.') || content.title?.includes('操縦') || content.title?.includes('編隊飛行');
-      }
-      return content.category === selectedCategory;
-    });
-
-    // eslint-disable-next-line no-console
-    console.log('filteredContents (after categoryFromUrl filter):', tempFilteredContents);
-
     if (!categoryFromUrl || !articleCategoryMapping[categoryFromUrl]) {
       return accessibleArticleContents;
     }

@@ -18,84 +18,103 @@ export interface GeoJSONProperties {
   [key: string]: string | number | boolean | null | undefined;
 }
 
-export interface GeoJSONGeometry {
-  type: 'Point' | 'LineString' | 'Polygon' | 'MultiPoint' | 'MultiLineString' | 'MultiPolygon';
-  coordinates: number[] | number[][] | number[][][];
-}
-
+// GeoJSON Feature型定義
 export interface GeoJSONFeature {
   type: 'Feature';
   properties: GeoJSONProperties;
-  geometry: GeoJSONGeometry;
+  geometry: {
+    type: 'Point' | 'LineString' | 'Polygon';
+    coordinates: [number, number] | [number, number][] | [number, number][][];
+  };
 }
 
+// GeoJSON FeatureCollection型定義
 export interface GeoJSONFeatureCollection {
   type: 'FeatureCollection';
   features: GeoJSONFeature[];
 }
 
-// 地図ナビゲーション関連型
-export interface MapNavaid {
-  id: string;
-  name: string;
-  type: 'VOR' | 'TACAN' | 'VORTAC' | 'NDB' | 'DME';
-  latitude: number;
-  longitude: number;
-  frequency?: string;
-  ch?: string;
+// Navaid GeoJSON Feature型定義
+export interface NavaidGeoJSONFeature extends GeoJSONFeature {
+  properties: GeoJSONProperties & {
+    id: string;
+    name: string;
+    type: 'VOR' | 'TACAN' | 'VORTAC';
+  };
+  geometry: {
+    type: 'Point';
+    coordinates: [number, number];
+  };
 }
 
-// 空港プロパティ型
-export interface AirportProperties extends GeoJSONProperties {
+// Airport GeoJSON Feature型定義
+export interface AirportGeoJSONFeature extends GeoJSONFeature {
+  properties: GeoJSONProperties & {
+    id: string;
+    name1: string;
+    type: 'civilian' | 'military' | 'joint';
+    'Elev(ft)'?: number;
+    RWY1?: string;
+    RWY2?: string;
+    RWY3?: string;
+    RWY4?: string;
+    'MAG Var'?: number;
+  };
+  geometry: {
+    type: 'Point';
+    coordinates: [number, number];
+  };
+}
+
+// Waypoint GeoJSON Feature型定義
+export interface WaypointGeoJSONFeature extends GeoJSONFeature {
+  properties: GeoJSONProperties & {
+    id: string;
+    name1: string;
+    type: 'Compulsory' | 'Optional' | 'Custom';
+  };
+  geometry: {
+    type: 'Point';
+    coordinates: [number, number];
+  };
+}
+
+// Leaflet Layer型定義
+export interface LeafletLayerWithBringToFront extends L.Layer {
+  bringToFront?: () => void;
+}
+
+// Weather Data型定義
+export interface WeatherData {
+  temperature: number;
+  conditions: string;
+  humidity?: number;
+  pressure?: number;
+  windSpeed?: number;
+  windDirection?: number;
+}
+
+// Airport Properties型定義
+export interface AirportProperties {
   id: string;
   name1: string;
-  type: 'civilian' | 'military' | 'joint';
-  'Elev(ft)': number;
+  type: string;
+  'Elev(ft)'?: number;
   RWY1?: string;
   RWY2?: string;
   RWY3?: string;
   RWY4?: string;
   'MAG Var'?: number;
+  [key: string]: string | number | boolean | null | undefined;
 }
 
-// Waypoint関連型
-export interface WaypointGeoJSON extends GeoJSONFeature {
-  properties: GeoJSONProperties & {
-    name: string;
-    type?: 'waypoint' | 'intersection' | 'fix';
-  };
-}
-
-// 気象データ型
-export interface WeatherData {
-  metar?: string;
-  taf?: string;
-  temperature?: number;
-  windSpeed?: number;
-  windDirection?: number;
-  visibility?: number;
-  ceiling?: number;
-  conditions?: string;
-  pressure?: number;
-  dewpoint?: number;
-  [key: string]: string | number | undefined;
-}
-
-// レイヤー制御型
+// Layer Control型定義
 export interface LayerControlOptions {
-  position?: L.ControlPosition;
   collapsed?: boolean;
-  autoZIndex?: boolean;
-  hideSingleBase?: boolean;
-  sortLayers?: boolean;
-  sortFunction?: (a: L.Layer, b: L.Layer, aName: string, bName: string) => number;
+  position?: 'topleft' | 'topright' | 'bottomleft' | 'bottomright';
 }
 
-// ポップアップコンテンツ生成関数型
-export type PopupContentGenerator = (properties: GeoJSONProperties, weatherData?: WeatherData) => string;
-
-// スタイル関数型
-export type FeatureStyleFunction = (feature?: GeoJSONFeature) => L.PathOptions;
-
-// イベントハンドラー型
-export type FeatureEventHandler = (feature: GeoJSONFeature, layer: L.Layer) => void; 
+// Overlay Layers型定義
+export interface OverlayLayers {
+  [key: string]: L.Layer;
+}

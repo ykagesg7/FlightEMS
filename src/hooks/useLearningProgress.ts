@@ -39,16 +39,8 @@ export const useLearningProgress = () => {
 
       if (data && data.length > 0) {
         setLearningContents(data);
-        // 開発環境でのみログを出力
-        if (import.meta.env.MODE === 'development') {
-          console.log('学習コンテンツをロードしました:', data.length, '件');
-        }
       } else {
         setLearningContents([]);
-        // 開発環境でのみログを出力
-        if (import.meta.env.MODE === 'development') {
-          console.log('データベースに公開された学習コンテンツはありません。');
-        }
       }
     } catch (err) {
       console.error('学習コンテンツのロードエラー:', err);

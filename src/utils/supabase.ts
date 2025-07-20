@@ -19,16 +19,13 @@ let browserSupabaseClient: ReturnType<typeof createBrowserClient<Database>> | un
 let adminSupabaseClient: ReturnType<typeof createClient<Database>> | undefined;
 
 // ログ制御フラグ
-let browserClientLogged = false;
-let adminClientLogged = false;
+const browserClientLogged = false;
+const adminClientLogged = false;
 
 // ブラウザ環境用のSupabaseクライアント（@supabase/ssrパッケージ使用）
 export const createBrowserSupabaseClient = () => {
   if (!browserSupabaseClient) {
-    if (isDevelopment && !browserClientLogged) {
-      console.log('新しいSupabaseブラウザクライアントを作成します');
-      browserClientLogged = true;
-    }
+    // デバッグログを削除
     browserSupabaseClient = createBrowserClient<Database>(supabaseUrl, supabaseKey, {
       auth: {
         autoRefreshToken: true,
@@ -49,10 +46,7 @@ export const createBrowserSupabaseClient = () => {
 // サーバーサイド用のSupabaseクライアント（シングルトン）
 export const getSupabaseAdmin = () => {
   if (!adminSupabaseClient) {
-    if (isDevelopment && !adminClientLogged) {
-      console.log('新しいSupabase管理者クライアントを作成します');
-      adminClientLogged = true;
-    }
+    // デバッグログを削除
     adminSupabaseClient = createClient<Database>(supabaseUrl, supabaseKey, {
       auth: {
         autoRefreshToken: false,
@@ -323,7 +317,7 @@ export const updateUserProfile = async (userId: string, updates: {
   full_name?: string;
   avatar_url?: string;
   website?: string;
-}): Promise<{ success: boolean; error?: string; data?: any }> => {
+}): Promise<{ success: boolean; error?: string; data?: Record<string, unknown> }> => {
   try {
     const { data, error } = await supabase
       .from('profiles')

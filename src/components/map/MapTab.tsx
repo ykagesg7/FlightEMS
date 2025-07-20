@@ -4,19 +4,25 @@ import 'leaflet-groupedlayercontrol';
 import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
 import 'leaflet/dist/leaflet.css';
 import { CircleMarker, MapContainer, Polyline, Popup } from 'react-leaflet';
+import { useDebouncedCallback } from 'use-debounce';
+import { fetchWeatherData, FilteredWeatherData } from '../../api/weather';
+import { CACHE_DURATION, useWeatherCache, WeatherCache } from '../../contexts/WeatherCacheContext';
 import { FlightPlan, Waypoint } from '../../types/index';
+import {
+  NavaidGeoJSONFeature,
+  WaypointGeoJSONFeature
+} from '../../types/map';
 import { DEFAULT_CENTER, DEFAULT_ZOOM, formatDMS, getNavaidColor } from '../../utils';
 import { calculateMagneticBearing } from '../../utils/bearing';
 import { formatBearing } from '../../utils/format';
 import icon from '/images/marker-icon.png';
 import iconShadow from '/images/marker-shadow.png';
-// 天気情報取得のためのAPIクライアントをインポート
-import { fetchWeatherData } from '../../api/weather';
-import { CACHE_DURATION, useWeatherCache, WeatherCache } from '../../contexts/WeatherCacheContext';
 
 // Waypoint用のツールチップスタイルを追加
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './mapStyles.css';
+
+import React from 'react';
 
 const DefaultIcon = L.icon({
   iconUrl: icon,
@@ -110,10 +116,10 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
   useEffect(() => {
     fetch('/geojson/Navaids.geojson')
       .then(res => res.json())
-      .then(data => {
-        const navaids = data.features.map((feat: any): MapNavaid => {
+      .then((data: { features: NavaidGeoJSONFeature[] }) => {
+        const navaids = data.features.map((feat: NavaidGeoJSONFeature): MapNavaid => {
           const [lng, lat] = feat.geometry.coordinates;
-          return { coordinates: L.latLng(lat, lng), id: feat.properties?.id || '', name: feat.properties?.name || '' };
+          return { coordinates: L.latLng(lat, lng), id: feat.properties.id, name: feat.properties.name };
         });
         setNavaidData(navaids);
       })
@@ -184,7 +190,7 @@ const MapContent: React.FC<{
   map: L.Map | null,
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>,
   regions: Region[]
-}> = ({ flightPlan, map, setFlightPlan, regions }) => {
+}> = React.memo(({ flightPlan, map, setFlightPlan, regions }) => {
   const layerControlRef = useRef<L.Control.Layers | null>(null) as LayerControlRef;
   // 各地域のWaypointレイヤーを保持する参照
   const regionLayersRef = useRef<{ [key: string]: L.GeoJSON }>({});
@@ -194,21 +200,33 @@ const MapContent: React.FC<{
   const { weatherCache, setWeatherCache } = useWeatherCache();
 
   // 各フィーチャーをクリック時に詳細情報をポップアップ表示するための関数
-  const onEachFeaturePopup = useCallback((feature: any, layer: L.Layer) => {
-    let popupContent = `<div><h4>Details</h4><table>`;
-    for (const key in feature.properties) {
-      popupContent += `<tr><td>${key}</td><td>${feature.properties[key]}</td></tr>`;
+  const onEachFeaturePopup = useCallback((feature: GeoJSON.Feature, layer: L.Layer) => {
+    if (feature.properties && feature.properties.id) {
+      const popupContent = `
+        <div class="airport-popup">
+          <div class="airport-popup-header">
+            ${feature.properties.id}（${feature.properties.name1?.split('(')[0].trim() || '空港'}）
+          </div>
+          <div class="p-3">
+            <div>
+              <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
+              <div class="ml-2">
+                ${simplifiedAirportInfoContent(feature.properties)}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      layer.bindPopup(popupContent);
     }
-    popupContent += `</table></div>`;
-    layer.bindPopup(popupContent);
   }, []);
 
   // Waypointのスタイル設定関数
   const waypointStyle = useCallback((feature: any) => {
     return {
       radius: 4,
-      fillColor: feature.properties.type === "Compulsory" ? "#FF9900" : "#66CCFF",
-      color: feature.properties.type === "Compulsory" ? "#FF6600" : "#3399CC",
+      fillColor: feature.properties?.type === "Compulsory" ? "#FF9900" : "#66CCFF",
+      color: feature.properties?.type === "Compulsory" ? "#FF6600" : "#3399CC",
       weight: 1.5,
       fillOpacity: 0.7,
       opacity: 0.9
@@ -216,13 +234,13 @@ const MapContent: React.FC<{
   }, []);
 
   // Waypointのポップアップ設定関数
-  const waypointPopup = useCallback((feature: any, layer: L.Layer, setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>, map: L.Map | null) => {
+  const waypointPopup = useCallback((feature: GeoJSON.Feature, layer: L.Layer, setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>, map: L.Map | null) => {
     const coords = (feature.geometry as GeoJSON.Point).coordinates;
     const popupContent = `<div class="waypoint-popup">
-      <div class="waypoint-popup-header">${feature.properties.id}</div>
+      <div class="waypoint-popup-header">${feature.properties?.id}</div>
       <div class="p-2">
-        <p class="text-xs font-bold">${feature.properties.name1 || '未設定'}</p>
-        <p class="text-xs text-gray-600">Type: ${feature.properties.type}</p>
+        <p class="text-xs font-bold">${feature.properties?.name1 || '未設定'}</p>
+        <p class="text-xs text-gray-600">Type: ${feature.properties?.type}</p>
         <p class="text-xs text-gray-600 position-info">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
         <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
       </div>
@@ -237,7 +255,7 @@ const MapContent: React.FC<{
     layer.bindPopup(popup);
 
     // マウスオーバー時のツールチップ表示
-    layer.bindTooltip(feature.properties.id, {
+    layer.bindTooltip(feature.properties?.id || '', {
       permanent: false,
       direction: 'top',
       className: 'waypoint-tooltip'
@@ -245,10 +263,10 @@ const MapContent: React.FC<{
 
     // クリックイベントを追加
     layer.on('click', () => {
-      console.log(`Waypoint clicked: ${feature.properties.id}`);
+      console.log(`Waypoint clicked: ${feature.properties?.id}`);
 
       // ポップアップが表示された後に「ルートに追加」ボタンにイベントリスナーを追加
-      setTimeout(() => {
+      const setupAddButtonListener = useDebouncedCallback(() => {
         const addButton = document.querySelector('.waypoint-custom-popup .add-to-route-btn');
         if (addButton) {
           addButton.addEventListener('click', (e) => {
@@ -257,8 +275,8 @@ const MapContent: React.FC<{
 
             // Waypointをウェイポイントとして追加
             const newWaypoint: Waypoint = {
-              id: feature.properties.id,
-              name: feature.properties.name1 || feature.properties.id,
+              id: feature.properties?.id || '',
+              name: feature.properties?.name1 || feature.properties?.id || '',
               type: 'custom',
               coordinates: [coords[0], coords[1]],
               latitude: coords[1],
@@ -273,7 +291,7 @@ const MapContent: React.FC<{
             // 成功メッセージを表示
             if (map) {
               const successMsg = L.DomUtil.create('div', 'success-message');
-              successMsg.innerHTML = `${feature.properties.id}をルートに追加しました`;
+              successMsg.innerHTML = `${feature.properties?.id}をルートに追加しました`;
               successMsg.style.position = 'absolute';
               successMsg.style.bottom = '10px';
               successMsg.style.left = '50%';
@@ -287,9 +305,10 @@ const MapContent: React.FC<{
               document.body.appendChild(successMsg);
 
               // 3秒後にメッセージを削除
-              setTimeout(() => {
+              const removeSuccessMsg = useDebouncedCallback(() => {
                 document.body.removeChild(successMsg);
               }, 3000);
+              removeSuccessMsg();
 
               // ポップアップを閉じる
               map.closePopup();
@@ -297,6 +316,7 @@ const MapContent: React.FC<{
           });
         }
       }, 100);
+      setupAddButtonListener();
     });
   }, []);
 
@@ -361,7 +381,7 @@ const MapContent: React.FC<{
             console.log(`Navaid clicked: ${feature.properties.id}`);
 
             // ポップアップが表示された後に「ルートに追加」ボタンにイベントリスナーを追加
-            setTimeout(() => {
+            const setupNavaidButtonListener = useDebouncedCallback(() => {
               const addButton = document.querySelector('.navaid-custom-popup .add-to-route-btn');
               if (addButton) {
                 addButton.addEventListener('click', (e) => {
@@ -402,9 +422,10 @@ const MapContent: React.FC<{
                     document.body.appendChild(successMsg);
 
                     // 3秒後にメッセージを削除
-                    setTimeout(() => {
+                    const removeSuccessMsg = useDebouncedCallback(() => {
                       document.body.removeChild(successMsg);
                     }, 3000);
+                    removeSuccessMsg();
 
                     // ポップアップを閉じる
                     map.closePopup();
@@ -412,6 +433,7 @@ const MapContent: React.FC<{
                 });
               }
             }, 100);
+            setupNavaidButtonListener();
           });
         }
       }),
@@ -1060,8 +1082,8 @@ const MapContent: React.FC<{
             // すべてのウェイポイントデータを読み込む
             loadAllWaypointsData();
 
-            // 他のすべての地域レイヤーを追加（イベントの無限ループを防ぐためにtimeoutを使用）
-            setTimeout(() => {
+            // 他のすべての地域レイヤーを追加（イベントの無限ループを防ぐためにデバウンスを使用）
+            const addOtherLayers = useDebouncedCallback(() => {
               waypointRegions.forEach(regionName => {
                 const regionLayer = (overlayLayers["Waypoints"] as Record<string, L.Layer>)[regionName];
                 if (regionLayer && !map.hasLayer(regionLayer)) {
@@ -1075,6 +1097,7 @@ const MapContent: React.FC<{
                 }
               });
             }, 10);
+            addOtherLayers();
           }
           // 通常のWaypointレイヤーが追加された場合
           else if (Object.keys((overlayLayers["Waypoints"] as Record<string, L.Layer>)).includes(layerName)) {
@@ -1091,7 +1114,7 @@ const MapContent: React.FC<{
           }
 
           // Waypointレイヤーが追加された場合、最前面に表示する
-          setTimeout(() => {
+          const bringToFront = useDebouncedCallback(() => {
             const layerObj = e.layer;
             if (layerObj instanceof L.GeoJSON) {
               layerObj.eachLayer(layer => {
@@ -1101,6 +1124,7 @@ const MapContent: React.FC<{
               });
             }
           }, 100);
+          bringToFront();
         });
 
         // 「すべて」レイヤーが削除されたとき、他のすべてのWaypointレイヤーも削除
@@ -1109,8 +1133,8 @@ const MapContent: React.FC<{
 
           // 「すべて」レイヤーが削除された場合
           if (layerName === 'すべて' && e.layer === (overlayLayers["Waypoints"] as Record<string, L.Layer>)['すべて']) {
-            // 他のすべての地域レイヤーを削除（イベントの無限ループを防ぐためにtimeoutを使用）
-            setTimeout(() => {
+            // 他のすべての地域レイヤーを削除（イベントの無限ループを防ぐためにデバウンスを使用）
+            const removeOtherLayers = useDebouncedCallback(() => {
               waypointRegions.forEach(regionName => {
                 const regionLayer = (overlayLayers["Waypoints"] as Record<string, L.Layer>)[regionName];
                 if (regionLayer && map.hasLayer(regionLayer)) {
@@ -1118,6 +1142,7 @@ const MapContent: React.FC<{
                 }
               });
             }, 10);
+            removeOtherLayers();
           }
 
           // ローカルレイヤーが削除された場合、レイヤーグループを完全にクリアする
@@ -1306,7 +1331,7 @@ const MapContent: React.FC<{
       ))}
     </>
   );
-};
+});
 
 // 空港の気象情報を取得して表示する関数を更新
 const fetchAirportWeather = (
@@ -1353,9 +1378,12 @@ const fetchAirportWeather = (
     // キャッシュが存在し、かつ有効期限内の場合
     if (cachedEntry && (now - cachedEntry.timestamp < CACHE_DURATION)) {
       console.log(`${airportId}の気象情報をキャッシュから取得しました`);
-      const weatherPopupContent = createWeatherPopupContent(feature.properties, cachedEntry.data);
-      loadingPopup.setContent(weatherPopupContent);
-      loadingPopup.update();
+      // キャッシュされたデータがFilteredWeatherDataの形式かチェック
+      if (cachedEntry.data && typeof cachedEntry.data === 'object' && 'current' in cachedEntry.data) {
+        const weatherPopupContent = createWeatherPopupContent(feature.properties || {}, cachedEntry.data as FilteredWeatherData);
+        loadingPopup.setContent(weatherPopupContent);
+        loadingPopup.update();
+      }
       return; // API呼び出しをスキップ
     }
 
@@ -1366,7 +1394,7 @@ const fetchAirportWeather = (
         if (!weatherData) return;
         console.log(`${airportId}の気象情報をAPIから取得しました`, weatherData);
         // 気象情報ポップアップを作成して表示
-        const weatherPopupContent = createWeatherPopupContent(feature.properties, weatherData);
+        const weatherPopupContent = createWeatherPopupContent(feature.properties || {}, weatherData);
         loadingPopup.setContent(weatherPopupContent);
         loadingPopup.update();
 
@@ -1391,7 +1419,7 @@ const fetchAirportWeather = (
 
                 <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
                 <div class="ml-2">
-                  ${simplifiedAirportInfoContent(feature.properties)}
+                  ${simplifiedAirportInfoContent(feature.properties || {})}
                 </div>
               </div>
             </div>
@@ -1407,7 +1435,7 @@ const fetchAirportWeather = (
 };
 
 // 気象情報ポップアップコンテンツを作成する関数
-const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
+const createWeatherPopupContent = (airportProps: Record<string, unknown>, weatherData: FilteredWeatherData) => {
   // 気象データが正しく取得できたかチェック
   const current = weatherData?.current;
 
@@ -1415,7 +1443,7 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
     return `
       <div class="airport-popup airport-weather-popup">
         <div class="airport-popup-header">
-          ${airportProps.id}（${airportProps.name1?.split('(')[0].trim()}）
+          ${airportProps.id as string}（${(airportProps.name1 as string)?.split('(')[0].trim()}）
         </div>
         <div class="p-3">
           <p class="text-sm text-red-500">気象データが不完全です</p>
@@ -1459,7 +1487,7 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
   return `
     <div class="airport-popup airport-weather-popup">
       <div class="airport-popup-header">
-        ${airportProps.id}（${airportProps.name1?.split('(')[0].trim()}）
+        ${airportProps.id as string}（${(airportProps.name1 as string)?.split('(')[0].trim()}）
       </div>
       <div class="p-3">
         <div class="mb-4">
@@ -1511,7 +1539,7 @@ const createWeatherPopupContent = (airportProps: any, weatherData: any) => {
 };
 
 // 簡略化した空港情報コンテンツを作成する関数
-const simplifiedAirportInfoContent = (properties: any) => {
+const simplifiedAirportInfoContent = (properties: Record<string, unknown>) => {
   // 滑走路情報をサンプルの形式に合わせる（例: 16-34(9187*197)）
   const formatRunway = (runwayInfo: string) => {
     if (!runwayInfo) return '';
@@ -1533,7 +1561,7 @@ const simplifiedAirportInfoContent = (properties: any) => {
   const rwy1Info = properties.RWY1
     ? `<p class="text-sm mb-2 airport-item">
          <span class="airport-label">・滑走路１</span>
-         <span class="airport-value">${formatRunway(properties.RWY1)}</span>
+         <span class="airport-value">${formatRunway(properties.RWY1 as string)}</span>
        </p>`
     : '';
 

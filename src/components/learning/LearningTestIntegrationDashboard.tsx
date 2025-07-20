@@ -50,7 +50,7 @@ interface DashboardStats {
 const LearningTestIntegrationDashboard: React.FC = () => {
   const { theme } = useTheme();
   const { user } = useAuthStore();
-  
+
   const [learningProgress, setLearningProgress] = useState<LearningProgress[]>([]);
   const [studyRecommendations, setStudyRecommendations] = useState<StudyRecommendation[]>([]);
   const [weakAreas, setWeakAreas] = useState<WeakArea[]>([]);
@@ -127,21 +127,21 @@ const LearningTestIntegrationDashboard: React.FC = () => {
             .eq('user_id', user.id)
             .eq('completed', true)
             .gte('completed_at', startDate.toISOString()),
-          
+
           supabase
             .from('cpl_exam_sessions')
             .select('id, overall_accuracy')
             .eq('user_id', user.id)
             .gte('created_at', startDate.toISOString()),
-          
+
           supabase.rpc('calculate_user_overall_accuracy', { p_user_id: user.id }),
-          
+
           supabase
             .from('learning_sessions')
             .select('session_duration')
             .eq('user_id', user.id)
             .gte('created_at', startDate.toISOString()),
-          
+
           supabase.rpc('calculate_learning_streak', { p_user_id: user.id })
         ]);
 
@@ -149,7 +149,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
           total_articles_completed: completedArticles.data?.length || 0,
           total_tests_taken: testsTaken.data?.length || 0,
           overall_accuracy: accuracyData.data || 0,
-          study_time_this_week: studyTime.data?.reduce((sum: number, session: any) => 
+          study_time_this_week: studyTime.data?.reduce((sum: number, session: { session_duration?: number }) =>
             sum + (session.session_duration || 0), 0) || 0,
           learning_streak: learningStreak.data || 0,
           mastered_subjects: progressData?.filter(p => p.learning_status === 'mastered').length || 0
@@ -209,7 +209,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
         <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
           学習進捗とテスト成績を統合して効率的な学習を支援します
         </p>
-        
+
         {/* 期間選択 */}
         <div className="mt-4 flex space-x-2">
           {(['week', 'month', 'all'] as const).map((timeframe) => (
@@ -330,7 +330,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
             <span className="text-2xl mr-2">📈</span>
             学習進捗一覧
           </h2>
-          
+
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {learningProgress.slice(0, 8).map((progress, index) => (
               <Link
@@ -382,7 +382,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
             <span className="text-2xl mr-2">🎯</span>
             今日の推奨学習
           </h2>
-          
+
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {studyRecommendations.map((rec, index) => (
               <Link
@@ -446,14 +446,14 @@ const LearningTestIntegrationDashboard: React.FC = () => {
             <span className="text-2xl mr-2">🔍</span>
             弱点領域分析
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {weakAreas.map((area, index) => (
-              <div 
+              <div
                 key={`${area.subject_category}-${area.sub_category}`}
                 className={`p-4 rounded-lg border-l-4 ${
-                  area.improvement_trend === 'improving' 
-                    ? 'border-green-400 bg-green-900/10' 
+                  area.improvement_trend === 'improving'
+                    ? 'border-green-400 bg-green-900/10'
                     : area.improvement_trend === 'declining'
                     ? 'border-red-400 bg-red-900/10'
                     : 'border-yellow-400 bg-yellow-900/10'
@@ -470,7 +470,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
                     {area.accuracy_rate}%
                   </span>
                 </div>
-                
+
                 <div className="text-xs opacity-75 space-y-1">
                   <div>{area.attempt_count}回挑戦</div>
                   <div className={`inline-block px-2 py-1 rounded-full ${
@@ -490,8 +490,8 @@ const LearningTestIntegrationDashboard: React.FC = () => {
 
       {/* クイックアクション */}
       <div className={`mt-8 p-6 rounded-lg shadow-lg text-center ${
-        theme === 'dark' 
-          ? 'bg-gradient-to-r from-blue-900/30 to-indigo-900/30' 
+        theme === 'dark'
+          ? 'bg-gradient-to-r from-blue-900/30 to-indigo-900/30'
           : 'bg-gradient-to-r from-blue-50 to-indigo-50'
       }`}>
         <h2 className="text-xl font-bold mb-4">🚀 クイックアクション</h2>
@@ -532,4 +532,4 @@ const LearningTestIntegrationDashboard: React.FC = () => {
   );
 };
 
-export default LearningTestIntegrationDashboard; 
+export default LearningTestIntegrationDashboard;

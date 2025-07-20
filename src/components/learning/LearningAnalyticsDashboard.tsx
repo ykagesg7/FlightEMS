@@ -113,7 +113,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
 
       // 期間の設定
       const now = new Date();
-      let startDate = new Date();
+      const startDate = new Date();
       switch (timeRange) {
         case 'week':
           startDate.setDate(now.getDate() - 7);

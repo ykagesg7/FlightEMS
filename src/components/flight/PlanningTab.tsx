@@ -1,10 +1,10 @@
 import React from 'react';
-import { FlightPlan, RouteSegment, Airport, Waypoint } from '../../types/index';
-import { formatTime, calculateDistance, calculateETE, calculateETA, groupBy, calculateTAS, calculateMach, calculateAirspeeds } from '../../utils';
+import { Airport, AirportGroupOption, AirportOption, FlightPlan, NavaidOption, RouteSegment, Waypoint } from '../../types/index';
+import { calculateAirspeeds, calculateDistance, calculateETA, calculateETE, calculateMach, calculateTAS, formatTime, groupBy } from '../../utils';
 import { calculateMagneticBearing } from '../../utils/bearing';
 import FlightParameters from './FlightParameters';
-import RoutePlanning from './RoutePlanning';
 import { FlightSummary } from './FlightSummary';
+import RoutePlanning from './RoutePlanning';
 
 interface PlanningTabProps {
   flightPlan: FlightPlan;
@@ -16,9 +16,9 @@ interface PlanningTabProps {
  * フライトプランの入力と計算結果の表示を行うメインコンポーネント
  */
 const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) => {
-  const [airportOptions, setAirportOptions] = React.useState<any[]>([]);
-  const [navaidOptions, setNavaidOptions] = React.useState<any[]>([]);
-  const [selectedNavaid, setSelectedNavaid] = React.useState<any>(null);
+  const [airportOptions, setAirportOptions] = React.useState<AirportGroupOption[]>([]);
+  const [navaidOptions, setNavaidOptions] = React.useState<NavaidOption[]>([]);
+  const [selectedNavaid, setSelectedNavaid] = React.useState<NavaidOption | null>(null);
 
   // 空港データを取得するuseEffect
   React.useEffect(() => {
@@ -26,11 +26,11 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
       try {
         const response = await fetch('/geojson/Airports.geojson');
         const geojsonData = await response.json();
-        const airportList = geojsonData.features.map((feature: any) => ({
+        const airportList = geojsonData.features.map((feature: { properties: { id: string; name1: string; type: string }; geometry: { coordinates: [number, number] } }) => ({
           value: feature.properties.id,
           label: `${feature.properties.name1} (${feature.properties.id})`,
           name: feature.properties.name1,
-          type: feature.properties.type,
+          type: feature.properties.type as 'civilian' | 'military' | 'joint',
           latitude: feature.geometry.coordinates[1],
           longitude: feature.geometry.coordinates[0],
           // GeoJSONのpropertiesを含める
@@ -40,7 +40,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
         // 空港タイプでグループ化
         const groupedAirports = Object.entries(groupBy(airportList, 'type')).map(([type, options]) => ({
           label: type,
-          options,
+          options: options as AirportOption[],
         }));
         setAirportOptions(groupedAirports);
       } catch (error) {
@@ -53,14 +53,14 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
       try {
         const response = await fetch('/geojson/Navaids.geojson');
         const geojsonData = await response.json();
-        const navaidList = geojsonData.features.map((feature: any) => ({
+        const navaidList = geojsonData.features.map((feature: { properties: { id: string; name1: string; name2: string; type: string; ch?: string }; geometry: { coordinates: [number, number] } }) => ({
           value: feature.properties.id,
           label: `${feature.properties.name1}(${feature.properties.name2})(${feature.properties.id})`,
-          type: feature.properties.type,
+          type: feature.properties.type as 'VOR' | 'TACAN' | 'VORTAC',
           latitude: feature.geometry.coordinates[1],
           longitude: feature.geometry.coordinates[0],
           ch: feature.properties.ch,
-          coordinates: [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
+          frequency: feature.properties.ch,
         }));
         setNavaidOptions(navaidList);
       } catch (error) {
@@ -71,6 +71,19 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
     fetchAirports();
     fetchNavaids();
   }, []);
+
+  // ポイントのIDを取得するヘルパー関数
+  const getPointId = (point: Airport | Waypoint): string => {
+    if ('id' in point) {
+      // Waypointの場合
+      return (point as Waypoint).id;
+    } else {
+      // Airportの場合
+      const airport = point as Airport;
+      const propertiesId = airport.properties?.id;
+      return (typeof propertiesId === 'string' ? propertiesId : '') || airport.value || '';
+    }
+  };
 
   // Flight Summaryを更新する関数
   const updateFlightSummary = React.useCallback(() => {
@@ -111,13 +124,14 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
       const segmentEteMinutes = calculateETE(distance, tas);
       cumulativeEte += segmentEteMinutes;
       const segmentEta = calculateETA(flightPlan.departureTime, cumulativeEte);
+
+      // 型安全なID取得
+      const fromId = getPointId(currentPoint);
+      const toId = getPointId(nextPoint);
+
       routeSegments.push({
-        from: 'id' in currentPoint
-          ? (currentPoint as Waypoint).id
-          : (currentPoint as Airport).properties?.id || (currentPoint as Airport).value,
-        to: 'id' in nextPoint
-          ? (nextPoint as Waypoint).id
-          : (nextPoint as Airport).properties?.id || (nextPoint as Airport).value,
+        from: fromId,
+        to: toId,
         speed: flightPlan.speed,
         bearing,
         altitude: flightPlan.altitude,
@@ -129,9 +143,9 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
 
     // 全体TAS、Mach計算
     const airspeedsResult = calculateAirspeeds(
-      flightPlan.speed, 
-      flightPlan.altitude, 
-      flightPlan.groundTempC, 
+      flightPlan.speed,
+      flightPlan.altitude,
+      flightPlan.groundTempC,
       flightPlan.groundElevationFt
     );
     // 高精度計算が失敗した場合、従来の計算方法で代替
@@ -154,26 +168,27 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
       routeSegments: routeSegments
     }));
   }, [
-    flightPlan.departure, 
-    flightPlan.arrival, 
-    flightPlan.waypoints, 
-    flightPlan.speed, 
-    flightPlan.altitude, 
+    flightPlan.departure,
+    flightPlan.arrival,
+    flightPlan.waypoints,
+    flightPlan.speed,
+    flightPlan.altitude,
     flightPlan.departureTime,
-    flightPlan.groundTempC, 
-    flightPlan.groundElevationFt
+    flightPlan.groundTempC,
+    flightPlan.groundElevationFt,
+    setFlightPlan
   ]);
 
   // Flight Summaryを更新するuseEffect
   React.useEffect(() => {
     updateFlightSummary();
   }, [
-    updateFlightSummary, 
-    flightPlan.departure, 
-    flightPlan.arrival, 
-    flightPlan.waypoints, 
-    flightPlan.speed, 
-    flightPlan.altitude, 
+    updateFlightSummary,
+    flightPlan.departure,
+    flightPlan.arrival,
+    flightPlan.waypoints,
+    flightPlan.speed,
+    flightPlan.altitude,
     flightPlan.departureTime,
     flightPlan.groundTempC,
     flightPlan.groundElevationFt
@@ -201,7 +216,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
 
       <div className="space-y-3 sm:space-y-4 md:space-y-6">
         {/* FlightSummary コンポーネントを配置 */}
-        <FlightSummary flightPlan={flightPlan} />
+        <FlightSummary flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
       </div>
     </div>
   );

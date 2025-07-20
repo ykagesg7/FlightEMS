@@ -163,9 +163,9 @@ export default defineConfig(({ mode }) => {
         'leaflet',
         'react-leaflet',
         '@supabase/supabase-js',
-        'react-window'
+        'react-window',
+        '@mdx-js/react'
       ],
-      exclude: ['@mdx-js/react'],
       // Stagewise対応の依存関係最適化
       esbuildOptions: {
         target: 'esnext',

@@ -1,4 +1,5 @@
 import type * as L from 'leaflet';
+import type { CustomGroupOption, CustomSelectOption } from './react-select';
 
 // エラー関連の型をエクスポート
 export type { Database } from './database.types';
@@ -6,38 +7,57 @@ export * from './error';
 export * from './learning';
 export * from './map';
 
-// Profile型定義（既存のany型を置き換え）
-export interface UserProfile {
-  id: string;
-  username: string | null;
-  full_name: string | null;
-  avatar_url: string | null;
-  website: string | null;
-  email: string | null;
-  created_at: string | null;
-  updated_at: string | null;
-  roll: string | null;
-}
+// 専用型定義ファイルをインポート
+export * from './leaflet';
+export * from './react-select';
 
-export interface Airport {
+// 基本型定義（重複を削除）
+export interface Airport extends CustomSelectOption {
   value: string;
-  name: string;
   label: string;
+  name: string;
   type: 'civilian' | 'military' | 'joint';
   latitude: number;
   longitude: number;
-  properties?: {
-    id?: string;
-    name1?: string;
-    type?: string;
-    "Elev(ft)"?: number;
-    RWY1?: string;
-    RWY2?: string;
-    RWY3?: string;
-    RWY4?: string;
-    "MAG Var"?: number;
-    [key: string]: string | number | boolean | null | undefined;
-  };
+  properties?: Record<string, unknown>;
+}
+
+export interface Waypoint {
+  id: string;
+  name: string;
+  type: 'custom' | 'navaid' | 'airport';
+  sourceId?: string;
+  ch?: string;
+  coordinates: [number, number];
+  latitude: number;
+  longitude: number;
+}
+
+export interface RouteSegment {
+  from: string;
+  to: string;
+  speed: number;
+  bearing: number;
+  altitude: number;
+  eta: string;
+  distance: number;
+}
+
+export interface FlightPlan {
+  departure?: Airport;
+  arrival?: Airport;
+  waypoints: Waypoint[];
+  speed: number;
+  altitude: number;
+  departureTime: string;
+  groundTempC: number;
+  groundElevationFt: number;
+  totalDistance: number;
+  ete: string;
+  eta: string;
+  tas: number;
+  mach: number;
+  routeSegments: RouteSegment[];
 }
 
 export interface Navaid {
@@ -48,19 +68,6 @@ export interface Navaid {
   longitude: number;
 }
 
-export interface Waypoint {
-  id: string;
-  name: string;
-  type: 'airport' | 'navaid' | 'custom';
-  sourceId?: string;
-  ch?: string;
-  coordinates: [number, number];
-  latitude: number;
-  longitude: number;
-  nameEditable?: boolean;
-  metadata?: WaypointMetadata;
-}
-
 export interface WaypointMetadata {
   baseNavaid: string;
   bearing: number;
@@ -69,33 +76,35 @@ export interface WaypointMetadata {
   baseLongitude: number;
 }
 
-export interface FlightPlan {
-  departure: Airport | null;
-  arrival: Airport | null;
-  waypoints: Waypoint[];
-  speed: number;
-  altitude: number;
-  departureTime: string;
-  tas: number;
-  mach: number;
-  totalDistance: number;
-  ete?: string;
-  eta?: string;
-  routeSegments?: RouteSegment[];
-  groundTempC: number; // 地上気温 (摂氏)
-  groundElevationFt: number; // 地上標高 (フィート)
+// RoutePlanning関連の型定義
+export interface AirportOption extends CustomSelectOption {
+  value: string;
+  label: string;
+  name: string;
+  type: 'civilian' | 'military' | 'joint';
+  latitude: number;
+  longitude: number;
+  properties?: Record<string, unknown>;
 }
 
-export interface RouteSegment {
-  from: string;
-  to: string;
-  speed: number; // CAS
-  bearing: number; // 磁方位
-  altitude: number;
-  eta?: string; // 予定到着時刻
-  distance?: number;
+export interface NavaidOption extends CustomSelectOption {
+  value: string;
+  label: string;
+  name: string;
+  type: 'VOR' | 'TACAN' | 'VORTAC';
+  latitude: number;
+  longitude: number;
+  frequency?: string;
+  ch?: string;
 }
 
+// 空港グループ化オプション
+export interface AirportGroupOption extends CustomGroupOption {
+  label: string;
+  options: AirportOption[];
+}
+
+// GeoJSON関連の型定義
 export interface GeoJSONFeature {
   type: string;
   properties: {
@@ -115,16 +124,7 @@ export interface GeoJSONData extends L.GeoJSON {
   features: GeoJSONFeature[];
 }
 
-// 学習システム型
-export type {
-  LearningAnalytics, LearningContent,
-  LearningContentType,
-  LearningProgress,
-  LearningSession, SessionMetadata, SubjectStats, TestSessionStats, UserWeakArea
-} from './learning';
-
-
-// Weather API型定義
+// 天気関連の型定義
 export interface WeatherCondition {
   text: string;
   japanese: string;
@@ -170,7 +170,6 @@ export interface WeatherAPIResponse {
   location: WeatherLocation;
 }
 
-// 外部Weather API生レスポンス型
 export interface ExternalWeatherData {
   current: {
     condition: { text: string; icon: string };

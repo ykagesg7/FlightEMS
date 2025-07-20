@@ -34,20 +34,16 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, showPath }) => {
 
       try {
         setLoading(true);
-        console.log(`MDXファイルを読み込みます: ${contentId}.mdx`);
-
         // ファイルパスを指定してimport
         // 注: コンテンツIDに基づいて動的にインポートするため、エラーが発生する可能性があります
         try {
           const module = await import(`../../content/${contentId}.mdx`);
-          console.log('MDXファイルの読み込みに成功しました', module);
           setContent(() => module.default);
           setError(null);
         } catch (err) {
           // 最初のパスでの読み込みに失敗した場合、別のパスを試す
           try {
             const module = await import(`@content/${contentId}.mdx`);
-            console.log('MDXファイルの読み込みに成功しました（エイリアス経由）', module);
             setContent(() => module.default);
             setError(null);
           } catch (err2) {
@@ -74,7 +70,7 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, showPath }) => {
         window.dispatchEvent(new CustomEvent(MDX_CONTENT_LOADED_EVENT, {
           detail: { contentId: contentId }
         }));
-        console.log(`コンテンツの読み込みが完了しました: ${contentId}`);
+        // コンテンツ読み込み完了
       }, 200);
 
       return () => clearTimeout(timer);

@@ -1,10 +1,10 @@
 import React from 'react';
-import { FlightPlan, Waypoint } from '../../types/index';
-import WaypointList from './WaypointList';
+import Select from 'react-select';
+import { AirportGroupOption, FlightPlan, NavaidOption, ReactSelectStylesProps, Waypoint } from '../../types/index';
+import { reactSelectStyles } from '../../utils/reactSelectStyles';
 import NavaidSelector from './NavaidSelector';
 import WaypointForm from './WaypointForm';
-import { reactSelectStyles } from '../../utils/reactSelectStyles';
-import Select from 'react-select';
+import WaypointList from './WaypointList';
 
 /**
  * Route Planning コンポーネント
@@ -13,10 +13,10 @@ import Select from 'react-select';
 interface RoutePlanningProps {
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
-  airportOptions: any[];
-  navaidOptions: any[];
-  selectedNavaid: any;
-  setSelectedNavaid: React.Dispatch<React.SetStateAction<any>>;
+  airportOptions: AirportGroupOption[];
+  navaidOptions: NavaidOption[];
+  selectedNavaid: NavaidOption | null;
+  setSelectedNavaid: React.Dispatch<React.SetStateAction<NavaidOption | null>>;
 }
 
 const RoutePlanning: React.FC<RoutePlanningProps> = ({
@@ -27,7 +27,7 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   selectedNavaid,
   setSelectedNavaid,
 }) => {
-  
+
   // 新しいWaypointを追加する関数を定義
   const handleAddWaypoint = (waypoint: Waypoint) => {
     setFlightPlan({ ...flightPlan, waypoints: [...flightPlan.waypoints, waypoint] });
@@ -50,7 +50,7 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
       zIndex: 50,
       backgroundColor: '#4b5563',
     }),
-    option: (provided: any, state: any) => ({
+    option: (provided: any, state: ReactSelectStylesProps) => ({
       ...provided,
       padding: '4px 8px',
       fontSize: '0.75rem',
@@ -80,16 +80,12 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
       ...provided,
       padding: '4px',
     }),
-    clearIndicator: (provided: any) => ({
-      ...provided,
-      padding: '4px',
-    }),
   };
 
   return (
     <div className="bg-gray-800 shadow-sm rounded-lg p-3 sm:p-4 md:p-6">
       <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 text-gray-50">経路計画</h2>
-      
+
       {/* 空港選択部 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
         <div>
@@ -101,8 +97,8 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
             placeholder="出発空港を選択.."
             options={airportOptions}
             value={flightPlan.departure}
-            onChange={(option) => setFlightPlan({ ...flightPlan, departure: option || null })}
-            styles={customStyles}
+            onChange={(option) => setFlightPlan({ ...flightPlan, departure: option || undefined })}
+            styles={customStyles as any}
             classNamePrefix="react-select"
             className="text-xs sm:text-sm"
           />
@@ -116,8 +112,8 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
             placeholder="到着空港を選択.."
             options={airportOptions}
             value={flightPlan.arrival}
-            onChange={(option) => setFlightPlan({ ...flightPlan, arrival: option || null })}
-            styles={customStyles}
+            onChange={(option) => setFlightPlan({ ...flightPlan, arrival: option || undefined })}
+            styles={customStyles as any}
             classNamePrefix="react-select"
             className="text-xs sm:text-sm"
           />
@@ -151,9 +147,9 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
           {/* ウェイポイントリスト - 既存の編集・並べ替え機能を持つコンポーネント */}
           <div className="bg-gray-700 p-3 sm:p-4 rounded-lg">
             <h3 className="text-sm sm:text-md font-medium text-gray-200 mb-2 sm:mb-3">ウェイポイントリスト</h3>
-            <WaypointList 
-              flightPlan={flightPlan} 
-              setFlightPlan={setFlightPlan} 
+            <WaypointList
+              flightPlan={flightPlan}
+              setFlightPlan={setFlightPlan}
             />
           </div>
         </div>
@@ -162,4 +158,4 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   );
 };
 
-export default RoutePlanning; 
+export default RoutePlanning;

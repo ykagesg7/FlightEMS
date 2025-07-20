@@ -16,7 +16,7 @@ interface ImportMeta {
 }
 
 declare module '*.geojson' {
-  const value: any;
+  const value: GeoJSON.FeatureCollection;
   export default value;
 }
 

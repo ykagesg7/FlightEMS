@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * 環境に応じてログ出力を制御するロガーユーティリティ
  */

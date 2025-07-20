@@ -40,6 +40,42 @@ const isProd = import.meta.env.PROD;
 // デプロイ先のドメインを取得（未設定の場合はnull）
 const deploymentDomain = isProd ? window.location.origin : null;
 
+// 開発環境でのモックデータ
+const createMockWeatherData = (lat: number, lon: number): FilteredWeatherData => {
+  return {
+    current: {
+      condition: {
+        text: 'Partly cloudy',
+        japanese: '晴れ時々曇り',
+        icon: '//cdn.weatherapi.com/weather/64x64/day/116.png'
+      },
+      temp_c: 20,
+      wind: {
+        degree: 180,
+        kph: 15,
+        knots: 8
+      },
+      pressure: {
+        mb: 1013,
+        inch: '29.91'
+      },
+      visibility_km: 10,
+      humidity: 65,
+      last_updated: new Date().toISOString()
+    },
+    astronomy: {
+      sunrise: '06:30',
+      sunset: '18:30'
+    },
+    location: {
+      name: `Location (${lat.toFixed(2)}, ${lon.toFixed(2)})`,
+      region: 'Development',
+      country: 'JP',
+      localtime: new Date().toISOString()
+    }
+  };
+};
+
 /**
  * Vercelでホストされているサーバーレス関数を介して天気データを取得します。
  * @param lat 緯度
@@ -54,15 +90,30 @@ export const fetchWeather = async (lat: number, lon: number): Promise<FilteredWe
     : `/api/weather?lat=${lat}&lon=${lon}`;
 
   try {
+    console.log(`Weather API呼び出し: ${functionUrl}`);
+
     // サーバーレス関数にリクエストを送信
-    const response = await axios.get<FilteredWeatherData>(functionUrl);
+    const response = await axios.get<FilteredWeatherData>(functionUrl, {
+      timeout: 10000, // 10秒のタイムアウト
+    });
+
+    console.log('Weather API レスポンス成功:', response.data);
     return response.data;
   } catch (error) {
     console.error('Vercel関数へのリクエストに失敗しました:', error);
+
     // エラーがaxiosのエラーであるか、または他のエラーであるかをチェック
     if (axios.isAxiosError(error)) {
       console.error('Axios error details:', error.response?.data);
+      console.error('Status:', error.response?.status);
+
+      // 開発環境ではモックデータを返す
+      if (!isProd) {
+        console.log('開発環境: モックデータを使用します');
+        return createMockWeatherData(lat, lon);
+      }
     }
+
     return null;
   }
 };

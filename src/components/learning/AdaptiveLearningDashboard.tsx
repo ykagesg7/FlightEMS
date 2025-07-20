@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import supabase from '../../utils/supabase';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import supabase from '../../utils/supabase';
 
 interface LearningProgress {
   user_id: string;
@@ -64,7 +64,7 @@ const AdaptiveLearningDashboard: React.FC = () => {
 
     try {
       setLoading(true);
-      
+
       // 学習進捗データの取得
       const { data: progressData, error: progressError } = await supabase
         .from('learning_progress_integration')
@@ -145,8 +145,8 @@ const AdaptiveLearningDashboard: React.FC = () => {
   const calculateOverallStats = () => {
     const totalProgress = learningProgress.length;
     const completedProgress = learningProgress.filter(p => p.completed).length;
-    const averageAccuracy = learningProgress.length > 0 
-      ? learningProgress.reduce((sum, p) => sum + p.test_accuracy_rate, 0) / learningProgress.length 
+    const averageAccuracy = learningProgress.length > 0
+      ? learningProgress.reduce((sum, p) => sum + p.test_accuracy_rate, 0) / learningProgress.length
       : 0;
     const totalStudyTime = recentSessions.reduce((sum, s) => sum + (s.session_duration || 0), 0);
 
@@ -172,7 +172,7 @@ const AdaptiveLearningDashboard: React.FC = () => {
     <div className="max-w-7xl mx-auto p-6 space-y-6">
       <div className="bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">学習分析ダッシュボード</h1>
-        
+
         {/* 統計概要 */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-blue-50 p-4 rounded-lg">
@@ -204,12 +204,11 @@ const AdaptiveLearningDashboard: React.FC = () => {
             ].map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key as any)}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === tab.key
+                onClick={() => setActiveTab(tab.key as 'overview' | 'progress' | 'weaknesses' | 'recommendations')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === tab.key
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>
@@ -304,8 +303,8 @@ const AdaptiveLearningDashboard: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                            <div 
-                              className="bg-blue-600 h-2 rounded-full" 
+                            <div
+                              className="bg-blue-600 h-2 rounded-full"
                               style={{ width: `${progress.progress_percentage}%` }}
                             ></div>
                           </div>
@@ -326,8 +325,8 @@ const AdaptiveLearningDashboard: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPerformanceLevelColor(progress.performance_level)}`}>
-                          {progress.performance_level === 'strong' ? '良好' : 
-                           progress.performance_level === 'average' ? '普通' : '要改善'}
+                          {progress.performance_level === 'strong' ? '良好' :
+                            progress.performance_level === 'average' ? '普通' : '要改善'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -349,13 +348,12 @@ const AdaptiveLearningDashboard: React.FC = () => {
                 <div key={index} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-medium text-gray-900">{area.subject_category}</h4>
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      area.improvement_trend === 'improving' ? 'bg-green-100 text-green-800' :
-                      area.improvement_trend === 'declining' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${area.improvement_trend === 'improving' ? 'bg-green-100 text-green-800' :
+                        area.improvement_trend === 'declining' ? 'bg-red-100 text-red-800' :
+                          'bg-gray-100 text-gray-800'
+                      }`}>
                       {area.improvement_trend === 'improving' ? '改善中' :
-                       area.improvement_trend === 'declining' ? '悪化' : '安定'}
+                        area.improvement_trend === 'declining' ? '悪化' : '安定'}
                     </span>
                   </div>
                   {area.sub_category && (
