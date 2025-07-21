@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArticleComment, CreateCommentRequest } from '../../types/articles';
 import { useTheme } from '../../contexts/ThemeContext';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 
 interface CommentsModalProps {
   isOpen: boolean;
@@ -67,11 +67,11 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* オーバーレイ */}
-      <div 
+      <div
         className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
         onClick={onClose}
       />
-      
+
       {/* モーダル */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div className={`relative w-full max-w-2xl rounded-xl shadow-2xl ${
@@ -132,7 +132,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                       }`}>
                         {comment.user?.display_name?.charAt(0) || 'U'}
                       </div>
-                      
+
                       {/* コメント内容 */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2 mb-1">
@@ -211,4 +211,4 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
       </div>
     </div>
   );
-}; 
+};

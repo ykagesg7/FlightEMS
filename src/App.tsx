@@ -7,7 +7,6 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ProgressProvider } from './contexts/ProgressContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
-import { AuthProvider } from './providers/AuthProvider';
 
 // Enhanced Error Boundary and Layout
 import { AppLayout } from './components/layout/AppLayout';
@@ -42,16 +41,14 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   return (
     <QueryClientProvider client={queryClient}>
       <EnhancedErrorBoundary>
-        <AuthProvider>
-          <ThemeProvider>
-            <ProgressProvider>
-              <WeatherCacheProvider>
-                {children}
-                <ReactQueryDevtools initialIsOpen={false} />
-              </WeatherCacheProvider>
-            </ProgressProvider>
-          </ThemeProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <ProgressProvider>
+            <WeatherCacheProvider>
+              {children}
+              <ReactQueryDevtools initialIsOpen={false} />
+            </WeatherCacheProvider>
+          </ProgressProvider>
+        </ThemeProvider>
       </EnhancedErrorBoundary>
     </QueryClientProvider>
   );

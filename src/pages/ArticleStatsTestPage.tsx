@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useArticleStats } from '../hooks/useArticleStats';
-import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { useArticleStats } from '../hooks/useArticleStats';
+import { useAuth } from '../hooks/useAuth';
 
 const ArticleStatsTestPage: React.FC = () => {
   const { user } = useAuth();
@@ -23,7 +23,7 @@ const ArticleStatsTestPage: React.FC = () => {
   // テスト用記事ID
   const testArticleIds = [
     'test-article-1',
-    'test-article-2', 
+    'test-article-2',
     'test-article-3'
   ];
 
@@ -55,27 +55,25 @@ const ArticleStatsTestPage: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen p-8 ${
-      theme === 'dark' 
-        ? 'bg-gray-900 text-white' 
+    <div className={`min-h-screen p-8 ${theme === 'dark'
+        ? 'bg-gray-900 text-white'
         : 'bg-gray-50 text-gray-900'
-    }`}>
+      }`}>
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">記事統計テストページ</h1>
-        
-        <div className={`border px-4 py-3 rounded mb-6 ${
-          user 
+
+        <div className={`border px-4 py-3 rounded mb-6 ${user
             ? 'bg-green-100 border-green-400 text-green-700'
             : 'bg-blue-100 border-blue-400 text-blue-700'
-        }`}>
+          }`}>
           {user ? (
             <>
-              ✅ ログイン中: {user.email}<br/>
+              ✅ ログイン中: {user.email}<br />
               📝 いいね・閲覧数・コメント機能が利用可能です
             </>
           ) : (
             <>
-              👤 匿名ユーザー<br/>
+              👤 匿名ユーザー<br />
               📝 いいね・閲覧数は利用可能、コメントはログインが必要です
             </>
           )}
@@ -94,11 +92,10 @@ const ArticleStatsTestPage: React.FC = () => {
             const articleComments = comments[articleId] || [];
 
             return (
-              <div key={articleId} className={`p-6 rounded-lg border ${
-                theme === 'dark' 
-                  ? 'bg-gray-800 border-gray-700' 
+              <div key={articleId} className={`p-6 rounded-lg border ${theme === 'dark'
+                  ? 'bg-gray-800 border-gray-700'
                   : 'bg-white border-gray-200'
-              }`}>
+                }`}>
                 <h2 className="text-xl font-semibold mb-4">
                   テスト記事: {articleId}
                 </h2>
@@ -110,13 +107,12 @@ const ArticleStatsTestPage: React.FC = () => {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => handleToggleLike(articleId)}
-                          className={`flex items-center space-x-1 px-3 py-1 rounded transition-colors ${
-                            articleStats.user_liked
+                          className={`flex items-center space-x-1 px-3 py-1 rounded transition-colors ${articleStats.user_liked
                               ? 'bg-red-100 text-red-600 hover:bg-red-200'
                               : theme === 'dark'
                                 ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                          }`}
+                            }`}
                           title="いいね（ログイン不要）"
                         >
                           <span>{articleStats.user_liked ? '❤️' : '🤍'}</span>
@@ -139,22 +135,20 @@ const ArticleStatsTestPage: React.FC = () => {
                     <div className="flex space-x-2">
                       <button
                         onClick={() => handleLoadComments(articleId)}
-                        className={`px-4 py-2 rounded transition-colors ${
-                          theme === 'dark'
+                        className={`px-4 py-2 rounded transition-colors ${theme === 'dark'
                             ? 'bg-blue-600 hover:bg-blue-700 text-white'
                             : 'bg-blue-500 hover:bg-blue-600 text-white'
-                        }`}
+                          }`}
                       >
                         コメント読み込み
                       </button>
 
                       <button
                         onClick={() => handleRecordView(articleId)}
-                        className={`px-4 py-2 rounded transition-colors ${
-                          theme === 'dark'
+                        className={`px-4 py-2 rounded transition-colors ${theme === 'dark'
                             ? 'bg-green-600 hover:bg-green-700 text-white'
                             : 'bg-green-500 hover:bg-green-600 text-white'
-                        }`}
+                          }`}
                         title="閲覧記録（ログイン不要）"
                       >
                         閲覧記録
@@ -171,21 +165,19 @@ const ArticleStatsTestPage: React.FC = () => {
                             setTestComment(e.target.value);
                           }}
                           placeholder="コメントを入力..."
-                          className={`w-full p-3 border rounded-lg resize-none ${
-                            theme === 'dark'
+                          className={`w-full p-3 border rounded-lg resize-none ${theme === 'dark'
                               ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                               : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                          }`}
+                            }`}
                           rows={3}
                         />
                         <button
                           onClick={() => handleCreateComment(articleId)}
                           disabled={!testComment.trim() || selectedArticle !== articleId}
-                          className={`px-4 py-2 rounded transition-colors ${
-                            theme === 'dark'
+                          className={`px-4 py-2 rounded transition-colors ${theme === 'dark'
                               ? 'bg-purple-600 hover:bg-purple-700 text-white'
                               : 'bg-purple-500 hover:bg-purple-600 text-white'
-                          } disabled:opacity-50 disabled:cursor-not-allowed`}
+                            } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
                           コメント投稿
                         </button>
@@ -197,11 +189,10 @@ const ArticleStatsTestPage: React.FC = () => {
                       <div className="space-y-3">
                         <h3 className="font-semibold">コメント一覧:</h3>
                         {articleComments.map(comment => (
-                          <div key={comment.id} className={`p-3 rounded border ${
-                            theme === 'dark'
+                          <div key={comment.id} className={`p-3 rounded border ${theme === 'dark'
                               ? 'bg-gray-700 border-gray-600'
                               : 'bg-gray-50 border-gray-200'
-                          }`}>
+                            }`}>
                             <div className="flex justify-between items-start mb-2">
                               <span className="font-medium">
                                 {comment.user?.display_name || 'ユーザー'}
@@ -241,4 +232,4 @@ const ArticleStatsTestPage: React.FC = () => {
   );
 };
 
-export default ArticleStatsTestPage; 
+export default ArticleStatsTestPage;

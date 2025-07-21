@@ -1,29 +1,28 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useLearningProgress } from '../hooks/useLearningProgress';
-import { useFreemiumAccess } from '../hooks/useFreemiumAccess';
+import { useEffect, useState } from 'react';
+import FreemiumUpgradePrompt from '../components/learning/FreemiumUpgradePrompt';
 import LearningMenuSidebar from '../components/learning/LearningMenuSidebar';
 import LearningTabMDX from '../components/mdx/LearningTabMDX';
-import FreemiumUpgradePrompt from '../components/learning/FreemiumUpgradePrompt';
-import { Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../hooks/useAuth';
+import { useFreemiumAccess } from '../hooks/useFreemiumAccess';
+import { useLearningProgress } from '../hooks/useLearningProgress';
 
 function LearningPageOld() {
   const { user } = useAuth();
   const { theme } = useTheme();
-  const { 
-    learningContents, 
+  const {
+    learningContents,
     isLoading,
     loadLearningContents
   } = useLearningProgress();
-  
-  const { 
-    displayContents, 
-    canAccessContent, 
+
+  const {
+    displayContents,
+    canAccessContent,
     freemiumInfo,
     isPreviewMode
   } = useFreemiumAccess();
-  
+
   const [selectedTab, setSelectedTab] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -85,10 +84,9 @@ function LearningPageOld() {
         <div
           className={`
             md:sticky md:top-16
-            fixed left-0 h-full w-4/5 max-w-xs ${
-              theme === 'dark' 
-                ? 'bg-gray-800 border-gray-700' 
-                : 'bg-gray-50 border-gray-100'
+            fixed left-0 h-full w-4/5 max-w-xs ${theme === 'dark'
+              ? 'bg-gray-800 border-gray-700'
+              : 'bg-gray-50 border-gray-100'
             } rounded-xl shadow-md z-50 transform transition-transform duration-300
             md:static md:translate-x-0 md:w-1/4 md:max-w-none md:shadow-md md:p-4
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -103,7 +101,7 @@ function LearningPageOld() {
           tabIndex={-1}
           aria-label="学習メニュー"
         >
-          <LearningMenuSidebar 
+          <LearningMenuSidebar
             contents={displayContents}
             selectedId={selectedTab}
             onSelectItem={handleMenuItemClick}
@@ -135,4 +133,4 @@ function LearningPageOld() {
   );
 }
 
-export default LearningPageOld; 
+export default LearningPageOld;

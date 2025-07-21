@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { supabase } from '../../utils/supabase';
 
@@ -9,19 +10,16 @@ interface AuthButtonProps {
 export const AuthButton: React.FC<AuthButtonProps> = ({ iconOnly }) => {
   const profile = useAuthStore((state) => state.profile);
   const session = useAuthStore((state) => state.session);
+  const signOut = useAuthStore((state) => state.signOut);
+  const navigate = useNavigate();
 
   const handleAuthClick = async () => {
     if (session) {
       // ユーザーがログインしている場合、ログアウト処理
-      await supabase.auth.signOut();
+      await signOut();
     } else {
-      // ユーザーがログインしていない場合、ログインページへリダイレクト
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin,
-        },
-      });
+      // ユーザーがログインしていない場合、ログインページへ遷移
+      navigate('/auth');
     }
   };
 

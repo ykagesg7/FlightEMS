@@ -1,7 +1,7 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { useLearningProgress } from '../hooks/useLearningProgress';
-import { supabase } from '../utils/supabase';
-import { useAuth } from './AuthContext';
+// import { useAuth } from './AuthContext';
+// ProgressContextで認証情報が必要な場合はuseAuthStoreやuseAuthを直接使ってください。
 import { LearningContent, ProgressStats } from '../types';
 
 interface Progress {
@@ -33,42 +33,21 @@ interface ProgressContextType {
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
 
 export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Supabaseベースの進捗管理フックを使用
-  const {
-    userProgress,
-    learningContents,
-    isLoading,
-    error,
-    updateProgress,
-    markAsCompleted,
-    getProgress,
-    isCompleted,
-    getLastReadInfo,
-    resetProgress,
-    loadUserProgress,
-    loadLearningContents,
-    getContentsByCategory,
-    getAllCategories
-  } = useLearningProgress();
+  const progressData = useLearningProgress();
+
+  // Context値をuseMemoでラップ
+  const contextValue = useMemo(() => ({
+    ...progressData
+  }), [
+    progressData.userProgress,
+    progressData.learningContents,
+    progressData.isLoading,
+    progressData.error
+    // 必要に応じて他の依存も追加
+  ]);
 
   return (
-    <ProgressContext.Provider value={{ 
-      progress: userProgress, 
-      updateProgress, 
-      markAsCompleted, 
-      getProgress, 
-      isCompleted,
-      getLastReadInfo,
-      resetProgress,
-      // 新しい機能
-      learningContents,
-      isLoading,
-      error,
-      loadUserProgress,
-      loadLearningContents,
-      getContentsByCategory,
-      getAllCategories
-    }}>
+    <ProgressContext.Provider value={contextValue}>
       {children}
     </ProgressContext.Provider>
   );
@@ -81,4 +60,4 @@ export const useProgress = (): ProgressContextType => {
     throw new Error('useProgress must be used within a ProgressProvider');
   }
   return context;
-}; 
+};

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import supabase from '../../utils/supabase';
 
 interface LearningProgress {
@@ -206,8 +206,8 @@ const AdaptiveLearningDashboard: React.FC = () => {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as 'overview' | 'progress' | 'weaknesses' | 'recommendations')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === tab.key
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
               >
                 {tab.label}
@@ -349,8 +349,8 @@ const AdaptiveLearningDashboard: React.FC = () => {
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-medium text-gray-900">{area.subject_category}</h4>
                     <span className={`px-2 py-1 rounded text-xs font-medium ${area.improvement_trend === 'improving' ? 'bg-green-100 text-green-800' :
-                        area.improvement_trend === 'declining' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
+                      area.improvement_trend === 'declining' ? 'bg-red-100 text-red-800' :
+                        'bg-gray-100 text-gray-800'
                       }`}>
                       {area.improvement_trend === 'improving' ? '改善中' :
                         area.improvement_trend === 'declining' ? '悪化' : '安定'}
