@@ -219,42 +219,6 @@ export interface Database {
           }
         ]
       }
-      quiz_questions: {
-        Row: {
-          id: number
-          category: string
-          question: string | null
-          answer1: string | null
-          answer2: string | null
-          answer3: string | null
-          answer4: string | null
-          correct: number | null
-          explanation: string | null
-        }
-        Insert: {
-          id?: number
-          category: string
-          question?: string | null
-          answer1?: string | null
-          answer2?: string | null
-          answer3?: string | null
-          answer4?: string | null
-          correct?: number | null
-          explanation?: string | null
-        }
-        Update: {
-          id?: number
-          category?: string
-          question?: string | null
-          answer1?: string | null
-          answer2?: string | null
-          answer3?: string | null
-          answer4?: string | null
-          correct?: number | null
-          explanation?: string | null
-        }
-        Relationships: []
-      }
       user_progress: {
         Row: {
           id: string
@@ -282,55 +246,6 @@ export interface Database {
             foreignKeyName: "user_progress_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      user_quiz_results: {
-        Row: {
-          id: string
-          user_id: string | null
-          question_id: number | null
-          category: string | null
-          is_correct: boolean | null
-          answered_at: string | null
-        }
-        Insert: {
-          id?: string
-          user_id?: string | null
-          question_id?: number | null
-          category?: string | null
-          is_correct?: boolean | null
-          answered_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string | null
-          question_id?: number | null
-          category?: string | null
-          is_correct?: boolean | null
-          answered_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_user_quiz_results_user"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_quiz_results_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "quiz_questions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_quiz_results_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -534,4 +449,4 @@ export interface Database {
       [_ in never]: never
     }
   }
-} 
+}

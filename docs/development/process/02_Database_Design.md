@@ -83,3 +83,36 @@ erDiagram
     questions ||--o{ user_question_srs_status : "has_srs_status_for_question"
 
     learning_records }o..o| user_question_srs_status : "updates_srs_via"
+
+    unified_cpl_questions {
+        uuid id PK
+        text main_subject
+        text sub_subject
+        text question_text
+        jsonb options
+        int correct_answer
+        text explanation
+        int difficulty_level
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    quiz_sessions {
+        uuid id PK
+        uuid user_id FK
+        text session_type
+        jsonb settings
+        jsonb answers
+        numeric score_percentage
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    user_test_results {
+        uuid id PK
+        uuid user_id FK
+        uuid question_id FK
+        int user_answer
+        int correct_answer
+        bool is_correct
+        int response_time_seconds
+        timestamptz created_at
+    }

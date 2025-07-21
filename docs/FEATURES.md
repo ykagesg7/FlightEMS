@@ -628,3 +628,22 @@ const cardStyles = `${
 - [DEVELOPMENT.md](./DEVELOPMENT.md) - 開発ガイド
 - [ROADMAP.md](./ROADMAP.md) - 開発ロードマップ
 - [troubleshooting/authentication-issues.md](./troubleshooting/authentication-issues.md) - 認証トラブルシューティング
+
+## [追加] 4択問題機能 実装計画・運用方針（2024年6月）
+
+- 出題: unified_cpl_questionsからランダム/条件付きで取得
+- UI: QuizComponentを拡張し、選択肢・解説・採点・進捗表示
+- 回答記録: quiz_sessions, user_test_resultsに保存
+- 拡張: 出題条件フィルタ、進捗・レコメンド連携、管理機能
+- 旧テーブルは廃止済み、現行テーブルのみ運用
+
+## [追加] 4択問題テスト機能 本番実装・UI/UX改善・型/データ整備（2025年7月）
+
+- /testページでSupabase本番データ（unified_cpl_questions）を取得し、QuizComponentで4択問題を出題・回答・保存できる本番実装を完了
+- 回答結果はquiz_sessionsおよびuser_test_resultsテーブルに保存
+- 型変換時にtextプロパティ（question_textのコピー）を必ずセットし、問題文が常に表示されるよう修正
+- 選択肢が空や不正な場合はダミー値をセットし、UI崩れを防止
+- QuestionComponentのラジオボタンvalue/currentAnswerをindex（数値）で統一し、選択肢の選択状態・disabled状態・デザインを強化
+- テキスト色・背景色のコントラストを強化し、視認性・アクセシビリティを向上
+- データ不備時もUI崩れせず、ダミー値で安全に表示
+- エラー時のUI/UXも改善

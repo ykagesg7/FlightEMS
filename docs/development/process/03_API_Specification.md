@@ -210,3 +210,26 @@ SupabaseのPostgreSQL関数をRPCとして呼び出し、複雑なビジネス�
     *   Teacherは担当Studentの学習記録を読み取り可能。
     *   Adminはほぼ全てのデータを読み書き可能。
 *   **注意点**: RPC関数はデフォルトで作成者の権限で実行される (`SECURITY DEFINER`) か、呼び出し元の権限で実行される (`SECURITY INVOKER`) かを指定できる。機密性の高い操作や、広範なデータアクセスが必要な関数は `SECURITY DEFINER` とし、関数内で厳密な権限チェックを行う。単純なデータ取得で、RLSが適切に機能する場合は `SECURITY INVOKER` で良い。
+
+## [追加] 4択問題機能 API設計・実装計画（2025年7月）
+
+### 1. 問題取得API
+- `GET /questions?limit=N&filter=...`
+  - unified_cpl_questionsからランダム/条件付きでN問取得
+
+### 2. 回答記録API
+- `POST /user_test_results`
+  - user_id, question_id, user_answer, is_correct, response_time_seconds等を保存
+
+### 3. セッション記録API
+- `POST /quiz_sessions`
+  - user_id, answers(jsonb), score_percentage等を保存
+
+### 4. 今後の拡張
+- 出題条件フィルタAPI
+- 学習進捗・レコメンドAPI
+- 管理者用API（問題追加・編集・削除）
+
+### 5. 備考
+- Supabase JSクライアントで直接テーブル操作（APIラッパー不要）
+- 詳細なパラメータ・レスポンス例は今後の実装で随時追記

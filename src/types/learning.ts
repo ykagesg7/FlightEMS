@@ -4,9 +4,6 @@ import type { Database } from './database.types';
 export type LearningProgress = Database['public']['Tables']['learning_progress']['Row'];
 
 // クイズ関連型
-export type QuizQuestion = Database['public']['Tables']['quiz_questions']['Row'];
-export type UserQuizResult = Database['public']['Tables']['user_quiz_results']['Row'];
-
 export interface QuizAnswer {
   questionId: number;
   selectedAnswer: number;

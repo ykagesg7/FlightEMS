@@ -163,31 +163,35 @@ FlightAcademyのデータベースには以下の主要テーブルがありま�
    - 主要フィールド: id, content_id, user_id, content, created_at, updated_at
    - 機能: 学習記事に対するコメントの管理
 
-5. **quiz_questions** - クイズ問題（515問）
-   - 主要フィールド: id, category, question, answer1-4, correct, explanation
-   - 説明: 航空関連知識のクイズ問題
+5. **unified_cpl_questions** - CPL試験用4択問題（現行運用）
+   - 主要フィールド: id, main_subject, sub_subject, question_text, options(jsonb), correct_answer, explanation, difficulty_level, ...
+   - 説明: CPL学科試験の4択問題本体。現行運用の主力テーブル。
 
-6. **user_quiz_results** - ユーザーのクイズ回答結果
-   - 主要フィールド: id, user_id, question_id, is_correct, answered_at, category
-   - 機能: ユーザーのクイズ履歴と成績の追跡
+6. **quiz_sessions** - クイズセッション記録（現行運用）
+   - 主要フィールド: id, user_id, session_type, settings, answers(jsonb), score_percentage, ...
+   - 機能: 1回のテストセッション全体の記録。
 
-7. **user_progress** - ユーザーの学習進捗
+7. **user_test_results** - ユーザーの個別問題回答記録（現行運用）
+   - 主要フィールド: id, user_id, question_id, user_answer, is_correct, response_time_seconds, ...
+   - 機能: 各問題ごとの詳細な回答履歴。
+
+8. **user_progress** - ユーザーの学習進捗
    - 主要フィールド: id, user_id, completed_units, created_at, updated_at
    - 機能: カリキュラムにおけるユーザーの進捗状況の管理
 
-8. **posts** - コミュニティ投稿
+9. **posts** - コミュニティ投稿
    - 主要フィールド: id, user_id, title, content, created_at
    - 関連テーブル: コメント、いいねと関連付け
 
-9. **comments** - コメント情報
-   - 主要フィールド: id, post_id, user_id, content, created_at
-   - 機能: 投稿に対するコメントの管理
+10. **comments** - コメント情報
+    - 主要フィールド: id, post_id, user_id, content, created_at
+    - 機能: 投稿に対するコメントの管理
 
-10. **likes** - いいね情報
+11. **likes** - いいね情報
     - 主要フィールド: id, post_id, user_id, created_at
     - 機能: 投稿に対するいいねの管理
 
-11. **announcements** - お知らせ情報
+12. **announcements** - お知らせ情報
     - 主要フィールド: id, title, date
     - 機能: 管理者からのお知らせの管理
 
@@ -234,12 +238,12 @@ async function getUserProfiles() {
     .select('*')
     .eq('roll', 'Student')
     .limit(10);
-    
+
   if (error) {
     console.error('Error fetching profiles:', error);
     return null;
   }
-  
+
   return data;
 }
 
@@ -250,12 +254,12 @@ async function getQuizQuestions(category: string) {
     .select('*')
     .eq('category', category)
     .limit(20);
-    
+
   if (error) {
     console.error('Error fetching quiz questions:', error);
     return null;
   }
-  
+
   return data;
 }
 ```
@@ -388,7 +392,7 @@ async function getQuizQuestions(category: string) {
 
 **カラーパレット**:
 - Primary: Indigo/Purple グラデーション
-- Secondary: Blue/Slate グラデーション  
+- Secondary: Blue/Slate グラデーション
 - Accent: Violet/Purple グラデーション
 
 **レスポンシブ対応**:
@@ -504,3 +508,35 @@ CREATE TABLE IF NOT EXISTS learning_test_mapping (
   created_at timestamp DEFAULT now()
 );
 ```
+
+## [追加] 4択問題機能 実装計画（2025年7月）
+
+### 1. 概要
+- Supabaseの現行テーブル（unified_cpl_questions, quiz_sessions, user_test_results）を用いた4択問題出題・回答記録機能を実装する。
+- React/TypeScriptでUIを構築し、Supabase JSクライアントでデータ取得・保存を行う。
+
+### 2. 実装ステップ
+1. **テーブル型定義・Supabaseクライアントの確認**
+   - unified_cpl_questions, quiz_sessions, user_test_resultsの型定義を整理
+   - supabase.tsの設定・認証フローを再確認
+2. **4択問題出題ページの新規作成**
+   - /testルートにQuiz UIページを作成
+   - 問題はunified_cpl_questionsからランダム/条件付きで取得
+3. **Quiz UIの実装**
+   - QuizComponentを拡張し、選択肢・解説・採点・再挑戦・進捗表示を実装
+   - 回答選択時に即時フィードバック
+4. **回答記録の保存**
+   - quiz_sessions, user_test_resultsへ回答内容・スコア等を保存
+   - セッション単位・個別問題単位の両方を記録
+5. **テスト・エラーハンドリング**
+   - ユニット・結合テスト（React Testing Library等）
+   - エラー時のUI/UX設計
+6. **今後の拡張**
+   - 出題条件（科目・難易度等）フィルタリング
+   - 学習進捗・レコメンド連携
+   - 管理画面・問題追加機能
+
+### 3. 備考
+- 旧テーブル（quiz_questions, user_quiz_results）は参照・運用不可
+- APIラッパーは不要、Supabase JSクライアント直利用
+- 詳細設計・API仕様は`process/02_Database_Design.md`・`03_API_Specification.md`参照
