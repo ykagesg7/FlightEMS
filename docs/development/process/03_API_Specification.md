@@ -233,3 +233,10 @@ SupabaseのPostgreSQL関数をRPCとして呼び出し、複雑なビジネス�
 ### 5. 備考
 - Supabase JSクライアントで直接テーブル操作（APIラッパー不要）
 - 詳細なパラメータ・レスポンス例は今後の実装で随時追記
+
+---
+
+### 【2025/07更新】4択テストAPI・保存仕様アップデート
+- user_weak_areasテーブルのカラム名をtotal_attempts→attempt_countに統一
+- API例・設計書もattempt_countで統一、total_attempts記載は廃止
+- 未ログイン時はテスト結果保存をスキップし、UIでログイン/新規登録を促す

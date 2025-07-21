@@ -116,3 +116,10 @@ erDiagram
         int response_time_seconds
         timestamptz created_at
     }
+
+---
+
+### 【2025/07更新】user_weak_areasテーブル設計・4択テスト保存仕様アップデート
+- カラム名をtotal_attempts→attempt_countに統一（DB・型・設計書すべて）
+- ER図・DDL・設計書もattempt_countで統一、total_attempts記載は廃止
+- 未ログイン時はテスト結果保存をスキップし、UIでログイン/新規登録を促す
