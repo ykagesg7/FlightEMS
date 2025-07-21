@@ -6,9 +6,12 @@
 - **[README.md](./README.md)** - このファイル（ドキュメント概要）
 - **[ROADMAP.md](./ROADMAP.md)** - プロジェクト全体のロードマップ
 - **[FEATURES.md](./FEATURES.md)** - 機能仕様書
+- **[CONVERSATION_SUMMARY.md](./CONVERSATION_SUMMARY.md)** - 会話履歴要約と今後の方向性
 
 ### **🔧 開発・技術**
+- **[TECHNICAL_STACK.md](./TECHNICAL_STACK.md)** - 技術スタック詳細
 - **[PERFORMANCE_IMPROVEMENTS.md](./PERFORMANCE_IMPROVEMENTS.md)** - パフォーマンス改善計画
+- **[AUTOMATED_DOCS_SYSTEM.md](./AUTOMATED_DOCS_SYSTEM.md)** - 自動ドキュメント更新システム
 - **[development/](./development/)** - 開発関連ドキュメント
 - **[guides/](./guides/)** - 開発ガイド
 
@@ -27,7 +30,13 @@
   - 70%のany型削除（30箇所 → 9箇所）
   - 45個の新規型定義追加
   - 外部ライブラリ型定義の整備
-- **詳細**: [Phase 1完全改善サマリー](./improvement-proposals/phase1-complete-improvement-summary.md)
+- **詳細**: [Phase 1包括的改善報告](./improvement-proposals/phase1-comprehensive-improvement-report.md)
+
+### **🔄 ドキュメント統廃合完了（2025年7月19日）**
+- **ファイル統合**: 20個のファイルを9個に統合（55%削減）
+- **型安全性改善**: 主要コンポーネントの型エラー解決
+- **自動ドキュメント更新システム**: 実装完了
+- **詳細**: [会話履歴要約](./CONVERSATION_SUMMARY.md)
 
 ### **🔄 Phase 2 準備中**
 - **パフォーマンス最適化**
@@ -51,6 +60,7 @@ FlightAcademyは、航空機パイロット向けの包括的な学習・計画�
 - **地図**: Leaflet + React-Leaflet
 - **UI**: Tailwind CSS + React Select
 - **バックエンド**: Supabase
+- **認証**: Zustand＋Supabase Auth（メール/パスワード認証のみ、Context/Providerや外部認証は未使用）
 - **テスト**: Vitest + React Testing Library
 
 ---
@@ -97,6 +107,7 @@ npm test
 - **any型削除率**: 70%達成（30箇所 → 9箇所）
 - **型定義数**: 45個の新規型定義追加
 - **型チェック**: 100%成功
+- **主要コンポーネント型エラー**: 解決済み（PlanningTab, RoutePlanning, MapTab, NavaidSelector）
 
 ### **テスト**
 - **テスト数**: 37テスト
@@ -111,6 +122,19 @@ npm test
 
 ## 🔄 開発フロー
 
+### **認証機能の実装方針**
+- 認証状態はZustandストアで一元管理しています。
+- Context/Providerによる認証状態管理は不要なため削除済みです。
+- Google OAuth等の外部認証は今後開発予定です（現状はメール/パスワード認証のみ）。
+- 認証関連のUI・ロジックは`AuthPage.tsx`と`AuthButton.tsx`に集約されています。
+
+#### 【認証機能の最新実装・品質管理】
+- Zustandストアのselector・参照安定化を徹底し、無限ループやReact警告を完全解消。
+- Context/Provider/外部OAuth関連の不要ファイル・コードを削除し、設計をシンプル化。
+- 認証UI・ロジックの主要テスト（`AuthButton.test.tsx`, `AuthPage.test.tsx`）を拡充し、全件パスを確認。
+- テストはVitest＋React Testing Libraryで実装。Zustandのstoreモックも最新APIに対応。
+- 今後もUI/UX・テスト品質・外部認証対応を段階的に強化予定。
+
 ### **1. 機能開発**
 1. 機能仕様の確認（[FEATURES.md](./FEATURES.md)）
 2. 開発環境での実装
@@ -122,6 +146,7 @@ npm test
 2. 実装計画の策定
 3. 段階的実装
 4. 結果の記録・文書化
+5. 自動ドキュメント更新システムによる継続的更新
 
 ### **3. 品質管理**
 1. TypeScript型チェック
@@ -189,5 +214,5 @@ npm test
 
 ---
 
-**最終更新**: 2025年1月27日
-**バージョン**: Phase 1完了版
+**最終更新**: 2025年7月19日
+**バージョン**: ドキュメント統廃合完了版

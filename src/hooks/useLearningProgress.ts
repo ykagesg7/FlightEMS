@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 import { LearningContent } from '../types';
 import supabase from '../utils/supabase';
 
@@ -18,6 +18,7 @@ interface LearningProgress {
 
 export const useLearningProgress = () => {
   const { user } = useAuth();
+  const stableUser = useMemo(() => user, [user]);
   const [userProgress, setUserProgress] = useState<Record<string, LearningProgress>>({});
   const [learningContents, setLearningContents] = useState<LearningContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +53,7 @@ export const useLearningProgress = () => {
   // 進捗データをロード
   const loadUserProgress = useCallback(async () => {
     try {
-      if (!user) {
+      if (!stableUser) {
         setUserProgress({});
         return;
       }
@@ -60,7 +61,7 @@ export const useLearningProgress = () => {
       const { data, error } = await supabase
         .from('learning_progress')
         .select('*')
-        .eq('user_id', user.id);
+        .eq('user_id', stableUser.id);
 
       if (error) {
         throw error;
@@ -77,7 +78,7 @@ export const useLearningProgress = () => {
       console.error('学習進捗のロードエラー:', err);
       setError(err instanceof Error ? err : new Error('学習進捗のロード中に不明なエラーが発生しました'));
     }
-  }, [user]);
+  }, [stableUser]);
 
   // ユーザー認証の変更を監視し、コンテンツと進捗をロード
   useEffect(() => {
@@ -92,9 +93,9 @@ export const useLearningProgress = () => {
   }, [loadLearningContents, loadUserProgress]);
 
   // 進捗の更新
-  const updateProgress = async (contentId: string, position: number) => {
+  const updateProgress = useCallback(async (contentId: string, position: number) => {
     try {
-      if (!user) return;
+      if (!stableUser) return;
 
       // 既存の進捗データを取得
       const existingProgress = userProgress[contentId];
@@ -111,7 +112,7 @@ export const useLearningProgress = () => {
       }
 
       const newProgress = {
-        user_id: user.id,
+        user_id: stableUser.id,
         content_id: contentId,
         last_position: position,
         progress_percentage: Math.min(progressPercentage, 99), // 99%まで（完了ボタンで100%に）
@@ -139,15 +140,15 @@ export const useLearningProgress = () => {
       console.error('進捗更新エラー:', err);
       setError(err instanceof Error ? err : new Error('進捗更新中に不明なエラーが発生しました'));
     }
-  };
+  }, [stableUser, userProgress]);
 
   // 完了としてマーク
-  const markAsCompleted = async (contentId: string) => {
+  const markAsCompleted = useCallback(async (contentId: string) => {
     try {
-      if (!user) return;
+      if (!stableUser) return;
 
       const newProgress = {
-        user_id: user.id,
+        user_id: stableUser.id,
         content_id: contentId,
         completed: true,
         progress_percentage: 100,
@@ -173,22 +174,22 @@ export const useLearningProgress = () => {
       console.error('完了マークエラー:', err);
       setError(err instanceof Error ? err : new Error('コンテンツを完了としてマーク中に不明なエラーが発生しました'));
     }
-  };
+  }, [stableUser]);
 
   // 進捗率の取得 (0-100%)
-  const getProgress = (contentId: string): number => {
+  const getProgress = useCallback((contentId: string): number => {
     const progress = userProgress[contentId];
     if (!progress) return 0;
     return progress.completed ? 100 : progress.progress_percentage;
-  };
+  }, [userProgress]);
 
   // 完了状態の確認
-  const isCompleted = (contentId: string): boolean => {
+  const isCompleted = useCallback((contentId: string): boolean => {
     return userProgress[contentId]?.completed || false;
-  };
+  }, [userProgress]);
 
   // 最後に読んだ情報の取得
-  const getLastReadInfo = (contentId: string) => {
+  const getLastReadInfo = useCallback((contentId: string) => {
     const progress = userProgress[contentId];
     if (!progress) return null;
 
@@ -196,17 +197,17 @@ export const useLearningProgress = () => {
       position: progress.last_position,
       date: progress.last_read_at
     };
-  };
+  }, [userProgress]);
 
   // 進捗のリセット
-  const resetProgress = async (contentId: string) => {
+  const resetProgress = useCallback(async (contentId: string) => {
     try {
-      if (!user) return;
+      if (!stableUser) return;
 
       const { error } = await supabase
         .from('learning_progress')
         .delete()
-        .eq('user_id', user.id)
+        .eq('user_id', stableUser.id)
         .eq('content_id', contentId);
 
       if (error) {
@@ -223,19 +224,19 @@ export const useLearningProgress = () => {
       console.error('進捗リセットエラー:', err);
       setError(err instanceof Error ? err : new Error('進捗のリセット中に不明なエラーが発生しました'));
     }
-  };
+  }, [stableUser]);
 
   // カテゴリー別のコンテンツ取得
-  const getContentsByCategory = (category?: string) => {
+  const getContentsByCategory = useCallback((category?: string) => {
     if (!category) return learningContents;
     return learningContents.filter(content => content.category === category);
-  };
+  }, [learningContents]);
 
   // 全カテゴリーのリストを取得
-  const getAllCategories = (): string[] => {
+  const getAllCategories = useCallback((): string[] => {
     const categories = new Set(learningContents.map(content => content.category));
     return Array.from(categories);
-  };
+  }, [learningContents]);
 
   return {
     // データ
