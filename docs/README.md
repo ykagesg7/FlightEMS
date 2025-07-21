@@ -1,239 +1,87 @@
-# FlightAcademy ドキュメント
+# FlightAcademyTsx
 
-## 📚 ドキュメント構成
-
-### **📋 概要・計画**
-- **[README.md](./README.md)** - このファイル（ドキュメント概要）
-- **[ROADMAP.md](./ROADMAP.md)** - プロジェクト全体のロードマップ
-- **[FEATURES.md](./FEATURES.md)** - 機能仕様書
-- **[CONVERSATION_SUMMARY.md](./CONVERSATION_SUMMARY.md)** - 会話履歴要約と今後の方向性
-
-### **🔧 開発・技術**
-- **[TECHNICAL_STACK.md](./TECHNICAL_STACK.md)** - 技術スタック詳細
-- **[PERFORMANCE_IMPROVEMENTS.md](./PERFORMANCE_IMPROVEMENTS.md)** - パフォーマンス改善計画
-- **[AUTOMATED_DOCS_SYSTEM.md](./AUTOMATED_DOCS_SYSTEM.md)** - 自動ドキュメント更新システム
-- **[development/](./development/)** - 開発関連ドキュメント
-- **[guides/](./guides/)** - 開発ガイド
-
-### **📈 改善提案・実装報告**
-- **[improvement-proposals/](./improvement-proposals/)** - 改善提案と実装報告
-
-### **🛠️ トラブルシューティング**
-- **[troubleshooting/](./troubleshooting/)** - トラブルシューティングガイド
+## 概要
+FlightAcademyTsxは、航空機パイロット向けの包括的な学習・計画プラットフォームです。React+TypeScript+Supabaseを基盤とし、学習コンテンツ管理、進捗・テスト連携、ソーシャル機能、フリーミアム公開、認証、SPAルーティング、パフォーマンス最適化などを実現しています。
 
 ---
 
-## 🎯 現在の状況
+## 主な機能
+- **学習コンテンツ管理**（MDXベース、カテゴリ・進捗・タグ管理）
+- **進捗・テスト連携**（CPL試験システム統合、学習-テストマッピング、進捗ダッシュボード）
+- **ソーシャル機能**（いいね・コメント、ユーザープロフィール、ロール管理）
+- **フリーミアム公開**（一部記事の無料公開、未ログインユーザー向け制御）
+- **認証**（Zustand+Supabase Auth、メール/パスワード、今後OAuth拡張予定）
+- **SPAルーティング**（React Router、遅延読み込み、404対応）
+- **パフォーマンス最適化**（仮想化、遅延読み込み、Vite/Babel最適化、Core Web Vitals指標）
 
-### **✅ Phase 1 完了（2025年1月27日）**
-- **TypeScript型安全性の確立**
-  - 70%のany型削除（30箇所 → 9箇所）
-  - 45個の新規型定義追加
-  - 外部ライブラリ型定義の整備
-- **詳細**: [Phase 1包括的改善報告](./improvement-proposals/phase1-comprehensive-improvement-report.md)
-
-### **🔄 ドキュメント統廃合完了（2025年7月19日）**
-- **ファイル統合**: 20個のファイルを9個に統合（55%削減）
-- **型安全性改善**: 主要コンポーネントの型エラー解決
-- **自動ドキュメント更新システム**: 実装完了
-- **詳細**: [会話履歴要約](./CONVERSATION_SUMMARY.md)
-
-### **🔄 Phase 2 準備中**
-- **パフォーマンス最適化**
-- **UX改善**
-- **継続的改善**
+詳細な機能設計・UI/UX・API仕様は[FEATURES.md](./FEATURES.md)をご参照ください。
 
 ---
 
-## 📊 プロジェクト概要
-
-FlightAcademyは、航空機パイロット向けの包括的な学習・計画プラットフォームです。
-
-### **主要機能**
-- 🗺️ **経路計画**: インタラクティブな地図ベースの飛行計画
-- 📚 **学習システム**: 適応型学習と進捗管理
-- 🌤️ **気象情報**: リアルタイム気象データ統合
-- 📊 **分析・レポート**: 学習進捗と飛行データの分析
-
-### **技術スタック**
-- **フロントエンド**: React 18 + TypeScript + Vite
-- **地図**: Leaflet + React-Leaflet
-- **UI**: Tailwind CSS + React Select
-- **バックエンド**: Supabase
-- **認証**: Zustand＋Supabase Auth（メール/パスワード認証のみ、Context/Providerや外部認証は未使用）
-- **テスト**: Vitest + React Testing Library
+## 現在の開発状況（2025年7月時点）
+- **Phase 5進行中**
+  - ルーティング・認証UI/UXの最適化、セキュリティ強化（APIキー・環境変数管理）、Vite/Babel/React18の最適化、型安全性・テストカバレッジ拡大
+  - CPL試験システム統合準備、学習-テスト連携基盤の構築
+- **品質管理**
+  - 型安全性（any型ほぼ排除）、ESLint/Prettierによる静的解析、Vitest+React Testing Libraryによるテスト、CI/CD（Vercel/Supabase/GitHub Actions）
+- **パフォーマンス**
+  - Core Web Vitals・バンドルサイズ・レンダリング最適化指標を明示し、react-window等で大規模データも高速表示
 
 ---
 
-## 🚀 開発環境セットアップ
-
-### **前提条件**
-- Node.js 18+
-- npm または yarn
-- Git
-
-### **セットアップ手順**
-```bash
-# リポジトリのクローン
-git clone <repository-url>
-cd FlightAcademyTsx
-
-# 依存関係のインストール
-npm install
-
-# 環境変数の設定
-cp .env.example .env.local
-# .env.localを編集して必要なAPIキーを設定
-
-# 開発サーバーの起動
-npm run dev
-
-# テストの実行
-npm test
-```
-
-### **主要スクリプト**
-- `npm run dev` - 開発サーバー起動
-- `npm run build` - 本番ビルド
-- `npm run test` - テスト実行
-- `npm run lint` - ESLint実行
-- `npm run type-check` - TypeScript型チェック
+## 今後の開発計画
+- **直近の優先タスク**
+  1. 学習進捗管理UIの実装強化（記事ごとの進捗率・完了管理・復習サポートUI）
+  2. CPL試験システムの本格統合（学習-テスト連携、出題傾向分析、優先記事推薦、進捗ダッシュボード）
+  3. UI/UXのさらなる改善（サイドバー・アクセシビリティ・ARIA属性強化、記事内検索・ハイライト機能）
+  4. AI・モバイル対応（AIによる記事推薦、React Nativeによるモバイルアプリ化）
+  5. パフォーマンス・セキュリティの継続的最適化（PWA対応、RLS/認証強化、バンドル最適化）
+  6. 管理者向け機能拡充（コンテンツ管理・同期機能、外部LMS連携）
+- **長期的な拡張予定・リスク管理・定期レビュー**
+  - 詳細は[ROADMAP.md](./ROADMAP.md)を参照
 
 ---
 
-## 📈 品質指標
-
-### **型安全性**
-- **any型削除率**: 70%達成（30箇所 → 9箇所）
-- **型定義数**: 45個の新規型定義追加
-- **型チェック**: 100%成功
-- **主要コンポーネント型エラー**: 解決済み（PlanningTab, RoutePlanning, MapTab, NavaidSelector）
-
-### **テスト**
-- **テスト数**: 37テスト
-- **カバレッジ**: 維持
-- **成功率**: 100%
-
-### **ビルド**
-- **ビルド成功率**: 100%
-- **開発サーバー**: 正常動作
+## 技術スタック
+- **フロント**：React 18, TypeScript, Vite, Tailwind CSS, Zustand, React Query, React Router
+- **バックエンド**：Supabase（PostgreSQL, Auth, Edge Functions, RLS）
+- **テスト・CI/CD**：Vitest, React Testing Library, ESLint, Prettier, Vercel, Supabase Cloud, GitHub Actions
+- **地図・ナビゲーション**：Leaflet, React-Leaflet, GeoJSON
+- **品質指標**：型安全性、テストカバレッジ、Core Web Vitals、バンドルサイズ、アクセシビリティ
+- 詳細は[TECHNICAL_STACK.md](./TECHNICAL_STACK.md)参照
 
 ---
 
-## 🔄 開発フロー
-
-### **認証機能の実装方針**
-- 認証状態はZustandストアで一元管理しています。
-- Context/Providerによる認証状態管理は不要なため削除済みです。
-- Google OAuth等の外部認証は今後開発予定です（現状はメール/パスワード認証のみ）。
-- 認証関連のUI・ロジックは`AuthPage.tsx`と`AuthButton.tsx`に集約されています。
-
-#### 【認証機能の最新実装・品質管理】
-- Zustandストアのselector・参照安定化を徹底し、無限ループやReact警告を完全解消。
-- Context/Provider/外部OAuth関連の不要ファイル・コードを削除し、設計をシンプル化。
-- 認証UI・ロジックの主要テスト（`AuthButton.test.tsx`, `AuthPage.test.tsx`）を拡充し、全件パスを確認。
-- テストはVitest＋React Testing Libraryで実装。Zustandのstoreモックも最新APIに対応。
-- 今後もUI/UX・テスト品質・外部認証対応を段階的に強化予定。
-
-### **1. 機能開発**
-1. 機能仕様の確認（[FEATURES.md](./FEATURES.md)）
-2. 開発環境での実装
-3. 型安全性の確保
-4. テストの追加・実行
-
-### **2. 改善提案**
-1. 改善提案の作成（[improvement-proposals/](./improvement-proposals/)）
-2. 実装計画の策定
-3. 段階的実装
-4. 結果の記録・文書化
-5. 自動ドキュメント更新システムによる継続的更新
-
-### **3. 品質管理**
-1. TypeScript型チェック
-2. ESLint実行
-3. 単体テスト実行
-4. 開発サーバーでの動作確認
+## 品質管理・開発フロー
+- 型安全性・テスト・CI/CD・ドキュメント自動更新
+- コントリビューションガイド・改善提案の流れ（[improvement-proposals/](./improvement-proposals/)）
+- トラブルシューティング・開発ガイド（[troubleshooting/](./troubleshooting/), [guides/](./guides/)）
 
 ---
 
-## 📝 ドキュメント更新ガイドライン
-
-### **改善提案の作成**
-1. `docs/improvement-proposals/`に新しいファイルを作成
-2. 改善内容、実装計画、結果を記録
-3. 関連ドキュメントの更新
-
-### **技術ドキュメントの更新**
-1. 変更内容の記録
-2. 影響範囲の明記
-3. 次のステップの提示
-
-### **READMEの更新**
-1. プロジェクト状況の反映
-2. 新しい機能・改善の追加
-3. 品質指標の更新
-
----
-
-## 🤝 コントリビューション
-
-### **開発参加**
-1. イシューの確認・作成
-2. ブランチの作成
-3. 実装・テスト
-4. プルリクエストの作成
-
-### **ドキュメント改善**
-1. 不足している情報の特定
-2. 改善提案の作成
-3. 実装・更新
-
-### **品質向上**
-1. 型安全性の改善
-2. テストの追加
-3. パフォーマンスの最適化
+## 参照リンク
+- [機能詳細・設計仕様（FEATURES.md）](./FEATURES.md)
+- [開発計画・優先順位（ROADMAP.md）](./ROADMAP.md)
+- [技術スタック詳細（TECHNICAL_STACK.md）](./TECHNICAL_STACK.md)
+- [改善提案・議論（improvement-proposals/）](./improvement-proposals/)
+- [トラブルシューティング](./troubleshooting/)
+- [開発ガイド](./guides/)
+- [ドキュメント自動更新システム（AUTOMATED_DOCS_SYSTEM.md）](./AUTOMATED_DOCS_SYSTEM.md)
+- [パフォーマンス改善計画（PERFORMANCE_IMPROVEMENTS.md）](./PERFORMANCE_IMPROVEMENTS.md)
+- [会話履歴・議論要約（CONVERSATION_SUMMARY.md）](./CONVERSATION_SUMMARY.md)
+- [開発詳細ガイド・設計書（development/）](./development/)
+- [コントリビューションガイド（CONTRIBUTING.md）](./development/CONTRIBUTING.md)
+- [開発ガイド（DEVELOPMENT.md）](./development/DEVELOPMENT.md)
+- [高度な機能・トラブルシューティング（ADVANCED.md）](./development/ADVANCED.md)
+- [学習-テスト連携ガイド（LEARNING_TEST_INTEGRATION.md）](./development/LEARNING_TEST_INTEGRATION.md)
+- [パフォーマンス最適化ガイド（PERFORMANCE_OPTIMIZATION_PLAN.md）](./development/PERFORMANCE_OPTIMIZATION_PLAN.md)
+- [設計・仕様・開発プロセス（development/process/）](./development/process/)
 
 ---
 
-## 📞 サポート
-
-### **トラブルシューティング**
-- [troubleshooting/](./troubleshooting/) - 一般的な問題と解決策
-
-### **開発ガイド**
-- [guides/](./guides/) - 開発に関する詳細ガイド
-
-### **技術仕様**
-- [development/](./development/) - 技術仕様とアーキテクチャ
-
----
-
-## [追加] 4択問題テスト機能 本番実装・UI/UX改善・型/データ整備（2025年7月）
-
-- /testページでSupabase本番データ（unified_cpl_questions）を取得し、QuizComponentで4択問題を出題・回答・保存できる本番実装を完了
-- 回答結果はquiz_sessionsおよびuser_test_resultsテーブルに保存
-- 型変換時にtextプロパティ（question_textのコピー）を必ずセットし、問題文が常に表示されるよう修正
-- 選択肢が空や不正な場合はダミー値をセットし、UI崩れを防止
-- QuestionComponentのラジオボタンvalue/currentAnswerをindex（数値）で統一し、選択肢の選択状態・disabled状態・デザインを強化
-- テキスト色・背景色のコントラストを強化し、視認性・アクセシビリティを向上
-- データ不備時もUI崩れせず、ダミー値で安全に表示
-- エラー時のUI/UXも改善
-
-## 4択テスト機能の未ログイン時保存・エラー対策アップデート（2025/07）
-- 未ログイン時はテスト結果をDB保存せず、UIで「ログイン/新規登録を促す」メッセージとボタンを表示
-- ログイン済み時のみSupabaseに結果保存
-- user_weak_areasテーブルのカラム名をtotal_attempts→attempt_countに統一（DB・型・UIすべて）
-- ドキュメント・設計書もattempt_countで統一、古いtotal_attempts記載は廃止
-- DBスキーマ・型・UIの整合性を三重に検証
-- 今後もスキーマ変更時はドキュメント・型・UIを同時に更新する運用に
-
----
-
-## 📄 ライセンス
-
-このプロジェクトは適切なライセンスの下で提供されています。
-
----
-
-**最終更新**: 2025年7月19日
-**バージョン**: ドキュメント統廃合完了版
+## 更新履歴
+- 最終更新日：2025年7月22日
+- バージョン：ドキュメント統合版
+- UIテーマ切替に応じた文字色変更を実装（2025年7月22日）
+  - Dayテーマ時はHUD緑（#39FF14）、Darkテーマ時は夜間照明赤（#FF3B3B）でPLANNING, ARTICLES, LESSONS, TEST、時刻・日付の文字色が切り替わるように修正
+  - 今後は文字色に合う背景色への最適化も検討中

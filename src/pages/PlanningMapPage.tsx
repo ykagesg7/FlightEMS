@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { WeatherCacheProvider } from '../contexts/WeatherCacheContext';
 import PlanningTab from '../components/flight/PlanningTab';
 import MapTab from '../components/map/MapTab';
+import { WeatherCacheProvider } from '../contexts/WeatherCacheContext';
 import { FlightPlan } from '../types/index';
-import { calculateTAS, calculateMach, formatTime, calculateAirspeeds } from '../utils';
+import { calculateAirspeeds, calculateMach, calculateTAS, formatTime } from '../utils';
 
 type TabKey = 'planning' | 'map';
 
@@ -20,10 +20,11 @@ function PlanningMapPage() {
     const initialMach = airspeedsResult ? airspeedsResult.mach : calculateMach(initialTas, initialAltitude);
     const departureTime = formatTime(new Date().getHours() * 60 + new Date().getMinutes());
     return {
-      departure: null, arrival: null, waypoints: [],
+      departure: undefined, arrival: undefined, waypoints: [],
       altitude: initialAltitude, speed: initialSpeed, tas: initialTas, mach: initialMach,
-      totalDistance: 0, ete: undefined, eta: undefined, departureTime,
+      totalDistance: 0, ete: '', eta: '', departureTime,
       groundTempC: initialGroundTempC, groundElevationFt: initialGroundElevationFt,
+      routeSegments: [],
     };
   });
 
@@ -50,8 +51,8 @@ function PlanningMapPage() {
     <div className="bg-gradient-to-br from-indigo-100 to-purple-100 min-h-screen flex flex-col">
       <div className={`bg-indigo-800 flex ${activeTab === 'map' ? 'mb-0' : 'mb-2'}`}>
         <button
-          className={`flex-1 px-2 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors duration-200 
-            ${activeTab === 'planning' 
+          className={`flex-1 px-2 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors duration-200
+            ${activeTab === 'planning'
               ? 'bg-white text-indigo-800 rounded-t-md border-t-2 border-l-2 border-r-2 border-indigo-300'
               : 'bg-indigo-700 text-white hover:bg-indigo-600'}`}
           onClick={() => setActiveTab('planning')}
@@ -66,7 +67,7 @@ function PlanningMapPage() {
         </button>
         <button
           className={`flex-1 px-2 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors duration-200
-            ${activeTab === 'map' 
+            ${activeTab === 'map'
               ? 'bg-white text-indigo-800 rounded-t-md border-t-2 border-l-2 border-r-2 border-indigo-300'
               : 'bg-indigo-700 text-white hover:bg-indigo-600'}`}
           onClick={() => setActiveTab('map')}
@@ -89,4 +90,4 @@ function PlanningMapPage() {
   );
 }
 
-export default PlanningMapPage; 
+export default PlanningMapPage;

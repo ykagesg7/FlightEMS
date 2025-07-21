@@ -29,9 +29,6 @@ export const AppLayout: React.FC = () => {
   const { effectiveTheme } = useTheme();
   const navigate = useNavigate();
 
-  // ミリタリーテーマかどうかの判定
-  const isMilitary = effectiveTheme === 'military';
-
   // サブメニュー外クリックで閉じるuseEffectをAppLayout本体に追加
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -58,50 +55,37 @@ export const AppLayout: React.FC = () => {
   }, [learningDropdownOpen, articlesDropdownOpen]);
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isMilitary ? 'bg-military-fighter-panel text-hud-primary' : 'bg-gray-900 text-gray-100'
-      }`}>
+    <div className="min-h-screen transition-colors duration-300 bg-gray-900 text-gray-100">
       {/* ヘッダー */}
-      <header className={`border-b transition-all duration-300 ${isMilitary
-        ? 'border-hud-accent bg-black/40'
-        : 'border-gray-700 bg-gray-800'
-        }`}>
+      <header className="border-b transition-all duration-300 border-gray-700 bg-gray-800">
         <div className="container mx-auto px-4 py-4">
           {/* デスクトップ用（1段構成） */}
           <div className="hidden md:flex items-center justify-between">
             {/* ロゴ・タイトルと時刻表示 */}
             <div className="flex items-center gap-4">
-              <h1 className={`text-xl font-bold transition-all duration-300 ${isMilitary
-                ? 'hud-text-glow font-tactical tracking-wider'
-                : 'text-blue-400'
-                }`}>
+              <h1 className="text-xl font-bold transition-all duration-300 text-blue-400">
                 FLIGHT ACADEMY
               </h1>
               <HUDTimeDisplay />
             </div>
             {/* デスクトップ用ナビゲーション・ユーティリティ */}
             <div className="flex items-center gap-8">
-              <div className={`flex items-center gap-4 ${isMilitary ? 'fighter-nav' : ''}`}> {/* ナビゲーション */}
+              <div className="flex items-center gap-4"> {/* ナビゲーション */}
                 <NavLink
                   to="/"
-                  className={`flex-1 flex items-center space-x-1 px-4 py-2 ${isMilitary
-                    ? 'fighter-nav-item hud-text border-none rounded-none'
-                    : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
-                    }`}
+                  className="flex-1 flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-white"
                 >
-                  <span>PLANNING</span>
+                  <span style={effectiveTheme === 'day' ? { color: '#39FF14' } : effectiveTheme === 'dark' ? { color: '#FF3B3B' } : {}}>PLANNING</span>
                 </NavLink>
                 <div className="relative group flex-1">
                   <NavLink
                     to="#"
                     onClick={() => setArticlesDropdownOpen((prev) => !prev)}
-                    className={`flex items-center space-x-1 px-4 py-2 ${isMilitary
-                      ? 'fighter-nav-item hud-text border-none rounded-none'
-                      : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
-                      }`}
+                    className="flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-white"
                     aria-expanded={articlesDropdownOpen}
                     aria-haspopup="true"
                   >
-                    <span>ARTICLES</span>
+                    <span style={effectiveTheme === 'day' ? { color: '#39FF14' } : effectiveTheme === 'dark' ? { color: '#FF3B3B' } : {}}>ARTICLES</span>
                     <svg
                       className={`w-4 h-4 transition-transform duration-300 ${articlesDropdownOpen ? 'rotate-180' : ''}`}
                       fill="none"
@@ -126,20 +110,14 @@ export const AppLayout: React.FC = () => {
                               setArticlesDropdownOpen(false);
                               navigate(`/articles?category=${category.key}`);
                             }}
-                            className={`w-full text-left px-3 py-3 transition-all duration-200 group/item ${isMilitary
-                              ? 'hud-button border-none rounded-none hover:bg-hud-dim'
-                              : 'rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30'
-                              }`}
+                            className="w-full text-left px-3 py-3 transition-all duration-200 group/item rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30"
                           >
                             <div className="flex items-center space-x-3">
                               <span className="text-lg group-hover/item:scale-110 transition-transform duration-200">
                                 {category.icon}
                               </span>
-                              <span className={`font-medium transition-colors duration-200 ${isMilitary
-                                ? 'text-hud-primary group-hover/item:text-hud-glow font-hud'
-                                : 'text-gray-700 dark:text-gray-300 group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400'
-                                }`}>
-                                {isMilitary ? category.name.toUpperCase() : category.name}
+                              <span className={`font-medium transition-colors duration-200 text-gray-700 dark:text-gray-300 group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400`}>
+                                {category.name}
                               </span>
                             </div>
                           </button>
@@ -161,14 +139,11 @@ export const AppLayout: React.FC = () => {
                   <NavLink
                     to="#"
                     onClick={() => setLearningDropdownOpen((prev) => !prev)}
-                    className={`flex items-center space-x-1 px-4 py-2 ${isMilitary
-                      ? 'fighter-nav-item hud-text border-none rounded-none'
-                      : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
-                      }`}
+                    className="flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-white"
                     aria-expanded={learningDropdownOpen}
                     aria-haspopup="true"
                   >
-                    <span>LESSONS</span>
+                    <span style={effectiveTheme === 'day' ? { color: '#39FF14' } : effectiveTheme === 'dark' ? { color: '#FF3B3B' } : {}}>LESSONS</span>
                     <svg
                       className={`w-4 h-4 transition-transform duration-300 ${learningDropdownOpen ? 'rotate-180' : ''}`}
                       fill="none"
@@ -193,20 +168,14 @@ export const AppLayout: React.FC = () => {
                               setLearningDropdownOpen(false);
                               navigate(`/learning?category=${category.key}`);
                             }}
-                            className={`w-full text-left px-3 py-3 transition-all duration-200 group/item ${isMilitary
-                              ? 'hud-button border-none rounded-none hover:bg-hud-dim'
-                              : 'rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30'
-                              }`}
+                            className="w-full text-left px-3 py-3 transition-all duration-200 group/item rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30"
                           >
                             <div className="flex items-center space-x-3">
                               <span className="text-lg group-hover/item:scale-110 transition-transform duration-200">
                                 {category.icon}
                               </span>
-                              <span className={`font-medium transition-colors duration-200 ${isMilitary
-                                ? 'text-hud-primary group-hover/item:text-hud-glow font-hud'
-                                : 'text-gray-700 dark:text-gray-300 group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400'
-                                }`}>
-                                {isMilitary ? category.name.toUpperCase() : category.name}
+                              <span className={`font-medium transition-colors duration-200 text-gray-700 dark:text-gray-300 group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400`}>
+                                {category.name}
                               </span>
                             </div>
                           </button>
@@ -226,12 +195,9 @@ export const AppLayout: React.FC = () => {
                 </div>
                 <NavLink
                   to="/test"
-                  className={`flex-1 flex items-center space-x-1 px-4 py-2 ${isMilitary
-                    ? 'fighter-nav-item hud-text border-none rounded-none'
-                    : 'rounded-lg hover:bg-white/10 transition-all duration-200 text-white'
-                    }`}
+                  className="flex-1 flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-white"
                 >
-                  <span>TEST</span>
+                  <span style={effectiveTheme === 'day' ? { color: '#39FF14' } : effectiveTheme === 'dark' ? { color: '#FF3B3B' } : {}}>TEST</span>
                 </NavLink>
               </div>
               <div className="flex items-center space-x-4">
@@ -247,10 +213,7 @@ export const AppLayout: React.FC = () => {
             {/* 1段目: タイトル＋時計 */}
             <div className="flex items-center gap-4 justify-between">
               <div className="flex items-center gap-4">
-                <h1 className={`text-xl font-bold transition-all duration-300 ${isMilitary
-                  ? 'hud-text-glow font-tactical tracking-wider'
-                  : 'text-blue-400'
-                  }`}>
+                <h1 className="text-xl font-bold transition-all duration-300 text-blue-400">
                   FLIGHT ACADEMY
                 </h1>
                 <HUDTimeDisplay />
@@ -263,10 +226,7 @@ export const AppLayout: React.FC = () => {
               <AuthButton iconOnly />
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`ml-2 text-white p-2 rounded-lg transition-all duration-200 ${isMilitary
-                  ? 'hud-button border-none rounded-none hover:bg-hud-dim'
-                  : 'hover:bg-white/10'
-                  }`}>
+                className="ml-2 text-white p-2 rounded-lg transition-all duration-200 hover:bg-white/10">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -286,16 +246,11 @@ export const AppLayout: React.FC = () => {
 
         {/* モバイルメニュー（サイドバー） */}
         {mobileMenuOpen && (
-          <div className={`fixed inset-y-0 right-0 w-64 px-4 ${isMilitary ? 'bg-military-fighter-panel border-l border-hud-accent' : 'bg-gray-900 border-l border-gray-700'} z-50 transform transition-transform duration-300 ease-in-out
-            `}>
+          <div className="fixed inset-y-0 right-0 w-64 px-4 bg-gray-900 border-l border-gray-700 z-50 transform transition-transform duration-300 ease-in-out">
             <div className="flex justify-end p-4">
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className={`text-white p-2 rounded-lg transition-all duration-200 ${isMilitary
-                  ? 'hud-button border-none rounded-none hover:bg-hud-dim'
-                  : 'hover:bg-white/10'
-                  }`}
-              >
+                className="text-white p-2 rounded-lg transition-all duration-200 hover:bg-white/10">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -311,12 +266,9 @@ export const AppLayout: React.FC = () => {
               <NavLink
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-4 py-3 transition-all duration-200 ${isMilitary
-                  ? 'fighter-nav-item hud-text'
-                  : 'rounded-lg hover:bg-white/10 text-white'
-                  }`}
+                className="px-4 py-3 transition-all duration-200 rounded-lg hover:bg-white/10 text-white"
               >
-                <span>PLANNING</span>
+                <span style={effectiveTheme === 'day' ? { color: '#39FF14' } : effectiveTheme === 'dark' ? { color: '#FF3B3B' } : {}}>PLANNING</span>
               </NavLink>
               <NavLink
                 to="/articles"
@@ -326,7 +278,7 @@ export const AppLayout: React.FC = () => {
                 }}
                 className="w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-all duration-200 flex items-center justify-between text-white"
               >
-                <span>ARTICLES</span>
+                <span style={effectiveTheme === 'day' ? { color: '#39FF14' } : effectiveTheme === 'dark' ? { color: '#FF3B3B' } : {}}>ARTICLES</span>
                 <svg
                   className={`w-4 h-4 transition-transform duration-300 ${articlesDropdownOpen ? 'rotate-180' : ''}`}
                   fill="none"
@@ -368,7 +320,7 @@ export const AppLayout: React.FC = () => {
                 }}
                 className="w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-all duration-200 flex items-center justify-between text-white"
               >
-                <span>LESSONS</span>
+                <span style={effectiveTheme === 'day' ? { color: '#39FF14' } : effectiveTheme === 'dark' ? { color: '#FF3B3B' } : {}}>LESSONS</span>
                 <svg
                   className={`w-4 h-4 transition-transform duration-300 ${learningDropdownOpen ? 'rotate-180' : ''}`}
                   fill="none"
@@ -405,12 +357,9 @@ export const AppLayout: React.FC = () => {
               <NavLink
                 to="/test"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-4 py-3 transition-all duration-200 ${isMilitary
-                  ? 'fighter-nav-item hud-text'
-                  : 'rounded-lg hover:bg-white/10 text-white'
-                  }`}
+                className="px-4 py-3 transition-all duration-200 rounded-lg hover:bg-white/10 text-white"
               >
-                <span>TEST</span>
+                <span style={effectiveTheme === 'day' ? { color: '#39FF14' } : effectiveTheme === 'dark' ? { color: '#FF3B3B' } : {}}>TEST</span>
               </NavLink>
             </nav>
           </div>
@@ -419,10 +368,7 @@ export const AppLayout: React.FC = () => {
 
       {/* メインコンテンツ */}
       <main
-        className={`container mx-auto px-4 py-8 transition-all duration-300 ${effectiveTheme === 'military'
-          ? 'military:text-hud text-gray-900'
-          : 'text-gray-100'
-          }`}
+        className="container mx-auto px-4 py-8 transition-all duration-300 text-gray-100"
       >
 
         <Outlet />
@@ -430,16 +376,10 @@ export const AppLayout: React.FC = () => {
       </main>
 
       {/* フッター */}
-      <footer className={`border-t mt-12 transition-all duration-300 ${isMilitary
-        ? 'border-hud-accent bg-military-fighter-cockpit'
-        : 'border-gray-700 bg-gray-800'
-        }`}>
+      <footer className="border-t mt-12 transition-all duration-300 border-gray-700 bg-gray-800">
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
-            <p className={`text-sm transition-all duration-300 ${isMilitary
-              ? 'hud-text font-tactical tracking-wider'
-              : 'text-gray-400'
-              }`}>
+            <p className="text-sm transition-all duration-300 text-gray-400">
               {'Flight Academy'}
             </p>
           </div>

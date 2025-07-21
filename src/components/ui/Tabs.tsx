@@ -1,10 +1,9 @@
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { cn } from '../../utils';
 import React from 'react';
+import { FlightPlan } from '../../types/index';
+import { calculateAirspeeds, calculateMach, calculateTAS, cn, formatTime } from '../../utils';
 import PlanningTab from '../flight/PlanningTab';
 import MapTab from '../map/MapTab';
-import { FlightPlan } from '../../types/index';
-import { calculateTAS, calculateMach, formatTime, calculateAirspeeds } from '../../utils';
 import LearningTabMDX from '../mdx/LearningTabMDX';
 
 const Tabs = TabsPrimitive.Root;
@@ -67,19 +66,20 @@ const TabsComponent: React.FC<TabsProps> = () => {
     );
 
     return {
-      departure: null,
-      arrival: null,
+      departure: undefined,
+      arrival: undefined,
       waypoints: [],
       altitude: initialAltitude,
       speed: initialSpeed,
       tas: initialTas,
       mach: initialMach,
       totalDistance: 0,
-      ete: undefined,
-      eta: undefined,
+      ete: '',
+      eta: '',
       departureTime,
       groundTempC: initialGroundTempC,
       groundElevationFt: initialGroundElevationFt,
+      routeSegments: [],
     };
   });
 
@@ -88,19 +88,22 @@ const TabsComponent: React.FC<TabsProps> = () => {
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-4 sm:space-x-8" aria-label="Tabs">
           <button
-            className={`${activeTab === 'planning' ? 'border-indigo-500 text-indigo-500' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
+            className={`${activeTab === 'planning' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
+            style={{ color: '#39FF14' }}
             onClick={() => setActiveTab('planning')}
           >
             Planning
           </button>
           <button
-            className={`${activeTab === 'map' ? 'border-indigo-500 text-indigo-500' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
+            className={`${activeTab === 'map' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
+            style={{ color: '#39FF14' }}
             onClick={() => setActiveTab('map')}
           >
             Map
           </button>
           <button
-            className={`${activeTab === 'learning' ? 'border-indigo-500 text-indigo-500' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
+            className={`${activeTab === 'learning' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
+            style={{ color: '#39FF14' }}
             onClick={() => setActiveTab('learning')}
           >
             Learning
@@ -119,7 +122,7 @@ const TabsComponent: React.FC<TabsProps> = () => {
           <MapTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
         )}
         {activeTab === 'learning' && (
-          <LearningTabMDX />
+          <LearningTabMDX contentId="" />
         )}
       </div>
     </div>
@@ -128,4 +131,5 @@ const TabsComponent: React.FC<TabsProps> = () => {
 
 export default TabsComponent;
 
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { Tabs, TabsContent, TabsList, TabsTrigger };
+
