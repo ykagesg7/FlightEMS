@@ -55,9 +55,12 @@ export const AppLayout: React.FC = () => {
   }, [learningDropdownOpen, articlesDropdownOpen]);
 
   return (
-    <div className="min-h-screen transition-colors duration-300 bg-gray-900 text-gray-100">
+    <div className={`min-h-screen transition-colors duration-300 ${effectiveTheme === 'day' ? 'bg-[#14213d]' : 'bg-gray-900'} text-gray-100`}>
       {/* ヘッダー */}
-      <header className="border-b transition-all duration-300 border-gray-700 bg-gray-800">
+      <header className={`border-b transition-all duration-300 border-gray-700 ${effectiveTheme === 'day'
+        ? 'bg-[#14213d]' // Navy Blue系単色
+        : 'bg-gray-800'
+        }`}>
         <div className="container mx-auto px-4 py-4">
           {/* デスクトップ用（1段構成） */}
           <div className="hidden md:flex items-center justify-between">
@@ -91,6 +94,13 @@ export const AppLayout: React.FC = () => {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      style={
+                        effectiveTheme === 'day'
+                          ? { color: '#39FF14' }
+                          : effectiveTheme === 'dark'
+                            ? { color: '#FF3B3B' }
+                            : {}
+                      }
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -149,6 +159,13 @@ export const AppLayout: React.FC = () => {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      style={
+                        effectiveTheme === 'day'
+                          ? { color: '#39FF14' }
+                          : effectiveTheme === 'dark'
+                            ? { color: '#FF3B3B' }
+                            : {}
+                      }
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -284,6 +301,13 @@ export const AppLayout: React.FC = () => {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  style={
+                    effectiveTheme === 'day'
+                      ? { color: '#39FF14' }
+                      : effectiveTheme === 'dark'
+                        ? { color: '#FF3B3B' }
+                        : {}
+                  }
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -326,6 +350,13 @@ export const AppLayout: React.FC = () => {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  style={
+                    effectiveTheme === 'day'
+                      ? { color: '#39FF14' }
+                      : effectiveTheme === 'dark'
+                        ? { color: '#FF3B3B' }
+                        : {}
+                  }
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -366,20 +397,55 @@ export const AppLayout: React.FC = () => {
         )}
       </header>
 
+      {/* ヘッダー下のHUDライン */}
+      <div
+        style={{
+          height: '0.5px',
+          background: effectiveTheme === 'day'
+            ? '#39FF14'
+            : effectiveTheme === 'dark'
+              ? '#FF3B3B'
+              : '#39FF14'
+        }}
+      />
       {/* メインコンテンツ */}
       <main
         className="container mx-auto px-4 py-8 transition-all duration-300 text-gray-100"
+        style={effectiveTheme === 'day' ? { background: '#14213d' } : {}}
       >
 
         <Outlet />
 
       </main>
 
+      {/* メイン下のHUDライン（Footer直前） */}
+      <div
+        style={{
+          height: '0.5px',
+          background: effectiveTheme === 'day'
+            ? '#39FF14'
+            : effectiveTheme === 'dark'
+              ? '#FF3B3B'
+              : '#39FF14'
+        }}
+      />
       {/* フッター */}
-      <footer className="border-t mt-12 transition-all duration-300 border-gray-700 bg-gray-800">
+      <footer className={`border-none mt-0.5 transition-all duration-300 border-gray-700 ${effectiveTheme === 'day'
+        ? 'bg-[#14213d]'
+        : 'bg-gray-800'
+        }`}>
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
-            <p className="text-sm transition-all duration-300 text-gray-400">
+            <p
+              className="text-sm transition-all duration-300"
+              style={
+                effectiveTheme === 'day'
+                  ? { color: '#39FF14' }
+                  : effectiveTheme === 'dark'
+                    ? { color: '#FF3B3B' }
+                    : {}
+              }
+            >
               {'Flight Academy'}
             </p>
           </div>

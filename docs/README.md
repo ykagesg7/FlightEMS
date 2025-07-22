@@ -80,8 +80,11 @@ FlightAcademyTsxは、航空機パイロット向けの包括的な学習・計�
 ---
 
 ## 更新履歴
-- 最終更新日：2025年7月22日
+- 最終更新日：2025年7月23日
 - バージョン：ドキュメント統合版
-- UIテーマ切替に応じた文字色変更を実装（2025年7月22日）
-  - Dayテーマ時はHUD緑（#39FF14）、Darkテーマ時は夜間照明赤（#FF3B3B）でPLANNING, ARTICLES, LESSONS, TEST、時刻・日付の文字色が切り替わるように修正
-  - 今後は文字色に合う背景色への最適化も検討中
+- UIテーマ・HUDライン仕様変更（2025年7月23日）
+  - Dayテーマ時はHeader/Main/Footerの背景をNavy Blue単色（#14213d）に統一
+  - Darkテーマ時はHeader/Main/Footerの背景をダークグレー（#1f2937等）に統一
+  - Header下・Footer上にHUDラインを追加（DayはHUDグリーン #39FF14、Darkは赤 #FF3B3B）
+  - HUDラインは高さ0.5pxで極細表示
+  - Footerのテキスト色もテーマに応じて切り替え（DayはHUDグリーン、Darkは赤）
