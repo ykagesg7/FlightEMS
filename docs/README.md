@@ -88,3 +88,7 @@ FlightAcademyTsxは、航空機パイロット向けの包括的な学習・計�
   - Header下・Footer上にHUDラインを追加（DayはHUDグリーン #39FF14、Darkは赤 #FF3B3B）
   - HUDラインは高さ0.5pxで極細表示
   - Footerのテキスト色もテーマに応じて切り替え（DayはHUDグリーン、Darkは赤）
+  - PlanningMapPageのテーマ・HUDライン・境界線仕様変更（2025年7月24日）
+    - Dayテーマ時は背景Navy Blue（#14213d）・文字色HUDグリーン（#39FF14）、Darkテーマ時は背景黒（#000）・文字色赤（#FF3B3B）
+    - 上下左右の極細HUDライン（0.5px）を追加し、DayはHUDグリーン、Darkは赤で分岐
+    - 境界線は全体を囲むように表示

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PlanningTab from '../components/flight/PlanningTab';
 import MapTab from '../components/map/MapTab';
+import { ThemeContext } from "../contexts/ThemeContext"; // パスは要調整
 import { WeatherCacheProvider } from '../contexts/WeatherCacheContext';
 import { FlightPlan } from '../types/index';
 import { calculateAirspeeds, calculateMach, calculateTAS, formatTime } from '../utils';
@@ -28,6 +29,11 @@ function PlanningMapPage() {
     };
   });
 
+  const themeContext = useContext(ThemeContext);
+  const effectiveTheme = themeContext?.effectiveTheme ?? "day";
+  const bgColor = effectiveTheme === "dark" ? "#000" : "#14213d";
+  const textColor = effectiveTheme === "dark" ? "#FF3B3B" : "#39FF14";
+
   const renderContent = () => {
     switch (activeTab) {
       case 'planning':
@@ -48,7 +54,43 @@ function PlanningMapPage() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-indigo-100 to-purple-100 min-h-screen flex flex-col">
+    <div
+      className={`min-h-screen flex flex-col`}
+      style={{ background: bgColor, color: textColor, position: 'relative' }}
+    >
+      {/* ヘッダー下のHUDライン */}
+      <div
+        style={{
+          height: '0.5px',
+          background: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+          width: '100%',
+          margin: 0,
+          padding: 0,
+        }}
+      />
+      {/* 左右のHUDライン */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '0.5px',
+          height: '100%',
+          background: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+          zIndex: 10,
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '0.5px',
+          height: '100%',
+          background: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+          zIndex: 10,
+        }}
+      />
       <div className={`bg-indigo-800 flex ${activeTab === 'map' ? 'mb-0' : 'mb-2'}`}>
         <button
           className={`flex-1 px-2 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors duration-200
@@ -86,6 +128,16 @@ function PlanningMapPage() {
           {renderContent()}
         </div>
       </div>
+      {/* フッター上のHUDライン */}
+      <div
+        style={{
+          height: '0.5px',
+          background: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+          width: '100%',
+          margin: 0,
+          padding: 0,
+        }}
+      />
     </div>
   );
 }
