@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import PlanningTab from '../components/flight/PlanningTab';
 import MapTab from '../components/map/MapTab';
-import { ThemeContext } from "../contexts/ThemeContext"; // パスは要調整
+import { ThemeContext } from "../contexts/ThemeContext"; // 大文字小文字一致済
 import { WeatherCacheProvider } from '../contexts/WeatherCacheContext';
 import { FlightPlan } from '../types/index';
 import { calculateAirspeeds, calculateMach, calculateTAS, formatTime } from '../utils';

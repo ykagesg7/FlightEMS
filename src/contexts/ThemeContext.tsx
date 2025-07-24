@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 type Theme = 'day' | 'dark' | 'auto';
 type EffectiveTheme = 'day' | 'dark';
@@ -9,7 +9,7 @@ interface ThemeContextType {
   setTheme: (theme: Theme) => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -63,9 +63,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
+  const themeContext = useContext(ThemeContext);
+  const effectiveTheme = themeContext?.effectiveTheme ?? "day"; // デフォルト値は"day"等
+  if (themeContext === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
-  return context;
+  return themeContext;
 }
