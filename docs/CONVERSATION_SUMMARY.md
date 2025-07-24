@@ -234,3 +234,13 @@ useEffect(() => {
 
 **最終更新**: 2025年7月19日
 **バージョン**: Conversation Summary v1.0
+
+## 2025-07-24 UI/テーマ・import修正まとめ
+
+- Day/Darkテーマに応じたボタン・カード背景色、文字色、枠線の統一
+    - Day: 背景 #14213d, 文字 #39FF14, 枠線 #39FF14 (0.5px)
+    - Dark: 背景 #1a1a1a, 文字 #FF3B3B, 枠線 #FF3B3B (0.5px)
+- PlanningMapPage.tsxのタブボタンも同様に分岐
+- FlightParameters, FlightSummary, RoutePlanning, WaypointForm, WaypointListのカードUIを全て統一
+- useThemeのimportパスをhooks→contextsに修正し、HMR/500エラーを解消
+- これらの修正内容をすべてGitHubにコミット・プッシュ済み
