@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { calculateOffsetPoint } from '../../utils/offset'; // Import from offset.ts
+import React, { useEffect, useState } from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
 import { FlightPlan } from '../../types/index';
 import { dmsToDecimal } from '../../utils/dms'; // ユーティリティ関数をインポート
+import { calculateOffsetPoint } from '../../utils/offset'; // Import from offset.ts
 
 interface WaypointFormProps {
   flightPlan: FlightPlan;
@@ -18,6 +19,7 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
   });
   const [errors, setErrors] = useState({ lat: '', lon: '' });
   const [dmsInput, setDmsInput] = useState<string>('');
+  const { theme, effectiveTheme } = useTheme();
 
   // バリデーション関数
   const validateDecimal = (value: string, max: number) => {
@@ -169,7 +171,15 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
   };
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-sm mt-8">
+    <div
+      className="shadow-sm rounded-lg p-6 mt-8"
+      style={{
+        background: effectiveTheme === 'dark' ? '#1a1a1a' : '#14213d',
+        color: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+        border: '0.5px solid',
+        borderColor: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+      }}
+    >
       <legend className="text-lg font-semibold mb-4 text-gray-50">Add Waypoint</legend>
 
       {/* 座標入力モード切り替え */}
@@ -303,10 +313,10 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
         <label className="block text-sm font-medium text-gray-400">
           連続DMS入力(例: N334005,E1234005)
         </label>
-        <input 
-          type="text" 
-          value={dmsInput} 
-          onChange={handleDmsInputChange} 
+        <input
+          type="text"
+          value={dmsInput}
+          onChange={handleDmsInputChange}
           placeholder="Nddmmss または Edddmmss"
           className="mt-1 block w-full rounded-md border-gray-600 shadow-sm bg-gray-700 text-gray-50 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         />
@@ -315,4 +325,4 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
   );
 };
 
-export default WaypointForm; 
+export default WaypointForm;

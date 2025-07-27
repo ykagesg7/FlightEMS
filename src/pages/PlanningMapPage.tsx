@@ -94,9 +94,14 @@ function PlanningMapPage() {
       <div className={`bg-indigo-800 flex ${activeTab === 'map' ? 'mb-0' : 'mb-2'}`}>
         <button
           className={`flex-1 px-2 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors duration-200
-            ${activeTab === 'planning'
-              ? 'bg-white text-indigo-800 rounded-t-md border-t-2 border-l-2 border-r-2 border-indigo-300'
-              : 'bg-indigo-700 text-white hover:bg-indigo-600'}`}
+              ${activeTab === 'planning'
+              ? effectiveTheme === 'dark'
+                ? 'bg-gray-900 text-[#FF3B3B]'
+                : 'bg-[#14213d] text-[#39FF14]'
+              : effectiveTheme === 'dark'
+                ? 'bg-gray-800 text-[#FF3B3B] hover:bg-gray-700'
+                : 'bg-[#223366] text-[#39FF14] hover:bg-[#14213d]'}
+              rounded-t-md`}
           onClick={() => setActiveTab('planning')}
         >
           <span className="flex items-center justify-center">
@@ -109,9 +114,14 @@ function PlanningMapPage() {
         </button>
         <button
           className={`flex-1 px-2 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors duration-200
-            ${activeTab === 'map'
-              ? 'bg-white text-indigo-800 rounded-t-md border-t-2 border-l-2 border-r-2 border-indigo-300'
-              : 'bg-indigo-700 text-white hover:bg-indigo-600'}`}
+              ${activeTab === 'map'
+              ? effectiveTheme === 'dark'
+                ? 'bg-gray-900 text-[#FF3B3B]'
+                : 'bg-[#14213d] text-[#39FF14]'
+              : effectiveTheme === 'dark'
+                ? 'bg-gray-800 text-[#FF3B3B] hover:bg-gray-700'
+                : 'bg-[#223366] text-[#39FF14] hover:bg-[#14213d]'}
+              rounded-t-md`}
           onClick={() => setActiveTab('map')}
         >
           <span className="flex items-center justify-center">

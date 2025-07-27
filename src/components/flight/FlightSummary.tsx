@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import { useTheme } from '../../contexts/ThemeContext';
 import { FlightPlan, RouteSegment } from '../../types/index';
 import { calculateAirspeeds, calculateTAS } from '../../utils';
 import { formatBearing } from '../../utils/format';
@@ -262,8 +263,18 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
     }
   }, [flightPlan.departureTime, editableSegments, debouncedRecalculate]);
 
+  const { theme, effectiveTheme } = useTheme();
+
   return (
-    <div className="bg-gray-800 shadow-sm rounded-lg p-4 md:p-6">
+    <div
+      className="shadow-sm rounded-lg p-4 md:p-6"
+      style={{
+        background: effectiveTheme === 'dark' ? '#1a1a1a' : '#14213d',
+        color: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+        border: '0.5px solid',
+        borderColor: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+      }}
+    >
       <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-gray-50">フライトサマリー</h2>
       <div className="space-y-3 md:space-y-4">
         <div className="grid grid-cols-2 gap-3">

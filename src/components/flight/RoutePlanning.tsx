@@ -1,5 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
+import { useTheme } from '../../contexts/ThemeContext';
 import { AirportGroupOption, FlightPlan, NavaidOption, ReactSelectStylesProps, Waypoint } from '../../types/index';
 import { reactSelectStyles } from '../../utils/reactSelectStyles';
 import NavaidSelector from './NavaidSelector';
@@ -27,6 +28,8 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   selectedNavaid,
   setSelectedNavaid,
 }) => {
+
+  const { theme, effectiveTheme } = useTheme();
 
   // 新しいWaypointを追加する関数を定義
   const handleAddWaypoint = (waypoint: Waypoint) => {
@@ -83,7 +86,15 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   };
 
   return (
-    <div className="bg-gray-800 shadow-sm rounded-lg p-3 sm:p-4 md:p-6">
+    <div
+      className="shadow-sm rounded-lg p-3 sm:p-4 md:p-6"
+      style={{
+        background: effectiveTheme === 'dark' ? '#1a1a1a' : '#14213d',
+        color: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+        border: '0.5px solid',
+        borderColor: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+      }}
+    >
       <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 text-gray-50">経路計画</h2>
 
       {/* 空港選択部 */}

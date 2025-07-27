@@ -11,6 +11,7 @@ import {
   parseTimeString,
   SPEED_INCREMENT
 } from '../../utils';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface FlightParametersProps {
   flightPlan: FlightPlan;
@@ -28,6 +29,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
 }) => {
   const { weatherCache, setWeatherCache } = useWeatherCache(); // Contextから取得
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { theme, effectiveTheme } = useTheme();
 
   const handleSpeedChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newSpeed = parseInt(event.target.value, 10);
@@ -206,7 +208,15 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   }, [flightPlan.departure]);
 
   return (
-    <div className="bg-gray-800 shadow-sm rounded-lg p-3 sm:p-4 md:p-6">
+    <div
+      className="shadow-sm rounded-lg p-3 sm:p-4 md:p-6"
+      style={{
+        background: effectiveTheme === 'dark' ? '#1a1a1a' : '#14213d',
+        color: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+        border: '0.5px solid',
+        borderColor: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+      }}
+    >
       <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 text-gray-50">フライトパラメータ</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
         {/* 左側: 速度計関連のパラメータ */}
