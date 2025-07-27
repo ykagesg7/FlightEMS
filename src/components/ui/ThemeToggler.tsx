@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 export const ThemeToggler: React.FC = () => {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, effectiveTheme } = useTheme();
 
   const themes = ['day', 'dark', 'auto'] as const;
 
@@ -51,18 +51,25 @@ export const ThemeToggler: React.FC = () => {
     }
   };
 
+  const getButtonStyle = () => {
+    const baseStyle = "relative flex items-center justify-center px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg border";
+
+    if (effectiveTheme === 'day') {
+      return `${baseStyle} bg-[#14213d] text-[#39FF14] hover:bg-[#1a2a4a] border-[#39FF14] focus:ring-[#39FF14]`;
+    } else if (effectiveTheme === 'dark') {
+      return `${baseStyle} bg-black text-[#FF3B3B] hover:bg-gray-900 border-[#FF3B3B] focus:ring-[#FF3B3B]`;
+    } else {
+      return `${baseStyle} bg-[#14213d] text-[#39FF14] hover:bg-[#1a2a4a] border-[#39FF14] focus:ring-[#39FF14]`;
+    }
+  };
+
   return (
     <button
       onClick={nextTheme}
-      className="relative flex items-center space-x-2 px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700"
+      className={getButtonStyle()}
       title={`現在: ${getThemeLabel()}テーマ (クリックして切り替え)`}
     >
-      <span className="flex items-center justify-center">
-        {getThemeIcon()}
-      </span>
-      <span className="hidden sm:inline">
-        {getThemeLabel()}
-      </span>
+      {getThemeIcon()}
     </button>
   );
 };

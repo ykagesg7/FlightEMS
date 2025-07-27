@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
-import { supabase } from '../../utils/supabase';
 
 interface AuthButtonProps {
   iconOnly?: boolean;
@@ -11,6 +11,7 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ iconOnly }) => {
   const profile = useAuthStore((state) => state.profile);
   const session = useAuthStore((state) => state.session);
   const signOut = useAuthStore((state) => state.signOut);
+  const { effectiveTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleAuthClick = async () => {
@@ -23,10 +24,22 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ iconOnly }) => {
     }
   };
 
+  const getButtonStyle = () => {
+    const baseStyle = "px-4 py-2 rounded-lg transition-colors duration-200";
+
+    if (effectiveTheme === 'day') {
+      return `${baseStyle} bg-[#14213d] text-[#39FF14] hover:bg-[#1a2a4a] border border-[#39FF14]`;
+    } else if (effectiveTheme === 'dark') {
+      return `${baseStyle} bg-black text-[#FF3B3B] hover:bg-gray-900 border border-[#FF3B3B]`;
+    } else {
+      return `${baseStyle} bg-[#14213d] text-[#39FF14] hover:bg-[#1a2a4a] border border-[#39FF14]`;
+    }
+  };
+
   return (
     <button
       onClick={handleAuthClick}
-      className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors duration-200"
+      className={getButtonStyle()}
     >
       {iconOnly ? (
         <svg

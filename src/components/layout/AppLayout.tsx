@@ -55,18 +55,27 @@ export const AppLayout: React.FC = () => {
   }, [learningDropdownOpen, articlesDropdownOpen]);
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${effectiveTheme === 'day' ? 'bg-[#14213d]' : 'bg-gray-900'} text-gray-100`}>
+    <div className={`min-h-screen transition-colors duration-300 ${effectiveTheme === 'day' ? 'bg-[#14213d]' : 'bg-black'} text-gray-100`}>
       {/* ヘッダー */}
       <header className={`border-b transition-all duration-300 border-gray-700 ${effectiveTheme === 'day'
         ? 'bg-[#14213d]' // Navy Blue系単色
-        : 'bg-gray-800'
+        : 'bg-black'
         }`}>
         <div className="container mx-auto px-4 py-4">
           {/* デスクトップ用（1段構成） */}
           <div className="hidden md:flex items-center justify-between">
             {/* ロゴ・タイトルと時刻表示 */}
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold transition-all duration-300 text-blue-400">
+              <h1
+                className="text-2xl font-extrabold tracking-wider transition-all duration-300"
+                style={
+                  effectiveTheme === 'day'
+                    ? { color: '#39FF14' }
+                    : effectiveTheme === 'dark'
+                      ? { color: '#FF3B3B' }
+                      : { color: '#39FF14' }
+                }
+              >
                 FLIGHT ACADEMY
               </h1>
               <HUDTimeDisplay />
@@ -220,7 +229,7 @@ export const AppLayout: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <ProgressIndicator />
                 <ThemeToggler />
-                <AuthButton />
+                <AuthButton iconOnly />
               </div>
             </div>
           </div>
@@ -230,7 +239,16 @@ export const AppLayout: React.FC = () => {
             {/* 1段目: タイトル＋時計 */}
             <div className="flex items-center gap-4 justify-between">
               <div className="flex items-center gap-4">
-                <h1 className="text-xl font-bold transition-all duration-300 text-blue-400">
+                <h1
+                  className="text-xl font-extrabold tracking-wider transition-all duration-300"
+                  style={
+                    effectiveTheme === 'day'
+                      ? { color: '#39FF14' }
+                      : effectiveTheme === 'dark'
+                        ? { color: '#FF3B3B' }
+                        : { color: '#39FF14' }
+                  }
+                >
                   FLIGHT ACADEMY
                 </h1>
                 <HUDTimeDisplay />
@@ -243,7 +261,14 @@ export const AppLayout: React.FC = () => {
               <AuthButton iconOnly />
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="ml-2 text-white p-2 rounded-lg transition-all duration-200 hover:bg-white/10">
+                className="ml-2 p-2 rounded-lg transition-all duration-200 hover:bg-white/10"
+                style={
+                  effectiveTheme === 'day'
+                    ? { color: '#39FF14' }
+                    : effectiveTheme === 'dark'
+                      ? { color: '#FF3B3B' }
+                      : { color: '#39FF14' }
+                }>
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -267,7 +292,14 @@ export const AppLayout: React.FC = () => {
             <div className="flex justify-end p-4">
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-white p-2 rounded-lg transition-all duration-200 hover:bg-white/10">
+                className="p-2 rounded-lg transition-all duration-200 hover:bg-white/10"
+                style={
+                  effectiveTheme === 'day'
+                    ? { color: '#39FF14' }
+                    : effectiveTheme === 'dark'
+                      ? { color: '#FF3B3B' }
+                      : { color: '#39FF14' }
+                }>
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -432,7 +464,7 @@ export const AppLayout: React.FC = () => {
       {/* フッター */}
       <footer className={`border-none mt-0.5 transition-all duration-300 border-gray-700 ${effectiveTheme === 'day'
         ? 'bg-[#14213d]'
-        : 'bg-gray-800'
+        : 'bg-black'
         }`}>
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
