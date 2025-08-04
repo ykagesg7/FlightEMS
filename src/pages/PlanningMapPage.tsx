@@ -34,6 +34,8 @@ function PlanningMapPage() {
   const bgColor = effectiveTheme === "dark" ? "#000" : "#14213d";
   const textColor = effectiveTheme === "dark" ? "#FF3B3B" : "#39FF14";
 
+
+
   const renderContent = () => {
     switch (activeTab) {
       case 'planning':
@@ -61,8 +63,8 @@ function PlanningMapPage() {
       {/* ヘッダー下のHUDライン */}
       <div
         style={{
-          height: '0.5px',
-          background: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+          height: '0.3px',
+          background: effectiveTheme === 'dark' ? '#cc3333' : '#33cc33',
           width: '100%',
           margin: 0,
           padding: 0,
@@ -74,9 +76,9 @@ function PlanningMapPage() {
           position: 'absolute',
           top: 0,
           left: 0,
-          width: '0.5px',
+          width: '0.3px',
           height: '100%',
-          background: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+          background: effectiveTheme === 'dark' ? '#cc3333' : '#33cc33',
           zIndex: 10,
         }}
       />
@@ -85,23 +87,31 @@ function PlanningMapPage() {
           position: 'absolute',
           top: 0,
           right: 0,
-          width: '0.5px',
+          width: '0.3px',
           height: '100%',
-          background: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+          background: effectiveTheme === 'dark' ? '#cc3333' : '#33cc33',
           zIndex: 10,
         }}
       />
       <div className={`bg-indigo-800 flex ${activeTab === 'map' ? 'mb-0' : 'mb-2'}`}>
         <button
-          className={`flex-1 px-2 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors duration-200
-              ${activeTab === 'planning'
-              ? effectiveTheme === 'dark'
-                ? 'bg-gray-900 text-[#FF3B3B]'
-                : 'bg-[#14213d] text-[#39FF14]'
-              : effectiveTheme === 'dark'
-                ? 'bg-gray-800 text-[#FF3B3B] hover:bg-gray-700'
-                : 'bg-[#223366] text-[#39FF14] hover:bg-[#14213d]'}
-              rounded-t-md`}
+          className={`flex-1 px-2 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors duration-200 rounded-t-md`}
+          style={{
+            backgroundColor: activeTab === 'planning'
+              ? (effectiveTheme === 'dark' ? '#cc3333' : '#33cc33')  // HUDカラー（暗く）
+              : (effectiveTheme === 'dark' ? '#1a1a1a' : '#14213d'),  // テーマ背景色
+            opacity: activeTab === 'planning' ? 0.8 : 1,  // 選択中のタブの背景を少し薄く
+            color: activeTab === 'planning'
+              ? (effectiveTheme === 'dark' ? '#ffffff' : '#ffffff')  // 白でコントラストを確保
+              : (effectiveTheme === 'dark' ? '#cc3333' : '#33cc33'),
+            border: `3px solid ${effectiveTheme === 'dark' ? '#cc3333' : '#33cc33'}`,
+            borderBottom: activeTab === 'planning' ? 'none' : `3px solid ${effectiveTheme === 'dark' ? '#cc3333' : '#33cc33'}`,
+            fontWeight: activeTab === 'planning' ? '900' : '600',
+            transform: activeTab === 'planning' ? 'scale(1.02)' : 'scale(1)',  // わずかな拡大
+            zIndex: activeTab === 'planning' ? 10 : 1,
+            boxShadow: activeTab === 'planning' ? `0 0 10px ${effectiveTheme === 'dark' ? '#cc3333' : '#33cc33'}` : 'none',
+            textShadow: activeTab === 'planning' ? '0 0 5px rgba(0,0,0,0.8)' : 'none'  // 文字の影を追加
+          }}
           onClick={() => setActiveTab('planning')}
         >
           <span className="flex items-center justify-center">
@@ -113,15 +123,23 @@ function PlanningMapPage() {
           </span>
         </button>
         <button
-          className={`flex-1 px-2 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors duration-200
-              ${activeTab === 'map'
-              ? effectiveTheme === 'dark'
-                ? 'bg-gray-900 text-[#FF3B3B]'
-                : 'bg-[#14213d] text-[#39FF14]'
-              : effectiveTheme === 'dark'
-                ? 'bg-gray-800 text-[#FF3B3B] hover:bg-gray-700'
-                : 'bg-[#223366] text-[#39FF14] hover:bg-[#14213d]'}
-              rounded-t-md`}
+          className={`flex-1 px-2 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors duration-200 rounded-t-md`}
+          style={{
+            backgroundColor: activeTab === 'map'
+              ? (effectiveTheme === 'dark' ? '#cc3333' : '#33cc33')  // HUDカラー（暗く）
+              : (effectiveTheme === 'dark' ? '#1a1a1a' : '#14213d'),  // テーマ背景色
+            opacity: activeTab === 'map' ? 0.8 : 1,  // 選択中のタブの背景を少し薄く
+            color: activeTab === 'map'
+              ? (effectiveTheme === 'dark' ? '#ffffff' : '#ffffff')  // 白でコントラストを確保
+              : (effectiveTheme === 'dark' ? '#cc3333' : '#33cc33'),
+            border: `3px solid ${effectiveTheme === 'dark' ? '#cc3333' : '#33cc33'}`,
+            borderBottom: activeTab === 'map' ? 'none' : `3px solid ${effectiveTheme === 'dark' ? '#cc3333' : '#33cc33'}`,
+            fontWeight: activeTab === 'map' ? '900' : '600',
+            transform: activeTab === 'map' ? 'scale(1.02)' : 'scale(1)',  // わずかな拡大
+            zIndex: activeTab === 'map' ? 10 : 1,
+            boxShadow: activeTab === 'map' ? `0 0 10px ${effectiveTheme === 'dark' ? '#cc3333' : '#33cc33'}` : 'none',
+            textShadow: activeTab === 'map' ? '0 0 5px rgba(0,0,0,0.8)' : 'none'  // 文字の影を追加
+          }}
           onClick={() => setActiveTab('map')}
         >
           <span className="flex items-center justify-center">
@@ -141,8 +159,8 @@ function PlanningMapPage() {
       {/* フッター上のHUDライン */}
       <div
         style={{
-          height: '0.5px',
-          background: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
+          height: '0.3px',
+          background: effectiveTheme === 'dark' ? '#cc3333' : '#33cc33',
           width: '100%',
           margin: 0,
           padding: 0,
