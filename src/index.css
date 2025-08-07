@@ -5,12 +5,13 @@
 
 @layer base {
   .day {
-    --hud-primary-color: #00ff41;
-    --hud-secondary-color: #00ff88;
-    --hud-accent-color: #00cc44;
-    --hud-dim-color: rgba(0, 51, 17, 0.4);
-    --hud-glow-color: #44ff66;
-    --hud-grid-color: rgba(0,255,65,0.15);
+    --hud-primary-color: #39FF14;
+    --hud-secondary-color: #39FF14;
+    --hud-accent-color: #39FF14;
+    --hud-dim-color: rgba(57, 255, 20, 0.4);
+    --hud-glow-color: #39FF14;
+    --hud-grid-color: rgba(57, 255, 20, 0.15);
+    --theme-background-color: #0b1d3a;
   }
 
   .dark {
@@ -19,12 +20,93 @@
     --hud-accent-color: #ff1a1a;
     --hud-dim-color: rgba(51, 0, 0, 0.4);
     --hud-glow-color: #ff8080;
-    --hud-grid-color: rgba(255,65,65,0.15);
+    --hud-grid-color: rgba(255, 65, 65, 0.15);
+    --theme-background-color: #000000;
   }
 
   body {
-    @apply bg-gray-900 text-gray-100;
+    @apply bg-gray-900;
     font-family: 'Consolas', 'Courier New', monospace;
     letter-spacing: 0.025em;
   }
+
+  /* テーマに応じたすべての文字色を統一 */
+  .day * {
+    color: var(--hud-primary-color) !important;
+  }
+
+  .dark * {
+    color: var(--hud-primary-color) !important;
+  }
+
+  /* メインコンテナのスタイル */
+  .day .shadow-sm,
+  .day .shadow-md,
+  .day .shadow-lg,
+  .day .shadow-xl {
+    background-color: var(--theme-background-color) !important;
+    border: 1px solid var(--hud-primary-color) !important;
+  }
+
+  .dark .shadow-sm,
+  .dark .shadow-md,
+  .dark .shadow-lg,
+  .dark .shadow-xl {
+    background-color: var(--theme-background-color) !important;
+    border: 1px solid var(--hud-primary-color) !important;
+  }
+
+  /* inputとbuttonのテーマ対応 */
+  .day input,
+  .day select {
+    background-color: var(--theme-background-color) !important;
+    border: 1px solid var(--hud-primary-color) !important;
+  }
+
+  .dark input,
+  .dark select {
+    background-color: var(--theme-background-color) !important;
+    border: 1px solid var(--hud-primary-color) !important;
+  }
+
+  /* タブボタンは除外（インラインスタイルを優先） */
+  .day button:not([style*="background-color"]) {
+    background-color: var(--theme-background-color) !important;
+    border: 1px solid var(--hud-primary-color) !important;
+  }
+
+  .dark button:not([style*="background-color"]) {
+    background-color: var(--theme-background-color) !important;
+    border: 1px solid var(--hud-primary-color) !important;
+  }
+
+  /* カードやパネルなどの重要な要素のみに縁を適用 */
+  .day .rounded-lg,
+  .day .rounded-xl {
+    background-color: var(--theme-background-color) !important;
+    border: 1px solid var(--hud-primary-color) !important;
+  }
+
+  .dark .rounded-lg,
+  .dark .rounded-xl {
+    background-color: var(--theme-background-color) !important;
+    border: 1px solid var(--hud-primary-color) !important;
+  }
+
+  /* 選択された要素の背景色と縁線をテーマに合わせる */
+  .day .bg-gray-700,
+  .day .react-select__control,
+  .day .css-fsr6vv-control {
+    background-color: var(--theme-background-color) !important;
+    border: 1px solid var(--hud-primary-color) !important;
+  }
+
+  .dark .bg-gray-700,
+  .dark .react-select__control,
+  .dark .css-fsr6vv-control {
+    background-color: var(--theme-background-color) !important;
+    border: 1px solid var(--hud-primary-color) !important;
+  }
+
+
 }

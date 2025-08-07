@@ -1,0 +1,14 @@
+warning: in the working copy of 'package-lock.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/hooks/useFreemiumAccess.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/hooks/useLearningProgress.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/index.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/main.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/supabase.ts', LF will be replaced by CRLF the next time Git touches it
+"docs/04_\351\201\213\347\224\250\344\277\235\345\256\210\343\202\254\343\202\244\343\203\211.md"
+package-lock.json
+package.json
+src/hooks/useFreemiumAccess.ts
+src/hooks/useLearningProgress.ts
+src/index.css
+src/main.tsx

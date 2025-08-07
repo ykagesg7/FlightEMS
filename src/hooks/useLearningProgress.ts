@@ -27,6 +27,10 @@ export const useLearningProgress = () => {
   // 学習コンテンツをロード
   const loadLearningContents = useCallback(async () => {
     try {
+      // 認証状態を確認
+      const { data: authData } = await supabase.auth.getSession();
+      console.log('認証状態:', authData.session ? '認証済み' : '未認証');
+
       const { data, error } = await supabase
         .from('learning_contents')
         .select('*')
@@ -35,6 +39,7 @@ export const useLearningProgress = () => {
         .order('order_index');
 
       if (error) {
+        console.error('Supabaseエラー詳細:', error);
         throw error;
       }
 

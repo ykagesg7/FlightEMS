@@ -26,12 +26,20 @@ export const useFreemiumAccess = (contentType?: 'learning' | 'articles') => {
     const fetchFreemiumContents = async () => {
       try {
         setFreemiumLoading(true);
+
+        // 認証状態を確認
+        const { data: authData } = await supabase.auth.getSession();
+        console.log('フリーミアム記事取得時の認証状態:', authData.session ? '認証済み' : '未認証');
+
         const { data, error } = await supabase
           .from('learning_contents')
           .select('id')
           .eq('is_freemium', true);
 
-        if (error) throw error;
+        if (error) {
+          console.error('フリーミアム記事取得エラー詳細:', error);
+          throw error;
+        }
 
         const ids = data?.map(item => item.id) || [];
         setFreemiumContentIds(ids);
