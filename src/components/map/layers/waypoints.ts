@@ -1,5 +1,4 @@
 import L from 'leaflet';
-import { useDebouncedCallback } from 'use-debounce';
 import { Waypoint } from '../../../types';
 import { escapeHtml, kvItem, sectionHeader } from '../popups/common';
 import { WaypointProps } from '../types';
@@ -47,7 +46,8 @@ export const bindWaypointPopup = (
 
   // クリック: ルートに追加
   layer.on('click', () => {
-    const setupAddButtonListener = useDebouncedCallback(() => {
+    // useDebouncedCallbackをsetTimeoutに置き換え
+    setTimeout(() => {
       const addButton = document.querySelector('.waypoint-custom-popup .add-to-route-btn');
       if (addButton) {
         addButton.addEventListener('click', (e) => {
@@ -78,16 +78,17 @@ export const bindWaypointPopup = (
             successMsg.style.borderRadius = '4px';
             successMsg.style.zIndex = '1000';
             document.body.appendChild(successMsg);
-            const removeSuccessMsg = useDebouncedCallback(() => {
+
+            // 成功メッセージの削除もsetTimeoutに変更
+            setTimeout(() => {
               document.body.removeChild(successMsg);
             }, 3000);
-            removeSuccessMsg();
+
             map.closePopup();
           }
         });
       }
     }, 100);
-    setupAddButtonListener();
   });
 };
 

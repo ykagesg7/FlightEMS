@@ -13,6 +13,9 @@ export default defineConfig(({ mode }) => {
   const weatherApiKey = env.VITE_WEATHER_API_KEY || '';
   console.log(`Mode: ${mode}, Weather API Key: ${weatherApiKey ? '設定済み' : '未設定'}`);
 
+  // ローカル開発時のAPIプロキシ先（優先順位: VITE_API_PROXY_TARGET -> 3001）
+  const apiProxyTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:3001';
+
   return {
     plugins: [
       react({
@@ -38,7 +41,7 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api': {
-          target: 'http://localhost:3000',
+          target: apiProxyTarget,
           changeOrigin: true,
         }
       }

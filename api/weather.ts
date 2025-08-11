@@ -5,12 +5,13 @@ export default async function handler(
   request: VercelRequest,
   response: VercelResponse
 ) {
-  // リクエスト情報をログに出力
+  // リクエスト情報をログに出力（本番では詳細ログを削除）
   console.log(`Weather API Request - lat: ${request.query.lat}, lon: ${request.query.lon}`);
   console.log(`Environment: WEATHER_API_KEY=${process.env.WEATHER_API_KEY ? 'set' : 'not set'}`);
 
-  // CORSヘッダーを設定
-  response.setHeader('Access-Control-Allow-Origin', '*');
+  // CORSヘッダーを設定（本番では許可ドメインを制限）
+  const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
+  response.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -22,9 +23,30 @@ export default async function handler(
   // クエリパラメータを取得
   const { lat, lon } = request.query;
 
-  // パラメータの検証
+  // パラメータの検証を強化
   if (!lat || !lon) {
-    return response.status(400).json({ error: '緯度と経度が必要です' });
+    return response.status(400).json({
+      error: '緯度と経度が必要です',
+      code: 'MISSING_PARAMS'
+    });
+  }
+
+  // 数値と範囲の検証
+  const latNum = Number(lat);
+  const lonNum = Number(lon);
+
+  if (!Number.isFinite(latNum) || !Number.isFinite(lonNum)) {
+    return response.status(400).json({
+      error: '緯度と経度は数値である必要があります',
+      code: 'INVALID_NUMERIC_PARAMS'
+    });
+  }
+
+  if (Math.abs(latNum) > 90 || Math.abs(lonNum) > 180) {
+    return response.status(400).json({
+      error: '緯度は-90〜90、経度は-180〜180の範囲である必要があります',
+      code: 'OUT_OF_RANGE'
+    });
   }
 
   try {
@@ -32,23 +54,62 @@ export default async function handler(
     const apiKey = process.env.WEATHER_API_KEY;
 
     if (!apiKey) {
-      throw new Error('環境変数WEATHER_API_KEYが設定されていません');
+      console.error('WEATHER_API_KEY environment variable is not set');
+      return response.status(500).json({
+        error: '天気データの取得に失敗しました',
+        code: 'API_KEY_MISSING',
+        message: 'サーバー設定エラー'
+      });
     }
 
     // 外部APIへのリクエスト
-    console.log(`Fetching from Weather API: lat=${lat}, lon=${lon}`);
+    console.log(`Fetching from Weather API: lat=${latNum}, lon=${lonNum}`);
     const weatherResponse = await fetch(
-      `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${lat},${lon}&days=1&aqi=no`
+      `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${latNum},${lonNum}&days=1&aqi=no`,
+      {
+        timeout: 10000 // 10秒タイムアウト
+      }
     );
 
     if (!weatherResponse.ok) {
-      console.error(`Weather API error: ${weatherResponse.status}`);
-      throw new Error(`天気API応答エラー: ${weatherResponse.status}`);
+      console.error(`Weather API error: ${weatherResponse.status} - ${weatherResponse.statusText}`);
+
+      // 外部APIのエラーレスポンスを適切に処理
+      if (weatherResponse.status === 401) {
+        return response.status(500).json({
+          error: '天気データの取得に失敗しました',
+          code: 'API_KEY_INVALID',
+          message: '認証エラー'
+        });
+      }
+
+      if (weatherResponse.status === 429) {
+        return response.status(500).json({
+          error: '天気データの取得に失敗しました',
+          code: 'RATE_LIMIT_EXCEEDED',
+          message: 'リクエスト制限に達しました'
+        });
+      }
+
+      return response.status(500).json({
+        error: '天気データの取得に失敗しました',
+        code: 'UPSTREAM_ERROR',
+        message: `外部APIエラー: ${weatherResponse.status}`
+      });
     }
 
     // 天気データを取得
     const weatherData = await weatherResponse.json();
     console.log('Weather data received successfully');
+
+    // レスポンスデータの検証
+    if (!weatherData || !weatherData.current) {
+      return response.status(500).json({
+        error: '天気データの取得に失敗しました',
+        code: 'INVALID_RESPONSE',
+        message: '無効なレスポンス形式'
+      });
+    }
 
     // ここでレスポンスフィルタリングを実行
     const filteredData = filterWeatherData(weatherData);
@@ -60,8 +121,21 @@ export default async function handler(
     return response.status(200).json(filteredData);
   } catch (error) {
     console.error('天気データの取得に失敗しました:', error);
+
+    // エラーの種類に応じて適切なレスポンスを返す
+    if (error instanceof Error) {
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        return response.status(500).json({
+          error: '天気データの取得に失敗しました',
+          code: 'NETWORK_ERROR',
+          message: 'ネットワークエラー'
+        });
+      }
+    }
+
     return response.status(500).json({
       error: '天気データの取得に失敗しました',
+      code: 'UNKNOWN_ERROR',
       message: error instanceof Error ? error.message : '未知のエラー'
     });
   }

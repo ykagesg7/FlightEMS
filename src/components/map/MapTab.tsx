@@ -4,7 +4,6 @@ import 'leaflet-groupedlayercontrol';
 import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
 import 'leaflet/dist/leaflet.css';
 import { CircleMarker, MapContainer, Polyline, Popup } from 'react-leaflet';
-import { useDebouncedCallback } from 'use-debounce';
 import { fetchWeatherData } from '../../api/weather';
 import { CACHE_DURATION, useWeatherCache } from '../../contexts/WeatherCacheContext';
 import { FlightPlan, Waypoint } from '../../types/index';
@@ -269,7 +268,7 @@ const MapContent: React.FC<{
       console.log(`Waypoint clicked: ${feature.properties?.id}`);
 
       // ポップアップが表示された後に「ルートに追加」ボタンにイベントリスナーを追加
-      const setupAddButtonListener = useDebouncedCallback(() => {
+      setTimeout(() => {
         const addButton = document.querySelector('.waypoint-custom-popup .add-to-route-btn');
         if (addButton) {
           addButton.addEventListener('click', (e) => {
@@ -308,10 +307,9 @@ const MapContent: React.FC<{
               document.body.appendChild(successMsg);
 
               // 3秒後にメッセージを削除
-              const removeSuccessMsg = useDebouncedCallback(() => {
+              setTimeout(() => {
                 document.body.removeChild(successMsg);
               }, 3000);
-              removeSuccessMsg();
 
               // ポップアップを閉じる
               map.closePopup();
@@ -319,7 +317,6 @@ const MapContent: React.FC<{
           });
         }
       }, 100);
-      setupAddButtonListener();
     });
   }, []);
 
@@ -991,7 +988,7 @@ const MapContent: React.FC<{
             loadAllWaypointsData();
 
             // 他のすべての地域レイヤーを追加（イベントの無限ループを防ぐためにデバウンスを使用）
-            const addOtherLayers = useDebouncedCallback(() => {
+            setTimeout(() => {
               waypointRegions.forEach(regionName => {
                 const regionLayer = (overlayLayers["Waypoints"] as Record<string, L.Layer>)[regionName];
                 if (regionLayer && !map.hasLayer(regionLayer)) {
@@ -1005,7 +1002,6 @@ const MapContent: React.FC<{
                 }
               });
             }, 10);
-            addOtherLayers();
           }
           // 通常のWaypointレイヤーが追加された場合
           else if (Object.keys((overlayLayers["Waypoints"] as Record<string, L.Layer>)).includes(layerName)) {
@@ -1022,7 +1018,7 @@ const MapContent: React.FC<{
           }
 
           // Waypointレイヤーが追加された場合、最前面に表示する
-          const bringToFront = useDebouncedCallback(() => {
+          setTimeout(() => {
             const layerObj = e.layer;
             if (layerObj instanceof L.GeoJSON) {
               layerObj.eachLayer(layer => {
@@ -1032,7 +1028,6 @@ const MapContent: React.FC<{
               });
             }
           }, 100);
-          bringToFront();
         });
 
         // 「すべて」レイヤーが削除されたとき、他のすべてのWaypointレイヤーも削除
@@ -1042,7 +1037,7 @@ const MapContent: React.FC<{
           // 「すべて」レイヤーが削除された場合
           if (layerName === 'すべて' && e.layer === (overlayLayers["Waypoints"] as Record<string, L.Layer>)['すべて']) {
             // 他のすべての地域レイヤーを削除（イベントの無限ループを防ぐためにデバウンスを使用）
-            const removeOtherLayers = useDebouncedCallback(() => {
+            setTimeout(() => {
               waypointRegions.forEach(regionName => {
                 const regionLayer = (overlayLayers["Waypoints"] as Record<string, L.Layer>)[regionName];
                 if (regionLayer && map.hasLayer(regionLayer)) {
@@ -1050,7 +1045,6 @@ const MapContent: React.FC<{
                 }
               });
             }, 10);
-            removeOtherLayers();
           }
 
           // ローカルレイヤーが削除された場合、レイヤーグループを完全にクリアする

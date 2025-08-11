@@ -18,6 +18,7 @@ FlightAcademyTsxは、以下の機能を提供します：
 ### 必要条件
 - Node.js 16.x以上
 - npm 7.x以上
+- Vercel CLI（開発環境でAPI機能を使用する場合）
 
 ### インストール手順
 1. リポジトリのクローン：
@@ -35,17 +36,39 @@ npm install
 `.env.local`ファイルを作成し、以下の内容を追加します：
 ```
 VITE_WEATHER_API_KEY=your_weather_api_key
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 4. 開発サーバーの起動：
+
+**オプションA: フロントエンドのみ（モックデータ使用）**
 ```bash
 npm run dev
+```
+
+**オプションB: フルスタック開発（API機能含む）**
+```bash
+# Vercel CLIのインストール（初回のみ）
+npm install -g vercel
+
+# 環境変数をVercelに設定
+vercel env add WEATHER_API_KEY
+
+# フルスタック開発サーバー起動
+npm run dev:full
 ```
 
 5. ブラウザで以下のURLにアクセス：
 ```
 http://localhost:5173/
 ```
+
+### 開発環境での注意事項
+
+- **API機能を使用する場合**: `vercel dev`がポート3000で起動し、Viteのプロキシ設定により`/api/*`リクエストが自動的に転送されます
+- **モックデータ**: APIが利用できない場合は自動的にモックデータが表示されます
+- **環境変数**: 本番環境ではVercelのダッシュボードで環境変数を設定してください
 
 ## 基本的な使い方
 

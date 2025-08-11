@@ -1,5 +1,4 @@
 import L from 'leaflet';
-import { useDebouncedCallback } from 'use-debounce';
 import { Waypoint } from '../../../types';
 import { getNavaidColor } from '../../../utils';
 import { escapeHtml, kvItem, sectionHeader } from '../popups/common';
@@ -47,7 +46,7 @@ export const bindNavaidPopup = (
   });
 
   layer.on('click', () => {
-    const setupNavaidButtonListener = useDebouncedCallback(() => {
+    setTimeout(() => {
       const addButton = document.querySelector('.navaid-custom-popup .add-to-route-btn');
       if (addButton) {
         addButton.addEventListener('click', (e) => {
@@ -68,7 +67,6 @@ export const bindNavaidPopup = (
         });
       }
     }, 100);
-    setupNavaidButtonListener();
   });
 };
 

@@ -90,3 +90,4 @@ phase*.md
 *_completion_report_*.md
 batch_processing_*.json
 batch_processing_*.md
+.vercel

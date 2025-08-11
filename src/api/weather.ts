@@ -107,6 +107,13 @@ export const fetchWeather = async (lat: number, lon: number): Promise<FilteredWe
       console.error('Axios error details:', error.response?.data);
       console.error('Status:', error.response?.status);
 
+      // エラーレスポンスの詳細情報をログ出力
+      if (error.response?.data) {
+        const errorData = error.response.data as any;
+        console.error('Error code:', errorData.code);
+        console.error('Error message:', errorData.message);
+      }
+
       // 開発環境ではモックデータを返す
       if (!isProd) {
         console.log('開発環境: モックデータを使用します');

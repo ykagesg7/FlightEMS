@@ -12,7 +12,8 @@
       "dest": "/api/$1"
     }
   ],
-  "env": {
-    "WEATHER_API_KEY": "562ddc79c40348858b541534250903"
-  }
-} 
+  "devCommand": "vite --port 5173 --strictPort",
+  "buildCommand": "npm run vercel-build",
+  "installCommand": "npm install",
+  "outputDirectory": "dist"
+}

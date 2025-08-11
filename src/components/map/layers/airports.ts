@@ -50,7 +50,25 @@ export const fetchAirportWeather = (
 
   fetchWeatherData(latitude, longitude)
     .then((weatherData) => {
-      if (!weatherData) return;
+      if (!weatherData) {
+        // weatherDataがnullの場合もエラーポップアップを表示
+        const errorPopupContent = `
+          <div class="airport-popup airport-weather-popup">
+            <div class="airport-popup-header">
+              ${(feature.properties as any)?.id || '不明'}（${((feature.properties as any)?.name1 as string)?.split('(')[0].trim() || '空港'}）
+            </div>
+            <div class="p-3">
+              <div>
+                <p class="text-sm text-red-500 mb-3">気象情報の取得に失敗しました</p>
+                <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">空港情報</h4>
+                <div class="ml-2">${simplifiedAirportInfoContent(feature.properties as any)}</div>
+              </div>
+            </div>
+          </div>`;
+        loadingPopup.setContent(errorPopupContent);
+        loadingPopup.update();
+        return;
+      }
       const airportInfoHtml = simplifiedAirportInfoContent(feature.properties as any);
       const html = createWeatherPopupContent(feature.properties as any, weatherData, airportInfoHtml);
       loadingPopup.setContent(html);
