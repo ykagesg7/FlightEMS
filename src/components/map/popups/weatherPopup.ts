@@ -1,4 +1,4 @@
-import { FilteredWeatherData } from '../../../api/weather';
+import type { FilteredWeatherData } from '../../../api/weather';
 import { escapeHtml, kvItem, sectionHeader } from './common';
 
 export const createWeatherPopupContent = (
