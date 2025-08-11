@@ -266,39 +266,31 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
   const { theme, effectiveTheme } = useTheme();
 
   return (
-    <div
-      className="shadow-sm rounded-lg p-4 md:p-6"
-      style={{
-        background: effectiveTheme === 'dark' ? '#1a1a1a' : '#14213d',
-        color: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
-        border: '0.5px solid',
-        borderColor: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
-      }}
-    >
-      <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-gray-50">フライトサマリー</h2>
+    <div className="hud-surface hud-border rounded-lg p-4 md:p-6">
+      <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 hud-text">フライトサマリー</h2>
       <div className="space-y-3 md:space-y-4">
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-gray-700 p-2 md:p-3 rounded-md">
-            <div className="text-xs text-gray-300">合計距離</div>
-            <div className="text-sm md:text-base font-medium text-gray-100">
+          <div className="p-2 md:p-3 rounded-md border hud-border">
+            <div className="text-xs text-[color:var(--text-primary)]">合計距離</div>
+            <div className="text-sm md:text-base font-medium hud-text hud-readout">
               {flightPlan.totalDistance ? `${flightPlan.totalDistance.toFixed(1)} nm` : '--'}
             </div>
           </div>
-          <div className="bg-gray-700 p-2 md:p-3 rounded-md">
-            <div className="text-xs text-gray-300">予想飛行時間</div>
-            <div className="text-sm md:text-base font-medium text-gray-100">
+          <div className="p-2 md:p-3 rounded-md border hud-border">
+            <div className="text-xs text-[color:var(--text-primary)]">予想飛行時間</div>
+            <div className="text-sm md:text-base font-medium hud-text hud-readout">
               {flightPlan.ete || '--:--:--'}
             </div>
           </div>
-          <div className="bg-gray-700 p-2 md:p-3 rounded-md">
-            <div className="text-xs text-gray-300">出発時刻</div>
-            <div className="text-sm md:text-base font-medium text-gray-100">
+          <div className="p-2 md:p-3 rounded-md border hud-border">
+            <div className="text-xs text-[color:var(--text-primary)]">出発時刻</div>
+            <div className="text-sm md:text-base font-medium hud-text hud-readout">
               {flightPlan.departureTime || '--:--:--'}
             </div>
           </div>
-          <div className="bg-gray-700 p-2 md:p-3 rounded-md">
-            <div className="text-xs text-gray-300">到着予定時刻</div>
-            <div className="text-sm md:text-base font-medium text-gray-100">
+          <div className="p-2 md:p-3 rounded-md border hud-border">
+            <div className="text-xs text-[color:var(--text-primary)]">到着予定時刻</div>
+            <div className="text-sm md:text-base font-medium hud-text hud-readout">
               {flightPlan.eta || '--:--:--'}
             </div>
           </div>
@@ -306,63 +298,63 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
 
         {editableSegments && editableSegments.length > 0 && (
           <div className="mt-4">
-            <h3 className="text-sm md:text-base font-medium text-gray-200 mb-2">ルートセグメント</h3>
+            <h3 className="text-sm md:text-base font-medium hud-text mb-2">ルートセグメント</h3>
 
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-600 text-xs md:text-sm">
-                <thead className="bg-gray-700">
+              <table className="min-w-full divide-y hud-border text-xs md:text-sm">
+                <thead className="bg-[color:var(--panel)]">
                   <tr>
-                    <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-[color:var(--text-primary)] uppercase tracking-wider">
                       From
                     </th>
-                    <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-[color:var(--text-primary)] uppercase tracking-wider">
                       To
                     </th>
-                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-[color:var(--text-primary)] uppercase tracking-wider">
                       CAS
                     </th>
-                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-[color:var(--text-primary)] uppercase tracking-wider">
                       磁方位
                     </th>
-                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-[color:var(--text-primary)] uppercase tracking-wider">
                       高度
                     </th>
-                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-[color:var(--text-primary)] uppercase tracking-wider">
                       距離
                     </th>
-                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th scope="col" className="px-2 py-1 text-right text-xs font-medium text-[color:var(--text-primary)] uppercase tracking-wider">
                       ETA
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-gray-800 divide-y divide-gray-600">
+                <tbody className="bg-[color:var(--panel)] divide-y hud-border">
                   {editableSegments.map((segment, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'}>
-                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200">{segment.from}</td>
-                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200">{segment.to}</td>
-                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">
+                    <tr key={index} className="">
+                      <td className="px-2 py-1 text-xs md:text-sm text-[color:var(--text-primary)]">{segment.from}</td>
+                      <td className="px-2 py-1 text-xs md:text-sm text-[color:var(--text-primary)]">{segment.to}</td>
+                      <td className="px-2 py-1 text-xs md:text-sm text-[color:var(--text-primary)] text-right">
                         <input
                           type="number"
                           min="1"
                           value={isNaN(segment.speed) ? '' : segment.speed}
                           onChange={(e) => handleSpeedChange(index, e.target.value)}
-                          className="w-16 bg-gray-600 text-gray-100 text-right rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-16 bg-[color:var(--panel)] border hud-border text-[color:var(--text-primary)] text-right rounded px-1 py-0.5 focus:outline-none focus-hud"
                         />
                         <span className="ml-1">kt</span>
                       </td>
-                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">{formatBearing(segment.bearing)}°</td>
-                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">
+                      <td className="px-2 py-1 text-xs md:text-sm text-[color:var(--text-primary)] text-right">{formatBearing(segment.bearing)}°</td>
+                      <td className="px-2 py-1 text-xs md:text-sm text-[color:var(--text-primary)] text-right">
                         <input
                           type="number"
                           min="0"
                           value={isNaN(segment.altitude) ? '' : segment.altitude}
                           onChange={(e) => handleAltitudeChange(index, e.target.value)}
-                          className="w-16 bg-gray-600 text-gray-100 text-right rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-16 bg-[color:var(--panel)] border hud-border text-[color:var(--text-primary)] text-right rounded px-1 py-0.5 focus:outline-none focus-hud"
                         />
                         <span className="ml-1">ft</span>
                       </td>
-                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">{segment.distance?.toFixed(1)} nm</td>
-                      <td className="px-2 py-1 text-xs md:text-sm text-gray-200 text-right">
+                      <td className="px-2 py-1 text-xs md:text-sm text-[color:var(--text-primary)] text-right">{segment.distance?.toFixed(1)} nm</td>
+                      <td className="px-2 py-1 text-xs md:text-sm text-[color:var(--text-primary)] text-right">
                         {segment.eta || '--:--:--'}
                       </td>
                     </tr>

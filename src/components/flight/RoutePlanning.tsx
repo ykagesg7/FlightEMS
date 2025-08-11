@@ -86,21 +86,13 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   };
 
   return (
-    <div
-      className="shadow-sm rounded-lg p-3 sm:p-4 md:p-6"
-      style={{
-        background: effectiveTheme === 'dark' ? '#1a1a1a' : '#14213d',
-        color: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
-        border: '0.5px solid',
-        borderColor: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
-      }}
-    >
-      <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 text-gray-50">経路計画</h2>
+    <div className="hud-surface hud-border rounded-lg p-3 sm:p-4 md:p-6">
+      <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 hud-text">経路計画</h2>
 
       {/* 空港選択部 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label htmlFor="departure" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
+          <label htmlFor="departure" className="block text-xs sm:text-sm font-medium hud-text mb-1">
             出発地
           </label>
           <Select
@@ -115,7 +107,7 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
           />
         </div>
         <div>
-          <label htmlFor="arrival" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
+          <label htmlFor="arrival" className="block text-xs sm:text-sm font-medium hud-text mb-1">
             目的地
           </label>
           <Select
@@ -134,8 +126,8 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
       <div className="mt-4 sm:mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
           {/* NAVAID選択と追加 */}
-          <div className="mb-4 bg-gray-700 p-3 sm:p-4 rounded-lg">
-            <h3 className="text-sm sm:text-md font-medium text-gray-200 mb-2 sm:mb-3">NAVAIDの追加</h3>
+          <div className="mb-4 p-3 sm:p-4 rounded-lg border hud-border">
+            <h3 className="text-sm sm:text-md font-medium hud-text mb-2 sm:mb-3">NAVAIDの追加</h3>
             <NavaidSelector
               options={navaidOptions}
               selectedNavaid={selectedNavaid}
@@ -145,8 +137,8 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
           </div>
 
           {/* ウェイポイント追加フォーム */}
-          <div className="mb-4 sm:mb-6 bg-gray-700 p-3 sm:p-4 rounded-lg">
-            <h3 className="text-sm sm:text-md font-medium text-gray-200 mb-2 sm:mb-3">緯度経度で追加</h3>
+          <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg border hud-border">
+            <h3 className="text-sm sm:text-md font-medium hud-text mb-2 sm:mb-3">緯度経度で追加</h3>
             <WaypointForm
               flightPlan={flightPlan}
               setFlightPlan={setFlightPlan}
@@ -156,8 +148,8 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
 
         <div>
           {/* ウェイポイントリスト - 既存の編集・並べ替え機能を持つコンポーネント */}
-          <div className="bg-gray-700 p-3 sm:p-4 rounded-lg">
-            <h3 className="text-sm sm:text-md font-medium text-gray-200 mb-2 sm:mb-3">ウェイポイントリスト</h3>
+          <div className="p-3 sm:p-4 rounded-lg border hud-border">
+            <h3 className="text-sm sm:text-md font-medium hud-text mb-2 sm:mb-3">ウェイポイントリスト</h3>
             <WaypointList
               flightPlan={flightPlan}
               setFlightPlan={setFlightPlan}

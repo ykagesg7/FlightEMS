@@ -1,9 +1,9 @@
 /* Waypointのツールチップスタイル */
 .waypoint-tooltip {
-  background-color: rgba(255, 153, 0, 0.9);
-  border: 1px solid #ff6600;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--hud-primary);
   border-radius: 4px;
-  color: white;
+  color: var(--text-primary);
   font-weight: bold;
   padding: 2px 6px;
   font-size: 12px;
@@ -13,10 +13,10 @@
 
 /* Navaidのツールチップスタイル */
 .navaid-tooltip {
-  background-color: rgba(0, 128, 255, 0.9);
-  border: 1px solid #0066cc;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--hud-primary);
   border-radius: 4px;
-  color: white;
+  color: var(--text-primary);
   font-weight: bold;
   padding: 2px 6px;
   font-size: 12px;
@@ -26,10 +26,10 @@
 
 /* 空港のツールチップスタイル */
 .airport-tooltip {
-  background-color: rgba(60, 179, 113, 0.9);
-  border: 1px solid #2e8b57;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--hud-primary);
   border-radius: 4px;
-  color: white;
+  color: var(--text-primary);
   font-weight: bold;
   padding: 2px 6px;
   font-size: 12px;
@@ -39,10 +39,10 @@
 
 /* RJFA（浜松）のツールチップスタイル */
 .rjfa-tooltip {
-  background-color: rgba(65, 105, 225, 0.9);
-  border: 1px solid #0000cd;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--hud-primary);
   border-radius: 4px;
-  color: white;
+  color: var(--text-primary);
   font-weight: bold;
   padding: 2px 6px;
   font-size: 12px;
@@ -52,10 +52,10 @@
 
 /* RJFZ（海上自衛隊）のツールチップスタイル */
 .rjfz-tooltip {
-  background-color: rgba(46, 139, 87, 0.9);
-  border: 1px solid #228b22;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--hud-primary);
   border-radius: 4px;
-  color: white;
+  color: var(--text-primary);
   font-weight: bold;
   padding: 2px 6px;
   font-size: 12px;
@@ -92,74 +92,146 @@
   padding: 0;
   overflow: hidden;
   border-radius: 6px;
-  box-shadow: 0 3px 14px rgba(0,0,0,0.3);
-  max-width: 280px;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.3);
+  max-width: clamp(320px, 90vw, 720px);
+  width: auto;
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--text-primary);
+  border: 1px solid var(--hud-primary);
 }
 
 .leaflet-popup-content {
   margin: 0;
   padding: 8px;
   font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+/* コンパクト表示用。空港ポップアップの初期状態で使用 */
+.popup-compact {
+  font-size: 0.8rem;
+}
+
+.popup-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 700px) {
+  .popup-two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.popup-compact .weather-info-grid,
+.popup-compact .airport-info-grid {
+  gap: 2px 6px;
+}
+
+.popup-compact .weather-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.popup-compact .popup-section-header {
+  padding: 4px 6px;
+}
+
+.popup-compact .airport-popup-header {
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+/* 旧トグルUIのスタイルは不使用になったため削除 */
+
+/* 区切り線の撤廃（フラット表示） */
+.weather-update-time {
+  border-top: none;
+}
+
+/* 共通のポップアップ本文色（Navaid/Waypoint等の値テキスト） */
+.popup-value {
+  color: var(--text-primary);
+}
+
+/* 位置情報の補助テキストも本文色で統一 */
+.position-info {
+  color: var(--text-primary) !important;
 }
 
 /* Waypointポップアップのヘッダースタイル */
 .waypoint-popup-header {
-  background-color: #ff9900;
-  color: white;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: var(--hud-primary);
   padding: 4px 8px;
   font-weight: bold;
   font-size: 14px;
   margin: -8px -8px 8px -8px;
+  border-bottom: 1px solid var(--hud-primary);
 }
 
 /* Navaidポップアップのヘッダースタイル */
 .navaid-popup-header {
-  background-color: #0080ff;
-  color: white;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: var(--hud-primary);
   padding: 4px 8px;
   font-weight: bold;
   font-size: 14px;
   margin: -8px -8px 8px -8px;
+  border-bottom: 1px solid var(--hud-primary);
 }
 
 /* 空港ポップアップのヘッダースタイル */
 .airport-popup-header {
-  background-color: #3cb371;
-  color: white;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: var(--hud-primary);
   padding: 8px 10px;
   font-weight: bold;
   font-size: 14px;
   margin: -8px -8px 8px -8px;
-  border-bottom: 2px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid var(--hud-primary);
   text-align: center;
+}
+
+/* Popup section headers inside airport-weather-popup */
+.popup-section-header {
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--hud-primary);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.popup-section-title {
+  color: var(--hud-primary);
 }
 
 /* RJFA（浜松）ポップアップのヘッダースタイル */
 .rjfa-popup-header {
-  background-color: #4169e1;
-  color: white;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: var(--hud-primary);
   padding: 6px 10px;
   font-weight: bold;
   font-size: 14px;
   margin: -8px -8px 8px -8px;
-  border-bottom: 2px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid var(--hud-primary);
   text-align: center;
 }
 
 /* RJFZ（海上自衛隊）ポップアップのヘッダースタイル */
 .rjfz-popup-header {
-  background-color: #2e8b57;
-  color: white;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: var(--hud-primary);
   padding: 6px 10px;
   font-weight: bold;
   font-size: 14px;
   margin: -8px -8px 8px -8px;
-  border-bottom: 2px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid var(--hud-primary);
   text-align: center;
 }
 
 .airport-popup .font-semibold {
-  color: #2c7a4b;
+  color: var(--hud-primary);
   display: inline-block;
   min-width: 65px;
 }
@@ -178,7 +250,7 @@
 .airport-custom-popup .leaflet-popup-tip,
 .rjfa-custom-popup .leaflet-popup-tip,
 .rjfz-custom-popup .leaflet-popup-tip {
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 /* ローカルレイヤーのポップアップスタイル */
@@ -190,39 +262,44 @@
   font-size: 15px;
   font-weight: bold;
   margin-bottom: 8px;
-  color: #333;
+  color: var(--hud-primary);
 }
 
 .local-layer-popup p {
   font-size: 13px;
   margin: 4px 0;
-  color: #555;
+  color: var(--text-primary);
 }
 
 .local-layer-info {
   margin-top: 10px;
   padding-top: 8px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--hud-primary);
 }
 
 .local-layer-route {
   margin-top: 6px;
   padding: 5px;
-  background-color: #f5f5f5;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--hud-primary);
   border-radius: 4px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 /* 空港の気象情報ポップアップスタイル */
 .airport-weather-popup .leaflet-popup-content-wrapper {
-  max-width: 280px;
-  max-height: 400px;
+  max-width: clamp(360px, 90vw, 720px);
+  width: auto;
+  max-height: 70vh;
   overflow-y: auto;
-  border: 1px solid #3cb371;
+  border: 1px solid var(--hud-primary);
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--text-primary);
 }
 
 .airport-weather-popup .font-semibold {
-  color: #2c7a4b;
+  color: var(--hud-primary);
   display: inline-block;
   min-width: 80px;
   font-weight: 600;
@@ -231,7 +308,7 @@
 
 .airport-weather-popup h4 {
   font-size: 14px;
-  color: #2c7a4b;
+  color: var(--hud-primary);
   margin-top: 8px;
   margin-bottom: 6px;
   font-weight: 700;
@@ -244,41 +321,44 @@
 }
 
 /* 気象情報表示の改善スタイル */
+
 .weather-info-grid,
 .airport-info-grid {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 3px 8px;
-  align-items: baseline;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 8px 12px;
+  align-items: start;
   font-size: 12px;
 }
 
 .weather-item,
 .airport-item {
-  display: contents;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .weather-label,
 .airport-label {
-  color: #2c7a4b;
+  color: var(--hud-primary);
   font-weight: 600;
-  padding-right: 8px;
-  white-space: nowrap;
+  margin: 0;
 }
 
 .weather-value,
 .airport-value {
-  color: #333;
+  color: var(--text-primary);
   font-weight: 500;
+  line-height: 1.35;
 }
 
 .weather-update-time {
   grid-column: span 2;
   text-align: right;
   font-style: italic;
-  color: #666;
+  color: var(--text-primary);
   margin-top: 8px;
-  border-top: 1px dotted #ddd;
+  border-top: 1px dotted var(--hud-primary);
   padding-top: 4px;
 }
 
@@ -286,7 +366,7 @@
   width: 64px;
   height: 64px;
   margin-left: 10px;
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
 }
 
 /* マーカースタイルの改善 */
@@ -315,6 +395,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -322,6 +403,40 @@
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Leaflet controls HUD theming */
+.leaflet-control-zoom a {
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--hud-primary);
+  border: 1px solid var(--hud-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.leaflet-control-zoom a:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--hud-primary);
+}
+
+.leaflet-control-layers {
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--text-primary);
+  border: 1px solid var(--hud-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-control-layers-list label,
+.leaflet-control-layers-overlays label,
+.leaflet-control-layers-base label {
+  color: var(--text-primary);
+}
+
+.leaflet-control-layers-expanded {
+  background: rgba(0, 0, 0, 0.85);
 }
 
 /* 空港の管制圏円のスタイル */
@@ -336,10 +451,12 @@
     stroke-opacity: 0.8;
     stroke-width: 2;
   }
+
   50% {
     stroke-opacity: 0.5;
     stroke-width: 2.5;
   }
+
   100% {
     stroke-opacity: 0.8;
     stroke-width: 2;
@@ -354,6 +471,7 @@
 
 /* モバイル端末向けのツールチップサイズ調整 */
 @media (max-width: 640px) {
+
   .waypoint-tooltip,
   .navaid-tooltip,
   .airport-tooltip,
@@ -362,11 +480,11 @@
     font-size: 10px;
     padding: 1px 4px;
   }
-  
+
   .leaflet-popup-content-wrapper {
     max-width: 220px;
   }
-  
+
   .airport-weather-popup .leaflet-popup-content-wrapper {
     max-width: 220px;
     max-height: 350px;
@@ -376,13 +494,13 @@
   .airport-popup .position-info {
     font-size: 11px;
   }
-  
+
   /* モバイル端末でのポップアップ内タブレイアウトの最適化 */
   .weather-info-tab {
     padding: 4px 6px;
     font-size: 11px;
   }
-  
+
   /* ボタンサイズの最適化 */
   .add-to-route-btn {
     padding: 2px 6px !important;
@@ -395,12 +513,12 @@
   .leaflet-popup-content-wrapper {
     max-width: 200px;
   }
-  
+
   .airport-weather-popup .leaflet-popup-content-wrapper {
     max-width: 200px;
     max-height: 300px;
   }
-  
+
   .waypoint-popup-header,
   .navaid-popup-header,
   .airport-popup-header,
@@ -409,22 +527,22 @@
     font-size: 12px;
     padding: 3px 6px;
   }
-  
+
   .weather-info-grid,
   .airport-info-grid {
     font-size: 10px;
     gap: 2px 6px;
   }
-  
+
   .airport-weather-popup h4 {
     font-size: 12px;
     margin-top: 6px;
     margin-bottom: 4px;
   }
-  
+
   .airport-weather-popup p {
     font-size: 10px;
     line-height: 1.3;
     margin-bottom: 3px;
   }
-} 
+}

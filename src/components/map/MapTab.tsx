@@ -5,14 +5,13 @@ import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
 import 'leaflet/dist/leaflet.css';
 import { CircleMarker, MapContainer, Polyline, Popup } from 'react-leaflet';
 import { useDebouncedCallback } from 'use-debounce';
-import { fetchWeatherData, FilteredWeatherData } from '../../api/weather';
-import { CACHE_DURATION, useWeatherCache, WeatherCache } from '../../contexts/WeatherCacheContext';
+import { fetchWeatherData } from '../../api/weather';
+import { CACHE_DURATION, useWeatherCache } from '../../contexts/WeatherCacheContext';
 import { FlightPlan, Waypoint } from '../../types/index';
 import {
-  NavaidGeoJSONFeature,
-  WaypointGeoJSONFeature
+  NavaidGeoJSONFeature
 } from '../../types/map';
-import { DEFAULT_CENTER, DEFAULT_ZOOM, formatDMS, getNavaidColor } from '../../utils';
+import { DEFAULT_CENTER, DEFAULT_ZOOM, formatDMS } from '../../utils';
 import { calculateMagneticBearing } from '../../utils/bearing';
 import { formatBearing } from '../../utils/format';
 import icon from '/images/marker-icon.png';
@@ -20,7 +19,11 @@ import iconShadow from '/images/marker-shadow.png';
 
 // Waypoint用のツールチップスタイルを追加
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { fetchAirportWeather as fetchAirportWeatherLayer } from './layers/airports';
+import { bindNavaidPopup, navaidMarkerOptions } from './layers/navaids';
+import { bindWaypointPopup } from './layers/waypoints';
 import './mapStyles.css';
+import { simplifiedAirportInfoContent } from './popups/airportPopup';
 
 import React from 'react';
 
@@ -154,7 +157,7 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
   }, [cursorPosition, navaidData]);
 
   return (
-    <div className="relative h-[calc(100vh-4rem)] bg-white rounded-lg shadow-sm overflow-hidden">
+    <div className="relative h-[calc(100vh-4rem)] bg-[color:var(--bg)] rounded-lg shadow-sm overflow-hidden">
       <MapContainer
         center={[DEFAULT_CENTER.lat, DEFAULT_CENTER.lng]}
         zoom={DEFAULT_ZOOM}
@@ -168,14 +171,14 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
           regions={regions}
         />
       </MapContainer>
-      <div className="absolute bottom-2 left-2 z-[9999] pointer-events-none bg-gray-800 bg-opacity-75 text-white px-2 py-1 rounded max-w-full sm:max-w-sm md:max-w-md">
+      <div className="absolute bottom-2 left-2 z-[9999] pointer-events-none hud-overlay-panel text-[color:var(--text-primary)] px-2 py-1 rounded max-w-full sm:max-w-sm md:max-w-md">
         {cursorPosition ? (
           <div className="text-xs sm:text-sm space-y-0.5">
-            <div className="text-2xs sm:text-xs">{formatDMS(cursorPosition.lat, cursorPosition.lng)}</div>
+            <div className="text-2xs sm:text-xs hud-text hud-readout">{formatDMS(cursorPosition.lat, cursorPosition.lng)}</div>
             <div className="text-2xs sm:text-xs">位置(Degree)： {cursorPosition.lat.toFixed(4)}°N, {cursorPosition.lng.toFixed(4)}°E</div>
             {navaidInfos.map((info, index) => (
               <div key={index} className="text-2xs sm:text-xs truncate">
-                位置(from Navaid{index + 1})： {Math.round(info.bearing)}°/{info.distance}nm {info.id}
+                位置(from Navaid{index + 1})： <span className="hud-text hud-readout">{Math.round(info.bearing)}°/{info.distance}nm</span> {info.id}
               </div>
             ))}
           </div>
@@ -240,8 +243,8 @@ const MapContent: React.FC<{
       <div class="waypoint-popup-header">${feature.properties?.id}</div>
       <div class="p-2">
         <p class="text-xs font-bold">${feature.properties?.name1 || '未設定'}</p>
-        <p class="text-xs text-gray-600">Type: ${feature.properties?.type}</p>
-        <p class="text-xs text-gray-600 position-info">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
+        <p class="text-xs popup-value">Type: ${feature.properties?.type}</p>
+        <p class="text-xs popup-value position-info">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
         <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
       </div>
     </div>`;
@@ -339,103 +342,8 @@ const MapContent: React.FC<{
         }
       }),
       "Navaids": L.geoJSON(null, {
-        pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
-          radius: 4,
-          fillColor: getNavaidColor(feature.properties.type ?? ''),
-          color: getNavaidColor(feature.properties.type ?? ''),
-          weight: 1.5,
-          fillOpacity: 0.7,
-          opacity: 0.9
-        }),
-        onEachFeature: (feature, layer) => {
-          const coords = (feature.geometry as GeoJSON.Point).coordinates;
-
-          const popupContent = `<div class="navaid-popup">
-            <div class="navaid-popup-header">${feature.properties.id}（${feature.properties.name1} ${feature.properties.name2}）</div>
-            <div class="p-2">
-              <p class="text-xs text-gray-600">Type: ${feature.properties.type}</p>
-              <p class="text-xs text-gray-600">CH: ${feature.properties.ch || 'N/A'}</p>
-              <p class="text-xs text-gray-600">Freq: ${feature.properties.freq ? feature.properties.freq + ' MHz' : 'N/A'}</p>
-              <p class="text-xs text-gray-600 position-info">Position: ${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E</p>
-              <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
-            </div>
-          </div>`;
-
-          // ポップアップにカスタムクラスを付与
-          const popup = L.popup({
-            className: 'navaid-custom-popup',
-            maxWidth: 250
-          });
-          popup.setContent(popupContent);
-          layer.bindPopup(popup);
-
-          // マウスオーバー時のツールチップ表示
-          layer.bindTooltip(`${feature.properties.id}（${feature.properties.name1} ${feature.properties.name2}）`, {
-            permanent: false,
-            direction: 'top',
-            className: 'navaid-tooltip'
-          });
-
-          // クリックイベントの処理を追加
-          layer.on('click', () => {
-            console.log(`Navaid clicked: ${feature.properties.id}`);
-
-            // ポップアップが表示された後に「ルートに追加」ボタンにイベントリスナーを追加
-            const setupNavaidButtonListener = useDebouncedCallback(() => {
-              const addButton = document.querySelector('.navaid-custom-popup .add-to-route-btn');
-              if (addButton) {
-                addButton.addEventListener('click', (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-
-                  // Navaidをウェイポイントとして追加
-                  const newWaypoint: Waypoint = {
-                    id: feature.properties.id,
-                    name: feature.properties.name || feature.properties.id,
-                    type: 'navaid',
-                    sourceId: feature.properties.id,
-                    ch: feature.properties.ch,
-                    coordinates: [coords[0], coords[1]],
-                    latitude: coords[1],
-                    longitude: coords[0]
-                  };
-
-                  setFlightPlan((prev: FlightPlan) => ({
-                    ...prev,
-                    waypoints: [...prev.waypoints, newWaypoint]
-                  }));
-
-                  // 成功メッセージを表示
-                  if (map) {
-                    const successMsg = L.DomUtil.create('div', 'success-message');
-                    successMsg.innerHTML = `${feature.properties.id}をルートに追加しました`;
-                    successMsg.style.position = 'absolute';
-                    successMsg.style.bottom = '10px';
-                    successMsg.style.left = '50%';
-                    successMsg.style.transform = 'translateX(-50%)';
-                    successMsg.style.backgroundColor = 'rgba(52, 211, 153, 0.9)';
-                    successMsg.style.color = 'white';
-                    successMsg.style.padding = '10px 20px';
-                    successMsg.style.borderRadius = '4px';
-                    successMsg.style.zIndex = '1000';
-
-                    document.body.appendChild(successMsg);
-
-                    // 3秒後にメッセージを削除
-                    const removeSuccessMsg = useDebouncedCallback(() => {
-                      document.body.removeChild(successMsg);
-                    }, 3000);
-                    removeSuccessMsg();
-
-                    // ポップアップを閉じる
-                    map.closePopup();
-                  }
-                });
-              }
-            }, 100);
-            setupNavaidButtonListener();
-          });
-        }
+        pointToLayer: (feature, latlng) => L.circleMarker(latlng, navaidMarkerOptions((feature.properties as any).type)),
+        onEachFeature: (feature, layer) => bindNavaidPopup(feature, layer, setFlightPlan, map)
       }),
       "制限空域": L.geoJSON(null, {
         style: { color: 'red', weight: 2, opacity: 0.7, dashArray: '4' },
@@ -473,7 +381,7 @@ const MapContent: React.FC<{
     // すべてのウェイポイントを表示するレイヤーを作成
     const allWaypointsLayer = L.geoJSON(null, {
       pointToLayer: (feature, latlng) => L.circleMarker(latlng, waypointStyle(feature)),
-      onEachFeature: (feature, layer) => waypointPopup(feature, layer, setFlightPlan, map)
+      onEachFeature: (feature, layer) => bindWaypointPopup(feature, layer, setFlightPlan, map)
     });
 
     // すべてのウェイポイントレイヤーを参照に保存
@@ -486,7 +394,7 @@ const MapContent: React.FC<{
     regions.forEach(region => {
       const regionLayer = L.geoJSON(null, {
         pointToLayer: (feature, latlng) => L.circleMarker(latlng, waypointStyle(feature)),
-        onEachFeature: (feature, layer) => waypointPopup(feature, layer, setFlightPlan, map)
+        onEachFeature: (feature, layer) => bindWaypointPopup(feature, layer, setFlightPlan, map)
       });
 
       // 地域レイヤーをリストに追加
@@ -676,7 +584,7 @@ const MapContent: React.FC<{
                 circleMarker.on('click', () => {
                   if (map) {
                     console.log(`${feature.properties.id} 空港のマーカーが直接クリックされました`);
-                    fetchAirportWeather(feature, map, weatherCache, setWeatherCache);
+                    fetchAirportWeatherLayer(feature, map, weatherCache, setWeatherCache, fetchWeatherData, CACHE_DURATION);
                   }
                 });
 
@@ -708,7 +616,7 @@ const MapContent: React.FC<{
                 layer.on('click', () => {
                   if (map) {
                     console.log(`${feature.properties.id} 空港のレイヤーグループがクリックされました`);
-                    fetchAirportWeather(feature, map, weatherCache, setWeatherCache);
+                    fetchAirportWeatherLayer(feature, map, weatherCache, setWeatherCache, fetchWeatherData, CACHE_DURATION);
                   }
                 });
               }
@@ -1334,249 +1242,10 @@ const MapContent: React.FC<{
 });
 
 // 空港の気象情報を取得して表示する関数を更新
-const fetchAirportWeather = (
-  feature: GeoJSON.Feature,
-  map: L.Map,
-  weatherCache: WeatherCache,
-  setWeatherCache: React.Dispatch<React.SetStateAction<WeatherCache>>
-) => {
-  if (!feature.properties || !feature.geometry) return;
+// moved to layers/airports.ts
 
-  const airportId = feature.properties.id;
-  const geometry = feature.geometry as GeoJSON.Point;
-  const [longitude, latitude] = geometry.coordinates;
+// moved to popups/weatherPopup.ts
 
-  console.log(`${airportId} 空港の気象情報を確認します`);
-
-  // 気象情報を取得中のポップアップを表示
-  const loadingPopupContent = `
-    <div class="airport-popup">
-      <div class="airport-popup-header">${feature.properties?.id || '不明'}</div>
-      <div class="p-2">
-        <h3 class="text-base font-bold mb-2">${feature.properties?.name1 || '空港'}</h3>
-        <p class="text-sm">気象情報を読み込み中...</p>
-        <div class="flex justify-center my-2">
-          <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-green-500"></div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  try {
-    const loadingPopup = L.popup({
-      className: 'airport-custom-popup',
-      maxWidth: 300
-    })
-      .setLatLng([latitude, longitude])
-      .setContent(loadingPopupContent)
-      .openOn(map);
-
-    // キャッシュの確認
-    const cachedEntry = weatherCache[airportId];
-    const now = Date.now();
-
-    // キャッシュが存在し、かつ有効期限内の場合
-    if (cachedEntry && (now - cachedEntry.timestamp < CACHE_DURATION)) {
-      console.log(`${airportId}の気象情報をキャッシュから取得しました`);
-      // キャッシュされたデータがFilteredWeatherDataの形式かチェック
-      if (cachedEntry.data && typeof cachedEntry.data === 'object' && 'current' in cachedEntry.data) {
-        const weatherPopupContent = createWeatherPopupContent(feature.properties || {}, cachedEntry.data as FilteredWeatherData);
-        loadingPopup.setContent(weatherPopupContent);
-        loadingPopup.update();
-      }
-      return; // API呼び出しをスキップ
-    }
-
-    // キャッシュがないか期限切れの場合は新しく取得
-    console.log(`Weather APIを呼び出します: lat=${latitude}, lon=${longitude}`);
-    fetchWeatherData(latitude, longitude)
-      .then((weatherData: FilteredWeatherData | null) => {
-        if (!weatherData) return;
-        console.log(`${airportId}の気象情報をAPIから取得しました`, weatherData);
-        // 気象情報ポップアップを作成して表示
-        const weatherPopupContent = createWeatherPopupContent(feature.properties || {}, weatherData);
-        loadingPopup.setContent(weatherPopupContent);
-        loadingPopup.update();
-
-        // キャッシュを更新
-        setWeatherCache(prevCache => ({
-          ...prevCache,
-          [airportId]: { data: weatherData, timestamp: Date.now() }
-        }));
-      })
-      .catch(error => {
-        console.error('気象データの取得に失敗しました:', error);
-
-        // エラー時は基本情報のみのポップアップを表示
-        const errorPopupContent = `
-          <div class="airport-popup airport-weather-popup">
-            <div class="airport-popup-header">
-              ${feature.properties?.id || '不明'}（${feature.properties?.name1?.split('(')[0].trim() || '空港'}）
-            </div>
-            <div class="p-3">
-              <div>
-                <p class="text-sm text-red-500 mb-3">気象情報の取得に失敗しました</p>
-
-                <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
-                <div class="ml-2">
-                  ${simplifiedAirportInfoContent(feature.properties || {})}
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-
-        loadingPopup.setContent(errorPopupContent);
-        loadingPopup.update();
-      });
-  } catch (error) {
-    console.error('ポップアップの作成中にエラーが発生しました:', error);
-  }
-};
-
-// 気象情報ポップアップコンテンツを作成する関数
-const createWeatherPopupContent = (airportProps: Record<string, unknown>, weatherData: FilteredWeatherData) => {
-  // 気象データが正しく取得できたかチェック
-  const current = weatherData?.current;
-
-  if (!current) {
-    return `
-      <div class="airport-popup airport-weather-popup">
-        <div class="airport-popup-header">
-          ${airportProps.id as string}（${(airportProps.name1 as string)?.split('(')[0].trim()}）
-        </div>
-        <div class="p-3">
-          <p class="text-sm text-red-500">気象データが不完全です</p>
-        </div>
-      </div>
-    `;
-  }
-
-  // フィルタリング済みのデータから日本語の天気状態を取得
-  const conditionText = current.condition.japanese || current.condition.text;
-  const temp = current.temp_c !== undefined ? `${current.temp_c}℃` : '取得できません';
-
-  // 風向を3桁の度数表示に変更 (例: "039°/10kt")
-  const windDegree = current.wind.degree !== undefined ? current.wind.degree : null;
-  const windSpeedKnots = current.wind.knots !== undefined ? current.wind.knots : null;
-  const windInfo = (windDegree !== null && windSpeedKnots !== null)
-    ? `${windDegree.toString().padStart(3, '0')}°/${windSpeedKnots}kt`
-    : '取得できません';
-
-  // 気圧（inchHgフォーマット）
-  const pressureInch = current.pressure.inch !== undefined
-    ? `${current.pressure.inch}inch`
-    : '取得できません';
-
-  // 視程
-  const visibility = current.visibility_km !== undefined ? `${current.visibility_km}km` : '取得できません';
-
-  // 日の出・日の入り時刻
-  const astronomy = weatherData.astronomy;
-  const sunrise = astronomy?.sunrise || '情報なし';
-  const sunset = astronomy?.sunset || '情報なし';
-  const sunriseSunset = `${sunrise}/${sunset}`;
-
-  // 最終更新日時
-  const lastUpdated = current.last_updated || '不明';
-
-  // アイコン表示部分
-  const iconUrl = current.condition.icon ? `https:${current.condition.icon}` : '';
-  const iconHtml = iconUrl ? `<img src="${iconUrl}" alt="${conditionText}" class="weather-icon">` : '';
-
-  return `
-    <div class="airport-popup airport-weather-popup">
-      <div class="airport-popup-header">
-        ${airportProps.id as string}（${(airportProps.name1 as string)?.split('(')[0].trim()}）
-      </div>
-      <div class="p-3">
-        <div class="mb-4">
-          <div class="flex justify-between items-center mb-2">
-            <h4 class="text-base font-bold text-green-800 border-b border-green-200 pb-1">〇気象情報</h4>
-            ${iconHtml}
-          </div>
-
-          <div class="ml-2 weather-info-grid">
-            <p class="text-sm mb-2 weather-item">
-              <span class="weather-label">・天気状態</span>
-              <span class="weather-value">${conditionText}</span>
-            </p>
-            <p class="text-sm mb-2 weather-item">
-              <span class="weather-label">・温度</span>
-              <span class="weather-value">${temp}</span>
-            </p>
-            <p class="text-sm mb-2 weather-item">
-              <span class="weather-label">・風</span>
-              <span class="weather-value">${windInfo}</span>
-            </p>
-            <p class="text-sm mb-2 weather-item">
-              <span class="weather-label">・気圧</span>
-              <span class="weather-value">${pressureInch}</span>
-            </p>
-            <p class="text-sm mb-2 weather-item">
-              <span class="weather-label">・視程</span>
-              <span class="weather-value">${visibility}</span>
-            </p>
-            <p class="text-sm mb-2 weather-item">
-              <span class="weather-label">・日の出/日の入り</span>
-              <span class="weather-value">${sunriseSunset}</span>
-            </p>
-            <p class="text-xs mt-1 text-gray-500 weather-update-time">
-              <span>最終更新：${lastUpdated}</span>
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <h4 class="text-base font-bold mb-2 text-green-800 border-b border-green-200 pb-1">〇空港情報</h4>
-          <div class="ml-2 airport-info-grid">
-            ${simplifiedAirportInfoContent(airportProps)}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-};
-
-// 簡略化した空港情報コンテンツを作成する関数
-const simplifiedAirportInfoContent = (properties: Record<string, unknown>) => {
-  // 滑走路情報をサンプルの形式に合わせる（例: 16-34(9187*197)）
-  const formatRunway = (runwayInfo: string) => {
-    if (!runwayInfo) return '';
-
-    // 通常、RWY1は "RWY16/34 9187*197" のような形式
-    const match = runwayInfo.match(/RWY(\d+)\/(\d+)\s+(\d+)\*(\d+)/i);
-    if (match) {
-      const rwy1 = match[1];
-      const rwy2 = match[2];
-      const length = match[3];
-      const width = match[4];
-      return `${rwy1}-${rwy2}(${length}*${width})`;
-    }
-
-    return runwayInfo; // パターンにマッチしない場合はそのまま返す
-  };
-
-  // 滑走路情報を取得（存在する場合）
-  const rwy1Info = properties.RWY1
-    ? `<p class="text-sm mb-2 airport-item">
-         <span class="airport-label">・滑走路１</span>
-         <span class="airport-value">${formatRunway(properties.RWY1 as string)}</span>
-       </p>`
-    : '';
-
-  // 空港標高を取得（存在する場合）
-  const elevInfo = properties["Elev(ft)"]
-    ? `<p class="text-sm mb-2 airport-item">
-         <span class="airport-label">・標高</span>
-         <span class="airport-value">${properties["Elev(ft)"]}ft</span>
-       </p>`
-    : '';
-
-  return `
-    ${rwy1Info}
-    ${elevInfo}
-  `;
-};
+// moved to popups/airportPopup.ts
 
 export default MapTab;

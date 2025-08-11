@@ -1,4 +1,4 @@
-import { StylesConfig, ControlProps, MenuProps, OptionProps, PlaceholderProps, InputProps, SingleValueProps } from 'react-select';
+import { ControlProps, InputProps, MenuProps, OptionProps, PlaceholderProps, SingleValueProps, StylesConfig } from 'react-select';
 
 // オプション型の定義
 export interface SelectOption {
@@ -11,32 +11,36 @@ export const reactSelectStyles: StylesConfig<SelectOption, false> = {
   control: (provided: React.CSSProperties, state: ControlProps<SelectOption, false>) => ({
     ...provided,
     borderRadius: '0.5rem',
-    borderColor: '#e5e7eb',
-    backgroundColor: '#4b5563',
-    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    borderColor: 'var(--hud-primary)',
+    backgroundColor: 'var(--panel)',
+    color: 'var(--text-primary)',
+    boxShadow: '0 0 0 0 rgba(0,0,0,0)',
     '&:hover': {
-      borderColor: '#d1d5db',
+      borderColor: 'var(--hud-primary)',
     },
   }),
   menu: (provided: React.CSSProperties, state: MenuProps<SelectOption, false>) => ({
     ...provided,
-    backgroundColor: '#4b5563',
+    backgroundColor: 'rgba(0,0,0,0.85)',
+    border: '1px solid var(--hud-primary)',
+    color: 'var(--text-primary)'
   }),
   option: (provided: React.CSSProperties, state: OptionProps<SelectOption, false>) => ({
     ...provided,
-    backgroundColor: state.isFocused ? '#6b7280' : '#4b5563',
-    color: 'white',
+    backgroundColor: state.isFocused ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.4)',
+    color: 'var(--text-primary)',
+    borderBottom: '1px solid rgba(255,255,255,0.06)'
   }),
   placeholder: (provided: React.CSSProperties, state: PlaceholderProps<SelectOption, false>) => ({
     ...provided,
-    color: 'white',
+    color: 'var(--text-primary)',
   }),
   input: (provided: React.CSSProperties, state: InputProps<SelectOption, false>) => ({
     ...provided,
-    color: 'white',
+    color: 'var(--text-primary)',
   }),
   singleValue: (provided: React.CSSProperties, state: SingleValueProps<SelectOption, false>) => ({
     ...provided,
-    color: 'white',
+    color: 'var(--text-primary)',
   }),
-}; 
+};

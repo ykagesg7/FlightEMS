@@ -273,39 +273,21 @@ function ArticlesPage() {
         {/* パンくずナビゲーション */}
         {categoryFromUrl && articleCategoryMapping[categoryFromUrl] && (
           <nav className="mb-4">
-            <ol className="flex items-center space-x-2 text-sm" style={{ color: '#39FF14' }}>
+            <ol className="flex items-center space-x-2 text-sm hud-text">
               <li>
                 <a
                   href="/articles"
-                  className={`hover:underline ${theme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
-                    }`}
+                  className={`hover:underline hud-text`}
                 >
                   📚 記事一覧
                 </a>
               </li>
-              <li
-                style={
-                  effectiveTheme === 'day'
-                    ? { color: '#39FF14' }
-                    : effectiveTheme === 'dark'
-                      ? { color: '#FF3B3B' }
-                      : {}
-                }
-              >
+              <li className="hud-text">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                 </svg>
               </li>
-              <li
-                className="font-medium"
-                style={
-                  effectiveTheme === 'day'
-                    ? { color: '#39FF14' }
-                    : effectiveTheme === 'dark'
-                      ? { color: '#FF3B3B' }
-                      : {}
-                }
-              >
+              <li className="font-medium hud-text">
                 {articleCategoryMapping[categoryFromUrl]}
               </li>
             </ol>
@@ -328,19 +310,14 @@ function ArticlesPage() {
         <div className="max-w-4xl mx-auto">
           {/* 最新記事セクション */}
           {latestArticles.length > 0 && (
-            <div className={`backdrop-blur-xl rounded-2xl p-6 mb-8 shadow-xl border transition-all duration-300 ${theme === 'dark'
-              ? 'bg-white/5 border-white/10'
-              : 'bg-white/80 border-white/20'
-              }`}>
+            <div className={`hud-surface hud-glow rounded-2xl p-6 mb-8 shadow-xl border hud-border transition-all duration-300`}>
               <div className="flex items-center mb-6">
                 <div className="text-2xl mr-3">🆕</div>
                 <div>
-                  <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'
-                    }`}>
+                  <h2 className={`text-2xl font-bold hud-text`}>
                     最新記事
                   </h2>
-                  <p className={`text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
-                    }`}>
+                  <p className={`text-sm text-[color:var(--text-primary)]`}>
                     最近更新された記事をチェック
                   </p>
                 </div>
@@ -355,35 +332,24 @@ function ArticlesPage() {
                     <div
                       key={content.id}
                       onClick={() => handleJumpToArticle(content.id)}
-                      className={`
-                        p-4 rounded-xl border transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-[1.02] backdrop-blur-md
-                        ${theme === 'dark'
-                          ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                          : 'bg-white/90 border-slate-200 hover:bg-white hover:border-blue-300'}
-                      `}
+                      className={`p-4 rounded-xl border hud-border hud-surface transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-[1.02]`}
                     >
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className={`font-semibold text-sm leading-tight line-clamp-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'
-                          }`}>
+                        <h3 className={`font-semibold text-sm leading-tight line-clamp-2 hud-text`}>
                           {content.title}
                         </h3>
                       </div>
 
                       <div className="flex justify-between items-center mt-3">
-                        <span className={`text-xs px-2 py-1 rounded-full ${theme === 'dark'
-                          ? 'bg-blue-700/60 text-blue-100 border border-blue-500/30'
-                          : 'bg-blue-100 text-blue-700'
-                          }`}>
+                        <span className={`text-xs px-2 py-1 rounded-full border hud-border text-[color:var(--hud-primary)]`}>
                           {content.category}
                         </span>
 
                         <div className="flex flex-col items-end">
-                          <span className={`text-xs ${theme === 'dark' ? 'text-violet-200' : 'text-indigo-600'
-                            }`}>
+                          <span className={`text-xs hud-text`}>
                             {daysAgo === 0 ? '今日更新' : daysAgo === 1 ? '昨日更新' : `${daysAgo}日前更新`}
                           </span>
-                          <span className={`text-xs opacity-75 ${theme === 'dark' ? 'text-violet-300' : 'text-indigo-500'
-                            }`}>
+                          <span className={`text-xs opacity-75 text-[color:var(--text-primary)]`}>
                             {updatedDate.toLocaleDateString('ja-JP', {
                               month: 'short',
                               day: 'numeric'
@@ -393,8 +359,7 @@ function ArticlesPage() {
                       </div>
 
                       <div className="mt-2 flex items-center text-xs">
-                        <span className={`${theme === 'dark' ? 'text-violet-200' : 'text-indigo-600'
-                          }`}>
+                        <span className={`hud-text`}>
                           記事にジャンプ →
                         </span>
                       </div>
@@ -408,14 +373,8 @@ function ArticlesPage() {
           {categories.length > 0 ? (
             <div className="space-y-8">
               {categories.map(category => (
-                <div key={category} className={`backdrop-blur-xl rounded-2xl p-6 shadow-xl border transition-all duration-300 ${theme === 'dark'
-                  ? 'bg-white/5 border-white/10'
-                  : 'bg-white/80 border-white/20'
-                  }`}>
-                  <h2 className={`text-2xl font-bold mb-6 border-b pb-3 ${theme === 'dark'
-                    ? 'text-white border-gray-700'
-                    : 'text-slate-900 border-gray-200'
-                    }`}>
+                <div key={category} className={`hud-surface rounded-2xl p-6 shadow-xl border hud-border transition-all duration-300`}>
+                  <h2 className={`text-2xl font-bold mb-6 border-b pb-3 hud-text`}>
                     {category}
                   </h2>
 
@@ -431,22 +390,10 @@ function ArticlesPage() {
                             key={content.id}
                             id={`article-${content.id}`}
                             onClick={() => hasAccess && handleContentSelect(content.id)}
-                            className={`
-                              p-4 rounded-xl border transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg backdrop-blur-md
-                              ${hasAccess
-                                ? theme === 'dark'
-                                  ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                                  : 'bg-white/90 border-slate-200 hover:bg-white hover:border-blue-300'
-                                : theme === 'dark'
-                                  ? 'bg-white/5 border-white/10 cursor-not-allowed opacity-60'
-                                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'}
-                          `}
+                            className={`p-4 rounded-xl border hud-border hud-surface transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg ${hasAccess ? '' : 'cursor-not-allowed opacity-60'}`}
                           >
                             <div className="flex justify-between items-start mb-2">
-                              <h3 className={`font-semibold text-lg leading-tight ${hasAccess
-                                ? theme === 'dark' ? 'text-white' : 'text-slate-800'
-                                : theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                                }`}>
+                              <h3 className={`font-semibold text-lg leading-tight ${hasAccess ? 'hud-text' : 'text-gray-500'}`}>
                                 {content.title}
                               </h3>
 
@@ -458,10 +405,7 @@ function ArticlesPage() {
                                   </span>
                                 )}
                                 {isPreviewMode && !hasAccess && !isFreemium && (
-                                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold shadow-sm whitespace-nowrap ${theme === 'dark'
-                                    ? 'border border-gray-600 bg-gray-700 text-gray-400'
-                                    : 'border border-gray-300 bg-gray-200 text-gray-500'
-                                    }`}>
+                                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold shadow-sm whitespace-nowrap border hud-border text-[color:var(--text-primary)]`}>
                                     🔒
                                   </span>
                                 )}
@@ -469,10 +413,7 @@ function ArticlesPage() {
                             </div>
 
                             {content.description && (
-                              <p className={`text-sm leading-relaxed ${hasAccess
-                                ? theme === 'dark' ? 'text-gray-300' : 'text-slate-600'
-                                : theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                                }`}>
+                              <p className={`text-sm leading-relaxed text-[color:var(--text-primary)]`}>
                                 {content.description}
                               </p>
                             )}
@@ -480,8 +421,7 @@ function ArticlesPage() {
                             {hasAccess && (
                               <>
                                 <div className="mt-3 flex items-center text-sm">
-                                  <span className={`${theme === 'dark' ? 'text-purple-300' : 'text-indigo-700'
-                                    }`}>
+                                  <span className={`hud-text`}>
                                     記事を読む →
                                   </span>
                                 </div>

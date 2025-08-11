@@ -200,35 +200,35 @@ const TestPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
+    <div className="max-w-2xl mx-auto py-8" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
       <div className="mb-10 flex flex-col md:flex-row md:justify-center md:items-end gap-6 md:gap-10">
         {/* 科目 */}
         <div className="flex flex-col items-start md:items-center md:flex-row md:space-x-2 w-full md:w-auto">
-          <label className="text-lg font-bold text-gray-900 dark:text-slate-100 mb-1 md:mb-0">科目選択：</label>
+          <label className="text-lg font-bold hud-text mb-1 md:mb-0">科目選択：</label>
           <div className="relative w-full md:w-56">
             <select
-              className="block w-full appearance-none p-3 pr-10 text-lg bg-white dark:bg-slate-700 border-2 border-sky-300 dark:border-sky-600 rounded-xl shadow focus:ring-2 focus:ring-sky-400 focus:border-sky-400 text-gray-900 dark:text-slate-100 font-semibold hover:border-sky-400 cursor-pointer"
+              className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
               value={selectedSubject}
               onChange={e => setSelectedSubject(e.target.value)}
               disabled={subjectLoading}
             >
               {subjects.map(subj => (
-                <option key={subj} value={subj} className="text-base py-2 text-gray-900 dark:text-slate-100">
+                <option key={subj} value={subj} className="text-base py-2 bg-[color:var(--panel)] text-[color:var(--text-primary)]">
                   {subj === 'all' ? 'すべての科目' : subj}
                 </option>
               ))}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-              <svg className="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+              <svg className="w-6 h-6 hud-text" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
             </div>
           </div>
         </div>
         {/* サブ科目 */}
         <div className="flex flex-col items-start md:items-center md:flex-row md:space-x-2 w-full md:w-auto">
-          <label className="text-lg font-bold text-gray-900 dark:text-slate-100 mb-1 md:mb-0">サブ科目選択：</label>
+          <label className="text-lg font-bold hud-text mb-1 md:mb-0">サブ科目選択：</label>
           <div className="relative w-full md:w-56">
             <select
-              className="block w-full appearance-none p-3 pr-10 text-lg bg-white dark:bg-slate-700 border-2 border-emerald-300 dark:border-emerald-600 rounded-xl shadow focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 text-gray-900 dark:text-slate-100 font-semibold hover:border-emerald-400 cursor-pointer"
+              className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
               value={selectedSubSubject}
               onChange={e => setSelectedSubSubject(e.target.value)}
               disabled={selectedSubject === 'all' || subSubjectLoading}
@@ -237,35 +237,35 @@ const TestPage: React.FC = () => {
                 <option value="all">（サブ科目なし）</option>
               ) : (
                 subSubjects.map(subj => (
-                  <option key={subj} value={subj} className="text-base py-2 text-gray-900 dark:text-slate-100">
+                  <option key={subj} value={subj} className="text-base py-2 bg-[color:var(--panel)] text-[color:var(--text-primary)]">
                     {subj === 'all' ? 'すべてのサブ科目' : subj}
                   </option>
                 ))
               )}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-              <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+              <svg className="w-6 h-6 hud-text" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
             </div>
           </div>
         </div>
         {/* 問題数 */}
         <div className="flex flex-col items-start md:items-center md:flex-row md:space-x-2 w-full md:w-auto">
-          <label className="text-lg font-bold text-gray-900 dark:text-slate-100 mb-1 md:mb-0">問題数選択：</label>
+          <label className="text-lg font-bold hud-text mb-1 md:mb-0">問題数選択：</label>
           <div className="relative w-full md:w-40">
             <select
-              className="block w-full appearance-none p-3 pr-10 text-lg bg-white dark:bg-slate-700 border-2 border-indigo-300 dark:border-indigo-600 rounded-xl shadow focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 text-gray-900 dark:text-slate-100 font-semibold hover:border-indigo-400 cursor-pointer"
+              className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
               value={questionCount}
               onChange={e => setQuestionCount(Number(e.target.value))}
               disabled={questionCountOptions.length === 0}
             >
               {questionCountOptions.map(opt => (
-                <option key={opt} value={opt} className="text-base py-2 text-gray-900 dark:text-slate-100">
+                <option key={opt} value={opt} className="text-base py-2 bg-[color:var(--panel)] text-[color:var(--text-primary)]">
                   {opt}問
                 </option>
               ))}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-              <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h8M12 8v8" /></svg>
+              <svg className="w-6 h-6 hud-text" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h8M12 8v8" /></svg>
             </div>
           </div>
         </div>
@@ -275,9 +275,9 @@ const TestPage: React.FC = () => {
       ) : error ? (
         <div className="p-8 text-center text-red-500">{error}</div>
       ) : quizFinished ? (
-        <div className="max-w-xl mx-auto p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl text-center flex flex-col items-center justify-center min-h-[320px]">
-          <h2 className="text-3xl font-bold mb-6 text-sky-500 drop-shadow">テスト結果</h2>
-          <p className="mb-4 text-lg text-gray-700 dark:text-gray-200 font-semibold tracking-wide">
+        <div className="max-w-xl mx-auto p-8 hud-surface border hud-border rounded-2xl shadow-2xl text-center flex flex-col items-center justify-center min-h-[320px]">
+          <h2 className="text-3xl font-bold mb-6 hud-text drop-shadow">テスト結果</h2>
+          <p className="mb-4 text-lg text-[color:var(--text-primary)] font-semibold tracking-wide">
             正解数: <span className="text-2xl text-green-600 dark:text-green-400 font-bold">{userAnswers.filter(a => a.isCorrect).length}</span>
             <span className="mx-2 text-gray-400">/</span>
             <span className="text-2xl text-gray-600 dark:text-gray-300 font-bold">{userAnswers.length}</span>
@@ -288,7 +288,7 @@ const TestPage: React.FC = () => {
                 <>
                   {saveError}
                   <div className="mt-2">
-                    <a href="/auth" className="inline-block px-6 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg font-bold transition">ログイン/新規登録</a>
+                    <a href="/auth" className="inline-block px-6 py-2 rounded-lg border hud-border text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 font-bold transition">ログイン/新規登録</a>
                   </div>
                 </>
               ) : (
@@ -296,9 +296,9 @@ const TestPage: React.FC = () => {
               )}
             </div>
           )}
-          {saving && <p className="text-blue-500 text-base mb-2 animate-pulse">結果を保存中...</p>}
+          {saving && <p className="hud-text text-base mb-2 animate-pulse">結果を保存中...</p>}
           <button
-            className="mt-6 px-8 py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-opacity-75"
+            className="mt-6 px-8 py-3 rounded-xl border hud-border text-[color:var(--hud-primary)] shadow-lg transition-all duration-200 ease-in-out hover:bg-[color:var(--panel)]/60 focus-visible:focus-hud"
             onClick={() => { setQuizFinished(false); fetchQuestions(selectedSubject, selectedSubSubject, questionCount); }}
           >
             もう一度挑戦
