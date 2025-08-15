@@ -24,7 +24,9 @@
     "docs:watch": "cd scripts/docs-auto-update && npm run watch",
     "docs:update": "cd scripts/docs-auto-update && npm run update-docs",
     "docs:validate": "cd scripts/docs-auto-update && npm run validate-docs",
-    "docs:setup": "cd scripts/docs-auto-update && npm install && node setup-git-hooks.js"
+    "docs:setup": "cd scripts/docs-auto-update && npm install && node setup-git-hooks.js",
+    "lint:encoding": "node scripts/utils/check-encoding.js",
+    "fix:encoding": "node scripts/utils/fix-encoding.js"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.18",
@@ -56,6 +58,7 @@
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.6.0",
     "react-select": "^5.10.0",
+    "react-virtualized-auto-sizer": "^1.0.26",
     "react-window": "^1.8.11",
     "tailwind-merge": "^2.6.0",
     "tsx": "^4.19.3",

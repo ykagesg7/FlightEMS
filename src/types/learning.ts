@@ -1,4 +1,5 @@
 import type { Database } from './database.types';
+import type { QuizQuestion } from './quiz';
 
 // 学習コンテンツ関連型
 export type LearningProgress = Database['public']['Tables']['learning_progress']['Row'];
@@ -32,7 +33,7 @@ export interface QuizSettings {
 export interface CPLExamQuestion extends QuizQuestion {
   exam_date: string;
   subject: string;
-  difficulty_level?: number;
+  difficulty_level: 'easy' | 'medium' | 'hard';
 }
 
 export interface CPLExamSession extends QuizSession {
