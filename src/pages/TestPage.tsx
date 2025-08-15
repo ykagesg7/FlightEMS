@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { QuizComponent } from '../components/QuizComponent';
 import { useTheme } from '../contexts/ThemeContext';
 import { QuestionType, QuizQuestion, UserQuizAnswer } from '../types/quiz';
@@ -22,6 +23,25 @@ const TestPage: React.FC = () => {
   const [questionCount, setQuestionCount] = useState<number>(10);
   const [maxQuestionCount, setMaxQuestionCount] = useState<number>(10);
   const [questionCountOptions, setQuestionCountOptions] = useState<number[]>([10]);
+  const [mode, setMode] = useState<'practice' | 'exam' | 'review'>('practice');
+  const [contentId, setContentId] = useState<string | null>(null);
+
+  // クエリパラメータから初期値を設定
+  const [sp] = useSearchParams();
+  useEffect(() => {
+    const qs = sp.get('subject') || 'all';
+    const qss = sp.get('sub') || 'all';
+    const qc = Number(sp.get('count') || '10');
+    const qm = (sp.get('mode') as 'practice' | 'exam' | 'review') || 'practice';
+    const cid = sp.get('contentId');
+
+    setSelectedSubject(qs);
+    setSelectedSubSubject(qss);
+    setQuestionCount(Number.isFinite(qc) && qc > 0 ? qc : 10);
+    setMode(qm);
+    setContentId(cid);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // main_subject一覧取得
   useEffect(() => {
@@ -105,7 +125,7 @@ const TestPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSubject, selectedSubSubject]);
 
-  // 問題取得
+  // 問題取得（科目ベース）
   const fetchQuestions = async (subject: string, subSubject: string, count: number) => {
     setLoading(true);
     setError(null);
@@ -150,11 +170,112 @@ const TestPage: React.FC = () => {
     }
   };
 
-  // main_subject, sub_subject, questionCount選択時に問題取得
+  // 問題取得（学習コンテンツとのマッピング優先）
+  const fetchMappedQuestions = async (learningContentId: string, count: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data, error } = await supabase
+        .from('v_mapped_questions')
+        .select('*')
+        .eq('learning_content_id', learningContentId);
+      if (error) throw error;
+      const pool = Array.isArray(data) ? data : [];
+      const shuffled = pool.sort(() => Math.random() - 0.5).slice(0, count);
+      const parsed: QuizQuestion[] = shuffled.map((q: any) => ({
+        id: q.id,
+        deck_id: q.deck_id || '',
+        question_text: q.question_text || q.question || '（問題文データ不備）',
+        text: q.question_text || q.question || '（問題文データ不備）',
+        options: Array.isArray(q.options) && q.options.length === 4
+          ? q.options.map((opt: any) => (typeof opt === 'string' ? opt : (opt?.text || '')))
+          : ['選択肢1', '選択肢2', '選択肢3', '選択肢4'],
+        correct_option_index: typeof q.correct_answer === 'number' ? q.correct_answer - 1 : 0,
+        explanation: q.explanation || '',
+        explanation_image_url: q.explanation_image_url || null,
+        difficulty_level: q.difficulty_level || 'medium',
+        created_at: q.created_at,
+        updated_at: q.updated_at,
+        type: QuestionType.MULTIPLE_CHOICE,
+        correctAnswer: typeof q.correct_answer === 'number' ? q.correct_answer - 1 : 0,
+      }));
+      setQuestions(parsed);
+    } catch (err: any) {
+      setError(err.message || '問題の取得に失敗しました');
+      setQuestions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 問題取得（レビュー: SRS対象）
+  const fetchReviewQuestions = async (count: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data: authData } = await supabase.auth.getUser();
+      const uid = authData?.user?.id;
+      if (!uid) {
+        setError('レビュー出題にはログインが必要です');
+        setQuestions([]);
+        return;
+      }
+      const { data: dueList, error: dueErr } = await supabase
+        .from('user_unified_srs_status')
+        .select('question_id')
+        .lte('next_review_date', new Date().toISOString())
+        .eq('user_id', uid)
+        .limit(200);
+      if (dueErr) throw dueErr;
+      const ids = (dueList || []).map((r: any) => r.question_id).filter(Boolean);
+      if (ids.length === 0) {
+        setQuestions([]);
+        setError('本日の復習対象はありません');
+        return;
+      }
+      const pickIds = ids.sort(() => Math.random() - 0.5).slice(0, count);
+      const { data: qData, error: qErr } = await supabase
+        .from('unified_cpl_questions')
+        .select('*')
+        .in('id', pickIds);
+      if (qErr) throw qErr;
+      const parsed: QuizQuestion[] = (qData || []).map((q: any) => ({
+        id: q.id,
+        deck_id: q.deck_id || '',
+        question_text: q.question_text || q.question || '（問題文データ不備）',
+        text: q.question_text || q.question || '（問題文データ不備）',
+        options: Array.isArray(q.options) && q.options.length === 4
+          ? q.options.map((opt: any) => (typeof opt === 'string' ? opt : (opt?.text || '')))
+          : ['選択肢1', '選択肢2', '選択肢3', '選択肢4'],
+        correct_option_index: typeof q.correct_answer === 'number' ? q.correct_answer - 1 : 0,
+        explanation: q.explanation || '',
+        explanation_image_url: q.explanation_image_url || null,
+        difficulty_level: q.difficulty_level || 'medium',
+        created_at: q.created_at,
+        updated_at: q.updated_at,
+        type: QuestionType.MULTIPLE_CHOICE,
+        correctAnswer: typeof q.correct_answer === 'number' ? q.correct_answer - 1 : 0,
+      }));
+      setQuestions(parsed);
+    } catch (err: any) {
+      setError(err.message || '復習問題の取得に失敗しました');
+      setQuestions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // クエリ/選択/モード変更時の問題取得
   useEffect(() => {
-    fetchQuestions(selectedSubject, selectedSubSubject, questionCount);
+    if (mode === 'review') {
+      fetchReviewQuestions(questionCount);
+    } else if (contentId) {
+      fetchMappedQuestions(contentId, questionCount);
+    } else {
+      fetchQuestions(selectedSubject, selectedSubSubject, questionCount);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSubject, selectedSubSubject, questionCount]);
+  }, [selectedSubject, selectedSubSubject, questionCount, contentId, mode]);
 
   // 回答送信
   const handleSubmitQuiz = async (answers: UserQuizAnswer[]) => {
@@ -172,7 +293,7 @@ const TestPage: React.FC = () => {
       const user_id = userData.user.id;
       const sessionInsert = {
         user_id,
-        session_type: 'test',
+        session_type: mode === 'exam' ? 'exam' : mode === 'review' ? 'review' : 'practice',
         questions_attempted: answers.length,
         questions_correct: answers.filter(a => a.isCorrect).length,
         score_percentage: answers.length > 0 ? (answers.filter(a => a.isCorrect).length / answers.length) * 100 : 0,
@@ -185,6 +306,8 @@ const TestPage: React.FC = () => {
       const testResults = answers.map(a => ({
         user_id,
         question_id: a.questionId,
+        unified_question_id: a.questionId,
+        learning_content_id: contentId || null,
         user_answer: a.answer,
         is_correct: a.isCorrect,
         response_time_seconds: null,
@@ -201,6 +324,27 @@ const TestPage: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto py-8" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
+      {/* モード切替 */}
+      <div className="mb-6 flex justify-center gap-2">
+        <button
+          className={`px-4 py-2 rounded-lg border hud-border text-sm font-semibold transition ${mode === 'practice' ? 'bg-[color:var(--panel)]/60 text-[color:var(--hud-primary)]' : 'hover:bg-[color:var(--panel)]/40'}`}
+          onClick={() => setMode('practice')}
+          aria-pressed={mode === 'practice'}
+        >Practice</button>
+        <button
+          className={`px-4 py-2 rounded-lg border hud-border text-sm font-semibold transition ${mode === 'exam' ? 'bg-[color:var(--panel)]/60 text-[color:var(--hud-primary)]' : 'hover:bg-[color:var(--panel)]/40'}`}
+          onClick={() => setMode('exam')}
+          aria-pressed={mode === 'exam'}
+        >Exam</button>
+        <button
+          className={`px-4 py-2 rounded-lg border hud-border text-sm font-semibold transition ${mode === 'review' ? 'bg-[color:var(--panel)]/60 text-[color:var(--hud-primary)]' : 'hover:bg-[color:var(--panel)]/40'}`}
+          onClick={() => setMode('review')}
+          aria-pressed={mode === 'review'}
+        >Review</button>
+      </div>
+      {mode === 'exam' && (
+        <p className="text-center text-xs mb-2 opacity-80">Examモード：解説は結果画面まで表示されません。</p>
+      )}
       <div className="mb-10 flex flex-col md:flex-row md:justify-center md:items-end gap-6 md:gap-10">
         {/* 科目 */}
         <div className="flex flex-col items-start md:items-center md:flex-row md:space-x-2 w-full md:w-auto">
@@ -210,7 +354,7 @@ const TestPage: React.FC = () => {
               className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
               value={selectedSubject}
               onChange={e => setSelectedSubject(e.target.value)}
-              disabled={subjectLoading}
+              disabled={subjectLoading || mode === 'review' || !!contentId}
             >
               {subjects.map(subj => (
                 <option key={subj} value={subj} className="text-base py-2 bg-[color:var(--panel)] text-[color:var(--text-primary)]">
@@ -231,7 +375,7 @@ const TestPage: React.FC = () => {
               className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
               value={selectedSubSubject}
               onChange={e => setSelectedSubSubject(e.target.value)}
-              disabled={selectedSubject === 'all' || subSubjectLoading}
+              disabled={selectedSubject === 'all' || subSubjectLoading || mode === 'review' || !!contentId}
             >
               {subSubjects.length === 0 ? (
                 <option value="all">（サブ科目なし）</option>
@@ -299,7 +443,14 @@ const TestPage: React.FC = () => {
           {saving && <p className="hud-text text-base mb-2 animate-pulse">結果を保存中...</p>}
           <button
             className="mt-6 px-8 py-3 rounded-xl border hud-border text-[color:var(--hud-primary)] shadow-lg transition-all duration-200 ease-in-out hover:bg-[color:var(--panel)]/60 focus-visible:focus-hud"
-            onClick={() => { setQuizFinished(false); fetchQuestions(selectedSubject, selectedSubSubject, questionCount); }}
+            onClick={() => {
+              setQuizFinished(false);
+              if (contentId) {
+                fetchMappedQuestions(contentId, questionCount);
+              } else {
+                fetchQuestions(selectedSubject, selectedSubSubject, questionCount);
+              }
+            }}
           >
             もう一度挑戦
           </button>
@@ -311,6 +462,10 @@ const TestPage: React.FC = () => {
           onSubmitQuiz={handleSubmitQuiz}
           onBackToContents={() => { }}
           theme={theme}
+          mode={mode}
+          showImmediateFeedback={mode !== 'exam'}
+          showQuestionPalette={true}
+          examDurationSec={Math.max(questionCount * 60, 300)}
           generalMessages={{
             submitAnswer: '解答する',
             correct: '正解',

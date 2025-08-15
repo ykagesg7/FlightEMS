@@ -16,6 +16,7 @@ import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 const PlanningMapPage = lazy(() => import('./pages/PlanningMapPage'));
 const LearningPage = lazy(() => import('./pages/LearningPage'));
 const ArticlesPage = lazy(() => import('./pages/ArticlesPage'));
+const ArticleDetailPage = lazy(() => import('./pages/ArticleDetailPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const AuthPage = lazy(() => import('./pages/AuthPage')); // AuthPageを追加
 const TestPage = lazy(() => import('./pages/TestPage')); // Testページを追加
@@ -64,6 +65,7 @@ const App: React.FC = () => {
               <Route index element={<PlanningMapPage />} />
               <Route path="learning" element={<LearningPage />} />
               <Route path="articles" element={<ArticlesPage />} />
+              <Route path="articles/:contentId" element={<ArticleDetailPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="auth" element={<AuthPage />} /> {/* AuthPageへのルートを追加 */}
               <Route path="test" element={<TestPage />} /> {/* Testページへのルートを差し替え */}

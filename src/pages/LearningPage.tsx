@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import RelatedTestButton from '../components/learning/RelatedTestButton';
 import ReviewContentLink from '../components/learning/ReviewContentLink';
@@ -8,6 +8,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useLearningProgress } from '../hooks/useLearningProgress';
 import { LearningContent } from '../types';
 import { UserQuizAnswer } from '../types/quiz';
+import supabase from '../utils/supabase';
 
 enum LearningState {
   INTRODUCTION, // 目次・概要
@@ -19,7 +20,12 @@ function LearningPage() {
   const { theme } = useTheme();
   const { quizTitle, quizQuestions, generalMessages } = APP_CONTENT;
 
-  const { learningContents, isLoading, error } = useLearningProgress();
+  const { learningContents, isLoading, error, userProgress } = useLearningProgress();
+
+  // ダッシュボード用の実データ状態
+  const [srsCount, setSrsCount] = useState<number | null>(null);
+  const [recentContentIds, setRecentContentIds] = useState<string[]>([]);
+  const [recommendedSubject, setRecommendedSubject] = useState<string | null>(null);
 
   const [learningState, setLearningState] = useState<LearningState>(LearningState.INTRODUCTION);
   const [quizUserAnswers, setQuizUserAnswers] = useState<UserQuizAnswer[]>([]);
@@ -37,6 +43,79 @@ function LearningPage() {
   const latestThreeCplArticles = useMemo(() => {
     return cplAviationLawContents.slice(0, 3);
   }, [cplAviationLawContents]);
+
+  // 最近の閲覧（learning_progress）から直近を抽出
+  useEffect(() => {
+    const entries = Object.values(userProgress || {});
+    const sorted = entries
+      .slice()
+      .sort((a, b) => new Date(b.last_read_at).getTime() - new Date(a.last_read_at).getTime())
+      .map((p) => p.content_id);
+    setRecentContentIds(sorted.slice(0, 3));
+  }, [userProgress]);
+
+  // 今日の復習件数 & おすすめ科目（正答率の低いmain_subject）
+  useEffect(() => {
+    (async () => {
+      const { data: auth } = await supabase.auth.getUser();
+      const uid = auth?.user?.id;
+      if (!uid) {
+        setSrsCount(null);
+        setRecommendedSubject(null);
+        return;
+      }
+      // SRS件数
+      try {
+        const { count } = await supabase
+          .from('user_unified_srs_status')
+          .select('question_id', { count: 'exact', head: true })
+          .eq('user_id', uid)
+          .lte('next_review_date', new Date().toISOString());
+        setSrsCount(count ?? 0);
+      } catch {
+        setSrsCount(0);
+      }
+
+      // おすすめ科目: 直近200回答を集計
+      try {
+        const { data: results } = await supabase
+          .from('user_test_results')
+          .select('unified_question_id,is_correct')
+          .eq('user_id', uid)
+          .order('answered_at', { ascending: false })
+          .limit(200);
+        const ids = Array.from(new Set((results || []).map(r => r.unified_question_id).filter(Boolean)));
+        if (ids.length === 0) {
+          setRecommendedSubject(null);
+          return;
+        }
+        const { data: questions } = await supabase
+          .from('unified_cpl_questions')
+          .select('id,main_subject')
+          .in('id', ids as any);
+        const idToSubject: Record<string, string> = {};
+        (questions || []).forEach(q => { idToSubject[q.id] = q.main_subject; });
+        const agg: Record<string, { total: number; correct: number }> = {};
+        (results || []).forEach(r => {
+          const sid = r.unified_question_id as string;
+          const subj = idToSubject[sid];
+          if (!subj) return;
+          if (!agg[subj]) agg[subj] = { total: 0, correct: 0 };
+          agg[subj].total += 1;
+          if (r.is_correct) agg[subj].correct += 1;
+        });
+        let best: { subj: string; acc: number; total: number } | null = null;
+        Object.entries(agg).forEach(([subj, v]) => {
+          if (v.total < 5) return; // 最低試行数
+          const acc = v.correct / v.total;
+          if (!best || acc < best.acc) best = { subj, acc, total: v.total };
+        });
+        setRecommendedSubject(best ? best.subj : null);
+      } catch {
+        setRecommendedSubject(null);
+      }
+    })();
+  }, [userProgress]);
 
   const resetLearningState = useCallback(() => {
     setQuizUserAnswers([]);
@@ -64,6 +143,54 @@ function LearningPage() {
       case LearningState.INTRODUCTION:
         return (
           <div className={`hud-surface border hud-border p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn`}>
+            {/* ダッシュボード: 今日の復習 / 続きから / おすすめ */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <div className="p-4 rounded-xl hud-surface border hud-border">
+                <h3 className="font-semibold hud-text mb-2">今日の復習</h3>
+                <p className="text-sm text-[color:var(--text-primary)] mb-3">
+                  {srsCount === null ? 'ログインで復習件数を確認' : `本日の復習: ${srsCount} 件`}
+                </p>
+                <Link
+                  to="/test?mode=review&count=10"
+                  className="inline-flex items-center px-3 py-2 rounded-lg border hud-border text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 transition text-sm font-semibold"
+                >
+                  復習を始める
+                </Link>
+              </div>
+              <div className="p-4 rounded-xl hud-surface border hud-border">
+                <h3 className="font-semibold hud-text mb-2">続きから</h3>
+                {recentContentIds.length > 0 ? (
+                  <div className="space-y-2">
+                    {recentContentIds.slice(0, 2).map((id) => {
+                      const lc = learningContents.find(c => c.id === id);
+                      return (
+                        <Link
+                          key={id}
+                          to={`/articles/${id}`}
+                          className="block px-3 py-2 rounded-lg border hud-border hover:bg-[color:var(--panel)]/60 text-sm"
+                        >
+                          {lc?.title || id}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-sm text-[color:var(--text-primary)] mb-3">最近の閲覧はありません</p>
+                )}
+              </div>
+              <div className="p-4 rounded-xl hud-surface border hud-border">
+                <h3 className="font-semibold hud-text mb-2">おすすめ</h3>
+                <p className="text-sm text-[color:var(--text-primary)] mb-3">
+                  {recommendedSubject ? `${recommendedSubject} から重点的に学習` : '学習履歴に基づくおすすめを表示'}
+                </p>
+                <Link
+                  to={`/test?subject=${encodeURIComponent(recommendedSubject || '航空法規')}&count=10&mode=practice`}
+                  className="inline-flex items-center px-3 py-2 rounded-lg border hud-border text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 transition text-sm font-semibold"
+                >
+                  練習問題を開始
+                </Link>
+              </div>
+            </div>
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold hud-text mb-4">
                 🛩️ {generalMessages.tableOfContents}
@@ -90,7 +217,7 @@ function LearningPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
                   <div className="flex items-center">
-                    <Link to="/quiz" className="px-3 py-1 rounded-lg border hud-border text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 focus-visible:focus-hud transition font-semibold">
+                    <Link to="/test" className="px-3 py-1 rounded-lg border hud-border text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 focus-visible:focus-hud transition font-semibold">
                       2. Test
                     </Link>
                     <span className={`ml-2 text-[color:var(--text-primary)]`}>
@@ -114,19 +241,29 @@ function LearningPage() {
                 </p>
               )}
               {latestThreeCplArticles.map((content: LearningContent) => (
-                <Link
-                  key={content.id}
-                  to={`/articles/${content.id}`}
-                  className={`w-full text-left p-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out border hud-border hud-surface hover:bg-white/5 focus-visible:focus-hud`}>
-                  <h3 className="text-lg font-semibold hud-text">
-                    {content.title}
-                  </h3>
-                  {content.description && (
-                    <p className={`text-sm mt-2 text-[color:var(--text-primary)]`}>
-                      {content.description}
-                    </p>
-                  )}
-                </Link>
+                <div key={content.id} className={`w-full text-left p-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out border hud-border hud-surface hover:bg-white/5 focus-visible:focus-hud`}>
+                  <Link to={`/articles/${content.id}`} className="block">
+                    <h3 className="text-lg font-semibold hud-text">
+                      {content.title}
+                    </h3>
+                    {content.description && (
+                      <p className={`text-sm mt-2 text-[color:var(--text-primary)]`}>
+                        {content.description}
+                      </p>
+                    )}
+                  </Link>
+                  <div className="mt-4">
+                    <Link
+                      to={`/test?contentId=${encodeURIComponent(content.id)}&mode=practice&count=10`}
+                      className="inline-flex items-center px-4 py-2 rounded-lg border hud-border text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 transition font-semibold"
+                    >
+                      関連テストへ
+                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
               ))}
             </div>
 
@@ -159,7 +296,7 @@ function LearningPage() {
                   CPL航空法の理解度をクイズで確認しましょう。
                 </p>
                 <Link
-                  to="/quiz" // クイズページへのリンク
+                  to="/test" // クイズページへのリンク
                   className="inline-flex items-center px-6 py-3 rounded-xl border hud-border text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 transition font-semibold"
                 >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
