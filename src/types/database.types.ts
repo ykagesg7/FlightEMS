@@ -256,6 +256,7 @@ export interface Database {
           id: string
           title: string
           category: string
+          sub_category: string | null
           description: string | null
           order_index: number
           parent_id: string | null
@@ -268,6 +269,7 @@ export interface Database {
           id?: string
           title: string
           category: string
+          sub_category?: string | null
           description?: string | null
           order_index?: number
           parent_id?: string | null
@@ -280,6 +282,7 @@ export interface Database {
           id?: string
           title?: string
           category?: string
+          sub_category?: string | null
           description?: string | null
           order_index?: number
           parent_id?: string | null
