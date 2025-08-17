@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ArticleSearch from '../components/articles/ArticleSearch';
 import RelatedTestButton from '../components/learning/RelatedTestButton';
 import ReviewContentLink from '../components/learning/ReviewContentLink';
 import { QuizComponent } from '../components/QuizComponent';
@@ -30,19 +31,56 @@ function LearningPage() {
   const [learningState, setLearningState] = useState<LearningState>(LearningState.INTRODUCTION);
   const [quizUserAnswers, setQuizUserAnswers] = useState<UserQuizAnswer[]>([]);
 
-  // Filter and sort CPL aviation law contents
-  const cplAviationLawContents = useMemo(() => {
-    if (isLoading || error || !learningContents) {
-      return [];
-    }
+  // Lesson一覧のベース: 「CPL学科」配下の記事（航空法規/航空工学）
+  const cplLearningContents = useMemo(() => {
+    if (isLoading || error || !learningContents) return [];
     return learningContents
-      .filter((content: LearningContent) => content.category === 'CPL航空法')
+      .filter((content: LearningContent) => content.is_published && content.category === 'CPL学科')
       .sort((a: LearningContent, b: LearningContent) => (a.order_index || 0) - (b.order_index || 0));
   }, [learningContents, isLoading, error]);
 
-  const latestThreeCplArticles = useMemo(() => {
-    return cplAviationLawContents.slice(0, 3);
-  }, [cplAviationLawContents]);
+  const latestThreeCplArticles = useMemo(() => cplLearningContents.slice(0, 3), [cplLearningContents]);
+
+  // Articlesページ同等の検索/タグUI用状態
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // サブカテゴリ（タグ）候補。欠損時はIDから推定
+  const availableTags = useMemo(() => {
+    const tags = new Set<string>();
+    cplLearningContents.forEach((c) => {
+      if (c.sub_category) tags.add(c.sub_category);
+      else if (c.id.startsWith('3.1.')) tags.add('航空法規');
+      else if (c.id.startsWith('3.2.')) tags.add('航空工学');
+    });
+    return Array.from(tags).sort();
+  }, [cplLearningContents]);
+
+  // 正規化（かな統一/小文字化）
+  const normalizeText = (s: string) => {
+    const nk = s.normalize('NFKC').toLowerCase();
+    return nk.replace(/[\u30a1-\u30f6]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+  };
+
+  // 検索/タグでフィルタ
+  const filteredContents = useMemo(() => {
+    let filtered = cplLearningContents;
+    if (searchQuery.trim()) {
+      const q = normalizeText(searchQuery);
+      filtered = filtered.filter((c) =>
+        normalizeText(c.title).includes(q) ||
+        (c.description && normalizeText(c.description).includes(q)) ||
+        (c.sub_category && normalizeText(c.sub_category).includes(q))
+      );
+    }
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter((c) => {
+        const tag = c.sub_category || (c.id.startsWith('3.1.') ? '航空法規' : c.id.startsWith('3.2.') ? '航空工学' : '');
+        return selectedTags.includes(tag);
+      });
+    }
+    return filtered;
+  }, [cplLearningContents, searchQuery, selectedTags]);
 
   // 最近の閲覧（learning_progress）から直近を抽出
   useEffect(() => {
@@ -228,16 +266,24 @@ function LearningPage() {
               </div>
             </div>
 
-            {/* CPL航空法コンテンツの表示 */}
+            {/* 検索/タグ UI（Articlesページ準拠） */}
+            <div className="mb-8">
+              <h3 className="text-xl font-bold hud-text mb-4">学習記事を検索</h3>
+              <ArticleSearch
+                onSearch={(q) => setSearchQuery(q)}
+                onFilterChange={(tags) => setSelectedTags(tags)}
+                availableTags={availableTags}
+              />
+            </div>
+
+            {/* CPL学科コンテンツの表示 */}
             <div className="space-y-4">
-              <h3 className="text-xl font-bold hud-text mb-4">
-                CPL航空法：最新記事
-              </h3>
+              <h3 className="text-xl font-bold hud-text mb-4">CPL学科：最新記事</h3>
               {isLoading && <p className="text-center text-gray-500">コンテンツを読み込み中...</p>}
               {error && <p className="text-center text-red-500">コンテンツの読み込みに失敗しました。</p>}
-              {!isLoading && !error && cplAviationLawContents.length === 0 && (
+              {!isLoading && !error && cplLearningContents.length === 0 && (
                 <p className={`text-center ${theme === 'dark' ? 'text-gray-400' : 'text-slate-600'}`}>
-                  CPL航空法の記事が見つかりませんでした。
+                  CPL学科の記事が見つかりませんでした。
                 </p>
               )}
               {latestThreeCplArticles.map((content: LearningContent) => (
@@ -265,6 +311,28 @@ function LearningPage() {
                   </div>
                 </div>
               ))}
+
+              {/* フィルタ済み一覧 */}
+              <div className="mt-6 grid gap-4">
+                {filteredContents.map((content: LearningContent) => (
+                  <div key={`filtered-${content.id}`} className={`w-full text-left p-5 rounded-xl border hud-border hud-surface hover:bg-white/5 transition`}>
+                    <Link to={`/articles/${content.id}`} className="block">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-base font-semibold hud-text">{content.title}</h4>
+                        <span className="text-xs px-2 py-0.5 rounded-full border hud-border text-[color:var(--hud-primary)]">
+                          {content.sub_category || (content.id.startsWith('3.1.') ? '航空法規' : content.id.startsWith('3.2.') ? '航空工学' : 'CPL学科')}
+                        </span>
+                      </div>
+                      {content.description && (
+                        <p className="text-xs mt-2 text-[color:var(--text-primary)]">{content.description}</p>
+                      )}
+                    </Link>
+                  </div>
+                ))}
+                {filteredContents.length === 0 && (
+                  <p className="text-center text-sm text-[color:var(--text-muted)]">条件に一致する記事がありません。</p>
+                )}
+              </div>
             </div>
 
             {/* 全ての記事へのリンク */}
