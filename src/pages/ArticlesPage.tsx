@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import ArticleSearch from '../components/articles/ArticleSearch';
 import ArticleSection from '../components/articles/ArticleSection';
 import ArticleTabs from '../components/articles/ArticleTabs';
@@ -42,8 +42,10 @@ const articleCategoryMapping: { [key: string]: string } = {
 };
 
 function ArticlesPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get('category');
+  const searchFromUrl = searchParams.get('q') || '';
+  const tagsFromUrl = searchParams.get('tags') || '';
 
 
   const { learningContents, isLoading, loadLearningContents } = useLearningProgress();
@@ -67,9 +69,9 @@ function ArticlesPage() {
   } | null>(null);
 
   // 新しい状態管理
-  const [activeCategory, setActiveCategory] = useState<string>('メンタリティー');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string>(categoryFromUrl ? (articleCategoryMapping[categoryFromUrl] || 'すべて') : 'メンタリティー');
+  const [searchQuery, setSearchQuery] = useState(searchFromUrl);
+  const [selectedTags, setSelectedTags] = useState<string[]>(tagsFromUrl ? tagsFromUrl.split(',').filter(Boolean) : []);
 
   // ソーシャル機能のフック
   const { stats, comments, loadArticleStats, loadComments, createComment, recordView } =
@@ -177,6 +179,32 @@ function ArticlesPage() {
     .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
     .slice(0, 3);
 
+  // URL 同期（カテゴリ / 検索 / タグ）
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    // カテゴリ: 表示名 → キー
+    const categoryKey = Object.keys(articleCategoryMapping).find(
+      (k) => articleCategoryMapping[k] === activeCategory
+    );
+    if (activeCategory && activeCategory !== 'すべて' && categoryKey) {
+      params.set('category', categoryKey);
+    } else {
+      params.delete('category');
+    }
+    if (searchQuery && searchQuery.trim()) {
+      params.set('q', searchQuery.trim());
+    } else {
+      params.delete('q');
+    }
+    if (selectedTags.length > 0) {
+      params.set('tags', selectedTags.join(','));
+    } else {
+      params.delete('tags');
+    }
+    setSearchParams(params, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCategory, searchQuery, selectedTags]);
+
   if (selectedTab) {
     return (
       <div className="min-h-screen flex flex-col relative" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
@@ -221,7 +249,7 @@ function ArticlesPage() {
           <nav className="mb-4">
             <ol className="flex items-center space-x-2 text-sm hud-text">
               <li>
-                <a href="/articles" className={`hover:underline hud-text`}>📚 記事一覧</a>
+                <Link to="/articles" className={`hover:underline hud-text`}>📚 記事一覧</Link>
               </li>
               <li className="hud-text">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

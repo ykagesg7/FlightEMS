@@ -25,13 +25,13 @@ CREATE TABLE learning_contents (
 
 -- バックアップからデータを復元（必要に応じて型変換）
 INSERT INTO learning_contents (
-  id, title, category, description, 
-  order_index, parent_id, content_type, 
+  id, title, category, description,
+  order_index, parent_id, content_type,
   created_at, updated_at
 )
-SELECT 
-  id::TEXT, title, category, description, 
-  order_index, parent_id::TEXT, content_type, 
+SELECT
+  id::TEXT, title, category, description,
+  order_index, parent_id::TEXT, content_type,
   created_at, updated_at
 FROM learning_contents_backup;
 
@@ -56,4 +56,8 @@ CREATE POLICY "学習コンテンツ管理許可（教師）" ON learning_conten
   );
 
 -- 不要になったバックアップテーブルを削除（オプション）
--- DROP TABLE learning_contents_backup; 
+DROP TABLE IF EXISTS public.learning_contents_backup;
+
+-- ビューを呼び出し元権限で実行
+ALTER VIEW IF EXISTS public.v_mapped_questions SET (security_invoker = on);
+-- DROP TABLE learning_contents_backup;

@@ -121,3 +121,28 @@
     }
   }
 }
+
+/* Sticky header offsets and accessibility */
+:root {
+  --header-h: 72px;
+}
+
+html {
+  scroll-padding-top: var(--header-h);
+}
+
+:where(h1, h2, h3, h4, h5, h6)[id] {
+  scroll-margin-top: var(--header-h);
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  :root {
+    --safe-top: env(safe-area-inset-top);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}

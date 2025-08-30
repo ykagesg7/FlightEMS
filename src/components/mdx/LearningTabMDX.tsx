@@ -4,9 +4,15 @@ import { useSearchParams } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useFreemiumAccess } from '../../hooks/useFreemiumAccess';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
-import { useAuthStore } from '../../stores/authStore';
+// import { useAuthStore } from '../../stores/authStore';
 
-import LearningAnalyticsDashboard from '../learning/LearningAnalyticsDashboard';
+import { KeyboardShortcuts } from '../articles/KeyboardShortcuts';
+import { PrevNextNav } from '../articles/PrevNextNav';
+import { ReadingProgressBar } from '../articles/ReadingProgressBar';
+import { ScrollToButtons } from '../articles/ScrollToButtons';
+import { usePrevNext } from '../articles/usePrevNext';
+// Legacy dashboard was removed; analytics dashboard not used here anymore
+// import LearningAnalyticsDashboard from '../learning/LearningAnalyticsDashboard';
 import MDXLoader from './MDXLoader';
 
 // カテゴリキーと表示名のマッピング
@@ -58,7 +64,8 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
   const [selectedContent, setSelectedContent] = useState<string | null>(contentId && contentId.trim() !== '' ? contentId : null);
 
   const { theme } = useTheme();
-  const { user } = useAuthStore();
+  // Legacy dashboard removed; user is no longer needed here
+  // const { user } = useAuthStore();
 
   const {
     getProgress,
@@ -105,10 +112,12 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
     }
   }, [contentId, categoryFromUrl]);
 
-  // カテゴリ一覧
-  const categories = useMemo(() => {
-    return Array.from(new Set(displayContents.map(content => content.category))).sort();
-  }, [displayContents]);
+  const { prev, next } = usePrevNext(selectedContent ?? '');
+
+  // カテゴリ一覧（legacy dashboard removed; not used）
+  // const categories = useMemo(() => {
+  //   return Array.from(new Set(displayContents.map(content => content.category))).sort();
+  // }, [displayContents]);
 
   // カテゴリ別フィルタリング
   const filteredContents = useMemo(() => {
@@ -168,6 +177,32 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
     }
   };
 
+  // Articles/Learning 双方で「記事一覧」または親一覧へ戻す
+  const handleHomeClick = () => {
+    if (onBackToList) {
+      onBackToList();
+      return;
+    }
+    if (contentType === 'learning') {
+      try {
+        window.location.href = '/learning';
+      } catch {
+        // no-op
+      }
+      return;
+    }
+    if (contentType === 'articles') {
+      try {
+        window.location.href = '/articles';
+      } catch {
+        // no-op
+      }
+      return;
+    }
+    // 最後のフォールバック（理論上到達しない）
+    setCurrentView('category');
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -178,91 +213,6 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
 
   return (
     <div className="w-full mx-auto">
-      {/* ホームページ */}
-      {currentView === 'home' && (
-        <div>
-          <h1 className="text-2xl font-bold mb-4">学習ダッシュボード</h1>
-          <p className="mb-4">学習コンテンツを効率的に管理・追跡できるダッシュボードです。</p>
-
-          {/* 学習分析ダッシュボード（ログインユーザー向け） */}
-          {user && (
-            <div className="mb-8">
-              <LearningAnalyticsDashboard />
-            </div>
-          )}
-
-          {/* 最新記事お知らせ */}
-          <div className="mb-8">
-            <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'} mb-4`}>
-              📢 最新記事のお知らせ
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {displayContents.slice(0, 3).map((content) => (
-                <div
-                  key={content.id}
-                  className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'} hover:border-indigo-500 transition-all duration-200`}
-                >
-                  <h3 className={`font-semibold text-lg ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'} mb-2`}>
-                    {content.title}
-                  </h3>
-                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
-                    カテゴリ: {content.category}
-                  </p>
-                  <button
-                    onClick={() => selectContent(content.id)}
-                    className={`text-xs px-3 py-2 ${theme === 'dark'
-                      ? 'bg-indigo-600 text-white hover:bg-indigo-500'
-                      : 'bg-indigo-500 text-white hover:bg-indigo-400'
-                      } rounded transition-colors duration-200`}
-                  >
-                    読む
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* カテゴリ別学習開始 */}
-          <div>
-            <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'} mb-4`}>
-              📚 カテゴリ別学習
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {categories.map((category) => {
-                const categoryContents = displayContents.filter(c => c.category === category);
-                const completedCount = categoryContents.filter(c => isCompleted(c.id)).length;
-                const progressRate = categoryContents.length > 0 ? (completedCount / categoryContents.length) * 100 : 0;
-
-                return (
-                  <div
-                    key={category}
-                    className={`p-6 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'} hover:border-indigo-500 transition-all duration-200 cursor-pointer`}
-                    onClick={() => navigateToCategory(category)}
-                  >
-                    <h3 className={`font-bold text-xl ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'} mb-2`}>
-                      {category}
-                    </h3>
-                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
-                      {categoryContents.length}記事
-                    </p>
-
-                    {/* 進捗バー */}
-                    <div className="w-full bg-gray-300 rounded-full h-2 mb-3">
-                      <div
-                        className="bg-indigo-600 h-2 rounded-full"
-                        style={{ width: `${progressRate}%` }}
-                      ></div>
-                    </div>
-                    <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      進捗率: {Math.round(progressRate)}% ({completedCount}/{categoryContents.length})
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* カテゴリページ */}
       {currentView === 'category' && selectedCategory && (
@@ -270,10 +220,10 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
           {/* パンくずナビゲーション */}
           <div className="flex items-center space-x-2 mb-6">
             <button
-              onClick={navigateToHome}
+              onClick={handleHomeClick}
               className={`text-sm ${theme === 'dark' ? 'text-indigo-300 hover:text-indigo-200' : 'text-indigo-600 hover:text-indigo-500'} transition-colors duration-200`}
             >
-              ホーム
+              {contentType === 'articles' ? '記事一覧' : 'ホーム'}
             </button>
             <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
               &gt;
@@ -347,13 +297,13 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
             <div className={`text-center py-12 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
               <p className="text-lg">このカテゴリにはまだコンテンツがありません。</p>
               <button
-                onClick={navigateToHome}
+                onClick={handleHomeClick}
                 className={`mt-4 px-6 py-2 ${theme === 'dark'
                   ? 'bg-indigo-600 text-white hover:bg-indigo-500'
                   : 'bg-indigo-500 text-white hover:bg-indigo-400'
                   } rounded transition-colors duration-200`}
               >
-                ホームに戻る
+                {contentType === 'articles' ? '記事一覧に戻る' : 'ホームに戻る'}
               </button>
             </div>
           )}
@@ -366,10 +316,10 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
           {/* パンくずナビゲーション */}
           <div className="flex items-center space-x-2 mb-6">
             <button
-              onClick={navigateToHome}
+              onClick={handleHomeClick}
               className={`text-sm ${theme === 'dark' ? 'text-indigo-300 hover:text-indigo-200' : 'text-indigo-600 hover:text-indigo-500'} transition-colors duration-200`}
             >
-              ホーム
+              {contentType === 'articles' ? '記事一覧' : 'ホーム'}
             </button>
             {selectedCategory && (
               <>
@@ -392,7 +342,11 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
             </span>
           </div>
 
+          <ReadingProgressBar contentId={selectedContent} />
           <MDXLoader contentId={selectedContent} />
+          <PrevNextNav currentId={selectedContent} />
+          <ScrollToButtons />
+          <KeyboardShortcuts prevId={prev?.id} nextId={next?.id} />
         </div>
       )}
     </div>

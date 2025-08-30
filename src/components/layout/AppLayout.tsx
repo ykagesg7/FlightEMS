@@ -1,11 +1,13 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useHideOnScroll } from '../../hooks/useHideOnScroll';
+import { useAuthStore } from '../../stores/authStore';
 import { AuthButton } from '../auth/AuthButton';
 import { HUDTimeDisplay } from '../ui/HUDDashboard';
 import ProgressIndicator from '../ui/ProgressIndicator';
 import { ThemeToggler } from '../ui/ThemeToggler';
+import { HeaderSkeleton } from './HeaderSkeleton';
 
 const learningCategories = [
   { name: '航空法規', key: 'aviation-law', icon: '' },
@@ -19,6 +21,9 @@ export const AppLayout: React.FC = () => {
   const [learningDropdownOpen, setLearningDropdownOpen] = useState(false);
   const { effectiveTheme } = useTheme();
   const navigate = useNavigate();
+  const headerRef = useRef<HTMLElement | null>(null);
+  const hidden = useHideOnScroll();
+  const loading = useAuthStore(s => s.loading);
 
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
@@ -32,97 +37,85 @@ export const AppLayout: React.FC = () => {
     return () => document.removeEventListener('mousedown', onDown);
   }, [learningDropdownOpen]);
 
+  useEffect(() => {
+    const setVar = () => {
+      const h = headerRef.current?.offsetHeight ?? 0;
+      document.documentElement.style.setProperty('--header-h', `${h}px`);
+    };
+    setVar();
+    const ro = new ResizeObserver(setVar);
+    if (headerRef.current) ro.observe(headerRef.current);
+    window.addEventListener('resize', setVar);
+    return () => {
+      window.removeEventListener('resize', setVar);
+      ro.disconnect();
+    };
+  }, []);
+
   return (
     <div className={`min-h-screen ${effectiveTheme === 'day' ? 'bg-[#14213d]' : 'bg-black'} text-gray-100`}>
-      <header className="border-b border-gray-700 bg-[color:var(--bg)]">
-        <div className="container mx-auto px-4 py-4">
-          <div className="hidden md:flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-extrabold tracking-wider hud-text">FLIGHT ACADEMY</h1>
-              <HUDTimeDisplay />
-            </div>
-            <div className="flex items-center gap-8">
+      <header
+        ref={headerRef}
+        className={`sticky top-0 z-50 border-b border-gray-700 bg-[color:var(--bg)]/80 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--bg)]/60 transition-transform duration-200 ${hidden ? '-translate-y-full' : 'translate-y-0'}`}
+      >
+        {loading ? (
+          <HeaderSkeleton />
+        ) : (
+          <div className="container mx-auto px-4 py-4">
+            <div className="hidden md:flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <NavLink to="/" className="px-4 py-2 rounded-lg hover:bg-white/10 text-white">
-                  <span className="hud-text">PLANNING</span>
-                </NavLink>
-                <NavLink to="/articles" className="px-4 py-2 rounded-lg hover:bg-white/10 text-white">
-                  <span className="hud-text">ARTICLES</span>
-                </NavLink>
-                <div className="relative group">
-                  <DropdownMenu.Root open={learningDropdownOpen} onOpenChange={setLearningDropdownOpen}>
-                    <DropdownMenu.Trigger asChild>
-                      <button className="px-4 py-2 rounded-lg hover:bg-white/10 text-white focus-visible:focus-hud flex items-center gap-1">
-                        <span className="hud-text">LESSONS</span>
-                        <svg className={`w-4 h-4 transition-transform ${learningDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                    </DropdownMenu.Trigger>
-                    <DropdownMenu.Content sideOffset={6} className="mt-1 w-64 bg-black/90 rounded-xl shadow-2xl border border-gray-200/20 dark:border-gray-700/50 backdrop-blur-sm z-50 overflow-hidden">
-                      <div className="p-2">
-                        <div className="text-xs font-semibold px-3 py-2 uppercase tracking-wider text-gray-500 dark:text-gray-400">Categories</div>
-                        {learningCategories.map((c) => (
-                          <DropdownMenu.Item key={c.key} asChild>
-                            <button
-                              onClick={() => { setLearningDropdownOpen(false); navigate(`/learning?category=${c.key}`); }}
-                              className="w-full text-left px-3 py-3 rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30 focus-visible:focus-hud"
-                            >
-                              <div className="flex items-center gap-3">
-                                <span className="text-lg">{c.icon}</span>
-                                <span className="text-gray-300 group-hover:text-indigo-400 transition-colors">{c.name}</span>
-                              </div>
-                            </button>
-                          </DropdownMenu.Item>
-                        ))}
-                      </div>
-                      <div className="p-2 border-t border-gray-200/20 dark:border-gray-700/50">
-                        <DropdownMenu.Item asChild>
-                          <NavLink to="/learning" onClick={() => setLearningDropdownOpen(false)} className="block w-full text-left px-3 py-2 text-sm font-medium hud-text hover:bg-white/5 rounded-lg">
-                            ALL
-                          </NavLink>
-                        </DropdownMenu.Item>
-                      </div>
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Root>
-                </div>
-                <NavLink to="/test" className="px-4 py-2 rounded-lg hover:bg-white/10 text-white">
-                  <span className="hud-text">TEST</span>
-                </NavLink>
+                <h1 className="text-2xl font-extrabold tracking-wider hud-text">FLIGHT ACADEMY</h1>
+                <HUDTimeDisplay />
               </div>
-              <div className="flex items-center gap-4">
-                <ProgressIndicator />
+              <div className="flex items-center gap-8">
+                <div className="flex items-center gap-4">
+                  <NavLink to="/" className="px-4 py-2 rounded-lg hover:bg-white/10 text-white">
+                    <span className="hud-text">PLANNING</span>
+                  </NavLink>
+                  <NavLink to="/articles" className="px-4 py-2 rounded-lg hover:bg-white/10 text-white">
+                    <span className="hud-text">ARTICLES</span>
+                  </NavLink>
+                  <NavLink to="/learning" className="px-4 py-2 rounded-lg hover:bg-white/10 text-white">
+                    <span className="hud-text">LESSONS</span>
+                  </NavLink>
+                  <NavLink to="/test" className="px-4 py-2 rounded-lg hover:bg-white/10 text-white">
+                    <span className="hud-text">TEST</span>
+                  </NavLink>
+                </div>
+                <div className="flex items-center gap-4">
+                  <ProgressIndicator />
+                  <ThemeToggler />
+                  <AuthButton iconOnly />
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Header (md:hidden) */}
+            <div className="md:hidden flex items-center justify-between">
+              <h1 className="text-lg font-bold tracking-wider hud-text">FLIGHT ACADEMY</h1>
+              <div className="flex items-center gap-3">
                 <ThemeToggler />
                 <AuthButton iconOnly />
               </div>
             </div>
-          </div>
-
-          {/* Mobile Header (md:hidden) */}
-          <div className="md:hidden flex items-center justify-between">
-            <h1 className="text-lg font-bold tracking-wider hud-text">FLIGHT ACADEMY</h1>
-            <div className="flex items-center gap-3">
-              <ThemeToggler />
-              <AuthButton iconOnly />
+            <div className="md:hidden mt-3 -mx-2 px-2 overflow-x-auto whitespace-nowrap">
+              <nav className="flex gap-2">
+                <NavLink to="/" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
+                  <span className="hud-text">PLANNING</span>
+                </NavLink>
+                <NavLink to="/articles" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
+                  <span className="hud-text">ARTICLES</span>
+                </NavLink>
+                <NavLink to="/learning" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
+                  <span className="hud-text">LESSONS</span>
+                </NavLink>
+                <NavLink to="/test" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
+                  <span className="hud-text">TEST</span>
+                </NavLink>
+              </nav>
             </div>
           </div>
-          <div className="md:hidden mt-3 -mx-2 px-2 overflow-x-auto whitespace-nowrap">
-            <nav className="flex gap-2">
-              <NavLink to="/" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
-                <span className="hud-text">PLANNING</span>
-              </NavLink>
-              <NavLink to="/articles" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
-                <span className="hud-text">ARTICLES</span>
-              </NavLink>
-              <NavLink to="/learning" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
-                <span className="hud-text">LESSONS</span>
-              </NavLink>
-              <NavLink to="/test" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
-                <span className="hud-text">TEST</span>
-              </NavLink>
-            </nav>
-          </div>
-        </div>
+        )}
       </header>
 
       <main className="flex-1">

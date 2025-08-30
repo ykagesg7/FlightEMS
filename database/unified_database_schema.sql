@@ -394,6 +394,9 @@ JOIN unnest(ltm.unified_cpl_question_ids) WITH ORDINALITY AS qid(question_id, or
 JOIN unified_cpl_questions ucq ON ucq.id = qid.question_id
 WHERE ltm.verification_status = 'verified';
 
+-- セキュリティ: ビューは呼び出し元権限で実行（RLSを尊重）
+ALTER VIEW public.v_mapped_questions SET (security_invoker = on);
+
 -- インデックス作成
 CREATE INDEX IF NOT EXISTS idx_learning_contents_category ON learning_contents(category);
 CREATE INDEX IF NOT EXISTS idx_learning_contents_sub_category ON learning_contents(sub_category);

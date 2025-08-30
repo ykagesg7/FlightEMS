@@ -10,6 +10,7 @@ import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
 
 // Enhanced Error Boundary and Layout
 import { AppLayout } from './components/layout/AppLayout';
+import ScrollManager from './components/ScrollManager';
 import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 
 // ページのlazyインポート
@@ -59,6 +60,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <AppProviders>
+        <ScrollManager />
         <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
           <Routes>
             <Route path="/" element={<AppLayout />}>

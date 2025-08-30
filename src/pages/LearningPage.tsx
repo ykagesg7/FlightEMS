@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import ArticleSearch from '../components/articles/ArticleSearch';
+import { Link, useSearchParams } from 'react-router-dom';
+import FilterTabs from '../components/common/FilterTabs';
+import SearchAndTags from '../components/common/SearchAndTags';
 import RelatedTestButton from '../components/learning/RelatedTestButton';
 import ReviewContentLink from '../components/learning/ReviewContentLink';
+import LessonCard from '../components/lessons/LessonCard';
 import { QuizComponent } from '../components/QuizComponent';
 import { APP_CONTENT } from '../constants';
 import { useTheme } from '../contexts/ThemeContext';
@@ -20,8 +22,9 @@ enum LearningState {
 function LearningPage() {
   const { theme } = useTheme();
   const { quizTitle, quizQuestions, generalMessages } = APP_CONTENT;
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { learningContents, isLoading, error, userProgress } = useLearningProgress();
+  const { learningContents, isLoading, error, userProgress, getProgress } = useLearningProgress();
 
   // ダッシュボード用の実データ状態
   const [srsCount, setSrsCount] = useState<number | null>(null);
@@ -31,7 +34,7 @@ function LearningPage() {
   const [learningState, setLearningState] = useState<LearningState>(LearningState.INTRODUCTION);
   const [quizUserAnswers, setQuizUserAnswers] = useState<UserQuizAnswer[]>([]);
 
-  // Lesson一覧のベース: 「CPL学科」配下の記事（航空法規/航空工学）
+  // Lesson一覧のベース: 「CPL学科」配下の記事（航空法規/航空工学/航空気象）
   const cplLearningContents = useMemo(() => {
     if (isLoading || error || !learningContents) return [];
     return learningContents
@@ -41,9 +44,25 @@ function LearningPage() {
 
   const latestThreeCplArticles = useMemo(() => cplLearningContents.slice(0, 3), [cplLearningContents]);
 
-  // Articlesページ同等の検索/タグUI用状態
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  // タブ（カテゴリ）と検索/タグ（URL同期）
+  const categoryFromUrl = searchParams.get('category') || '';
+  const categoryKeyToLabel: Record<string, string> = {
+    'aviation-law': '航空法規',
+    'engineering': '航空工学',
+    'weather': '航空気象',
+  };
+  const labelToCategoryKey: Record<string, string> = {
+    '航空法規': 'aviation-law',
+    '航空工学': 'engineering',
+    '航空気象': 'weather',
+  };
+  const allLessonCategories = ['すべて', '航空法規', '航空工学', '航空気象'];
+  const [activeCategory, setActiveCategory] = useState<string>(categoryKeyToLabel[categoryFromUrl] || 'すべて');
+
+  const searchFromUrl = searchParams.get('q') || '';
+  const tagsFromUrl = searchParams.get('tags') || '';
+  const [searchQuery, setSearchQuery] = useState(searchFromUrl);
+  const [selectedTags, setSelectedTags] = useState<string[]>(tagsFromUrl ? tagsFromUrl.split(',').filter(Boolean) : []);
 
   // サブカテゴリ（タグ）候補。欠損時はIDから推定
   const availableTags = useMemo(() => {
@@ -52,6 +71,7 @@ function LearningPage() {
       if (c.sub_category) tags.add(c.sub_category);
       else if (c.id.startsWith('3.1.')) tags.add('航空法規');
       else if (c.id.startsWith('3.2.')) tags.add('航空工学');
+      else if (c.id.startsWith('3.3.')) tags.add('航空気象');
     });
     return Array.from(tags).sort();
   }, [cplLearningContents]);
@@ -62,9 +82,20 @@ function LearningPage() {
     return nk.replace(/[\u30a1-\u30f6]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0x60));
   };
 
-  // 検索/タグでフィルタ
+  // カテゴリ判定（IDから推定）
+  const detectSubject = (id: string): string => {
+    if (id.startsWith('3.1.')) return '航空法規';
+    if (id.startsWith('3.2.')) return '航空工学';
+    if (id.startsWith('3.3.')) return '航空気象';
+    return '';
+  };
+
+  // カテゴリ→検索/タグの順でフィルタ
   const filteredContents = useMemo(() => {
     let filtered = cplLearningContents;
+    if (activeCategory !== 'すべて') {
+      filtered = filtered.filter((c) => (c.sub_category || detectSubject(c.id)) === activeCategory || detectSubject(c.id) === activeCategory);
+    }
     if (searchQuery.trim()) {
       const q = normalizeText(searchQuery);
       filtered = filtered.filter((c) =>
@@ -75,12 +106,30 @@ function LearningPage() {
     }
     if (selectedTags.length > 0) {
       filtered = filtered.filter((c) => {
-        const tag = c.sub_category || (c.id.startsWith('3.1.') ? '航空法規' : c.id.startsWith('3.2.') ? '航空工学' : '');
+        const tag =
+          c.sub_category ||
+          (c.id.startsWith('3.1.')
+            ? '航空法規'
+            : c.id.startsWith('3.2.')
+              ? '航空工学'
+              : c.id.startsWith('3.3.')
+                ? '航空気象'
+                : '');
         return selectedTags.includes(tag);
       });
     }
     return filtered;
-  }, [cplLearningContents, searchQuery, selectedTags]);
+  }, [cplLearningContents, activeCategory, searchQuery, selectedTags]);
+
+  // URL 同期（カテゴリ/検索/タグ）
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (activeCategory && activeCategory !== 'すべて') params.set('category', labelToCategoryKey[activeCategory] || ''); else params.delete('category');
+    if (searchQuery && searchQuery.trim()) params.set('q', searchQuery.trim()); else params.delete('q');
+    if (selectedTags.length > 0) params.set('tags', selectedTags.join(',')); else params.delete('tags');
+    setSearchParams(params, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCategory, searchQuery, selectedTags]);
 
   // 最近の閲覧（learning_progress）から直近を抽出
   useEffect(() => {
@@ -142,13 +191,17 @@ function LearningPage() {
           agg[subj].total += 1;
           if (r.is_correct) agg[subj].correct += 1;
         });
-        let best: { subj: string; acc: number; total: number } | null = null;
-        Object.entries(agg).forEach(([subj, v]) => {
+        let bestSubj: string | null = null;
+        let bestAcc = Number.POSITIVE_INFINITY;
+        Object.entries(agg as Record<string, { total: number; correct: number }>).forEach(([subj, v]) => {
           if (v.total < 5) return; // 最低試行数
           const acc = v.correct / v.total;
-          if (!best || acc < best.acc) best = { subj, acc, total: v.total };
+          if (acc < bestAcc) {
+            bestAcc = acc;
+            bestSubj = subj;
+          }
         });
-        setRecommendedSubject(best ? best.subj : null);
+        setRecommendedSubject(bestSubj);
       } catch {
         setRecommendedSubject(null);
       }
@@ -181,6 +234,7 @@ function LearningPage() {
       case LearningState.INTRODUCTION:
         return (
           <div className={`hud-surface border hud-border p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn`}>
+
             {/* ダッシュボード: 今日の復習 / 続きから / おすすめ */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               <div className="p-4 rounded-xl hud-surface border hud-border">
@@ -229,50 +283,26 @@ function LearningPage() {
                 </Link>
               </div>
             </div>
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold hud-text mb-4">
-                🛩️ {generalMessages.tableOfContents}
-              </h2>
-              <p className={`text-lg leading-relaxed mb-6 text-[color:var(--text-primary)]`}>
-                {generalMessages.appOverview}
-              </p>
 
-              {/* Learning → Test フロー説明 */}
-              <div className={`p-5 rounded-xl mb-6 hud-surface border hud-border`}>
-                <h3 className="text-lg font-semibold hud-text mb-2">
-                  📚 学習フロー
-                </h3>
-                <div className="flex items-center justify-center space-x-4 text-sm">
-                  <div className="flex items-center">
-                    <span className="px-3 py-1 rounded-full font-semibold border hud-border hud-text">
-                      1. Learning
-                    </span>
-                    <span className={`ml-2 text-[color:var(--text-primary)]`}>
-                      知識インプット
-                    </span>
-                  </div>
-                  <svg className={`w-6 h-6 hud-text`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                  <div className="flex items-center">
-                    <Link to="/test" className="px-3 py-1 rounded-lg border hud-border text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 focus-visible:focus-hud transition font-semibold">
-                      2. Test
-                    </Link>
-                    <span className={`ml-2 text-[color:var(--text-primary)]`}>
-                      知識確認
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 検索/タグ UI（Articlesページ準拠） */}
+            {/* タブ＋検索/タグ（URL同期） */}
             <div className="mb-8">
+              <div className="mb-4" role="region" aria-labelledby="tabs-lessons">
+                <h2 id="tabs-lessons" className="sr-only">レッスンカテゴリ</h2>
+                <FilterTabs
+                  categories={allLessonCategories}
+                  activeCategory={activeCategory}
+                  onCategoryChange={setActiveCategory}
+                  ariaLabel="レッスンカテゴリ"
+                />
+              </div>
               <h3 className="text-xl font-bold hud-text mb-4">学習記事を検索</h3>
-              <ArticleSearch
+              <SearchAndTags
+                placeholder="学習記事を検索..."
+                availableTags={availableTags}
+                value={searchQuery}
+                tags={selectedTags}
                 onSearch={(q) => setSearchQuery(q)}
                 onFilterChange={(tags) => setSelectedTags(tags)}
-                availableTags={availableTags}
               />
             </div>
 
@@ -287,47 +317,13 @@ function LearningPage() {
                 </p>
               )}
               {latestThreeCplArticles.map((content: LearningContent) => (
-                <div key={content.id} className={`w-full text-left p-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out border hud-border hud-surface hover:bg-white/5 focus-visible:focus-hud`}>
-                  <Link to={`/articles/${content.id}`} className="block">
-                    <h3 className="text-lg font-semibold hud-text">
-                      {content.title}
-                    </h3>
-                    {content.description && (
-                      <p className={`text-sm mt-2 text-[color:var(--text-primary)]`}>
-                        {content.description}
-                      </p>
-                    )}
-                  </Link>
-                  <div className="mt-4">
-                    <Link
-                      to={`/test?contentId=${encodeURIComponent(content.id)}&mode=practice&count=10`}
-                      className="inline-flex items-center px-4 py-2 rounded-lg border hud-border text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 transition font-semibold"
-                    >
-                      関連テストへ
-                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </Link>
-                  </div>
-                </div>
+                <LessonCard key={content.id} content={content} progressPercent={getProgress(content.id)} />
               ))}
 
               {/* フィルタ済み一覧 */}
               <div className="mt-6 grid gap-4">
                 {filteredContents.map((content: LearningContent) => (
-                  <div key={`filtered-${content.id}`} className={`w-full text-left p-5 rounded-xl border hud-border hud-surface hover:bg-white/5 transition`}>
-                    <Link to={`/articles/${content.id}`} className="block">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-base font-semibold hud-text">{content.title}</h4>
-                        <span className="text-xs px-2 py-0.5 rounded-full border hud-border text-[color:var(--hud-primary)]">
-                          {content.sub_category || (content.id.startsWith('3.1.') ? '航空法規' : content.id.startsWith('3.2.') ? '航空工学' : 'CPL学科')}
-                        </span>
-                      </div>
-                      {content.description && (
-                        <p className="text-xs mt-2 text-[color:var(--text-primary)]">{content.description}</p>
-                      )}
-                    </Link>
-                  </div>
+                  <LessonCard key={`filtered-${content.id}`} content={content} progressPercent={getProgress(content.id)} />
                 ))}
                 {filteredContents.length === 0 && (
                   <p className="text-center text-sm text-[color:var(--text-muted)]">条件に一致する記事がありません。</p>
