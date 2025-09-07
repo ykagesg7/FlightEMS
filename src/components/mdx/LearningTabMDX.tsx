@@ -344,7 +344,7 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
 
           <ReadingProgressBar contentId={selectedContent} />
           <MDXLoader contentId={selectedContent} />
-          <PrevNextNav currentId={selectedContent} />
+          <PrevNextNav currentId={selectedContent} listPath={contentType === 'articles' ? '/articles' : '/learning'} />
           <ScrollToButtons />
           <KeyboardShortcuts prevId={prev?.id} nextId={next?.id} />
         </div>

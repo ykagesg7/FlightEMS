@@ -11,7 +11,7 @@ function prefetchMDX(id: string) {
   } catch { }
 }
 
-export const PrevNextNav: React.FC<{ currentId: string }> = ({ currentId }) => {
+export const PrevNextNav: React.FC<{ currentId: string; listPath?: string }> = ({ currentId, listPath = '/articles' }) => {
   const { learningContents } = useLearningProgress();
   const navigate = useNavigate();
 
@@ -49,7 +49,7 @@ export const PrevNextNav: React.FC<{ currentId: string }> = ({ currentId }) => {
         </div>
         <button
           aria-label="記事一覧へ"
-          onClick={() => navigate('/articles')}
+          onClick={() => navigate(listPath)}
           className="px-3 py-2 rounded-md border hud-border hud-surface hud-text text-sm"
         >
           一覧

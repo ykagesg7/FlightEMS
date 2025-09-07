@@ -29,7 +29,7 @@ const ArticleDetailPage: React.FC = () => {
           <Link to="/articles" className="text-sm text-[color:var(--hud-primary)] underline">← 記事一覧へ</Link>
         </div>
         <MDXLoader contentId={contentId} />
-        <PrevNextNav currentId={contentId} />
+        <PrevNextNav currentId={contentId} listPath="/articles" />
       </div>
       <ScrollToButtons />
       <KeyboardShortcuts prevId={prev?.id} nextId={next?.id} />

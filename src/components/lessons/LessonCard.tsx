@@ -29,7 +29,7 @@ const LessonCard: React.FC<LessonCardProps> = ({ content, progressPercent }) => 
       role="article"
       aria-label={`${content.title}`}
     >
-      <Link to={`/articles/${content.id}`} className="block">
+      <Link to={`/learning/${content.id}`} className="block">
         <div className="flex items-center justify-between">
           <h4 className="text-base font-semibold hud-text">{content.title}</h4>
           <span className="text-xs px-2 py-0.5 rounded-full border hud-border text-[color:var(--hud-primary)]">

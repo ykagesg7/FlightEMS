@@ -16,6 +16,7 @@ import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 // ページのlazyインポート
 const PlanningMapPage = lazy(() => import('./pages/PlanningMapPage'));
 const LearningPage = lazy(() => import('./pages/LearningPage'));
+const LessonDetailPage = lazy(() => import('./pages/LessonDetailPage'));
 const ArticlesPage = lazy(() => import('./pages/ArticlesPage'));
 const ArticleDetailPage = lazy(() => import('./pages/ArticleDetailPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
@@ -66,6 +67,7 @@ const App: React.FC = () => {
             <Route path="/" element={<AppLayout />}>
               <Route index element={<PlanningMapPage />} />
               <Route path="learning" element={<LearningPage />} />
+              <Route path="learning/:contentId" element={<LessonDetailPage />} />
               <Route path="articles" element={<ArticlesPage />} />
               <Route path="articles/:contentId" element={<ArticleDetailPage />} />
               <Route path="profile" element={<ProfilePage />} />
