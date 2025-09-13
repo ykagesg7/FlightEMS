@@ -14,6 +14,7 @@ import ScrollManager from './components/ScrollManager';
 import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 
 // ページのlazyインポート
+const HomePage = lazy(() => import('./pages/HomePage'));
 const PlanningMapPage = lazy(() => import('./pages/PlanningMapPage'));
 const LearningPage = lazy(() => import('./pages/LearningPage'));
 const LessonDetailPage = lazy(() => import('./pages/LessonDetailPage'));
@@ -66,7 +67,8 @@ const App: React.FC = () => {
         <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
           <Routes>
             <Route path="/" element={<AppLayout />}>
-              <Route index element={<PlanningMapPage />} />
+              <Route index element={<HomePage />} />
+              <Route path="planning" element={<PlanningMapPage />} />
               <Route path="learning" element={<LearningPage />} />
               <Route path="learning/:contentId" element={<LessonDetailPage />} />
               <Route path="articles" element={<ArticlesPage />} />

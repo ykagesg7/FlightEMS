@@ -70,6 +70,9 @@ export const AppLayout: React.FC = () => {
               <div className="flex items-center gap-8">
                 <div className="flex items-center gap-4">
                   <NavLink to="/" className="px-4 py-2 rounded-lg hover:bg-white/10 text-white">
+                    <span className="hud-text">HOME</span>
+                  </NavLink>
+                  <NavLink to="/planning" className="px-4 py-2 rounded-lg hover:bg-white/10 text-white">
                     <span className="hud-text">PLANNING</span>
                   </NavLink>
                   <NavLink to="/articles" className="px-4 py-2 rounded-lg hover:bg-white/10 text-white">
@@ -99,6 +102,9 @@ export const AppLayout: React.FC = () => {
             <div className="md:hidden mt-3 -mx-2 px-2 overflow-x-auto whitespace-nowrap">
               <nav className="flex gap-2">
                 <NavLink to="/" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
+                  <span className="hud-text">HOME</span>
+                </NavLink>
+                <NavLink to="/planning" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
                   <span className="hud-text">PLANNING</span>
                 </NavLink>
                 <NavLink to="/articles" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">

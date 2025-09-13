@@ -28,14 +28,28 @@ const AuthPage: React.FC = () => {
   const state = location.state as LocationState;
 
   // フォーム状態
-  const [isLogin, setIsLogin] = useState(true);
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const params = new URLSearchParams(location.search);
+  const initialMode = params.get('mode');
+  const [isLogin, setIsLogin] = useState(initialMode === 'signup' ? false : true);
+  const [isForgotPassword, setIsForgotPassword] = useState(initialMode === 'reset');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // URLクエリの変更に応じてフォームモードを同期
+  useEffect(() => {
+    const p = new URLSearchParams(location.search);
+    const m = p.get('mode');
+    if (m === 'signup') {
+      setIsLogin(false);
+      setIsForgotPassword(false);
+    } else if (m === 'reset') {
+      setIsForgotPassword(true);
+    }
+  }, [location.search]);
 
   // メール検証バイパス状態
   const [verificationEmailSent, setVerificationEmailSent] = useState(false);
