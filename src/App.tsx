@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React, { lazy, Suspense } from 'react';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 // Contexts
 import { ProgressProvider } from './contexts/ProgressContext';
@@ -19,7 +19,8 @@ const LearningPage = lazy(() => import('./pages/LearningPage'));
 const LessonDetailPage = lazy(() => import('./pages/LessonDetailPage'));
 const ArticlesPage = lazy(() => import('./pages/ArticlesPage'));
 const ArticleDetailPage = lazy(() => import('./pages/ArticleDetailPage'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+// const ProfilePage = lazy(() => import('./pages/ProfilePage')); // deprecated: redirect to /account
+const AccountCenterPage = lazy(() => import('./pages/AccountCenter'));
 const AuthPage = lazy(() => import('./pages/AuthPage')); // AuthPageを追加
 const TestPage = lazy(() => import('./pages/TestPage')); // Testページを追加
 // 必要に応じて他のページも追加
@@ -70,7 +71,8 @@ const App: React.FC = () => {
               <Route path="learning/:contentId" element={<LessonDetailPage />} />
               <Route path="articles" element={<ArticlesPage />} />
               <Route path="articles/:contentId" element={<ArticleDetailPage />} />
-              <Route path="profile" element={<ProfilePage />} />
+              <Route path="profile" element={<Navigate to="/account?tab=profile" replace />} />
+              <Route path="account" element={<AccountCenterPage />} />
               <Route path="auth" element={<AuthPage />} /> {/* AuthPageへのルートを追加 */}
               <Route path="test" element={<TestPage />} /> {/* Testページへのルートを差し替え */}
               <Route path="*" element={<NotFoundPage />} />

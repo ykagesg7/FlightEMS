@@ -3,10 +3,10 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useHideOnScroll } from '../../hooks/useHideOnScroll';
 import { useAuthStore } from '../../stores/authStore';
-import { AuthButton } from '../auth/AuthButton';
+import AvatarMenu from '../ui/AvatarMenu';
 import { HUDTimeDisplay } from '../ui/HUDDashboard';
 import ProgressIndicator from '../ui/ProgressIndicator';
-import { ThemeToggler } from '../ui/ThemeToggler';
+// Theme toggler is integrated into AvatarMenu
 import { HeaderSkeleton } from './HeaderSkeleton';
 
 const learningCategories = [
@@ -84,8 +84,7 @@ export const AppLayout: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-4">
                   <ProgressIndicator />
-                  <ThemeToggler />
-                  <AuthButton iconOnly />
+                  <AvatarMenu />
                 </div>
               </div>
             </div>
@@ -94,8 +93,7 @@ export const AppLayout: React.FC = () => {
             <div className="md:hidden flex items-center justify-between">
               <h1 className="text-lg font-bold tracking-wider hud-text">FLIGHT ACADEMY</h1>
               <div className="flex items-center gap-3">
-                <ThemeToggler />
-                <AuthButton iconOnly />
+                <AvatarMenu />
               </div>
             </div>
             <div className="md:hidden mt-3 -mx-2 px-2 overflow-x-auto whitespace-nowrap">
@@ -111,6 +109,9 @@ export const AppLayout: React.FC = () => {
                 </NavLink>
                 <NavLink to="/test" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
                   <span className="hud-text">TEST</span>
+                </NavLink>
+                <NavLink to="/account?tab=overview" className="px-3 py-2 rounded-lg border hud-border hud-surface text-sm">
+                  <span className="hud-text">ACCOUNT</span>
                 </NavLink>
               </nav>
             </div>

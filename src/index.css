@@ -60,6 +60,18 @@
     color: var(--hud-primary);
   }
 
+  .hud-input {
+    background: transparent;
+    border: 1px solid var(--hud-dim);
+    color: var(--text-primary);
+  }
+
+  .hud-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ring);
+    border-color: var(--ring);
+  }
+
   .hud-border {
     border-color: var(--hud-primary);
   }

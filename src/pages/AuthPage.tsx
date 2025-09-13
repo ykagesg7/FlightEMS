@@ -22,7 +22,7 @@ const AuthPage: React.FC = () => {
   const session = useAuthStore(state => state.session);
   const setLoading = useAuthStore(state => state.setLoading);
 
-  const { theme } = useTheme();
+  const { theme, effectiveTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState;
@@ -197,12 +197,8 @@ const AuthPage: React.FC = () => {
 
   // メール検証中の状態表示
   const renderVerificationPending = () => (
-    <div className={`p-8 rounded-2xl shadow-xl max-w-md w-full backdrop-blur-xl border transition-all duration-300 ${theme === 'dark'
-      ? 'bg-white/5 border-white/10'
-      : 'bg-white/80 border-white/20'
-    }`}>
-      <h2 className={`text-2xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-800'
-      }`}>
+    <div className={`p-8 rounded-2xl shadow-xl max-w-md w-full backdrop-blur-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
+      <h2 className={`text-2xl font-bold mb-6 hud-text`}>
         メール検証
       </h2>
 
@@ -218,8 +214,7 @@ const AuthPage: React.FC = () => {
         </div>
       )}
 
-      <div className={`mb-4 p-4 border rounded ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'
-      }`}>
+      <div className={`mb-4 p-4 border rounded bg-[color:var(--panel)]/60 border-[color:var(--hud-dim)]`}>
         <p className="mb-3">
           <strong>登録メールアドレス:</strong> {email}
         </p>
@@ -237,11 +232,9 @@ const AuthPage: React.FC = () => {
             onClick={handleVerificationBypass}
             disabled={loading}
             className={`w-full py-2 px-4 rounded-md focus:outline-none mb-3 ${loading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : theme === 'dark'
-                  ? 'bg-amber-600 hover:bg-amber-700 text-white'
-                  : 'bg-amber-500 hover:bg-amber-600 text-white'
-            }`}
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)] focus:ring-2 focus:ring-[color:var(--ring)]'}
+            `}
           >
             {loading ? '処理中...' : '開発環境用: 検証リンクを生成'}
           </button>
@@ -253,7 +246,7 @@ const AuthPage: React.FC = () => {
                 href={verificationLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 underline break-all"
+                className="hud-text underline break-all"
               >
                 {verificationLink}
               </a>
@@ -265,7 +258,7 @@ const AuthPage: React.FC = () => {
       <div className="mt-4 text-center">
         <button
           onClick={toggleForm}
-          className={`text-indigo-500 hover:underline focus:outline-none`}
+          className={`hud-text hover:underline focus:outline-none`}
         >
           ログインページに戻る
         </button>
@@ -274,12 +267,8 @@ const AuthPage: React.FC = () => {
   );
 
   const renderForgotPasswordForm = () => (
-    <div className={`p-8 rounded-2xl shadow-xl max-w-md w-full backdrop-blur-xl border transition-all duration-300 ${theme === 'dark'
-      ? 'bg-white/5 border-white/10'
-      : 'bg-white/80 border-white/20'
-    }`}>
-      <h2 className={`text-2xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-800'
-      }`}>
+    <div className={`p-8 rounded-2xl shadow-xl max-w-md w-full backdrop-blur-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
+      <h2 className={`text-2xl font-bold mb-6 hud-text`}>
         パスワードリセット
       </h2>
 
@@ -299,8 +288,7 @@ const AuthPage: React.FC = () => {
         <div className="mb-4">
           <label
             htmlFor="email"
-            className={`block mb-2 text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-            }`}
+            className={`block mb-2 text-sm font-medium`}
           >
             メールアドレス
           </label>
@@ -309,10 +297,7 @@ const AuthPage: React.FC = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={`w-full px-3 py-2 border rounded-md ${theme === 'dark'
-                ? 'bg-gray-700 border-gray-600 text-white'
-                : 'bg-gray-50 border-gray-300 text-gray-900'
-            } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+            className={`w-full px-3 py-2 rounded-md hud-input focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]`}
             autoComplete="email"
           />
         </div>
@@ -321,21 +306,18 @@ const AuthPage: React.FC = () => {
           type="submit"
           disabled={loading}
           className={`w-full py-2 px-4 rounded-md focus:outline-none ${loading
-              ? 'bg-gray-400 cursor-not-allowed'
-              : theme === 'dark'
-                ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                : 'bg-indigo-500 hover:bg-indigo-600 text-white'
-          }`}
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)] focus:ring-2 focus:ring-[color:var(--ring)]'
+            }`}
         >
           {loading ? 'リセット手順を送信中...' : 'リセット手順を送信'}
         </button>
 
-        <p className={`mt-4 text-sm text-center ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-        }`}>
+        <p className={`mt-4 text-sm text-center`}>
           <button
             type="button"
             onClick={toggleForgotPassword}
-            className="text-indigo-500 hover:underline focus:outline-none"
+            className="hud-text hover:underline focus:outline-none"
           >
             ログインに戻る
           </button>
@@ -345,12 +327,8 @@ const AuthPage: React.FC = () => {
   );
 
   const renderLoginForm = () => (
-    <div className={`p-8 rounded-2xl shadow-xl max-w-md w-full backdrop-blur-xl border transition-all duration-300 ${theme === 'dark'
-      ? 'bg-white/5 border-white/10'
-      : 'bg-white/80 border-white/20'
-    }`}>
-      <h2 className={`text-2xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-800'
-      }`}>
+    <div className={`p-8 rounded-2xl shadow-xl max-w-md w-full backdrop-blur-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
+      <h2 className={`text-2xl font-bold mb-6 hud-text`}>
         {isLogin ? 'ログイン' : 'アカウント登録'}
       </h2>
 
@@ -376,8 +354,7 @@ const AuthPage: React.FC = () => {
         <div className="mb-4">
           <label
             htmlFor="email"
-            className={`block mb-2 text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-            }`}
+            className={`block mb-2 text-sm font-medium`}
           >
             メールアドレス
           </label>
@@ -386,10 +363,7 @@ const AuthPage: React.FC = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={`w-full px-3 py-2 border rounded-md ${theme === 'dark'
-                ? 'bg-gray-700 border-gray-600 text-white'
-                : 'bg-gray-50 border-gray-300 text-gray-900'
-            } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+            className={`w-full px-3 py-2 rounded-md hud-input focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]`}
             autoComplete="email"
           />
         </div>
@@ -398,8 +372,7 @@ const AuthPage: React.FC = () => {
           <div className="mb-4">
             <label
               htmlFor="username"
-              className={`block mb-2 text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-              }`}
+              className={`block mb-2 text-sm font-medium`}
             >
               ユーザー名
             </label>
@@ -408,10 +381,7 @@ const AuthPage: React.FC = () => {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md ${theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-gray-50 border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              className={`w-full px-3 py-2 rounded-md hud-input focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]`}
               autoComplete="username"
             />
           </div>
@@ -420,8 +390,7 @@ const AuthPage: React.FC = () => {
         <div className="mb-4">
           <label
             htmlFor="password"
-            className={`block mb-2 text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-            }`}
+            className={`block mb-2 text-sm font-medium`}
           >
             パスワード
           </label>
@@ -430,10 +399,7 @@ const AuthPage: React.FC = () => {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className={`w-full px-3 py-2 border rounded-md ${theme === 'dark'
-                ? 'bg-gray-700 border-gray-600 text-white'
-                : 'bg-gray-50 border-gray-300 text-gray-900'
-            } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+            className={`w-full px-3 py-2 rounded-md hud-input focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]`}
             autoComplete={isLogin ? "current-password" : "new-password"}
           />
         </div>
@@ -442,8 +408,7 @@ const AuthPage: React.FC = () => {
           <div className="mb-4">
             <label
               htmlFor="confirmPassword"
-              className={`block mb-2 text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-              }`}
+              className={`block mb-2 text-sm font-medium`}
             >
               パスワード（確認）
             </label>
@@ -452,10 +417,7 @@ const AuthPage: React.FC = () => {
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md ${theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-gray-50 border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              className={`w-full px-3 py-2 rounded-md hud-input focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]`}
               autoComplete="new-password"
             />
           </div>
@@ -465,11 +427,9 @@ const AuthPage: React.FC = () => {
           type="submit"
           disabled={loading}
           className={`w-full py-2 px-4 rounded-md focus:outline-none ${loading
-              ? 'bg-gray-400 cursor-not-allowed'
-              : theme === 'dark'
-                ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                : 'bg-indigo-500 hover:bg-indigo-600 text-white'
-          }`}
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)] focus:ring-2 focus:ring-[color:var(--ring)]'
+            }`}
         >
           {loading
             ? (isLogin ? 'ログイン中...' : '登録中...')
@@ -477,27 +437,25 @@ const AuthPage: React.FC = () => {
         </button>
 
         {isLogin && (
-          <p className={`mt-2 text-sm text-center ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-          }`}>
+          <p className={`mt-2 text-sm text-center`}>
             <button
               type="button"
               onClick={toggleForgotPassword}
-              className="text-indigo-500 hover:underline focus:outline-none"
+              className="hud-text hover:underline focus:outline-none"
             >
               パスワードを忘れた場合
             </button>
           </p>
         )}
 
-        <p className={`mt-4 text-sm text-center ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-        }`}>
+        <p className={`mt-4 text-sm text-center`}>
           {isLogin
             ? 'アカウントをお持ちでない場合は'
             : 'すでにアカウントをお持ちの場合は'}
           <button
             type="button"
             onClick={toggleForm}
-            className="ml-1 text-indigo-500 hover:underline focus:outline-none"
+            className="ml-1 hud-text hover:underline focus:outline-none"
           >
             {isLogin ? '登録' : 'ログイン'}
           </button>
@@ -507,10 +465,7 @@ const AuthPage: React.FC = () => {
   );
 
   return (
-    <div className={`${theme === 'dark'
-      ? 'bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800'
-      : 'bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100'
-    } min-h-screen py-16 flex justify-center items-center p-4`}>
+    <div className={`bg-[color:var(--bg)] min-h-screen py-16 flex justify-center items-center p-4`}>
       {verificationEmailSent
         ? renderVerificationPending()
         : isForgotPassword

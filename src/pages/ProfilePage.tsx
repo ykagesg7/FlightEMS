@@ -20,6 +20,8 @@ const ProfilePage = () => {
   const [fullName, setFullName] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [tempAvatarUrl, setTempAvatarUrl] = useState('');
+  const [website, setWebsite] = useState('');
+  const [roll, setRoll] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [formLoading, setFormLoading] = useState(false);
@@ -40,8 +42,76 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
 
-  // 管理者権限チェック
-  const isAdmin = typeof profile?.roll === 'string' && ['admin', 'teacher'].includes(profile.roll.toLowerCase());
+  // 管理者権限チェック（admin のみ）
+  const isAdmin = typeof profile?.roll === 'string' && profile.roll.toLowerCase() === 'admin';
+
+  // 管理者: ユーザーロール管理用の状態
+  const [userSearch, setUserSearch] = useState('');
+  const [userSearchTick, setUserSearchTick] = useState(0);
+  const [userList, setUserList] = useState<Array<{ id: string; username: string | null; email: string | null; roll: string | null }>>([]);
+  const [userListLoading, setUserListLoading] = useState(false);
+  const [userListError, setUserListError] = useState<string | null>(null);
+  const [roleSaving, setRoleSaving] = useState<Record<string, boolean>>({});
+
+  // 検索入力のデバウンス
+  useEffect(() => {
+    const t = setTimeout(() => setUserSearchTick((v) => v + 1), 350);
+    return () => clearTimeout(t);
+  }, [userSearch]);
+
+  // 管理者タブ表示時にユーザー一覧を取得
+  useEffect(() => {
+    const fetchUsers = async () => {
+      if (!(activeTab === 'admin' && isAdmin)) return;
+      try {
+        setUserListLoading(true);
+        setUserListError(null);
+        const q = userSearch.trim();
+        let query = supabase
+          .from('profiles')
+          .select('id, username, email, roll')
+          .order('created_at', { ascending: false })
+          .range(0, 9999); // Adminは全ユーザーを表示
+
+        if (q) {
+          // username/emailの部分一致検索
+          // or フィルタはPostgRESTのor構文を使用
+          query = query.or(`username.ilike.%${q}%,email.ilike.%${q}%`);
+        }
+
+        const { data, error } = await query;
+        if (error) {
+          setUserListError(error.message);
+        } else if (data) {
+          setUserList(data as any);
+        }
+      } catch (e) {
+        setUserListError(e instanceof Error ? e.message : 'ユーザー取得中にエラーが発生しました');
+      } finally {
+        setUserListLoading(false);
+      }
+    };
+    fetchUsers();
+  }, [activeTab, isAdmin, userSearchTick]);
+
+  const updateUserRole = useCallback(async (userId: string, newRole: string) => {
+    try {
+      setRoleSaving((m) => ({ ...m, [userId]: true }));
+      const { error } = await supabase
+        .from('profiles')
+        .update({ roll: newRole, updated_at: new Date().toISOString() })
+        .eq('id', userId);
+      if (error) {
+        setUserListError(error.message);
+        return;
+      }
+      setUserList((list) => list.map((u) => (u.id === userId ? { ...u, roll: newRole } : u)));
+    } catch (e) {
+      setUserListError(e instanceof Error ? e.message : 'ロール更新中にエラーが発生しました');
+    } finally {
+      setRoleSaving((m) => ({ ...m, [userId]: false }));
+    }
+  }, []);
 
   // 未ログインならリダイレクト
   useEffect(() => {
@@ -56,6 +126,8 @@ const ProfilePage = () => {
       // プロフィール情報更新完了
       setUsername(profile.username || '');
       setFullName(profile.full_name || '');
+      setWebsite(profile.website || '');
+      setRoll(profile.roll || '');
       const currentAvatarUrl = profile.avatar_url || '';
       setAvatarUrl(currentAvatarUrl);
       setTempAvatarUrl(currentAvatarUrl);
@@ -216,7 +288,7 @@ const ProfilePage = () => {
       // ローカル状態更新完了
 
       // プロフィールストアを更新（データベースにはfinalImageUrlを保存）
-      const updateResult = await updateProfile({ avatar_url: finalImageUrl });
+      await updateProfile({ avatar_url: finalImageUrl });
 
       // プロフィールストア更新完了
 
@@ -350,17 +422,25 @@ const ProfilePage = () => {
       return;
     }
 
+    if (website && !/^https?:\/\//i.test(website)) {
+      setError('WebサイトURLはhttp(s)から始まる形式で入力してください');
+      return;
+    }
+
     try {
       setError(null);
       setSuccess(null);
       setFormLoading(true);
 
-      const { error } = await updateProfile({
+      const payload: any = {
         username,
         full_name: fullName,
+        website: website || null,
         avatar_url: tempAvatarUrl,
         updated_at: new Date().toISOString()
-      });
+      };
+      // 基本情報ではロールを変更しない（表示のみ）
+      const { error } = await updateProfile(payload);
 
       if (error) {
         setError(error.message || 'プロフィールの更新に失敗しました');
@@ -451,14 +531,10 @@ const ProfilePage = () => {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${effectiveTheme === 'dark'
-          ? 'bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800'
-          : 'bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100'
-        } py-8`}>
+      <div className={`min-h-screen flex items-center justify-center bg-[color:var(--bg)] py-8`}>
         <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-transparent border-indigo-500"></div>
-          <p className={`text-lg ${effectiveTheme === 'dark' ? 'text-slate-300' : 'text-slate-600'
-            }`}>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-transparent border-[color:var(--hud-primary)]"></div>
+          <p className={`text-lg hud-text`}>
             プロフィールを読み込み中...
           </p>
         </div>
@@ -467,28 +543,20 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className={`min-h-screen ${effectiveTheme === 'dark'
-        ? 'bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800'
-        : 'bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100'
-      } py-8`}>
+    <div className={`min-h-screen bg-[color:var(--bg)] py-8`}>
       <div className="container mx-auto px-4 max-w-6xl">
         {/* ページヘッダー */}
         <div className="text-center mb-8">
-          <h1 className={`text-4xl font-bold mb-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
-            }`}>
+          <h1 className={`text-4xl font-bold mb-2 hud-text`}>
             プロフィール設定
           </h1>
-          <p className={`text-lg ${effectiveTheme === 'dark' ? 'text-slate-300' : 'text-slate-600'
-            }`}>
+          <p className={`text-lg`}>
             あなたの情報を管理しましょう
           </p>
         </div>
 
         {/* タブナビゲーション */}
-        <div className={`backdrop-blur-xl rounded-2xl p-2 mb-8 shadow-lg border ${effectiveTheme === 'dark'
-          ? 'bg-white/5 border-white/10'
-          : 'bg-white/80 border-white/20'
-          }`}>
+        <div className={`backdrop-blur-xl rounded-2xl p-2 mb-8 shadow-lg border bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
           <div className="flex space-x-1">
             {[
               { id: 'profile', name: 'プロフィール', icon: '👤' },
@@ -500,12 +568,8 @@ const ProfilePage = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-200 ${activeTab === tab.id
-                  ? effectiveTheme === 'dark'
-                    ? 'bg-indigo-600 text-white shadow-lg'
-                    : 'bg-indigo-500 text-white shadow-lg'
-                  : effectiveTheme === 'dark'
-                    ? 'text-gray-400 hover:text-white hover:bg-white/10'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                  ? 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)]'
+                  : 'text-[color:var(--text-primary)] hover:bg-[color:var(--hud-dim)]'
                   }`}
               >
                 <span className="text-lg">{tab.icon}</span>
@@ -517,15 +581,12 @@ const ProfilePage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* プロフィールカード */}
-          <div className={`lg:col-span-1 backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${effectiveTheme === 'dark'
-            ? 'bg-white/5 border-white/10'
-            : 'bg-white/80 border-white/20'
-            }`}>
+          <div className={`lg:col-span-1 backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
             <div className="text-center">
               {/* アバター画像 */}
               <div
                 className={`relative mx-auto mb-6 group cursor-pointer transition-all duration-200 ${isDragging
-                  ? 'scale-105 ring-4 ring-indigo-400 ring-opacity-50'
+                  ? 'scale-105 ring-4 ring-[color:var(--ring)] ring-opacity-50'
                   : ''
                   }`}
                 onDragEnter={handleDragEnter}
@@ -537,10 +598,10 @@ const ProfilePage = () => {
                 <div className="relative w-32 h-32 mx-auto">
                   {tempAvatarUrl ? (
                     <img
-                      key={tempAvatarUrl} // keyを追加してReactが強制的に再レンダリングするように
+                      key={tempAvatarUrl}
                       src={tempAvatarUrl}
                       alt="プロフィール画像"
-                      className="w-full h-full rounded-full object-cover border-4 border-indigo-400 shadow-lg transition-transform duration-300 group-hover:scale-105"
+                      className="w-full h-full rounded-full object-cover border-4 border-[color:var(--hud-primary)] shadow-lg transition-transform duration-300 group-hover:scale-105"
                       onError={() => {
                         console.error('アバター画像の読み込みに失敗:', tempAvatarUrl);
                         console.error('tempAvatarUrl:', tempAvatarUrl);
@@ -554,15 +615,10 @@ const ProfilePage = () => {
                       }}
                     />
                   ) : (
-                    <div className={`w-full h-full rounded-full flex items-center justify-center border-4 border-indigo-400 shadow-lg transition-all duration-300 group-hover:scale-105 ${effectiveTheme === 'dark'
-                      ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white'
-                      : 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white'
-                      }`}>
-                      <span className="text-3xl font-bold">{getInitial()}</span>
+                    <div className={`w-full h-full rounded-full flex items-center justify-center border-4 border-[color:var(--hud-primary)] shadow-lg transition-all duration-300 group-hover:scale-105 bg-[color:var(--panel)]`}>
+                      <span className="text-3xl font-bold hud-text">{getInitial()}</span>
                     </div>
                   )}
-
-
 
                   {/* オーバーレイ */}
                   <div className={`absolute inset-0 rounded-full flex items-center justify-center transition-opacity duration-300 ${'opacity-0 group-hover:opacity-100'
@@ -585,7 +641,7 @@ const ProfilePage = () => {
                               stroke="currentColor"
                               strokeWidth="2"
                               strokeDasharray={`${uploadProgress}, 100`}
-                              className="text-indigo-400"
+                              className="hud-text"
                             />
                           </svg>
                         </div>
@@ -606,13 +662,13 @@ const ProfilePage = () => {
 
               {/* シンプルなアバター中心のヘッダー */}
               <div className="text-center">
-                <h2 className={`text-xl font-semibold mb-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                <h2 className={`text-xl font-semibold mb-2 hud-text`}>
                   {fullName || username || 'ユーザー'}
                 </h2>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <p className={`text-xs text-center ${effectiveTheme === 'dark' ? 'text-gray-500' : 'text-slate-400'}`}>
+              <div className="mt-4 pt-4 border-t border-[color:var(--hud-dim)]">
+                <p className={`text-xs text-center`}>
                   画像をクリックしてアップロード
                 </p>
 
@@ -623,14 +679,12 @@ const ProfilePage = () => {
                     disabled={isUploadingAvatar}
                     className={`w-full px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isUploadingAvatar
                       ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
-                      : effectiveTheme === 'dark'
-                        ? 'bg-red-600 hover:bg-red-700 text-white'
-                        : 'bg-red-500 hover:bg-red-600 text-white'
-                      }`}
+                      : 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)]'}
+                      `}
                   >
                     {isUploadingAvatar ? (
                       <div className="flex items-center justify-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border-2 hud-text border-t-transparent rounded-full animate-spin"></div>
                         <span>処理中...</span>
                       </div>
                     ) : (
@@ -650,20 +704,16 @@ const ProfilePage = () => {
           {/* メインコンテンツ */}
           <div className="lg:col-span-2 space-y-6">
             {activeTab === 'profile' && (
-              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${effectiveTheme === 'dark'
-                ? 'bg-white/5 border-white/10'
-                : 'bg-white/80 border-white/20'
-                }`}>
+              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className={`text-2xl font-bold ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
-                    }`}>
+                  <h3 className={`text-2xl font-bold hud-text`}>
                     基本情報
                   </h3>
                   <button
                     onClick={() => setIsEditing(!isEditing)}
                     className={`px-4 py-2 rounded-lg transition-all duration-200 ${isEditing
                       ? 'bg-gray-500 hover:bg-gray-600 text-white'
-                      : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+                      : 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)]'
                       }`}
                   >
                     {isEditing ? 'キャンセル' : '編集'}
@@ -695,12 +745,8 @@ const ProfilePage = () => {
                         onChange={(e) => setUsername(e.target.value)}
                         disabled={!isEditing}
                         className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isEditing
-                          ? effectiveTheme === 'dark'
-                            ? 'bg-gray-800 border-gray-600 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                            : 'bg-white border-gray-300 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                          : effectiveTheme === 'dark'
-                            ? 'bg-gray-800/50 border-gray-700 text-gray-400 cursor-not-allowed'
-                            : 'bg-gray-50 border-gray-300 text-slate-500 cursor-not-allowed'
+                          ? 'bg-[color:var(--panel)] border-[color:var(--hud-dim)] text-[color:var(--text-primary)] focus:border-[color:var(--ring)] focus:ring-2 focus:ring-[color:var(--ring)]'
+                          : 'bg-[color:var(--panel)]/50 border-[color:var(--hud-dim)] text-[color:var(--text-muted)] cursor-not-allowed'
                           }`}
                         placeholder="ユーザー名を入力"
                       />
@@ -717,16 +763,44 @@ const ProfilePage = () => {
                         onChange={(e) => setFullName(e.target.value)}
                         disabled={!isEditing}
                         className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isEditing
-                          ? effectiveTheme === 'dark'
-                            ? 'bg-gray-800 border-gray-600 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                            : 'bg-white border-gray-300 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                          : effectiveTheme === 'dark'
-                            ? 'bg-gray-800/50 border-gray-700 text-gray-400 cursor-not-allowed'
-                            : 'bg-gray-50 border-gray-300 text-slate-500 cursor-not-allowed'
+                          ? 'bg-[color:var(--panel)] border-[color:var(--hud-dim)] text-[color:var(--text-primary)] focus:border-[color:var(--ring)] focus:ring-2 focus:ring-[color:var(--ring)]'
+                          : 'bg-[color:var(--panel)]/50 border-[color:var(--hud-dim)] text-[color:var(--text-muted)] cursor-not-allowed'
                           }`}
                         placeholder="フルネームを入力"
                       />
                     </div>
+
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'
+                        }`}>
+                        Webサイト
+                      </label>
+                      <input
+                        type="url"
+                        value={website}
+                        onChange={(e) => setWebsite(e.target.value)}
+                        disabled={!isEditing}
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isEditing
+                          ? 'bg-[color:var(--panel)] border-[color:var(--hud-dim)] text-[color:var(--text-primary)] focus:border-[color:var(--ring)] focus:ring-2 focus:ring-[color:var(--ring)]'
+                          : 'bg-[color:var(--panel)]/50 border-[color:var(--hud-dim)] text-[color:var(--text-muted)] cursor-not-allowed'
+                          }`}
+                        placeholder="https://example.com"
+                      />
+                    </div>
+
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'
+                        }`}>
+                        ロール
+                      </label>
+                      <input
+                        type="text"
+                        value={roll || ''}
+                        disabled
+                        className={`w-full px-4 py-3 rounded-lg border cursor-not-allowed bg-[color:var(--panel)]/50 border-[color:var(--hud-dim)] text-[color:var(--text-muted)]`}
+                      />
+                    </div>
+
                   </div>
 
                   <div>
@@ -754,7 +828,7 @@ const ProfilePage = () => {
                       <button
                         type="submit"
                         disabled={formLoading}
-                        className="flex-1 bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-400 text-white py-3 px-6 rounded-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2"
+                        className="flex-1 border border-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)] disabled:opacity-60 text-[color:var(--hud-primary)] py-3 px-6 rounded-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2"
                       >
                         {formLoading ? (
                           <>
@@ -777,20 +851,16 @@ const ProfilePage = () => {
             )}
 
             {activeTab === 'security' && (
-              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${effectiveTheme === 'dark'
-                ? 'bg-white/5 border-white/10'
-                : 'bg-white/80 border-white/20'
-                }`}>
+              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className={`text-2xl font-bold ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
-                    }`}>
+                  <h3 className={`text-2xl font-bold hud-text`}>
                     セキュリティ設定
                   </h3>
                   <button
                     onClick={() => setShowPasswordForm(!showPasswordForm)}
                     className={`px-4 py-2 rounded-lg transition-all duration-200 ${showPasswordForm
                       ? 'bg-gray-500 hover:bg-gray-600 text-white'
-                      : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+                      : 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)]'
                       }`}
                   >
                     {showPasswordForm ? 'キャンセル' : 'パスワード変更'}
@@ -823,8 +893,8 @@ const ProfilePage = () => {
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
                             className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all duration-200 ${effectiveTheme === 'dark'
-                              ? 'bg-gray-800 border-gray-600 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                              : 'bg-white border-gray-300 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                              ? 'bg-[color:var(--panel)] border-[color:var(--hud-dim)] text-[color:var(--text-primary)] focus:border-[color:var(--ring)] focus:ring-2 focus:ring-[color:var(--ring)]/20'
+                              : 'bg-[color:var(--panel)] border-[color:var(--hud-dim)] text-[color:var(--text-primary)] focus:border-[color:var(--ring)] focus:ring-2 focus:ring-[color:var(--ring)]/20'
                               }`}
                             placeholder="現在のパスワードを入力"
                           />
@@ -858,8 +928,8 @@ const ProfilePage = () => {
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
                           className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${effectiveTheme === 'dark'
-                            ? 'bg-gray-800 border-gray-600 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                            : 'bg-white border-gray-300 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                            ? 'bg-[color:var(--panel)] border-[color:var(--hud-dim)] text-[color:var(--text-primary)] focus:border-[color:var(--ring)] focus:ring-2 focus:ring-[color:var(--ring)]/20'
+                            : 'bg-[color:var(--panel)] border-[color:var(--hud-dim)] text-[color:var(--text-primary)] focus:border-[color:var(--ring)] focus:ring-2 focus:ring-[color:var(--ring)]/20'
                             }`}
                           placeholder="新しいパスワードを入力（8文字以上）"
                         />
@@ -875,8 +945,8 @@ const ProfilePage = () => {
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${effectiveTheme === 'dark'
-                            ? 'bg-gray-800 border-gray-600 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                            : 'bg-white border-gray-300 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                            ? 'bg-[color:var(--panel)] border-[color:var(--hud-dim)] text-[color:var(--text-primary)] focus:border-[color:var(--ring)] focus:ring-2 focus:ring-[color:var(--ring)]/20'
+                            : 'bg-[color:var(--panel)] border-[color:var(--hud-dim)] text-[color:var(--text-primary)] focus:border-[color:var(--ring)] focus:ring-2 focus:ring-[color:var(--ring)]/20'
                             }`}
                           placeholder="新しいパスワードを再入力"
                         />
@@ -885,7 +955,7 @@ const ProfilePage = () => {
                       <button
                         type="submit"
                         disabled={passwordLoading}
-                        className="w-full bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-400 text-white py-3 px-6 rounded-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2"
+                        className="w-full border border-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)] disabled:opacity-60 text-[color:var(--hud-primary)] py-3 px-6 rounded-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2"
                       >
                         {passwordLoading ? (
                           <>
@@ -907,18 +977,13 @@ const ProfilePage = () => {
 
                 {!showPasswordForm && (
                   <div className="space-y-4">
-                    <div className={`p-6 border rounded-lg ${effectiveTheme === 'dark'
-                      ? 'border-gray-700 bg-gray-800/50'
-                      : 'border-gray-200 bg-gray-50'
-                      }`}>
+                    <div className={`p-6 border rounded-lg bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className={`font-medium ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
-                            }`}>
+                          <h4 className={`font-medium hud-text`}>
                             パスワード
                           </h4>
-                          <p className={`text-sm ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-slate-600'
-                            }`}>
+                          <p className={`text-sm`}>
                             最後に更新: 不明
                           </p>
                         </div>
@@ -931,36 +996,25 @@ const ProfilePage = () => {
             )}
 
             {activeTab === 'preferences' && (
-              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${effectiveTheme === 'dark'
-                ? 'bg-white/5 border-white/10'
-                : 'bg-white/80 border-white/20'
-                }`}>
-                <h3 className={`text-2xl font-bold mb-6 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
-                  }`}>
+              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
+                <h3 className={`text-2xl font-bold mb-6 hud-text`}>
                   設定
                 </h3>
 
                 <div className="space-y-6">
-                  <div className={`p-6 border rounded-lg ${effectiveTheme === 'dark'
-                    ? 'border-gray-700 bg-gray-800/50'
-                    : 'border-gray-200 bg-gray-50'
-                    }`}>
-                    <h4 className={`font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
-                      }`}>
+                  <div className={`p-6 border rounded-lg bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
+                    <h4 className={`font-medium mb-2 hud-text`}>
                       テーマ設定
                     </h4>
-                    <p className={`text-sm mb-4 ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-slate-600'
-                      }`}>
+                    <p className={`text-sm mb-4`}>
                       ライトモード、ダークモード、または自動選択
                     </p>
                     <div className="flex flex-wrap gap-3">
                       <button
-                        onClick={() => setTheme('light')}
-                        className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${theme === 'light'
-                          ? 'bg-indigo-500 text-white shadow-lg transform scale-105'
-                          : theme === 'dark'
-                            ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        onClick={() => setTheme('day')}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${theme === 'day'
+                          ? 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] shadow-lg transform scale-105'
+                          : 'border border-[color:var(--hud-dim)] text-[color:var(--text-primary)] hover:bg-[color:var(--hud-dim)]'
                           }`}
                       >
                         🌞 ライト
@@ -968,10 +1022,8 @@ const ProfilePage = () => {
                       <button
                         onClick={() => setTheme('dark')}
                         className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${theme === 'dark'
-                          ? 'bg-indigo-500 text-white shadow-lg transform scale-105'
-                          : theme === 'dark'
-                            ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                          ? 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] shadow-lg transform scale-105'
+                          : 'border border-[color:var(--hud-dim)] text-[color:var(--text-primary)] hover:bg-[color:var(--hud-dim)]'
                           }`}
                       >
                         🌙 ダーク
@@ -979,47 +1031,40 @@ const ProfilePage = () => {
                       <button
                         onClick={() => setTheme('auto')}
                         className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${theme === 'auto'
-                          ? 'bg-indigo-500 text-white shadow-lg transform scale-105'
-                          : theme === 'dark'
-                            ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                          ? 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] shadow-lg transform scale-105'
+                          : 'border border-[color:var(--hud-dim)] text-[color:var(--text-primary)] hover:bg-[color:var(--hud-dim)]'
                           }`}
                       >
                         🔄 自動
                       </button>
                     </div>
                     {theme === 'auto' && (
-                      <div className={`mt-3 p-3 rounded-md ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
-                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-slate-600'}`}>
-                          現在: {effectiveTheme === 'dark' ? '�� ダークモード' : '🌞 ライトモード'}
+                      <div className={`mt-3 p-3 rounded-md bg-[color:var(--panel)]`}>
+                        <p className={`text-xs`}>
+                          現在: {effectiveTheme === 'dark' ? '🌙 ダークモード' : '🌞 ライトモード'}
                           (システム設定に従います)
                         </p>
                       </div>
                     )}
                   </div>
 
-                  <div className={`p-6 border rounded-lg ${effectiveTheme === 'dark'
-                    ? 'border-gray-700 bg-gray-800/50'
-                    : 'border-gray-200 bg-gray-50'
-                    }`}>
-                    <h4 className={`font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
-                      }`}>
+                  <div className={`p-6 border rounded-lg bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
+                    <h4 className={`font-medium mb-2 hud-text`}>
                       通知設定
                     </h4>
-                    <p className={`text-sm mb-4 ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-slate-600'
-                      }`}>
+                    <p className={`text-sm mb-4`}>
                       学習の進捗やお知らせに関する通知
                     </p>
                     <div className="space-y-3">
                       <label className="flex items-center">
                         <input type="checkbox" className="mr-3" defaultChecked />
-                        <span className={effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'}>
+                        <span>
                           学習の進捗通知
                         </span>
                       </label>
                       <label className="flex items-center">
                         <input type="checkbox" className="mr-3" defaultChecked />
-                        <span className={effectiveTheme === 'dark' ? 'text-gray-300' : 'text-slate-700'}>
+                        <span>
                           新しいコンテンツの通知
                         </span>
                       </label>
@@ -1030,19 +1075,14 @@ const ProfilePage = () => {
             )}
 
             {activeTab === 'admin' && isAdmin && (
-              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 ${effectiveTheme === 'dark'
-                ? 'bg-white/5 border-white/10'
-                : 'bg-white/80 border-white/20'
-                }`}>
-                <h3 className={`text-2xl font-bold mb-6 ${effectiveTheme === 'dark' ? 'text-white' : 'text-slate-900'
-                  }`}>
+              <div className={`backdrop-blur-xl rounded-2xl p-8 shadow-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
+                <h3 className={`text-2xl font-bold mb-6 hud-text`}>
                   管理者機能
                 </h3>
 
                 <div className="space-y-6">
                   {/* 管理者情報 */}
-                  <div className={`p-6 rounded-lg shadow-md ${effectiveTheme === 'dark' ? 'bg-gray-800/50 text-gray-200' : 'bg-white text-gray-800'
-                    } border ${effectiveTheme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+                  <div className={`p-6 rounded-lg shadow-md bg-[color:var(--panel)]/80 text-[color:var(--text-primary)] border border-[color:var(--hud-dim)]`}>
                     <h4 className="text-xl font-semibold mb-4">管理者情報</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
@@ -1064,46 +1104,72 @@ const ProfilePage = () => {
                     </div>
                   </div>
 
-                  {/* システム管理 */}
-                  <div className={`p-6 rounded-lg shadow-md ${effectiveTheme === 'dark' ? 'bg-gray-800/50 text-gray-200' : 'bg-white text-gray-800'
-                    } border ${effectiveTheme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-                    <h4 className="text-xl font-semibold mb-4">システム管理</h4>
+                  {/* システム管理（ユーザーロール管理） */}
+                  <div className={`p-6 rounded-lg shadow-md bg-[color:var(--panel)]/80 text-[color:var(--text-primary)] border border-[color:var(--hud-dim)]`}>
+                    <h4 className="text-xl font-semibold mb-4">ユーザーロール管理</h4>
                     <div className="space-y-4">
-                      <div className={`p-4 rounded-md ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
-                        }`}>
-                        <h5 className="font-semibold mb-2">コンテンツ管理</h5>
-                        <p className="text-sm mb-3">
-                          学習コンテンツの管理は、SupabaseMCPを使用して直接データベースを操作できます。
-                          これにより、より柔軟で効率的なコンテンツ管理が可能です。
-                        </p>
-                        <div className="flex flex-wrap gap-2 text-sm">
-                          <span className={`px-2 py-1 rounded ${effectiveTheme === 'dark' ? 'bg-green-800 text-green-200' : 'bg-green-100 text-green-800'
-                            }`}>
-                            SupabaseMCP対応
-                          </span>
-                          <span className={`px-2 py-1 rounded ${effectiveTheme === 'dark' ? 'bg-blue-800 text-blue-200' : 'bg-blue-100 text-blue-800'
-                            }`}>
-                            リアルタイム更新
-                          </span>
-                          <span className={`px-2 py-1 rounded ${effectiveTheme === 'dark' ? 'bg-purple-800 text-purple-200' : 'bg-purple-100 text-purple-800'
-                            }`}>
-                            SQL直接実行
-                          </span>
-                        </div>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="text"
+                          value={userSearch}
+                          onChange={(e) => setUserSearch(e.target.value)}
+                          className="flex-1 px-3 py-2 rounded-md border bg-[color:var(--panel)] border-[color:var(--hud-dim)] text-[color:var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]"
+                          placeholder="ユーザー名/メールで検索"
+                        />
+                        {userListLoading && <span className="text-sm hud-text">検索中...</span>}
+                        {userListError && <span className="text-sm text-red-500">{userListError}</span>}
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full text-sm">
+                          <thead>
+                            <tr className="text-left">
+                              <th className="py-2 pr-4">ユーザー名</th>
+                              <th className="py-2 pr-4">メール</th>
+                              <th className="py-2 pr-4">ロール</th>
+                              <th className="py-2 pr-4">操作</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {userList.map((u) => (
+                              <tr key={u.id} className="border-t border-[color:var(--hud-dim)]">
+                                <td className="py-2 pr-4">{u.username || '-'}</td>
+                                <td className="py-2 pr-4">{u.email || '-'}</td>
+                                <td className="py-2 pr-4">{u.roll || '未設定'}</td>
+                                <td className="py-2 pr-4">
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      disabled={!isAdmin || !!roleSaving[u.id]}
+                                      onClick={() => updateUserRole(u.id, 'Student')}
+                                      className="px-2 py-1 rounded-md border border-[color:var(--hud-dim)] hover:bg-[color:var(--hud-dim)]"
+                                    >Student</button>
+                                    <button
+                                      disabled={!isAdmin || !!roleSaving[u.id]}
+                                      onClick={() => updateUserRole(u.id, 'Teacher')}
+                                      className="px-2 py-1 rounded-md border border-[color:var(--hud-dim)] hover:bg-[color:var(--hud-dim)]"
+                                    >Teacher</button>
+                                    <button
+                                      disabled={!isAdmin || !!roleSaving[u.id]}
+                                      onClick={() => updateUserRole(u.id, 'Admin')}
+                                      className="px-2 py-1 rounded-md border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)]"
+                                    >Admin</button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
 
                   {/* ユーザー管理 */}
-                  <div className={`p-6 rounded-lg shadow-md ${effectiveTheme === 'dark' ? 'bg-gray-800/50 text-gray-200' : 'bg-white text-gray-800'
-                    } border ${effectiveTheme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+                  <div className={`p-6 rounded-lg shadow-md bg-[color:var(--panel)]/80 text-[color:var(--text-primary)] border border-[color:var(--hud-dim)]`}>
                     <h4 className="text-xl font-semibold mb-4">ユーザー管理</h4>
-                    <div className={`p-4 rounded-md ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
-                      }`}>
+                    <div className={`p-4 rounded-md bg-[color:var(--panel)]`}>
                       <p className="text-sm mb-2">
                         ユーザー管理機能は準備中です。
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs">
                         SupabaseMCPでprofilesテーブルを直接操作することで、
                         ユーザー情報の管理が可能です。
                       </p>
@@ -1111,22 +1177,18 @@ const ProfilePage = () => {
                   </div>
 
                   {/* 統計情報 */}
-                  <div className={`p-6 rounded-lg shadow-md ${effectiveTheme === 'dark' ? 'bg-gray-800/50 text-gray-200' : 'bg-white text-gray-800'
-                    } border ${effectiveTheme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+                  <div className={`p-6 rounded-lg shadow-md bg-[color:var(--panel)]/80 text-[color:var(--text-primary)] border border-[color:var(--hud-dim)]`}>
                     <h4 className="text-xl font-semibold mb-4">システム統計</h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className={`p-4 rounded-md text-center ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
-                        }`}>
-                        <div className="text-2xl font-bold text-blue-500">30+</div>
+                      <div className={`p-4 rounded-md text-center bg-[color:var(--panel)]`}>
+                        <div className="text-2xl font-bold hud-text">30+</div>
                         <div className="text-sm">学習コンテンツ</div>
                       </div>
-                      <div className={`p-4 rounded-md text-center ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
-                        }`}>
+                      <div className={`p-4 rounded-md text-center bg-[color:var(--panel)]`}>
                         <div className="text-2xl font-bold text-green-500">451</div>
                         <div className="text-sm">CPL試験問題</div>
                       </div>
-                      <div className={`p-4 rounded-md text-center ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
-                        }`}>
+                      <div className={`p-4 rounded-md text-center bg-[color:var(--panel)]`}>
                         <div className="text-2xl font-bold text-purple-500">9+</div>
                         <div className="text-sm">登録ユーザー</div>
                       </div>
