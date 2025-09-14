@@ -22,7 +22,8 @@ const AuthPage: React.FC = () => {
   const session = useAuthStore(state => state.session);
   const setLoading = useAuthStore(state => state.setLoading);
 
-  const { theme, effectiveTheme } = useTheme();
+  // このページでは値を参照していないため、未使用変数の警告を避けて単純に呼び出しのみ行う
+  useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState;

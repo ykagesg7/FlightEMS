@@ -64,7 +64,7 @@ export const AppLayout: React.FC = () => {
           <div className="container mx-auto px-4 py-4">
             <div className="hidden md:flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <h1 className="text-2xl font-extrabold tracking-wider hud-text">FLIGHT ACADEMY</h1>
+                <img src="/images/icon.png" alt="Flight Academy" className="w-12 h-12 select-none" />
                 <HUDTimeDisplay />
               </div>
               <div className="flex items-center gap-8">
@@ -94,7 +94,7 @@ export const AppLayout: React.FC = () => {
 
             {/* Mobile Header (md:hidden) */}
             <div className="md:hidden flex items-center justify-between">
-              <h1 className="text-lg font-bold tracking-wider hud-text">FLIGHT ACADEMY</h1>
+              <img src="/images/icon.png" alt="Flight Academy" className="w-10 h-10 select-none" />
               <div className="flex items-center gap-3">
                 <AvatarMenu />
               </div>

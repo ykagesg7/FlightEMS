@@ -28,7 +28,7 @@ interface QuizComponentProps {
 }
 
 export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questions, onSubmitQuiz, onBackToContents, theme, generalMessages, mode = 'practice', showImmediateFeedback = true, showQuestionPalette = true, examDurationSec }) => {
-  const { theme: contextTheme } = useTheme();
+  useTheme();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserQuizAnswer[]>([]);
   const [feedback, setFeedback] = useState<{ [key: string]: { isCorrect: boolean; explanation: string; userAnswer?: string | number } }>({});
@@ -121,20 +121,16 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   };
 
   return (
-    <div className={`p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn border ${theme === 'dark'
-      ? 'bg-slate-800 border-slate-700'
-      : 'bg-white border-gray-200'
-      }`}>
+    <div className={`p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn hud-surface border hud-border`}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-sky-400">{quizTitle}</h2>
+        <h2 className="text-2xl font-bold hud-text">{quizTitle}</h2>
         {mode === 'exam' && timeLeft !== null && (
           <div className="px-3 py-1 rounded-lg border hud-border text-sm font-semibold">
             残り時間: {formatTime(timeLeft)}
           </div>
         )}
       </div>
-      <p className={`text-center mb-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
-        }`}>質問 {currentQuestionIndex + 1} / {questions.length}</p>
+      <p className={`text-center mb-4 text-[color:var(--text-muted)]`}>質問 {currentQuestionIndex + 1} / {questions.length}</p>
 
       {showQuestionPalette && (
         <div role="navigation" aria-label="Question palette" className="flex flex-wrap gap-2 justify-center mb-4">
@@ -142,17 +138,32 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
             const answered = userAnswers.some(a => a.questionId === q.id);
             const isCurrent = idx === currentQuestionIndex;
             const isFlagged = !!flagged[q.id];
+            const fb = feedback[q.id];
             return (
               <button
                 key={q.id}
                 onClick={() => setCurrentQuestionIndex(idx)}
                 className={`w-8 h-8 rounded-md border text-sm font-semibold
-                  ${isCurrent ? 'bg-sky-600 text-white border-sky-500' : answered ? 'bg-emerald-600/80 text-white border-emerald-500' : 'bg-[color:var(--panel)] text-[color:var(--text-primary)] border-slate-500'}
+                  ${isCurrent
+                    ? 'bg-[color:var(--hud-primary)] text-black border-[color:var(--hud-primary)]'
+                    : fb !== undefined
+                      ? fb.isCorrect
+                        ? 'bg-emerald-600 text-white border-emerald-500'
+                        : 'bg-rose-600 text-white border-rose-500'
+                      : answered
+                        ? 'bg-[color:var(--hud-primary)]/80 text-black border-[color:var(--hud-primary)]'
+                        : 'bg-[color:var(--panel)] text-[color:var(--text-primary)] hud-border'}
                 `}
                 aria-current={isCurrent ? 'true' : undefined}
                 title={`Q${idx + 1}${isFlagged ? '（フラグ）' : ''}`}
               >
-                {idx + 1}
+                {isFlagged ? (
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 mx-auto" fill="currentColor" aria-hidden>
+                    <path d="M6 2a1 1 0 00-1 1v18a1 1 0 102 0v-5h7l1 2h3V5h-3l-1-2H6z" />
+                  </svg>
+                ) : (
+                  idx + 1
+                )}
               </button>
             );
           })}
@@ -179,7 +190,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
         {!showImmediateFeedback && hasAnsweredCurrent && (
           <button
             onClick={() => setCurrentQuestionIndex((i) => Math.min(i + 1, questions.length - 1))}
-            className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-semibold shadow"
+            className="px-4 py-2 rounded-lg bg-[color:var(--hud-primary)] hover:opacity-90 text-black font-semibold shadow"
           >次へ</button>
         )}
       </div>
@@ -187,7 +198,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
       {(showImmediateFeedback ? !!currentFeedback : hasAnsweredCurrent) && (
         <button
           onClick={handleNextQuestion}
-          className="mt-6 w-full bg-sky-600 hover:bg-sky-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-105"
+          className="mt-6 w-full bg-[color:var(--hud-primary)] hover:opacity-90 text-black font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-105"
         >
           {currentQuestionIndex < questions.length - 1 ? generalMessages.nextQuestion : generalMessages.finishQuiz}
         </button>
