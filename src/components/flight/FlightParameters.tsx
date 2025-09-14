@@ -1,7 +1,7 @@
 import { format, toZonedTime } from 'date-fns-tz';
 import { BarChart, ChevronDown, ChevronUp, Clock, Gauge, Thermometer } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { fetchWeatherData } from '../../api/weather';
+import { fetchWeatherData } from '../../services/weather';
 import { useTheme } from '../../contexts/ThemeContext';
 import { CACHE_DURATION, useWeatherCache } from '../../contexts/WeatherCacheContext';
 import { FlightPlan } from '../../types/index';

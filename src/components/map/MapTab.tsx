@@ -4,7 +4,7 @@ import 'leaflet-groupedlayercontrol';
 import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
 import 'leaflet/dist/leaflet.css';
 import { CircleMarker, MapContainer, Polyline, Popup } from 'react-leaflet';
-import { fetchWeatherData } from '../../api/weather';
+import { fetchWeatherData } from '../../services/weather';
 import { CACHE_DURATION, useWeatherCache } from '../../contexts/WeatherCacheContext';
 import { FlightPlan, Waypoint } from '../../types/index';
 import {
