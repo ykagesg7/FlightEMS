@@ -26,8 +26,8 @@ function PlanningMapPage() {
     };
   });
 
-  const themeContext = useContext(ThemeContext);
-  const effectiveTheme = themeContext?.effectiveTheme ?? "day";
+  // 未使用のため値を保持せずに呼び出しのみ
+  useContext(ThemeContext);
 
   return (
     <div className={`min-h-screen flex flex-col relative`} style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://docs.cursor.com/schema/cursorrules.v1.json",
+  "rules": [
+    {
+      "description": "Global defaults for FlightAcademyTsx",
+      "globs": [
+        "**/*"
+      ],
+      "alwaysApply": true,
+      "rules": [
+        "Always respond in Japanese.",
+        "Do not change package versions without explicit approval.",
+        "Prefer type-safe code; avoid any.",
+        "No UI/UX changes without approval.",
+        "Keep secrets in .env.local; never inline keys.",
+        "Follow existing formatting and linter rules.",
+        "Use React 18 practices and existing Suspense boundaries.",
+        "Prefer SupabaseMCP for Supabase integration.",
+        "Use stagewise toolbar only in development as configured."
+      ]
+    },
+    {
+      "description": "Large binary and generated data: avoid heavy edits",
+      "globs": [
+        "public/images/**",
+        "public/geojson/**",
+        "cpl_exam_data/**",
+        "**/*.pdf",
+        "**/*.png",
+        "**/*.jpg",
+        "**/*.zip"
+      ],
+      "rules": [
+        "Avoid mass edits; operate on indices or metadata instead.",
+        "Never commit generated artifacts."
+      ]
+    }
+  ]
+}

@@ -6,7 +6,7 @@ import { QuestionType, QuizQuestion, UserQuizAnswer } from '../types/quiz';
 import supabase from '../utils/supabase';
 
 const TestPage: React.FC = () => {
-  const { theme } = useTheme();
+  const { effectiveTheme: theme } = useTheme();
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +21,7 @@ const TestPage: React.FC = () => {
   const [selectedSubSubject, setSelectedSubSubject] = useState<string>('all');
   const [subSubjectLoading, setSubSubjectLoading] = useState(false);
   const [questionCount, setQuestionCount] = useState<number>(10);
-  const [maxQuestionCount, setMaxQuestionCount] = useState<number>(10);
+  // 最大値は選択肢生成のみに使用するため、状態として保持しない
   const [questionCountOptions, setQuestionCountOptions] = useState<number[]>([10]);
   const [mode, setMode] = useState<'practice' | 'exam' | 'review'>('practice');
   const [contentId, setContentId] = useState<string | null>(null);
@@ -52,7 +52,13 @@ const TestPage: React.FC = () => {
           .from('unified_cpl_questions')
           .select('main_subject', { count: 'exact', head: false });
         if (error) throw error;
-        const uniqueSubjects = Array.from(new Set((data || []).map((q: any) => q.main_subject).filter(Boolean)));
+        const uniqueSubjects = Array.from(
+          new Set(
+            ((data ?? []) as Array<{ main_subject: unknown }>)
+              .map((q) => q.main_subject)
+              .filter((s): s is string => typeof s === 'string' && s.length > 0)
+          )
+        );
         setSubjects(['all', ...uniqueSubjects]);
       } catch (err: any) {
         setSubjects(['all']);
@@ -78,7 +84,13 @@ const TestPage: React.FC = () => {
           .select('sub_subject', { count: 'exact', head: false })
           .eq('main_subject', selectedSubject);
         if (error) throw error;
-        const uniqueSubSubjects = Array.from(new Set((data || []).map((q: any) => q.sub_subject).filter(Boolean)));
+        const uniqueSubSubjects = Array.from(
+          new Set(
+            ((data ?? []) as Array<{ sub_subject: unknown }>)
+              .map((q) => q.sub_subject)
+              .filter((s): s is string => typeof s === 'string' && s.length > 0)
+          )
+        );
         setSubSubjects(['all', ...uniqueSubSubjects]);
         setSelectedSubSubject('all');
       } catch (err: any) {
@@ -117,7 +129,6 @@ const TestPage: React.FC = () => {
         }
         if (options[options.length - 1] !== maxCount) options.push(maxCount);
       }
-      setMaxQuestionCount(maxCount);
       setQuestionCountOptions(options);
       setQuestionCount(options[0]);
     };
@@ -291,32 +302,65 @@ const TestPage: React.FC = () => {
         return;
       }
       const user_id = userData.user.id;
-      const sessionInsert = {
-        user_id,
-        session_type: mode === 'exam' ? 'exam' : mode === 'review' ? 'review' : 'practice',
-        questions_attempted: answers.length,
-        questions_correct: answers.filter(a => a.isCorrect).length,
-        score_percentage: answers.length > 0 ? (answers.filter(a => a.isCorrect).length / answers.length) * 100 : 0,
-        answers,
-        completed_at: new Date().toISOString(),
-        is_completed: true,
-      };
-      const { error: sessionError } = await supabase.from('quiz_sessions').insert(sessionInsert);
-      if (sessionError) throw sessionError;
-      const testResults = answers.map(a => ({
-        user_id,
-        question_id: a.questionId,
-        unified_question_id: a.questionId,
-        learning_content_id: contentId || null,
-        user_answer: a.answer,
-        is_correct: a.isCorrect,
-        response_time_seconds: null,
-        answered_at: new Date().toISOString(),
-      }));
-      const { error: resultError } = await supabase.from('user_test_results').insert(testResults);
-      if (resultError) throw resultError;
+      // セッション記録（DB側で列が存在しない環境も考慮し、失敗しても継続）
+      try {
+        const sessionInsert = {
+          user_id,
+          session_type: mode === 'exam' ? 'exam' : mode === 'review' ? 'review' : 'practice',
+          questions_attempted: answers.length,
+          questions_correct: answers.filter(a => a.isCorrect).length,
+          score_percentage: answers.length > 0 ? (answers.filter(a => a.isCorrect).length / answers.length) * 100 : 0,
+          // answers 列がない環境を考慮して省略
+          completed_at: new Date().toISOString(),
+          is_completed: true,
+        } as Record<string, unknown>;
+        await supabase.from('quiz_sessions').insert(sessionInsert);
+      } catch (e) {
+        // セッション保存に失敗しても致命的ではないためログのみ
+        // eslint-disable-next-line no-console
+        console.warn('quiz_sessions insert skipped:', e);
+      }
+
+      // 個別回答の保存（DBスキーマに合わせ、必須の question_id を含める）
+      const isUuid = (v: unknown) => typeof v === 'string' && /^[0-9a-fA-F-]{36}$/.test(v);
+      const questionMap = new Map(questions.map(q => [String(q.id), q]));
+      const nowIso = new Date().toISOString();
+      const testResults = answers.map(a => {
+        const q = questionMap.get(String(a.questionId));
+        const userAnswer = typeof a.answer === 'number' ? a.answer : Number(a.answer);
+        const correct = (q as any)?.correct_option_index ?? (q as any)?.correctAnswer ?? null;
+        const text = (q as any)?.text ?? (q as any)?.question_text ?? null;
+        const subject = (q as any)?.subject_category ?? (q as any)?.main_subject ?? null;
+        return {
+          user_id,
+          question_id: String(a.questionId),
+          unified_question_id: isUuid(a.questionId) ? a.questionId : null,
+          question_text: text,
+          user_answer: Number.isFinite(userAnswer) ? userAnswer : null,
+          correct_answer: Number.isFinite(correct) ? Number(correct) : null,
+          is_correct: !!a.isCorrect,
+          answered_at: nowIso,
+          learning_content_id: contentId ?? null,
+          subject_category: subject,
+        } as Record<string, unknown>;
+      });
+      const { error: resultError } = await supabase
+        .from('user_test_results')
+        .insert(testResults)
+        .select();
+      if (resultError) {
+        // 400などの詳細をUIにも表示
+        // eslint-disable-next-line no-console
+        console.error('user_test_results insert error:', resultError);
+        throw resultError;
+      }
     } catch (err: any) {
-      setSaveError(err.message || '回答結果の保存に失敗しました');
+      try {
+        const msg = typeof err === 'object' ? (err.message || JSON.stringify(err)) : String(err);
+        setSaveError(msg || '回答結果の保存に失敗しました');
+      } catch {
+        setSaveError('回答結果の保存に失敗しました');
+      }
     } finally {
       setSaving(false);
     }
@@ -353,7 +397,7 @@ const TestPage: React.FC = () => {
             <select
               className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
               value={selectedSubject}
-              onChange={e => setSelectedSubject(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSubject(e.target.value)}
               disabled={subjectLoading || mode === 'review' || !!contentId}
             >
               {subjects.map(subj => (
@@ -374,7 +418,7 @@ const TestPage: React.FC = () => {
             <select
               className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
               value={selectedSubSubject}
-              onChange={e => setSelectedSubSubject(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSubSubject(e.target.value)}
               disabled={selectedSubject === 'all' || subSubjectLoading || mode === 'review' || !!contentId}
             >
               {subSubjects.length === 0 ? (
@@ -399,7 +443,7 @@ const TestPage: React.FC = () => {
             <select
               className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
               value={questionCount}
-              onChange={e => setQuestionCount(Number(e.target.value))}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setQuestionCount(Number(e.target.value))}
               disabled={questionCountOptions.length === 0}
             >
               {questionCountOptions.map(opt => (

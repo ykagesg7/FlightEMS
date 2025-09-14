@@ -165,26 +165,34 @@ function LearningPage() {
 
       // おすすめ科目: 直近200回答を集計
       try {
-        const { data: results } = await supabase
+        type UserTestResultRow = { unified_question_id: string; is_correct: boolean };
+        type QuestionRow = { id: string; main_subject: string };
+
+        const resultsRes = await supabase
           .from('user_test_results')
           .select('unified_question_id,is_correct')
           .eq('user_id', uid)
           .order('answered_at', { ascending: false })
           .limit(200);
-        const ids = Array.from(new Set((results || []).map(r => r.unified_question_id).filter(Boolean)));
+        const results: UserTestResultRow[] = (resultsRes.data ?? []) as UserTestResultRow[];
+
+        const ids = Array.from(
+          new Set(results.map((r: UserTestResultRow) => r.unified_question_id).filter(Boolean))
+        );
         if (ids.length === 0) {
           setRecommendedSubject(null);
           return;
         }
-        const { data: questions } = await supabase
+        const questionsRes = await supabase
           .from('unified_cpl_questions')
           .select('id,main_subject')
-          .in('id', ids as any);
+          .in('id', ids as string[]);
+        const questions: QuestionRow[] = (questionsRes.data ?? []) as QuestionRow[];
         const idToSubject: Record<string, string> = {};
-        (questions || []).forEach(q => { idToSubject[q.id] = q.main_subject; });
+        questions.forEach((q: QuestionRow) => { idToSubject[q.id] = q.main_subject; });
         const agg: Record<string, { total: number; correct: number }> = {};
-        (results || []).forEach(r => {
-          const sid = r.unified_question_id as string;
+        results.forEach((r: UserTestResultRow) => {
+          const sid = r.unified_question_id;
           const subj = idToSubject[sid];
           if (!subj) return;
           if (!agg[subj]) agg[subj] = { total: 0, correct: 0 };

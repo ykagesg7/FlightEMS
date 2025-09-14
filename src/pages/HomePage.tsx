@@ -19,7 +19,8 @@ const useReveal = () => {
 };
 
 const HomePage: React.FC = () => {
-  const { effectiveTheme } = useTheme();
+  // 未使用のため分割代入をやめて呼び出しのみ
+  useTheme();
   useReveal();
 
   return (

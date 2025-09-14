@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { FilteredWeatherData } from '../../../api/weather';
+import { FilteredWeatherData } from '../../../services/weather';
 import type { WeatherCache } from '../../../contexts/WeatherCacheContext';
 import { simplifiedAirportInfoContent } from '../popups/airportPopup';
 import { createPopup } from '../popups/common';
