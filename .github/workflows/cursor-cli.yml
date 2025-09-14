@@ -1,0 +1,22 @@
+name: cursor-cli
+
+on:
+  workflow_dispatch:
+
+jobs:
+  install-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install CursorCLI
+        run: |
+          curl -fsSL https://cursor.com/install | bash
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Verify installation
+        run: |
+          cursor-agent --version
+
+

@@ -1,0 +1,33 @@
+# Build artifacts
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+.vercel/
+
+# VCS
+.git/
+
+# OS/Editor
+.DS_Store
+.idea/
+.vscode/
+
+# Generated / large data
+public/images/
+public/geojson/
+cpl_exam_data/
+**/*.pdf
+**/*.zip
+**/*.jpg
+**/*.png
+
+# Env & secrets
+.env*
+
+# Tests cache
+coverage/
+.vitest/
+
+
