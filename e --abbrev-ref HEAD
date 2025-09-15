@@ -1,0 +1,4 @@
+  chore/cleanup-structure            [m 8125f32 [[34morigin/chore/cleanup-structure[m: gone] feat(header): ブランドをロゴ中心に刷新しサイズ最適化 (desktop 48px/mobile 40px); fix(db): user_test_results AFTER INSERT トリガー関数を現行スキーマ対応NULLガード追加; feat(test): TestPage 保存整備とエラー表示改善; docs: 運用保守ガイドに変更履歴と検証手順を追記 (v1.1)
+  chore/cursor-homepage-unused-import[m 4161d0e feat(home): introduce HomePage as landing; add /planning; header HOME; AuthPage supports ?mode=signup|reset; docs updated
+* [32mmain                               [m 6128dd7 [[34morigin/main[m] feat(content): restore content structure and add Millionaire Teaching series
+  master                             [m 4557c5a Zで始まるウェイポイントを追加し、関連ファイルを更新
