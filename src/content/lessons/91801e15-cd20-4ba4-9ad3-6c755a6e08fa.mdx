@@ -1,0 +1,69 @@
+---
+title: 進捗管理機能のテスト
+slug: progress-test
+category: システム
+order: 1
+---
+
+# 進捗管理機能のテスト
+
+このページは進捗管理機能をテストするためのものです。スクロールして進捗がどのように更新されるかを確認できます。
+
+## 機能の概要
+
+この機能では以下のことができます：
+
+1. 学習の進捗状況を自動的に追跡
+2. 最後に読んだ位置を記録
+3. 完了したコンテンツを管理
+
+## 進捗の計算方法
+
+進捗はスクロール位置に基づいて計算されます。以下のルールが適用されます：
+
+- ページをスクロールするとリアルタイムで進捗が更新されます
+- ページの90%以上をスクロールすると、コンテンツが「完了」としてマークされます
+- 手動で「完了」ボタンを押すこともできます
+
+## テスト用コンテンツ
+
+以下は単にページを長くしてスクロールできるようにするためのものです。
+
+### セクション1
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat nisl ut dapibus. Mauris iaculis porttitor posuere. Praesent id metus massa, ut blandit odio.
+
+<Highlight>
+ハイライト表示のテストです。この部分は強調されて表示されます。
+改行しても適切に表示されるかテストします。
+</Highlight>
+
+### セクション2
+
+Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed posuere consectetur est at lobortis. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur. Nullam quis risus eget urna mollis ornare vel eu leo. Nullam id dolor id nibh ultricies vehicula ut id elit.
+
+### セクション3
+
+Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur. Donec ullamcorper nulla non metus auctor fringilla. Donec id elit non mi porta gravida at eget metus. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+
+<CalloutBox type="info" title="情報">
+このCalloutBoxは情報を表示するためのものです。進捗管理機能についての詳細情報を含めることができます。
+</CalloutBox>
+
+### セクション4
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+
+### セクション5
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
+
+<CalloutBox type="warning" title="注意">
+スクロール位置によって進捗が更新される仕組みは簡易的な実装です。実際のアプリケーションでは、より正確な計算方法を検討する必要があります。
+</CalloutBox>
+
+## 終わりに
+
+このページをスクロールすることで、進捗管理機能がどのように動作するかを確認できます。ページの上部に表示される進捗バーに注目してください。また、コンテンツ一覧ページに戻ると、このコンテンツの進捗状況が表示されます。
+
+以上で進捗管理機能のテストは完了です。お疲れ様でした！ 
