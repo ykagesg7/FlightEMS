@@ -21,8 +21,6 @@ export default defineConfig(({ mode }) => {
       react({
         // React 18対応の基本設定
         jsxRuntime: 'automatic',
-        // Fast Refresh有効化（デフォルトで含まれる）
-        fastRefresh: true,
       }),
       mdx({
         // MDX設定
@@ -51,10 +49,6 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_WEATHER_API_KEY': JSON.stringify(weatherApiKey),
       'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
       'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
-    },
-    // Experimental features
-    experimental: {
-      buildAdvanced: true,
     },
     build: {
       // ソースマップを無効化（本番環境ではAPIキーを隠すため）
@@ -184,6 +178,7 @@ export default defineConfig(({ mode }) => {
         '@hooks': resolve(__dirname, 'src/hooks'),
         '@types': resolve(__dirname, 'src/types'),
         '@stores': resolve(__dirname, 'src/stores'),
+        '@mdx': resolve(__dirname, 'src/components/mdx'),
       }
     },
     // パフォーマンス監視設定（stagewise対応）

@@ -69,7 +69,7 @@ function ArticlesPage() {
   } | null>(null);
 
   // 新しい状態管理
-  const [activeCategory, setActiveCategory] = useState<string>(categoryFromUrl ? (articleCategoryMapping[categoryFromUrl] || 'すべて') : 'メンタリティー');
+  const [activeCategory, setActiveCategory] = useState<string>(categoryFromUrl ? (articleCategoryMapping[categoryFromUrl] || 'すべて') : 'すべて');
   const [searchQuery, setSearchQuery] = useState(searchFromUrl);
   const [selectedTags, setSelectedTags] = useState<string[]>(tagsFromUrl ? tagsFromUrl.split(',').filter(Boolean) : []);
 

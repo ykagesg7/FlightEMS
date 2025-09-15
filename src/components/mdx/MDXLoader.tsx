@@ -37,17 +37,25 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, showPath }) => {
         // ファイルパスを指定してimport
         // 注: コンテンツIDに基づいて動的にインポートするため、エラーが発生する可能性があります
         try {
-          const module = await import(`../../content/${contentId}.mdx`);
+          // Try articles directory first
+          const module = await import(`../../content/articles/${contentId}.mdx`);
           setContent(() => module.default);
           setError(null);
         } catch (err) {
-          // 最初のパスでの読み込みに失敗した場合、別のパスを試す
+          // If articles fails, try lessons directory
           try {
-            const module = await import(`@content/${contentId}.mdx`);
+            const module = await import(`../../content/lessons/${contentId}.mdx`);
             setContent(() => module.default);
             setError(null);
           } catch (err2) {
-            throw err2; // 両方のパスで失敗した場合はエラーをスロー
+            // If both fail, try legacy path
+            try {
+              const module = await import(`../../content/${contentId}.mdx`);
+              setContent(() => module.default);
+              setError(null);
+            } catch (err3) {
+              throw err3; // All paths failed
+            }
           }
         }
       } catch (err) {

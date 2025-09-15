@@ -7,7 +7,10 @@ const articleCategories = ['メンタリティー', '思考法', '操縦'];
 function prefetchMDX(id: string) {
   try {
     // @ts-ignore - best-effort prefetch; Vite will ignore unknown
-    import(`../../content/${id}.mdx`);
+    // Try articles first, then lessons
+    import(`../../content/articles/${id}.mdx`).catch(() =>
+      import(`../../content/lessons/${id}.mdx`)
+    );
   } catch { }
 }
 
