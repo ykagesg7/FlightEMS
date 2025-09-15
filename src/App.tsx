@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React, { lazy, Suspense } from 'react';
+import { HelmetProvider } from 'react-helmet-async';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 // Contexts
@@ -45,16 +46,18 @@ const queryClient = new QueryClient({
 const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <EnhancedErrorBoundary>
-        <ThemeProvider>
-          <ProgressProvider>
-            <WeatherCacheProvider>
-              {children}
-              <ReactQueryDevtools initialIsOpen={false} />
-            </WeatherCacheProvider>
-          </ProgressProvider>
-        </ThemeProvider>
-      </EnhancedErrorBoundary>
+      <HelmetProvider>
+        <EnhancedErrorBoundary>
+          <ThemeProvider>
+            <ProgressProvider>
+              <WeatherCacheProvider>
+                {children}
+                <ReactQueryDevtools initialIsOpen={false} />
+              </WeatherCacheProvider>
+            </ProgressProvider>
+          </ThemeProvider>
+        </EnhancedErrorBoundary>
+      </HelmetProvider>
     </QueryClientProvider>
   );
 };

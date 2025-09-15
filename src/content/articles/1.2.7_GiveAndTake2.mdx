@@ -1,14 +1,18 @@
 import { Highlight, Image } from '@mdx'
 import React from 'react'
 
-{/*
----
-title: "【GIVE&TAKE】その２、清正公の熊本よかとこラジオ～テイカー撃退の法～"
-date: "2025-06-10"
-author: "しゃどー"
-tags: ["GIVE&TAKE", "思考法", "行動", "自己啓発", "チームワーク", "人間関係"]
----
-*/}
+export const meta = {
+  type: 'article',
+  title: '【GIVE&TAKE】その２、清正公の熊本よかとこラジオ～テイカー撃退の法～',
+  slug: '/articles/give-and-take-2',
+  tags: ['GIVE&TAKE', '思考法', '行動', '自己啓発', 'チームワーク', '人間関係'],
+  series: 'GIVE&TAKE',
+  order: 2,
+  readingTime: 10,
+  excerpt: 'テイカーを見抜き撃退する方法。健全な人間関係を築く技術。',
+  publishedAt: '2025-06-10',
+  author: 'しゃどー'
+};
 
 # 【GIVE&TAKE】その２、清正公の熊本よかとこラジオ～テイカー撃退の法～
 
@@ -22,10 +26,10 @@ tags: ["GIVE&TAKE", "思考法", "行動", "自己啓発", "チームワーク",
 
 **加藤清正:** 「お、くまモンよ。お主も来年は出る気か？ よかよか！ゴール地点の二の丸広場で、儂がうまか馬肉汁と、いきなり団子ば用意して待っとるばい！…というわけで、先週は『自己犠牲の罠』について話したが、今宵はその続き、より厄介な問題に切り込むぞ！」
 
-<Image 
-  src="/images/ContentImages/kiyomasa_radio_giveandtake2.png" 
-  width={600} 
-  height={350} 
+<Image
+  src="/images/ContentImages/kiyomasa_radio_giveandtake2.png"
+  width={600}
+  height={350}
 />
 
 ## リスナーからのお便りじゃ！
@@ -108,10 +112,10 @@ tags: ["GIVE&TAKE", "思考法", "行動", "自己啓発", "チームワーク",
 
 **加藤清正:** 「三つ！ <Highlight>**『チーム』で対処せよ！**</Highlight> 一人で抱えるな！ 問題を共有し、不正を許さぬという文化を作れ！ 健全なチームは、病巣を自ら摘出する、強い免疫機能を持つものじゃ！」
 
-<Image 
-  src="/images/ContentImages/kiyomasa_advice2.jpg" 
-  width={600} 
-  height={350} 
+<Image
+  src="/images/ContentImages/kiyomasa_advice2.jpg"
+  width={600}
+  height={350}
 />
 
 **加藤清正:** 「GIVEは伝染するが、TAKEもまた伝染する。よき流れを作るも、悪しき流れを断ち切るも、お主次第じゃ！」
@@ -126,4 +130,4 @@ tags: ["GIVE&TAKE", "思考法", "行動", "自己啓発", "チームワーク",
 
 スタジオの片隅では、くまモンが麗と百美に教わったのか、おずおずと「埼玉ポーズ」を練習していた。それを見た清正公が「な、なんじゃそのポーズは…腰に悪そうじゃのう…」と困惑している。カオスながらも、新たな文化交流が生まれた一夜であった。
 
-export default ({ children }) => <>{children}</> 
+export default ({ children }) => <>{children}</>

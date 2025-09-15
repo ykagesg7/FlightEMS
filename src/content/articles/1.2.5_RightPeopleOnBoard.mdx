@@ -1,14 +1,18 @@
 import { Highlight, Image } from '@mdx'
 import React from 'react'
 
-{/*
----
-title: "【ビジョナリー・カンパニー】「誰ば飛行機（ふね）に乗せるか」酔いどれ道真の人選術！"
-date: "2025-05-31"
-author: "しゃどー"
-tags: ["ビジョナリー・カンパニー", "チームワーク", "人選", "リーダーシップ", "自己啓発"]
----
-*/}
+export const meta = {
+  type: 'article',
+  title: '【ビジョナリー・カンパニー】「誰ば飛行機（ふね）に乗せるか」酔いどれ道真の人選術！',
+  slug: '/articles/right-people-on-board',
+  tags: ['ビジョナリー・カンパニー', 'チームワーク', '人選', 'リーダーシップ', '自己啓発'],
+  series: 'ビジョナリー・カンパニー',
+  order: 1,
+  readingTime: 11,
+  excerpt: '酔いどれ道真が語る人選の極意。誰を飛行機に乗せるかで全てが決まる。',
+  publishedAt: '2025-05-31',
+  author: 'しゃどー'
+};
 
 # 「誰ば飛行機（ふね）に乗せるか」酔いどれ道真の人選術！
 
@@ -16,10 +20,10 @@ tags: ["ビジョナリー・カンパニー", "チームワーク", "人選", "
 
 前回、ガネしゃんが「シナジーば創り出せ！」て言いよったろ？そりゃ確かに大事か。ばってん、今日はもっと根本的、「**そもそも、どげんヤツと一緒に空ば飛ぶとか？**」っちゅう、ちょっぴり辛子高菜みたいに辛口ばってん、避けては通れん話ばするったい！かの『ビジョナリー・カンパニー』っちゅうスッゴイ本にも書いてあるけん、間違いなか！心して聞かんと、梅の枝でケツば叩くばい！笑
 
-<Image 
-  src="/images/ContentImages/yoidore.jpg" 
-  width={600} 
-  height={350} 
+<Image
+  src="/images/ContentImages/yoidore.jpg"
+  width={600}
+  height={350}
   alt="酔いどれ道真のイラスト"
 />
 
@@ -127,13 +131,13 @@ tags: ["ビジョナリー・カンパニー", "チームワーク", "人選", "
 **自分（おの）ば磨いて**
 **あとは飛ぶだけたい！！！**
 
-<Image 
-  src="/images/ContentImages/yoidore2.jpg" 
-  width={600} 
-  height={350} 
+<Image
+  src="/images/ContentImages/yoidore2.jpg"
+  width={600}
+  height={350}
   alt="酔いどれ道真 最後の一句"
 />
 
 ワシはいつでも、この太宰府天満宮で熱燗片手に梅ば眺めながら、自分らのこと応援しとるけんね！ たまには「あの酔っ払い、また梅見酒でええ気分になっとるやろか？」くらい思い出してくれたら嬉しかばい。ほんなら、またな！ エンジン全開、気張って行けー！フライ・ハイ！！
 
-export default ({ children }) => <>{children}</> 
+export default ({ children }) => <>{children}</>

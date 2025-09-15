@@ -1,14 +1,18 @@
 import { Highlight } from '@mdx'
 import React from 'react'
 
-{/*
----
-title: "【７つの習慣】その１、道真公と学ぶ「主体性」
-date: "2025-04-29"
-author: "しゃどー"
-tags: ["思考法", "行動", "自己啓発", "主体性"]
----
-*/}
+export const meta = {
+  type: 'article',
+  title: '【７つの習慣】その１、道真公と学ぶ「主体性」',
+  slug: '/articles/unconscious-success',
+  tags: ['思考法', '行動', '自己啓発', '主体性'],
+  series: '７つの習慣',
+  order: 1,
+  readingTime: 6,
+  excerpt: '道真公と共に学ぶ主体性の本質。考えるだけでなく行動する習慣の重要性。',
+  publishedAt: '2025-04-29',
+  author: 'しゃどー'
+};
 
 # “考えるな、行動しろ！”…だけじゃない？道真が読み解く『７つの習慣』その１
 
@@ -78,4 +82,4 @@ tags: ["思考法", "行動", "自己啓発", "主体性"]
   height={350}
 />
 
-export default ({ children }) => <>{children}</> 
+export default ({ children }) => <>{children}</>

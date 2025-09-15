@@ -1,9 +1,12 @@
 import { MDXProvider } from '@mdx-js/react';
 import React, { useEffect, useState } from 'react';
+import type { ArticleMeta, MDXModule } from '../../types/articles';
+import { getArticleBySlug } from '../../utils/articlesIndex';
 import MDXContent from './MDXContent';
 
 interface MDXLoaderProps {
-  contentId: string; // コンテンツID (filePath を contentId にリネーム)
+  contentId: string; // コンテンツID（後方互換性のため）
+  slug?: string; // 新しいslugベースのローディング
   showPath?: boolean; // ファイルパスを表示するかどうか
 }
 
@@ -16,59 +19,76 @@ const isUUID = (str: string): boolean => {
   return uuidPattern.test(str);
 };
 
-const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, showPath }) => {
+const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
   const [Content, setContent] = useState<React.ComponentType | null>(null);
+  const [meta, setMeta] = useState<ArticleMeta | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadMDX = async () => {
-      // UUIDの場合は特別なエラーメッセージを表示
-      if (isUUID(contentId)) {
-        console.error('UUIDフォーマットのコンテンツIDは現在サポートされていません:', contentId);
-        setError(`コンテンツID "${contentId}" はUUIDフォーマットのため読み込めません。代わりに管理者ページから新しいコンテンツを追加してください。`);
-        setContent(null);
-        setLoading(false);
-        return;
-      }
-
       try {
         setLoading(true);
-        // ファイルパスを指定してimport
-        // 注: コンテンツIDに基づいて動的にインポートするため、エラーが発生する可能性があります
-        try {
-          // Try articles directory first
-          const module = await import(`../../content/articles/${contentId}.mdx`);
-          setContent(() => module.default);
-          setError(null);
-        } catch (err) {
-          // If articles fails, try lessons directory
+        setError(null);
+
+        let module: MDXModule;
+        let articleMeta: ArticleMeta | null = null;
+
+        // slugが指定されている場合は新しいインデックスベースのローディング
+        if (slug) {
+          const articleEntry = await getArticleBySlug(slug);
+          if (!articleEntry) {
+            throw new Error(`記事が見つかりません: ${slug}`);
+          }
+          module = await articleEntry.loader();
+          articleMeta = articleEntry.meta;
+        } else {
+          // 後方互換性のため、contentIdベースのローディングも保持
+          // UUIDの場合は特別なエラーメッセージを表示
+          if (isUUID(contentId)) {
+            console.error('UUIDフォーマットのコンテンツIDは現在サポートされていません:', contentId);
+            setError(`コンテンツID "${contentId}" はUUIDフォーマットのため読み込めません。代わりに管理者ページから新しいコンテンツを追加してください。`);
+            setContent(null);
+            setLoading(false);
+            return;
+          }
+
+          // 従来の動的インポート方式
           try {
-            const module = await import(`../../content/lessons/${contentId}.mdx`);
-            setContent(() => module.default);
-            setError(null);
-          } catch (err2) {
-            // If both fail, try legacy path
+            // Try articles directory first
+            module = await import(`../../content/articles/${contentId}.mdx`);
+          } catch (err) {
+            // If articles fails, try lessons directory
             try {
-              const module = await import(`../../content/${contentId}.mdx`);
-              setContent(() => module.default);
-              setError(null);
-            } catch (err3) {
-              throw err3; // All paths failed
+              module = await import(`../../content/lessons/${contentId}.mdx`);
+            } catch (err2) {
+              // If both fail, try legacy path
+              try {
+                module = await import(`../../content/${contentId}.mdx`);
+              } catch (err3) {
+                throw err3; // All paths failed
+              }
             }
           }
+          articleMeta = module.meta || null;
         }
+
+        setContent(() => module.default);
+        setMeta(articleMeta);
+        setError(null);
       } catch (err) {
         console.error('MDXの読み込みに失敗しました:', err);
-        setError(`コンテンツID "${contentId}" の読み込みに失敗しました。ファイルが存在するか確認してください。`);
+        const identifier = slug || contentId;
+        setError(`コンテンツ "${identifier}" の読み込みに失敗しました。ファイルが存在するか確認してください。`);
         setContent(null);
+        setMeta(null);
       } finally {
         setLoading(false);
       }
     };
 
     loadMDX();
-  }, [contentId]);
+  }, [contentId, slug]);
 
   // コンテンツの読み込みが完了したときにイベントを発火
   useEffect(() => {
@@ -76,14 +96,18 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, showPath }) => {
       // 少し遅延させてコンテンツがDOMに反映された後にイベントを発火
       const timer = setTimeout(() => {
         window.dispatchEvent(new CustomEvent(MDX_CONTENT_LOADED_EVENT, {
-          detail: { contentId: contentId }
+          detail: {
+            contentId: contentId,
+            slug: slug || meta?.slug,
+            meta: meta
+          }
         }));
         // コンテンツ読み込み完了
       }, 200);
 
       return () => clearTimeout(timer);
     }
-  }, [loading, Content, contentId]);
+  }, [loading, Content, contentId, slug, meta]);
 
   if (loading) {
     return (
@@ -108,12 +132,13 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, showPath }) => {
     <div className="mdx-container">
       {showPath && (
         <div className="bg-gray-100 text-gray-600 text-sm p-2 mb-4 rounded-lg shadow-sm">
-          コンテンツID: {contentId}
+          {slug ? `Slug: ${slug}` : `コンテンツID: ${contentId}`}
+          {meta && <span className="ml-2">({meta.title})</span>}
         </div>
       )}
       {Content ? (
         <MDXProvider>
-          <MDXContent>
+          <MDXContent meta={meta}>
             <Content />
           </MDXContent>
         </MDXProvider>

@@ -1,6 +1,13 @@
 import { MDXProvider } from '@mdx-js/react';
 import React from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
+import ArticleHeader from '../articles/ArticleHeader';
+import RelatedArticles from '../articles/RelatedArticles';
+import TableOfContents from '../articles/TableOfContents';
+import ArticleJsonLd from '../seo/ArticleJsonLd';
+import ArticleMetaTags from '../seo/ArticleMetaTags';
+import { Callout, Footnote, FootnoteRef } from './CalloutComponents';
+import ImageWithOptimization from './ImageWithOptimization';
 import * as MDXComponents from './index';
 
 // HTML要素のプロップス型定義
@@ -15,7 +22,7 @@ interface AnchorProps extends React.HTMLAttributes<HTMLAnchorElement> { }
 interface BlockquoteProps extends React.HTMLAttributes<HTMLElement> { }
 
 // MDXコンポーネント型定義
-export interface MDXComponents {
+export interface CustomMDXComponents {
   h1: React.ComponentType<HeadingProps>;
   h2: React.ComponentType<HeadingProps>;
   h3: React.ComponentType<HeadingProps>;
@@ -31,6 +38,7 @@ export interface MDXComponents {
   a: React.ComponentType<AnchorProps>;
   strong: React.ComponentType<React.HTMLAttributes<HTMLElement>>;
   em: React.ComponentType<React.HTMLAttributes<HTMLElement>>;
+  [key: string]: React.ComponentType<any>;
 }
 
 // MDXでカスタマイズできるコンポーネント
@@ -42,7 +50,6 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
   const headingColor = 'text-[color:var(--hud-primary)]';
   const subHeadingColor = 'text-[color:var(--hud-primary)]';
   const linkColor = 'text-[color:var(--hud-primary)]';
-  const linkHoverColor = '';
   const strongColor = 'text-[color:var(--text-primary)]';
   const bgColor = 'bg-[color:var(--panel)]';
   const borderColor = 'border-[color:var(--hud-primary)]';
@@ -50,7 +57,7 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
   const blockquoteBorderColor = theme === 'dark' ? 'border-amber-400' : 'border-amber-500';
   const blockquoteTextColor = theme === 'dark' ? 'text-amber-100' : 'text-amber-900';
 
-  const components: MDXComponents = {
+  const components: CustomMDXComponents = {
     h1: (props: HeadingProps) => <h1 className={`text-2xl sm:text-3xl font-bold ${headingColor} border-b-2 ${theme === 'dark' ? 'border-indigo-700' : 'border-indigo-800'} pb-2 mb-6 break-words tracking-tight`} {...props} />,
     h2: (props: HeadingProps) => <h2 className={`text-xl sm:text-2xl font-bold mb-4 ${subHeadingColor} mt-8 break-words tracking-tight`} {...props} />,
     h3: (props: HeadingProps) => <h3 className={`text-lg sm:text-xl font-bold mt-6 mb-3 ${subHeadingColor} break-words tracking-tight`} {...props} />,
@@ -70,16 +77,16 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
     em: (props: React.HTMLAttributes<HTMLElement>) => <em className={`italic ${textColor}`} {...props} />,
 
     // カスタムコンポーネント
-    Image: MDXComponents.ImageComponent,
-    Callout: MDXComponents.CalloutBox,
+    Image: ImageWithOptimization,
+    ImageOptimized: ImageWithOptimization,
+    Callout: Callout,
     CalloutBox: MDXComponents.CalloutBox,
+    Footnote: Footnote,
+    FootnoteRef: FootnoteRef,
     Code: MDXComponents.CodeBlock,
     Quiz: MDXComponents.QuizComponent,
     Diagram: MDXComponents.DiagramComponent,
-    Highlight: MDXComponents.Highlight,
-
-    // HTMLのimg要素をオーバーライドする代わりに、標準のimg要素を使用
-    // img: MDXComponents.ImageComponent, // 型エラーが発生するため削除
+    Highlight: MDXComponents.Highlight
   };
 
   // フロントマターのキーワード
@@ -130,12 +137,55 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
+import type { ArticleMeta } from '../../types/articles';
+
 interface MDXContentProps {
   children: React.ReactNode;
+  meta?: ArticleMeta | null;
 }
 
-const MDXContent: React.FC<MDXContentProps> = ({ children }) => {
-  return <MDXContentWithTheme>{children}</MDXContentWithTheme>;
+const MDXContent: React.FC<MDXContentProps> = ({ children, meta }) => {
+  // 現在のURLを取得
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+
+  return (
+    <>
+      {/* SEO用メタタグとJSON-LD */}
+      {meta && (
+        <>
+          <ArticleMetaTags meta={meta} url={currentUrl} />
+          <ArticleJsonLd meta={meta} url={currentUrl} />
+        </>
+      )}
+
+      {/* 記事ヘッダー */}
+      {meta && <ArticleHeader meta={meta} />}
+
+      {/* デスクトップでは右側に目次を表示、モバイルではドロワー */}
+      <div className="flex gap-8">
+        <div className="flex-1 min-w-0">
+          <MDXContentWithTheme>{children}</MDXContentWithTheme>
+
+          {/* 記事末尾に関連記事を表示 */}
+          {meta && (
+            <div className="mt-12">
+              <RelatedArticles currentSlug={meta.slug} />
+            </div>
+          )}
+        </div>
+
+        {/* デスクトップ用サイドバー目次 */}
+        <div className="hidden xl:block flex-shrink-0">
+          <TableOfContents mode="sidebar" compact={true} />
+        </div>
+      </div>
+
+      {/* モバイル・タブレット用ドロワー目次 */}
+      <div className="xl:hidden">
+        <TableOfContents mode="drawer" />
+      </div>
+    </>
+  );
 };
 
 export default MDXContent;
