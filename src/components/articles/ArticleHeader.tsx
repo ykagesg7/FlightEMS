@@ -7,7 +7,7 @@ interface ArticleHeaderProps {
 }
 
 const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
-  const { theme } = useTheme();
+  const { effectiveTheme } = useTheme();
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return null;
@@ -27,7 +27,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
   return (
     <header className={`
       mb-8 pb-6 border-b transition-colors duration-200
-      ${theme === 'dark'
+      ${effectiveTheme === 'dark'
         ? 'border-[color:var(--hud-primary)] border-opacity-30'
         : 'border-[color:var(--hud-primary)] border-opacity-40'
       }
@@ -35,7 +35,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
       {/* タイトル */}
       <h1 className={`
         text-3xl sm:text-4xl font-bold mb-4 leading-tight transition-colors duration-200
-        ${theme === 'dark'
+        ${effectiveTheme === 'dark'
           ? 'text-[color:var(--hud-primary)]'
           : 'text-[color:var(--hud-primary)]'
         }
@@ -47,7 +47,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
       {meta.excerpt && (
         <p className={`
           text-lg mb-6 leading-relaxed transition-colors duration-200
-          ${theme === 'dark'
+          ${effectiveTheme === 'dark'
             ? 'text-[color:var(--text-primary)] opacity-90'
             : 'text-[color:var(--text-primary)] opacity-85'
           }
@@ -59,7 +59,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
       {/* メタ情報 */}
       <div className={`
         flex flex-wrap items-center gap-4 text-sm transition-colors duration-200
-        ${theme === 'dark'
+        ${effectiveTheme === 'dark'
           ? 'text-[color:var(--text-primary)] opacity-80'
           : 'text-[color:var(--text-primary)] opacity-75'
         }
@@ -101,7 +101,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
           {meta.tags.map((tag, index) => (
             <span
               key={index}
-              className={`px-3 py-1 text-xs rounded-full border transition-colors duration-200 ${theme === 'dark'
+              className={`px-3 py-1 text-xs rounded-full border transition-colors duration-200 ${effectiveTheme === 'dark'
                 ? 'bg-indigo-900 bg-opacity-30 border-indigo-700 text-indigo-300'
                 : 'bg-indigo-100 border-indigo-300 text-indigo-700'
                 }`}
@@ -116,14 +116,14 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
       {meta.series && (
         <div className={`
           mt-4 p-3 rounded-lg border transition-all duration-200
-          ${theme === 'dark'
+          ${effectiveTheme === 'dark'
             ? 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-20'
             : 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-30'
           }
         `}>
           <div className={`
             flex items-center gap-2 text-sm transition-colors duration-200
-            ${theme === 'dark'
+            ${effectiveTheme === 'dark'
               ? 'text-[color:var(--hud-primary)]'
               : 'text-[color:var(--hud-primary)]'
             }

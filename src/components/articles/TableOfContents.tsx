@@ -16,7 +16,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
   maxLevel = 3,
   compact = false
 }) => {
-  const { theme } = useTheme();
+  const { effectiveTheme } = useTheme();
   const { tocItems, activeId, scrollToHeading } = useTableOfContents();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -38,7 +38,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
           className={`
             block w-full text-left py-1 px-2 rounded text-sm transition-all duration-200
             ${isActive
-              ? `font-semibold text-[color:var(--hud-primary)] ${theme === 'dark' ? 'bg-indigo-900 bg-opacity-30' : 'bg-indigo-100'}`
+              ? `font-semibold text-[color:var(--hud-primary)] ${effectiveTheme === 'dark' ? 'bg-indigo-900 bg-opacity-30' : 'bg-indigo-100'}`
               : `text-[color:var(--text-primary)] opacity-80 hover:opacity-100 hover:text-[color:var(--hud-primary)]`
             }
             ${compact ? 'py-0.5 text-xs' : ''}
@@ -85,7 +85,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
       `}>
         <div className={`
           p-4 rounded-lg border transition-colors duration-200
-          ${theme === 'dark'
+          ${effectiveTheme === 'dark'
             ? 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-20'
             : 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-25'
           }
@@ -105,7 +105,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
           className={`
             fixed top-20 right-4 z-50 p-2 rounded-full shadow-lg transition-all duration-200
-            ${theme === 'dark'
+            ${effectiveTheme === 'dark'
               ? 'bg-[color:var(--panel)] text-[color:var(--text-primary)] hover:bg-[color:var(--hud-primary)] hover:bg-opacity-10'
               : 'bg-[color:var(--panel)] text-[color:var(--text-primary)] hover:bg-[color:var(--hud-primary)] hover:bg-opacity-15'
             }
@@ -129,7 +129,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
         <div className={`
           fixed top-0 right-0 h-full w-80 z-50 transform transition-transform duration-300 ease-in-out
           ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}
-          ${theme === 'dark'
+          ${effectiveTheme === 'dark'
             ? 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-20'
             : 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-25'
           }
@@ -158,7 +158,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
   return (
     <div className={`
       toc-inline mb-8 p-4 rounded-lg border
-      ${theme === 'dark'
+      ${effectiveTheme === 'dark'
         ? 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-20'
         : 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-25'
       }

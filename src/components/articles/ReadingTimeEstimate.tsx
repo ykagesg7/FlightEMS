@@ -15,7 +15,7 @@ const ReadingTimeEstimate: React.FC<ReadingTimeEstimateProps> = ({
   progress = 0,
   compact = false
 }) => {
-  const { theme } = useTheme();
+  const { effectiveTheme } = useTheme();
   const [remainingTime, setRemainingTime] = useState(totalReadingTime);
 
   useEffect(() => {
@@ -32,12 +32,12 @@ const ReadingTimeEstimate: React.FC<ReadingTimeEstimateProps> = ({
 
   const getProgressColor = () => {
     if (progress >= 0.9) {
-      return theme === 'dark' ? 'text-green-400' : 'text-green-600';
+      return effectiveTheme === 'dark' ? 'text-green-400' : 'text-green-600';
     }
     if (progress >= 0.5) {
-      return theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600';
+      return effectiveTheme === 'dark' ? 'text-yellow-400' : 'text-yellow-600';
     }
-    return theme === 'dark' ? 'text-blue-400' : 'text-blue-600';
+    return effectiveTheme === 'dark' ? 'text-blue-400' : 'text-blue-600';
   };
 
   const getIcon = () => {
@@ -67,8 +67,8 @@ const ReadingTimeEstimate: React.FC<ReadingTimeEstimateProps> = ({
   return (
     <div className={`
       flex items-center gap-3 p-3 rounded-lg border transition-all duration-300
-      ${theme === 'dark'
-        ? 'bg-gray-800 border-gray-700 text-gray-200'
+      ${effectiveTheme === 'dark'
+        ? 'hud-surface text-gray-200'
         : 'bg-white border-gray-200 text-gray-800'
       }
     `}>
@@ -81,16 +81,16 @@ const ReadingTimeEstimate: React.FC<ReadingTimeEstimateProps> = ({
         <div className="flex-1 min-w-0">
           <div className={`
             h-2 rounded-full overflow-hidden
-            ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}
+            ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}
           `}>
             <div
               className={`
                 h-full transition-all duration-300 ease-out rounded-full
                 ${progress >= 0.9
-                  ? (theme === 'dark' ? 'bg-green-400' : 'bg-green-500')
+                  ? (effectiveTheme === 'dark' ? 'bg-green-400' : 'bg-green-500')
                   : progress >= 0.5
-                    ? (theme === 'dark' ? 'bg-yellow-400' : 'bg-yellow-500')
-                    : (theme === 'dark' ? 'bg-blue-400' : 'bg-blue-500')
+                    ? (effectiveTheme === 'dark' ? 'bg-yellow-400' : 'bg-yellow-500')
+                    : (effectiveTheme === 'dark' ? 'bg-blue-400' : 'bg-blue-500')
                 }
               `}
               style={{ width: `${Math.min(100, progress * 100)}%` }}

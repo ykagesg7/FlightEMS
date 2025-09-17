@@ -15,7 +15,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
   limit = 3,
   showSeries = true
 }) => {
-  const { theme } = useTheme();
+  const { effectiveTheme } = useTheme();
   const [relatedArticles, setRelatedArticles] = useState<ArticleIndexEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -40,7 +40,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
     return (
       <div className={`
         p-6 rounded-lg border transition-colors duration-200
-        ${theme === 'dark'
+        ${effectiveTheme === 'dark'
           ? 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-20'
           : 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-25'
         }
@@ -81,7 +81,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
   return (
     <section className={`
       p-6 rounded-lg border transition-colors duration-200
-      ${theme === 'dark'
+      ${effectiveTheme === 'dark'
         ? 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-20'
         : 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-25'
       }
@@ -92,7 +92,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
         </svg>
         <h3 className={`
           text-lg font-semibold transition-colors duration-200
-          ${theme === 'dark'
+          ${effectiveTheme === 'dark'
             ? 'text-[color:var(--hud-primary)]'
             : 'text-[color:var(--hud-primary)]'
           }
@@ -107,7 +107,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
             key={article.meta.slug}
             className={`
               p-4 rounded-lg border transition-all duration-200 hover:shadow-md
-              ${theme === 'dark'
+              ${effectiveTheme === 'dark'
                 ? 'bg-[color:var(--main)] border-[color:var(--hud-primary)] border-opacity-30 hover:bg-[color:var(--panel)] hover:border-[color:var(--hud-primary)] hover:border-opacity-50'
                 : 'bg-[color:var(--main)] border-[color:var(--hud-primary)] border-opacity-20 hover:bg-[color:var(--panel)] hover:border-[color:var(--hud-primary)] hover:border-opacity-40'
               }
@@ -170,7 +170,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
                       key={index}
                       className={`
                         px-2 py-0.5 text-xs rounded-full border
-                        ${theme === 'dark'
+                        ${effectiveTheme === 'dark'
                           ? 'bg-indigo-900 bg-opacity-30 border-indigo-700 text-indigo-300'
                           : 'bg-indigo-100 border-indigo-300 text-indigo-700'
                         }
