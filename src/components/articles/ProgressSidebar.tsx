@@ -19,10 +19,10 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
     <div className="space-y-6">
       {/* カテゴリー別進捗 */}
       <div className={`
-        p-5 rounded-xl border backdrop-blur-sm shadow-lg
+        p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg
         ${effectiveTheme === 'dark'
-          ? 'hud-surface shadow-red-900/20'
-          : 'hud-surface shadow-green-900/10'
+          ? 'hud-surface border-red-500/60 shadow-red-900/20'
+          : 'hud-surface border-green-500/50 shadow-green-900/10'
         }
       `}>
         <h3 className={`
@@ -94,10 +94,10 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
 
       {/* シリーズ別進捗 */}
       <div className={`
-        p-5 rounded-xl border backdrop-blur-sm shadow-lg
+        p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg
         ${effectiveTheme === 'dark'
-          ? 'hud-surface shadow-red-900/20'
-          : 'hud-surface shadow-green-900/10'
+          ? 'hud-surface border-red-500/60 shadow-red-900/20'
+          : 'hud-surface border-green-500/50 shadow-green-900/10'
         }
       `}>
         <h3 className={`
@@ -184,10 +184,10 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
 
       {/* 最近の活動 */}
       <div className={`
-        p-5 rounded-xl border backdrop-blur-sm shadow-lg
+        p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg
         ${effectiveTheme === 'dark'
-          ? 'hud-surface shadow-red-900/20'
-          : 'hud-surface shadow-green-900/10'
+          ? 'hud-surface border-red-500/60 shadow-red-900/20'
+          : 'hud-surface border-green-500/50 shadow-green-900/10'
         }
       `}>
         <h3 className={`

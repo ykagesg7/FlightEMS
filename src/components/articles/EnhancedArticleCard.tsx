@@ -83,11 +83,11 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
       )}
 
       <div className={`
-         relative overflow-hidden rounded-xl border transition-all duration-300 backdrop-blur-sm
+         relative overflow-hidden rounded-xl border-2 transition-all duration-300 backdrop-blur-sm
          shadow-lg hover:shadow-xl
          ${effectiveTheme === 'dark'
-          ? 'hud-surface hover:bg-white/10'
-          : 'hud-surface hover:bg-white/10'
+          ? 'hud-surface border-red-500/60 shadow-red-900/20 hover:bg-white/10'
+          : 'hud-surface border-green-500/50 shadow-green-900/10 hover:bg-white/10'
         }
          ${shouldBlur ? 'blur-[1px]' : ''}
        `}>

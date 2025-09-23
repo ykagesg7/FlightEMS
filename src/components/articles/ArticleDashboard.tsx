@@ -8,7 +8,7 @@ import { LearningContent } from '../../types';
 import { ArticleMeta } from '../../types/articles';
 import { buildArticleIndex } from '../../utils/articlesIndex';
 import ArticleSearch from './ArticleSearch';
-import ArticleTabs from './ArticleTabs';
+import ArticleSortControls from './ArticleSortControls';
 import { EnhancedArticleCard } from './EnhancedArticleCard';
 import { ProgressSidebar } from './ProgressSidebar';
 import { ProgressSummaryHeader } from './ProgressSummaryHeader';
@@ -47,17 +47,20 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
   // URLパラメータから状態を取得
   const categoryFromUrl = searchParams.get('category');
-  const searchFromUrl = searchParams.get('q') || '';
   const tagsFromUrl = searchParams.get('tags') || '';
+  const sortFromUrl = searchParams.get('sort') || '';
 
   // フィルタリング状態
   const [activeCategory, setActiveCategory] = useState<string>(
     categoryFromUrl || 'すべて'
   );
-  const [searchQuery, setSearchQuery] = useState(searchFromUrl);
   const [selectedTags, setSelectedTags] = useState<string[]>(
     tagsFromUrl ? tagsFromUrl.split(',').filter(Boolean) : []
   );
+
+  // ソート状態
+  const [sortBy, setSortBy] = useState<string>(sortFromUrl || 'date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   // 記事メタデータの読み込み
   React.useEffect(() => {
@@ -66,7 +69,8 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
         const index = await buildArticleIndex();
         const metaMap: Record<string, ArticleMeta> = {};
         index.forEach(entry => {
-          metaMap[entry.meta.slug] = entry.meta;
+          // filenameをキーとして使用（content.idと一致する）
+          metaMap[entry.filename] = entry.meta;
         });
         setArticleMetas(metaMap);
 
@@ -91,14 +95,6 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
   // フィルタリングロジック
   const filteredContents = useMemo(() => {
-    const normalizeText = (s: string) => {
-      const nk = s.normalize('NFKC');
-      const lower = nk.toLowerCase();
-      return lower.replace(/[\u30a1-\u30f6]/g, (ch) =>
-        String.fromCharCode(ch.charCodeAt(0) - 0x60)
-      );
-    };
-
     let filtered = articleContents;
 
     // カテゴリーフィルタ
@@ -106,40 +102,71 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
       filtered = filtered.filter((content) => content.category === activeCategory);
     }
 
-    // 検索クエリフィルタ
-    if (searchQuery.trim()) {
-      const normalizedQuery = normalizeText(searchQuery);
-      filtered = filtered.filter((content) => {
-        const titleMatch = normalizeText(content.title).includes(normalizedQuery);
-        const descMatch = normalizeText(content.description || '').includes(normalizedQuery);
-        const categoryMatch = normalizeText(content.category).includes(normalizedQuery);
-
-        // メタデータからも検索
-        const meta = Object.values(articleMetas).find(m =>
-          m.slug.includes(content.id) || content.title.includes(m.title)
-        );
-        const metaMatch = meta ?
-          normalizeText(meta.title).includes(normalizedQuery) ||
-          normalizeText(meta.excerpt || '').includes(normalizedQuery) ||
-          meta.tags.some(tag => normalizeText(tag).includes(normalizedQuery))
-          : false;
-
-        return titleMatch || descMatch || categoryMatch || metaMatch;
-      });
-    }
-
-    // タグフィルタ
+    // タグフィルタ（複数選択）
     if (selectedTags.length > 0) {
       filtered = filtered.filter((content) => {
-        const meta = Object.values(articleMetas).find(m =>
-          m.slug.includes(content.id) || content.title.includes(m.title)
-        );
+        const meta = articleMetas[content.id];
         return meta ? selectedTags.some(tag => meta.tags.includes(tag)) : false;
       });
     }
 
-    return filtered;
-  }, [articleContents, activeCategory, searchQuery, selectedTags, articleMetas]);
+
+    // ソート処理
+    const sorted = [...filtered].sort((a, b) => {
+      let comparison = 0;
+
+
+      switch (sortBy) {
+        case 'date':
+          const dateA = new Date(a.created_at || 0).getTime();
+          const dateB = new Date(b.created_at || 0).getTime();
+          comparison = dateA - dateB;
+          break;
+
+        case 'title':
+          comparison = a.title.localeCompare(b.title, 'ja');
+          break;
+
+        case 'readingTime':
+          const metaA = Object.values(articleMetas).find(m =>
+            m.slug.includes(a.id) || a.title.includes(m.title)
+          );
+          const metaB = Object.values(articleMetas).find(m =>
+            m.slug.includes(b.id) || b.title.includes(m.title)
+          );
+          const timeA = metaA?.readingTime || 10;
+          const timeB = metaB?.readingTime || 10;
+          comparison = timeA - timeB;
+          break;
+
+        case 'popularity':
+          const statsA = Object.values(articleMetas).find(m =>
+            m.slug.includes(a.id) || a.title.includes(m.title)
+          );
+          const statsB = Object.values(articleMetas).find(m =>
+            m.slug.includes(b.id) || b.title.includes(m.title)
+          );
+          const socialA = statsA ? socialStats[statsA.slug] : undefined;
+          const socialB = statsB ? socialStats[statsB.slug] : undefined;
+          const likesA = socialA?.likes || 0;
+          const likesB = socialB?.likes || 0;
+          comparison = likesA - likesB;
+          break;
+
+        case 'category':
+          comparison = a.category.localeCompare(b.category, 'ja');
+          break;
+
+
+        default:
+          comparison = 0;
+      }
+
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
+    return sorted;
+  }, [articleContents, activeCategory, selectedTags, articleMetas, sortBy, sortOrder, socialStats]);
 
   // 利用可能なタグを抽出
   const availableTags = useMemo(() => {
@@ -150,6 +177,49 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     return Array.from(tags).sort();
   }, [articleMetas]);
 
+
+  // カテゴリ変更時のURLパラメータ更新とソート適用
+  const handleCategoryChange = useCallback((category: string) => {
+    setActiveCategory(category);
+
+    // カテゴリーに応じたデフォルトソートを適用
+    let defaultSort = 'date';
+    if (category === 'メンタリティー') {
+      defaultSort = 'popularity'; // 人気度でソート
+    } else if (category === '思考法') {
+      defaultSort = 'readingTime'; // 読了時間でソート
+    } else if (category === '操縦') {
+      defaultSort = 'title'; // タイトル順でソート
+    }
+
+    setSortBy(defaultSort);
+
+    const newSearchParams = new URLSearchParams(searchParams);
+    if (category === 'すべて') {
+      newSearchParams.delete('category');
+    } else {
+      newSearchParams.set('category', category);
+    }
+    newSearchParams.set('sort', defaultSort);
+    setSearchParams(newSearchParams);
+  }, [searchParams, setSearchParams]);
+
+  // ソート変更時のURLパラメータ更新
+  const handleSortChange = useCallback((newSortBy: string) => {
+    setSortBy(newSortBy);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('sort', newSortBy);
+    setSearchParams(newSearchParams);
+  }, [searchParams, setSearchParams]);
+
+  // ソート順序変更
+  const handleSortOrderChange = useCallback(() => {
+    const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newOrder);
+  }, [sortOrder]);
+
+
+
   // 登録促進モーダル
   const showRegistrationModal = useCallback(() => {
     navigate('/auth');
@@ -158,13 +228,26 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   // ローディング状態
   if (isLoading || progressLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div
+        className="flex items-center justify-center min-h-screen"
+        style={{
+          background: effectiveTheme === 'day' ? '#0b1d3a' : 'var(--bg)',
+          color: 'var(--text-primary)'
+        }}
+      >
         <div className={`
-          text-center
-          ${effectiveTheme === 'dark' ? 'text-white' : 'text-gray-900'}
+          text-center p-8 rounded-xl border backdrop-blur-sm
+          ${effectiveTheme === 'dark'
+            ? 'hud-surface border-gray-700'
+            : 'hud-surface border-gray-300'
+          }
         `}>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-current mx-auto mb-4"></div>
-          <p>学習データを読み込み中...</p>
+          <div className={`animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4 ${effectiveTheme === 'dark' ? 'border-red-500' : 'border-green-500'
+            }`}></div>
+          <p className={`text-lg font-medium ${effectiveTheme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>
+            学習データを読み込み中...
+          </p>
         </div>
       </div>
     );
@@ -217,25 +300,16 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
           {/* メインエリア: 記事一覧 */}
           <div className="xl:col-span-3 order-1 xl:order-2">
-            {/* 検索・フィルタリング */}
+            {/* フィルタリング */}
             <div className="mb-8">
               <ArticleSearch
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
                 selectedTags={selectedTags}
                 setSelectedTags={setSelectedTags}
                 availableTags={availableTags}
-                placeholder="記事を検索..."
-              />
-            </div>
-
-            {/* カテゴリータブ */}
-            <div className="mb-6">
-              <ArticleTabs
                 categories={['すべて', ...articleCategories]}
                 activeCategory={activeCategory}
-                setActiveCategory={setActiveCategory}
-                contentCounts={{
+                onCategoryChange={handleCategoryChange}
+                categoryCounts={{
                   'すべて': articleContents.length,
                   ...articleCategories.reduce((acc, cat) => ({
                     ...acc,
@@ -245,10 +319,22 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
               />
             </div>
 
+
+            {/* ソートコントロール */}
+            <div className="mb-6">
+              <ArticleSortControls
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortChange={handleSortChange}
+                onSortOrderChange={handleSortOrderChange}
+              />
+            </div>
+
             {/* 記事一覧 */}
             <div className="space-y-6">
               {filteredContents.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${effectiveTheme === 'day' ? 'hud-grid' : ''
+                  }`}>
                   {filteredContents.map((article) => {
                     // 記事のメタデータを取得
                     const meta = Object.values(articleMetas).find(m =>
@@ -256,7 +342,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                     );
 
                     // 進捗情報を取得
-                    const progress = meta ? getArticleProgress(meta.slug) : null;
+                    const progress = meta ? getArticleProgress(meta.slug) : undefined;
 
                     // ソーシャル統計を取得
                     const stats = meta ? socialStats[meta.slug] : undefined;
@@ -266,7 +352,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                         key={article.id}
                         article={article}
                         articleMeta={meta}
-                        progress={progress}
+                        progress={progress || undefined}
                         isDemo={isDemo}
                         onRegisterPrompt={showRegistrationModal}
                         stats={stats}
@@ -276,11 +362,17 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 </div>
               ) : (
                 <div className={`
-                  text-center py-12
-                  ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}
+                  text-center py-12 p-8 rounded-xl border backdrop-blur-sm
+                  ${effectiveTheme === 'dark'
+                    ? 'hud-surface border-gray-700 text-gray-400'
+                    : 'hud-surface border-gray-300 text-gray-600'
+                  }
                 `}>
                   <div className="text-4xl mb-4">📚</div>
-                  <p className="text-lg font-medium mb-2">記事が見つかりませんでした</p>
+                  <p className={`text-lg font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>
+                    記事が見つかりませんでした
+                  </p>
                   <p className="text-sm">
                     検索条件を変更するか、カテゴリーを「すべて」に設定してお試しください。
                   </p>

@@ -1,67 +1,158 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface ArticleSearchProps {
-  onSearch: (query: string) => void;
-  onFilterChange: (filters: string[]) => void;
+  selectedTags: string[];
+  setSelectedTags: (tags: string[]) => void;
   availableTags: string[];
+  categories?: string[];
+  activeCategory?: string;
+  onCategoryChange?: (category: string) => void;
+  categoryCounts?: Record<string, number>;
 }
 
 const ArticleSearch: React.FC<ArticleSearchProps> = ({
-  onSearch,
-  onFilterChange,
-  availableTags
+  selectedTags,
+  setSelectedTags,
+  availableTags,
+  categories = [],
+  activeCategory = 'すべて',
+  onCategoryChange,
+  categoryCounts = {}
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  const handleSearchChange = (query: string) => {
-    setSearchQuery(query);
-    onSearch(query);
-  };
+  const { effectiveTheme } = useTheme();
 
   const handleTagToggle = (tag: string) => {
     const newTags = selectedTags.includes(tag)
       ? selectedTags.filter(t => t !== tag)
       : [...selectedTags, tag];
     setSelectedTags(newTags);
-    onFilterChange(newTags);
   };
 
+  const handleCategoryClick = (category: string) => {
+    if (onCategoryChange) {
+      onCategoryChange(category);
+    }
+  };
+
+
   return (
-    <div className="space-y-4">
-      {/* 検索バー */}
-      <div className="relative">
-        <input
-          type="text"
-          placeholder="記事を検索..."
-          value={searchQuery}
-          onChange={(e) => handleSearchChange(e.target.value)}
-          className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 transition-colors bg-[color:var(--panel)] border-[color:var(--hud-primary)] text-[color:var(--text-primary)] placeholder-[color:var(--text-muted)] focus:ring-[color:var(--ring)] focus:border-[color:var(--ring)]`}
-        />
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
+    <div className={`p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg ${effectiveTheme === 'dark'
+      ? 'hud-surface border-red-500/60 shadow-red-900/20'
+      : effectiveTheme === 'day'
+        ? 'hud-surface border-green-500/50 shadow-green-900/10'
+        : 'hud-surface border-gray-300'
+      }`}>
+      {/* ヘッダー */}
+      <div className="flex items-center justify-between mb-3">
+        <h3 className={`text-sm font-medium ${effectiveTheme === 'dark'
+          ? 'text-gray-300'
+          : effectiveTheme === 'day'
+            ? 'text-[#39FF14]'
+            : 'text-gray-700'
+          }`}>
+          📂 記事のフィルタリング
+        </h3>
+        {selectedTags.length > 0 && (
+          <button
+            onClick={() => setSelectedTags([])}
+            className={`text-xs px-2 py-1 rounded-md border-2 transition-colors duration-200 ${effectiveTheme === 'dark'
+              ? 'bg-red-900/30 text-red-300 border-red-500/60 hover:bg-red-800/40'
+              : 'bg-red-100 text-red-700 border-red-300 hover:bg-red-200'
+              }`}
+          >
+            タグをクリア
+          </button>
+        )}
       </div>
 
-      {/* タグフィルター */}
-      {availableTags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {availableTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => handleTagToggle(tag)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedTags.includes(tag)
-                ? 'bg-[color:var(--hud-dim)] text-[color:var(--hud-primary)] border border-[color:var(--hud-primary)]'
-                : 'bg-[color:var(--panel)] text-[color:var(--text-primary)] hover:bg-[color:var(--hud-grid)] border border-[color:var(--hud-primary)]'
-                }`}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="space-y-4">
+        {/* カテゴリータブ */}
+        {categories.length > 0 && (
+          <div>
+            <div className={`text-xs mb-2 ${effectiveTheme === 'dark'
+              ? 'text-gray-400'
+              : effectiveTheme === 'day'
+                ? 'text-green-400'
+                : 'text-gray-500'
+              }`}>
+              カテゴリーで絞り込み
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => {
+                const isActive = activeCategory === category;
+                const count = categoryCounts[category] || 0;
+
+                return (
+                  <button
+                    key={category}
+                    onClick={() => handleCategoryClick(category)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${isActive
+                      ? effectiveTheme === 'dark'
+                        ? 'bg-red-500 text-white shadow-red-500/50 shadow-lg'
+                        : 'bg-green-500 text-white shadow-green-500/50 shadow-lg'
+                      : effectiveTheme === 'dark'
+                        ? 'bg-gray-800 text-gray-300 border-2 border-gray-600 hover:bg-gray-700 hover:border-gray-500'
+                        : 'bg-gray-100 text-gray-700 border-2 border-gray-300 hover:bg-gray-200 hover:border-gray-400'
+                      }`}
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>📂</span>
+                      <span>{category}</span>
+                      {count > 0 && (
+                        <span className={`text-xs ${isActive ? 'text-white/80' : 'text-gray-500'
+                          }`}>
+                          ({count})
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+
+        {/* タグフィルター */}
+        {availableTags.length > 0 && (
+          <div>
+            <div className={`text-xs mb-2 ${effectiveTheme === 'dark'
+              ? 'text-gray-400'
+              : effectiveTheme === 'day'
+                ? 'text-green-400'
+                : 'text-gray-500'
+              }`}>
+              タグで絞り込み ({selectedTags.length}個選択中)
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {availableTags.map((tag) => {
+                const isSelected = selectedTags.includes(tag);
+
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => handleTagToggle(tag)}
+                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 ${isSelected
+                      ? effectiveTheme === 'dark'
+                        ? 'bg-red-500 text-white shadow-red-500/50 shadow-lg'
+                        : 'bg-green-500 text-white shadow-green-500/50 shadow-lg'
+                      : effectiveTheme === 'dark'
+                        ? 'bg-gray-800 text-gray-300 border-2 border-gray-600 hover:bg-gray-700 hover:border-gray-500'
+                        : 'bg-gray-100 text-gray-700 border-2 border-gray-300 hover:bg-gray-200 hover:border-gray-400'
+                      }`}
+                  >
+                    <div className="truncate">
+                      <span>{tag}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 };

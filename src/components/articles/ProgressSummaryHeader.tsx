@@ -21,10 +21,10 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
 
   return (
     <div className={`
-      relative overflow-hidden rounded-2xl p-6 mb-8 backdrop-blur-sm
+      relative overflow-hidden rounded-xl border-2 p-6 mb-8 backdrop-blur-sm shadow-lg
       ${effectiveTheme === 'dark'
-        ? 'hud-surface shadow-2xl shadow-red-900/20'
-        : 'hud-surface shadow-2xl shadow-green-900/10'
+        ? 'hud-surface border-red-500/60 shadow-red-900/20'
+        : 'hud-surface border-green-500/50 shadow-green-900/10'
       }
     `}>
       {/* デモ用オーバーレイ */}
@@ -81,10 +81,10 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
           {/* 読了記事数 */}
           <div className={`
-            p-3 sm:p-4 rounded-xl backdrop-blur-sm
+            p-3 sm:p-4 rounded-xl border-2 backdrop-blur-sm shadow-lg
             ${effectiveTheme === 'dark'
-              ? 'hud-surface'
-              : 'hud-surface'
+              ? 'hud-surface border-red-500/60 shadow-red-900/20'
+              : 'hud-surface border-green-500/50 shadow-green-900/10'
             }
           `}>
             <div className="text-center">
@@ -111,10 +111,10 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
 
           {/* 学習時間 */}
           <div className={`
-            p-3 sm:p-4 rounded-xl backdrop-blur-sm
+            p-3 sm:p-4 rounded-xl border-2 backdrop-blur-sm shadow-lg
             ${effectiveTheme === 'dark'
-              ? 'hud-surface'
-              : 'hud-surface'
+              ? 'hud-surface border-red-500/60 shadow-red-900/20'
+              : 'hud-surface border-green-500/50 shadow-green-900/10'
             }
           `}>
             <div className="text-center">
@@ -141,10 +141,10 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
 
           {/* 連続日数 */}
           <div className={`
-            p-3 sm:p-4 rounded-xl backdrop-blur-sm
+            p-3 sm:p-4 rounded-xl border-2 backdrop-blur-sm shadow-lg
             ${effectiveTheme === 'dark'
-              ? 'hud-surface'
-              : 'hud-surface'
+              ? 'hud-surface border-red-500/60 shadow-red-900/20'
+              : 'hud-surface border-green-500/50 shadow-green-900/10'
             }
           `}>
             <div className="text-center">
@@ -171,10 +171,10 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
 
           {/* 平均評価 */}
           <div className={`
-            p-3 sm:p-4 rounded-xl backdrop-blur-sm
+            p-3 sm:p-4 rounded-xl border-2 backdrop-blur-sm shadow-lg
             ${effectiveTheme === 'dark'
-              ? 'hud-surface'
-              : 'hud-surface'
+              ? 'hud-surface border-red-500/60 shadow-red-900/20'
+              : 'hud-surface border-green-500/50 shadow-green-900/10'
             }
           `}>
             <div className="text-center">
