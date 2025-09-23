@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useArticleProgress } from '../../hooks/useArticleProgress';
 import { useArticleStats } from '../../hooks/useArticleStats';
-import { useAuth } from '../../hooks/useAuth';
 import { LearningContent } from '../../types';
 import { ArticleMeta } from '../../types/articles';
 import { buildArticleIndex } from '../../utils/articlesIndex';
@@ -23,14 +22,12 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   isLoading
 }) => {
   const { effectiveTheme } = useTheme();
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // 進捗管理
   const {
     stats,
-    userProgress,
     isDemo,
     getArticleProgress,
     isLoading: progressLoading
