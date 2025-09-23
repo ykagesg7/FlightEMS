@@ -36,7 +36,8 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   // ソーシャル機能
   const {
     stats: socialStats,
-    loadArticleStats
+    loadArticleStats,
+    recordView
   } = useArticleStats();
 
   // 記事メタデータ
@@ -71,9 +72,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
         });
         setArticleMetas(metaMap);
 
-        // ソーシャル統計も読み込み
-        const articleIds = index.map(entry => entry.meta.slug);
-        loadArticleStats(articleIds);
+        // ソーシャル統計も読み込み（記事コンテンツがロードされた後に行う）
       } catch (error) {
         console.error('記事メタデータの読み込みエラー:', error);
       }
@@ -89,6 +88,14 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
       (content) => content.is_published && articleCategories.includes(content.category)
     );
   }, [learningContents]);
+
+  // 記事コンテンツがロードされた後に統計データを読み込み
+  React.useEffect(() => {
+    if (articleContents.length > 0) {
+      const articleIds = articleContents.map(content => content.id);
+      loadArticleStats(articleIds);
+    }
+  }, [articleContents, loadArticleStats]);
 
   // フィルタリングロジック
   const filteredContents = useMemo(() => {
@@ -164,6 +171,15 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
     return sorted;
   }, [articleContents, activeCategory, selectedTags, articleMetas, sortBy, sortOrder, socialStats]);
+
+  // 記事クリック時の閲覧数記録
+  const handleArticleClick = async (articleId: string) => {
+    try {
+      await recordView({ article_id: articleId });
+    } catch (error) {
+      console.error('閲覧数の記録に失敗しました:', error);
+    }
+  };
 
   // 利用可能なタグを抽出
   const availableTags = useMemo(() => {
@@ -343,8 +359,13 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                     // 進捗情報を取得
                     const progress = meta ? getArticleProgress(meta.slug) : undefined;
 
-                    // ソーシャル統計を取得
-                    const stats = meta ? socialStats[meta.slug] : undefined;
+                    // ソーシャル統計を取得（デフォルト値を提供）
+                    const stats = socialStats[article.id] || {
+                      likes_count: 0,
+                      comments_count: 0,
+                      views_count: 0,
+                      user_liked: false
+                    };
 
                     return (
                       <EnhancedArticleCard
@@ -355,6 +376,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                         isDemo={isDemo}
                         onRegisterPrompt={showRegistrationModal}
                         stats={stats}
+                        onArticleClick={() => handleArticleClick(article.id)}
                       />
                     );
                   })}

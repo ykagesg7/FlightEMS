@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { ArticleProgress } from '../../hooks/useArticleProgress';
+import { useAuth } from '../../hooks/useAuth';
 import { LearningContent } from '../../types';
 import { ArticleMeta } from '../../types/articles';
 
@@ -18,6 +19,7 @@ interface EnhancedArticleCardProps {
     user_liked: boolean;
   };
   highlightId?: string;
+  onArticleClick?: () => void;
 }
 
 export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
@@ -27,10 +29,15 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
   isDemo,
   onRegisterPrompt,
   stats,
-  highlightId
+  highlightId,
+  onArticleClick
 }) => {
   const { effectiveTheme } = useTheme();
+  const { user } = useAuth();
   const [isHighlighted, setIsHighlighted] = useState(false);
+
+  // ログイン状態の確認
+  const isLoggedIn = !!user;
 
   // ハイライト効果
   useEffect(() => {
@@ -167,6 +174,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
               {/* タイトル */}
               <Link
                 to={`/articles/${article.id}`}
+                onClick={onArticleClick}
                 className={`
                      block text-lg font-bold mb-2 line-clamp-2 hover:underline transition-all duration-300
                      bg-gradient-to-r bg-clip-text text-transparent
@@ -266,7 +274,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
               </div>
 
               {/* 公開日 */}
-              {articleMeta?.publishedAt && (
+              {(articleMeta?.publishedAt || article.created_at) && (
                 <div className={`
                   flex items-center space-x-1
                   ${effectiveTheme === 'dark'
@@ -278,7 +286,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
                 `}>
                   <span>📅</span>
                   <span>
-                    {new Date(articleMeta.publishedAt).toLocaleDateString('ja-JP', {
+                    {new Date(articleMeta?.publishedAt || article.created_at).toLocaleDateString('ja-JP', {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric'
@@ -315,33 +323,39 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
             {/* ソーシャル統計 */}
             {stats && (
               <div className="flex items-center space-x-3 text-xs">
-                <div className={`
-                  flex items-center space-x-1
-                  ${effectiveTheme === 'dark'
-                    ? 'text-gray-400'
-                    : effectiveTheme === 'day'
-                      ? 'text-green-600'
-                      : 'text-gray-600'
-                  }
-                `}>
-                  <span className={stats.user_liked ? '❤️' : '🤍'}>
-                  </span>
-                  <span>{stats.likes_count}</span>
-                </div>
+                {/* いいね・コメントはログインユーザーのみ表示 */}
+                {isLoggedIn && (
+                  <>
+                    <div className={`
+                      flex items-center space-x-1
+                      ${effectiveTheme === 'dark'
+                        ? 'text-gray-400'
+                        : effectiveTheme === 'day'
+                          ? 'text-green-600'
+                          : 'text-gray-600'
+                      }
+                    `}>
+                      <span className={stats.user_liked ? '❤️' : '🤍'}>
+                      </span>
+                      <span>{stats.likes_count}</span>
+                    </div>
 
-                <div className={`
-                  flex items-center space-x-1
-                  ${effectiveTheme === 'dark'
-                    ? 'text-gray-400'
-                    : effectiveTheme === 'day'
-                      ? 'text-green-600'
-                      : 'text-gray-600'
-                  }
-                `}>
-                  <span>💬</span>
-                  <span>{stats.comments_count}</span>
-                </div>
+                    <div className={`
+                      flex items-center space-x-1
+                      ${effectiveTheme === 'dark'
+                        ? 'text-gray-400'
+                        : effectiveTheme === 'day'
+                          ? 'text-green-600'
+                          : 'text-gray-600'
+                      }
+                    `}>
+                      <span>💬</span>
+                      <span>{stats.comments_count}</span>
+                    </div>
+                  </>
+                )}
 
+                {/* 閲覧数は常に表示 */}
                 <div className={`
                   flex items-center space-x-1
                   ${effectiveTheme === 'dark'

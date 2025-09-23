@@ -11,7 +11,6 @@ import {
   getAnonymousUserInfo,
   getLocalLikeState,
   getLocalViewState,
-  setLocalLikeState,
   setLocalViewState
 } from '../utils/sessionUtils';
 import { supabase as supabaseClient } from '../utils/supabase';
@@ -149,113 +148,60 @@ export function useArticleStats() {
     }
   }, [supabase]);
 
-  // いいねを切り替え
+  // いいねを切り替え（ログインユーザーのみ）
   const toggleLike = useCallback(async (request: ToggleLikeRequest) => {
+    if (!user) {
+      alert('いいねするにはログインが必要です');
+      return;
+    }
+
     try {
       const currentStats = stats[request.article_id];
       if (!currentStats) return;
+      // ログインユーザーの場合：データベースで管理
+      if (currentStats.user_liked) {
+        // いいね削除
+        const { error } = await supabase
+          .from('learning_content_likes')
+          .delete()
+          .eq('content_id', request.article_id)
+          .eq('user_id', user.id);
 
-      if (user) {
-        // ログインユーザーの場合：データベースで管理
-        if (currentStats.user_liked) {
-          // いいね削除
-          const { error } = await supabase
-            .from('learning_content_likes')
-            .delete()
-            .eq('content_id', request.article_id)
-            .eq('user_id', user.id);
-
-          if (error) {
-            console.error('いいね削除エラー:', error);
-            return;
-          }
-
-          setStats(prev => ({
-            ...prev,
-            [request.article_id]: {
-              ...currentStats,
-              user_liked: false,
-              likes_count: Math.max(0, currentStats.likes_count - 1)
-            }
-          }));
-        } else {
-          // いいね追加
-          const { error } = await supabase
-            .from('learning_content_likes')
-            .insert({
-              content_id: request.article_id,
-              user_id: user.id
-            });
-
-          if (error) {
-            console.error('いいね追加エラー:', error);
-            return;
-          }
-
-          setStats(prev => ({
-            ...prev,
-            [request.article_id]: {
-              ...currentStats,
-              user_liked: true,
-              likes_count: currentStats.likes_count + 1
-            }
-          }));
+        if (error) {
+          console.error('いいね削除エラー:', error);
+          return;
         }
+
+        setStats(prev => ({
+          ...prev,
+          [request.article_id]: {
+            ...currentStats,
+            user_liked: false,
+            likes_count: Math.max(0, currentStats.likes_count - 1)
+          }
+        }));
       } else {
-        // 匿名ユーザーの場合：セッション管理
-        const anonymousInfo = getAnonymousUserInfo();
+        // いいね追加
+        const { error } = await supabase
+          .from('learning_content_likes')
+          .insert({
+            content_id: request.article_id,
+            user_id: user.id
+          });
 
-        if (currentStats.user_liked) {
-          // いいね削除
-          const { error } = await supabase
-            .from('learning_content_likes')
-            .delete()
-            .eq('content_id', request.article_id)
-            .eq('session_id', anonymousInfo.sessionId);
-
-          if (error) {
-            console.error('匿名いいね削除エラー:', error);
-            return;
-          }
-
-          // ローカルストレージも更新
-          setLocalLikeState(request.article_id, false);
-
-          setStats(prev => ({
-            ...prev,
-            [request.article_id]: {
-              ...currentStats,
-              user_liked: false,
-              likes_count: Math.max(0, currentStats.likes_count - 1)
-            }
-          }));
-        } else {
-          // いいね追加
-          const { error } = await supabase
-            .from('learning_content_likes')
-            .insert({
-              content_id: request.article_id,
-              session_id: anonymousInfo.sessionId,
-              user_agent: anonymousInfo.userAgent
-            });
-
-          if (error) {
-            console.error('匿名いいね追加エラー:', error);
-            return;
-          }
-
-          // ローカルストレージも更新
-          setLocalLikeState(request.article_id, true);
-
-          setStats(prev => ({
-            ...prev,
-            [request.article_id]: {
-              ...currentStats,
-              user_liked: true,
-              likes_count: currentStats.likes_count + 1
-            }
-          }));
+        if (error) {
+          console.error('いいね追加エラー:', error);
+          return;
         }
+
+        setStats(prev => ({
+          ...prev,
+          [request.article_id]: {
+            ...currentStats,
+            user_liked: true,
+            likes_count: currentStats.likes_count + 1
+          }
+        }));
       }
     } catch (error) {
       console.error('いいねの切り替えに失敗しました:', error);
