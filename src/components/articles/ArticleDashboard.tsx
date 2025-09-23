@@ -289,6 +289,8 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
             {stats && (
               <ProgressSidebar
                 stats={stats}
+                articleContents={articleContents}
+                articleCategories={articleCategories}
                 isDemo={isDemo}
                 onRegisterClick={showRegistrationModal}
               />
