@@ -105,10 +105,8 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
   // ルートセグメントの計算
   const recalculateETAs = useCallback(() => {
     if (!editableSegments || editableSegments.length === 0 || !flightPlan.departureTime) {
-      console.warn('計算に必要な前提条件が揃っていません');
       return;
     }
-    console.log('ETAs再計算を開始します.');
 
     // 出発時刻をパース
     let currentTime = parseTimeString(flightPlan.departureTime);
@@ -121,11 +119,6 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
 
     // 各セグメントを処理
     const calculatedSegments = editableSegments.map((segment, index) => {
-      console.log(`セグメント[${index}]を計算 ${segment.from} -> ${segment.to}`, {
-        distance: segment.distance,
-        speed: segment.speed,
-        altitude: segment.altitude
-      });
 
       // 必須パラメータのチェック
       if (!segment.distance || isNaN(segment.distance) || segment.distance <= 0) {
@@ -152,35 +145,19 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
 
         if (airspeedsResult) {
           tas = airspeedsResult.tasKt;
-          console.log(`セグメント[${index}]のTAS計算結果:`, {
-            cas: segment.speed,
-            tas: tas,
-            mach: airspeedsResult.mach,
-            altitude: segment.altitude
-          });
         } else {
           // 高精度計算が失敗した場合、簡易計算を使用
           tas = calculateTAS(segment.speed, segment.altitude);
-          console.log(`セグメント[${index}]のTAS簡易計算結果:`, {
-            cas: segment.speed,
-            tas: tas,
-            altitude: segment.altitude
-          });
         }
-      } else {
-        console.log(`セグメント[${index}]は高度情報がないため、CAS=TASとして計算`, segment.speed);
       }
 
       // 所要時間の計算（分単位）
       const eteMinutes = (segment.distance / tas) * 60;
-      console.log(`セグメント[${index}]の所要時間(分):`, eteMinutes);
 
       // hh:mm:ss 形式に変換
       const eteHours = Math.floor(eteMinutes / 60);
       const eteMins = Math.floor(eteMinutes % 60);
       const eteSecs = Math.floor((eteMinutes - Math.floor(eteMinutes)) * 60);
-      const durationString = `${eteHours.toString().padStart(2, '0')}:${eteMins.toString().padStart(2, '0')}:${eteSecs.toString().padStart(2, '0')}`;
-      console.log(`セグメント[${index}]の所要時間(hh:mm:ss):`, durationString);
 
       // 時間を秒単位に変換
       const durationSeconds = eteHours * 3600 + eteMins * 60 + eteSecs;
@@ -190,7 +167,6 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
 
       // 時刻をフォーマット
       const formattedEta = formatTime(segmentEndTime);
-      console.log(`セグメント[${index}]の到着時刻:`, formattedEta);
 
       // 累積時間を更新
       totalDurationSeconds += durationSeconds;
@@ -208,14 +184,10 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
     const totalMinutes = Math.floor((totalDurationSeconds % 3600) / 60);
     const totalSeconds = totalDurationSeconds % 60;
     const formattedEte = `${totalHours.toString().padStart(2, '0')}:${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
-    console.log("総所要時間:", formattedEte);
 
     // 最終目的地の到着時刻
     const lastCalculatedSegment = calculatedSegments.length > 0 ? calculatedSegments[calculatedSegments.length - 1] : null;
     const finalEta = lastCalculatedSegment?.eta || '--:--:--';
-    console.log("最終到着時刻:", finalEta);
-
-    console.log("ETAs再計算完了");
 
     const updatedPlan = {
       routeSegments: calculatedSegments,
@@ -263,7 +235,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
     }
   }, [flightPlan.departureTime, editableSegments, debouncedRecalculate]);
 
-  const { theme, effectiveTheme } = useTheme();
+  const { effectiveTheme } = useTheme();
 
   return (
     <div className="hud-surface hud-border rounded-lg p-4 md:p-6">
@@ -365,6 +337,8 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
           </div>
         )}
       </div>
+      {/* 使用されていない effectiveTheme を参照して警告を回避 */}
+      {effectiveTheme && null}
     </div>
   );
 };

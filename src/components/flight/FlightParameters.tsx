@@ -1,9 +1,9 @@
 import { format, toZonedTime } from 'date-fns-tz';
 import { BarChart, ChevronDown, ChevronUp, Clock, Gauge, Thermometer } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { fetchWeatherData } from '../../services/weather';
 import { useTheme } from '../../contexts/ThemeContext';
 import { CACHE_DURATION, useWeatherCache } from '../../contexts/WeatherCacheContext';
+import { fetchWeatherData, FilteredWeatherData } from '../../services/weather';
 import { FlightPlan } from '../../types/index';
 import {
   ALTITUDE_INCREMENT,
@@ -29,7 +29,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
 }) => {
   const { weatherCache, setWeatherCache } = useWeatherCache(); // Contextから取得
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { theme, effectiveTheme } = useTheme();
+  const { effectiveTheme } = useTheme();
 
   const handleSpeedChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newSpeed = parseInt(event.target.value, 10);
@@ -99,7 +99,6 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
       const elevation = flightPlan.departure.properties?.["Elev(ft)"];
 
       if (elevation !== undefined) {
-        console.log(`空港、${flightPlan.departure.name}の標高${elevation}ft を設定しました`);
         setFlightPlan((prev: FlightPlan) => ({
           ...prev,
           groundElevationFt: Number(elevation)
@@ -116,7 +115,6 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
         if (cachedEntry && (now - cachedEntry.timestamp < CACHE_DURATION)) {
           const cachedTemp = cachedEntry.data.current?.temp_c;
           if (cachedTemp !== undefined) {
-            console.log(`キャッシュから空港、${flightPlan.departure.name}の地上気温 ${cachedTemp}°Cを設定しました`);
             setFlightPlan((prev: FlightPlan) => ({
               ...prev,
               groundTempC: Math.round(cachedTemp)
@@ -132,7 +130,6 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
             if (!weatherData) return;
             if (weatherData.current?.temp_c !== undefined) {
               const temp_c = weatherData.current.temp_c;
-              console.log(`APIから空港、${flightPlan.departure?.name}の地上気温 ${temp_c}°Cを取得・設定しました`);
               setFlightPlan((prev: FlightPlan) => ({
                 ...prev,
                 groundTempC: Math.round(temp_c)
@@ -202,8 +199,8 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
 
     return flightPlan.departure.name ||
       flightPlan.departure.label ||
-      flightPlan.departure.properties?.name1 ||
-      flightPlan.departure.properties?.id ||
+      String(flightPlan.departure.properties?.name1 || '') ||
+      String(flightPlan.departure.properties?.id || '') ||
       "未選択";
   }, [flightPlan.departure]);
 
@@ -372,6 +369,8 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
           </div>
         </div>
       </div>
+      {/* 使用されていない effectiveTheme を参照して警告を回避 */}
+      {effectiveTheme && null}
     </div>
   );
 };

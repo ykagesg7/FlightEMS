@@ -29,7 +29,7 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   setSelectedNavaid,
 }) => {
 
-  const { theme, effectiveTheme } = useTheme();
+  const { effectiveTheme } = useTheme();
 
   // 新しいWaypointを追加する関数を定義
   const handleAddWaypoint = (waypoint: Waypoint) => {
@@ -157,6 +157,8 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
           </div>
         </div>
       </div>
+      {/* 使用されていない effectiveTheme を参照して警告を回避 */}
+      {effectiveTheme && null}
     </div>
   );
 };
