@@ -4,8 +4,8 @@ import 'leaflet-groupedlayercontrol';
 import 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css';
 import 'leaflet/dist/leaflet.css';
 import { CircleMarker, MapContainer, Polyline, Popup } from 'react-leaflet';
-import { fetchWeatherData } from '../../services/weather';
 import { CACHE_DURATION, useWeatherCache } from '../../contexts/WeatherCacheContext';
+import { fetchWeatherData } from '../../services/weather';
 import { FlightPlan, Waypoint } from '../../types/index';
 import {
   NavaidGeoJSONFeature
@@ -543,7 +543,6 @@ const MapContent: React.FC<{
       .then(res => res.json())
       .then(data => {
         if (map && map.getContainer() && map.getContainer().clientWidth > 0) {
-          console.log(`Airports データを読み込みました。ポイント数: ${data.features.length}`);
 
           try {
             // 空港レイヤーを作成 - より見やすく改善
@@ -940,7 +939,6 @@ const MapContent: React.FC<{
   ), []);
 
   const baseLayers = useMemo(() => {
-    console.log("baseLayers in useMemo:", osmLayer, esriLayer);
     return {
       "地図": osmLayer,
       "衛星写真": esriLayer,
@@ -956,14 +954,12 @@ const MapContent: React.FC<{
     try {
       // レイヤーコントロールがまだ追加されていない場合、新規作成して追加
       if (!layerControlRef.current) {
-        console.log("レイヤーコントロールを初期化します");
         const control = L.control.groupedLayers(baseLayers, overlayLayers as any, {
           collapsed: true, // デフォルトで格納状態に変更
           position: 'topright'
         }) as any;
 
         control.addTo(map);
-        console.log("baseLayers in useEffect:", baseLayers);
         layerControlRef.current = control;
 
         // 初期のベースレイヤーとして "地図" のタイルレイヤー (osmLayer) を追加する

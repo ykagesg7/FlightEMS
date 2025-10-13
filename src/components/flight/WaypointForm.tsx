@@ -108,14 +108,10 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
         nameEditable: true
       };
 
-      console.log("追加するWaypoint:", waypoint);
-
       setFlightPlan({
         ...flightPlan,
         waypoints: [...flightPlan.waypoints, waypoint]
       });
-
-      console.log("更新後のFlightPlan.waypoints:", [...flightPlan.waypoints, waypoint]);
     }
   };
 

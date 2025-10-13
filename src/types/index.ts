@@ -31,6 +31,8 @@ export interface Waypoint {
   coordinates: [number, number];
   latitude: number;
   longitude: number;
+  nameEditable?: boolean;
+  metadata?: WaypointMetadata;
 }
 
 export interface RouteSegment {

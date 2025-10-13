@@ -18,20 +18,37 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
   const handleAddWaypoint = () => {
     if (!selectedNavaid || !bearing || !distance) return;
 
+    // ✅ 磁方位と距離からオフセット地点を計算
+    const bearingNum = parseFloat(bearing);
+    const distanceNum = parseFloat(distance);
+
+    const offset = calculateOffsetPoint(
+      selectedNavaid.latitude,
+      selectedNavaid.longitude,
+      bearingNum,
+      distanceNum
+    );
+
+    if (!offset) {
+      console.error('オフセット計算に失敗しました');
+      return;
+    }
+
+    // ✅ 計算されたオフセット地点の座標を使用
     const waypoint: Waypoint = {
       id: `${selectedNavaid.value}-${bearing}-${distance}`,
       name: `${selectedNavaid.name}/${bearing}°/${distance}nm`,
       type: 'navaid',
       sourceId: selectedNavaid.value,
       ch: selectedNavaid.ch,
-      coordinates: [selectedNavaid.longitude, selectedNavaid.latitude], // GeoJSON format
-      latitude: selectedNavaid.latitude,
-      longitude: selectedNavaid.longitude,
+      coordinates: [offset.lon, offset.lat], // ✅ オフセット座標（GeoJSON format）
+      latitude: offset.lat,  // ✅ オフセット緯度
+      longitude: offset.lon, // ✅ オフセット経度
       nameEditable: true,
       metadata: {
         baseNavaid: selectedNavaid.name,
-        bearing: parseFloat(bearing),
-        distance: parseFloat(distance),
+        bearing: bearingNum,
+        distance: distanceNum,
         baseLatitude: selectedNavaid.latitude,
         baseLongitude: selectedNavaid.longitude
       }
@@ -49,13 +66,13 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
   return (
     <div>
       <label className="block text-sm font-medium text-gray-400 mb-1">NAVAID選択</label>
-      <Select
+      <Select<NavaidOption>
         options={options}
         value={selectedNavaid}
         onChange={handleNavaidChange}
         placeholder="Select NAVAID"
         isClearable
-        styles={reactSelectStyles}
+        styles={reactSelectStyles as any}
       />
 
       <div className="mt-3 space-y-3">

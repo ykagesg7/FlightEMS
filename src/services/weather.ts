@@ -90,33 +90,19 @@ export const fetchWeather = async (lat: number, lon: number): Promise<FilteredWe
     : `/api/weather?lat=${lat}&lon=${lon}`;
 
   try {
-    console.log(`Weather API呼び出し: ${functionUrl}`);
-
     // サーバーレス関数にリクエストを送信
     const response = await axios.get<FilteredWeatherData>(functionUrl, {
       timeout: 10000, // 10秒のタイムアウト
     });
 
-    console.log('Weather API レスポンス成功:', response.data);
     return response.data;
   } catch (error) {
     console.error('Vercel関数へのリクエストに失敗しました:', error);
 
     // エラーがaxiosのエラーであるか、または他のエラーであるかをチェック
     if (axios.isAxiosError(error)) {
-      console.error('Axios error details:', error.response?.data);
-      console.error('Status:', error.response?.status);
-
-      // エラーレスポンスの詳細情報をログ出力
-      if (error.response?.data) {
-        const errorData = error.response.data as any;
-        console.error('Error code:', errorData.code);
-        console.error('Error message:', errorData.message);
-      }
-
       // 開発環境ではモックデータを返す
       if (!isProd) {
-        console.log('開発環境: モックデータを使用します');
         return createMockWeatherData(lat, lon);
       }
     }
