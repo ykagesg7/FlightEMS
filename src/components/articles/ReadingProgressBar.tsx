@@ -97,11 +97,6 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
 
   return (
     <>
-      {/* 進捗バー */}
-      <div style={{ position: 'fixed', top: `calc(${headerOffset}px + env(safe-area-inset-top, 0px))`, left: 0, right: 0, height: 3, zIndex: 70, background: 'transparent', pointerEvents: 'none' }} aria-hidden="true">
-        <div style={{ width: `${progressPct}%`, height: '100%', background: 'linear-gradient(90deg, var(--hud-primary), #06b6d4)', transition: 'width 120ms linear' }} />
-      </div>
-
       {/* 読了時間表示（右上に固定） */}
       {progressPct > 0 && (
         <div className="fixed top-4 right-4 z-40">

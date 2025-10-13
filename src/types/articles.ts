@@ -79,3 +79,71 @@ export interface ArticleNavigation {
     title: string;
   };
 }
+
+/**
+ * 記事統計情報
+ */
+export interface ArticleStats {
+  article_id: string;
+  likes_count: number;
+  comments_count: number;
+  views_count: number;
+  user_liked: boolean;
+}
+
+/**
+ * 記事コメント
+ */
+export interface ArticleComment {
+  id: string;
+  article_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  user: {
+    id: string;
+    email: string;
+    display_name: string;
+    avatar_url?: string;
+  };
+}
+
+/**
+ * いいね切り替えリクエスト
+ */
+export interface ToggleLikeRequest {
+  article_id: string;
+}
+
+/**
+ * 閲覧記録リクエスト
+ */
+export interface RecordViewRequest {
+  article_id: string;
+}
+
+/**
+ * コメント作成リクエスト
+ */
+export interface CreateCommentRequest {
+  article_id: string;
+  content: string;
+}
+
+/**
+ * コメント更新リクエスト
+ */
+export interface UpdateCommentRequest {
+  comment_id: string;
+  article_id: string;
+  content: string;
+}
+
+/**
+ * コメント削除リクエスト
+ */
+export interface DeleteCommentRequest {
+  comment_id: string;
+  article_id: string;
+}

@@ -4,8 +4,10 @@ import {
   ArticleComment,
   ArticleStats,
   CreateCommentRequest,
+  DeleteCommentRequest,
   RecordViewRequest,
-  ToggleLikeRequest
+  ToggleLikeRequest,
+  UpdateCommentRequest
 } from '../types/articles';
 import {
   getAnonymousUserInfo,
@@ -111,7 +113,8 @@ export function useArticleStats() {
           profiles (
             id,
             username,
-            full_name
+            full_name,
+            avatar_url
           )
         `)
         .eq('content_id', articleId)
@@ -134,7 +137,8 @@ export function useArticleStats() {
           user: {
             id: comment.user_id,
             email: '', // プライバシー保護のため空
-            display_name: profile?.full_name || profile?.username || 'ユーザー'
+            display_name: profile?.username || '名無しさん',
+            avatar_url: profile?.avatar_url
           }
         };
       });
@@ -230,13 +234,29 @@ export function useArticleStats() {
       }
 
       // コメント数を更新
-      setStats(prev => ({
-        ...prev,
-        [request.article_id]: {
-          ...prev[request.article_id],
-          comments_count: prev[request.article_id].comments_count + 1
+      setStats(prev => {
+        const currentStats = prev[request.article_id];
+        if (!currentStats) {
+          // 統計情報がまだ読み込まれていない場合は初期化
+          return {
+            ...prev,
+            [request.article_id]: {
+              article_id: request.article_id,
+              likes_count: 0,
+              comments_count: 1,
+              views_count: 0,
+              user_liked: false
+            }
+          };
         }
-      }));
+        return {
+          ...prev,
+          [request.article_id]: {
+            ...currentStats,
+            comments_count: currentStats.comments_count + 1
+          }
+        };
+      });
 
       // コメント一覧を再読み込み
       loadComments(request.article_id);
@@ -244,6 +264,105 @@ export function useArticleStats() {
       console.error('コメントの投稿に失敗しました:', error);
     }
   }, [user, supabase, loadComments]);
+
+  // コメントを更新（ログインユーザーのみ、自分のコメントのみ）
+  const updateComment = useCallback(async (request: UpdateCommentRequest) => {
+    if (!user) {
+      alert('コメントを編集するにはログインが必要です');
+      return;
+    }
+
+    try {
+      // 自分のコメントかチェック
+      const currentComments = comments[request.article_id] || [];
+      const targetComment = currentComments.find(c => c.id === request.comment_id);
+
+      if (!targetComment) {
+        console.error('コメントが見つかりません');
+        return;
+      }
+
+      if (targetComment.user_id !== user.id) {
+        alert('自分のコメントのみ編集できます');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('learning_content_comments')
+        .update({
+          content: request.content,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', request.comment_id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('コメント更新エラー:', error);
+        return;
+      }
+
+      // コメント一覧を再読み込み
+      loadComments(request.article_id);
+    } catch (error) {
+      console.error('コメントの更新に失敗しました:', error);
+    }
+  }, [user, comments, supabase, loadComments]);
+
+  // コメントを削除（ログインユーザーのみ、自分のコメントのみ）
+  const deleteComment = useCallback(async (request: DeleteCommentRequest) => {
+    if (!user) {
+      alert('コメントを削除するにはログインが必要です');
+      return;
+    }
+
+    try {
+      // 自分のコメントかチェック
+      const currentComments = comments[request.article_id] || [];
+      const targetComment = currentComments.find(c => c.id === request.comment_id);
+
+      if (!targetComment) {
+        console.error('コメントが見つかりません');
+        return;
+      }
+
+      if (targetComment.user_id !== user.id) {
+        alert('自分のコメントのみ削除できます');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('learning_content_comments')
+        .delete()
+        .eq('id', request.comment_id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('コメント削除エラー:', error);
+        return;
+      }
+
+      // コメント数を更新
+      setStats(prev => {
+        const currentStats = prev[request.article_id];
+        if (!currentStats) {
+          // 統計情報がない場合は何もしない
+          return prev;
+        }
+        return {
+          ...prev,
+          [request.article_id]: {
+            ...currentStats,
+            comments_count: Math.max(0, currentStats.comments_count - 1)
+          }
+        };
+      });
+
+      // コメント一覧を再読み込み
+      loadComments(request.article_id);
+    } catch (error) {
+      console.error('コメントの削除に失敗しました:', error);
+    }
+  }, [user, comments, supabase, loadComments]);
 
   // 閲覧数を記録（ログイン不要）
   const recordView = useCallback(async (request: RecordViewRequest) => {
@@ -300,6 +419,8 @@ export function useArticleStats() {
     loadComments,
     toggleLike,
     createComment,
+    updateComment,
+    deleteComment,
     recordView
   };
 }
