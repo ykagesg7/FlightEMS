@@ -52,8 +52,8 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
           index: action.index,
           mode: action.mode,
           waypoint: { ...action.waypoint },
-          bearing: action.mode === 'id' && action.waypoint.metadata ? action.waypoint.metadata.bearing.toString() : '',
-          distance: action.mode === 'id' && action.waypoint.metadata ? action.waypoint.metadata.distance.toString() : '',
+          bearing: action.mode === 'id' && action.waypoint.metadata?.bearing !== undefined ? action.waypoint.metadata.bearing.toString() : '',
+          distance: action.mode === 'id' && action.waypoint.metadata?.distance !== undefined ? action.waypoint.metadata.distance.toString() : '',
           dmsLatitude: action.mode === 'position'
             ? decimalToDMS(action.waypoint.latitude, action.waypoint.longitude).latDMS
             : '',

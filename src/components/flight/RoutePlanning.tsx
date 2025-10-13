@@ -1,11 +1,12 @@
 import React from 'react';
 import Select from 'react-select';
 import { useTheme } from '../../contexts/ThemeContext';
-import { AirportGroupOption, FlightPlan, NavaidOption, ReactSelectStylesProps, Waypoint } from '../../types/index';
+import { AirportGroupOption, FlightPlan, NavaidOption, ReactSelectStylesProps, Waypoint, WaypointOption } from '../../types/index';
 import { reactSelectStyles } from '../../utils/reactSelectStyles';
 import NavaidSelector from './NavaidSelector';
 import WaypointForm from './WaypointForm';
 import WaypointList from './WaypointList';
+import WaypointSelector from './WaypointSelector';
 
 /**
  * Route Planning コンポーネント
@@ -18,6 +19,9 @@ interface RoutePlanningProps {
   navaidOptions: NavaidOption[];
   selectedNavaid: NavaidOption | null;
   setSelectedNavaid: React.Dispatch<React.SetStateAction<NavaidOption | null>>;
+  waypointOptions: WaypointOption[];
+  selectedWaypoint: WaypointOption | null;
+  setSelectedWaypoint: React.Dispatch<React.SetStateAction<WaypointOption | null>>;
 }
 
 const RoutePlanning: React.FC<RoutePlanningProps> = ({
@@ -27,6 +31,9 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   navaidOptions,
   selectedNavaid,
   setSelectedNavaid,
+  waypointOptions,
+  selectedWaypoint,
+  setSelectedWaypoint,
 }) => {
 
   const { effectiveTheme } = useTheme();
@@ -133,6 +140,18 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
               selectedNavaid={selectedNavaid}
               setSelectedNavaid={setSelectedNavaid}
               onAdd={handleAddWaypoint}
+            />
+          </div>
+
+          {/* Waypoint選択と追加 */}
+          <div className="mb-4 p-3 sm:p-4 rounded-lg border hud-border">
+            <h3 className="text-sm sm:text-md font-medium hud-text mb-2 sm:mb-3">Waypointの追加</h3>
+            <WaypointSelector
+              options={waypointOptions}
+              selectedWaypoint={selectedWaypoint}
+              setSelectedWaypoint={setSelectedWaypoint}
+              onAdd={handleAddWaypoint}
+              flightPlan={flightPlan}
             />
           </div>
 

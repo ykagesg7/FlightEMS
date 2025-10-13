@@ -25,7 +25,7 @@ export interface Airport extends CustomSelectOption {
 export interface Waypoint {
   id: string;
   name: string;
-  type: 'custom' | 'navaid' | 'airport';
+  type: 'custom' | 'navaid' | 'airport' | 'waypoint';
   sourceId?: string;
   ch?: string;
   coordinates: [number, number];
@@ -72,8 +72,8 @@ export interface Navaid {
 
 export interface WaypointMetadata {
   baseNavaid: string;
-  bearing: number;
-  distance: number;
+  bearing?: number;
+  distance?: number;
   baseLatitude: number;
   baseLongitude: number;
 }
@@ -98,6 +98,15 @@ export interface NavaidOption extends CustomSelectOption {
   longitude: number;
   frequency?: string;
   ch?: string;
+}
+
+export interface WaypointOption extends CustomSelectOption {
+  value: string;      // id
+  label: string;      // "id - name1"形式
+  name: string;       // name1
+  type: string;       // "Non-Compulsory"など
+  latitude: number;
+  longitude: number;
 }
 
 // 空港グループ化オプション

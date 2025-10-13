@@ -1,5 +1,5 @@
 import React from 'react';
-import { Airport, AirportGroupOption, AirportOption, FlightPlan, NavaidOption, RouteSegment, Waypoint } from '../../types/index';
+import { Airport, AirportGroupOption, AirportOption, FlightPlan, NavaidOption, RouteSegment, Waypoint, WaypointOption } from '../../types/index';
 import { calculateAirspeeds, calculateDistance, calculateETA, calculateETE, calculateMach, calculateTAS, formatTime, groupBy } from '../../utils';
 import { calculateMagneticBearing } from '../../utils/bearing';
 import FlightParameters from './FlightParameters';
@@ -19,6 +19,8 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
   const [airportOptions, setAirportOptions] = React.useState<AirportGroupOption[]>([]);
   const [navaidOptions, setNavaidOptions] = React.useState<NavaidOption[]>([]);
   const [selectedNavaid, setSelectedNavaid] = React.useState<NavaidOption | null>(null);
+  const [waypointOptions, setWaypointOptions] = React.useState<WaypointOption[]>([]);
+  const [selectedWaypoint, setSelectedWaypoint] = React.useState<WaypointOption | null>(null);
 
   // 空港データを取得するuseEffect
   React.useEffect(() => {
@@ -68,8 +70,28 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
       }
     };
 
+    // Waypointsデータを取得するuseEffect
+    const fetchWaypoints = async () => {
+      try {
+        const response = await fetch('/geojson/Waypoints.json');
+        const geojsonData = await response.json();
+        const waypointList = geojsonData.features.map((feature: { properties: { id: string; name1: string; type: string }; geometry: { coordinates: [number, number] } }) => ({
+          value: feature.properties.id,
+          label: `${feature.properties.id} - ${feature.properties.name1}`,
+          name: feature.properties.name1,
+          type: feature.properties.type,
+          latitude: feature.geometry.coordinates[1],
+          longitude: feature.geometry.coordinates[0],
+        }));
+        setWaypointOptions(waypointList);
+      } catch (error) {
+        console.error("Waypointsデータの読み込みに失敗しました", error);
+      }
+    };
+
     fetchAirports();
     fetchNavaids();
+    fetchWaypoints();
   }, []);
 
   // ポイントのIDを取得するヘルパー関数
@@ -211,6 +233,9 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
           navaidOptions={navaidOptions}
           selectedNavaid={selectedNavaid}
           setSelectedNavaid={setSelectedNavaid}
+          waypointOptions={waypointOptions}
+          selectedWaypoint={selectedWaypoint}
+          setSelectedWaypoint={setSelectedWaypoint}
         />
       </div>
 

@@ -16,43 +16,77 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
   const [distance, setDistance] = useState<string>('');
 
   const handleAddWaypoint = () => {
-    if (!selectedNavaid || !bearing || !distance) return;
+    if (!selectedNavaid) return;
 
-    // ✅ 磁方位と距離からオフセット地点を計算
-    const bearingNum = parseFloat(bearing);
-    const distanceNum = parseFloat(distance);
+    // 磁方位と距離の両方が入力されているかチェック
+    const hasBearing = bearing.trim() !== '';
+    const hasDistance = distance.trim() !== '';
 
-    const offset = calculateOffsetPoint(
-      selectedNavaid.latitude,
-      selectedNavaid.longitude,
-      bearingNum,
-      distanceNum
-    );
-
-    if (!offset) {
-      console.error('オフセット計算に失敗しました');
+    // 片方だけ入力されている場合はエラー
+    if (hasBearing !== hasDistance) {
+      console.error('磁方位と距離は両方入力するか、両方とも空にしてください');
       return;
     }
 
-    // ✅ 計算されたオフセット地点の座標を使用
-    const waypoint: Waypoint = {
-      id: `${selectedNavaid.value}-${bearing}-${distance}`,
-      name: `${selectedNavaid.name}/${bearing}°/${distance}nm`,
-      type: 'navaid',
-      sourceId: selectedNavaid.value,
-      ch: selectedNavaid.ch,
-      coordinates: [offset.lon, offset.lat], // ✅ オフセット座標（GeoJSON format）
-      latitude: offset.lat,  // ✅ オフセット緯度
-      longitude: offset.lon, // ✅ オフセット経度
-      nameEditable: true,
-      metadata: {
-        baseNavaid: selectedNavaid.name,
-        bearing: bearingNum,
-        distance: distanceNum,
-        baseLatitude: selectedNavaid.latitude,
-        baseLongitude: selectedNavaid.longitude
+    let waypoint: Waypoint;
+
+    if (hasBearing && hasDistance) {
+      // ✅ 磁方位と距離からオフセット地点を計算
+      const bearingNum = parseFloat(bearing);
+      const distanceNum = parseFloat(distance);
+
+      const offset = calculateOffsetPoint(
+        selectedNavaid.latitude,
+        selectedNavaid.longitude,
+        bearingNum,
+        distanceNum
+      );
+
+      if (!offset) {
+        console.error('オフセット計算に失敗しました');
+        return;
       }
-    };
+
+      // ✅ 計算されたオフセット地点の座標を使用
+      waypoint = {
+        id: `${selectedNavaid.value}-${bearing}-${distance}`,
+        name: `${selectedNavaid.name}/${bearing}°/${distance}nm`,
+        type: 'navaid',
+        sourceId: selectedNavaid.value,
+        ch: selectedNavaid.ch,
+        coordinates: [offset.lon, offset.lat], // ✅ オフセット座標（GeoJSON format）
+        latitude: offset.lat,  // ✅ オフセット緯度
+        longitude: offset.lon, // ✅ オフセット経度
+        nameEditable: true,
+        metadata: {
+          baseNavaid: selectedNavaid.name,
+          bearing: bearingNum,
+          distance: distanceNum,
+          baseLatitude: selectedNavaid.latitude,
+          baseLongitude: selectedNavaid.longitude
+        }
+      };
+    } else {
+      // ✅ NAVAID単体を追加（オフセットなし）
+      waypoint = {
+        id: selectedNavaid.value,
+        name: selectedNavaid.name,
+        type: 'navaid',
+        sourceId: selectedNavaid.value,
+        ch: selectedNavaid.ch,
+        coordinates: [selectedNavaid.longitude, selectedNavaid.latitude], // GeoJSON format
+        latitude: selectedNavaid.latitude,
+        longitude: selectedNavaid.longitude,
+        nameEditable: true,
+        metadata: {
+          baseNavaid: selectedNavaid.name,
+          bearing: undefined,
+          distance: undefined,
+          baseLatitude: selectedNavaid.latitude,
+          baseLongitude: selectedNavaid.longitude
+        }
+      };
+    }
 
     onAdd(waypoint);
     setBearing('');
