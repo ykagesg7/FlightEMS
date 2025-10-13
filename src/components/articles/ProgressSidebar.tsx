@@ -9,6 +9,7 @@ interface ProgressSidebarProps {
   articleCategories: string[];
   isDemo: boolean;
   onRegisterClick?: () => void;
+  getArticleProgress?: (articleSlug: string) => { completed: boolean } | null;
 }
 
 export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
@@ -16,7 +17,8 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
   articleContents,
   articleCategories,
   isDemo,
-  onRegisterClick
+  onRegisterClick,
+  getArticleProgress
 }) => {
   const { effectiveTheme } = useTheme();
 
@@ -44,13 +46,18 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
           {articleCategories.map((category) => {
             const categoryContents = articleContents.filter(content => content.category === category);
             const total = categoryContents.length;
-            const read = categoryContents.filter(() => {
+            const read = categoryContents.filter((content) => {
               // デモモードの場合はランダムに完了状態を設定
               if (isDemo) {
                 return Math.random() > 0.7; // 30%の確率で完了
               }
-              // 実際の進捗データがある場合はそれを使用
-              return false; // 実際の実装では進捗データを参照
+              // 実際の進捗データを参照
+              if (getArticleProgress) {
+                // content.idをslugとして使用（または適切なslugフィールドがあればそれを使用）
+                const progress = getArticleProgress(content.id);
+                return progress?.completed || false;
+              }
+              return false;
             }).length;
             const percentage = total > 0 ? Math.round((read / total) * 100) : 0;
 

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ArticleMeta } from '../types/articles';
 import { buildArticleIndex } from '../utils/articlesIndex';
+import { supabase } from '../utils/supabase';
 import { useAuth } from './useAuth';
 
 // 記事の進捗情報
@@ -246,11 +247,33 @@ export const useArticleProgress = () => {
       setIsLoading(true);
       try {
         if (user) {
-          // 登録ユーザーの場合：実際のデータを読み込み（将来実装）
-          // TODO: Supabaseからユーザーの進捗データを取得
-          console.log('登録ユーザーのデータ読み込み（未実装）');
-          setUserProgress({});
-          setStats(calculateStats({}));
+          // 登録ユーザーの場合：Supabaseから進捗データを読み込み
+          const { data, error: fetchError } = await supabase
+            .from('learning_progress')
+            .select('*')
+            .eq('user_id', user.id);
+
+          if (fetchError) {
+            console.error('進捗データ取得エラー:', fetchError);
+            throw fetchError;
+          }
+
+          // データをArticleProgress形式に変換
+          const progressMap: Record<string, ArticleProgress> = {};
+          data?.forEach(record => {
+            progressMap[record.content_id] = {
+              articleSlug: record.content_id,
+              readAt: new Date(record.last_read_at),
+              readingTime: 0, // 将来的に計算可能
+              scrollProgress: record.progress_percentage,
+              completed: record.completed,
+              bookmarked: false, // 将来的に別テーブルで管理
+              lastPosition: record.last_position
+            };
+          });
+
+          setUserProgress(progressMap);
+          setStats(calculateStats(progressMap));
         } else {
           // 未登録ユーザーの場合：ダミーデータを使用
           setUserProgress(DEMO_PROGRESS);
@@ -282,20 +305,39 @@ export const useArticleProgress = () => {
     try {
       const existing = userProgress[articleSlug];
       const newProgress: ArticleProgress = {
+        ...existing,
         articleSlug,
         readAt: new Date(),
-        readingTime: 0,
+        readingTime: existing?.readingTime || 0,
         scrollProgress: 0,
         completed: false,
-        bookmarked: false,
+        bookmarked: existing?.bookmarked || false,
         lastPosition: 0,
-        ...existing,
         ...updates
       };
 
-      // TODO: Supabaseに保存
-      console.log('進捗更新（未実装）:', newProgress);
+      // Supabaseに保存（UPSERT）
+      const { error: upsertError } = await supabase
+        .from('learning_progress')
+        .upsert({
+          user_id: user.id,
+          content_id: articleSlug,
+          progress_percentage: Math.round(newProgress.scrollProgress),
+          completed: newProgress.scrollProgress >= 95, // 95%以上で完了
+          last_position: newProgress.lastPosition,
+          last_read_at: newProgress.readAt.toISOString(),
+          read_count: existing ? (existing.readingTime > 0 ? 2 : 1) : 1,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,content_id'
+        });
 
+      if (upsertError) {
+        console.error('Supabase保存エラー:', upsertError);
+        throw upsertError;
+      }
+
+      // ローカル状態を更新
       setUserProgress(prev => ({
         ...prev,
         [articleSlug]: newProgress

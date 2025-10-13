@@ -309,6 +309,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 articleCategories={articleCategories}
                 isDemo={isDemo}
                 onRegisterClick={showRegistrationModal}
+                getArticleProgress={getArticleProgress}
               />
             )}
           </div>

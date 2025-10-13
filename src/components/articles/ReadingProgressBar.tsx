@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useArticlePrefetch } from '../../hooks/useArticlePrefetch';
+import { useArticleProgress } from '../../hooks/useArticleProgress';
+import { useAuth } from '../../hooks/useAuth';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
 import { getArticleBySlug } from '../../utils/articlesIndex';
 import { MDX_CONTENT_LOADED_EVENT } from '../mdx/MDXLoader';
@@ -26,6 +28,8 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
   const [headerOffset, setHeaderOffset] = useState(0);
   const [readingTime, setReadingTime] = useState<number>(5);
   const { updateProgress } = useLearningProgress();
+  const { updateArticleProgress } = useArticleProgress();
+  const { user } = useAuth();
 
   // プリフェッチフックを使用
   const currentSlug = slug || contentId || '';
@@ -70,13 +74,26 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
     computeHeaderOffset();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
-    window.addEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as EventListener);
+    window.addEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as unknown as EventListener);
     return () => {
+      // ページ離脱時に進捗を保存（ログインユーザーのみ、5%以上読んだ場合）
+      if (user && currentSlug && progressPct >= 5) {
+        const isCompleted = progressPct >= 95;
+        updateArticleProgress(currentSlug, {
+          scrollProgress: progressPct,
+          completed: isCompleted,
+          lastPosition: Math.floor(window.scrollY),
+          readAt: new Date()
+        }).catch(error => {
+          console.error('進捗保存エラー:', error);
+        });
+      }
+
       window.removeEventListener('scroll', onScroll as any);
       window.removeEventListener('resize', onResize as any);
-      window.removeEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as EventListener);
+      window.removeEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as unknown as EventListener);
     };
-  }, [compute]);
+  }, [compute, user, currentSlug, progressPct, updateArticleProgress]);
 
   return (
     <>
