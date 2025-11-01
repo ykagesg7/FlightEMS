@@ -1,10 +1,13 @@
 import type { FilteredWeatherData } from '../../../services/weather';
+import type { AviationWeatherData } from '../../../types/aviation';
+import { formatMETAR, formatTAF, translateFlightCategory } from '../../../services/aviationWeather';
 import { escapeHtml, kvItem, sectionHeader } from './common';
 
 export const createWeatherPopupContent = (
   airportProps: Record<string, unknown>,
   weatherData: FilteredWeatherData,
-  airportInfoHtml?: string
+  airportInfoHtml?: string,
+  aviationWeather?: AviationWeatherData | null
 ): string => {
   const current = weatherData?.current;
 
@@ -46,6 +49,86 @@ export const createWeatherPopupContent = (
   const iconUrl = current.condition.icon ? `https:${current.condition.icon}` : '';
   const iconHtml = iconUrl ? `<img src="${iconUrl}" alt="${conditionText}" class="weather-icon">` : '';
 
+  // METAR/TAFセクションの生成
+  let metarSection = '';
+  let tafSection = '';
+
+  if (aviationWeather?.metar) {
+    const metar = aviationWeather.metar;
+
+    // 必須フィールドのチェック（NOAA APIの実際のフィールド名）
+    if (metar.rawOb && metar.obsTime) {
+      // obsTimeはUnixタイムスタンプなのでミリ秒に変換
+      const observationTime = new Date(metar.obsTime * 1000).toLocaleString('ja-JP', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      metarSection = `
+        <div class="metar-section">
+          <h4>📡 METAR</h4>
+          <div class="metar-raw">${escapeHtml(formatMETAR(metar.rawOb))}</div>
+          <div class="metar-details">
+            <p><strong>観測:</strong> ${observationTime}</p>
+            ${metar.fltCat ? `<p><strong>カテゴリー:</strong> <span class="flight-category ${metar.fltCat}">${translateFlightCategory(metar.fltCat)}</span></p>` : ''}
+            ${metar.wxString ? `<p><strong>天気:</strong> ${escapeHtml(metar.wxString)}</p>` : ''}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  if (aviationWeather?.taf) {
+    const taf = aviationWeather.taf;
+
+    // 必須フィールドのチェック（NOAA APIの実際のフィールド名）
+    if (taf.rawTAF && taf.issueTime && taf.validTimeFrom !== undefined && taf.validTimeTo !== undefined) {
+      const issueTime = new Date(taf.issueTime).toLocaleString('ja-JP', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      // validTimeFrom/ToはUnixタイムスタンプなのでミリ秒に変換
+      const validFrom = new Date(taf.validTimeFrom * 1000).toLocaleString('ja-JP', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      const validTo = new Date(taf.validTimeTo * 1000).toLocaleString('ja-JP', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      tafSection = `
+        <div class="taf-section">
+          <h4>🔮 TAF（飛行場予報）</h4>
+          <div class="taf-raw">${escapeHtml(formatTAF(taf.rawTAF))}</div>
+          <div class="taf-details">
+            <p><strong>発表:</strong> ${issueTime}</p>
+            <p><strong>有効期間:</strong> ${validFrom} 〜 ${validTo}</p>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // METAR/TAFが両方とも取得できない場合のメッセージ
+  let noAviationWeatherMsg = '';
+  if (aviationWeather && !aviationWeather.metar && !aviationWeather.taf) {
+    noAviationWeatherMsg = `
+      <div class="no-aviation-weather">
+        <p>⚠️ METAR/TAF情報は現在利用できません</p>
+        <p class="note">このデータは政府機関から提供されており、一時的に利用できない場合があります。</p>
+      </div>
+    `;
+  }
+
   return `
     <div class="airport-popup airport-weather-popup popup-compact">
       <div class="airport-popup-header">
@@ -74,6 +157,9 @@ export const createWeatherPopupContent = (
           <div class="ml-2 airport-info-grid">${airportInfoHtml ?? ''}</div>
         </div>
       </div>
+      ${metarSection}
+      ${tafSection}
+      ${noAviationWeatherMsg}
     </div>
   `;
 };

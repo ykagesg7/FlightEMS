@@ -546,3 +546,195 @@
     margin-bottom: 3px;
   }
 }
+
+/* ========================================
+   METAR/TAF航空気象情報スタイル
+   ======================================== */
+
+/* 気象セクション共通スタイル */
+.weather-section,
+.metar-section,
+.taf-section {
+  margin: 15px 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  border: 1px solid rgba(57, 255, 20, 0.2);
+}
+
+.weather-section h4,
+.metar-section h4,
+.taf-section h4 {
+  font-size: 1em;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--hud-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* METAR/TAF生テキスト表示 */
+.metar-raw,
+.taf-raw {
+  font-family: 'Courier New', Consolas, monospace;
+  background: #1a1a1a;
+  color: #00ff00;
+  padding: 8px;
+  border-radius: 4px;
+  margin: 8px 0;
+  font-size: 0.85em;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  line-height: 1.4;
+}
+
+/* 詳細情報 */
+.metar-details,
+.taf-details {
+  font-size: 0.9em;
+  margin-top: 8px;
+}
+
+.metar-details p,
+.taf-details p {
+  margin: 5px 0;
+  color: var(--text-primary);
+}
+
+.metar-details strong,
+.taf-details strong {
+  color: var(--hud-primary);
+  font-weight: 600;
+}
+
+/* フライトカテゴリー色分け */
+.flight-category {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.9em;
+  margin-left: 4px;
+}
+
+.flight-category.VFR {
+  background: #00ff00;
+  color: #000;
+}
+
+.flight-category.MVFR {
+  background: #0066ff;
+  color: #fff;
+}
+
+.flight-category.IFR {
+  background: #ff0000;
+  color: #fff;
+}
+
+.flight-category.LIFR {
+  background: #ff00ff;
+  color: #fff;
+}
+
+/* METAR/TAF利用不可メッセージ */
+.no-aviation-weather {
+  margin: 15px 0;
+  padding: 12px;
+  background: rgba(255, 165, 0, 0.1);
+  border: 1px solid rgba(255, 165, 0, 0.3);
+  border-radius: 5px;
+  text-align: center;
+}
+
+.no-aviation-weather p {
+  margin: 5px 0;
+  color: var(--text-primary);
+}
+
+.no-aviation-weather .note {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ダークテーマ対応 */
+.dark .weather-section,
+.dark .metar-section,
+.dark .taf-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 68, 68, 0.2);
+}
+
+.dark .metar-raw,
+.dark .taf-raw {
+  background: #2a2a2a;
+  color: #ff4444;
+  border-color: rgba(255, 68, 68, 0.3);
+}
+
+.dark .weather-section h4,
+.dark .metar-section h4,
+.dark .taf-section h4 {
+  color: #ff4444;
+}
+
+.dark .metar-details strong,
+.dark .taf-details strong {
+  color: #ff4444;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .metar-raw,
+  .taf-raw {
+    font-size: 0.75em;
+    padding: 6px;
+  }
+
+  .weather-section,
+  .metar-section,
+  .taf-section {
+    margin: 10px 0;
+    padding: 8px;
+  }
+
+  .weather-section h4,
+  .metar-section h4,
+  .taf-section h4 {
+    font-size: 0.9em;
+  }
+
+  .metar-details,
+  .taf-details {
+    font-size: 0.85em;
+  }
+
+  .flight-category {
+    font-size: 0.8em;
+    padding: 2px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .metar-raw,
+  .taf-raw {
+    font-size: 0.7em;
+    padding: 5px;
+  }
+
+  .weather-section,
+  .metar-section,
+  .taf-section {
+    margin: 8px 0;
+    padding: 6px;
+  }
+
+  .flight-category {
+    font-size: 0.75em;
+    padding: 2px 5px;
+  }
+}

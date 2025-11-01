@@ -10,6 +10,8 @@ FlightAcademyTsxは、以下の機能を提供します：
 - フライトプランの作成と管理
 - 空港、ウェイポイント、NAVAIDの表示と操作
 - 気象データの取得と表示
+  - 一般気象情報（温度、風向風速、気圧、視程など）
+  - **METAR/TAF情報**（日本国内空港のリアルタイム航空気象データ）
 - フライトパラメータの計算
 - 学習コンテンツとマニューバービューア
 
@@ -42,12 +44,19 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 4. 開発サーバーの起動：
 
-**オプションA: フロントエンドのみ（モックデータ使用）**
+**推奨: ローカル開発環境（APIサーバー + フロントエンド）**
+
+2つのターミナルを開いて以下を実行：
+
 ```bash
+# ターミナル1: ローカルAPIサーバー起動
+npm run dev:weather
+
+# ターミナル2: フロントエンド開発サーバー起動
 npm run dev
 ```
 
-**オプションB: フルスタック開発（API機能含む）**
+**オプション: Vercel Dev環境（フルスタック統合）**
 ```bash
 # Vercel CLIのインストール（初回のみ）
 npm install -g vercel
@@ -58,6 +67,7 @@ vercel env add WEATHER_API_KEY
 # フルスタック開発サーバー起動
 npm run dev:full
 ```
+※ Vercel Devは日本語のPC名がある環境で問題が発生する場合があります。その場合は上記の推奨方法を使用してください。
 
 5. ブラウザで以下のURLにアクセス：
 ```
@@ -66,9 +76,14 @@ http://localhost:5173/
 
 ### 開発環境での注意事項
 
-- **API機能を使用する場合**: `vercel dev`がポート3000で起動し、Viteのプロキシ設定により`/api/*`リクエストが自動的に転送されます
-- **モックデータ**: APIが利用できない場合は自動的にモックデータが表示されます
-- **環境変数**: 本番環境ではVercelのダッシュボードで環境変数を設定してください
+- **推奨開発方法**: `npm run dev:weather`でローカルAPIサーバー（ポート3001）を起動し、別ターミナルで`npm run dev`を実行
+- **API機能**: ローカルAPIサーバーは以下のエンドポイントを提供します：
+  - `/api/weather` - 一般気象情報
+  - `/api/aviation-weather` - METAR/TAF航空気象情報
+  - `/api/health` - ヘルスチェック
+- **プロキシ設定**: Viteが`/api/*`リクエストを自動的に`localhost:3001`に転送します
+- **環境変数**: `.env.local`にWEATHER_API_KEY（WeatherAPI.com）を設定してください。METAR/TAFは認証不要です
+- **本番環境**: Vercelにデプロイする際は、`api/weather.ts`と`api/aviation-weather.ts`が自動的に使用されます
 
 ## 基本的な使い方
 
@@ -195,10 +210,32 @@ echo "GEMINI_API_KEY=your_api_key_here" >> .env.local
 
 ## 最近の更新
 
+- **METAR/TAF航空気象情報の統合**: 日本国内空港のリアルタイムMETAR/TAF情報を無料で取得・表示（NOAA Aviation Weather Center API使用）
 - **CPL試験学習資料の構造化**: 事業用操縦士学科試験出題範囲を5つの分野別資料に体系化
 - mermaidライブラリの追加によるダイアグラム描画機能の実装
 - ドキュメント構造の整理（3つの主要ドキュメントに統合）
 - 各種コンポーネントのリファクタリングとバグ修正
+
+### METAR/TAF機能の詳細
+
+**対象空港**: 日本国内の主要空港（ICAOコードがRJで始まる空港）
+
+**表示情報**:
+- **METAR（定時飛行場実況気象通報式）**
+  - 観測時刻
+  - フライトカテゴリー（VFR/MVFR/IFR/LIFR）
+  - 天気現象
+  - 生METARテキスト
+- **TAF（飛行場予報）**
+  - 発表時刻
+  - 有効期間
+  - 生TAFテキスト
+
+**技術仕様**:
+- データソース: NOAA Aviation Weather Center API（無料、認証不要）
+- キャッシュ: 1時間
+- 並列取得: 一般気象情報とMETAR/TAFを同時取得
+- エラーハンドリング: データ取得失敗時の適切なフォールバック
 
 ## ライセンス
 
@@ -206,4 +243,4 @@ echo "GEMINI_API_KEY=your_api_key_here" >> .env.local
 
 ---
 
-最終更新日: 2025年4月19日
+最終更新日: 2025年11月1日

@@ -103,6 +103,103 @@ app.get('/api/weather', async (req, res) => {
   }
 });
 
+// Aviation Weather endpoint (mirrors api/aviation-weather.ts)
+app.get('/api/aviation-weather', async (req, res) => {
+  const type = req.query.type as string | undefined;
+  const icao = req.query.icao as string | undefined;
+
+  // パラメータバリデーション
+  if (!type || !icao) {
+    return res.status(400).json({
+      error: 'Missing required parameters',
+      message: 'Both "type" and "icao" parameters are required'
+    });
+  }
+
+  // typeのバリデーション
+  if (type !== 'metar' && type !== 'taf') {
+    return res.status(400).json({
+      error: 'Invalid type parameter',
+      message: 'Type must be either "metar" or "taf"'
+    });
+  }
+
+  // ICAOコードのバリデーション
+  if (typeof icao !== 'string' || icao.length < 3 || icao.length > 4) {
+    return res.status(400).json({
+      error: 'Invalid ICAO code',
+      message: 'ICAO code must be 3-4 characters'
+    });
+  }
+
+  try {
+    // NOAA APIへのリクエストURL構築
+    const noaaUrl = `https://aviationweather.gov/api/data/${type}?ids=${icao.toUpperCase()}&format=json`;
+
+    console.log(`[aviation-weather] Fetching ${type.toUpperCase()} for ${icao.toUpperCase()}...`);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒タイムアウト
+
+    const response = await fetch(noaaUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'FlightAcademyTsx-Dev/1.0',
+      },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      console.error(`[aviation-weather] NOAA API error: ${response.status} ${response.statusText}`);
+      return res.status(response.status).json({
+        error: 'NOAA API Error',
+        message: `Failed to fetch ${type.toUpperCase()} data from NOAA`,
+        status: response.status,
+      });
+    }
+
+    const data = await response.json();
+
+    // データが空の場合
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+      console.log(`[aviation-weather] No ${type.toUpperCase()} data found for ${icao.toUpperCase()}`);
+      return res.status(404).json({
+        error: 'No data found',
+        message: `No ${type.toUpperCase()} data available for ${icao.toUpperCase()}`,
+        data: [],
+      });
+    }
+
+    console.log(`[aviation-weather] Successfully fetched ${type.toUpperCase()} for ${icao.toUpperCase()}`);
+    res.setHeader('Cache-Control', 'public, max-age=1800');
+    return res.json(data);
+
+  } catch (error: any) {
+    console.error('[aviation-weather] Error:', error);
+
+    // タイムアウトエラー
+    if (error.name === 'AbortError') {
+      return res.status(504).json({
+        error: 'Gateway Timeout',
+        message: 'Request to NOAA API timed out',
+      });
+    }
+
+    // その他のエラー
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: error.message || 'An unexpected error occurred',
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`[dev-weather-server] listening on http://localhost:${PORT} (env: ${serverEnvPath})`);
+  console.log(`[dev-weather-server] Available endpoints:`);
+  console.log(`  - GET /api/health`);
+  console.log(`  - GET /api/weather?lat={lat}&lon={lon}`);
+  console.log(`  - GET /api/aviation-weather?type={metar|taf}&icao={ICAO}`);
 });

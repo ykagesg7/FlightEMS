@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
+import type { AviationWeatherData } from '../types/aviation';
 
 // WeatherDataの型定義
 export interface WeatherData {
@@ -34,10 +35,11 @@ export interface WeatherData {
   };
 }
 
-// キャッシュの型定義
+// キャッシュの型定義（航空気象データを含む）
 export interface WeatherCache {
   [airportId: string]: {
     data: WeatherData;
+    aviationWeather?: AviationWeatherData | null; // 航空気象データ（METAR/TAF）を追加
     timestamp: number;
   };
 }
@@ -92,4 +94,4 @@ export const getCachedWeatherData = (
   }
 
   return { data: cachedEntry?.data || null, isValid: false };
-}; 
+};

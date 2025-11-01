@@ -1,5 +1,7 @@
 import L from 'leaflet';
 import { FilteredWeatherData } from '../../../services/weather';
+import { fetchAviationWeather } from '../../../services/aviationWeather';
+import type { AviationWeatherData } from '../../../types/aviation';
 import type { WeatherCache } from '../../../contexts/WeatherCacheContext';
 import { simplifiedAirportInfoContent } from '../popups/airportPopup';
 import { createPopup } from '../popups/common';
@@ -41,16 +43,34 @@ export const fetchAirportWeather = (
   if (cachedEntry && now - cachedEntry.timestamp < CACHE_DURATION) {
     if (cachedEntry.data && typeof cachedEntry.data === 'object' && 'current' in cachedEntry.data) {
       const airportInfoHtml = simplifiedAirportInfoContent(feature.properties as any);
-      const html = createWeatherPopupContent(feature.properties as any, cachedEntry.data as FilteredWeatherData, airportInfoHtml);
+      const html = createWeatherPopupContent(
+        feature.properties as any,
+        cachedEntry.data as FilteredWeatherData,
+        airportInfoHtml,
+        cachedEntry.aviationWeather || null
+      );
       loadingPopup.setContent(html);
       loadingPopup.update();
       return;
     }
   }
 
-  fetchWeatherData(latitude, longitude)
-    .then((weatherData) => {
-      if (!weatherData) {
+  // 既存の気象データを取得
+  const weatherDataPromise = fetchWeatherData(latitude, longitude);
+
+  // ICAOコードがRJで始まる日本の空港の場合、METAR/TAFも取得
+  let aviationWeatherPromise: Promise<AviationWeatherData | null> = Promise.resolve(null);
+  if (airportId && typeof airportId === 'string' && airportId.startsWith('RJ')) {
+    aviationWeatherPromise = fetchAviationWeather(airportId).catch((error) => {
+      console.error(`${airportId}の航空気象データ取得エラー:`, error);
+      return null;
+    });
+  }
+
+         // 両方のデータを並列で取得
+         Promise.all([weatherDataPromise, aviationWeatherPromise])
+           .then(([weatherData, aviationWeather]) => {
+             if (!weatherData) {
         // weatherDataがnullの場合もエラーポップアップを表示
         const errorPopupContent = `
           <div class="airport-popup airport-weather-popup">
@@ -69,13 +89,29 @@ export const fetchAirportWeather = (
         loadingPopup.update();
         return;
       }
+
       const airportInfoHtml = simplifiedAirportInfoContent(feature.properties as any);
-      const html = createWeatherPopupContent(feature.properties as any, weatherData, airportInfoHtml);
+      const html = createWeatherPopupContent(
+        feature.properties as any,
+        weatherData,
+        airportInfoHtml,
+        aviationWeather
+      );
       loadingPopup.setContent(html);
       loadingPopup.update();
-      setWeatherCache((prev) => ({ ...prev, [airportId]: { data: weatherData, timestamp: Date.now() } }));
+
+      // キャッシュに保存（航空気象データも含む）
+      setWeatherCache((prev) => ({
+        ...prev,
+        [airportId]: {
+          data: weatherData,
+          aviationWeather: aviationWeather,
+          timestamp: Date.now()
+        }
+      }));
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error('気象データ取得エラー:', error);
       const errorPopupContent = `
         <div class="airport-popup airport-weather-popup">
           <div class="airport-popup-header">
