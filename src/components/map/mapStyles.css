@@ -553,6 +553,7 @@
 
 /* 気象セクション共通スタイル */
 .weather-section,
+.airport-info-section,
 .metar-section,
 .taf-section {
   margin: 15px 0;
@@ -563,6 +564,7 @@
 }
 
 .weather-section h4,
+.airport-info-section h4,
 .metar-section h4,
 .taf-section h4 {
   font-size: 1em;
@@ -663,6 +665,7 @@
 
 /* ダークテーマ対応 */
 .dark .weather-section,
+.dark .airport-info-section,
 .dark .metar-section,
 .dark .taf-section {
   background: rgba(255, 255, 255, 0.05);
@@ -677,6 +680,7 @@
 }
 
 .dark .weather-section h4,
+.dark .airport-info-section h4,
 .dark .metar-section h4,
 .dark .taf-section h4 {
   color: #ff4444;
@@ -696,6 +700,7 @@
   }
 
   .weather-section,
+  .airport-info-section,
   .metar-section,
   .taf-section {
     margin: 10px 0;
@@ -703,6 +708,7 @@
   }
 
   .weather-section h4,
+  .airport-info-section h4,
   .metar-section h4,
   .taf-section h4 {
     font-size: 0.9em;
@@ -727,6 +733,7 @@
   }
 
   .weather-section,
+  .airport-info-section,
   .metar-section,
   .taf-section {
     margin: 8px 0;

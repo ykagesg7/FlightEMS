@@ -129,33 +129,40 @@ export const createWeatherPopupContent = (
     `;
   }
 
+  // 気象情報カードセクション
+  const weatherSection = `
+    <div class="weather-section">
+      <h4>🌤️ 気象情報${iconHtml ? ` ${iconHtml}` : ''}</h4>
+      <p class="text-sm mt-1 popup-value">${escapeHtml(conditionText)}</p>
+      <div class="weather-info-grid">
+        ${kvItem('weather', '温度：', temp, { readout: true })}
+        ${kvItem('weather', '風：', windInfo, { readout: true })}
+        ${kvItem('weather', '視程：', visibility, { readout: true })}
+        ${kvItem('weather', '気圧：', pressureInch, { readout: true })}
+        ${kvItem('weather', '日出/日入：', sunriseSunset)}
+        <p class="text-xs mt-1 weather-update-time">
+          <span>最終更新：${escapeHtml(lastUpdated)}</span>
+        </p>
+      </div>
+    </div>
+  `;
+
+  // 空港情報カードセクション
+  const airportSection = `
+    <div class="airport-info-section">
+      <h4>✈️ 空港情報</h4>
+      <div class="airport-info-grid">${airportInfoHtml ?? ''}</div>
+    </div>
+  `;
+
   return `
     <div class="airport-popup airport-weather-popup popup-compact">
       <div class="airport-popup-header">
         ${airportProps.id as string}（${(airportProps.name1 as string)?.split('(')[0].trim()}）
       </div>
-      <div class="p-3 popup-two-col">
-        <div>
-          ${sectionHeader('気象情報', iconHtml)}
-          <p class="text-sm mt-1 popup-value">${escapeHtml(conditionText)}</p>
-
-          <div class="ml-2 weather-info-grid">
-            ${kvItem('weather', '温度：', temp, { readout: true })}
-            ${kvItem('weather', '風：', windInfo, { readout: true })}
-            ${kvItem('weather', '視程：', visibility, { readout: true })}
-            ${kvItem('weather', '気圧：', pressureInch, { readout: true })}
-            ${kvItem('weather', '日出/日入：', sunriseSunset)}
-            <p class="text-xs mt-1 text-gray-500 weather-update-time">
-              <span>最終更新：${escapeHtml(lastUpdated)}</span>
-            </p>
-          </div>
-        </div>
-        <div>
-          <div>
-            <h4 class="text-sm font-bold mb-0 popup-section-title">空港情報</h4>
-          </div>
-          <div class="ml-2 airport-info-grid">${airportInfoHtml ?? ''}</div>
-        </div>
+      <div class="p-3">
+        ${weatherSection}
+        ${airportSection}
       </div>
       ${metarSection}
       ${tafSection}
