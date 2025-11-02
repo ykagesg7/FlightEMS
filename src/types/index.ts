@@ -43,6 +43,7 @@ export interface RouteSegment {
   altitude: number;
   eta: string;
   distance: number;
+  duration?: string; // セグメントの所要時間（時分秒形式）
 }
 
 export interface FlightPlan {

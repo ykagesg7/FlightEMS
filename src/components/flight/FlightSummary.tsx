@@ -123,12 +123,12 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       // 必須パラメータのチェック
       if (!segment.distance || isNaN(segment.distance) || segment.distance <= 0) {
         console.warn(`セグメント[${index}]の距離が無効です`, segment.distance);
-        return { ...segment, eta: '--:--:--' };
+        return { ...segment, eta: '--:--:--', duration: '--:--:--' };
       }
 
       if (!segment.speed || isNaN(segment.speed) || segment.speed <= 0) {
         console.warn(`セグメント[${index}]の速度が無効です`, segment.speed);
-        return { ...segment, eta: '--:--:--' };
+        return { ...segment, eta: '--:--:--', duration: '--:--:--' };
       }
 
       // 高度に基づくTASを計算(高精度)
@@ -162,6 +162,9 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       // 時間を秒単位に変換
       const durationSeconds = eteHours * 3600 + eteMins * 60 + eteSecs;
 
+      // セグメント所要時間をフォーマット（時分秒形式）
+      const formattedDuration = `${eteHours.toString().padStart(2, '0')}:${eteMins.toString().padStart(2, '0')}:${eteSecs.toString().padStart(2, '0')}`;
+
       // 到着時刻を計算
       const segmentEndTime = new Date(currentTime.getTime() + durationSeconds * 1000);
 
@@ -176,6 +179,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       return {
         ...segment,
         eta: formattedEta,
+        duration: formattedDuration,
       };
     });
 
@@ -327,7 +331,8 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
                       </td>
                       <td className="px-2 py-1 text-xs md:text-sm text-[color:var(--text-primary)] text-right">{segment.distance?.toFixed(1)} nm</td>
                       <td className="px-2 py-1 text-xs md:text-sm text-[color:var(--text-primary)] text-right">
-                        {segment.eta || '--:--:--'}
+                        <div>{segment.eta || '--:--:--'}</div>
+                        <div className="text-xs opacity-70">{segment.duration || '--:--:--'}</div>
                       </td>
                     </tr>
                   ))}
