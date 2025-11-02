@@ -84,23 +84,32 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       setEditableSegments(flightPlan.routeSegments || []);
       prevSegmentsLengthRef.current = currentLength;
       userEditedRef.current = false; // 同期されたためフラグをリセット
-    } else if (flightPlan.routeSegments && !userEditedRef.current) {
-      // ユーザー編集がなく、かつフライトプランのルートに変更がある場合
-      // ルートの構造的な変更（出発地/到着地変更など）があった可能性があるため同期
-      const hasStructuralChanges = flightPlan.routeSegments.some((segment, index) => {
+    } else if (flightPlan.routeSegments) {
+      // flightPlan.routeSegmentsとeditableSegmentsが異なる場合に同期
+      // etaとdurationも含めてチェックすることで、再計算結果を反映
+      const hasChanges = flightPlan.routeSegments.some((segment, index) => {
         const editableSegment = editableSegments[index];
-        return !editableSegment ||
-          segment.from !== editableSegment.from ||
+        if (!editableSegment) return true;
+        
+        return segment.from !== editableSegment.from ||
           segment.to !== editableSegment.to ||
           segment.distance !== editableSegment.distance ||
-          segment.bearing !== editableSegment.bearing;
+          segment.bearing !== editableSegment.bearing ||
+          segment.speed !== editableSegment.speed ||
+          segment.altitude !== editableSegment.altitude ||
+          segment.eta !== editableSegment.eta ||
+          segment.duration !== editableSegment.duration;
       });
 
-      if (hasStructuralChanges) {
+      if (hasChanges) {
         setEditableSegments(flightPlan.routeSegments);
+        // ユーザー編集フラグが立っている場合はリセット（再計算済みのため）
+        if (userEditedRef.current) {
+          userEditedRef.current = false;
+        }
       }
     }
-  }, [flightPlan.routeSegments, editableSegments]);
+  }, [flightPlan.routeSegments]);
 
   // ルートセグメントの計算
   const recalculateETAs = useCallback(() => {
