@@ -40,7 +40,22 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
     const currentScrollY = Math.max(0, window.scrollY);
     const pct = Math.min(100, Math.max(0, (currentScrollY / totalScrollable) * 100));
     setProgressPct(pct);
+
+    // 学習進捗を更新
     updateProgress(currentSlug, Math.floor(currentScrollY));
+
+    // 記事進捗も更新（ログインユーザーのみ、5%以上読んだ場合）
+    if (user && currentSlug && pct >= 5) {
+      const isCompleted = pct >= 95;
+      updateArticleProgress(currentSlug, {
+        scrollProgress: pct,
+        completed: isCompleted,
+        lastPosition: Math.floor(currentScrollY),
+        readAt: new Date()
+      }).catch(error => {
+        console.error('進捗保存エラー:', error);
+      });
+    }
   }, 1000);
 
   useEffect(() => {

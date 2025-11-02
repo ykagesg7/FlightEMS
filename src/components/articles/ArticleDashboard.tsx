@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useArticleProgress } from '../../hooks/useArticleProgress';
 import { useArticleStats } from '../../hooks/useArticleStats';
+import { useSeriesUnlock } from '../../hooks/useSeriesUnlock';
 import { LearningContent } from '../../types';
 import { ArticleMeta } from '../../types/articles';
 import { buildArticleIndex } from '../../utils/articlesIndex';
@@ -89,6 +90,10 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     );
   }, [learningContents]);
 
+  // シリーズアンロック機能
+  const learningContentIds = useMemo(() => articleContents.map(c => c.id), [articleContents]);
+  const seriesUnlock = useSeriesUnlock(articleMetas, learningContentIds);
+
   // 記事コンテンツがロードされた後に統計データを読み込み
   React.useEffect(() => {
     if (articleContents.length > 0) {
@@ -172,10 +177,20 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     return sorted;
   }, [articleContents, activeCategory, selectedTags, articleMetas, sortBy, sortOrder, socialStats]);
 
-  // 記事クリック時の閲覧数記録
-  const handleArticleClick = async (articleId: string) => {
+  // 記事クリック時の閲覧数記録とロックチェック
+  const handleArticleClick = async (articleId: string, isLocked: boolean) => {
+    if (isLocked) {
+      // ロックされている場合は遷移しない（トーストなどで通知するか、CTAを表示）
+      const reason = seriesUnlock.getLockedReason(articleId);
+      if (reason) {
+        alert(reason); // TODO: トーストライブラリに置き換え
+      }
+      return;
+    }
+
     try {
       await recordView({ article_id: articleId });
+      navigate(`/articles/${articleId}`);
     } catch (error) {
       console.error('閲覧数の記録に失敗しました:', error);
     }
@@ -377,7 +392,9 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                         isDemo={isDemo}
                         onRegisterPrompt={showRegistrationModal}
                         stats={stats}
-                        onArticleClick={() => handleArticleClick(article.id)}
+                        locked={!seriesUnlock.isUnlocked(article.id)}
+                        lockedReason={seriesUnlock.getLockedReason(article.id)}
+                        onArticleClick={() => handleArticleClick(article.id, !seriesUnlock.isUnlocked(article.id))}
                       />
                     );
                   })}

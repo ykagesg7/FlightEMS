@@ -19,6 +19,8 @@ interface EnhancedArticleCardProps {
     user_liked: boolean;
   };
   highlightId?: string;
+  locked?: boolean;
+  lockedReason?: string | null;
   onArticleClick?: () => void;
 }
 
@@ -30,6 +32,8 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
   onRegisterPrompt,
   stats,
   highlightId,
+  locked = false,
+  lockedReason,
   onArticleClick
 }) => {
   const { effectiveTheme } = useTheme();
@@ -59,11 +63,52 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
 
   return (
     <div className={`
-      group relative transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1
+      group relative transition-all duration-300 transform ${!locked ? 'hover:scale-[1.02] hover:-translate-y-1' : ''}
       ${isHighlighted ? 'highlight-article' : ''}
+      ${locked ? 'opacity-75' : ''}
     `}>
+      {/* ロックオーバーレイ */}
+      {locked && (
+        <div className="absolute inset-0 z-20 rounded-xl bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm flex items-center justify-center cursor-not-allowed">
+          <div className="text-center p-6 max-w-sm">
+            <div className="text-4xl mb-3">🔒</div>
+            <div className={`
+              text-lg font-semibold mb-2
+              ${effectiveTheme === 'dark' ? 'text-white' : 'text-gray-900'}
+            `}>
+              この記事はロックされています
+            </div>
+            <div className={`
+              text-sm mb-4
+              ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}
+            `}>
+              {lockedReason || 'この記事を読むには、前の記事を読了する必要があります。'}
+            </div>
+            {!isLoggedIn && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onRegisterPrompt) {
+                    onRegisterPrompt();
+                  }
+                }}
+                className={`
+                  px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                  ${effectiveTheme === 'dark'
+                    ? 'bg-blue-600 hover:bg-blue-500 text-white'
+                    : 'bg-blue-500 hover:bg-blue-400 text-white'
+                  }
+                `}
+              >
+                ログイン/登録する
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* デモ用オーバーレイ */}
-      {shouldBlur && (
+      {!locked && shouldBlur && (
         <div className="absolute inset-0 z-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm flex items-center justify-center">
           <div className="text-center p-4">
             <div className="text-2xl mb-2">🔒</div>
@@ -142,6 +187,20 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
                   {article.category}
                 </span>
 
+                {locked && (
+                  <span className={`
+                     px-2 py-1 text-xs font-medium rounded-full
+                     ${effectiveTheme === 'dark'
+                      ? 'bg-red-900/50 text-red-400 border border-red-700/50'
+                      : effectiveTheme === 'day'
+                        ? 'bg-red-100 text-red-600 border border-red-300'
+                        : 'bg-red-100 text-red-600 border border-red-300'
+                    }
+                   `}>
+                    🔒 ロック
+                  </span>
+                )}
+
                 {isCompleted && (
                   <span className={`
                      px-2 py-1 text-xs font-medium rounded-full
@@ -172,10 +231,26 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
               </div>
 
               {/* タイトル */}
-              <Link
-                to={`/articles/${article.id}`}
-                onClick={onArticleClick}
-                className={`
+              {locked ? (
+                <div
+                  className={`
+                     block text-lg font-bold mb-2 line-clamp-2 transition-all duration-300
+                     bg-gradient-to-r bg-clip-text text-transparent cursor-not-allowed
+                     ${effectiveTheme === 'dark'
+                    ? 'from-gray-500 to-gray-600'
+                    : effectiveTheme === 'day'
+                      ? 'from-gray-400 to-gray-500'
+                      : 'from-gray-400 to-gray-500'
+                  }
+                   `}
+                >
+                  {articleMeta?.title || article.title}
+                </div>
+              ) : (
+                <Link
+                  to={`/articles/${article.id}`}
+                  onClick={onArticleClick}
+                  className={`
                      block text-lg font-bold mb-2 line-clamp-2 hover:underline transition-all duration-300
                      bg-gradient-to-r bg-clip-text text-transparent
                      ${effectiveTheme === 'dark'
@@ -185,9 +260,10 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
                       : 'from-gray-900 to-gray-700 hover:from-blue-600 hover:to-indigo-600'
                   }
                    `}
-              >
-                {articleMeta?.title || article.title}
-              </Link>
+                >
+                  {articleMeta?.title || article.title}
+                </Link>
+              )}
 
               {/* 要約 */}
               {(articleMeta?.excerpt || article.description) && (
