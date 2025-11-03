@@ -90,7 +90,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       const hasChanges = flightPlan.routeSegments.some((segment, index) => {
         const editableSegment = editableSegments[index];
         if (!editableSegment) return true;
-        
+
         return segment.from !== editableSegment.from ||
           segment.to !== editableSegment.to ||
           segment.distance !== editableSegment.distance ||

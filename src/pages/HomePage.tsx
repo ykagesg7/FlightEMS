@@ -1,8 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { DailyTasks } from '../components/dashboard/DailyTasks';
+import { LearningHeatmap } from '../components/dashboard/LearningHeatmap';
+import { SubjectRadarChart } from '../components/dashboard/SubjectRadarChart';
 import { AnnouncementCard } from '../components/home/AnnouncementCard';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAnnouncements } from '../hooks/useAnnouncements';
+import { useAuthStore } from '../stores/authStore';
+import type { DashboardMetrics } from '../types/dashboard';
+import { fetchDashboardMetrics } from '../utils/dashboard';
 
 const useReveal = (deps?: React.DependencyList) => {
   useEffect(() => {
@@ -52,7 +58,351 @@ const useReveal = (deps?: React.DependencyList) => {
   }, deps || []);
 };
 
-const HomePage: React.FC = () => {
+/**
+ * ダッシュボードページのスケルトンローダー
+ */
+const DashboardSkeleton: React.FC = () => {
+  const { effectiveTheme } = useTheme();
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <div className="h-8 w-48 bg-gray-700/30 rounded animate-pulse" />
+          <div className="h-4 w-64 bg-gray-700/20 rounded mt-2 animate-pulse" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className={`
+                rounded-xl border-2 p-6 animate-pulse
+                ${effectiveTheme === 'dark'
+                  ? 'border-red-500/30 bg-red-900/10'
+                  : 'border-green-500/30 bg-green-900/10'
+                }
+              `}
+            >
+              <div className="h-6 w-32 bg-gray-700/30 rounded mb-4" />
+              <div className="h-12 w-full bg-gray-700/20 rounded" />
+            </div>
+          ))}
+        </div>
+
+        <div className="h-64 bg-gray-700/10 rounded-xl animate-pulse" />
+      </div>
+    </div>
+  );
+};
+
+/**
+ * ダッシュボードページ本体
+ */
+const DashboardContent: React.FC = () => {
+  const { user } = useAuthStore();
+  const { effectiveTheme } = useTheme();
+  const [metrics, setMetrics] = React.useState<DashboardMetrics | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+
+    async function loadMetrics() {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchDashboardMetrics(user!.id);
+        setMetrics(data);
+      } catch (err) {
+        console.error('ダッシュボードデータ取得エラー:', err);
+        setError('データの取得に失敗しました');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadMetrics();
+  }, [user]);
+
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div
+            className={`
+              rounded-xl border-2 p-6 text-center
+              ${effectiveTheme === 'dark'
+                ? 'border-red-500/50 bg-red-900/10'
+                : 'border-green-500/50 bg-green-900/10'
+              }
+            `}
+          >
+            <p className="text-red-400 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className={`
+                px-4 py-2 rounded-lg border-2
+                ${effectiveTheme === 'dark'
+                  ? 'border-red-500/60 text-red-400 hover:bg-red-900/20'
+                  : 'border-green-500/60 text-green-400 hover:bg-green-900/20'
+                }
+              `}
+            >
+              再試行
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!metrics) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div
+            className={`
+              rounded-xl border-2 p-6 text-center
+              ${effectiveTheme === 'dark'
+                ? 'border-red-500/30 bg-red-900/10'
+                : 'border-green-500/30 bg-green-900/10'
+              }
+            `}
+          >
+            <p className="text-[color:var(--text-muted)]">データがありません</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const borderColor = effectiveTheme === 'dark'
+    ? 'border-red-500/60'
+    : 'border-green-500/50';
+  const bgColor = effectiveTheme === 'dark'
+    ? 'bg-red-900/10'
+    : 'bg-green-900/10';
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto">
+        {/* ヘッダー */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold hud-text hud-glow mb-2">
+            学習ダッシュボード
+          </h1>
+          <p className="text-[color:var(--text-muted)]">
+            あなたの学習進捗と成績を確認
+          </p>
+        </div>
+
+        {/* サマリーカード */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* 全体進捗 */}
+          <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
+            <h3 className="text-sm text-[color:var(--text-muted)] mb-2">
+              全体進捗
+            </h3>
+            <div className="text-4xl font-bold hud-text mb-2">
+              {metrics.overallProgressPct}%
+            </div>
+            <div className="w-full bg-gray-700/30 rounded-full h-2">
+              <div
+                className={`
+                  h-2 rounded-full transition-all duration-500
+                  ${effectiveTheme === 'dark' ? 'bg-red-500' : 'bg-green-500'}
+                `}
+                style={{ width: `${metrics.overallProgressPct}%` }}
+              />
+            </div>
+          </div>
+
+          {/* 模試正答率 */}
+          <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
+            <h3 className="text-sm text-[color:var(--text-muted)] mb-2">
+              模試正答率
+            </h3>
+            <div className="text-4xl font-bold hud-text mb-2">
+              {metrics.testAccuracyPct}%
+            </div>
+            <div className="w-full bg-gray-700/30 rounded-full h-2">
+              <div
+                className={`
+                  h-2 rounded-full transition-all duration-500
+                  ${effectiveTheme === 'dark' ? 'bg-red-500' : 'bg-green-500'}
+                `}
+                style={{ width: `${metrics.testAccuracyPct}%` }}
+              />
+            </div>
+          </div>
+
+          {/* 連続学習日数 */}
+          <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
+            <h3 className="text-sm text-[color:var(--text-muted)] mb-2">
+              連続学習日数
+            </h3>
+            <div className="text-4xl font-bold hud-text mb-2">
+              {metrics.streakDays}日
+            </div>
+            <p className="text-xs text-[color:var(--text-muted)]">
+              継続して学習を続けましょう
+            </p>
+          </div>
+        </div>
+
+        {/* クイックアクション */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Link
+            to="/planning"
+            className={`
+              rounded-xl border-2 p-6 text-center transition-all duration-300
+              hover:scale-105 hover:shadow-lg
+              ${borderColor} ${bgColor}
+            `}
+          >
+            <div className="text-2xl mb-2">🗺️</div>
+            <div className="font-bold hud-text">PLANNING</div>
+            <div className="text-sm text-[color:var(--text-muted)]">
+              フライト計画
+            </div>
+          </Link>
+
+          <Link
+            to="/articles"
+            className={`
+              rounded-xl border-2 p-6 text-center transition-all duration-300
+              hover:scale-105 hover:shadow-lg
+              ${borderColor} ${bgColor}
+            `}
+          >
+            <div className="text-2xl mb-2">📖</div>
+            <div className="font-bold hud-text">ARTICLES</div>
+            <div className="text-sm text-[color:var(--text-muted)]">
+              記事を読む
+            </div>
+          </Link>
+
+          <Link
+            to="/learning"
+            className={`
+              rounded-xl border-2 p-6 text-center transition-all duration-300
+              hover:scale-105 hover:shadow-lg
+              ${borderColor} ${bgColor}
+            `}
+          >
+            <div className="text-2xl mb-2">📚</div>
+            <div className="font-bold hud-text">LESSONS</div>
+            <div className="text-sm text-[color:var(--text-muted)]">
+              レッスン開始
+            </div>
+          </Link>
+
+          <Link
+            to="/test"
+            className={`
+              rounded-xl border-2 p-6 text-center transition-all duration-300
+              hover:scale-105 hover:shadow-lg
+              ${borderColor} ${bgColor}
+            `}
+          >
+            <div className="text-2xl mb-2">✍️</div>
+            <div className="font-bold hud-text">TEST</div>
+            <div className="text-sm text-[color:var(--text-muted)]">
+              模試を受ける
+            </div>
+          </Link>
+        </div>
+
+        {/* 今日の学習タスク / 科目別レーダーチャート */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <DailyTasks />
+          <SubjectRadarChart />
+        </div>
+
+        {/* 学習履歴カレンダー */}
+        <div className="mb-8">
+          <LearningHeatmap />
+        </div>
+
+        {/* 続きから再開 / 弱点復習 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 続きから再開 */}
+          {metrics.nextLesson && (
+            <Link
+              to={`/learning/${metrics.nextLesson.id}`}
+              className={`
+                rounded-xl border-2 p-6 transition-all duration-300
+                hover:scale-[1.02] hover:shadow-lg
+                ${borderColor} ${bgColor}
+              `}
+            >
+              <h3 className="text-lg font-bold hud-text mb-3">
+                🔄 続きから再開
+              </h3>
+              <p className="text-[color:var(--text-muted)] mb-4">
+                {metrics.nextLesson.title}
+              </p>
+              <div className="text-sm hud-text">
+                クリックして続きを読む →
+              </div>
+            </Link>
+          )}
+
+          {/* 弱点復習 */}
+          {metrics.weakTopics.length > 0 && (
+            <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
+              <h3 className="text-lg font-bold hud-text mb-3">
+                📌 復習が必要なトピック
+              </h3>
+              <div className="space-y-2">
+                {metrics.weakTopics.map((topic, idx) => (
+                  <div key={idx} className="flex items-center justify-between">
+                    <span className="text-sm">{topic.topic}</span>
+                    <span className={`text-sm ${effectiveTheme === 'dark' ? 'text-red-400' : 'text-green-400'}`}>
+                      {topic.accuracyPct}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <Link
+                to="/test"
+                className="inline-block mt-4 text-sm hud-text underline"
+              >
+                模試で復習する →
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* 学習時間サマリー */}
+        <div className="mt-8">
+          <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
+            <h3 className="text-lg font-bold hud-text mb-4">
+              直近7日間の学習時間
+            </h3>
+            <div className="text-3xl font-bold hud-text">
+              {metrics.weeklyStudyMinutes}分
+            </div>
+            <p className="text-sm text-[color:var(--text-muted)] mt-2">
+              目標達成まで頑張りましょう
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * ゲスト向けホームページ（未ログイン時）
+ */
+const GuestHomeContent: React.FC = () => {
   const { effectiveTheme } = useTheme();
   const { announcements, isLoading, error } = useAnnouncements();
 
@@ -409,6 +759,25 @@ const HomePage: React.FC = () => {
       </section>
     </div>
   );
+};
+
+/**
+ * 統合されたHomePage/DashboardPage
+ * ログイン状態に応じてDashboardまたはGuestHomeを表示
+ */
+const HomePage: React.FC = () => {
+  const { user } = useAuthStore();
+
+  // ログイン状態で分岐
+  if (user) {
+    return (
+      <Suspense fallback={<DashboardSkeleton />}>
+        <DashboardContent />
+      </Suspense>
+    );
+  }
+
+  return <GuestHomeContent />;
 };
 
 export default HomePage;

@@ -60,7 +60,7 @@ const AuthPage: React.FC = () => {
   // ユーザーが既にログインしている場合はリダイレクト
   useEffect(() => {
     if (user && session) {
-      const from = state?.from?.pathname || '/learning';
+      const from = state?.from?.pathname || '/';
       navigate(from, { replace: true });
     }
   }, [user, session, navigate, state]);
