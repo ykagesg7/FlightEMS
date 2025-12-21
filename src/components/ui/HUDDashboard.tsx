@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 
 interface HUDTimeDisplayProps {
   className?: string;
@@ -7,7 +6,6 @@ interface HUDTimeDisplayProps {
 
 export const HUDTimeDisplay: React.FC<HUDTimeDisplayProps> = ({ className = '' }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const { effectiveTheme } = useTheme();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -29,10 +27,10 @@ export const HUDTimeDisplay: React.FC<HUDTimeDisplayProps> = ({ className = '' }
   return (
     <div className={`hud-time-display ${className}`}>
       <div className="text-center">
-        <div className="text-lg font-bold" style={effectiveTheme === 'day' ? { color: '#39FF14' } : effectiveTheme === 'dark' ? { color: '#FF3B3B' } : {}}>
+        <div className="text-lg font-bold text-whiskyPapa-yellow">
           {formatTime(currentTime)}
         </div>
-        <div className="text-sm mt-1" style={effectiveTheme === 'day' ? { color: '#39FF14' } : effectiveTheme === 'dark' ? { color: '#FF3B3B' } : {}}>
+        <div className="text-sm mt-1 text-gray-400">
           {currentTime.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',

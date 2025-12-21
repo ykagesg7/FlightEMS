@@ -9,6 +9,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import { buildSubjectRadarData } from '../../utils/chartData';
 import type { SubjectRadarData } from '../../utils/chartData';
+import { Card, CardContent, Typography } from '../ui';
 
 // Chart.jsコンポーネントの登録
 ChartJS.register(
@@ -66,10 +67,14 @@ export const SubjectRadarChart: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
-        <h3 className="text-lg font-bold hud-text mb-4">科目別理解度</h3>
-        <div className="h-64 bg-gray-700/30 rounded animate-pulse" />
-      </div>
+      <Card variant="hud" padding="md" className={borderColor}>
+        <CardContent>
+          <Typography variant="h4" color="hud" className="mb-4">
+            科目別理解度
+          </Typography>
+          <div className="h-64 bg-gray-700/30 rounded animate-pulse" />
+        </CardContent>
+      </Card>
     );
   }
 
@@ -133,12 +138,16 @@ export const SubjectRadarChart: React.FC = () => {
   };
 
   return (
-    <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
-      <h3 className="text-lg font-bold hud-text mb-4">科目別理解度</h3>
-      <div className="h-64">
-        <Radar data={data} options={options} />
-      </div>
-    </div>
+    <Card variant="hud" padding="md" className={borderColor}>
+      <CardContent>
+        <Typography variant="h4" color="hud" className="mb-4">
+          科目別理解度
+        </Typography>
+        <div className="h-64">
+          <Radar data={data} options={options} />
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

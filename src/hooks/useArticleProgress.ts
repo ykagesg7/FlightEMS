@@ -123,6 +123,7 @@ const DEMO_PROGRESS: Record<string, ArticleProgress> = {
 
 export const useArticleProgress = () => {
   const { user } = useAuth();
+  const { completeMissionByAction } = useGamification();
   const [userProgress, setUserProgress] = useState<Record<string, ArticleProgress>>({});
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -346,11 +347,21 @@ export const useArticleProgress = () => {
       // 統計を再計算
       const newProgressMap = { ...userProgress, [articleSlug]: newProgress };
       setStats(calculateStats(newProgressMap));
+
+      // 記事完了時にミッション達成をチェック
+      if (newProgress.scrollProgress >= 95 || newProgress.completed) {
+        try {
+          await completeMissionByAction('article_read');
+        } catch (missionError) {
+          // ミッション達成の失敗は致命的ではないためログのみ
+          console.warn('Mission completion check failed:', missionError);
+        }
+      }
     } catch (err) {
       console.error('進捗更新エラー:', err);
       setError(err instanceof Error ? err : new Error('進捗の更新に失敗しました'));
     }
-  }, [user, userProgress, calculateStats]);
+  }, [user, userProgress, calculateStats, completeMissionByAction]);
 
   // 記事をブックマーク
   const toggleBookmark = useCallback(async (articleSlug: string) => {

@@ -5,9 +5,24 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Whisky Papa Brand Colors (Marketing/Show)
+        brand: {
+          primary: '#FFD700',      // Whisky Papa Yellow
+          'primary-dark': '#FFC700',
+          'primary-light': '#FFE44D',
+          secondary: '#121212',     // Whisky Papa Black
+          'secondary-light': '#1a1a1a',
+          'secondary-dark': '#0a0a0a',
+          accent: '#FFD700',       // Alias for primary
+          surface: '#121212',      // Alias for secondary
+          'surface-light': '#1a1a1a',
+          'surface-dark': '#0a0a0a',
+        },
+        // HUD/Cockpit Colors (App/Focus)
         hud: {
-          green: '#00ff41',
-          red: '#ff4141',
+          green: '#39FF14',         // Day mode HUD green
+          red: '#ff3b3b',          // Dark/Night mode HUD red
+          'red-light': '#ff6666',
           primary: 'var(--hud-primary-color)',
           secondary: 'var(--hud-secondary-color)',
           accent: 'var(--hud-accent-color)',
@@ -17,7 +32,20 @@ module.exports = {
           danger: '#ff2244',
           info: '#00aaff',
           grid: 'var(--hud-grid-color)',
+          surface: 'var(--panel)',  // Cockpit panel background
+          'surface-dark': '#0b0b0b',
         },
+        // Semantic Colors (Context-aware)
+        semantic: {
+          primary: 'var(--semantic-primary)',    // Brand yellow or HUD green/red
+          secondary: 'var(--semantic-secondary)', // Brand black or HUD dim
+          accent: 'var(--semantic-accent)',
+          surface: 'var(--semantic-surface)',
+          border: 'var(--semantic-border)',
+          text: 'var(--semantic-text)',
+          'text-muted': 'var(--semantic-text-muted)',
+        },
+        // Military/Camo Colors (Legacy support)
         military: {
           camo: {
             dark: '#2a3441',
@@ -34,12 +62,27 @@ module.exports = {
             panel: '#0d1117',
             hull: '#374151',
           }
+        },
+        // Whisky Papa (Legacy alias - kept for backward compatibility)
+        whiskyPapa: {
+          yellow: '#FFD700',
+          'yellow-dark': '#FFC700',
+          'yellow-light': '#FFE44D',
+          black: '#121212',
+          'black-light': '#1a1a1a',
+          'black-dark': '#0a0a0a',
         }
       },
       fontFamily: {
-        hud: ['Courier New', 'monospace'],
-        military: ['Arial Black', 'sans-serif'],
-        tactical: ['Consolas', 'monospace'],
+        // Display fonts (Marketing/Headers)
+        display: ['Arial Black', 'Impact', 'sans-serif'],  // Impactful headers
+        // Body fonts (Readable content)
+        body: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        // Monospace fonts (HUD/Data)
+        mono: ['Courier New', 'Consolas', 'JetBrains Mono', 'monospace'],
+        hud: ['Courier New', 'monospace'],  // Legacy alias
+        military: ['Arial Black', 'sans-serif'],  // Legacy alias
+        tactical: ['Consolas', 'monospace'],  // Legacy alias
       },
       animation: {
         'hud-glow': 'hud-glow 2s ease-in-out infinite alternate',

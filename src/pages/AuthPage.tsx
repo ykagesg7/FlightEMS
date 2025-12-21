@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext';
 import { useAuthStore } from '../stores/authStore';
 import { toAppError } from '../types/error';
 import { bypassEmailVerification } from '../utils/supabase';
+import { Button, Card, CardHeader, CardTitle, CardContent, Typography } from '../components/ui';
 
 interface LocationState {
   from?: {
@@ -22,8 +22,6 @@ const AuthPage: React.FC = () => {
   const session = useAuthStore(state => state.session);
   const setLoading = useAuthStore(state => state.setLoading);
 
-  // このページでは値を参照していないため、未使用変数の警告を避けて単純に呼び出しのみ行う
-  useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState;
@@ -212,275 +210,287 @@ const AuthPage: React.FC = () => {
 
   // メール検証中の状態表示
   const renderVerificationPending = () => (
-    <div className={`p-8 rounded-2xl shadow-xl max-w-md w-full backdrop-blur-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
-      <h2 className={`text-2xl font-bold mb-6 hud-text`}>
-        メール検証
-      </h2>
+    <Card variant="brand" padding="lg" className="max-w-md w-full border-brand-primary/30">
+      <CardHeader>
+        <CardTitle>
+          <Typography variant="h2" color="brand">
+            メール検証
+          </Typography>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {error && (
+          <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 text-red-300 rounded">
+            {error}
+          </div>
+        )}
 
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+        {success && (
+          <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 text-green-300 rounded">
+            {success}
+          </div>
+        )}
+
+        <div className="mb-4 p-4 border border-whiskyPapa-yellow/30 rounded bg-whiskyPapa-black-dark">
+          <p className="mb-3 text-white">
+            <strong>登録メールアドレス:</strong> {email}
+          </p>
+          <p className="mb-3 text-gray-300">
+            上記のメールアドレスに確認リンクを送信しました。メールを確認して認証を完了してください。
+          </p>
+          <p className="text-sm text-gray-400">
+            メールが届かない場合は、迷惑メールフォルダも確認してください。
+          </p>
         </div>
-      )}
 
-      {success && (
-        <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-          {success}
-        </div>
-      )}
+        {isDevelopment && (
+          <div className="mt-4">
+            <Button
+              variant="brand"
+              size="md"
+              onClick={handleVerificationBypass}
+              disabled={loading}
+              className="w-full mb-3"
+            >
+              {loading ? '処理中...' : '開発環境用: 検証リンクを生成'}
+            </Button>
 
-      <div className={`mb-4 p-4 border rounded bg-[color:var(--panel)]/60 border-[color:var(--hud-dim)]`}>
-        <p className="mb-3">
-          <strong>登録メールアドレス:</strong> {email}
-        </p>
-        <p className="mb-3">
-          上記のメールアドレスに確認リンクを送信しました。メールを確認して認証を完了してください。
-        </p>
-        <p className="text-sm">
-          メールが届かない場合は、迷惑メールフォルダも確認してください。
-        </p>
-      </div>
+            {verificationLink && (
+              <div className="mt-2 p-3 bg-blue-500/20 border border-blue-500/50 text-blue-300 rounded text-sm">
+                <p className="mb-2 font-bold">開発環境用検証リンク:</p>
+                <a
+                  href={verificationLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-whiskyPapa-yellow underline break-all hover:text-whiskyPapa-yellow/80"
+                >
+                  {verificationLink}
+                </a>
+              </div>
+            )}
+          </div>
+        )}
 
-      {isDevelopment && (
-        <div className="mt-4">
+        <div className="mt-4 text-center">
           <button
-            onClick={handleVerificationBypass}
-            disabled={loading}
-            className={`w-full py-2 px-4 rounded-md focus:outline-none mb-3 ${loading
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)] focus:ring-2 focus:ring-[color:var(--ring)]'}
-            `}
+            onClick={toggleForm}
+            className="text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 hover:underline focus:outline-none transition-colors"
           >
-            {loading ? '処理中...' : '開発環境用: 検証リンクを生成'}
+            ログインページに戻る
           </button>
-
-          {verificationLink && (
-            <div className="mt-2 p-3 bg-blue-100 border border-blue-400 text-blue-800 rounded text-sm">
-              <p className="mb-2 font-bold">開発環境用検証リンク:</p>
-              <a
-                href={verificationLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hud-text underline break-all"
-              >
-                {verificationLink}
-              </a>
-            </div>
-          )}
         </div>
-      )}
-
-      <div className="mt-4 text-center">
-        <button
-          onClick={toggleForm}
-          className={`hud-text hover:underline focus:outline-none`}
-        >
-          ログインページに戻る
-        </button>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 
   const renderForgotPasswordForm = () => (
-    <div className={`p-8 rounded-2xl shadow-xl max-w-md w-full backdrop-blur-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
-      <h2 className={`text-2xl font-bold mb-6 hud-text`}>
-        パスワードリセット
-      </h2>
-
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-          {success}
-        </div>
-      )}
-
-      <form onSubmit={handleResetPasswordSubmit}>
-        <div className="mb-4">
-          <label
-            htmlFor="email"
-            className={`block mb-2 text-sm font-medium`}
-          >
-            メールアドレス
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={`w-full px-3 py-2 rounded-md hud-input focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]`}
-            autoComplete="email"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className={`w-full py-2 px-4 rounded-md focus:outline-none ${loading
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)] focus:ring-2 focus:ring-[color:var(--ring)]'
-            }`}
-        >
-          {loading ? 'リセット手順を送信中...' : 'リセット手順を送信'}
-        </button>
-
-        <p className={`mt-4 text-sm text-center`}>
-          <button
-            type="button"
-            onClick={toggleForgotPassword}
-            className="hud-text hover:underline focus:outline-none"
-          >
-            ログインに戻る
-          </button>
-        </p>
-      </form>
-    </div>
-  );
-
-  const renderLoginForm = () => (
-    <div className={`p-8 rounded-2xl shadow-xl max-w-md w-full backdrop-blur-xl border transition-all duration-300 bg-[color:var(--panel)]/80 border-[color:var(--hud-dim)]`}>
-      <h2 className={`text-2xl font-bold mb-6 hud-text`}>
-        {isLogin ? 'ログイン' : 'アカウント登録'}
-      </h2>
-
-      {state?.timeout && (
-        <div className="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
-          認証がタイムアウトしました。再度ログインしてください。
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-          {success}
-        </div>
-      )}
-
-      <form onSubmit={isLogin ? handleLoginSubmit : handleSignupSubmit}>
-        <div className="mb-4">
-          <label
-            htmlFor="email"
-            className={`block mb-2 text-sm font-medium`}
-          >
-            メールアドレス
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={`w-full px-3 py-2 rounded-md hud-input focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]`}
-            autoComplete="email"
-          />
-        </div>
-
-        {!isLogin && (
-          <div className="mb-4">
-            <label
-              htmlFor="username"
-              className={`block mb-2 text-sm font-medium`}
-            >
-              ユーザー名
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className={`w-full px-3 py-2 rounded-md hud-input focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]`}
-              autoComplete="username"
-            />
+    <Card variant="brand" padding="lg" className="max-w-md w-full border-brand-primary/30">
+      <CardHeader>
+        <CardTitle>
+          <Typography variant="h2" color="brand">
+            パスワードリセット
+          </Typography>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {error && (
+          <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 text-red-300 rounded">
+            {error}
           </div>
         )}
 
-        <div className="mb-4">
-          <label
-            htmlFor="password"
-            className={`block mb-2 text-sm font-medium`}
-          >
-            パスワード
-          </label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={`w-full px-3 py-2 rounded-md hud-input focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]`}
-            autoComplete={isLogin ? "current-password" : "new-password"}
-          />
-        </div>
-
-        {!isLogin && (
-          <div className="mb-4">
-            <label
-              htmlFor="confirmPassword"
-              className={`block mb-2 text-sm font-medium`}
-            >
-              パスワード（確認）
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className={`w-full px-3 py-2 rounded-md hud-input focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]`}
-              autoComplete="new-password"
-            />
+        {success && (
+          <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 text-green-300 rounded">
+            {success}
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className={`w-full py-2 px-4 rounded-md focus:outline-none ${loading
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-dim)] focus:ring-2 focus:ring-[color:var(--ring)]'
-            }`}
-        >
-          {loading
-            ? (isLogin ? 'ログイン中...' : '登録中...')
-            : (isLogin ? 'ログイン' : '登録')}
-        </button>
+        <form onSubmit={handleResetPasswordSubmit}>
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-white"
+            >
+              メールアドレス
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 rounded-md bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/30 text-white focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow/50 focus:border-whiskyPapa-yellow transition-colors"
+              autoComplete="email"
+            />
+          </div>
 
-        {isLogin && (
-          <p className={`mt-2 text-sm text-center`}>
+          <Button
+            type="submit"
+            variant="brand"
+            size="md"
+            disabled={loading}
+            className="w-full"
+          >
+            {loading ? 'リセット手順を送信中...' : 'リセット手順を送信'}
+          </Button>
+
+          <p className="mt-4 text-sm text-center text-gray-300">
             <button
               type="button"
               onClick={toggleForgotPassword}
-              className="hud-text hover:underline focus:outline-none"
+              className="text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 hover:underline focus:outline-none transition-colors"
             >
-              パスワードを忘れた場合
+              ログインに戻る
             </button>
           </p>
+        </form>
+      </CardContent>
+    </Card>
+  );
+
+  const renderLoginForm = () => (
+    <Card variant="brand" padding="lg" className="max-w-md w-full border-brand-primary/30">
+      <CardHeader>
+        <CardTitle>
+          <Typography variant="h2" color="brand">
+            {isLogin ? 'ログイン' : 'アカウント登録'}
+          </Typography>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {state?.timeout && (
+          <div className="mb-4 p-3 bg-yellow-500/20 border border-yellow-500/50 text-yellow-300 rounded">
+            認証がタイムアウトしました。再度ログインしてください。
+          </div>
         )}
 
-        <p className={`mt-4 text-sm text-center`}>
-          {isLogin
-            ? 'アカウントをお持ちでない場合は'
-            : 'すでにアカウントをお持ちの場合は'}
-          <button
-            type="button"
-            onClick={toggleForm}
-            className="ml-1 hud-text hover:underline focus:outline-none"
+        {error && (
+          <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 text-red-300 rounded">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 text-green-300 rounded">
+            {success}
+          </div>
+        )}
+
+        <form onSubmit={isLogin ? handleLoginSubmit : handleSignupSubmit}>
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-white"
+            >
+              メールアドレス
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 rounded-md bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/30 text-white focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow/50 focus:border-whiskyPapa-yellow transition-colors"
+              autoComplete="email"
+            />
+          </div>
+
+          {!isLogin && (
+            <div className="mb-4">
+              <label
+                htmlFor="username"
+                className="block mb-2 text-sm font-medium text-white"
+              >
+                ユーザー名
+              </label>
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-3 py-2 rounded-md bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/30 text-white focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow/50 focus:border-whiskyPapa-yellow transition-colors"
+                autoComplete="username"
+              />
+            </div>
+          )}
+
+          <div className="mb-4">
+            <label
+              htmlFor="password"
+              className="block mb-2 text-sm font-medium text-white"
+            >
+              パスワード
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 rounded-md bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/30 text-white focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow/50 focus:border-whiskyPapa-yellow transition-colors"
+              autoComplete={isLogin ? "current-password" : "new-password"}
+            />
+          </div>
+
+          {!isLogin && (
+            <div className="mb-4">
+              <label
+                htmlFor="confirmPassword"
+                className="block mb-2 text-sm font-medium text-white"
+              >
+                パスワード（確認）
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-3 py-2 rounded-md bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/30 text-white focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow/50 focus:border-whiskyPapa-yellow transition-colors"
+                autoComplete="new-password"
+              />
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            variant="brand"
+            size="md"
+            disabled={loading}
+            className="w-full"
           >
-            {isLogin ? '登録' : 'ログイン'}
-          </button>
-        </p>
-      </form>
-    </div>
+            {loading
+              ? (isLogin ? 'ログイン中...' : '登録中...')
+              : (isLogin ? 'ログイン' : '登録')}
+          </Button>
+
+          {isLogin && (
+            <p className="mt-2 text-sm text-center text-gray-300">
+              <button
+                type="button"
+                onClick={toggleForgotPassword}
+                className="text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 hover:underline focus:outline-none transition-colors"
+              >
+                パスワードを忘れた場合
+              </button>
+            </p>
+          )}
+
+          <p className="mt-4 text-sm text-center text-gray-300">
+            {isLogin
+              ? 'アカウントをお持ちでない場合は'
+              : 'すでにアカウントをお持ちの場合は'}
+            <button
+              type="button"
+              onClick={toggleForm}
+              className="ml-1 text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 hover:underline focus:outline-none transition-colors"
+            >
+              {isLogin ? '登録' : 'ログイン'}
+            </button>
+          </p>
+        </form>
+      </CardContent>
+    </Card>
   );
 
   return (
-    <div className={`bg-[color:var(--bg)] min-h-screen py-16 flex justify-center items-center p-4`}>
+    <div className="bg-whiskyPapa-black min-h-screen py-16 flex justify-center items-center p-4">
       {verificationEmailSent
         ? renderVerificationPending()
         : isForgotPassword

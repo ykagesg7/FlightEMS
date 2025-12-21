@@ -9,6 +9,7 @@ import { useAnnouncements } from '../hooks/useAnnouncements';
 import { useAuthStore } from '../stores/authStore';
 import type { DashboardMetrics } from '../types/dashboard';
 import { fetchDashboardMetrics } from '../utils/dashboard';
+import { Card, CardContent, Typography, Button } from '../components/ui';
 
 const useReveal = (deps?: React.DependencyList) => {
   useEffect(() => {
@@ -194,128 +195,130 @@ const DashboardContent: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         {/* ヘッダー */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold hud-text hud-glow mb-2">
+          <Typography variant="h1" color="hud" className="mb-2 hud-glow">
             学習ダッシュボード
-          </h1>
-          <p className="text-[color:var(--text-muted)]">
+          </Typography>
+          <Typography variant="body" color="muted">
             あなたの学習進捗と成績を確認
-          </p>
+          </Typography>
         </div>
 
         {/* サマリーカード */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* 全体進捗 */}
-          <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
-            <h3 className="text-sm text-[color:var(--text-muted)] mb-2">
-              全体進捗
-            </h3>
-            <div className="text-4xl font-bold hud-text mb-2">
-              {metrics.overallProgressPct}%
-            </div>
-            <div className="w-full bg-gray-700/30 rounded-full h-2">
-              <div
-                className={`
-                  h-2 rounded-full transition-all duration-500
-                  ${effectiveTheme === 'dark' ? 'bg-red-500' : 'bg-green-500'}
-                `}
-                style={{ width: `${metrics.overallProgressPct}%` }}
-              />
-            </div>
-          </div>
+          <Card variant="hud" padding="md" className={borderColor}>
+            <CardContent>
+              <Typography variant="caption" color="muted" className="mb-2">
+                全体進捗
+              </Typography>
+              <Typography variant="h1" color="hud" className="mb-2">
+                {metrics.overallProgressPct}%
+              </Typography>
+              <div className="w-full bg-gray-700/30 rounded-full h-2">
+                <div
+                  className={`
+                    h-2 rounded-full transition-all duration-500
+                    ${effectiveTheme === 'dark' ? 'bg-red-500' : 'bg-green-500'}
+                  `}
+                  style={{ width: `${metrics.overallProgressPct}%` }}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
           {/* 模試正答率 */}
-          <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
-            <h3 className="text-sm text-[color:var(--text-muted)] mb-2">
-              模試正答率
-            </h3>
-            <div className="text-4xl font-bold hud-text mb-2">
-              {metrics.testAccuracyPct}%
-            </div>
-            <div className="w-full bg-gray-700/30 rounded-full h-2">
-              <div
-                className={`
-                  h-2 rounded-full transition-all duration-500
-                  ${effectiveTheme === 'dark' ? 'bg-red-500' : 'bg-green-500'}
-                `}
-                style={{ width: `${metrics.testAccuracyPct}%` }}
-              />
-            </div>
-          </div>
+          <Card variant="hud" padding="md" className={borderColor}>
+            <CardContent>
+              <Typography variant="caption" color="muted" className="mb-2">
+                模試正答率
+              </Typography>
+              <Typography variant="h1" color="hud" className="mb-2">
+                {metrics.testAccuracyPct}%
+              </Typography>
+              <div className="w-full bg-gray-700/30 rounded-full h-2">
+                <div
+                  className={`
+                    h-2 rounded-full transition-all duration-500
+                    ${effectiveTheme === 'dark' ? 'bg-red-500' : 'bg-green-500'}
+                  `}
+                  style={{ width: `${metrics.testAccuracyPct}%` }}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
           {/* 連続学習日数 */}
-          <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
-            <h3 className="text-sm text-[color:var(--text-muted)] mb-2">
-              連続学習日数
-            </h3>
-            <div className="text-4xl font-bold hud-text mb-2">
-              {metrics.streakDays}日
-            </div>
-            <p className="text-xs text-[color:var(--text-muted)]">
-              継続して学習を続けましょう
-            </p>
-          </div>
+          <Card variant="hud" padding="md" className={borderColor}>
+            <CardContent>
+              <Typography variant="caption" color="muted" className="mb-2">
+                連続学習日数
+              </Typography>
+              <Typography variant="h1" color="hud" className="mb-2">
+                {metrics.streakDays}日
+              </Typography>
+              <Typography variant="caption" color="muted">
+                継続して学習を続けましょう
+              </Typography>
+            </CardContent>
+          </Card>
         </div>
 
         {/* クイックアクション */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Link
-            to="/planning"
-            className={`
-              rounded-xl border-2 p-6 text-center transition-all duration-300
-              hover:scale-105 hover:shadow-lg
-              ${borderColor} ${bgColor}
-            `}
-          >
-            <div className="text-2xl mb-2">🗺️</div>
-            <div className="font-bold hud-text">PLANNING</div>
-            <div className="text-sm text-[color:var(--text-muted)]">
-              フライト計画
-            </div>
+          <Link to="/planning">
+            <Card variant="hud" padding="md" className={`text-center transition-all duration-300 hover:scale-105 hover:shadow-lg ${borderColor}`}>
+              <CardContent>
+                <div className="text-2xl mb-2">🗺️</div>
+                <Typography variant="h5" color="hud" className="font-bold">
+                  PLANNING
+                </Typography>
+                <Typography variant="body-sm" color="muted">
+                  フライト計画
+                </Typography>
+              </CardContent>
+            </Card>
           </Link>
 
-          <Link
-            to="/articles"
-            className={`
-              rounded-xl border-2 p-6 text-center transition-all duration-300
-              hover:scale-105 hover:shadow-lg
-              ${borderColor} ${bgColor}
-            `}
-          >
-            <div className="text-2xl mb-2">📖</div>
-            <div className="font-bold hud-text">ARTICLES</div>
-            <div className="text-sm text-[color:var(--text-muted)]">
-              記事を読む
-            </div>
+          <Link to="/articles">
+            <Card variant="hud" padding="md" className={`text-center transition-all duration-300 hover:scale-105 hover:shadow-lg ${borderColor}`}>
+              <CardContent>
+                <div className="text-2xl mb-2">📖</div>
+                <Typography variant="h5" color="hud" className="font-bold">
+                  ARTICLES
+                </Typography>
+                <Typography variant="body-sm" color="muted">
+                  記事を読む
+                </Typography>
+              </CardContent>
+            </Card>
           </Link>
 
-          <Link
-            to="/learning"
-            className={`
-              rounded-xl border-2 p-6 text-center transition-all duration-300
-              hover:scale-105 hover:shadow-lg
-              ${borderColor} ${bgColor}
-            `}
-          >
-            <div className="text-2xl mb-2">📚</div>
-            <div className="font-bold hud-text">LESSONS</div>
-            <div className="text-sm text-[color:var(--text-muted)]">
-              レッスン開始
-            </div>
+          <Link to="/learning">
+            <Card variant="hud" padding="md" className={`text-center transition-all duration-300 hover:scale-105 hover:shadow-lg ${borderColor}`}>
+              <CardContent>
+                <div className="text-2xl mb-2">📚</div>
+                <Typography variant="h5" color="hud" className="font-bold">
+                  LESSONS
+                </Typography>
+                <Typography variant="body-sm" color="muted">
+                  レッスン開始
+                </Typography>
+              </CardContent>
+            </Card>
           </Link>
 
-          <Link
-            to="/test"
-            className={`
-              rounded-xl border-2 p-6 text-center transition-all duration-300
-              hover:scale-105 hover:shadow-lg
-              ${borderColor} ${bgColor}
-            `}
-          >
-            <div className="text-2xl mb-2">✍️</div>
-            <div className="font-bold hud-text">TEST</div>
-            <div className="text-sm text-[color:var(--text-muted)]">
-              模試を受ける
-            </div>
+          <Link to="/test">
+            <Card variant="hud" padding="md" className={`text-center transition-all duration-300 hover:scale-105 hover:shadow-lg ${borderColor}`}>
+              <CardContent>
+                <div className="text-2xl mb-2">✍️</div>
+                <Typography variant="h5" color="hud" className="font-bold">
+                  TEST
+                </Typography>
+                <Typography variant="body-sm" color="muted">
+                  模試を受ける
+                </Typography>
+              </CardContent>
+            </Card>
           </Link>
         </div>
 
@@ -334,65 +337,65 @@ const DashboardContent: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* 続きから再開 */}
           {metrics.nextLesson && (
-            <Link
-              to={`/learning/${metrics.nextLesson.id}`}
-              className={`
-                rounded-xl border-2 p-6 transition-all duration-300
-                hover:scale-[1.02] hover:shadow-lg
-                ${borderColor} ${bgColor}
-              `}
-            >
-              <h3 className="text-lg font-bold hud-text mb-3">
-                🔄 続きから再開
-              </h3>
-              <p className="text-[color:var(--text-muted)] mb-4">
-                {metrics.nextLesson.title}
-              </p>
-              <div className="text-sm hud-text">
-                クリックして続きを読む →
-              </div>
+            <Link to={`/learning/${metrics.nextLesson.id}`}>
+              <Card variant="hud" padding="md" className={`transition-all duration-300 hover:scale-[1.02] hover:shadow-lg ${borderColor}`}>
+                <CardContent>
+                  <Typography variant="h4" color="hud" className="mb-3">
+                    🔄 続きから再開
+                  </Typography>
+                  <Typography variant="body" color="muted" className="mb-4">
+                    {metrics.nextLesson.title}
+                  </Typography>
+                  <Typography variant="body-sm" color="hud">
+                    クリックして続きを読む →
+                  </Typography>
+                </CardContent>
+              </Card>
             </Link>
           )}
 
           {/* 弱点復習 */}
           {metrics.weakTopics.length > 0 && (
-            <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
-              <h3 className="text-lg font-bold hud-text mb-3">
-                📌 復習が必要なトピック
-              </h3>
-              <div className="space-y-2">
-                {metrics.weakTopics.map((topic, idx) => (
-                  <div key={idx} className="flex items-center justify-between">
-                    <span className="text-sm">{topic.topic}</span>
-                    <span className={`text-sm ${effectiveTheme === 'dark' ? 'text-red-400' : 'text-green-400'}`}>
-                      {topic.accuracyPct}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <Link
-                to="/test"
-                className="inline-block mt-4 text-sm hud-text underline"
-              >
-                模試で復習する →
-              </Link>
-            </div>
+            <Card variant="hud" padding="md" className={borderColor}>
+              <CardContent>
+                <Typography variant="h4" color="hud" className="mb-3">
+                  📌 復習が必要なトピック
+                </Typography>
+                <div className="space-y-2">
+                  {metrics.weakTopics.map((topic, idx) => (
+                    <div key={idx} className="flex items-center justify-between">
+                      <Typography variant="body-sm">{topic.topic}</Typography>
+                      <Typography variant="body-sm" color={effectiveTheme === 'dark' ? 'hud' : 'hud'}>
+                        {topic.accuracyPct}%
+                      </Typography>
+                    </div>
+                  ))}
+                </div>
+                <Link to="/test" className="inline-block mt-4">
+                  <Typography variant="body-sm" color="hud" className="underline">
+                    模試で復習する →
+                  </Typography>
+                </Link>
+              </CardContent>
+            </Card>
           )}
         </div>
 
         {/* 学習時間サマリー */}
         <div className="mt-8">
-          <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
-            <h3 className="text-lg font-bold hud-text mb-4">
-              直近7日間の学習時間
-            </h3>
-            <div className="text-3xl font-bold hud-text">
-              {metrics.weeklyStudyMinutes}分
-            </div>
-            <p className="text-sm text-[color:var(--text-muted)] mt-2">
-              目標達成まで頑張りましょう
-            </p>
-          </div>
+          <Card variant="hud" padding="md" className={borderColor}>
+            <CardContent>
+              <Typography variant="h4" color="hud" className="mb-4">
+                直近7日間の学習時間
+              </Typography>
+              <Typography variant="h2" color="hud">
+                {metrics.weeklyStudyMinutes}分
+              </Typography>
+              <Typography variant="body-sm" color="muted" className="mt-2">
+                目標達成まで頑張りましょう
+              </Typography>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

@@ -4,9 +4,11 @@ import { QuizComponent } from '../components/QuizComponent';
 import { useTheme } from '../contexts/ThemeContext';
 import { QuestionType, QuizQuestion, UserQuizAnswer } from '../types/quiz';
 import supabase from '../utils/supabase';
+import { useGamification } from '../hooks/useGamification';
 
 const TestPage: React.FC = () => {
   const { effectiveTheme: theme } = useTheme();
+  const { completeMissionByAction } = useGamification();
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -353,6 +355,14 @@ const TestPage: React.FC = () => {
         // eslint-disable-next-line no-console
         console.error('user_test_results insert error:', resultError);
         throw resultError;
+      }
+
+      // ミッション達成をチェック
+      try {
+        await completeMissionByAction('quiz_pass');
+      } catch (missionError) {
+        // ミッション達成の失敗は致命的ではないためログのみ
+        console.warn('Mission completion check failed:', missionError);
       }
     } catch (err: any) {
       try {

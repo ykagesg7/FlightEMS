@@ -8,6 +8,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import type { DailyStudyStat } from '../../utils/heatmapData';
 import { buildDailyStudyStats } from '../../utils/heatmapData';
+import { Card, CardContent, Typography } from '../ui';
 
 export const LearningHeatmap: React.FC = () => {
   const { user } = useAuthStore();
@@ -92,10 +93,14 @@ export const LearningHeatmap: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
-        <h3 className="text-lg font-bold hud-text mb-4">過去90日の学習履歴</h3>
-        <div className="h-32 bg-gray-700/30 rounded animate-pulse" />
-      </div>
+      <Card variant="hud" padding="md" className={borderColor}>
+        <CardContent>
+          <Typography variant="h4" color="hud" className="mb-4">
+            過去90日の学習履歴
+          </Typography>
+          <div className="h-32 bg-gray-700/30 rounded animate-pulse" />
+        </CardContent>
+      </Card>
     );
   }
 
@@ -106,62 +111,70 @@ export const LearningHeatmap: React.FC = () => {
   const hoveredStat = hoveredDate ? stats.find(s => s.date === hoveredDate) : null;
 
   return (
-    <div className={`rounded-xl border-2 p-6 ${borderColor} ${bgColor}`}>
-      <h3 className="text-lg font-bold hud-text mb-4">過去90日の学習履歴</h3>
+    <Card variant="hud" padding="md" className={borderColor}>
+      <CardContent>
+        <Typography variant="h4" color="hud" className="mb-4">
+          過去90日の学習履歴
+        </Typography>
 
-      {/* 凡例 */}
-      <div className="flex items-center justify-between mb-4 text-xs text-[color:var(--text-muted)]">
-        <span>学習時間が少ない</span>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: getIntensityColor(0) }} />
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: getIntensityColor(1) }} />
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: getIntensityColor(2) }} />
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: getIntensityColor(3) }} />
+        {/* 凡例 */}
+        <div className="flex items-center justify-between mb-4">
+          <Typography variant="caption" color="muted">
+            学習時間が少ない
+          </Typography>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: getIntensityColor(0) }} />
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: getIntensityColor(1) }} />
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: getIntensityColor(2) }} />
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: getIntensityColor(3) }} />
+          </div>
+          <Typography variant="caption" color="muted">
+            学習時間が多い
+          </Typography>
         </div>
-        <span>学習時間が多い</span>
-      </div>
 
-      {/* ヒートマップ */}
-      <div className="overflow-x-auto">
-        <svg width="100%" height="120" viewBox="0 0 800 120" className="min-w-[600px]">
-          {weeks.map((week, weekIndex) =>
-            week.map((day, dayIndex) => {
-              const x = weekIndex * 14 + 20;
-              const y = dayIndex * 14 + 20;
+        {/* ヒートマップ */}
+        <div className="overflow-x-auto">
+          <svg width="100%" height="120" viewBox="0 0 800 120" className="min-w-[600px]">
+            {weeks.map((week, weekIndex) =>
+              week.map((day, dayIndex) => {
+                const x = weekIndex * 14 + 20;
+                const y = dayIndex * 14 + 20;
 
-              return (
-                <rect
-                  key={`${day.date}-${weekIndex}-${dayIndex}`}
-                  x={x}
-                  y={y}
-                  width="12"
-                  height="12"
-                  rx="2"
-                  fill={getIntensityColor(day.intensity)}
-                  stroke={hoveredDate === day.date ? (effectiveTheme === 'dark' ? '#ef4444' : '#39FF14') : 'transparent'}
-                  strokeWidth="2"
-                  onMouseEnter={() => setHoveredDate(day.date)}
-                  onMouseLeave={() => setHoveredDate(null)}
-                  className="cursor-pointer transition-all"
-                />
-              );
-            })
-          )}
-        </svg>
-      </div>
-
-      {/* ツールチップ */}
-      {hoveredStat && hoveredDate && (
-        <div className="mt-4 p-3 rounded-lg bg-[color:var(--panel)] border border-gray-700">
-          <p className="text-sm font-semibold hud-text">
-            {formatDateLabel(parseDate(hoveredDate))}
-          </p>
-          <p className="text-xs text-[color:var(--text-muted)]">
-            {hoveredStat.minutes}分 学習
-          </p>
+                return (
+                  <rect
+                    key={`${day.date}-${weekIndex}-${dayIndex}`}
+                    x={x}
+                    y={y}
+                    width="12"
+                    height="12"
+                    rx="2"
+                    fill={getIntensityColor(day.intensity)}
+                    stroke={hoveredDate === day.date ? (effectiveTheme === 'dark' ? '#ef4444' : '#39FF14') : 'transparent'}
+                    strokeWidth="2"
+                    onMouseEnter={() => setHoveredDate(day.date)}
+                    onMouseLeave={() => setHoveredDate(null)}
+                    className="cursor-pointer transition-all"
+                  />
+                );
+              })
+            )}
+          </svg>
         </div>
-      )}
-    </div>
+
+        {/* ツールチップ */}
+        {hoveredStat && hoveredDate && (
+          <div className="mt-4 p-3 rounded-lg bg-[color:var(--panel)] border border-gray-700">
+            <Typography variant="body-sm" color="hud" className="font-semibold">
+              {formatDateLabel(parseDate(hoveredDate))}
+            </Typography>
+            <Typography variant="caption" color="muted">
+              {hoveredStat.minutes}分 学習
+            </Typography>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

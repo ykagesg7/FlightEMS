@@ -5,8 +5,19 @@
 
 @layer base {
 
-  /* テーマトークン（既存名との互換も保持） */
+  /* Whisky Papa Brand Colors (Marketing/Show) */
+  :root {
+    --brand-primary: #FFD700;
+    --brand-primary-dark: #FFC700;
+    --brand-primary-light: #FFE44D;
+    --brand-secondary: #121212;
+    --brand-secondary-light: #1a1a1a;
+    --brand-secondary-dark: #0a0a0a;
+  }
+
+  /* Day Theme (HUD Green) */
   .day {
+    /* HUD Colors */
     --hud-primary: #39FF14;
     --hud-secondary: #39FF14;
     --hud-dim: rgba(57, 255, 20, 0.35);
@@ -17,6 +28,16 @@
     --text-primary: #e5e7eb;
     --text-muted: #9ca3af;
     --ring: #39FF14;
+
+    /* Semantic Variables (Context-aware: defaults to HUD for App pages) */
+    --semantic-primary: var(--hud-primary);
+    --semantic-secondary: var(--hud-secondary);
+    --semantic-accent: var(--hud-primary);
+    --semantic-surface: var(--panel);
+    --semantic-border: var(--hud-primary);
+    --semantic-text: var(--text-primary);
+    --semantic-text-muted: var(--text-muted);
+
     /* backward compat */
     --hud-primary-color: var(--hud-primary);
     --hud-secondary-color: var(--hud-secondary);
@@ -27,7 +48,9 @@
     --theme-background-color: var(--panel);
   }
 
+  /* Dark Theme (HUD Red) */
   .dark {
+    /* HUD Colors */
     --hud-primary: #ff3b3b;
     --hud-secondary: #ff6666;
     --hud-dim: rgba(255, 59, 59, 0.35);
@@ -38,6 +61,16 @@
     --text-primary: #e5e7eb;
     --text-muted: #9ca3af;
     --ring: #ff3b3b;
+
+    /* Semantic Variables (Context-aware: defaults to HUD for App pages) */
+    --semantic-primary: var(--hud-primary);
+    --semantic-secondary: var(--hud-secondary);
+    --semantic-accent: var(--hud-primary);
+    --semantic-surface: var(--panel);
+    --semantic-border: var(--hud-primary);
+    --semantic-text: var(--text-primary);
+    --semantic-text-muted: var(--text-muted);
+
     /* backward compat */
     --hud-primary-color: var(--hud-primary);
     --hud-secondary-color: var(--hud-secondary);
@@ -48,8 +81,20 @@
     --theme-background-color: var(--panel);
   }
 
+  /* Marketing Theme (Whisky Papa Brand) - Applied via data attribute or class */
+  [data-theme="marketing"],
+  .theme-marketing {
+    --semantic-primary: var(--brand-primary);
+    --semantic-secondary: var(--brand-secondary);
+    --semantic-accent: var(--brand-primary);
+    --semantic-surface: var(--brand-secondary);
+    --semantic-border: var(--brand-primary);
+    --semantic-text: var(--text-primary);
+    --semantic-text-muted: var(--text-muted);
+  }
+
   body {
-    @apply bg-gray-900 font-sans;
+    @apply bg-gray-900 font-body;
     color: var(--text-primary);
     letter-spacing: 0.01em;
   }
@@ -58,6 +103,20 @@
 @layer components {
   .hud-text {
     color: var(--hud-primary);
+  }
+
+  /* Brand Text (Whisky Papa) */
+  .brand-text {
+    color: var(--brand-primary);
+  }
+
+  /* Semantic Text (Context-aware) */
+  .semantic-text {
+    color: var(--semantic-text);
+  }
+
+  .semantic-text-muted {
+    color: var(--semantic-text-muted);
   }
 
   .hud-input {
@@ -79,6 +138,18 @@
   .hud-surface {
     background: var(--panel);
     border: 1px solid var(--hud-primary);
+  }
+
+  /* Brand Surface (Whisky Papa) */
+  .brand-surface {
+    background: var(--brand-secondary);
+    border: 1px solid var(--brand-primary);
+  }
+
+  /* Semantic Surface (Context-aware) */
+  .semantic-surface {
+    background: var(--semantic-surface);
+    border: 1px solid var(--semantic-border);
   }
 
   .hud-line {

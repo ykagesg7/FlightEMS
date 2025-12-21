@@ -162,7 +162,12 @@ export const useAuthStore = create<AuthState>()(
             set({ loading: false });
             return;
           }
-          set({ session: sessionData.session });
+          // sessionData.userがnullの場合、session.userから取得を試みる
+          const user = sessionData.user || sessionData.session?.user;
+          set({ session: sessionData.session, user });
+          if (user) {
+            await get().fetchProfile(user.id);
+          }
           set({ loading: false });
         } catch (err) {
           set({ loading: false });

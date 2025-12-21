@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import supabase from '../../utils/supabase';
+import { useGamification } from '../../hooks/useGamification';
 
 interface CPLQuestion {
   id: string;
@@ -39,7 +40,8 @@ interface UserAnswer {
 const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, onBack }) => {
   const { theme } = useTheme();
   const { user } = useAuthStore();
-  
+  const { completeMissionByAction } = useGamification();
+
   const [questions, setQuestions] = useState<CPLQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
@@ -57,7 +59,7 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
     const loadQuestions = async () => {
       try {
         setLoading(true);
-        
+
         // 科目フィルターを作成
         const subjectFilters = settings.subjects.map(subject => {
           const [main_subject, sub_subject] = subject.split('::');
@@ -71,7 +73,7 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
 
         // 複数科目の条件をORで結合
         if (subjectFilters.length > 0) {
-          const orConditions = subjectFilters.map(filter => 
+          const orConditions = subjectFilters.map(filter =>
             `and(main_subject.eq.${filter.main_subject},sub_subject.eq.${filter.sub_subject})`
           ).join(',');
           query = query.or(orConditions);
@@ -82,7 +84,7 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
         if (error) throw error;
 
         let selectedQuestions = data || [];
-        
+
         // 問題数を調整
         if (selectedQuestions.length > settings.questionCount) {
           if (settings.shuffleQuestions) {
@@ -97,7 +99,7 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
         // 選択肢をパース
         const parsedQuestions: CPLQuestion[] = selectedQuestions.map(q => ({
           ...q,
-          options: Array.isArray(q.options) 
+          options: Array.isArray(q.options)
             ? q.options.map((opt: string | { text: string } | { number: number; text: string }, idx: number) => ({
                 number: idx + 1,
                 text: typeof opt === 'string' ? opt : ('text' in opt ? opt.text : String(opt))
@@ -163,7 +165,7 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
 
     setUserAnswers(prev => [...prev, answer]);
     setIsAnswered(true);
-    
+
     if (settings.reviewMode) {
       setShowExplanation(true);
     }
@@ -225,13 +227,21 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
 
       if (error) throw error;
 
+      // ミッション達成をチェック
+      try {
+        await completeMissionByAction('quiz_pass');
+      } catch (missionError) {
+        // ミッション達成の失敗は致命的ではないためログのみ
+        console.warn('Mission completion check failed:', missionError);
+      }
+
       onComplete(data.id);
     } catch (err) {
       console.error('Failed to save exam results:', err);
       // エラーでも結果画面に進む
       onComplete('temp-session-id');
     }
-  }, [user, userAnswers, examStartTime, settings, onComplete]);
+  }, [user, userAnswers, examStartTime, settings, onComplete, completeMissionByAction]);
 
   if (loading) {
     return (
@@ -293,10 +303,10 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
             残り時間: {formatTime(timeRemaining)}
           </div>
         </div>
-        
+
         {/* プログレスバー */}
         <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-          <div 
+          <div
             className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${progress}%` }}
           ></div>
@@ -359,7 +369,7 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
         >
           試験を終了
         </button>
-        
+
         <div className="space-x-3">
           {!isAnswered && selectedAnswer !== null && (
             <button
@@ -369,7 +379,7 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
               解答する
             </button>
           )}
-          
+
           {isAnswered && (
             <button
               onClick={nextQuestion}
@@ -384,4 +394,4 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
   );
 };
 
-export default CPLExamSession; 
+export default CPLExamSession;
