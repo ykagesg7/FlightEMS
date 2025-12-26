@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 
 interface AISearchEngineProps {
   onSearch: (query: string, intent: SearchIntent) => void;
@@ -30,7 +29,6 @@ const AISearchEngine: React.FC<AISearchEngineProps> = ({
   onStartListening,
   onStopListening
 }) => {
-  const { effectiveTheme } = useTheme();
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
@@ -166,18 +164,13 @@ const AISearchEngine: React.FC<AISearchEngineProps> = ({
   }, [isListening, onStartListening, onStopListening]);
 
   return (
-    <div className={`p-4 rounded-lg border backdrop-blur-sm ${effectiveTheme === 'dark'
-        ? 'hud-surface border-gray-700'
-        : 'hud-surface border-gray-300'
-      }`}>
+    <div className="p-4 rounded-lg border backdrop-blur-sm hud-surface border-gray-300">
       {/* ヘッダー */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className={`text-sm font-medium ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-          }`}>
+        <h3 className="text-sm font-medium text-gray-700">
           🤖 AI検索エンジン
         </h3>
-        <div className={`text-xs ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-          }`}>
+        <div className="text-xs text-gray-500">
           検索意図を理解して最適な結果を提供
         </div>
       </div>
@@ -197,10 +190,7 @@ const AISearchEngine: React.FC<AISearchEngineProps> = ({
               handleSearch(query);
             }
           }}
-          className={`w-full pl-10 pr-20 py-3 border rounded-lg focus:ring-2 transition-all duration-200 ${effectiveTheme === 'dark'
-              ? 'bg-gray-700 text-white border-gray-600 focus:ring-red-500 focus:border-red-500'
-              : 'bg-white text-gray-900 border-gray-300 focus:ring-green-500 focus:border-green-500'
-            }`}
+          className="w-full pl-10 pr-20 py-3 border rounded-lg focus:ring-2 transition-all duration-200 bg-white text-gray-900 border-gray-300 focus:ring-green-500 focus:border-green-500"
         />
 
         {/* 検索アイコン */}
@@ -215,9 +205,7 @@ const AISearchEngine: React.FC<AISearchEngineProps> = ({
           onClick={handleVoiceSearch}
           className={`absolute inset-y-0 right-0 pr-3 flex items-center transition-colors duration-200 ${isListening
               ? 'text-red-500 animate-pulse'
-              : effectiveTheme === 'dark'
-                ? 'text-gray-400 hover:text-red-400'
-                : 'text-gray-500 hover:text-green-500'
+              : 'text-gray-500 hover:text-green-500'
             }`}
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -228,14 +216,10 @@ const AISearchEngine: React.FC<AISearchEngineProps> = ({
 
       {/* 音声検索状態表示 */}
       {isListening && (
-        <div className={`mb-4 p-3 rounded-lg ${effectiveTheme === 'dark'
-            ? 'bg-red-900/20 border border-red-500/50'
-            : 'bg-red-50 border border-red-200'
-          }`}>
+        <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200">
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            <span className={`text-sm ${effectiveTheme === 'dark' ? 'text-red-300' : 'text-red-700'
-              }`}>
+            <span className="text-sm text-red-700">
               音声を聞いています... 話してください
             </span>
           </div>
@@ -244,12 +228,8 @@ const AISearchEngine: React.FC<AISearchEngineProps> = ({
 
       {/* 検索候補 */}
       {showSuggestions && (
-        <div className={`mb-4 p-3 rounded-lg border ${effectiveTheme === 'dark'
-            ? 'bg-gray-800 border-gray-600'
-            : 'bg-gray-50 border-gray-200'
-          }`}>
-          <div className={`text-xs mb-2 ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-            }`}>
+        <div className="mb-4 p-3 rounded-lg border bg-gray-50 border-gray-200">
+          <div className="text-xs mb-2 text-gray-500">
             検索候補
           </div>
           <div className="space-y-2">
@@ -265,17 +245,13 @@ const AISearchEngine: React.FC<AISearchEngineProps> = ({
                     setQuery(suggestion.text);
                     handleSearch(suggestion.text);
                   }}
-                  className={`w-full text-left p-2 rounded-md transition-colors duration-200 ${effectiveTheme === 'dark'
-                      ? 'hover:bg-gray-700 text-gray-300'
-                      : 'hover:bg-gray-100 text-gray-700'
-                    }`}
+                  className="w-full text-left p-2 rounded-md transition-colors duration-200 hover:bg-gray-100 text-gray-700"
                 >
                   <div className="flex items-center space-x-2">
                     <span>{suggestion.icon}</span>
                     <div>
                       <div className="font-medium">{suggestion.text}</div>
-                      <div className={`text-xs ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                        }`}>
+                      <div className="text-xs text-gray-500">
                         {suggestion.description}
                       </div>
                     </div>
@@ -288,12 +264,8 @@ const AISearchEngine: React.FC<AISearchEngineProps> = ({
 
       {/* 検索履歴 */}
       {searchHistory.length > 0 && !showSuggestions && (
-        <div className={`p-3 rounded-lg border ${effectiveTheme === 'dark'
-            ? 'bg-gray-800 border-gray-600'
-            : 'bg-gray-50 border-gray-200'
-          }`}>
-          <div className={`text-xs mb-2 ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-            }`}>
+        <div className="p-3 rounded-lg border bg-gray-50 border-gray-200">
+          <div className="text-xs mb-2 text-gray-500">
             最近の検索
           </div>
           <div className="flex flex-wrap gap-2">
@@ -304,10 +276,7 @@ const AISearchEngine: React.FC<AISearchEngineProps> = ({
                   setQuery(history);
                   handleSearch(history);
                 }}
-                className={`px-2 py-1 rounded-md text-xs transition-colors duration-200 ${effectiveTheme === 'dark'
-                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                className="px-2 py-1 rounded-md text-xs transition-colors duration-200 bg-gray-200 text-gray-700 hover:bg-gray-300"
               >
                 {history}
               </button>

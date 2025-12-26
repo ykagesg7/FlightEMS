@@ -1,6 +1,5 @@
 import { MDXProvider } from '@mdx-js/react';
 import React from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import ArticleHeader from '../articles/ArticleHeader';
 import RelatedArticles from '../articles/RelatedArticles';
 import TableOfContents from '../articles/TableOfContents';
@@ -43,22 +42,20 @@ export interface CustomMDXComponents {
 
 // MDXでカスタマイズできるコンポーネント
 const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { theme } = useTheme();
-
-  // ダークモード用のスタイル
-  const textColor = 'text-[color:var(--text-primary)]';
-  const headingColor = 'text-[color:var(--hud-primary)]';
-  const subHeadingColor = 'text-[color:var(--hud-primary)]';
-  const linkColor = 'text-[color:var(--hud-primary)]';
-  const strongColor = 'text-[color:var(--text-primary)]';
-  const bgColor = 'bg-[color:var(--panel)]';
-  const borderColor = 'border-[color:var(--hud-primary)]';
-  const blockquoteBgColor = theme === 'dark' ? 'bg-amber-900 bg-opacity-20' : 'bg-amber-50';
-  const blockquoteBorderColor = theme === 'dark' ? 'border-amber-400' : 'border-amber-500';
-  const blockquoteTextColor = theme === 'dark' ? 'text-amber-100' : 'text-amber-900';
+  // Whisky Papaテーマ用のスタイル
+  const textColor = 'text-white';
+  const headingColor = 'text-whiskyPapa-yellow';
+  const subHeadingColor = 'text-whiskyPapa-yellow';
+  const linkColor = 'text-whiskyPapa-yellow';
+  const strongColor = 'text-white';
+  const bgColor = 'bg-whiskyPapa-black-dark';
+  const borderColor = 'border-whiskyPapa-yellow/20';
+  const blockquoteBgColor = 'bg-amber-900 bg-opacity-20';
+  const blockquoteBorderColor = 'border-amber-400';
+  const blockquoteTextColor = 'text-amber-100';
 
   const components: CustomMDXComponents = {
-    h1: (props: HeadingProps) => <h1 className={`text-2xl sm:text-3xl font-bold ${headingColor} border-b-2 ${theme === 'dark' ? 'border-indigo-700' : 'border-indigo-800'} pb-2 mb-6 break-words tracking-tight`} {...props} />,
+    h1: (props: HeadingProps) => <h1 className={`text-2xl sm:text-3xl font-bold ${headingColor} border-b-2 border-indigo-700 pb-2 mb-6 break-words tracking-tight`} {...props} />,
     h2: (props: HeadingProps) => <h2 className={`text-xl sm:text-2xl font-bold mb-4 ${subHeadingColor} mt-8 break-words tracking-tight`} {...props} />,
     h3: (props: HeadingProps) => <h3 className={`text-lg sm:text-xl font-bold mt-6 mb-3 ${subHeadingColor} break-words tracking-tight`} {...props} />,
     p: (props: ParagraphProps) => <p className={`mb-5 ${textColor} leading-7 sm:leading-8 break-words text-base tracking-wide`} {...props} />,
@@ -69,9 +66,9 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
       <div className={`important-box ${blockquoteBgColor} border-l-4 ${blockquoteBorderColor} p-4 my-6 ${blockquoteTextColor} rounded-r-lg shadow-sm break-words`} {...props} />
     ),
     table: (props: TableProps) => <table className="w-full border-collapse my-6 shadow-sm" {...props} />,
-    th: (props: TableCellProps) => <th className={`border ${borderColor} p-3 text-left ${theme === 'dark' ? 'bg-indigo-900 text-white' : 'bg-indigo-800 text-white'} break-words`} {...props} />,
+    th: (props: TableCellProps) => <th className={`border ${borderColor} p-3 text-left bg-indigo-900 text-white break-words`} {...props} />,
     td: (props: TableCellProps) => <td className={`border ${borderColor} p-3 break-words ${textColor}`} {...props} />,
-    tr: (props: TableRowProps) => <tr className={`${theme === 'dark' ? 'bg-gray-800 even:bg-gray-750' : 'bg-white even:bg-gray-50'}`} {...props} />,
+    tr: (props: TableRowProps) => <tr className="bg-gray-800 even:bg-gray-750" {...props} />,
     a: (props: AnchorProps) => <a className={`${linkColor} break-all underline`} {...props} />,
     strong: (props: React.HTMLAttributes<HTMLElement>) => <strong className={`font-bold ${strongColor}`} {...props} />,
     em: (props: React.HTMLAttributes<HTMLElement>) => <em className={`italic ${textColor}`} {...props} />,

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import supabase from '../../utils/supabase';
 
@@ -33,14 +32,13 @@ interface WeakArea {
   priority_level: number;
 }
 
-const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({ 
+const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
   subjectCategories,
   overallAccuracy,
   subjectAccuracies,
   testSessionId,
   incorrectQuestionIds = []
 }) => {
-  const { theme } = useTheme();
   const { user } = useAuthStore();
   const [recommendedContents, setRecommendedContents] = useState<RecommendedContent[]>([]);
   const [weakAreas, setWeakAreas] = useState<WeakArea[]>([]);
@@ -93,7 +91,7 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
         // 4. 学習推奨の動的生成
         if (overallAccuracy < 70) {
           const highPriorityRecommendations = recommendedData?.slice(0, 3) || [];
-          
+
           for (const content of highPriorityRecommendations) {
             await supabase
               .from('learning_recommendations')
@@ -153,28 +151,20 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
   };
 
   const bgColor = needsIntensiveReview
-    ? theme === 'dark'
-      ? 'bg-gradient-to-br from-red-900/30 to-orange-900/30 border-red-400'
-      : 'bg-gradient-to-br from-red-50 to-orange-50 border-red-500'
+    ? 'bg-gradient-to-br from-red-50 to-orange-50 border-red-500'
     : needsReview
-    ? theme === 'dark'
-      ? 'bg-gradient-to-br from-orange-900/30 to-yellow-900/30 border-orange-400'
-      : 'bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-500'
-    : theme === 'dark'
-      ? 'bg-gradient-to-br from-green-900/30 to-blue-900/30 border-green-400'
-      : 'bg-gradient-to-br from-green-50 to-blue-50 border-green-500';
+    ? 'bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-500'
+    : 'bg-gradient-to-br from-green-50 to-blue-50 border-green-500';
 
   return (
-    <div className={`mt-8 p-6 rounded-lg border-l-4 shadow-lg ${bgColor} ${
-      theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
-    }`}>
+    <div className={`mt-8 p-6 rounded-lg border-l-4 shadow-lg ${bgColor} text-gray-800`}>
       {/* ヘッダー */}
       <div className="flex items-center mb-6">
         <div className="mr-4">
-          <svg className={`w-10 h-10 ${needsReview ? 'text-orange-500' : 'text-green-500'}`} 
+          <svg className={`w-10 h-10 ${needsReview ? 'text-orange-500' : 'text-green-500'}`}
                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-              d={needsReview 
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d={needsReview
                 ? "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 : "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
               } />
@@ -200,7 +190,7 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
           <h4 className="text-sm font-semibold mb-3 opacity-75">科目別成績：</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {Object.entries(subjectAccuracies).map(([subject, accuracy]) => (
-              <div 
+              <div
                 key={subject}
                 className={`p-3 rounded-lg ${
                   theme === 'dark' ? 'bg-gray-800/50' : 'bg-white/80'
@@ -215,7 +205,7 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
                 <div className={`w-full bg-gray-300 rounded-full h-2 mt-2 ${
                   theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
                 }`}>
-                  <div 
+                  <div
                     className={`h-2 rounded-full transition-all duration-300 ${
                       accuracy >= 70 ? 'bg-green-500' : accuracy >= 50 ? 'bg-yellow-500' : 'bg-red-500'
                     }`}
@@ -234,11 +224,11 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
           <h4 className="text-sm font-semibold mb-3 opacity-75">弱点領域分析：</h4>
           <div className="space-y-2">
             {weakAreas.slice(0, 3).map((area, index) => (
-              <div 
+              <div
                 key={`${area.subject_category}-${area.sub_category}`}
                 className={`p-3 rounded-lg border-l-2 ${
-                  area.improvement_trend === 'improving' 
-                    ? 'border-green-400 bg-green-900/10' 
+                  area.improvement_trend === 'improving'
+                    ? 'border-green-400 bg-green-900/10'
                     : area.improvement_trend === 'declining'
                     ? 'border-red-400 bg-red-900/10'
                     : 'border-yellow-400 bg-yellow-900/10'
@@ -250,8 +240,8 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
                       {area.sub_category || area.subject_category}
                     </span>
                     <div className="text-xs opacity-75 mt-1">
-                      {area.attempt_count}回挑戦 • 
-                      {area.improvement_trend === 'improving' ? '改善傾向' : 
+                      {area.attempt_count}回挑戦 •
+                      {area.improvement_trend === 'improving' ? '改善傾向' :
                        area.improvement_trend === 'declining' ? '悪化傾向' : '横ばい'}
                     </div>
                   </div>
@@ -293,11 +283,11 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
                   </span>
                   <h4 className="font-medium text-base">{content.content_title}</h4>
                 </div>
-                
+
                 <p className={`text-sm mb-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                   {content.recommended_reason}
                 </p>
-                
+
                 <div className="flex flex-wrap gap-2">
                   <span className={`inline-block px-2 py-1 text-xs rounded-full ${
                     theme === 'dark'
@@ -315,8 +305,8 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
                   </span>
                   <span className={`inline-block px-2 py-1 text-xs rounded-full ${
                     content.priority_score > 7
-                      ? theme === 'dark' 
-                        ? 'bg-red-900/30 text-red-300' 
+                      ? theme === 'dark'
+                        ? 'bg-red-900/30 text-red-300'
                         : 'bg-red-100 text-red-800'
                       : theme === 'dark'
                         ? 'bg-yellow-900/30 text-yellow-300'
@@ -327,7 +317,7 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
                 </div>
               </div>
               <div className="ml-4 flex-shrink-0">
-                <svg className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} 
+                <svg className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -340,8 +330,8 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
       {/* アクションプラン */}
       {needsReview && (
         <div className={`mt-6 p-4 rounded-lg ${
-          theme === 'dark' 
-            ? 'bg-indigo-900/20 text-indigo-200 border border-indigo-800/30' 
+          theme === 'dark'
+            ? 'bg-indigo-900/20 text-indigo-200 border border-indigo-800/30'
             : 'bg-indigo-100 text-indigo-800 border border-indigo-200'
         }`}>
           <div className="flex items-center mb-3">
@@ -366,4 +356,4 @@ const EnhancedReviewContentLink: React.FC<EnhancedReviewContentLinkProps> = ({
   );
 };
 
-export default EnhancedReviewContentLink; 
+export default EnhancedReviewContentLink;

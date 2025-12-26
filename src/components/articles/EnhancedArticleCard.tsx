@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import { ArticleProgress } from '../../hooks/useArticleProgress';
 import { useAuth } from '../../hooks/useAuth';
 import { LearningContent } from '../../types';
@@ -36,7 +35,6 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
   lockedReason,
   onArticleClick
 }) => {
-  const { effectiveTheme } = useTheme();
   const { user } = useAuth();
   const [isHighlighted, setIsHighlighted] = useState(false);
 
@@ -72,16 +70,10 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
         <div className="absolute inset-0 z-20 rounded-xl bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm flex items-center justify-center cursor-not-allowed">
           <div className="text-center p-6 max-w-sm">
             <div className="text-4xl mb-3">🔒</div>
-            <div className={`
-              text-lg font-semibold mb-2
-              ${effectiveTheme === 'dark' ? 'text-white' : 'text-gray-900'}
-            `}>
+            <div className="text-lg font-semibold mb-2 text-white">
               この記事はロックされています
             </div>
-            <div className={`
-              text-sm mb-4
-              ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}
-            `}>
+            <div className="text-sm mb-4 text-gray-300">
               {lockedReason || 'この記事を読むには、前の記事を読了する必要があります。'}
             </div>
             {!isLoggedIn && (
@@ -92,13 +84,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
                     onRegisterPrompt();
                   }
                 }}
-                className={`
-                  px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                  ${effectiveTheme === 'dark'
-                    ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                    : 'bg-blue-500 hover:bg-blue-400 text-white'
-                  }
-                `}
+                className="px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-blue-600 hover:bg-blue-500 text-white"
               >
                 ログイン/登録する
               </button>
@@ -112,21 +98,12 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
         <div className="absolute inset-0 z-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm flex items-center justify-center">
           <div className="text-center p-4">
             <div className="text-2xl mb-2">🔒</div>
-            <div className={`
-              text-sm font-medium mb-2
-              ${effectiveTheme === 'dark' ? 'text-white' : 'text-gray-900'}
-            `}>
+            <div className="text-sm font-medium mb-2 text-white">
               詳細な進捗データ
             </div>
             <button
               onClick={onRegisterPrompt}
-              className={`
-                px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200
-                ${effectiveTheme === 'dark'
-                  ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                  : 'bg-blue-500 hover:bg-blue-400 text-white'
-                }
-              `}
+              className="px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200 bg-blue-600 hover:bg-blue-500 text-white"
             >
               登録して見る
             </button>
@@ -134,36 +111,14 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
         </div>
       )}
 
-      <div className={`
-         relative overflow-hidden rounded-xl border-2 transition-all duration-300 backdrop-blur-sm
-         shadow-lg hover:shadow-xl
-         ${effectiveTheme === 'dark'
-          ? 'hud-surface border-red-500/60 shadow-red-900/20 hover:bg-white/10'
-          : 'hud-surface border-green-500/50 shadow-green-900/10 hover:bg-white/10'
-        }
-         ${shouldBlur ? 'blur-[1px]' : ''}
-       `}>
+      <div className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-xl bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20 hover:bg-white/10 ${shouldBlur ? 'blur-[1px]' : ''}`}>
         {/* 進捗バー（上部） */}
         {progress && progressPercentage > 0 && (
-          <div className={`
-            absolute top-0 left-0 right-0 h-1 z-10
-            ${effectiveTheme === 'dark'
-              ? 'bg-gray-800'
-              : 'bg-green-100'
-            }
-          `}>
+          <div className="absolute top-0 left-0 right-0 h-1 z-10 bg-gray-800">
             <div
-              className={`
-                h-full transition-all duration-500
-                ${isCompleted
-                  ? effectiveTheme === 'dark'
-                    ? 'bg-green-500'
-                    : 'bg-[color:var(--hud-primary)]'
-                  : effectiveTheme === 'dark'
-                    ? 'bg-blue-500'
-                    : 'bg-yellow-500'
-                }
-              `}
+              className={`h-full transition-all duration-500 ${
+                isCompleted ? 'bg-green-500' : 'bg-blue-500'
+              }`}
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
@@ -175,56 +130,24 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
             <div className="flex-1">
               {/* カテゴリーとステータス */}
               <div className="flex items-center space-x-2 mb-2">
-                <span className={`
-                   px-2 py-1 text-xs font-medium rounded-full
-                   ${effectiveTheme === 'dark'
-                    ? 'bg-blue-900/50 text-blue-400 border border-blue-700/50'
-                    : effectiveTheme === 'day'
-                      ? 'bg-green-100 text-[#39FF14] border border-green-300'
-                      : 'bg-blue-100 text-blue-700 border border-blue-300'
-                  }
-                 `}>
+                <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-900/50 text-blue-400 border border-blue-700/50">
                   {article.category}
                 </span>
 
                 {locked && (
-                  <span className={`
-                     px-2 py-1 text-xs font-medium rounded-full
-                     ${effectiveTheme === 'dark'
-                      ? 'bg-red-900/50 text-red-400 border border-red-700/50'
-                      : effectiveTheme === 'day'
-                        ? 'bg-red-100 text-red-600 border border-red-300'
-                        : 'bg-red-100 text-red-600 border border-red-300'
-                    }
-                   `}>
+                  <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-900/50 text-red-400 border border-red-700/50">
                     🔒 ロック
                   </span>
                 )}
 
                 {isCompleted && (
-                  <span className={`
-                     px-2 py-1 text-xs font-medium rounded-full
-                     ${effectiveTheme === 'dark'
-                      ? 'bg-green-900/50 text-green-400 border border-green-700/50'
-                      : effectiveTheme === 'day'
-                        ? 'bg-green-100 text-[#39FF14] border border-green-300'
-                        : 'bg-green-100 text-green-700 border border-green-300'
-                    }
-                   `}>
+                  <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-900/50 text-green-400 border border-green-700/50">
                     ✓ 完了
                   </span>
                 )}
 
                 {progress && !isCompleted && progressPercentage > 0 && (
-                  <span className={`
-                    px-2 py-1 text-xs font-medium rounded-full
-                    ${effectiveTheme === 'dark'
-                      ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-700/50'
-                      : effectiveTheme === 'day'
-                        ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
-                        : 'bg-yellow-100 text-yellow-700 border border-yellow-300'
-                    }
-                  `}>
+                  <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-900/50 text-yellow-400 border border-yellow-700/50">
                     {progressPercentage}% 進行中
                   </span>
                 )}
@@ -232,34 +155,14 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
 
               {/* タイトル */}
               {locked ? (
-                <div
-                  className={`
-                     block text-lg font-bold mb-2 line-clamp-2 transition-all duration-300
-                     bg-gradient-to-r bg-clip-text text-transparent cursor-not-allowed
-                     ${effectiveTheme === 'dark'
-                    ? 'from-gray-500 to-gray-600'
-                    : effectiveTheme === 'day'
-                      ? 'from-gray-400 to-gray-500'
-                      : 'from-gray-400 to-gray-500'
-                  }
-                   `}
-                >
+                <div className="block text-lg font-bold mb-2 line-clamp-2 transition-all duration-300 bg-gradient-to-r bg-clip-text text-transparent cursor-not-allowed from-gray-500 to-gray-600">
                   {articleMeta?.title || article.title}
                 </div>
               ) : (
                 <Link
                   to={`/articles/${article.id}`}
                   onClick={onArticleClick}
-                  className={`
-                     block text-lg font-bold mb-2 line-clamp-2 hover:underline transition-all duration-300
-                     bg-gradient-to-r bg-clip-text text-transparent
-                     ${effectiveTheme === 'dark'
-                    ? 'from-white to-gray-200 hover:from-blue-400 hover:to-purple-400'
-                    : effectiveTheme === 'day'
-                      ? 'from-[#39FF14] to-green-700 hover:from-green-500 hover:to-green-600'
-                      : 'from-gray-900 to-gray-700 hover:from-blue-600 hover:to-indigo-600'
-                  }
-                   `}
+                  className="block text-lg font-bold mb-2 line-clamp-2 hover:underline transition-all duration-300 bg-gradient-to-r bg-clip-text text-transparent from-white to-gray-200 hover:from-blue-400 hover:to-purple-400"
                 >
                   {articleMeta?.title || article.title}
                 </Link>
@@ -267,15 +170,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
 
               {/* 要約 */}
               {(articleMeta?.excerpt || article.description) && (
-                <p className={`
-                  text-sm line-clamp-2 mb-3
-                  ${effectiveTheme === 'dark'
-                    ? 'text-gray-300'
-                    : effectiveTheme === 'day'
-                      ? 'text-green-700'
-                      : 'text-gray-600'
-                  }
-                `}>
+                <p className="text-sm line-clamp-2 mb-3 text-gray-300">
                   {articleMeta?.excerpt || article.description}
                 </p>
               )}
@@ -283,15 +178,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
 
             {/* ブックマークアイコン */}
             {isBookmarked && (
-              <div className={`
-                ml-3 text-lg
-                ${effectiveTheme === 'dark'
-                  ? 'text-yellow-400'
-                  : effectiveTheme === 'day'
-                    ? 'text-yellow-500'
-                    : 'text-yellow-500'
-                }
-              `}>
+              <div className="ml-3 text-lg text-yellow-400">
                 🔖
               </div>
             )}
@@ -303,29 +190,13 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
               {articleMeta.tags.slice(0, 3).map((tag, index) => (
                 <span
                   key={index}
-                  className={`
-                    px-2 py-1 text-xs rounded-md
-                    ${effectiveTheme === 'dark'
-                      ? 'bg-gray-800 text-gray-400'
-                      : effectiveTheme === 'day'
-                        ? 'bg-green-100 text-green-600'
-                        : 'bg-gray-100 text-gray-600'
-                    }
-                  `}
+                  className="px-2 py-1 text-xs rounded-md bg-gray-800 text-gray-400"
                 >
                   #{tag}
                 </span>
               ))}
               {articleMeta.tags.length > 3 && (
-                <span className={`
-                  px-2 py-1 text-xs rounded-md
-                  ${effectiveTheme === 'dark'
-                    ? 'bg-gray-800 text-gray-500'
-                    : effectiveTheme === 'day'
-                      ? 'bg-green-100 text-green-500'
-                      : 'bg-gray-100 text-gray-500'
-                  }
-                `}>
+                <span className="px-2 py-1 text-xs rounded-md bg-gray-800 text-gray-500">
                   +{articleMeta.tags.length - 3}
                 </span>
               )}
@@ -336,30 +207,14 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
           <div className="flex items-center justify-between pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
             <div className="flex items-center space-x-4 text-xs">
               {/* 読了時間 */}
-              <div className={`
-                flex items-center space-x-1
-                ${effectiveTheme === 'dark'
-                  ? 'text-gray-400'
-                  : effectiveTheme === 'day'
-                    ? 'text-green-600'
-                    : 'text-gray-600'
-                }
-              `}>
+              <div className="flex items-center space-x-1 text-gray-400">
                 <span>📖</span>
                 <span>{readingTime}分</span>
               </div>
 
               {/* 公開日 */}
               {(articleMeta?.publishedAt || article.created_at) && (
-                <div className={`
-                  flex items-center space-x-1
-                  ${effectiveTheme === 'dark'
-                    ? 'text-gray-400'
-                    : effectiveTheme === 'day'
-                      ? 'text-green-600'
-                      : 'text-gray-600'
-                  }
-                `}>
+                <div className="flex items-center space-x-1 text-gray-400">
                   <span>📅</span>
                   <span>
                     {new Date(articleMeta?.publishedAt || article.created_at).toLocaleDateString('ja-JP', {
@@ -377,17 +232,9 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
                   {[...Array(5)].map((_, i) => (
                     <span
                       key={i}
-                      className={`
-                        text-xs
-                        ${i < progress.rating!
-                          ? effectiveTheme === 'dark'
-                            ? 'text-yellow-400'
-                            : 'text-yellow-500'
-                          : effectiveTheme === 'dark'
-                            ? 'text-gray-600'
-                            : 'text-gray-300'
-                        }
-                      `}
+                      className={`text-xs ${
+                        i < progress.rating! ? 'text-yellow-400' : 'text-gray-600'
+                      }`}
                     >
                       ⭐
                     </span>
@@ -402,29 +249,13 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
                 {/* いいね・コメントはログインユーザーのみ表示 */}
                 {isLoggedIn && (
                   <>
-                    <div className={`
-                      flex items-center space-x-1
-                      ${effectiveTheme === 'dark'
-                        ? 'text-gray-400'
-                        : effectiveTheme === 'day'
-                          ? 'text-green-600'
-                          : 'text-gray-600'
-                      }
-                    `}>
+                    <div className="flex items-center space-x-1 text-gray-400">
                       <span className={stats.user_liked ? '❤️' : '🤍'}>
                       </span>
                       <span>{stats.likes_count}</span>
                     </div>
 
-                    <div className={`
-                      flex items-center space-x-1
-                      ${effectiveTheme === 'dark'
-                        ? 'text-gray-400'
-                        : effectiveTheme === 'day'
-                          ? 'text-green-600'
-                          : 'text-gray-600'
-                      }
-                    `}>
+                    <div className="flex items-center space-x-1 text-gray-400">
                       <span>💬</span>
                       <span>{stats.comments_count}</span>
                     </div>
@@ -432,15 +263,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
                 )}
 
                 {/* 閲覧数は常に表示 */}
-                <div className={`
-                  flex items-center space-x-1
-                  ${effectiveTheme === 'dark'
-                    ? 'text-gray-400'
-                    : effectiveTheme === 'day'
-                      ? 'text-green-600'
-                      : 'text-gray-600'
-                  }
-                `}>
+                <div className="flex items-center space-x-1 text-gray-400">
                   <span>👀</span>
                   <span>{stats.views_count}</span>
                 </div>
@@ -450,16 +273,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
 
           {/* 最後に読んだ日時（進行中の場合） */}
           {progress && !isCompleted && progress.readAt && (
-            <div className={`
-              mt-2 pt-2 border-t border-gray-200/30 dark:border-gray-700/30
-              text-xs
-              ${effectiveTheme === 'dark'
-                ? 'text-gray-500'
-                : effectiveTheme === 'day'
-                  ? 'text-green-600'
-                  : 'text-gray-500'
-              }
-            `}>
+            <div className="mt-2 pt-2 border-t border-gray-200/30 dark:border-gray-700/30 text-xs text-gray-500">
               最後に読んだ: {new Date(progress.readAt).toLocaleDateString('ja-JP', {
                 month: 'short',
                 day: 'numeric',

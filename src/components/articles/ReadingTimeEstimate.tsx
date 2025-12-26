@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 
 interface ReadingTimeEstimateProps {
   /** 記事の推定読了時間（分） */
@@ -15,7 +14,6 @@ const ReadingTimeEstimate: React.FC<ReadingTimeEstimateProps> = ({
   progress = 0,
   compact = false
 }) => {
-  const { effectiveTheme } = useTheme();
   const [remainingTime, setRemainingTime] = useState(totalReadingTime);
 
   useEffect(() => {
@@ -65,13 +63,7 @@ const ReadingTimeEstimate: React.FC<ReadingTimeEstimateProps> = ({
   }
 
   return (
-    <div className={`
-      flex items-center gap-3 p-3 rounded-lg border transition-all duration-300
-      ${effectiveTheme === 'dark'
-        ? 'hud-surface text-gray-200'
-        : 'bg-white border-gray-200 text-gray-800'
-      }
-    `}>
+    <div className="flex items-center gap-3 p-3 rounded-lg border border-whiskyPapa-yellow/20 bg-whiskyPapa-black-dark text-gray-200 transition-all duration-300">
       <div className={`flex items-center gap-2 ${getProgressColor()}`}>
         {getIcon()}
         <span className="font-medium">{formatTime(remainingTime)}</span>
@@ -79,24 +71,18 @@ const ReadingTimeEstimate: React.FC<ReadingTimeEstimateProps> = ({
 
       {progress > 0 && (
         <div className="flex-1 min-w-0">
-          <div className={`
-            h-2 rounded-full overflow-hidden
-            ${effectiveTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}
-          `}>
+          <div className="h-2 rounded-full overflow-hidden bg-gray-700">
             <div
-              className={`
-                h-full transition-all duration-300 ease-out rounded-full
-                ${progress >= 0.9
-                  ? (effectiveTheme === 'dark' ? 'bg-green-400' : 'bg-green-500')
+              className={`h-full transition-all duration-300 ease-out rounded-full ${progress >= 0.9
+                  ? 'bg-green-400'
                   : progress >= 0.5
-                    ? (effectiveTheme === 'dark' ? 'bg-yellow-400' : 'bg-yellow-500')
-                    : (effectiveTheme === 'dark' ? 'bg-blue-400' : 'bg-blue-500')
-                }
-              `}
+                    ? 'bg-yellow-400'
+                    : 'bg-blue-400'
+                }`}
               style={{ width: `${Math.min(100, progress * 100)}%` }}
             />
           </div>
-          <div className="flex justify-between text-xs mt-1 text-[color:var(--text-primary)] opacity-70">
+          <div className="flex justify-between text-xs mt-1 text-gray-300 opacity-70">
             <span>0%</span>
             <span>{Math.round(progress * 100)}%</span>
             <span>100%</span>

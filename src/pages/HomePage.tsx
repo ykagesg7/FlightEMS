@@ -4,12 +4,11 @@ import { DailyTasks } from '../components/dashboard/DailyTasks';
 import { LearningHeatmap } from '../components/dashboard/LearningHeatmap';
 import { SubjectRadarChart } from '../components/dashboard/SubjectRadarChart';
 import { AnnouncementCard } from '../components/home/AnnouncementCard';
-import { useTheme } from '../contexts/ThemeContext';
+import { Card, CardContent, Typography } from '../components/ui';
 import { useAnnouncements } from '../hooks/useAnnouncements';
 import { useAuthStore } from '../stores/authStore';
 import type { DashboardMetrics } from '../types/dashboard';
 import { fetchDashboardMetrics } from '../utils/dashboard';
-import { Card, CardContent, Typography, Button } from '../components/ui';
 
 const useReveal = (deps?: React.DependencyList) => {
   useEffect(() => {
@@ -63,8 +62,6 @@ const useReveal = (deps?: React.DependencyList) => {
  * ダッシュボードページのスケルトンローダー
  */
 const DashboardSkeleton: React.FC = () => {
-  const { effectiveTheme } = useTheme();
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto">
@@ -77,13 +74,7 @@ const DashboardSkeleton: React.FC = () => {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className={`
-                rounded-xl border-2 p-6 animate-pulse
-                ${effectiveTheme === 'dark'
-                  ? 'border-red-500/30 bg-red-900/10'
-                  : 'border-green-500/30 bg-green-900/10'
-                }
-              `}
+              className="rounded-xl border-2 border-whiskyPapa-yellow/30 bg-whiskyPapa-yellow/10 p-6 animate-pulse"
             >
               <div className="h-6 w-32 bg-gray-700/30 rounded mb-4" />
               <div className="h-12 w-full bg-gray-700/20 rounded" />
@@ -102,7 +93,6 @@ const DashboardSkeleton: React.FC = () => {
  */
 const DashboardContent: React.FC = () => {
   const { user } = useAuthStore();
-  const { effectiveTheme } = useTheme();
   const [metrics, setMetrics] = React.useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -138,10 +128,7 @@ const DashboardContent: React.FC = () => {
           <div
             className={`
               rounded-xl border-2 p-6 text-center
-              ${effectiveTheme === 'dark'
-                ? 'border-red-500/50 bg-red-900/10'
-                : 'border-green-500/50 bg-green-900/10'
-              }
+              border-whiskyPapa-yellow/50 bg-whiskyPapa-yellow/10
             `}
           >
             <p className="text-red-400 mb-4">{error}</p>
@@ -149,10 +136,7 @@ const DashboardContent: React.FC = () => {
               onClick={() => window.location.reload()}
               className={`
                 px-4 py-2 rounded-lg border-2
-                ${effectiveTheme === 'dark'
-                  ? 'border-red-500/60 text-red-400 hover:bg-red-900/20'
-                  : 'border-green-500/60 text-green-400 hover:bg-green-900/20'
-                }
+                border-whiskyPapa-yellow/60 text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/20
               `}
             >
               再試行
@@ -170,10 +154,7 @@ const DashboardContent: React.FC = () => {
           <div
             className={`
               rounded-xl border-2 p-6 text-center
-              ${effectiveTheme === 'dark'
-                ? 'border-red-500/30 bg-red-900/10'
-                : 'border-green-500/30 bg-green-900/10'
-              }
+              border-whiskyPapa-yellow/30 bg-whiskyPapa-yellow/10
             `}
           >
             <p className="text-[color:var(--text-muted)]">データがありません</p>
@@ -183,19 +164,15 @@ const DashboardContent: React.FC = () => {
     );
   }
 
-  const borderColor = effectiveTheme === 'dark'
-    ? 'border-red-500/60'
-    : 'border-green-500/50';
-  const bgColor = effectiveTheme === 'dark'
-    ? 'bg-red-900/10'
-    : 'bg-green-900/10';
+  const borderColor = 'border-whiskyPapa-yellow/60';
+  const bgColor = 'bg-whiskyPapa-yellow/10';
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto">
         {/* ヘッダー */}
         <div className="mb-8">
-          <Typography variant="h1" color="hud" className="mb-2 hud-glow">
+          <Typography variant="h1" color="brand" className="mb-2">
             学習ダッシュボード
           </Typography>
           <Typography variant="body" color="muted">
@@ -218,7 +195,7 @@ const DashboardContent: React.FC = () => {
                 <div
                   className={`
                     h-2 rounded-full transition-all duration-500
-                    ${effectiveTheme === 'dark' ? 'bg-red-500' : 'bg-green-500'}
+                    bg-whiskyPapa-yellow
                   `}
                   style={{ width: `${metrics.overallProgressPct}%` }}
                 />
@@ -239,7 +216,7 @@ const DashboardContent: React.FC = () => {
                 <div
                   className={`
                     h-2 rounded-full transition-all duration-500
-                    ${effectiveTheme === 'dark' ? 'bg-red-500' : 'bg-green-500'}
+                    bg-whiskyPapa-yellow
                   `}
                   style={{ width: `${metrics.testAccuracyPct}%` }}
                 />
@@ -365,7 +342,7 @@ const DashboardContent: React.FC = () => {
                   {metrics.weakTopics.map((topic, idx) => (
                     <div key={idx} className="flex items-center justify-between">
                       <Typography variant="body-sm">{topic.topic}</Typography>
-                      <Typography variant="body-sm" color={effectiveTheme === 'dark' ? 'hud' : 'hud'}>
+                      <Typography variant="body-sm" color="brand">
                         {topic.accuracyPct}%
                       </Typography>
                     </div>
@@ -406,7 +383,6 @@ const DashboardContent: React.FC = () => {
  * ゲスト向けホームページ（未ログイン時）
  */
 const GuestHomeContent: React.FC = () => {
-  const { effectiveTheme } = useTheme();
   const { announcements, isLoading, error } = useAnnouncements();
 
   // お知らせデータが読み込まれた後にrevealアニメーションを実行
@@ -414,7 +390,7 @@ const GuestHomeContent: React.FC = () => {
   useReveal([announcements.length, isLoading]);
 
   return (
-    <div className="relative bg-[color:var(--bg)] min-h-screen">
+    <div className="relative bg-whiskyPapa-black min-h-screen">
       {/* 背景イメージ（戦闘機/パイロット系） */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none" aria-hidden>
         <img
@@ -423,16 +399,14 @@ const GuestHomeContent: React.FC = () => {
           className="w-full h-full object-cover opacity-20"
         />
       </div>
-      <div className="absolute inset-0 hud-grid-overlay" />
-      <div className="absolute inset-0 hud-scanlines" />
 
       {/* Hero */}
       <section className="relative container mx-auto px-4 pt-20 pb-24">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 hud-glow leading-tight">
-            <span className="hud-text">学ぶ・計画する・飛ぶ。</span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+            <span className="text-whiskyPapa-yellow">学ぶ・計画する・飛ぶ。</span>
           </h1>
-          <p className="text-lg sm:text-xl text-[color:var(--text-muted)] mb-10 leading-relaxed">
+          <p className="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed">
             FlightAcademyは、学習コンテンツと試験対策、フライト計画がひとつになった
             モダンなパイロット学習プラットフォーム。今すぐ無料で始められます。
           </p>
@@ -441,13 +415,10 @@ const GuestHomeContent: React.FC = () => {
               to="/auth?mode=signup"
               className={`
                 px-8 py-4 rounded-lg border-2 backdrop-blur-md
-                focus-hud hud-glow w-full sm:w-auto text-center
+                w-full sm:w-auto text-center
                 transform transition-all duration-300 ease-out
                 hover:scale-105 hover:shadow-xl
-                ${effectiveTheme === 'dark'
-                  ? 'hud-border hud-surface border-red-500/60 shadow-red-900/20 hover:bg-white/10 hover:border-red-500/80'
-                  : 'hud-border hud-surface border-green-500/50 shadow-green-900/10 hover:bg-white/10 hover:border-green-500/70'
-                }
+                border-whiskyPapa-yellow/60 bg-whiskyPapa-black-dark shadow-lg hover:bg-whiskyPapa-yellow/10 hover:border-whiskyPapa-yellow/80
               `}
             >
               無料で始める
@@ -459,40 +430,28 @@ const GuestHomeContent: React.FC = () => {
                 w-full sm:w-auto text-center
                 transform transition-all duration-300 ease-out
                 hover:scale-105 hover:bg-white/10
-                ${effectiveTheme === 'dark'
-                  ? 'border-red-500/40 hover:border-red-500/60'
-                  : 'border-green-500/30 hover:border-green-500/50'
-                }
+                border-whiskyPapa-yellow/40 hover:border-whiskyPapa-yellow/60
               `}
             >
               デモを見る（計画マップ）
             </Link>
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm text-[color:var(--text-muted)]">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm text-gray-400">
             <span className={`
               px-4 py-2 rounded-full backdrop-blur-sm border
-              ${effectiveTheme === 'dark'
-                ? 'border-red-500/30 bg-red-900/10'
-                : 'border-green-500/30 bg-green-900/10'
-              }
+              border-whiskyPapa-yellow/30 bg-whiskyPapa-yellow/10
             `}>
               一部コンテンツは無料
             </span>
             <span className={`
               px-4 py-2 rounded-full backdrop-blur-sm border
-              ${effectiveTheme === 'dark'
-                ? 'border-red-500/30 bg-red-900/10'
-                : 'border-green-500/30 bg-green-900/10'
-              }
+              border-whiskyPapa-yellow/30 bg-whiskyPapa-yellow/10
             `}>
               登録は3分で完了
             </span>
             <span className={`
               px-4 py-2 rounded-full backdrop-blur-sm border
-              ${effectiveTheme === 'dark'
-                ? 'border-red-500/30 bg-red-900/10'
-                : 'border-green-500/30 bg-green-900/10'
-              }
+              border-whiskyPapa-yellow/30 bg-whiskyPapa-yellow/10
             `}>
               Supabaseで安全に管理
             </span>
@@ -503,10 +462,10 @@ const GuestHomeContent: React.FC = () => {
       {/* Announcements */}
       <section className="relative container mx-auto px-4 pb-16">
         <div className="mb-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-3 hud-text hud-glow">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-3 text-whiskyPapa-yellow">
             最新情報
           </h2>
-          <p className="text-sm text-[color:var(--text-muted)]">
+          <p className="text-sm text-gray-400">
             プラットフォームの最新アップデートとお知らせ
           </p>
         </div>
@@ -518,14 +477,11 @@ const GuestHomeContent: React.FC = () => {
                 key={i}
                 className={`
                     rounded-xl border-2 backdrop-blur-md shadow-lg p-6 animate-pulse
-                    ${effectiveTheme === 'dark'
-                    ? 'hud-surface border-red-500/30'
-                    : 'hud-surface border-green-500/30'
-                  }
+                    bg-whiskyPapa-black-dark border-whiskyPapa-yellow/30
                   `}
               >
-                <div className={`h-6 rounded mb-3 ${effectiveTheme === 'dark' ? 'bg-red-900/30' : 'bg-green-900/30'}`} />
-                <div className={`h-12 rounded ${effectiveTheme === 'dark' ? 'bg-red-900/20' : 'bg-green-900/20'}`} />
+                <div className="h-6 rounded mb-3 bg-whiskyPapa-yellow/30" />
+                <div className="h-12 rounded bg-whiskyPapa-yellow/20" />
               </div>
             ))}
           </div>
@@ -533,13 +489,10 @@ const GuestHomeContent: React.FC = () => {
           <div
             className={`
                 rounded-xl border-2 backdrop-blur-md p-6 text-center
-                ${effectiveTheme === 'dark'
-                ? 'hud-surface border-red-500/50'
-                : 'hud-surface border-green-500/50'
-              }
+                bg-whiskyPapa-black-dark border-whiskyPapa-yellow/50
               `}
           >
-            <p className="text-sm text-[color:var(--text-muted)]">
+            <p className="text-sm text-gray-400">
               お知らせの読み込み中にエラーが発生しました。
             </p>
             {process.env.NODE_ENV === 'development' && error && (
@@ -563,7 +516,7 @@ const GuestHomeContent: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-sm text-[color:var(--text-muted)]">現在お知らせはありません</p>
+            <p className="text-sm text-gray-400">現在お知らせはありません</p>
           </div>
         )}
       </section>
@@ -571,10 +524,10 @@ const GuestHomeContent: React.FC = () => {
       {/* Features */}
       <section className="relative container mx-auto px-4 pb-20">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-3 hud-text hud-glow">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-3 text-whiskyPapa-yellow">
             主な機能
           </h2>
-          <p className="text-sm text-[color:var(--text-muted)]">
+          <p className="text-sm text-gray-400">
             FlightAcademyが提供する革新的な学習体験
           </p>
         </div>
@@ -603,14 +556,11 @@ const GuestHomeContent: React.FC = () => {
                 reveal opacity-0 translate-y-4 transition-all duration-700 ease-out
                 p-6 rounded-xl border-2 backdrop-blur-md shadow-lg
                 transform hover:scale-[1.03] hover:shadow-xl
-                ${effectiveTheme === 'dark'
-                  ? 'hud-border hud-surface border-red-500/60 shadow-red-900/20 hover:bg-white/10 hover:border-red-500/80'
-                  : 'hud-border hud-surface border-green-500/50 shadow-green-900/10 hover:bg-white/10 hover:border-green-500/70'
-                }
+                border-whiskyPapa-yellow/60 bg-whiskyPapa-black-dark hover:bg-whiskyPapa-yellow/10 hover:border-whiskyPapa-yellow/80
               `}
             >
-              <h3 className="font-bold text-lg mb-3 hud-text">{f.title}</h3>
-              <p className="text-sm text-[color:var(--text-muted)] leading-relaxed">{f.desc}</p>
+              <h3 className="font-bold text-lg mb-3 text-whiskyPapa-yellow">{f.title}</h3>
+              <p className="text-sm text-gray-400 leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -618,16 +568,8 @@ const GuestHomeContent: React.FC = () => {
 
       {/* Try routes */}
       <section className="relative container mx-auto px-4 pb-20">
-        <div className={`
-          reveal opacity-0 translate-y-4 transition-all duration-700 ease-out
-          rounded-2xl border-2 backdrop-blur-md shadow-lg
-          p-6 sm:p-8 lg:p-10
-          ${effectiveTheme === 'dark'
-            ? 'hud-border hud-surface border-red-500/60 shadow-red-900/20'
-            : 'hud-border hud-surface border-green-500/50 shadow-green-900/10'
-          }
-        `}>
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 hud-text hud-glow">今すぐ体験</h2>
+        <div className="reveal opacity-0 translate-y-4 transition-all duration-700 ease-out rounded-2xl border-2 border-whiskyPapa-yellow/60 backdrop-blur-md shadow-lg p-6 sm:p-8 lg:p-10 bg-whiskyPapa-black-dark">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-whiskyPapa-yellow">今すぐ体験</h2>
           <div className="grid sm:grid-cols-3 gap-4 mb-8">
             <Link
               to="/learning"
@@ -635,14 +577,11 @@ const GuestHomeContent: React.FC = () => {
                 block p-5 rounded-xl border-2 backdrop-blur-sm
                 transform transition-all duration-300 ease-out
                 hover:scale-[1.02] hover:shadow-lg
-                ${effectiveTheme === 'dark'
-                  ? 'border-red-500/40 hover:bg-white/10 hover:border-red-500/60'
-                  : 'border-green-500/30 hover:bg-white/10 hover:border-green-500/50'
-                }
+                border-whiskyPapa-yellow/40 hover:bg-whiskyPapa-yellow/10 hover:border-whiskyPapa-yellow/60
               `}
             >
-              <div className="font-semibold mb-2 text-lg hud-text">LESSONS</div>
-              <p className="text-sm text-[color:var(--text-muted)] leading-relaxed">カテゴリ/検索/タグで学習をスタート</p>
+              <div className="font-semibold mb-2 text-lg text-whiskyPapa-yellow">LESSONS</div>
+              <p className="text-sm text-gray-400 leading-relaxed">カテゴリ/検索/タグで学習をスタート</p>
             </Link>
             <Link
               to="/articles"
@@ -650,14 +589,11 @@ const GuestHomeContent: React.FC = () => {
                 block p-5 rounded-xl border-2 backdrop-blur-sm
                 transform transition-all duration-300 ease-out
                 hover:scale-[1.02] hover:shadow-lg
-                ${effectiveTheme === 'dark'
-                  ? 'border-red-500/40 hover:bg-white/10 hover:border-red-500/60'
-                  : 'border-green-500/30 hover:bg-white/10 hover:border-green-500/50'
-                }
+                border-whiskyPapa-yellow/40 hover:bg-whiskyPapa-yellow/10 hover:border-whiskyPapa-yellow/60
               `}
             >
-              <div className="font-semibold mb-2 text-lg hud-text">ARTICLES</div>
-              <p className="text-sm text-[color:var(--text-muted)] leading-relaxed">記事を読む・いいね/コメントで交流</p>
+              <div className="font-semibold mb-2 text-lg text-whiskyPapa-yellow">ARTICLES</div>
+              <p className="text-sm text-gray-400 leading-relaxed">記事を読む・いいね/コメントで交流</p>
             </Link>
             <Link
               to="/planning"
@@ -665,27 +601,21 @@ const GuestHomeContent: React.FC = () => {
                 block p-5 rounded-xl border-2 backdrop-blur-sm
                 transform transition-all duration-300 ease-out
                 hover:scale-[1.02] hover:shadow-lg
-                ${effectiveTheme === 'dark'
-                  ? 'border-red-500/40 hover:bg-white/10 hover:border-red-500/60'
-                  : 'border-green-500/30 hover:bg-white/10 hover:border-green-500/50'
-                }
+                border-whiskyPapa-yellow/40 hover:bg-whiskyPapa-yellow/10 hover:border-whiskyPapa-yellow/60
               `}
             >
-              <div className="font-semibold mb-2 text-lg hud-text">PLANNING</div>
-              <p className="text-sm text-[color:var(--text-muted)] leading-relaxed">地図・気象を確認しながらルート設計</p>
+              <div className="font-semibold mb-2 text-lg text-whiskyPapa-yellow">PLANNING</div>
+              <p className="text-sm text-gray-400 leading-relaxed">地図・気象を確認しながらルート設計</p>
             </Link>
           </div>
           <div className="text-right">
             <Link
               to="/auth?mode=signup"
               className={`
-                hud-text underline text-sm
+                text-whiskyPapa-yellow underline text-sm
                 transition-all duration-300 ease-out
                 hover:no-underline
-                ${effectiveTheme === 'dark'
-                  ? 'hover:text-red-400'
-                  : 'hover:text-green-400'
-                }
+                hover:text-whiskyPapa-yellow
               `}
             >
               登録して機能を解放する →
@@ -697,10 +627,10 @@ const GuestHomeContent: React.FC = () => {
       {/* Social proof */}
       <section className="relative container mx-auto px-4 pb-20">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-3 hud-text hud-glow">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-3 text-whiskyPapa-yellow">
             ユーザーの声
           </h2>
-          <p className="text-sm text-[color:var(--text-muted)]">
+          <p className="text-sm text-gray-400">
             FlightAcademyを利用している方々からのフィードバック
           </p>
         </div>
@@ -716,13 +646,10 @@ const GuestHomeContent: React.FC = () => {
                 p-6 rounded-xl border-2 backdrop-blur-md shadow-lg
                 transform transition-all duration-300 ease-out
                 hover:scale-[1.02] hover:shadow-xl
-                ${effectiveTheme === 'dark'
-                  ? 'border-red-500/40 bg-[color:var(--panel)]/60 hover:bg-white/5 hover:border-red-500/60'
-                  : 'border-green-500/30 bg-[color:var(--panel)]/60 hover:bg-white/5 hover:border-green-500/50'
-                }
+                border-whiskyPapa-yellow/40 bg-whiskyPapa-black-dark/60 hover:bg-whiskyPapa-yellow/5 hover:border-whiskyPapa-yellow/60
               `}
             >
-              <p className="text-sm text-[color:var(--text-muted)] leading-relaxed">"{t}"</p>
+              <p className="text-sm text-gray-400 leading-relaxed">"{t}"</p>
             </div>
           ))}
         </div>
@@ -730,30 +657,19 @@ const GuestHomeContent: React.FC = () => {
 
       {/* Final CTA */}
       <section className="relative container mx-auto px-4 pb-24">
-        <div className={`
-          reveal opacity-0 translate-y-4 transition-all duration-700 ease-out
-          text-center max-w-2xl mx-auto
-          rounded-2xl border-2 backdrop-blur-md shadow-lg p-8 sm:p-10
-          ${effectiveTheme === 'dark'
-            ? 'hud-border hud-surface border-red-500/60 shadow-red-900/20'
-            : 'hud-border hud-surface border-green-500/50 shadow-green-900/10'
-          }
-        `}>
-          <h3 className="text-2xl sm:text-3xl font-bold mb-4 hud-text hud-glow">3分で登録、今日からスタート</h3>
-          <p className="text-[color:var(--text-muted)] mb-8 leading-relaxed">
+        <div className="reveal opacity-0 translate-y-4 transition-all duration-700 ease-out text-center max-w-2xl mx-auto rounded-2xl border-2 border-whiskyPapa-yellow/60 backdrop-blur-md shadow-lg p-8 sm:p-10 bg-whiskyPapa-black-dark">
+          <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-whiskyPapa-yellow">3分で登録、今日からスタート</h3>
+          <p className="text-gray-400 mb-8 leading-relaxed">
             メール登録で学習進捗やテスト結果が保存されます。
           </p>
           <Link
             to="/auth?mode=signup"
             className={`
               px-8 py-4 rounded-lg border-2 backdrop-blur-md
-              focus-hud hud-glow inline-block
+              inline-block
               transform transition-all duration-300 ease-out
               hover:scale-105 hover:shadow-xl
-              ${effectiveTheme === 'dark'
-                ? 'hud-border hud-surface border-red-500/60 shadow-red-900/20 hover:bg-white/10 hover:border-red-500/80'
-                : 'hud-border hud-surface border-green-500/50 shadow-green-900/10 hover:bg-white/10 hover:border-green-500/70'
-              }
+              border-whiskyPapa-yellow/60 bg-whiskyPapa-black-dark shadow-lg hover:bg-whiskyPapa-yellow/10 hover:border-whiskyPapa-yellow/80
             `}
           >
             無料で始める

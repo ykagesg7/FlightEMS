@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '../../utils';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'hud' | 'ghost' | 'brand';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'brand';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -27,14 +27,12 @@ export const Button: React.FC<ButtonProps> = ({
   const variantStyles: Record<ButtonVariant, string> = {
     // Whisky Papa Brand (Marketing)
     brand: 'bg-brand-primary text-brand-secondary hover:bg-brand-primary-dark focus:ring-brand-primary shadow-lg hover:shadow-xl',
-    // Primary Action (HUD Green/Red)
-    primary: 'bg-[color:var(--hud-primary)] text-black hover:bg-[color:var(--hud-primary)]/90 focus:ring-[color:var(--hud-primary)] shadow-hud-button',
-    // Secondary Action (HUD Outline)
-    secondary: 'bg-transparent border-2 border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--hud-primary)]/10 focus:ring-[color:var(--hud-primary)]',
-    // HUD Style (Cockpit)
-    hud: 'bg-[color:var(--panel)] border border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 focus:ring-[color:var(--hud-primary)]',
+    // Primary Action (Whisky Papa Yellow)
+    primary: 'bg-whiskyPapa-yellow text-black hover:bg-whiskyPapa-yellow/90 focus:ring-whiskyPapa-yellow shadow-lg',
+    // Secondary Action (Whisky Papa Outline)
+    secondary: 'bg-transparent border-2 border-whiskyPapa-yellow text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10 focus:ring-whiskyPapa-yellow',
     // Ghost (Minimal)
-    ghost: 'bg-transparent text-[color:var(--text-primary)] hover:bg-[color:var(--panel)]/40 focus:ring-[color:var(--hud-primary)]',
+    ghost: 'bg-transparent text-white hover:bg-whiskyPapa-yellow/10 focus:ring-whiskyPapa-yellow',
   };
 
   const sizeStyles: Record<ButtonSize, string> = {

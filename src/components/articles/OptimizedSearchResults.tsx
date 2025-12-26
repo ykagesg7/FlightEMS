@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { LearningContent } from '../../types';
 import { ArticleMeta } from '../../types/articles';
 
@@ -25,8 +24,6 @@ const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(({
   index,
   isVisible
 }) => {
-  const { effectiveTheme } = useTheme();
-
   if (!isVisible) {
     return (
       <div className="h-32 bg-transparent" />
@@ -34,40 +31,30 @@ const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(({
   }
 
   return (
-    <div className={`p-4 rounded-lg border backdrop-blur-sm transition-all duration-200 hover:scale-[1.02] ${effectiveTheme === 'dark'
-        ? 'hud-surface border-gray-700 hover:bg-white/5'
-        : 'hud-surface border-gray-300 hover:bg-white/10'
-      }`}>
+    <div className="p-4 rounded-lg border backdrop-blur-sm transition-all duration-200 hover:scale-[1.02] hud-surface border-gray-300 hover:bg-white/10">
       {/* 記事ヘッダー */}
       <div className="flex items-start justify-between mb-2">
-        <h3 className={`text-lg font-semibold line-clamp-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
+        <h3 className="text-lg font-semibold line-clamp-2 text-gray-900">
           {content.title}
         </h3>
-        <div className={`text-xs px-2 py-1 rounded-md ${effectiveTheme === 'dark'
-            ? 'bg-gray-700 text-gray-300'
-            : 'bg-gray-100 text-gray-600'
-          }`}>
+        <div className="text-xs px-2 py-1 rounded-md bg-gray-100 text-gray-600">
           {content.category}
         </div>
       </div>
 
       {/* 記事説明 */}
-      <p className={`text-sm mb-3 line-clamp-3 ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-        }`}>
+      <p className="text-sm mb-3 line-clamp-3 text-gray-600">
         {content.description || meta.excerpt}
       </p>
 
       {/* メタ情報 */}
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center space-x-4">
-          <span className={`flex items-center space-x-1 ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-            }`}>
+          <span className="flex items-center space-x-1 text-gray-500">
             <span>⏱️</span>
             <span>{meta.readingTime || 10}分</span>
           </span>
-          <span className={`flex items-center space-x-1 ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-            }`}>
+          <span className="flex items-center space-x-1 text-gray-500">
             <span>📅</span>
             <span>{new Date(content.created_at || '').toLocaleDateString('ja-JP')}</span>
           </span>
@@ -78,17 +65,13 @@ const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(({
           {meta.tags.slice(0, 2).map((tag, tagIndex) => (
             <span
               key={tagIndex}
-              className={`px-2 py-1 rounded-md text-xs ${effectiveTheme === 'dark'
-                  ? 'bg-gray-700 text-gray-300'
-                  : 'bg-gray-100 text-gray-600'
-                }`}
+              className="px-2 py-1 rounded-md text-xs bg-gray-100 text-gray-600"
             >
               {tag}
             </span>
           ))}
           {meta.tags.length > 2 && (
-            <span className={`text-xs ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}>
+            <span className="text-xs text-gray-500">
               +{meta.tags.length - 2}
             </span>
           )}
@@ -148,7 +131,6 @@ const OptimizedSearchResults: React.FC<OptimizedSearchResultsProps> = ({
   onLoadMore,
   hasMore
 }) => {
-  const { effectiveTheme } = useTheme();
   const [searchIntent, setSearchIntent] = useState<string>('');
   const { containerRef, visibleItems, totalHeight, handleScroll } = useVirtualScroll(results);
 
@@ -194,26 +176,20 @@ const OptimizedSearchResults: React.FC<OptimizedSearchResultsProps> = ({
   }, [handleScrollToBottom]);
 
   return (
-    <div className={`p-4 rounded-lg border backdrop-blur-sm ${effectiveTheme === 'dark'
-        ? 'hud-surface border-gray-700'
-        : 'hud-surface border-gray-300'
-      }`}>
+    <div className="p-4 rounded-lg border backdrop-blur-sm hud-surface border-gray-300">
       {/* ヘッダー */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className={`text-lg font-semibold ${effectiveTheme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
+          <h3 className="text-lg font-semibold text-gray-900">
             🔍 検索結果
           </h3>
           {searchIntent && (
-            <p className={`text-sm ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}>
+            <p className="text-sm text-gray-500">
               {searchIntent}
             </p>
           )}
         </div>
-        <div className={`text-sm ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-          }`}>
+        <div className="text-sm text-gray-500">
           {results.length}件の記事
         </div>
       </div>
@@ -250,10 +226,8 @@ const OptimizedSearchResults: React.FC<OptimizedSearchResultsProps> = ({
       {/* ローディング状態 */}
       {isLoading && (
         <div className="flex items-center justify-center py-4">
-          <div className={`animate-spin rounded-full h-8 w-8 border-b-2 ${effectiveTheme === 'dark' ? 'border-red-500' : 'border-green-500'
-            }`}></div>
-          <span className={`ml-2 text-sm ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-            }`}>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+          <span className="ml-2 text-sm text-gray-500">
             検索中...
           </span>
         </div>
@@ -264,10 +238,7 @@ const OptimizedSearchResults: React.FC<OptimizedSearchResultsProps> = ({
         <div className="text-center mt-4">
           <button
             onClick={onLoadMore}
-            className={`px-6 py-2 rounded-lg font-medium transition-colors ${effectiveTheme === 'dark'
-                ? 'bg-gray-700 text-white hover:bg-gray-600'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
+            className="px-6 py-2 rounded-lg font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
           >
             もっと見る
           </button>
@@ -278,12 +249,10 @@ const OptimizedSearchResults: React.FC<OptimizedSearchResultsProps> = ({
       {results.length === 0 && !isLoading && (
         <div className="text-center py-8">
           <div className="text-4xl mb-2">🔍</div>
-          <p className={`text-lg ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-            }`}>
+          <p className="text-lg text-gray-500">
             検索結果が見つかりませんでした
           </p>
-          <p className={`text-sm ${effectiveTheme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-            }`}>
+          <p className="text-sm text-gray-400">
             別のキーワードで検索してみてください
           </p>
         </div>

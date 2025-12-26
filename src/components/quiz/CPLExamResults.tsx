@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../utils/supabase';
 // import EnhancedMistakeReview from './EnhancedMistakeReview'; // TODO: コンポーネント作成時に有効化
 import { QuizAnswer } from '../../types';
@@ -41,7 +40,6 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
   onRestartExam,
   onBackToSelection
 }) => {
-  const { theme } = useTheme();
   const [session, setSession] = useState<ExamSession | null>(null);
   const [subjectStats, setSubjectStats] = useState<SubjectStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -123,7 +121,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
 
   if (error || !session) {
     return (
-      <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
+      <div className="bg-gray-800 rounded-lg shadow-lg p-6">
         <div className="text-center">
           <div className="text-red-500 text-xl mb-4">{error || '結果が見つかりませんでした'}</div>
           <button
@@ -142,7 +140,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
   const timeSpentMinutes = Math.round(session.total_time_spent / 60); // 秒を分に変換
 
   return (
-    <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
+    <div className="bg-gray-800 rounded-lg shadow-lg p-6">
       {/* ヘッダー */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -297,11 +295,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
         </div>
       </div>
 
-      <EnhancedMistakeReview
-        sessionId={sessionId}
-        questionIds={session?.answers?.map((a: QuizAnswer) => a.questionId) || []}
-        theme={theme}
-      />
+      {/* EnhancedMistakeReview component removed - theme prop no longer needed */}
     </div>
   );
 };

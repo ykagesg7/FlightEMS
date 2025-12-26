@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import type { Database } from '../../types/database.types';
 
 type Announcement = Database['public']['Tables']['announcements']['Row'];
@@ -17,7 +16,6 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
   announcement,
   index = 0,
 }) => {
-  const { effectiveTheme } = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
 
   // 日付フォーマット
@@ -93,10 +91,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
         relative overflow-hidden rounded-xl border-2
         backdrop-blur-md shadow-lg hover:shadow-xl
         transform hover:scale-[1.03] cursor-pointer group
-        ${effectiveTheme === 'dark'
-          ? 'hud-surface border-red-500/60 shadow-red-900/20 hover:bg-white/10 hover:border-red-500/80'
-          : 'hud-surface border-green-500/50 shadow-green-900/10 hover:bg-white/10 hover:border-green-500/70'
-        }
+        hud-surface border-green-500/50 shadow-green-900/10 hover:bg-white/10 hover:border-green-500/70
       `}
       style={{
         transitionDelay: `${animationDelay}ms`,
@@ -107,13 +102,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
     >
       {/* グラデーションボーダー効果（上部アクセント） */}
       <div
-        className={`
-          absolute top-0 left-0 right-0 h-1
-          ${effectiveTheme === 'dark'
-            ? 'bg-gradient-to-r from-red-500/0 via-red-500/80 to-red-500/0'
-            : 'bg-gradient-to-r from-green-500/0 via-green-500/80 to-green-500/0'
-          }
-        `}
+        className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500/0 via-green-500/80 to-green-500/0"
       />
 
       {/* カードコンテンツ */}
@@ -121,13 +110,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
         {/* 日付バッジ */}
         <div className="flex items-center justify-between mb-3">
           <time
-            className={`
-              text-xs font-medium px-3 py-1 rounded-full
-              ${effectiveTheme === 'dark'
-                ? 'bg-red-900/30 text-red-400 border border-red-700/50'
-                : 'bg-green-100/50 text-green-700 border border-green-300/50'
-              }
-            `}
+            className="text-xs font-medium px-3 py-1 rounded-full bg-green-100/50 text-green-700 border border-green-300/50"
             dateTime={announcement.date}
           >
             {formatDate(announcement.date)}
@@ -136,12 +119,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
 
         {/* タイトル */}
         <h3
-          className={`
-            text-lg font-bold mb-2 line-clamp-2
-            transition-colors duration-300
-            ${effectiveTheme === 'dark' ? 'text-white' : 'hud-text'}
-            hover:text-[color:var(--hud-primary)]
-          `}
+          className="text-lg font-bold mb-2 line-clamp-2 transition-colors duration-300 hud-text hover:text-[color:var(--hud-primary)]"
         >
           {announcement.title}
         </h3>
@@ -149,10 +127,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
         {/* ホバー時のアクションヒント */}
         <div className="mt-4 flex items-center text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <span
-            className={`
-              ${effectiveTheme === 'dark' ? 'text-red-400' : 'text-green-600'}
-              transform group-hover:translate-x-1 transition-transform duration-300
-            `}
+            className="text-green-600 transform group-hover:translate-x-1 transition-transform duration-300"
           >
             →
           </span>
@@ -161,14 +136,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
 
       {/* グロー効果（ホバー時） */}
       <div
-        className={`
-          absolute inset-0 rounded-xl opacity-0 hover:opacity-20
-          transition-opacity duration-300 pointer-events-none
-          ${effectiveTheme === 'dark'
-            ? 'bg-red-500'
-            : 'bg-green-500'
-          }
-        `}
+        className="absolute inset-0 rounded-xl opacity-0 hover:opacity-20 transition-opacity duration-300 pointer-events-none bg-green-500"
       />
     </div>
   );

@@ -13,7 +13,17 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => 
   const [preview, setPreview] = useState<string | null>(null);
   const [caption, setCaption] = useState('');
   const [isDragging, setIsDragging] = useState(false);
-  const { uploadAndSubmitPhoto, isUploading } = useGallery();
+  const { uploadAndSubmitPhoto, isUploading, activeEvent, userPhotos, isAdmin } = useGallery();
+
+  const activeEventId = activeEvent?.id;
+  const myCountInActive =
+    activeEventId && userPhotos
+      ? userPhotos.filter((p) => p.event_id === activeEventId).length
+      : 0;
+  const remainingSlots = isAdmin ? Infinity : Math.max(0, 5 - myCountInActive);
+  const isDeadlinePassed =
+    activeEvent?.ends_at && new Date(activeEvent.ends_at).getTime() < Date.now();
+  const canPost = !!activeEvent && !isDeadlinePassed && remainingSlots > 0;
 
   const handleFileSelect = useCallback((selectedFile: File) => {
     // ファイル形式チェック
@@ -71,6 +81,10 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => 
       alert('ファイルを選択してください。');
       return;
     }
+    if (!canPost) {
+      alert('現在は投稿できません（締切後か、上限に達しています）。');
+      return;
+    }
 
     try {
       const result = await uploadAndSubmitPhoto(file, caption);
@@ -98,14 +112,14 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => 
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 overflow-y-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleClose}
         >
           <motion.div
-            className="relative w-full max-w-2xl bg-whiskyPapa-black-light rounded-lg border border-whiskyPapa-yellow/30 p-6"
+            className="relative w-full max-w-2xl bg-whiskyPapa-black-light rounded-lg border border-whiskyPapa-yellow/30 p-6 max-h-[90vh] overflow-y-auto"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
@@ -119,6 +133,35 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => 
             </button>
 
             <h2 className="text-2xl font-bold text-whiskyPapa-yellow mb-6">写真を投稿</h2>
+
+            <div className="mb-4 space-y-1 text-sm text-gray-300">
+              <div>対応形式: JPEG / PNG / WebP / GIF</div>
+              <div>容量上限: 5MB</div>
+              {activeEvent ? (
+                <>
+                  <div>イベント: {activeEvent.title}</div>
+                  <div>
+                    投票/投稿締切:{' '}
+                    {activeEvent.ends_at
+                      ? new Date(activeEvent.ends_at).toLocaleString()
+                      : '未設定（締切なし）'}
+                  </div>
+                  {!isAdmin && (
+                    <div>
+                      残り投稿枠: {Number.isFinite(remainingSlots) ? remainingSlots : '無制限'} / 5
+                    </div>
+                  )}
+                  {isDeadlinePassed && (
+                    <div className="text-red-400">締切を過ぎています。新規投稿はできません。</div>
+                  )}
+                  {!isDeadlinePassed && remainingSlots <= 0 && !isAdmin && (
+                    <div className="text-red-400">このイベントの投稿上限（5件）に達しました。</div>
+                  )}
+                </>
+              ) : (
+                <div className="text-red-400">アクティブなイベントがありません。管理者に連絡してください。</div>
+              )}
+            </div>
 
             {/* ドラッグ&ドロップエリア */}
             <div
@@ -197,7 +240,7 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => 
                 <button
                   className="px-6 py-2 bg-whiskyPapa-yellow text-whiskyPapa-black font-bold rounded-lg hover:bg-whiskyPapa-yellow-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleSubmit}
-                  disabled={isUploading}
+                  disabled={isUploading || !canPost}
                 >
                   {isUploading ? 'アップロード中...' : '投稿する'}
                 </button>

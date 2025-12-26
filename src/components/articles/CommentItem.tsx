@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import { ArticleComment } from '../../types/articles';
 import { CommentForm } from './CommentForm';
 
@@ -17,7 +16,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   onEdit,
   onDelete
 }) => {
-  const { effectiveTheme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -55,15 +53,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   return (
     <div
-      className={`
-        p-4 rounded-lg transition-all
-        ${effectiveTheme === 'dark'
-          ? 'bg-gray-800/50 border border-gray-700'
-          : effectiveTheme === 'night'
-            ? 'bg-[#0a1929]/50 border border-gray-700'
-            : 'bg-white/5 border border-[#39FF14]/20 backdrop-blur-sm'
-        }
-      `}
+      className="p-4 rounded-lg transition-all bg-white/5 border border-[#39FF14]/20 backdrop-blur-sm"
     >
       {/* ヘッダー */}
       <div className="flex justify-between items-start mb-3">
@@ -82,26 +72,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             />
           ) : null}
           <div
-            className={`
-              w-8 h-8 rounded-full flex items-center justify-center font-bold
-              ${comment.user.avatar_url ? 'hidden' : ''}
-              ${effectiveTheme === 'dark'
-                ? 'bg-red-600 text-white'
-                : effectiveTheme === 'night'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-[#39FF14] text-[#0b1d3a]'
-              }
-            `}
+            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${comment.user.avatar_url ? 'hidden' : ''} bg-[#39FF14] text-[#0b1d3a]`}
           >
             {comment.user.display_name.charAt(0).toUpperCase()}
           </div>
           <div>
             <div className="flex items-center gap-2">
               <div
-                className={`
-                  font-medium
-                  ${effectiveTheme === 'dark' ? 'text-white' : effectiveTheme === 'night' ? 'text-white' : 'text-[color:var(--text-primary)]'}
-                `}
+                className="font-medium text-[color:var(--text-primary)]"
               >
                 {comment.user.display_name}
               </div>
@@ -109,15 +87,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               {isOwner && comment.user.display_name === '名無しさん' && (
                 <Link
                   to="/account?tab=profile"
-                  className={`
-                    text-xs px-2 py-0.5 rounded-full transition-all
-                    ${effectiveTheme === 'dark'
-                      ? 'bg-red-600/20 text-red-400 hover:bg-red-600/30'
-                      : effectiveTheme === 'night'
-                        ? 'bg-blue-600/20 text-blue-400 hover:bg-blue-600/30'
-                        : 'bg-[#39FF14]/20 text-[#39FF14] hover:bg-[#39FF14]/30'
-                    }
-                  `}
+                  className="text-xs px-2 py-0.5 rounded-full transition-all bg-[#39FF14]/20 text-[#39FF14] hover:bg-[#39FF14]/30"
                   title="プロフィールでユーザー名を設定"
                 >
                   設定する
@@ -125,10 +95,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               )}
             </div>
             <div
-              className={`
-                text-xs
-                ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}
-              `}
+              className="text-xs text-gray-500"
             >
               {formatDate(comment.created_at)}
               {isEdited && ' (編集済み)'}
@@ -141,15 +108,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
           <div className="flex gap-2">
             <button
               onClick={() => setIsEditing(true)}
-              className={`
-                p-2 rounded-lg transition-all
-                ${effectiveTheme === 'dark'
-                  ? 'text-gray-400 hover:bg-gray-700 hover:text-white'
-                  : effectiveTheme === 'night'
-                    ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                    : 'text-gray-500 hover:bg-white/10 hover:text-[color:var(--text-primary)]'
-                }
-              `}
+              className="p-2 rounded-lg transition-all text-gray-500 hover:bg-white/10 hover:text-[color:var(--text-primary)]"
               aria-label="編集"
               title="編集"
             >
@@ -159,15 +118,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             </button>
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className={`
-                p-2 rounded-lg transition-all
-                ${effectiveTheme === 'dark'
-                  ? 'text-gray-400 hover:bg-red-600 hover:text-white'
-                  : effectiveTheme === 'night'
-                    ? 'text-gray-400 hover:bg-red-600 hover:text-white'
-                    : 'text-gray-500 hover:bg-red-500/20 hover:text-red-600'
-                }
-              `}
+              className="p-2 rounded-lg transition-all text-gray-500 hover:bg-red-500/20 hover:text-red-600"
               aria-label="削除"
               title="削除"
             >
@@ -190,10 +141,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         />
       ) : (
         <div
-          className={`
-            whitespace-pre-wrap break-words
-            ${effectiveTheme === 'dark' ? 'text-gray-200' : effectiveTheme === 'night' ? 'text-gray-200' : 'text-[color:var(--text-primary)]'}
-          `}
+          className="whitespace-pre-wrap break-words text-[color:var(--text-primary)]"
         >
           {comment.content}
         </div>
@@ -203,44 +151,22 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div
-            className={`
-              max-w-md w-full p-6 rounded-xl shadow-2xl
-              ${effectiveTheme === 'dark'
-                ? 'bg-gray-800 border border-gray-700'
-                : effectiveTheme === 'night'
-                  ? 'bg-[#0a1929] border border-gray-700'
-                  : 'bg-[#0b1d3a] border border-[#39FF14]/30'
-              }
-            `}
+            className="max-w-md w-full p-6 rounded-xl shadow-2xl bg-[#0b1d3a] border border-[#39FF14]/30"
           >
             <h3
-              className={`
-                text-lg font-bold mb-4
-                ${effectiveTheme === 'dark' ? 'text-white' : effectiveTheme === 'night' ? 'text-white' : 'text-[color:var(--text-primary)]'}
-              `}
+              className="text-lg font-bold mb-4 text-[color:var(--text-primary)]"
             >
               コメントを削除しますか？
             </h3>
             <p
-              className={`
-                mb-6
-                ${effectiveTheme === 'dark' ? 'text-gray-300' : 'text-gray-400'}
-              `}
+              className="mb-6 text-gray-400"
             >
               この操作は取り消せません。
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className={`
-                  px-4 py-2 rounded-lg font-medium transition-all
-                  ${effectiveTheme === 'dark'
-                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    : effectiveTheme === 'night'
-                      ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                      : 'bg-white/10 text-[color:var(--text-primary)] hover:bg-white/20 border border-[#39FF14]/30'
-                  }
-                `}
+                className="px-4 py-2 rounded-lg font-medium transition-all bg-white/10 text-[color:var(--text-primary)] hover:bg-white/20 border border-[#39FF14]/30"
               >
                 キャンセル
               </button>

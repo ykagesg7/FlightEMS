@@ -1,6 +1,6 @@
 import L from 'leaflet';
-import { Waypoint } from '../../../types';
-import { getNavaidColor } from '../../../utils';
+import { Waypoint } from '@/types';
+import { getNavaidColor } from '@/utils';
 import { escapeHtml, kvItem, sectionHeader } from '../popups/common';
 import { NavaidProps } from '../types';
 

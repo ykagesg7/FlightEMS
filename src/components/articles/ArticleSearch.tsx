@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 
 interface ArticleSearchProps {
   selectedTags: string[];
@@ -20,7 +19,6 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
   onCategoryChange,
   categoryCounts = {}
 }) => {
-  const { effectiveTheme } = useTheme();
 
   const handleTagToggle = (tag: string) => {
     const newTags = selectedTags.includes(tag)
@@ -37,29 +35,16 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
 
 
   return (
-    <div className={`p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg ${effectiveTheme === 'dark'
-      ? 'hud-surface border-red-500/60 shadow-red-900/20'
-      : effectiveTheme === 'day'
-        ? 'hud-surface border-green-500/50 shadow-green-900/10'
-        : 'hud-surface border-gray-300'
-      }`}>
+    <div className="p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20">
       {/* ヘッダー */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className={`text-sm font-medium ${effectiveTheme === 'dark'
-          ? 'text-gray-300'
-          : effectiveTheme === 'day'
-            ? 'text-[#39FF14]'
-            : 'text-gray-700'
-          }`}>
+        <h3 className="text-sm font-medium text-white">
           📂 記事のフィルタリング
         </h3>
         {selectedTags.length > 0 && (
           <button
             onClick={() => setSelectedTags([])}
-            className={`text-xs px-2 py-1 rounded-md border-2 transition-colors duration-200 ${effectiveTheme === 'dark'
-              ? 'bg-red-900/30 text-red-300 border-red-500/60 hover:bg-red-800/40'
-              : 'bg-red-100 text-red-700 border-red-300 hover:bg-red-200'
-              }`}
+            className="text-xs px-2 py-1 rounded-md border-2 transition-colors duration-200 bg-red-900/30 text-red-300 border-red-500/60 hover:bg-red-800/40"
           >
             タグをクリア
           </button>
@@ -70,12 +55,7 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
         {/* カテゴリータブ */}
         {categories.length > 0 && (
           <div>
-            <div className={`text-xs mb-2 ${effectiveTheme === 'dark'
-              ? 'text-gray-400'
-              : effectiveTheme === 'day'
-                ? 'text-green-400'
-                : 'text-gray-500'
-              }`}>
+            <div className="text-xs mb-2 text-gray-400">
               カテゴリーで絞り込み
             </div>
             <div className="flex flex-wrap gap-2">
@@ -87,21 +67,17 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
                   <button
                     key={category}
                     onClick={() => handleCategoryClick(category)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${isActive
-                      ? effectiveTheme === 'dark'
-                        ? 'bg-red-500 text-white shadow-red-500/50 shadow-lg'
-                        : 'bg-green-500 text-white shadow-green-500/50 shadow-lg'
-                      : effectiveTheme === 'dark'
-                        ? 'bg-gray-800 text-gray-300 border-2 border-gray-600 hover:bg-gray-700 hover:border-gray-500'
-                        : 'bg-gray-100 text-gray-700 border-2 border-gray-300 hover:bg-gray-200 hover:border-gray-400'
-                      }`}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
+                      isActive
+                        ? 'bg-whiskyPapa-yellow text-black shadow-whiskyPapa-yellow/50 shadow-lg'
+                        : 'bg-gray-800 text-gray-300 border-2 border-gray-600 hover:bg-gray-700 hover:border-gray-500'
+                    }`}
                   >
                     <div className="flex items-center space-x-1">
                       <span>📂</span>
                       <span>{category}</span>
                       {count > 0 && (
-                        <span className={`text-xs ${isActive ? 'text-white/80' : 'text-gray-500'
-                          }`}>
+                        <span className={`text-xs ${isActive ? 'text-black/80' : 'text-gray-500'}`}>
                           ({count})
                         </span>
                       )}
@@ -117,12 +93,7 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
         {/* タグフィルター */}
         {availableTags.length > 0 && (
           <div>
-            <div className={`text-xs mb-2 ${effectiveTheme === 'dark'
-              ? 'text-gray-400'
-              : effectiveTheme === 'day'
-                ? 'text-green-400'
-                : 'text-gray-500'
-              }`}>
+            <div className="text-xs mb-2 text-gray-400">
               タグで絞り込み ({selectedTags.length}個選択中)
             </div>
             <div className="flex flex-wrap gap-2">
@@ -133,14 +104,11 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
                   <button
                     key={tag}
                     onClick={() => handleTagToggle(tag)}
-                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 ${isSelected
-                      ? effectiveTheme === 'dark'
-                        ? 'bg-red-500 text-white shadow-red-500/50 shadow-lg'
-                        : 'bg-green-500 text-white shadow-green-500/50 shadow-lg'
-                      : effectiveTheme === 'dark'
-                        ? 'bg-gray-800 text-gray-300 border-2 border-gray-600 hover:bg-gray-700 hover:border-gray-500'
-                        : 'bg-gray-100 text-gray-700 border-2 border-gray-300 hover:bg-gray-200 hover:border-gray-400'
-                      }`}
+                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 ${
+                      isSelected
+                        ? 'bg-whiskyPapa-yellow text-black shadow-whiskyPapa-yellow/50 shadow-lg'
+                        : 'bg-gray-800 text-gray-300 border-2 border-gray-600 hover:bg-gray-700 hover:border-gray-500'
+                    }`}
                   >
                     <div className="truncate">
                       <span>{tag}</span>

@@ -1,31 +1,60 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import {
+  ArrowLeft,
+  BookOpen,
+  Calendar,
+  CheckCircle,
+  Lock,
+  Mic,
+  Plane,
+  Target,
+  TrendingUp,
+  Trophy,
+} from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ComingSoonBadge } from '../../components/marketing/ComingSoonBadge';
+import MissionCard from '../../components/marketing/MissionCard';
+import RankBadge from '../../components/marketing/RankBadge';
+import MDXLoader from '../../components/mdx/MDXLoader';
 import { useGamification } from '../../hooks/useGamification';
 import { useAuthStore } from '../../stores/authStore';
-import RankBadge from '../../components/marketing/RankBadge';
-import MissionCard from '../../components/marketing/MissionCard';
-import { ComingSoonBadge } from '../../components/marketing/ComingSoonBadge';
-import { Trophy, TrendingUp, Target, BookOpen, Plane, Lock, CheckCircle, Calendar, Mic } from 'lucide-react';
 import { RANK_INFO } from '../../types/gamification';
 
-// サンプルブログ記事データ（将来的にはMDXから読み込む）
-const samplePosts = [
+type MissionBlogPost = {
+  id: string;
+  contentId: string;
+  title: string;
+  excerpt: string;
+  author: 'narrator' | 'pilot' | 'staff';
+  publishedAt: string;
+};
+
+// 会員向けブログ（沿革/曲技飛行/機体詳細をここへ移設）
+const missionBlogPosts: MissionBlogPost[] = [
   {
-    id: '1',
-    slug: 'first-flight-briefing',
-    title: '初フライトへの招集',
-    author: 'narrator' as const,
-    excerpt: '本日、新たなミッションが開始されます。観客の皆さん、準備はできていますか？',
-    published_at: '2024-01-15',
+    id: 'team-history',
+    contentId: 'team-history',
+    title: 'Whisky Papa の歩みとミッション',
+    excerpt: '2008年の結成から、岡南飛行場を拠点に世界選手権を目指すまでの物語。',
+    author: 'pilot',
+    publishedAt: '2025-06-10',
   },
   {
-    id: '2',
-    slug: 'wingman-program-launch',
-    title: 'Wingman Program 開始',
-    author: 'narrator' as const,
-    excerpt: '観客から僚機へ。あなたの成長をサポートする新プログラムが始まります。',
-    published_at: '2024-01-10',
+    id: 'what-is-aerobatics',
+    contentId: 'what-is-aerobatics',
+    title: '曲技飛行とは何か？競技のルールと魅力',
+    excerpt: '1km立方体の空域で美しさと正確さを競う競技の仕組みと、安全の思想。',
+    author: 'narrator',
+    publishedAt: '2025-06-11',
+  },
+  {
+    id: 'extra-300l-deep-dive',
+    contentId: 'extra-300l-deep-dive',
+    title: 'EXTRA 300L Deep Dive（機体詳細）',
+    excerpt: '+/-10G を耐える機体構造と、計器を削ぎ落としたコクピット哲学。',
+    author: 'staff',
+    publishedAt: '2025-06-12',
   },
 ];
 
@@ -36,14 +65,10 @@ const samplePosts = [
 const MissionDashboard: React.FC = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'missions' | 'blog' | 'experience' | 'planning'>('missions');
-  const {
-    profile,
-    rankInfo,
-    xpToNextRank,
-    rankProgress,
-    isLoadingProfile,
-  } = useGamification();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<'missions' | 'blog' | 'experience' | 'tools'>('missions');
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const { profile, rankInfo, xpToNextRank, rankProgress, isLoadingProfile } = useGamification();
 
   // 認証ガード: 未ログイン時は/authへリダイレクト
   useEffect(() => {
@@ -51,6 +76,32 @@ const MissionDashboard: React.FC = () => {
       navigate('/auth', { replace: true });
     }
   }, [user, navigate]);
+
+  // クエリパラメータから初期タブを決定
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'blog' || tab === 'experience' || tab === 'tools' || tab === 'missions') {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
+
+  // タブ変更時にクエリも同期（不要なパラメータは消す）
+  const handleTabChange = (tab: typeof activeTab) => {
+    setActiveTab(tab);
+    setSelectedPostId(null);
+    const next = new URLSearchParams(searchParams);
+    if (tab === 'missions') {
+      next.delete('tab');
+    } else {
+      next.set('tab', tab);
+    }
+    setSearchParams(next, { replace: true });
+  };
+
+  const selectedPost = useMemo(
+    () => missionBlogPosts.find((post) => post.id === selectedPostId) || null,
+    [selectedPostId],
+  );
 
   // ユーザーがログインしていない場合はローディング表示（リダイレクト中）
   if (!user) {
@@ -121,7 +172,7 @@ const MissionDashboard: React.FC = () => {
         {/* Tabs */}
         <div className="flex justify-center mb-8 border-b border-whiskyPapa-yellow/20">
           <button
-            onClick={() => setActiveTab('missions')}
+            onClick={() => handleTabChange('missions')}
             className={`px-6 py-3 font-medium transition-colors ${
               activeTab === 'missions'
                 ? 'text-whiskyPapa-yellow border-b-2 border-whiskyPapa-yellow'
@@ -132,7 +183,7 @@ const MissionDashboard: React.FC = () => {
             ミッション
           </button>
           <button
-            onClick={() => setActiveTab('blog')}
+            onClick={() => handleTabChange('blog')}
             className={`px-6 py-3 font-medium transition-colors ${
               activeTab === 'blog'
                 ? 'text-whiskyPapa-yellow border-b-2 border-whiskyPapa-yellow'
@@ -143,7 +194,7 @@ const MissionDashboard: React.FC = () => {
             ブログ
           </button>
           <button
-            onClick={() => setActiveTab('experience')}
+            onClick={() => handleTabChange('experience')}
             className={`px-6 py-3 font-medium transition-colors ${
               activeTab === 'experience'
                 ? 'text-whiskyPapa-yellow border-b-2 border-whiskyPapa-yellow'
@@ -154,15 +205,15 @@ const MissionDashboard: React.FC = () => {
             体験搭乗
           </button>
           <button
-            onClick={() => setActiveTab('planning')}
+            onClick={() => handleTabChange('tools')}
             className={`px-6 py-3 font-medium transition-colors ${
-              activeTab === 'planning'
+              activeTab === 'tools'
                 ? 'text-whiskyPapa-yellow border-b-2 border-whiskyPapa-yellow'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            <Plane className="w-5 h-5 inline-block mr-2" />
-            飛行計画
+            <Target className="w-5 h-5 inline-block mr-2" />
+            ツール
           </button>
         </div>
 
@@ -235,72 +286,72 @@ const MissionDashboard: React.FC = () => {
           <div className="space-y-8">
             {/* One-time Missions */}
             {oneTimeMissions.length > 0 && (
-            <section>
-              <div className="flex items-center gap-3 mb-6">
-                <Target className="w-6 h-6 text-whiskyPapa-yellow" />
-                <h2 className="text-2xl font-bold">通常ミッション</h2>
-              </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {oneTimeMissions.map((mission) => (
-                  <MissionCard
-                    key={mission.id}
-                    mission={mission}
-                    isCompleted={completedMissionsMap.has(mission.id)}
-                    completedAt={
-                      completedMissionsMap.get(mission.id)?.completed_at
-                    }
-                    userRank={profile.rank}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
+              <section>
+                <div className="flex items-center gap-3 mb-6">
+                  <Target className="w-6 h-6 text-whiskyPapa-yellow" />
+                  <h2 className="text-2xl font-bold">通常ミッション</h2>
+                </div>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {oneTimeMissions.map((mission) => (
+                    <MissionCard
+                      key={mission.id}
+                      mission={mission}
+                      isCompleted={completedMissionsMap.has(mission.id)}
+                      completedAt={
+                        completedMissionsMap.get(mission.id)?.completed_at
+                      }
+                      userRank={profile.rank}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
-          {/* Daily Missions */}
-          {dailyMissions.length > 0 && (
-            <section>
-              <div className="flex items-center gap-3 mb-6">
-                <Target className="w-6 h-6 text-whiskyPapa-yellow" />
-                <h2 className="text-2xl font-bold">デイリーミッション</h2>
-              </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {dailyMissions.map((mission) => (
-                  <MissionCard
-                    key={mission.id}
-                    mission={mission}
-                    isCompleted={completedMissionsMap.has(mission.id)}
-                    completedAt={
-                      completedMissionsMap.get(mission.id)?.completed_at
-                    }
-                    userRank={profile.rank}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
+            {/* Daily Missions */}
+            {dailyMissions.length > 0 && (
+              <section>
+                <div className="flex items-center gap-3 mb-6">
+                  <Target className="w-6 h-6 text-whiskyPapa-yellow" />
+                  <h2 className="text-2xl font-bold">デイリーミッション</h2>
+                </div>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {dailyMissions.map((mission) => (
+                    <MissionCard
+                      key={mission.id}
+                      mission={mission}
+                      isCompleted={completedMissionsMap.has(mission.id)}
+                      completedAt={
+                        completedMissionsMap.get(mission.id)?.completed_at
+                      }
+                      userRank={profile.rank}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
-          {/* Weekly Missions */}
-          {weeklyMissions.length > 0 && (
-            <section>
-              <div className="flex items-center gap-3 mb-6">
-                <Target className="w-6 h-6 text-whiskyPapa-yellow" />
-                <h2 className="text-2xl font-bold">ウィークリーミッション</h2>
-              </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {weeklyMissions.map((mission) => (
-                  <MissionCard
-                    key={mission.id}
-                    mission={mission}
-                    isCompleted={completedMissionsMap.has(mission.id)}
-                    completedAt={
-                      completedMissionsMap.get(mission.id)?.completed_at
-                    }
-                    userRank={profile.rank}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
+            {/* Weekly Missions */}
+            {weeklyMissions.length > 0 && (
+              <section>
+                <div className="flex items-center gap-3 mb-6">
+                  <Target className="w-6 h-6 text-whiskyPapa-yellow" />
+                  <h2 className="text-2xl font-bold">ウィークリーミッション</h2>
+                </div>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {weeklyMissions.map((mission) => (
+                    <MissionCard
+                      key={mission.id}
+                      mission={mission}
+                      isCompleted={completedMissionsMap.has(mission.id)}
+                      completedAt={
+                        completedMissionsMap.get(mission.id)?.completed_at
+                      }
+                      userRank={profile.rank}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* No Missions Available */}
             {profile.available_missions.length === 0 && (
@@ -315,63 +366,117 @@ const MissionDashboard: React.FC = () => {
 
         {activeTab === 'blog' && (
           <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center mb-8"
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
               <h2 className="text-3xl font-bold text-whiskyPapa-yellow mb-4">SKY NOTES</h2>
               <p className="text-gray-300 text-lg">
-                Whisky Papaチームからの最新情報と、パイロット・ナレーター・スタッフによるブログ
+                Whisky Papa のコクピット思考を共有する会員向けブログ。沿革・競技の舞台裏・機体思想をここに集約。
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {samplePosts.map((post, index) => (
-                <motion.article
-                  key={post.id}
-                  className="bg-whiskyPapa-black-light border border-whiskyPapa-yellow/30 rounded-lg overflow-hidden hover:border-whiskyPapa-yellow/60 transition-colors"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+            {/* 詳細ビュー */}
+            {selectedPost && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+                <button
+                  onClick={() => setSelectedPostId(null)}
+                  className="inline-flex items-center text-gray-300 hover:text-white text-sm"
                 >
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 rounded-full bg-whiskyPapa-yellow/20 flex items-center justify-center">
-                        <BookOpen className="w-4 h-4 text-whiskyPapa-yellow" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-400">
-                          {post.author === 'narrator' ? 'Briefing Officer' : post.author === 'pilot' ? 'Master Instructor' : 'Staff'}
-                        </p>
-                        <p className="text-sm font-semibold text-whiskyPapa-yellow">
-                          {post.author === 'narrator' ? 'Jun' : post.author === 'pilot' ? 'Masa' : 'Staff'}
-                        </p>
-                      </div>
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  記事一覧に戻る
+                </button>
+
+                <div className="bg-whiskyPapa-black-light border border-whiskyPapa-yellow/30 rounded-lg p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-whiskyPapa-yellow/20 flex items-center justify-center">
+                      <BookOpen className="w-5 h-5 text-whiskyPapa-yellow" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-3 line-clamp-2">{post.title}</h3>
-                    {post.excerpt && (
-                      <p className="text-gray-400 text-sm mb-4 line-clamp-3">{post.excerpt}</p>
-                    )}
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <Calendar className="w-4 h-4" />
-                      <time dateTime={post.published_at}>
-                        {new Date(post.published_at).toLocaleDateString('ja-JP', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
-                      </time>
+                    <div>
+                      <p className="text-xs text-gray-400">
+                        {selectedPost.author === 'narrator'
+                          ? 'Briefing Officer'
+                          : selectedPost.author === 'pilot'
+                            ? 'Master Instructor'
+                            : 'Staff'}
+                      </p>
+                      <p className="text-sm font-semibold text-whiskyPapa-yellow">
+                        {selectedPost.author === 'narrator'
+                          ? 'Jun'
+                          : selectedPost.author === 'pilot'
+                            ? 'Masa'
+                            : 'Team'}
+                      </p>
                     </div>
                   </div>
-                </motion.article>
-              ))}
-            </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">{selectedPost.title}</h3>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 mb-6">
+                    <Calendar className="w-4 h-4" />
+                    <time dateTime={selectedPost.publishedAt}>
+                      {new Date(selectedPost.publishedAt).toLocaleDateString('ja-JP', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </time>
+                  </div>
 
-            {samplePosts.length === 0 && (
-              <div className="text-center py-20">
-                <p className="text-gray-400 text-lg">まだ記事がありません。</p>
-              </div>
+                  <MDXLoader contentId={selectedPost.contentId} />
+                </div>
+              </motion.div>
+            )}
+
+            {/* 一覧ビュー */}
+            {!selectedPost && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {missionBlogPosts.map((post, index) => (
+                    <motion.article
+                      key={post.id}
+                      className="bg-whiskyPapa-black-light border border-whiskyPapa-yellow/30 rounded-lg overflow-hidden hover:border-whiskyPapa-yellow/60 transition-colors cursor-pointer"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      onClick={() => setSelectedPostId(post.id)}
+                    >
+                      <div className="p-6">
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="w-8 h-8 rounded-full bg-whiskyPapa-yellow/20 flex items-center justify-center">
+                            <BookOpen className="w-4 h-4 text-whiskyPapa-yellow" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-400">
+                              {post.author === 'narrator'
+                                ? 'Briefing Officer'
+                                : post.author === 'pilot'
+                                  ? 'Master Instructor'
+                                  : 'Staff'}
+                            </p>
+                            <p className="text-sm font-semibold text-whiskyPapa-yellow">
+                              {post.author === 'narrator' ? 'Jun' : post.author === 'pilot' ? 'Masa' : 'Team'}
+                            </p>
+                          </div>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3 line-clamp-2">{post.title}</h3>
+                        {post.excerpt && <p className="text-gray-400 text-sm mb-4 line-clamp-3">{post.excerpt}</p>}
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <Calendar className="w-4 h-4" />
+                          <time dateTime={post.publishedAt}>
+                            {new Date(post.publishedAt).toLocaleDateString('ja-JP', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </time>
+                        </div>
+                      </div>
+                    </motion.article>
+                  ))}
+                </div>
+
+                {missionBlogPosts.length === 0 && (
+                  <div className="text-center py-20">
+                    <p className="text-gray-400 text-lg">まだ記事がありません。</p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
@@ -489,7 +594,7 @@ const MissionDashboard: React.FC = () => {
           </div>
         )}
 
-        {activeTab === 'planning' && (
+        {activeTab === 'tools' && (
           <div className="space-y-8">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -497,19 +602,20 @@ const MissionDashboard: React.FC = () => {
               className="text-center mb-8"
             >
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-whiskyPapa-yellow">
-                FLIGHT PLANNING
+                FLIGHT ACADEMY TOOLS
               </h2>
               <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
-                実践的なフライトプラン作成ツール
+                学習と実践のためのツール集
               </p>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="max-w-4xl mx-auto"
+              className="max-w-6xl mx-auto"
             >
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {/* Flight Planner */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -517,7 +623,7 @@ const MissionDashboard: React.FC = () => {
                   className="p-6 border border-whiskyPapa-yellow/30 rounded-lg bg-whiskyPapa-black-light hover:border-whiskyPapa-yellow/60 transition-colors"
                 >
                   <Plane className="w-12 h-12 text-whiskyPapa-yellow mb-4" />
-                  <h3 className="text-2xl font-bold text-white mb-3">フライトプランナー</h3>
+                  <h3 className="text-2xl font-bold text-white mb-3">Flight Planner</h3>
                   <p className="text-gray-300 mb-4">
                     出発地・目的地・経由地を設定し、高度・速度・気象条件を考慮した詳細なフライトプランを作成できます。
                   </p>
@@ -529,38 +635,69 @@ const MissionDashboard: React.FC = () => {
                   </button>
                 </motion.div>
 
+                {/* Articles */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
                   className="p-6 border border-whiskyPapa-yellow/30 rounded-lg bg-whiskyPapa-black-light hover:border-whiskyPapa-yellow/60 transition-colors"
                 >
+                  <BookOpen className="w-12 h-12 text-whiskyPapa-yellow mb-4" />
+                  <h3 className="text-2xl font-bold text-white mb-3">Articles</h3>
+                  <p className="text-gray-300 mb-4">
+                    航空に関する記事を読んで知識を深め、いいねやコメントでコミュニティと交流できます。
+                  </p>
+                  <button
+                    onClick={() => navigate('/articles')}
+                    className="w-full px-4 py-2 bg-whiskyPapa-yellow text-whiskyPapa-black font-bold rounded-lg hover:bg-whiskyPapa-yellow/80 transition-colors"
+                  >
+                    記事を読む
+                  </button>
+                </motion.div>
+
+                {/* CPL Quiz */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="p-6 border border-whiskyPapa-yellow/30 rounded-lg bg-whiskyPapa-black-light hover:border-whiskyPapa-yellow/60 transition-colors"
+                >
                   <Target className="w-12 h-12 text-whiskyPapa-yellow mb-4" />
-                  <h3 className="text-2xl font-bold text-white mb-3">主な機能</h3>
-                  <ul className="text-gray-300 space-y-2 mb-4">
-                    <li>• ルート計算と距離測定</li>
-                    <li>• 飛行時間（ETE）と到着時刻（ETA）の計算</li>
-                    <li>• 対気速度（TAS）とマッハ数の計算</li>
-                    <li>• 気象情報の表示</li>
-                    <li>• 地図上での視覚的な確認</li>
-                  </ul>
+                  <h3 className="text-2xl font-bold text-white mb-3">CPL Quiz</h3>
+                  <p className="text-gray-300 mb-4">
+                    CPL（商業操縦士）試験対策の4択クイズ。科目別・モード別で学習し、理解度を確認できます。
+                  </p>
+                  <button
+                    onClick={() => navigate('/test')}
+                    className="w-full px-4 py-2 bg-whiskyPapa-yellow text-whiskyPapa-black font-bold rounded-lg hover:bg-whiskyPapa-yellow/80 transition-colors"
+                  >
+                    クイズに挑戦
+                  </button>
                 </motion.div>
               </div>
 
+              {/* Academy Tool */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/30 rounded-lg p-6"
+                transition={{ delay: 0.4 }}
+                className="p-6 border border-whiskyPapa-yellow/30 rounded-lg bg-whiskyPapa-black-light hover:border-whiskyPapa-yellow/60 transition-colors mb-8"
               >
-                <h3 className="text-xl font-bold text-whiskyPapa-yellow mb-4">使い方</h3>
-                <ol className="text-gray-300 space-y-3 list-decimal list-inside">
-                  <li>「プランナーを開く」ボタンをクリックしてフライトプランナーページに移動</li>
-                  <li>出発地と目的地を選択（空港コードまたは地名で検索可能）</li>
-                  <li>必要に応じて経由地を追加</li>
-                  <li>飛行高度と速度を設定</li>
-                  <li>気象条件を確認し、プランを保存</li>
-                </ol>
+                <div className="flex items-start gap-4">
+                  <BookOpen className="w-12 h-12 text-whiskyPapa-yellow flex-shrink-0" />
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold text-white mb-3">Academy</h3>
+                    <p className="text-gray-300 mb-4">
+                      体系的に学習コンテンツを学び、進捗を管理できます。カテゴリ別・検索・タグで効率的に学習を進めましょう。
+                    </p>
+                    <button
+                      onClick={() => navigate('/learning')}
+                      className="px-6 py-2 bg-whiskyPapa-yellow text-whiskyPapa-black font-bold rounded-lg hover:bg-whiskyPapa-yellow/80 transition-colors"
+                    >
+                      学習を開始
+                    </button>
+                  </div>
+                </div>
               </motion.div>
             </motion.div>
           </div>

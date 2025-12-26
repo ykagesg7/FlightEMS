@@ -5,7 +5,6 @@
 import { Chart as ChartJS, Filler, Legend, LinearScale, LineElement, PointElement, RadialLinearScale, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Radar } from 'react-chartjs-2';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import { buildSubjectRadarData } from '../../utils/chartData';
 import type { SubjectRadarData } from '../../utils/chartData';
@@ -24,7 +23,6 @@ ChartJS.register(
 
 export const SubjectRadarChart: React.FC = () => {
   const { user } = useAuthStore();
-  const { effectiveTheme } = useTheme();
   const [chartData, setChartData] = useState<SubjectRadarData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,18 +50,10 @@ export const SubjectRadarChart: React.FC = () => {
     loadChartData();
   }, [user]);
 
-  const borderColor = effectiveTheme === 'dark'
-    ? 'border-red-500/60'
-    : 'border-green-500/50';
-  const bgColor = effectiveTheme === 'dark'
-    ? 'bg-red-900/10'
-    : 'bg-green-900/10';
-  const chartColor = effectiveTheme === 'dark'
-    ? 'rgba(239, 68, 68, 0.6)' // red-500
-    : 'rgba(57, 255, 20, 0.6)'; // green-500 (#39FF14)
-  const chartBorderColor = effectiveTheme === 'dark'
-    ? 'rgb(239, 68, 68)'
-    : 'rgb(57, 255, 20)';
+  const borderColor = 'border-green-500/50';
+  const bgColor = 'bg-green-900/10';
+  const chartColor = 'rgba(57, 255, 20, 0.6)'; // HUD green (#39FF14)
+  const chartBorderColor = 'rgb(57, 255, 20)';
 
   if (loading) {
     return (
@@ -108,14 +98,14 @@ export const SubjectRadarChart: React.FC = () => {
         max: 100,
         ticks: {
           stepSize: 20,
-          color: effectiveTheme === 'dark' ? 'rgba(239, 68, 68, 0.8)' : 'rgba(57, 255, 20, 0.8)',
+          color: 'rgba(57, 255, 20, 0.8)',
           backdropColor: 'transparent',
         },
         grid: {
-          color: effectiveTheme === 'dark' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(57, 255, 20, 0.2)',
+          color: 'rgba(57, 255, 20, 0.2)',
         },
         pointLabels: {
-          color: effectiveTheme === 'dark' ? 'rgba(239, 68, 68, 0.9)' : 'rgba(57, 255, 20, 0.9)',
+          color: 'rgba(57, 255, 20, 0.9)',
           font: {
             size: 12,
             weight: 'bold' as const,

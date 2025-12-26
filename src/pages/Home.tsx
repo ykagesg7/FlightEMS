@@ -1,415 +1,275 @@
+import { motion } from 'framer-motion';
+import { BookOpen, ChevronRight, Lock, PlayCircle, Target, Trophy, Users } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Button, Typography, Card, CardHeader, CardTitle, CardContent } from '../components/ui';
+import { Button, Card, CardContent, Typography } from '../components/ui';
 import { useAuthStore } from '../stores/authStore';
-import { BookOpen, Plane, Target, TrendingUp, Award, Users, Shield } from 'lucide-react';
 
-/**
- * Home Page (Landing Page)
- * Whisky Papa公式サイトのトップページ
- * Heroセクション + ミッション提示
- */
 const Home: React.FC = () => {
   const { user } = useAuthStore();
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
   return (
     <div className="relative min-h-screen bg-whiskyPapa-black text-white overflow-hidden">
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center">
-        {/* Background Video Placeholder */}
-        <div className="absolute inset-0 bg-gradient-to-b from-whiskyPapa-black to-whiskyPapa-black-dark">
-          {/* 将来的に動画背景を配置 */}
-          <div className="absolute inset-0 opacity-20">
-            <div className="w-full h-full bg-[url('/images/ContentImages/topgun1.jpg')] bg-cover bg-center" />
-          </div>
+      {/* Hero Section: Immersion */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        {/* Dynamic Background (Placeholder for Video) */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-t from-whiskyPapa-black via-whiskyPapa-black/50 to-transparent z-10" />
+          <div className="absolute inset-0 bg-[url('/images/ContentImages/topgun1.jpg')] bg-cover bg-center opacity-40 scale-105 animate-pulse-slow" />
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 container mx-auto px-4 py-20 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Typography variant="display" color="brand" className="mb-6 !text-5xl md:!text-7xl">
+        <div className="relative z-20 container mx-auto px-4 text-center">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }}>
+            <h2 className="text-whiskyPapa-yellow tracking-[0.2em] text-sm md:text-base font-bold mb-4 uppercase">
+              Competition Aerobatic Team
+            </h2>
+            <Typography variant="display" className="mb-2 !text-6xl md:!text-8xl font-black italic tracking-tighter">
+              Sync with
+            </Typography>
+            <Typography variant="display" color="brand" className="mb-8 !text-6xl md:!text-8xl font-black italic tracking-tighter">
               WHISKY PAPA
             </Typography>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-8 max-w-3xl mx-auto"
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-medium leading-relaxed"
           >
-            <Typography variant="h3" className="text-gray-300 mb-4">
-              ウイスキーパパ競技曲技飛行チーム
-            </Typography>
-            <Typography variant="body" className="text-gray-400 mb-4">
-              世界選手権日本代表チームが母体となり、日本人初で唯一、FAA（米連邦航空局）のエアショーライセンス最高位の無制限クラスを保有するパイロット、内海昌浩が率いる競技曲技飛行チームです。
-            </Typography>
-            <Typography variant="body" className="text-gray-400">
-              空飛ぶ楽しさを伝え空の仲間を増やしたいとの想いから、岡山県の岡南飛行場をベースに全国で飛行競技活動、展示飛行（エアショー）、安全講習、選手育成を行っています。
-            </Typography>
-          </motion.div>
+            空は厳しくも自由で美しい。
+            <br className="md:hidden" />
+
+            <br />
+            空の仲間になろう！
+          </motion.p>
+
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            transition={{ delay: 0.8 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
             {user ? (
               <Link to="/mission">
-                <Button variant="brand" size="lg">
-                  ミッションダッシュボードへ
+                <Button variant="brand" size="lg" className="px-8 py-6 text-lg min-w-[240px]">
+                  <Target className="mr-2 h-5 w-5" />
+                  MISSION START
                 </Button>
               </Link>
             ) : (
               <Link to="/auth">
-                <Button variant="brand" size="lg">
-                  ログインして始める
+                <Button variant="brand" size="lg" className="px-8 py-6 text-lg min-w-[240px] shadow-[0_0_20px_rgba(255,215,0,0.3)]">
+                  JOIN our Formation
+                  <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
             )}
-            <Link to="/about">
-              <Button variant="secondary" size="lg" className="border-2 border-brand-primary text-brand-primary hover:bg-brand-primary/10">
-                チームについて
+            <Link to="/gallery">
+              <Button variant="secondary" size="lg" className="px-8 py-6 text-lg min-w-[240px] border-white/20 hover:bg-white/10 text-white">
+                <PlayCircle className="mr-2 h-5 w-5" />
+                Watch GALLERY
               </Button>
             </Link>
           </motion.div>
         </div>
-
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        >
-          <div className="w-6 h-10 border-2 border-whiskyPapa-yellow/50 rounded-full flex items-start justify-center p-2">
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-1 h-3 bg-whiskyPapa-yellow rounded-full"
-            />
-          </div>
-        </motion.div>
       </section>
 
-      {/* Activities Section */}
-      <section className="py-20 bg-brand-secondary-light">
+      {/* Concept: The Narrative */}
+      <section className="py-24 bg-whiskyPapa-black relative">
         <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            className="grid md:grid-cols-2 gap-16 items-center"
           >
-            <Typography variant="h1" color="brand" className="mb-4">
-              活動の柱
-            </Typography>
-            <Typography variant="body" className="text-gray-300 max-w-2xl mx-auto">
-              年間約10か所のエアショーに参加し、訓練を含め年100回以上の曲技飛行を行い、年々曲技飛行のファンを増やし続けています。
-            </Typography>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-12">
-            {[
-              {
-                icon: Award,
-                title: '競技活動',
-                description: 'IAC（International Aerobatic Club）主催の競技会やFAI（国際航空連盟）主催の世界選手権に向けた曲技飛行の訓練と競技参加',
-              },
-              {
-                icon: Plane,
-                title: '展示飛行',
-                description: 'エアショーやイベントでの展示飛行（エアロバティック）。全国の空港で行われている航空祭、各種イベントにて実施',
-              },
-              {
-                icon: Shield,
-                title: '安全講習・育成',
-                description: '安全講習、選手育成プログラム。世界選手権に代表選手をコンスタントに日本から送り込むことを目指しています',
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-              >
-                <Card variant="brand" padding="md" className="border-brand-primary/30 hover:border-brand-primary/60 transition-colors h-full">
-                  <CardHeader>
-                    <div className="flex items-center gap-3 mb-2">
-                      <item.icon className="w-8 h-8 text-brand-primary" />
-                      <CardTitle>
-                        <Typography variant="h3" color="brand" as="span">
-                          {item.title}
-                        </Typography>
-                      </CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Typography variant="body" className="text-gray-300">
-                      {item.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Wingman Program Section */}
-      <section className="py-20 bg-brand-secondary">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <Typography variant="h1" color="brand" className="mb-4">
-              WINGMAN PROGRAM
-            </Typography>
-            <Typography variant="body" className="text-gray-300 max-w-2xl mx-auto">
-              観客から僚機（Wingman）へ。ログインすると、ブログ、フライトプランニング、CPLクイズを「ミッション」として進め、ランクアップしながらパイロットの知識とスキルを身につけることができます。
-            </Typography>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                title: 'SEE',
-                subtitle: 'Hero / Gallery',
-                description: '圧倒的な映像美で「空への憧れ」を作る',
-              },
-              {
-                title: 'KNOW',
-                subtitle: 'Mission / Planning',
-                description: 'フライトプランナーやクイズを「ミッション」として提供',
-              },
-              {
-                title: 'FLY',
-                subtitle: 'Experience',
-                description: 'ランクを上げたユーザーだけが限定アクセス権を得る',
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-              >
-                <Card variant="brand" padding="md" className="border-brand-primary/30 hover:border-brand-primary/60 transition-colors">
-                  <CardHeader>
-                    <CardTitle>
-                      <Typography variant="h3" color="brand" as="span">
-                        {item.title}
-                      </Typography>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Typography variant="caption" color="muted" className="mb-4">
-                      {item.subtitle}
-                    </Typography>
-                    <Typography variant="body" className="text-gray-300">
-                      {item.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Sponsors Section */}
-      <section className="py-20 bg-brand-secondary-light">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <Typography variant="h2" color="brand" className="mb-4">
-              支援企業・団体
-            </Typography>
-            <Typography variant="body" className="text-gray-300 max-w-2xl mx-auto mb-6">
-              私たちの活動は、多くの企業・団体の皆様にご支援いただいています。
-            </Typography>
-            <Link to="/links" className="text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 underline text-sm">
-              詳細はリンク集ページをご覧ください →
-            </Link>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {[
-              {
-                name: 'Guinand',
-                description: 'パイロットのために作る時計「飛ぶ為の時計」',
-              },
-              {
-                name: '株式会社ジャプコン',
-                description: 'ビジネス機の導入・受託運航・整備・空輸',
-              },
-              {
-                name: '岡山航空株式会社',
-                description: 'パイロットの操縦訓練、宣伝飛行、航空写真撮影',
-              },
-            ].map((sponsor, index) => (
-              <motion.div
-                key={sponsor.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <Card variant="brand" padding="md" className="border-brand-primary/30 hover:border-brand-primary/60 transition-colors h-full">
-                  <CardContent>
-                    <Typography variant="h4" color="brand" className="mb-2">
-                      {sponsor.name}
-                    </Typography>
-                    <Typography variant="body-sm" className="text-gray-300">
-                      {sponsor.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Login Hook Section - Only shown when not logged in */}
-      {!user && (
-        <section className="py-20 bg-brand-secondary">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-12"
-            >
-              <Typography variant="h2" color="brand" className="mb-4">
-                ログインで解放される機能
-              </Typography>
-              <Typography variant="body" className="text-gray-300 max-w-2xl mx-auto">
-                ログインすると、以下の機能が利用可能になります。レベルアップしながら、パイロットの知識とスキルを身につけましょう。
-              </Typography>
+            <motion.div variants={itemVariants}>
+              <div className="relative">
+                <div className="absolute -top-10 -left-10 text-[120px] font-black text-whiskyPapa-yellow/5 select-none z-0">
+                  WHY
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold mb-6 relative z-10">
+                  その熱狂には
+                  <br />
+                  <span className="text-whiskyPapa-yellow">
+                    理由－LOGIC－
+                    <br />
+                  </span>
+                  がある。
+                </h2>
+              </div>
+              <p className="text-gray-400 text-lg leading-relaxed mb-6">
+                アクロバット飛行は、単なるショーではありません。
+                <br />
+                気象、航空力学、生理学、そして緻密な計画。
+                <br />
+                膨大な理論と準備の先にある「必然の美しさ」です。
+              </p>
+              <p className="text-gray-400 text-lg leading-relaxed mb-8">
+                Whisky Papaは、その「裏側（コクピットの思考）」まで公開します。
+                <br />
+                見るだけのファンから、知性で飛ぶ「ウイングマン」へ。
+              </p>
+              <Link to="/about">
+                <span className="inline-flex items-center text-whiskyPapa-yellow hover:text-white transition-colors font-bold border-b border-whiskyPapa-yellow pb-1">
+                  READ our Philosophy <ChevronRight className="ml-1 w-4 h-4" />
+                </span>
+              </Link>
             </motion.div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto mb-12">
-              {[
-                {
-                  icon: BookOpen,
-                  title: 'ブログ',
-                  description: 'チームからの最新情報とパイロット・ナレーターによる記事',
-                },
-                {
-                  icon: Plane,
-                  title: 'フライトプランニング',
-                  description: '実践的なフライトプラン作成ツール',
-                },
-                {
-                  icon: Target,
-                  title: 'CPLクイズ',
-                  description: '航空知識をテスト形式で学習',
-                },
-                {
-                  icon: TrendingUp,
-                  title: 'ランクアップ',
-                  description: 'ミッション達成でランクを上げ、限定コンテンツへアクセス',
-                },
-              ].map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
+
+            <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
+              <div className="space-y-4 mt-8">
+                <div className="h-48 bg-gray-800 rounded-lg overflow-hidden border border-white/10">
+                  <img
+                    src="/images/ContentImages/topgun2.jpg"
+                    alt="Planning"
+                    className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity"
+                  />
+                </div>
+                <div className="h-64 bg-gray-800 rounded-lg overflow-hidden border border-white/10">
+                  <img
+                    src="/images/ContentImages/topgun1.jpg"
+                    alt="Cockpit"
+                    className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity"
+                  />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="h-64 bg-gray-800 rounded-lg overflow-hidden border border-white/10">
+                  <img
+                    src="/images/ContentImages/topgun1.jpg"
+                    alt="Aerobatics"
+                    className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity"
+                  />
+                </div>
+                <div className="h-48 bg-gray-800 rounded-lg overflow-hidden border border-white/10">
+                  <img
+                    src="/images/ContentImages/topgun2.jpg"
+                    alt="Team"
+                    className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Wingman Program (Roadmap) */}
+      <section className="py-24 bg-gradient-to-b from-whiskyPapa-black-light to-whiskyPapa-black border-t border-white/5">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <Typography variant="h4" color="brand" className="mb-2 uppercase tracking-widest">
+              Wingman Program
+            </Typography>
+            <h2 className="text-4xl md:text-5xl font-bold text-white">空へのキャリアパス</h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 relative">
+            {/* Connecting Line (Desktop) */}
+            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-gray-700 via-whiskyPapa-yellow to-gray-700 z-0" />
+
+            {[
+              {
+                step: '01',
+                role: 'Fan',
+                desc: 'まずは「観る」ことから。',
+                features: ['Galleryの閲覧・投稿', 'Shopの利用', 'Blogの閲覧'],
+                icon: Users,
+                active: true,
+              },
+              {
+                step: '02',
+                role: 'Trainee',
+                desc: 'パイロットの知識を学ぶ。',
+                features: ['学科試験への挑戦', 'Flight Plannerの利用', 'XP（経験値）の獲得'],
+                icon: BookOpen,
+                active: !!user,
+              },
+              {
+                step: '03',
+                role: 'Wingman',
+                desc: '空の仲間として認められる。',
+                features: ['体験搭乗権', '限定グッズ購入', 'Briefingへの参加'],
+                icon: Trophy,
+                active: false,
+              },
+            ].map((rank, i) => (
+              <motion.div
+                key={rank.role}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                className="relative z-10"
+              >
+                <Card
+                  variant="brand"
+                  padding="none"
+                  className="h-full border border-white/10 bg-whiskyPapa-black-light p-8 hover:border-whiskyPapa-yellow/50 transition-colors group"
                 >
-                  <Card variant="brand" padding="md" className="border-brand-primary/30 hover:border-brand-primary/60 transition-colors h-full">
-                    <CardHeader>
-                      <div className="flex items-center gap-3 mb-2">
-                        <feature.icon className="w-6 h-6 text-brand-primary" />
-                        <CardTitle>
-                          <Typography variant="h4" color="brand" as="span">
-                            {feature.title}
-                          </Typography>
-                        </CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <Typography variant="body-sm" className="text-gray-300">
-                        {feature.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-center"
-            >
-              <Link to="/auth">
-                <Button variant="brand" size="lg">
-                  今すぐログイン
-                </Button>
-              </Link>
-            </motion.div>
+                  <CardContent className="text-center">
+                    <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6 text-2xl font-bold bg-gray-800 text-gray-500 group-hover:bg-whiskyPapa-yellow group-hover:text-black transition-colors">
+                      <rank.icon className="w-8 h-8" />
+                    </div>
+                    <div className="text-sm font-mono text-gray-500 mb-2">STEP {rank.step}</div>
+                    <h3 className={`text-2xl font-bold mb-4 ${rank.active ? 'text-white' : 'text-gray-500'}`}>{rank.role}</h3>
+                    <p className="text-gray-400 mb-6 min-h-[3em]">{rank.desc}</p>
+                    <ul className="text-left space-y-3 bg-black/20 p-4 rounded-lg">
+                      {rank.features.map((f, j) => (
+                        <li key={j} className="flex items-center text-sm text-gray-300">
+                          {rank.role === 'Wingman' ? (
+                            <Lock className="w-3 h-3 mr-2 text-whiskyPapa-yellow" />
+                          ) : (
+                            <ChevronRight className="w-3 h-3 mr-2 text-whiskyPapa-yellow" />
+                          )}
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-      {/* CTA Section - Only shown when logged in */}
-      {user && (
-        <section className="py-20 bg-brand-secondary">
-          <div className="container mx-auto px-4 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="mb-6"
-            >
-              <Typography variant="h2" color="brand">
-                ミッションダッシュボードへ
-              </Typography>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mb-8 max-w-2xl mx-auto"
-            >
-              <Typography variant="body" className="text-gray-300">
-                ミッションをクリアしてランクを上げ、限定コンテンツへのアクセス権を獲得しましょう
-              </Typography>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <Link to="/mission">
-                <Button variant="brand" size="lg">
-                  ミッションダッシュボードへ
-                </Button>
-              </Link>
-            </motion.div>
-          </div>
-        </section>
-      )}
+      {/* CTA to Mission Blog */}
+      <section className="py-20 bg-whiskyPapa-black text-center border-t border-white/10">
+        <div className="container mx-auto px-4">
+          <Typography variant="h3" className="mb-4 text-whiskyPapa-yellow">
+            THE PILOT&apos;S NARRATIVE
+          </Typography>
+          <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+            沿革、競技の仕組み、機体説明は会員向けブログで公開中。
+            <br />
+            さあ、コクピットを覗きに行こう。
+          </p>
+          <Link to="/mission?tab=blog">
+            <Button variant="brand" size="lg" className="px-8 py-4 text-lg">
+              JOIN our Formation
+            </Button>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 };

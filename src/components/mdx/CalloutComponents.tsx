@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 
 type CalloutType = 'info' | 'warning' | 'error' | 'success' | 'tip' | 'note';
 
@@ -30,42 +29,22 @@ export const Callout: React.FC<CalloutProps> = ({
   children,
   className = ''
 }) => {
-  const { theme } = useTheme();
-
   const getCalloutStyles = () => {
     const baseStyles = 'border-l-4 p-4 my-6 rounded-r-lg';
 
     switch (type) {
       case 'warning':
-        return `${baseStyles} ${theme === 'dark'
-            ? 'bg-yellow-900 bg-opacity-20 border-yellow-400 text-yellow-100'
-            : 'bg-yellow-50 border-yellow-400 text-yellow-800'
-          }`;
+        return `${baseStyles} bg-yellow-900 bg-opacity-20 border-yellow-400 text-yellow-100`;
       case 'error':
-        return `${baseStyles} ${theme === 'dark'
-            ? 'bg-red-900 bg-opacity-20 border-red-400 text-red-100'
-            : 'bg-red-50 border-red-400 text-red-800'
-          }`;
+        return `${baseStyles} bg-red-900 bg-opacity-20 border-red-400 text-red-100`;
       case 'success':
-        return `${baseStyles} ${theme === 'dark'
-            ? 'bg-green-900 bg-opacity-20 border-green-400 text-green-100'
-            : 'bg-green-50 border-green-400 text-green-800'
-          }`;
+        return `${baseStyles} bg-green-900 bg-opacity-20 border-green-400 text-green-100`;
       case 'tip':
-        return `${baseStyles} ${theme === 'dark'
-            ? 'bg-purple-900 bg-opacity-20 border-purple-400 text-purple-100'
-            : 'bg-purple-50 border-purple-400 text-purple-800'
-          }`;
+        return `${baseStyles} bg-purple-900 bg-opacity-20 border-purple-400 text-purple-100`;
       case 'note':
-        return `${baseStyles} ${theme === 'dark'
-            ? 'bg-gray-800 bg-opacity-50 border-gray-400 text-gray-100'
-            : 'bg-gray-50 border-gray-400 text-gray-700'
-          }`;
+        return `${baseStyles} bg-gray-800 bg-opacity-50 border-gray-400 text-gray-100`;
       default: // info
-        return `${baseStyles} ${theme === 'dark'
-            ? 'bg-blue-900 bg-opacity-20 border-blue-400 text-blue-100'
-            : 'bg-blue-50 border-blue-400 text-blue-800'
-          }`;
+        return `${baseStyles} bg-blue-900 bg-opacity-20 border-blue-400 text-blue-100`;
     }
   };
 
@@ -151,21 +130,13 @@ export const Callout: React.FC<CalloutProps> = ({
  * 脚注コンポーネント
  */
 export const Footnote: React.FC<FootnoteProps> = ({ id, children }) => {
-  const { theme } = useTheme();
-
   return (
     <div
       id={`footnote-${id}`}
-      className={`
-        text-sm p-3 my-4 rounded border-l-2
-        ${theme === 'dark'
-          ? 'bg-gray-800 border-gray-600 text-gray-300'
-          : 'bg-gray-50 border-gray-300 text-gray-700'
-        }
-      `}
+      className="text-sm p-3 my-4 rounded border-l-2 bg-gray-800 border-gray-600 text-gray-300"
     >
       <div className="flex items-start">
-        <span className="font-mono text-xs bg-[color:var(--hud-primary)] text-white px-1.5 py-0.5 rounded mr-2 flex-shrink-0">
+        <span className="font-mono text-xs bg-whiskyPapa-yellow text-black px-1.5 py-0.5 rounded mr-2 flex-shrink-0">
           {id}
         </span>
         <div className="flex-1">
@@ -203,7 +174,7 @@ export const FootnoteRef: React.FC<FootnoteRefProps> = ({ id, children }) => {
       <a
         href={`#footnote-${id}`}
         onClick={handleClick}
-        className="inline-block px-1 py-0.5 text-xs font-mono bg-[color:var(--hud-primary)] text-white rounded hover:opacity-80 transition-opacity duration-200 no-underline"
+        className="inline-block px-1 py-0.5 text-xs font-mono bg-whiskyPapa-yellow text-black rounded hover:opacity-80 transition-opacity duration-200 no-underline"
         title={`脚注 ${id} を見る`}
       >
         {children || id}

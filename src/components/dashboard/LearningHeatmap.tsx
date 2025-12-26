@@ -4,7 +4,6 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import type { DailyStudyStat } from '../../utils/heatmapData';
 import { buildDailyStudyStats } from '../../utils/heatmapData';
@@ -12,7 +11,6 @@ import { Card, CardContent, Typography } from '../ui';
 
 export const LearningHeatmap: React.FC = () => {
   const { user } = useAuthStore();
-  const { effectiveTheme } = useTheme();
   const [stats, setStats] = useState<DailyStudyStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,28 +39,17 @@ export const LearningHeatmap: React.FC = () => {
     loadStats();
   }, [user]);
 
-  const borderColor = effectiveTheme === 'dark'
-    ? 'border-red-500/60'
-    : 'border-green-500/50';
-  const bgColor = effectiveTheme === 'dark'
-    ? 'bg-red-900/10'
-    : 'bg-green-900/10';
+  const borderColor = 'border-green-500/50';
+  const bgColor = 'bg-green-900/10';
 
-  // 強度に応じた色を取得
+  // 強度に応じた色を取得（HUDグリーン固定）
   const getIntensityColor = (intensity: DailyStudyStat['intensity']) => {
-    const colors = effectiveTheme === 'dark'
-      ? [
-        'rgba(239, 68, 68, 0.1)',   // 0: なし
-        'rgba(239, 68, 68, 0.3)',   // 1: 軽い
-        'rgba(239, 68, 68, 0.6)',   // 2: 中
-        'rgba(239, 68, 68, 0.9)',   // 3: 高
-      ]
-      : [
-        'rgba(57, 255, 20, 0.1)',   // 0: なし (#39FF14)
-        'rgba(57, 255, 20, 0.3)',   // 1: 軽い
-        'rgba(57, 255, 20, 0.6)',   // 2: 中
-        'rgba(57, 255, 20, 0.9)',   // 3: 高
-      ];
+    const colors = [
+      'rgba(57, 255, 20, 0.1)',   // 0: なし (#39FF14)
+      'rgba(57, 255, 20, 0.3)',   // 1: 軽い
+      'rgba(57, 255, 20, 0.6)',   // 2: 中
+      'rgba(57, 255, 20, 0.9)',   // 3: 高
+    ];
     return colors[intensity];
   };
 
@@ -150,7 +137,7 @@ export const LearningHeatmap: React.FC = () => {
                     height="12"
                     rx="2"
                     fill={getIntensityColor(day.intensity)}
-                    stroke={hoveredDate === day.date ? (effectiveTheme === 'dark' ? '#ef4444' : '#39FF14') : 'transparent'}
+                    stroke={hoveredDate === day.date ? '#39FF14' : 'transparent'}
                     strokeWidth="2"
                     onMouseEnter={() => setHoveredDate(day.date)}
                     onMouseLeave={() => setHoveredDate(null)}

@@ -1,9 +1,9 @@
+import { AnimatePresence, motion } from 'framer-motion';
+import { LogOut, UserCircle } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
 import { Button } from '../ui';
-import { LogOut, Settings, UserCircle } from 'lucide-react';
 
 /**
  * UserMenu Component
@@ -121,15 +121,7 @@ export const UserMenu: React.FC = () => {
                 className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:bg-whiskyPapa-yellow/10 transition-colors"
               >
                 <UserCircle className="w-4 h-4" />
-                プロフィール
-              </Link>
-              <Link
-                to="/account"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:bg-whiskyPapa-yellow/10 transition-colors"
-              >
-                <Settings className="w-4 h-4" />
-                アカウント設定
+                プロフィール設定
               </Link>
               <button
                 onClick={handleSignOut}

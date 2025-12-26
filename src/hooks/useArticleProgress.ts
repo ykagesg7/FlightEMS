@@ -3,6 +3,7 @@ import { ArticleMeta } from '../types/articles';
 import { buildArticleIndex } from '../utils/articlesIndex';
 import { supabase } from '../utils/supabase';
 import { useAuth } from './useAuth';
+import { useGamification } from './useGamification';
 
 // 記事の進捗情報
 export interface ArticleProgress {

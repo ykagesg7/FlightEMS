@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import type { ArticleIndexEntry } from '../../types/articles';
 import { getRelatedArticles } from '../../utils/articlesIndex';
 
@@ -15,7 +14,6 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
   limit = 3,
   showSeries = true
 }) => {
-  const { effectiveTheme } = useTheme();
   const [relatedArticles, setRelatedArticles] = useState<ArticleIndexEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -38,13 +36,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
 
   if (isLoading) {
     return (
-      <div className={`
-        p-6 rounded-lg border transition-colors duration-200
-        ${effectiveTheme === 'dark'
-          ? 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-20'
-          : 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-25'
-        }
-      `}>
+      <div className="p-6 rounded-lg border border-whiskyPapa-yellow/20 bg-whiskyPapa-black-dark transition-colors duration-200">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-300 rounded mb-4 w-32"></div>
           <div className="space-y-4">
@@ -79,24 +71,12 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
   };
 
   return (
-    <section className={`
-      p-6 rounded-lg border transition-colors duration-200
-      ${effectiveTheme === 'dark'
-        ? 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-20'
-        : 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-25'
-      }
-    `}>
+    <section className="p-6 rounded-lg border border-whiskyPapa-yellow/20 bg-whiskyPapa-black-dark transition-colors duration-200">
       <div className="flex items-center gap-2 mb-6">
-        <svg className="w-5 h-5 text-[color:var(--hud-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 text-whiskyPapa-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
         </svg>
-        <h3 className={`
-          text-lg font-semibold transition-colors duration-200
-          ${effectiveTheme === 'dark'
-            ? 'text-[color:var(--hud-primary)]'
-            : 'text-[color:var(--hud-primary)]'
-          }
-        `}>
+        <h3 className="text-lg font-semibold text-whiskyPapa-yellow transition-colors duration-200">
           関連記事
         </h3>
       </div>
@@ -105,32 +85,26 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
         {relatedArticles.map((article) => (
           <article
             key={article.meta.slug}
-            className={`
-              p-4 rounded-lg border transition-all duration-200 hover:shadow-md
-              ${effectiveTheme === 'dark'
-                ? 'bg-[color:var(--main)] border-[color:var(--hud-primary)] border-opacity-30 hover:bg-[color:var(--panel)] hover:border-[color:var(--hud-primary)] hover:border-opacity-50'
-                : 'bg-[color:var(--main)] border-[color:var(--hud-primary)] border-opacity-20 hover:bg-[color:var(--panel)] hover:border-[color:var(--hud-primary)] hover:border-opacity-40'
-              }
-            `}
+            className="p-4 rounded-lg border border-whiskyPapa-yellow/30 bg-whiskyPapa-black-light hover:bg-whiskyPapa-black-dark hover:border-whiskyPapa-yellow/50 transition-all duration-200 hover:shadow-md"
           >
             <Link
               to={`/articles/${article.filename}`}
               className="block space-y-2 no-underline"
             >
               {/* タイトル */}
-              <h4 className="font-medium text-[color:var(--text-primary)] hover:text-[color:var(--hud-primary)] transition-colors duration-200 line-clamp-2">
+              <h4 className="font-medium text-white hover:text-whiskyPapa-yellow transition-colors duration-200 line-clamp-2">
                 {article.meta.title}
               </h4>
 
               {/* 要約 */}
               {article.meta.excerpt && (
-                <p className="text-sm text-[color:var(--text-primary)] opacity-80 line-clamp-2">
+                <p className="text-sm text-white opacity-80 line-clamp-2">
                   {article.meta.excerpt}
                 </p>
               )}
 
               {/* メタ情報 */}
-              <div className="flex items-center gap-4 text-xs text-[color:var(--text-primary)] opacity-60">
+              <div className="flex items-center gap-4 text-xs text-white opacity-60">
                 {/* 公開日 */}
                 {article.meta.publishedAt && (
                   <span className="flex items-center gap-1">
@@ -168,19 +142,13 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
                   {article.meta.tags.slice(0, 3).map((tag, index) => (
                     <span
                       key={index}
-                      className={`
-                        px-2 py-0.5 text-xs rounded-full border
-                        ${effectiveTheme === 'dark'
-                          ? 'bg-indigo-900 bg-opacity-30 border-indigo-700 text-indigo-300'
-                          : 'bg-indigo-100 border-indigo-300 text-indigo-700'
-                        }
-                      `}
+                      className="px-2 py-0.5 text-xs rounded-full border bg-indigo-900 bg-opacity-30 border-indigo-700 text-indigo-300"
                     >
                       {tag}
                     </span>
                   ))}
                   {article.meta.tags.length > 3 && (
-                    <span className="text-xs text-[color:var(--text-primary)] opacity-50">
+                    <span className="text-xs text-white opacity-50">
                       +{article.meta.tags.length - 3}
                     </span>
                   )}

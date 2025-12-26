@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useFreemiumAccess } from '../../hooks/useFreemiumAccess';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
 // import { useAuthStore } from '../../stores/authStore';
@@ -63,7 +62,6 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
 
   const [selectedContent, setSelectedContent] = useState<string | null>(contentId && contentId.trim() !== '' ? contentId : null);
 
-  const { theme } = useTheme();
   // Legacy dashboard removed; user is no longer needed here
   // const { user } = useAuthStore();
 
@@ -221,19 +219,19 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
           <div className="flex items-center space-x-2 mb-6">
             <button
               onClick={handleHomeClick}
-              className={`text-sm ${theme === 'dark' ? 'text-indigo-300 hover:text-indigo-200' : 'text-indigo-600 hover:text-indigo-500'} transition-colors duration-200`}
+              className="text-sm text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 transition-colors duration-200"
             >
               {contentType === 'articles' ? '記事一覧' : 'ホーム'}
             </button>
-            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            <span className="text-sm text-gray-400">
               &gt;
             </span>
-            <span className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>
+            <span className="text-sm font-semibold text-white">
               {selectedCategory}
             </span>
           </div>
 
-          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'} mb-6`}>
+          <h1 className="text-3xl font-bold text-whiskyPapa-yellow mb-6">
             {selectedCategory} の学習コンテンツ
           </h1>
 
@@ -246,12 +244,11 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
               return (
                 <div
                   key={content.id}
-                  className={`p-6 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'
-                    } hover:border-indigo-500 transition-all duration-200 ${hasAccess ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
+                  className={`p-6 rounded-lg border bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 hover:border-whiskyPapa-yellow/40 transition-all duration-200 ${hasAccess ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
                   onClick={() => hasAccess && selectContent(content.id)}
                 >
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className={`font-bold text-lg ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'} leading-tight`}>
+                    <h3 className="font-bold text-lg text-whiskyPapa-yellow leading-tight">
                       {content.title}
                     </h3>
                     {!hasAccess && (
@@ -261,28 +258,25 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
                     )}
                   </div>
 
-                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
+                  <p className="text-sm text-gray-300 mb-4">
                     {content.description || '詳細な学習内容をご確認いただけます。'}
                   </p>
 
                   {hasAccess && (
                     <div className="flex justify-between items-center">
                       <div className="flex items-center space-x-2">
-                        <div className="w-full bg-gray-300 rounded-full h-2 min-w-[60px]">
+                        <div className="w-full bg-gray-700 rounded-full h-2 min-w-[60px]">
                           <div
-                            className="bg-indigo-600 h-2 rounded-full"
+                            className="bg-whiskyPapa-yellow h-2 rounded-full"
                             style={{ width: `${progressPercentage}%` }}
                           ></div>
                         </div>
-                        <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <span className="text-xs text-gray-300">
                           {Math.round(progressPercentage)}%
                         </span>
                       </div>
                       <button
-                        className={`ml-4 text-xs px-3 py-2 ${theme === 'dark'
-                          ? 'bg-indigo-600 text-white hover:bg-indigo-500'
-                          : 'bg-indigo-500 text-white hover:bg-indigo-400'
-                          } rounded transition-colors duration-200`}
+                        className="ml-4 text-xs px-3 py-2 bg-whiskyPapa-yellow text-black hover:bg-whiskyPapa-yellow/90 rounded transition-colors duration-200"
                       >
                         {progressPercentage > 0 ? '続きを読む' : '読む'}
                       </button>
@@ -294,14 +288,11 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
           </div>
 
           {filteredContents.length === 0 && (
-            <div className={`text-center py-12 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            <div className="text-center py-12 text-gray-300">
               <p className="text-lg">このカテゴリにはまだコンテンツがありません。</p>
               <button
                 onClick={handleHomeClick}
-                className={`mt-4 px-6 py-2 ${theme === 'dark'
-                  ? 'bg-indigo-600 text-white hover:bg-indigo-500'
-                  : 'bg-indigo-500 text-white hover:bg-indigo-400'
-                  } rounded transition-colors duration-200`}
+                className="mt-4 px-6 py-2 bg-whiskyPapa-yellow text-black hover:bg-whiskyPapa-yellow/90 rounded transition-colors duration-200"
               >
                 {contentType === 'articles' ? '記事一覧に戻る' : 'ホームに戻る'}
               </button>
@@ -317,27 +308,27 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
           <div className="flex items-center space-x-2 mb-6">
             <button
               onClick={handleHomeClick}
-              className={`text-sm ${theme === 'dark' ? 'text-indigo-300 hover:text-indigo-200' : 'text-indigo-600 hover:text-indigo-500'} transition-colors duration-200`}
+              className="text-sm text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 transition-colors duration-200"
             >
               {contentType === 'articles' ? '記事一覧' : 'ホーム'}
             </button>
             {selectedCategory && (
               <>
-                <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                <span className="text-sm text-gray-400">
                   &gt;
                 </span>
                 <button
                   onClick={() => navigateToCategory(selectedCategory)}
-                  className={`text-sm ${theme === 'dark' ? 'text-indigo-300 hover:text-indigo-200' : 'text-indigo-600 hover:text-indigo-500'} transition-colors duration-200`}
+                  className="text-sm text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 transition-colors duration-200"
                 >
                   {selectedCategory}
                 </button>
               </>
             )}
-            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            <span className="text-sm text-gray-400">
               &gt;
             </span>
-            <span className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>
+            <span className="text-sm font-semibold text-white">
               記事
             </span>
           </div>

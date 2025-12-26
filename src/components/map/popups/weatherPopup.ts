@@ -1,6 +1,6 @@
-import type { FilteredWeatherData } from '../../../services/weather';
-import type { AviationWeatherData } from '../../../types/aviation';
-import { formatMETAR, formatTAF, translateFlightCategory } from '../../../services/aviationWeather';
+import type { FilteredWeatherData } from '@/services/weather';
+import type { AviationWeatherData } from '@/types/aviation';
+import { formatMETAR, formatTAF, translateFlightCategory } from '@/services/aviationWeather';
 import { escapeHtml, kvItem, sectionHeader } from './common';
 
 export const createWeatherPopupContent = (

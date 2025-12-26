@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { QuizComponent } from '../components/QuizComponent';
-import { useTheme } from '../contexts/ThemeContext';
+import { useGamification } from '../hooks/useGamification';
 import { QuestionType, QuizQuestion, UserQuizAnswer } from '../types/quiz';
 import supabase from '../utils/supabase';
-import { useGamification } from '../hooks/useGamification';
 
 const TestPage: React.FC = () => {
-  const { effectiveTheme: theme } = useTheme();
   const { completeMissionByAction } = useGamification();
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -305,6 +303,7 @@ const TestPage: React.FC = () => {
       }
       const user_id = userData.user.id;
       // セッション記録（DB側で列が存在しない環境も考慮し、失敗しても継続）
+      let sessionId: string | null = null;
       try {
         const sessionInsert = {
           user_id,
@@ -316,7 +315,19 @@ const TestPage: React.FC = () => {
           completed_at: new Date().toISOString(),
           is_completed: true,
         } as Record<string, unknown>;
-        await supabase.from('quiz_sessions').insert(sessionInsert);
+        const { data: sessionData, error: sessionError } = await supabase
+          .from('quiz_sessions')
+          .insert(sessionInsert)
+          .select()
+          .single();
+
+        if (sessionError) {
+          throw sessionError;
+        }
+
+        if (sessionData?.id) {
+          sessionId = sessionData.id;
+        }
       } catch (e) {
         // セッション保存に失敗しても致命的ではないためログのみ
         // eslint-disable-next-line no-console
@@ -335,6 +346,7 @@ const TestPage: React.FC = () => {
         const subject = (q as any)?.subject_category ?? (q as any)?.main_subject ?? null;
         return {
           user_id,
+          session_id: sessionId, // セッションIDを設定
           question_id: String(a.questionId),
           unified_question_id: isUuid(a.questionId) ? a.questionId : null,
           question_text: text,
@@ -381,7 +393,7 @@ const TestPage: React.FC = () => {
       {/* モード切替 */}
       <div className="mb-6 flex justify-center gap-2">
         <button
-          className={`px-4 py-2 rounded-lg border hud-border text-sm font-semibold transition ${mode === 'practice' ? 'bg-[color:var(--panel)]/60 text-[color:var(--hud-primary)]' : 'hover:bg-[color:var(--panel)]/40'}`}
+          className={`px-4 py-2 rounded-lg border border-whiskyPapa-yellow/20 text-sm font-semibold transition ${mode === 'practice' ? 'bg-whiskyPapa-yellow/20 text-whiskyPapa-yellow' : 'hover:bg-whiskyPapa-yellow/10'}`}
           onClick={() => setMode('practice')}
           aria-pressed={mode === 'practice'}
         >Practice</button>
@@ -391,7 +403,7 @@ const TestPage: React.FC = () => {
           aria-pressed={mode === 'exam'}
         >Exam</button>
         <button
-          className={`px-4 py-2 rounded-lg border hud-border text-sm font-semibold transition ${mode === 'review' ? 'bg-[color:var(--panel)]/60 text-[color:var(--hud-primary)]' : 'hover:bg-[color:var(--panel)]/40'}`}
+          className={`px-4 py-2 rounded-lg border border-whiskyPapa-yellow/20 text-sm font-semibold transition ${mode === 'review' ? 'bg-whiskyPapa-yellow/20 text-whiskyPapa-yellow' : 'hover:bg-whiskyPapa-yellow/10'}`}
           onClick={() => setMode('review')}
           aria-pressed={mode === 'review'}
         >Review</button>
@@ -402,31 +414,31 @@ const TestPage: React.FC = () => {
       <div className="mb-10 flex flex-col md:flex-row md:justify-center md:items-end gap-6 md:gap-10">
         {/* 科目 */}
         <div className="flex flex-col items-start md:items-center md:flex-row md:space-x-2 w-full md:w-auto">
-          <label className="text-lg font-bold hud-text mb-1 md:mb-0">科目選択：</label>
+          <label className="text-lg font-bold text-whiskyPapa-yellow mb-1 md:mb-0">科目選択：</label>
           <div className="relative w-full md:w-56">
             <select
-              className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
+              className="block w-full appearance-none p-3 pr-10 text-lg bg-whiskyPapa-black-dark border-2 border-whiskyPapa-yellow/20 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow text-white font-semibold hover:bg-whiskyPapa-yellow/10 cursor-pointer"
               value={selectedSubject}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSubject(e.target.value)}
               disabled={subjectLoading || mode === 'review' || !!contentId}
             >
               {subjects.map(subj => (
-                <option key={subj} value={subj} className="text-base py-2 bg-[color:var(--panel)] text-[color:var(--text-primary)]">
+                <option key={subj} value={subj} className="text-base py-2 bg-whiskyPapa-black-dark text-white">
                   {subj === 'all' ? 'すべての科目' : subj}
                 </option>
               ))}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-              <svg className="w-6 h-6 hud-text" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+              <svg className="w-6 h-6 text-whiskyPapa-yellow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
             </div>
           </div>
         </div>
         {/* サブ科目 */}
         <div className="flex flex-col items-start md:items-center md:flex-row md:space-x-2 w-full md:w-auto">
-          <label className="text-lg font-bold hud-text mb-1 md:mb-0">サブ科目選択：</label>
+          <label className="text-lg font-bold text-whiskyPapa-yellow mb-1 md:mb-0">サブ科目選択：</label>
           <div className="relative w-full md:w-56">
             <select
-              className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
+              className="block w-full appearance-none p-3 pr-10 text-lg bg-whiskyPapa-black-dark border-2 border-whiskyPapa-yellow/20 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow text-white font-semibold hover:bg-whiskyPapa-yellow/10 cursor-pointer"
               value={selectedSubSubject}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSubSubject(e.target.value)}
               disabled={selectedSubject === 'all' || subSubjectLoading || mode === 'review' || !!contentId}
@@ -451,19 +463,19 @@ const TestPage: React.FC = () => {
           <label className="text-lg font-bold hud-text mb-1 md:mb-0">問題数選択：</label>
           <div className="relative w-full md:w-40">
             <select
-              className="block w-full appearance-none p-3 pr-10 text-lg bg-[color:var(--panel)] border-2 hud-border rounded-xl shadow focus:outline-none focus-hud text-[color:var(--text-primary)] font-semibold hover:bg-white/5 cursor-pointer"
+              className="block w-full appearance-none p-3 pr-10 text-lg bg-whiskyPapa-black-dark border-2 border-whiskyPapa-yellow/20 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow text-white font-semibold hover:bg-whiskyPapa-yellow/10 cursor-pointer"
               value={questionCount}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setQuestionCount(Number(e.target.value))}
               disabled={questionCountOptions.length === 0}
             >
               {questionCountOptions.map(opt => (
-                <option key={opt} value={opt} className="text-base py-2 bg-[color:var(--panel)] text-[color:var(--text-primary)]">
+                <option key={opt} value={opt} className="text-base py-2 bg-whiskyPapa-black-dark text-white">
                   {opt}問
                 </option>
               ))}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-              <svg className="w-6 h-6 hud-text" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h8M12 8v8" /></svg>
+              <svg className="w-6 h-6 text-whiskyPapa-yellow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h8M12 8v8" /></svg>
             </div>
           </div>
         </div>
@@ -473,9 +485,9 @@ const TestPage: React.FC = () => {
       ) : error ? (
         <div className="p-8 text-center text-red-500">{error}</div>
       ) : quizFinished ? (
-        <div className="max-w-xl mx-auto p-8 hud-surface border hud-border rounded-2xl shadow-2xl text-center flex flex-col items-center justify-center min-h-[320px]">
-          <h2 className="text-3xl font-bold mb-6 hud-text drop-shadow">テスト結果</h2>
-          <p className="mb-4 text-lg text-[color:var(--text-primary)] font-semibold tracking-wide">
+        <div className="max-w-xl mx-auto p-8 bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-2xl shadow-2xl text-center flex flex-col items-center justify-center min-h-[320px]">
+          <h2 className="text-3xl font-bold mb-6 text-whiskyPapa-yellow drop-shadow">テスト結果</h2>
+          <p className="mb-4 text-lg text-white font-semibold tracking-wide">
             正解数: <span className="text-2xl text-green-600 dark:text-green-400 font-bold">{userAnswers.filter(a => a.isCorrect).length}</span>
             <span className="mx-2 text-gray-400">/</span>
             <span className="text-2xl text-gray-600 dark:text-gray-300 font-bold">{userAnswers.length}</span>
@@ -494,9 +506,9 @@ const TestPage: React.FC = () => {
               )}
             </div>
           )}
-          {saving && <p className="hud-text text-base mb-2 animate-pulse">結果を保存中...</p>}
+          {saving && <p className="text-whiskyPapa-yellow text-base mb-2 animate-pulse">結果を保存中...</p>}
           <button
-            className="mt-6 px-8 py-3 rounded-xl border hud-border text-[color:var(--hud-primary)] shadow-lg transition-all duration-200 ease-in-out hover:bg-[color:var(--panel)]/60 focus-visible:focus-hud"
+            className="mt-6 px-8 py-3 rounded-xl border border-whiskyPapa-yellow/20 text-whiskyPapa-yellow shadow-lg transition-all duration-200 ease-in-out hover:bg-whiskyPapa-yellow/10 focus-visible:focus:ring-2 focus-visible:focus:ring-whiskyPapa-yellow"
             onClick={() => {
               setQuizFinished(false);
               if (contentId) {
@@ -515,7 +527,6 @@ const TestPage: React.FC = () => {
           questions={questions}
           onSubmitQuiz={handleSubmitQuiz}
           onBackToContents={() => { }}
-          theme={theme}
           mode={mode}
           showImmediateFeedback={mode !== 'exam'}
           showQuestionPalette={true}

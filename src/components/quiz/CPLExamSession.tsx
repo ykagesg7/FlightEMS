@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import supabase from '../../utils/supabase';
 import { useGamification } from '../../hooks/useGamification';
@@ -38,7 +37,6 @@ interface UserAnswer {
 }
 
 const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, onBack }) => {
-  const { theme } = useTheme();
   const { user } = useAuthStore();
   const { completeMissionByAction } = useGamification();
 
@@ -253,7 +251,7 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
 
   if (error) {
     return (
-      <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
+      <div className="bg-gray-800 rounded-lg shadow-lg p-6">
         <div className="text-center">
           <div className="text-red-500 text-xl mb-4">{error}</div>
           <button
@@ -269,7 +267,7 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
 
   if (questions.length === 0) {
     return (
-      <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
+      <div className="bg-gray-800 rounded-lg shadow-lg p-6">
         <div className="text-center">
           <div className="text-gray-500 text-xl mb-4">選択した条件に合う問題が見つかりませんでした</div>
           <button
@@ -287,7 +285,7 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   return (
-    <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
+    <div className="bg-gray-800 rounded-lg shadow-lg p-6">
       {/* ヘッダー */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">

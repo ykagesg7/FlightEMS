@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import supabase from '../../utils/supabase';
 
 interface CPLSubject {
@@ -21,8 +20,6 @@ interface CPLExamSelectorProps {
 }
 
 const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
-  const { theme } = useTheme();
-  
   const [subjects, setSubjects] = useState<CPLSubject[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [questionCount, setQuestionCount] = useState<number>(20);
@@ -69,7 +66,7 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
   }, []);
 
   const handleSubjectToggle = (subjectKey: string) => {
-    setSelectedSubjects(prev => 
+    setSelectedSubjects(prev =>
       prev.includes(subjectKey)
         ? prev.filter(s => s !== subjectKey)
         : [...prev, subjectKey]
@@ -124,9 +121,7 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
   }, {} as { [key: string]: CPLSubject[] });
 
   return (
-    <div className={`${
-      theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-    } rounded-lg shadow-lg p-6`}>
+    <div className="bg-gray-800 rounded-lg shadow-lg p-6">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           CPL学科試験問題
@@ -174,7 +169,7 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
                 {subSubjects.map((subject) => {
                   const subjectKey = `${subject.main_subject}::${subject.sub_subject}`;
                   const isSelected = selectedSubjects.includes(subjectKey);
-                  
+
                   return (
                     <label
                       key={subjectKey}
@@ -208,7 +203,7 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
           試験設定
         </h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* 問題数 */}
           <div>
@@ -257,7 +252,7 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
               問題順序をランダムにする
             </span>
           </label>
-          
+
           <label className="flex items-center">
             <input
               type="checkbox"
@@ -290,4 +285,4 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
   );
 };
 
-export default CPLExamSelector; 
+export default CPLExamSelector;

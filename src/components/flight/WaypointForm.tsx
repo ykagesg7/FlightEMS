@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { FlightPlan } from '../../types/index';
 import { dmsToDecimal } from '../../utils/dms'; // ユーティリティ関数をインポート
 import { calculateOffsetPoint } from '../../utils/offset'; // Import from offset.ts
@@ -19,7 +18,6 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
   });
   const [errors, setErrors] = useState({ lat: '', lon: '' });
   const [dmsInput, setDmsInput] = useState<string>('');
-  const { theme, effectiveTheme } = useTheme();
 
   // バリデーション関数
   const validateDecimal = (value: string, max: number) => {
@@ -167,15 +165,7 @@ const WaypointForm: React.FC<WaypointFormProps> = ({ flightPlan, setFlightPlan }
   };
 
   return (
-    <div
-      className="shadow-sm rounded-lg p-6 mt-8"
-      style={{
-        background: effectiveTheme === 'dark' ? '#1a1a1a' : '#14213d',
-        color: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
-        border: '0.5px solid',
-        borderColor: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
-      }}
-    >
+    <div className="shadow-sm rounded-lg p-6 mt-8 bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 text-white">
       <legend className="text-lg font-semibold mb-4 text-gray-50">Add Waypoint</legend>
 
       {/* 座標入力モード切り替え */}

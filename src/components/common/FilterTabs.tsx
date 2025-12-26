@@ -27,7 +27,7 @@ const FilterTabs: React.FC<FilterTabsProps> = ({
   };
 
   return (
-    <div className={`border-b hud-border`}>
+    <div className="border-b border-whiskyPapa-yellow/20">
       <nav
         className="-mb-px flex space-x-8 overflow-x-auto"
         role="tablist"
@@ -47,8 +47,8 @@ const FilterTabs: React.FC<FilterTabsProps> = ({
               tabIndex={isActive ? 0 : -1}
               onClick={() => onCategoryChange(category)}
               className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${isActive
-                ? 'border-[color:var(--hud-primary)] text-[color:var(--hud-primary)] hud-glow'
-                : 'border-transparent text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)] hover:border-[color:var(--hud-dim)]'
+                ? 'border-whiskyPapa-yellow text-whiskyPapa-yellow'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-whiskyPapa-yellow/30'
                 }`}
             >
               {category}

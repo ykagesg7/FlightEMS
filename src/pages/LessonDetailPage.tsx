@@ -16,7 +16,7 @@ const LessonDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
+    <div className="min-h-screen bg-whiskyPapa-black text-white">
       <div className="container mx-auto px-4 py-6">
         <LearningTabMDX
           contentId={contentId}

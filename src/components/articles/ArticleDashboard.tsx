@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useArticleProgress } from '../../hooks/useArticleProgress';
 import { useArticleStats } from '../../hooks/useArticleStats';
 import { useSeriesUnlock } from '../../hooks/useSeriesUnlock';
@@ -22,7 +21,6 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   learningContents,
   isLoading
 }) => {
-  const { effectiveTheme } = useTheme();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -256,24 +254,16 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   // ローディング状態
   if (isLoading || progressLoading) {
     return (
-      <div
-        className="flex items-center justify-center min-h-screen"
-        style={{
-          background: effectiveTheme === 'day' ? '#0b1d3a' : 'var(--bg)',
-          color: 'var(--text-primary)'
-        }}
-      >
+      <div className="flex items-center justify-center min-h-screen bg-whiskyPapa-black text-white">
         <div className={`
           text-center p-8 rounded-xl border backdrop-blur-sm
-          ${effectiveTheme === 'dark'
-            ? 'hud-surface border-gray-700'
-            : 'hud-surface border-gray-300'
+          ${true
+            ? 'bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20'
+            : 'bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20'
           }
         `}>
-          <div className={`animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4 ${effectiveTheme === 'dark' ? 'border-red-500' : 'border-green-500'
-            }`}></div>
-          <p className={`text-lg font-medium ${effectiveTheme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-whiskyPapa-yellow mx-auto mb-4"></div>
+          <p className="text-lg font-medium text-white">
             学習データを読み込み中...
           </p>
         </div>
@@ -282,15 +272,9 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   }
 
   return (
-    <div
-      className="min-h-screen py-8 relative"
-      style={{
-        background: effectiveTheme === 'day' ? '#0b1d3a' : 'var(--bg)',
-        color: 'var(--text-primary)'
-      }}
-    >
+    <div className="min-h-screen py-8 relative bg-whiskyPapa-black text-white">
       {/* HUD枠線 */}
-      {effectiveTheme === 'day' && (
+      {false && (
         <>
           {/* 上部のHUDライン */}
           <div className="hud-line" />
@@ -364,8 +348,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
             {/* 記事一覧 */}
             <div className="space-y-6">
               {filteredContents.length > 0 ? (
-                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${effectiveTheme === 'day' ? 'hud-grid' : ''
-                  }`}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {filteredContents.map((article) => {
                     // 記事のメタデータを取得
                     const meta = Object.values(articleMetas).find(m =>
@@ -402,14 +385,13 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
               ) : (
                 <div className={`
                   text-center py-12 p-8 rounded-xl border backdrop-blur-sm
-                  ${effectiveTheme === 'dark'
-                    ? 'hud-surface border-gray-700 text-gray-400'
-                    : 'hud-surface border-gray-300 text-gray-600'
+                  ${true
+                    ? 'bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 text-gray-400'
+                    : 'bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 text-gray-400'
                   }
                 `}>
                   <div className="text-4xl mb-4">📚</div>
-                  <p className={`text-lg font-medium mb-2 ${effectiveTheme === 'dark' ? 'text-white' : 'text-gray-900'
-                    }`}>
+                  <p className="text-lg font-medium mb-2 text-white">
                     記事が見つかりませんでした
                   </p>
                   <p className="text-sm">
@@ -424,15 +406,15 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
               <div className={`
                  mt-12 p-6 rounded-xl border-2 border-dashed text-center backdrop-blur-sm
                  transition-all duration-300 hover:scale-[1.02] hover:shadow-lg
-                 ${effectiveTheme === 'dark'
+                 ${true
                   ? 'border-blue-500/60 bg-blue-900/30 hover:bg-blue-900/40 shadow-blue-900/20'
-                  : 'hud-surface hover:bg-white/10 shadow-green-900/10'
+                  : 'bg-whiskyPapa-black-dark hover:bg-whiskyPapa-yellow/10'
                 }
                `}>
                 <div className="text-3xl mb-4">🎯</div>
                 <h3 className={`
                    text-xl font-bold mb-2 bg-gradient-to-r bg-clip-text text-transparent
-                   ${effectiveTheme === 'dark'
+                   ${true
                     ? 'from-white to-gray-200'
                     : 'from-[#39FF14] to-green-600'
                   }
@@ -441,9 +423,9 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 </h3>
                 <p className={`
                   mb-4
-                  ${effectiveTheme === 'dark'
+                  ${true
                     ? 'text-gray-300'
-                    : 'text-[color:var(--text-primary)]'
+                    : 'text-white'
                   }
                 `}>
                   登録すると、AI による学習パターン分析、パーソナライズされた推薦、
@@ -455,9 +437,9 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                      px-8 py-3 rounded-xl font-medium transition-all duration-300
                      shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1
                      border backdrop-blur-sm
-                     ${effectiveTheme === 'dark'
+                     ${true
                       ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500 border-blue-500/30'
-                      : 'hud-surface hud-text hover:bg-white/10'
+                      : 'bg-whiskyPapa-black-dark text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10'
                     }
                    `}
                 >

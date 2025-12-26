@@ -1,6 +1,5 @@
 import { ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import React, { useReducer } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { FlightPlan, Waypoint } from '../../types/index';
 import { decimalToDMS, dmsToDecimal, formatDMS } from '../../utils';
 import { formatBearing, formatDistance } from '../../utils/format';
@@ -209,18 +208,8 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
     handleCancelEdit();
   };
 
-  const { theme, effectiveTheme } = useTheme();
-
   return (
-    <div
-      className="shadow-sm rounded-lg p-6"
-      style={{
-        background: effectiveTheme === 'dark' ? '#1a1a1a' : '#14213d',
-        color: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
-        border: '0.5px solid',
-        borderColor: effectiveTheme === 'dark' ? '#FF3B3B' : '#39FF14',
-      }}
-    >
+    <div className="shadow-sm rounded-lg p-6 bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 text-white">
       <legend className="text-lg font-semibold mb-4 text-gray-50">Waypoint List</legend>
       <ul>
         {flightPlan.waypoints.map((waypoint, index) => (

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
 import { Option, Question, QuestionType } from '../types/quiz';
 
 interface QuestionComponentProps {
@@ -27,7 +26,6 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
   toggleShowAnswer,
   generalMessages
 }) => {
-  useTheme();
   const [currentAnswer, setCurrentAnswer] = useState<number | string>('');
   const questionTextId = `question-text-${question.id}`;
 
@@ -63,8 +61,8 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
                   key={optionId}
                   className={`block p-3 rounded-xl border transition-all duration-200 cursor-pointer text-base font-medium
                     ${selected
-                      ? 'bg-[color:var(--hud-primary)] text-black border-[color:var(--hud-primary)]'
-                      : 'hud-surface hud-border hover:bg-[color:var(--panel)]/60 text-[color:var(--text-primary)]'}
+                      ? 'bg-whiskyPapa-yellow text-black border-whiskyPapa-yellow'
+                      : 'bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 hover:bg-whiskyPapa-black-light text-white'}
                     ${feedback !== undefined ? 'opacity-60 cursor-not-allowed' : ''}
                   `}
                 >
@@ -102,7 +100,7 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
             value={currentAnswer as string}
             onChange={(e) => setCurrentAnswer(e.target.value)}
             rows={3}
-            className={`w-full p-3 border rounded-xl focus:ring-2 focus:ring-[color:var(--hud-primary)] focus:border-[color:var(--hud-primary)] outline-none transition-all duration-200 hud-surface hud-border text-[color:var(--text-primary)]`}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-whiskyPapa-yellow focus:border-whiskyPapa-yellow outline-none transition-all duration-200 bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 text-white"
             placeholder="回答を入力してください..."
             disabled={feedback !== undefined}
             aria-labelledby={questionTextId}
@@ -159,9 +157,9 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
         </button>
       )}
       {showAnswer && question.type === QuestionType.TEXT_INPUT && !feedback?.isCorrect && (
-        <div className={`mt-2 p-3 rounded-xl hud-surface hud-border`}>
-          <p className={`text-xs mb-1 text-[color:var(--text-muted)]`}>模範解答:</p>
-          <p className={`text-sm text-amber-600 dark:text-amber-300`}>{question.correctAnswer.toString()}</p>
+        <div className="mt-2 p-3 rounded-xl bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20">
+          <p className="text-xs mb-1 text-gray-400">模範解答:</p>
+          <p className="text-sm text-amber-400">{question.correctAnswer.toString()}</p>
         </div>
       )}
     </form>

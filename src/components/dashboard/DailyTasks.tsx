@@ -4,7 +4,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import { generateDailyTasks } from '../../utils/taskGenerator';
 import type { DailyTask } from '../../types/tasks';
@@ -12,7 +11,6 @@ import { Card, CardContent, Typography } from '../ui';
 
 export const DailyTasks: React.FC = () => {
   const { user } = useAuthStore();
-  const { effectiveTheme } = useTheme();
   const [tasks, setTasks] = useState<DailyTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,15 +38,9 @@ export const DailyTasks: React.FC = () => {
     loadTasks();
   }, [user]);
 
-  const borderColor = effectiveTheme === 'dark'
-    ? 'border-red-500/60'
-    : 'border-green-500/50';
-  const bgColor = effectiveTheme === 'dark'
-    ? 'bg-red-900/10'
-    : 'bg-green-900/10';
-  const textColor = effectiveTheme === 'dark'
-    ? 'text-red-400'
-    : 'text-green-400';
+  const borderColor = 'border-green-500/50';
+  const bgColor = 'bg-green-900/10';
+  const textColor = 'text-green-400';
 
   if (loading) {
     return (
@@ -116,7 +108,7 @@ export const DailyTasks: React.FC = () => {
                         {task.title}
                       </Typography>
                     </div>
-                    <Typography variant="caption" color={effectiveTheme === 'dark' ? 'hud' : 'hud'}>
+                    <Typography variant="caption" color="hud">
                       推定 {task.estimatedMinutes}分
                     </Typography>
                   </div>

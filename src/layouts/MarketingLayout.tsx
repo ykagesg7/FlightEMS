@@ -1,8 +1,8 @@
-import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Typography } from '../components/ui';
 import { UserMenu } from '../components/marketing/UserMenu';
+import { Typography } from '../components/ui';
 import { HUDTimeDisplay } from '../components/ui/HUDDashboard';
 import { useAuthStore } from '../stores/authStore';
 
@@ -13,6 +13,7 @@ import { useAuthStore } from '../stores/authStore';
  */
 export const MarketingLayout: React.FC = () => {
   const { user } = useAuthStore();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-whiskyPapa-black text-white">
@@ -100,14 +101,135 @@ export const MarketingLayout: React.FC = () => {
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center gap-2">
               <UserMenu />
-              <button className="p-2 text-whiskyPapa-yellow">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10 rounded-lg transition-colors"
+                aria-label="メニューを開く"
+                aria-expanded={isMobileMenuOpen}
+              >
+                {isMobileMenuOpen ? (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden overflow-hidden bg-whiskyPapa-black/95 backdrop-blur-md border-b border-whiskyPapa-yellow/20"
+            >
+              <div className="container mx-auto px-4 py-4">
+                {/* HUD Time Display - Only shown when logged in */}
+                {user && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.05 }}
+                    className="mb-4"
+                  >
+                    <HUDTimeDisplay />
+                  </motion.div>
+                )}
+                <nav className="flex flex-col gap-2">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    <Link
+                      to="/"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                    >
+                      HOME
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.15 }}
+                  >
+                    <Link
+                      to="/about"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                    >
+                      ABOUT
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <Link
+                      to="/gallery"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                    >
+                      GALLERY
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.25 }}
+                  >
+                    <Link
+                      to="/shop"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                    >
+                      SHOP
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <Link
+                      to="/schedule"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                    >
+                      SCHEDULE
+                    </Link>
+                  </motion.div>
+                  {/* MISSION Link - Only shown when logged in */}
+                  {user && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.35 }}
+                    >
+                      <Link
+                        to="/mission"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                      >
+                        MISSION
+                      </Link>
+                    </motion.div>
+                  )}
+                </nav>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Main Content */}

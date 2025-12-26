@@ -1,7 +1,6 @@
 import { format, toZonedTime } from 'date-fns-tz';
 import { BarChart, ChevronDown, ChevronUp, Clock, Gauge, Thermometer } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { CACHE_DURATION, useWeatherCache } from '../../contexts/WeatherCacheContext';
 import { fetchWeatherData, FilteredWeatherData } from '../../services/weather';
 import { FlightPlan } from '../../types/index';
@@ -29,7 +28,6 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
 }) => {
   const { weatherCache, setWeatherCache } = useWeatherCache(); // Contextから取得
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { effectiveTheme } = useTheme();
 
   const handleSpeedChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newSpeed = parseInt(event.target.value, 10);
@@ -205,13 +203,13 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   }, [flightPlan.departure]);
 
   return (
-    <div className="hud-surface hud-border rounded-lg p-3 sm:p-4 md:p-6">
-      <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 hud-text">フライトパラメータ</h2>
+    <div className="bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-lg p-3 sm:p-4 md:p-6">
+      <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 text-white">フライトパラメータ</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
         {/* 左側: 速度計関連のパラメータ */}
         <div className="space-y-2 sm:space-y-3">
           <div className="mb-1">
-            <label htmlFor="speed" className="block text-xs sm:text-sm font-medium hud-text mb-1">
+            <label htmlFor="speed" className="block text-xs sm:text-sm font-medium text-white mb-1">
               <Gauge size={14} className="inline-block mr-1" /> 速度 (CAS/kt)
             </label>
             <div className="flex">
@@ -219,20 +217,20 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 type="number"
                 id="speed"
                 name="speed"
-                className="px-2 py-1 w-full border hud-border rounded-l-md text-xs sm:text-sm bg-[color:var(--panel)] text-[color:var(--text-primary)] focus:outline-none focus-hud"
+                className="px-2 py-1 w-full border border-whiskyPapa-yellow/20 rounded-l-md text-xs sm:text-sm bg-whiskyPapa-black-dark text-white focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow"
                 value={flightPlan.speed}
                 onChange={handleSpeedChange}
               />
               <div className="flex flex-col">
                 <button
-                  className="px-2 text-[color:var(--hud-primary)] border-t border-r hud-border rounded-tr-md hover:bg-white/5"
+                  className="px-2 text-whiskyPapa-yellow border-t border-r border-whiskyPapa-yellow/20 rounded-tr-md hover:bg-white/5"
                   onClick={handleSpeedIncrement}
                   aria-label="Increase speed"
                 >
                   <ChevronUp size={12} />
                 </button>
                 <button
-                  className="px-2 text-[color:var(--hud-primary)] border-b border-r hud-border rounded-br-md hover:bg-white/5"
+                  className="px-2 text-whiskyPapa-yellow border-b border-r border-whiskyPapa-yellow/20 rounded-br-md hover:bg-white/5"
                   onClick={handleSpeedDecrement}
                   aria-label="Decrease speed"
                 >
@@ -240,27 +238,27 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 </button>
               </div>
             </div>
-            <div className="mt-1 text-2xs sm:text-xs text-[color:var(--text-primary)]">
+            <div className="mt-1 text-2xs sm:text-xs text-gray-300">
               TAS: {displayTAS} kt | EAS: {displayEAS} kt
             </div>
           </div>
 
           <div className="mb-1">
-            <label className="block text-xs sm:text-sm font-medium hud-text mb-1">
+            <label className="block text-xs sm:text-sm font-medium text-white mb-1">
               <Gauge size={14} className="inline-block mr-1" /> MACH
             </label>
-            <div className="flex justify-between items-center bg-[color:var(--panel)] rounded-md px-2 py-1 border hud-border">
-              <span className="text-xs sm:text-sm hud-text">{displayMach}</span>
+            <div className="flex justify-between items-center bg-whiskyPapa-black-dark rounded-md px-2 py-1 border border-whiskyPapa-yellow/20">
+              <span className="text-xs sm:text-sm text-white">{displayMach}</span>
               <div className="flex space-x-1">
                 <button
-                  className="px-1 text-[color:var(--hud-primary)] rounded hover:bg-white/5 focus-visible:focus-hud"
+                  className="px-1 text-whiskyPapa-yellow rounded hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-whiskyPapa-yellow"
                   onClick={handleMachIncrement}
                   aria-label="Increase MACH"
                 >
                   <ChevronUp size={12} />
                 </button>
                 <button
-                  className="px-1 text-[color:var(--hud-primary)] rounded hover:bg-white/5 focus-visible:focus-hud"
+                  className="px-1 text-whiskyPapa-yellow rounded hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-whiskyPapa-yellow"
                   onClick={handleMachDecrement}
                   aria-label="Decrease MACH"
                 >
@@ -274,7 +272,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
         {/* 中央: 高度と時間パラメータ */}
         <div className="space-y-2 sm:space-y-3">
           <div className="mb-1">
-            <label htmlFor="altitude" className="block text-xs sm:text-sm font-medium hud-text mb-1">
+            <label htmlFor="altitude" className="block text-xs sm:text-sm font-medium text-white mb-1">
               <BarChart size={14} className="inline-block mr-1" /> 高度 (ft)
             </label>
             <div className="flex">
@@ -282,20 +280,20 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 type="number"
                 id="altitude"
                 name="altitude"
-                className="px-2 py-1 w-full border hud-border rounded-l-md text-xs sm:text-sm bg-[color:var(--panel)] text-[color:var(--text-primary)] focus:outline-none focus-hud"
+                className="px-2 py-1 w-full border border-whiskyPapa-yellow/20 rounded-l-md text-xs sm:text-sm bg-whiskyPapa-black-dark text-white focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow"
                 value={flightPlan.altitude}
                 onChange={(e) => handleAltitudeChange(parseInt(e.target.value, 10) || 0)}
               />
               <div className="flex flex-col">
                 <button
-                  className="px-2 text-[color:var(--hud-primary)] border-t border-r hud-border rounded-tr-md hover:bg-white/5"
+                  className="px-2 text-whiskyPapa-yellow border-t border-r border-whiskyPapa-yellow/20 rounded-tr-md hover:bg-white/5"
                   onClick={handleAltitudeIncrement}
                   aria-label="Increase altitude"
                 >
                   <ChevronUp size={12} />
                 </button>
                 <button
-                  className="px-2 text-[color:var(--hud-primary)] border-b border-r hud-border rounded-br-md hover:bg-white/5"
+                  className="px-2 text-whiskyPapa-yellow border-b border-r border-whiskyPapa-yellow/20 rounded-br-md hover:bg-white/5"
                   onClick={handleAltitudeDecrement}
                   aria-label="Decrease altitude"
                 >
@@ -303,13 +301,13 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 </button>
               </div>
             </div>
-            <div className="mt-1 text-2xs sm:text-xs text-[color:var(--text-primary)]">
+            <div className="mt-1 text-2xs sm:text-xs text-gray-300">
               気温(高度): {displayAltitudeTemp}℃
             </div>
           </div>
 
           <div className="mb-1">
-            <label htmlFor="departureTime" className="block text-xs sm:text-sm font-medium hud-text mb-1">
+            <label htmlFor="departureTime" className="block text-xs sm:text-sm font-medium text-white mb-1">
               <Clock size={14} className="inline-block mr-1" /> 出発時刻（JST/UTC）
             </label>
             <div className="flex items-center space-x-2">
@@ -317,11 +315,11 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 type="time"
                 id="departureTime"
                 name="departureTime"
-                className="px-2 py-1 w-3/5 border hud-border rounded-md text-xs sm:text-sm bg-[color:var(--panel)] text-[color:var(--text-primary)] focus:outline-none focus-hud"
+                className="px-2 py-1 w-3/5 border border-whiskyPapa-yellow/20 rounded-md text-xs sm:text-sm bg-whiskyPapa-black-dark text-white focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow"
                 value={flightPlan.departureTime}
                 onChange={handleDepartureTimeChange}
               />
-              <span className="text-xs sm:text-sm hud-text hud-readout">{utcTime}Z</span>
+              <span className="text-xs sm:text-sm text-white">{utcTime}Z</span>
             </div>
           </div>
         </div>
@@ -369,8 +367,6 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
           </div>
         </div>
       </div>
-      {/* 使用されていない effectiveTheme を参照して警告を回避 */}
-      {effectiveTheme && null}
     </div>
   );
 };

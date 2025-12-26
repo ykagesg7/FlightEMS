@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import supabase from '../../utils/supabase';
 
@@ -34,12 +33,11 @@ interface RelatedQuestion {
   relationship_type: string;
 }
 
-const EnhancedRelatedTestButton: React.FC<EnhancedRelatedTestButtonProps> = ({ 
-  contentId, 
+const EnhancedRelatedTestButton: React.FC<EnhancedRelatedTestButtonProps> = ({
+  contentId,
   contentTitle,
   onTestStart
 }) => {
-  const { theme } = useTheme();
   const { user } = useAuthStore();
   const [testMapping, setTestMapping] = useState<TestMapping | null>(null);
   const [relatedQuestions, setRelatedQuestions] = useState<RelatedQuestion[]>([]);
@@ -133,9 +131,7 @@ const EnhancedRelatedTestButton: React.FC<EnhancedRelatedTestButtonProps> = ({
 
   if (error) {
     return (
-      <div className={`mt-6 p-4 rounded-lg border-l-4 border-red-400 ${
-        theme === 'dark' ? 'bg-red-900/20 text-red-200' : 'bg-red-50 text-red-800'
-      }`}>
+      <div className="mt-6 p-4 rounded-lg border-l-4 border-red-400 bg-red-50 text-red-800">
         <div className="flex items-center">
           <svg className="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -167,32 +163,26 @@ const EnhancedRelatedTestButton: React.FC<EnhancedRelatedTestButtonProps> = ({
   }, {} as Record<string, RelatedQuestion[]>);
 
   return (
-    <div className={`mt-8 p-6 rounded-lg border-l-4 shadow-lg ${
-      theme === 'dark' 
-        ? 'bg-gradient-to-br from-blue-900/30 to-indigo-900/30 border-blue-400 text-gray-100' 
-        : 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-500 text-gray-800'
-    }`}>
+    <div className="mt-8 p-6 rounded-lg border-l-4 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-500 text-gray-800">
       {/* ヘッダー */}
       <div className="flex items-center mb-6">
         <div className="mr-4">
           <svg className="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
         <div className="flex-1">
           <h3 className="text-xl font-bold mb-2">📝 関連テストで理解度をチェック！</h3>
-          <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className="text-sm text-gray-600">
             この記事の内容に関連したCPL過去問で習熟度を確認しましょう
           </p>
         </div>
-        <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-          theme === 'dark' ? 'bg-green-900/30 text-green-300' : 'bg-green-100 text-green-800'
-        }`}>
+        <div className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
           信頼度 {Math.round(testMapping.confidence_score * 100)}%
         </div>
       </div>
-      
+
       {/* 統計情報 */}
       <div className={`mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-lg ${
         theme === 'dark' ? 'bg-gray-800/50' : 'bg-white/80'
@@ -220,11 +210,11 @@ const EnhancedRelatedTestButton: React.FC<EnhancedRelatedTestButtonProps> = ({
         <h4 className="text-sm font-semibold mb-3 opacity-75">出題科目の内訳：</h4>
         <div className="flex flex-wrap gap-2">
           {Object.entries(questionsBySubject).map(([subject, questions]) => (
-            <span 
+            <span
               key={subject}
               className={`px-3 py-1 rounded-full text-xs font-medium ${
-                theme === 'dark' 
-                  ? 'bg-blue-900/40 text-blue-200 border border-blue-700/50' 
+                theme === 'dark'
+                  ? 'bg-blue-900/40 text-blue-200 border border-blue-700/50'
                   : 'bg-blue-100 text-blue-800 border border-blue-200'
               }`}
             >
@@ -246,7 +236,7 @@ const EnhancedRelatedTestButton: React.FC<EnhancedRelatedTestButtonProps> = ({
           }`}
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
           CPLテストを開始する
@@ -265,9 +255,9 @@ const EnhancedRelatedTestButton: React.FC<EnhancedRelatedTestButtonProps> = ({
           }`}
         >
           <svg className="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
           <div className="text-xs">プレビュー</div>
@@ -276,8 +266,8 @@ const EnhancedRelatedTestButton: React.FC<EnhancedRelatedTestButtonProps> = ({
 
       {/* 学習効果に関する情報 */}
       <div className={`mt-4 p-3 rounded-lg text-sm ${
-        theme === 'dark' 
-          ? 'bg-indigo-900/20 text-indigo-200 border border-indigo-800/30' 
+        theme === 'dark'
+          ? 'bg-indigo-900/20 text-indigo-200 border border-indigo-800/30'
           : 'bg-indigo-100 text-indigo-800 border border-indigo-200'
       }`}>
         <div className="flex items-center">
@@ -296,4 +286,4 @@ const EnhancedRelatedTestButton: React.FC<EnhancedRelatedTestButtonProps> = ({
   );
 };
 
-export default EnhancedRelatedTestButton; 
+export default EnhancedRelatedTestButton;

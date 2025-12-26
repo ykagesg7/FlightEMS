@@ -7,7 +7,6 @@ import ReviewContentLink from '../components/learning/ReviewContentLink';
 import LessonCard from '../components/lessons/LessonCard';
 import { QuizComponent } from '../components/QuizComponent';
 import { APP_CONTENT } from '../constants';
-import { useTheme } from '../contexts/ThemeContext';
 import { useLearningProgress } from '../hooks/useLearningProgress';
 import { LearningContent } from '../types';
 import { UserQuizAnswer } from '../types/quiz';
@@ -20,7 +19,6 @@ enum LearningState {
 }
 
 function LearningPage() {
-  const { theme } = useTheme();
   const { quizTitle, quizQuestions, generalMessages } = APP_CONTENT;
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -320,7 +318,7 @@ function LearningPage() {
               {isLoading && <p className="text-center text-gray-500">コンテンツを読み込み中...</p>}
               {error && <p className="text-center text-red-500">コンテンツの読み込みに失敗しました。</p>}
               {!isLoading && !error && cplLearningContents.length === 0 && (
-                <p className={`text-center ${theme === 'dark' ? 'text-gray-400' : 'text-slate-600'}`}>
+                <p className="text-center text-slate-600">
                   CPL学科の記事が見つかりませんでした。
                 </p>
               )}
@@ -386,7 +384,6 @@ function LearningPage() {
             questions={quizQuestions}
             onSubmitQuiz={handleSubmitQuiz}
             onBackToContents={handleBackToContents}
-            theme={theme}
             quizTitle={quizTitle}
             generalMessages={generalMessages}
           />
@@ -431,7 +428,7 @@ function LearningPage() {
   };
 
   return (
-    <div className={`min-h-screen py-8 px-4 sm:px-6 lg:px-8 flex items-start justify-center`} style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 flex items-start justify-center bg-whiskyPapa-black text-white">
       <div className="max-w-4xl w-full">
         {renderContent()}
       </div>

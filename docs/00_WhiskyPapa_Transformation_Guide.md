@@ -1,6 +1,6 @@
 # Whisky Papa Transformation Guide: "The Pilot's Narrative"
 
-**最終更新: 2025年12月14日**
+**最終更新: 2025年12月26日（実装状況評価・ファイル整理計画）**
 
 ## 1. プロジェクト概要
 
@@ -93,7 +93,7 @@ src/
 
 ---
 
-## 4. 実装状況（2025年11月30日更新）
+## 4. 実装状況（2025年12月26日更新）
 
 ### ✅ Phase 1: Brand Foundation (完了)
 
@@ -104,17 +104,27 @@ src/
 
 - ランクシステム (Spectator/Trainee/Wingman)
 - ミッション機能、XP獲得ロジック
+- データベース: `profiles`拡張、`missions`、`user_missions`テーブル
 
 ### ✅ Phase 3: Engagement (完了)
 
 - ランク連動型 Hangar Store
-- 双方向 Interactive Gallery
-- Sky Notes Blog (Narrator Template)
+- 双方向 Interactive Gallery（イベント管理、いいね機能、承認制）
+- Sky Notes Blog (Narrator Template) - Mission Dashboardに統合
+- データベース: `products`、`fan_photos`、`gallery_events`テーブル
 
-### 🚧 Phase 4: Real Experience (進行中)
+### ⏸️ Phase 4: Real Experience (承認待ち - 長期的実装予定)
 
-- **完了**: Coming Soonページ、ランク制限ロジック
-- **未完了**: 予約フォーム実装、招集命令（Summons）演出
+**状況**: 体験搭乗プログラム自体がまだ承認されていないため、実装は長期的に予定されています。
+
+- **完了**: Coming Soonページ（Mission Dashboardのexperienceタブ）、ランク制限ロジック（Wingmanランクチェック）
+- **未実装（承認後に実装予定）**:
+  - 予約フォーム実装 (`BookingForm.tsx`)
+  - 招集命令演出 (`SummonsEffect.tsx`)
+  - データベース: `flight_bookings`テーブル
+  - 予約管理 (Admin) 機能
+
+**注記**: 現在は「承認待ち」状態を表示するComing Soonページのみ実装済み。体験搭乗プログラムの承認後、順次実装を開始します。
 
 ### ✅ Phase 4.5: Design System & Rebranding (完了)
 
@@ -145,6 +155,61 @@ src/
 - **Linksページの新設**:
   - 公式サイト、SNS、スポンサー、問い合わせ先のリンク集
   - フッターからのみアクセス可能
+
+### ✅ Phase 4.7: リポジトリ整理（2025年12月24日完了）
+
+- **不要ファイルの退避**:
+  - 未参照ページ4ファイル（Blog、BlogDetail、Experience、AccountCenter）を`archive/2025-12-24/`に退避
+  - 重複静的ファイル1ファイル（`src/content/05_TacanApproach.html`）を退避
+  - 未使用候補1ファイル（`public/newpoints.json`）を退避
+- **ルーティング整理**:
+  - `/blog*`、`/experience`、`/account`は`/mission`や`/profile`へリダイレクト
+  - `App.tsx`のコメントアウトされたlazy importを整理
+- **ドキュメント整理**:
+  - `docs/README.md`を新規作成し、主要ドキュメントへの導線を明確化
+- **検証完了**:
+  - ルーティング、静的ファイル、Git管理の確認完了
+  - 詳細は`archive/2025-12-24/`内のレポートを参照
+
+### 📊 Phase 5: Advanced LMS (部分実装)
+
+**目標**: ユーザーの継続率向上と「パイロットの知性」への没入。
+
+- **完了**:
+  - 進捗追跡機能（`useArticleProgress`、`useLearningProgress`）
+  - 進捗可視化（`ReadingProgressBar`、`ProgressSidebar`）
+  - 学習ダッシュボード（`AdaptiveLearningDashboard`、`LearningAnalyticsDashboard`）
+  - データベース: `learning_progress`テーブル
+- **未実装**:
+  - 目標設定機能 (`GoalSetting.tsx`)
+  - 進捗グラフ (`ProgressChart.tsx`)
+  - 弱点分析機能
+  - データベース: `learning_goals`、`daily_progress`テーブル
+
+**進捗**: 基本的な進捗管理は実装済み。目標設定・可視化機能は今後実装予定。
+
+### 📝 Phase 6: Content Expansion & Analytics (未着手)
+
+**目標**: コンテンツの質的向上とデータ駆動型改善。
+
+- **未着手**:
+  - CPL記事拡充: 重要度・頻出度分析に基づいた19記事の投入
+  - ランキング機能: XPやクイズ正答率に基づくユーザーランキング（匿名/公開選択可）
+  - モバイル最適化: PWAとしての挙動改善、タッチ操作の最適化
+
+**注記**: モバイル対応は一部実装済み（レスポンシブデザイン）だが、PWA機能は未実装。
+
+---
+
+## 4.1. 実装達成度サマリー
+
+**全体達成度: 約85%**
+
+- ✅ **Phase 1-3**: 100%完了（コア機能実装済み）
+- ✅ **Phase 4.5-4.7**: 100%完了（設計システム・統合完了）
+- ⏸️ **Phase 4**: 約30%完了（Coming Soonページ実装済み、予約機能は承認待ち）
+- 📊 **Phase 5**: 約60%完了（進捗管理実装済み、目標設定は未実装）
+- 📝 **Phase 6**: 未着手
 
 ---
 
@@ -210,13 +275,16 @@ CREATE TABLE flight_bookings (
 
 ## 6. 今後の開発ロードマップ
 
-### 🚀 Phase 4: Real Experience - Full Implementation
+### 🚀 Phase 4: Real Experience - Full Implementation (承認後に実装)
 
 **目標**: 「憧れ」を「現実」に変える予約フローの完遂。
+
+**状況**: 体験搭乗プログラムの承認待ち。承認後、順次実装を開始します。
 
 1. **予約フォーム実装 (`BookingForm.tsx`)**:
    - Wingmanランク限定アクセス制御。
    - 第3希望までの日程選択、ナレーションオプション選択。
+   - データベース: `flight_bookings`テーブルの作成
 
 2. **招集命令演出 (`SummonsEffect.tsx`)**:
    - 予約完了後、Junさんからの「招集命令」が表示されるモーダル演出。

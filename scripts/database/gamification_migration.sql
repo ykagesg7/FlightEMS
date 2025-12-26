@@ -147,7 +147,7 @@ BEGIN
   INSERT INTO user_missions (user_id, mission_id, xp_earned)
   VALUES (p_user_id, p_mission_id, xp_earned)
   ON CONFLICT (user_id, mission_id) DO UPDATE
-  SET completed_at = now(), xp_earned = xp_earned;
+  SET completed_at = now(), xp_earned = EXCLUDED.xp_earned;
 
   -- 結果を返す
   SELECT json_build_object(

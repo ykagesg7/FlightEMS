@@ -56,10 +56,25 @@ export interface FanPhoto {
   approved_at: string | null;
   created_at: string;
   updated_at: string;
+  event_id?: string;
+  // 拡張表示用（クエリでJOIN/集計して埋める）
+  likes_count?: number;
+  user_liked?: boolean;
+}
+
+export interface GalleryEvent {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  status: 'active' | 'archived';
+  starts_at: string | null;
+  ends_at: string | null;
+  created_at: string;
 }
 
 export interface FanPhotoInsert {
-  user_id: string;
+  user_id?: string; // mutationFn内で追加されるためオプショナル
   image_url: string;
   caption?: string | null;
 }

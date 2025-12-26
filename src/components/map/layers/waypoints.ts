@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { Waypoint } from '../../../types';
+import { Waypoint } from '@/types';
 import { escapeHtml, kvItem, sectionHeader } from '../popups/common';
 import { WaypointProps } from '../types';
 

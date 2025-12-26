@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useAuthStore } from '../../stores/authStore';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useArticleStats } from '../../hooks/useArticleStats';
 
 interface LearningContentInteractionProps {
@@ -9,8 +8,7 @@ interface LearningContentInteractionProps {
 
 const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({ contentId }) => {
   const user = useAuthStore(state => state.user);
-  const { theme } = useTheme();
-  
+
   // 新しいuseArticleStatsフックを使用
   const {
     stats,
@@ -59,11 +57,7 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
   }
 
   return (
-    <div className={`mt-8 p-6 rounded-lg border ${
-      theme === 'dark' 
-        ? 'bg-gray-800 border-gray-700' 
-        : 'bg-gray-50 border-gray-200'
-    }`}>
+    <div className="mt-8 p-6 rounded-lg border bg-gray-50 border-gray-200">
       {/* いいねセクション */}
       <div className="flex items-center gap-4 mb-6">
         <button
@@ -71,28 +65,22 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
             articleStats.user_liked
               ? 'bg-red-500 text-white hover:bg-red-600'
-              : theme === 'dark'
-                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
           title={articleStats.user_liked ? 'いいねを取り消す' : 'いいね（ログイン不要）'}
         >
           <span className="text-lg">{articleStats.user_liked ? '❤️' : '🤍'}</span>
           <span>{articleStats.likes_count}</span>
         </button>
-        
+
         {/* 閲覧数表示 */}
-        <div className={`flex items-center gap-2 ${
-          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-        }`}>
+        <div className="flex items-center gap-2 text-gray-500">
           <span>👁️</span>
           <span>{articleStats.views_count} 回閲覧</span>
         </div>
-        
+
         {!user && (
-          <span className={`text-sm ${
-            theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-          }`}>
+          <span className="text-sm text-gray-500">
             いいねはログイン不要！コメントはログインが必要です。
           </span>
         )}
@@ -102,22 +90,17 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
       {user && (
         <CommentForm
           onSubmit={handleCommentSubmit}
-          theme={theme}
         />
       )}
 
       {/* コメント一覧 */}
       <div>
-        <h3 className={`text-lg font-semibold mb-4 ${
-          theme === 'dark' ? 'text-white' : 'text-gray-900'
-        }`}>
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">
           コメント ({articleStats.comments_count})
         </h3>
-        
+
         {articleComments.length === 0 ? (
-          <p className={`text-center py-4 ${
-            theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-          }`}>
+          <p className="text-center py-4 text-gray-500">
             まだコメントがありません。{user ? '最初のコメントを投稿してみましょう！' : 'ログインしてコメントを投稿してみましょう！'}
           </p>
         ) : (
@@ -125,21 +108,13 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
             {articleComments.map((comment) => (
               <div
                 key={comment.id}
-                className={`p-4 rounded-lg ${
-                  theme === 'dark' ? 'bg-gray-700' : 'bg-white'
-                } border ${
-                  theme === 'dark' ? 'border-gray-600' : 'border-gray-200'
-                }`}
+                className="p-4 rounded-lg bg-white border border-gray-200"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={`font-medium ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
+                  <span className="font-medium text-gray-900">
                     {comment.user?.display_name || 'ユーザー'}
                   </span>
-                  <span className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
+                  <span className="text-sm text-gray-500">
                     {new Date(comment.created_at).toLocaleDateString('ja-JP', {
                       year: 'numeric',
                       month: 'short',
@@ -149,9 +124,7 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
                     })}
                   </span>
                 </div>
-                <p className={`${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                } whitespace-pre-wrap`}>
+                <p className="text-gray-700 whitespace-pre-wrap">
                   {comment.content}
                 </p>
               </div>
@@ -166,16 +139,15 @@ const LearningContentInteraction: React.FC<LearningContentInteractionProps> = ({
 // コメント投稿フォームコンポーネント
 interface CommentFormProps {
   onSubmit: (content: string) => void;
-  theme: string;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ onSubmit, theme }) => {
+const CommentForm: React.FC<CommentFormProps> = ({ onSubmit }) => {
   const [newComment, setNewComment] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const handleSubmit = async () => {
     if (!newComment.trim() || isSubmitting) return;
-    
+
     setIsSubmitting(true);
     try {
       await onSubmit(newComment.trim());
@@ -191,11 +163,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ onSubmit, theme }) => {
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
         placeholder="コメントを入力してください..."
-        className={`w-full p-3 rounded-lg border resize-none ${
-          theme === 'dark'
-            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-        } focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
+        className="w-full p-3 rounded-lg border resize-none bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
         rows={3}
       />
       <div className="flex justify-end mt-2">

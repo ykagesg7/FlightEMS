@@ -1,8 +1,8 @@
 import L from 'leaflet';
-import { FilteredWeatherData } from '../../../services/weather';
-import { fetchAviationWeather } from '../../../services/aviationWeather';
-import type { AviationWeatherData } from '../../../types/aviation';
-import type { WeatherCache } from '../../../contexts/WeatherCacheContext';
+import { FilteredWeatherData } from '@/services/weather';
+import { fetchAviationWeather } from '@/services/aviationWeather';
+import type { AviationWeatherData } from '@/types/aviation';
+import type { WeatherCache } from '@/contexts/WeatherCacheContext';
 import { simplifiedAirportInfoContent } from '../popups/airportPopup';
 import { createPopup } from '../popups/common';
 import { createWeatherPopupContent } from '../popups/weatherPopup';

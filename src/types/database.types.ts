@@ -186,6 +186,9 @@ export interface Database {
           email: string | null
           created_at: string | null
           roll: string | null
+          social_links: Json | null
+          bio: string | null
+          password_updated_at: string | null
         }
         Insert: {
           id: string
@@ -197,6 +200,9 @@ export interface Database {
           email?: string | null
           created_at?: string | null
           roll?: string | null
+          social_links?: Json | null
+          bio?: string | null
+          password_updated_at?: string | null
         }
         Update: {
           id?: string
@@ -208,6 +214,9 @@ export interface Database {
           email?: string | null
           created_at?: string | null
           roll?: string | null
+          social_links?: Json | null
+          bio?: string | null
+          password_updated_at?: string | null
         }
         Relationships: [
           {
@@ -372,222 +381,270 @@ export interface Database {
         Row: {
           id: string
           content        Update: {
-          id?: string
-          content_id?: string
-          user_id?: string | null
-          session_id?: string | null
-          ip_address?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "learning_content_likes_user_id_fkey"
+  id ?: string
+  content_id ?: string
+  user_id ?: string | null
+  session_id ?: string | null
+  ip_address ?: string | null
+  created_at ?: string
+}
+Relationships: [
+  {
+    foreignKeyName: "learning_content_likes_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
-        ]
+  }
+]
       }
-      learning_content_comments: {ed_at: string
-        }
-        Insert: {
-          id?: string
-          content_id: string
-          user_id?: string | null
-          session_id?: string | null
-          ip_address?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          content_id?: string
-          user_id?: string | nul      learning_content_comments: {
-        Row: {
-          id: string
-          content_id: string
-          user_id: string
-          content: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          content_id: string
-          user_id: string
-          content: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          content_id?: string
-          user_id?: string
-          content?: string
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "learning_content_comments_user_id_fkey"
+learning_content_comments: {
+  ed_at: string
+}
+Insert: {
+  id ?: string
+  content_id: string
+  user_id ?: string | null
+  session_id ?: string | null
+  ip_address ?: string | null
+  created_at ?: string
+}
+Update: {
+  id ?: string
+  content_id ?: string
+  user_id ?: string | nul      learning_content_comments: {
+    Row: {
+      id: string
+      content_id: string
+      user_id: string
+      content: string
+      created_at: string
+      updated_at: string
+    }
+    Insert: {
+      id ?: string
+      content_id: string
+      user_id: string
+      content: string
+      created_at ?: string
+      updated_at ?: string
+    }
+    Update: {
+      id ?: string
+      content_id ?: string
+      user_id ?: string
+      content ?: string
+      created_at ?: string
+      updated_at ?: string
+    }
+    Relationships: [
+      {
+        foreignKeyName: "learning_content_comments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
-        ]
       }
-      user_test_results: {
-        Row: {
-          id: string
-          user_id: string
-          session_id: string
-          learning_content_id: string | null
-          subject_category: string | null
-          unified_question_id: string | null
-          is_correct: boolean
-          answered_at: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          session_id: string
-          learning_content_id?: string | null
-          subject_category?: string | null
-          unified_question_id?: string | null
-          is_correct: boolean
-          answered_at?: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          session_id?: string
-          learning_content_id?: string | null
-          subject_category?: string | null
-          unified_question_id?: string | null
-          is_correct?: boolean
-          answered_at?: string
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_test_results_user_id_fkey"
+    ]
+  }
+  user_test_results: {
+    Row: {
+      id: string
+      user_id: string
+      session_id: string
+      learning_content_id: string | null
+      subject_category: string | null
+      unified_question_id: string | null
+      is_correct: boolean
+      answered_at: string
+      created_at: string
+    }
+    Insert: {
+      id ?: string
+      user_id: string
+      session_id: string
+      learning_content_id ?: string | null
+      subject_category ?: string | null
+      unified_question_id ?: string | null
+      is_correct: boolean
+      answered_at ?: string
+      created_at ?: string
+    }
+    Update: {
+      id ?: string
+      user_id ?: string
+      session_id ?: string
+      learning_content_id ?: string | null
+      subject_category ?: string | null
+      unified_question_id ?: string | null
+      is_correct ?: boolean
+      answered_at ?: string
+      created_at ?: string
+    }
+    Relationships: [
+      {
+        foreignKeyName: "user_test_results_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
-        ]
       }
-      unified_cpl_questions: {
-        Row: {
-          id: string
-          main_subject: string
-          sub_subject: string | null
-          question_text: string
-          options: string[]
-          correct_option_index: number
-          explanation: string | null
-          difficulty_level: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          main_subject: string
-          sub_subject?: string | null
-          question_text: string
-          options: string[]
-          correct_option_index: number
-          explanation?: string | null
-          difficulty_level?: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          main_subject?: string
-          sub_subject?: string | null
-          question_text?: string
-          options?: string[]
-          correct_option_index?: number
-          explanation?: string | null
-          difficulty_level?: string
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      user_unified_srs_status: {
-        Row: {
-          user_id: string
-          question_id: string
-          next_review_date: string | null
-          interval_days: number
-          ease_factor: number
-          repetitions: number
-          last_attempt_record_id: string | null
-          updated_at: string
-        }
-        Insert: {
-          user_id: string
-          question_id: string
-          next_review_date?: string | null
-          interval_days?: number
-          ease_factor?: number
-          repetitions?: number
-          last_attempt_record_id?: string | null
-          updated_at?: string
-        }
-        Update: {
-          user_id?: string
-          question_id?: string
-          next_review_date?: string | null
-          interval_days?: number
-          ease_factor?: number
-          repetitions?: number
-          last_attempt_record_id?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_unified_srs_status_user_id_fkey"
+    ]
+  }
+  unified_cpl_questions: {
+    Row: {
+      id: string
+      main_subject: string
+      sub_subject: string | null
+      question_text: string
+      options: string[]
+      correct_option_index: number
+      explanation: string | null
+      difficulty_level: string
+      created_at: string
+      updated_at: string
+    }
+    Insert: {
+      id ?: string
+      main_subject: string
+      sub_subject ?: string | null
+      question_text: string
+      options: string[]
+      correct_option_index: number
+      explanation ?: string | null
+      difficulty_level ?: string
+      created_at ?: string
+      updated_at ?: string
+    }
+    Update: {
+      id ?: string
+      main_subject ?: string
+      sub_subject ?: string | null
+      question_text ?: string
+      options ?: string[]
+      correct_option_index ?: number
+      explanation ?: string | null
+      difficulty_level ?: string
+      created_at ?: string
+      updated_at ?: string
+    }
+    Relationships: []
+  }
+  user_unified_srs_status: {
+    Row: {
+      user_id: string
+      question_id: string
+      next_review_date: string | null
+      interval_days: number
+      ease_factor: number
+      repetitions: number
+      last_attempt_record_id: string | null
+      updated_at: string
+    }
+    Insert: {
+      user_id: string
+      question_id: string
+      next_review_date ?: string | null
+      interval_days ?: number
+      ease_factor ?: number
+      repetitions ?: number
+      last_attempt_record_id ?: string | null
+      updated_at ?: string
+    }
+    Update: {
+      user_id ?: string
+      question_id ?: string
+      next_review_date ?: string | null
+      interval_days ?: number
+      ease_factor ?: number
+      repetitions ?: number
+      last_attempt_record_id ?: string | null
+      updated_at ?: string
+    }
+    Relationships: [
+      {
+        foreignKeyName: "user_unified_srs_status_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
-        ]
-      }    content_id?: string
-          user_id?: string
-          content?: string
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "learning_content_comments_user_id_fkey"
+      }
+    ]
+  }
+  user_notification_settings: {
+    Row: {
+      id: string
+      user_id: string
+      learning_reminder_enabled: boolean
+      new_content_enabled: boolean
+      announcement_enabled: boolean
+      mission_update_enabled: boolean
+      email_notifications_enabled: boolean
+      notification_time: string | null
+      created_at: string | null
+      updated_at: string | null
+    }
+    Insert: {
+      id ?: string
+      user_id: string
+      learning_reminder_enabled ?: boolean
+      new_content_enabled ?: boolean
+      announcement_enabled ?: boolean
+      mission_update_enabled ?: boolean
+      email_notifications_enabled ?: boolean
+      notification_time ?: string | null
+      created_at ?: string | null
+      updated_at ?: string | null
+    }
+    Update: {
+      id ?: string
+      user_id ?: string
+      learning_reminder_enabled ?: boolean
+      new_content_enabled ?: boolean
+      announcement_enabled ?: boolean
+      mission_update_enabled ?: boolean
+      email_notifications_enabled ?: boolean
+      notification_time ?: string | null
+      created_at ?: string | null
+      updated_at ?: string | null
+    }
+    Relationships: [
+      {
+        foreignKeyName: "user_notification_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+      }
+    ]
+  } content_id ?: string
+  user_id ?: string
+  content ?: string
+  created_at ?: string
+  updated_at ?: string
+}
+Relationships: [
+  {
+    foreignKeyName: "learning_content_comments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
-        ]
+  }
+]
       }
     }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+Views: {
+  [_ in never]: never
+}
+Functions: {
+  [_ in never]: never
+}
+Enums: {
+  [_ in never]: never
+}
+CompositeTypes: {
+  [_ in never]: never
+}
   }
 }

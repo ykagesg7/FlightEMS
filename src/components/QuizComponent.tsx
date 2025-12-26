@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
 import { QuestionType, QuizQuestion, UserQuizAnswer } from '../types/quiz';
 import { QuestionComponent } from './QuestionComponent'; // Reusing for individual question rendering
 
@@ -8,7 +7,6 @@ interface QuizComponentProps {
   questions: QuizQuestion[];
   onSubmitQuiz: (answers: UserQuizAnswer[]) => void;
   onBackToContents: () => void;
-  theme: Theme;
   generalMessages: {
     submitAnswer: string;
     correct: string;
@@ -27,8 +25,7 @@ interface QuizComponentProps {
   examDurationSec?: number; // Examモード時の制限時間（秒）
 }
 
-export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questions, onSubmitQuiz, onBackToContents, theme, generalMessages, mode = 'practice', showImmediateFeedback = true, showQuestionPalette = true, examDurationSec }) => {
-  useTheme();
+export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questions, onSubmitQuiz, onBackToContents, generalMessages, mode = 'practice', showImmediateFeedback = true, showQuestionPalette = true, examDurationSec }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserQuizAnswer[]>([]);
   const [feedback, setFeedback] = useState<{ [key: string]: { isCorrect: boolean; explanation: string; userAnswer?: string | number } }>({});
@@ -121,11 +118,11 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   };
 
   return (
-    <div className={`p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn hud-surface border hud-border`}>
+    <div className="p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold hud-text">{quizTitle}</h2>
+        <h2 className="text-2xl font-bold text-whiskyPapa-yellow">{quizTitle}</h2>
         {mode === 'exam' && timeLeft !== null && (
-          <div className="px-3 py-1 rounded-lg border hud-border text-sm font-semibold">
+          <div className="px-3 py-1 rounded-lg border border-whiskyPapa-yellow/20 text-sm font-semibold">
             残り時間: {formatTime(timeLeft)}
           </div>
         )}
@@ -145,14 +142,14 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
                 onClick={() => setCurrentQuestionIndex(idx)}
                 className={`w-8 h-8 rounded-md border text-sm font-semibold
                   ${isCurrent
-                    ? 'bg-[color:var(--hud-primary)] text-black border-[color:var(--hud-primary)]'
+                    ? 'bg-whiskyPapa-yellow text-black border-whiskyPapa-yellow'
                     : fb !== undefined
                       ? fb.isCorrect
                         ? 'bg-emerald-600 text-white border-emerald-500'
                         : 'bg-rose-600 text-white border-rose-500'
                       : answered
-                        ? 'bg-[color:var(--hud-primary)]/80 text-black border-[color:var(--hud-primary)]'
-                        : 'bg-[color:var(--panel)] text-[color:var(--text-primary)] hud-border'}
+                        ? 'bg-whiskyPapa-yellow/80 text-black border-whiskyPapa-yellow'
+                        : 'bg-whiskyPapa-black-dark text-white border-whiskyPapa-yellow/20'}
                 `}
                 aria-current={isCurrent ? 'true' : undefined}
                 title={`Q${idx + 1}${isFlagged ? '（フラグ）' : ''}`}
@@ -190,7 +187,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
         {!showImmediateFeedback && hasAnsweredCurrent && (
           <button
             onClick={() => setCurrentQuestionIndex((i) => Math.min(i + 1, questions.length - 1))}
-            className="px-4 py-2 rounded-lg bg-[color:var(--hud-primary)] hover:opacity-90 text-black font-semibold shadow"
+            className="px-4 py-2 rounded-lg bg-whiskyPapa-yellow hover:opacity-90 text-black font-semibold shadow"
           >次へ</button>
         )}
       </div>
@@ -198,7 +195,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
       {(showImmediateFeedback ? !!currentFeedback : hasAnsweredCurrent) && (
         <button
           onClick={handleNextQuestion}
-          className="mt-6 w-full bg-[color:var(--hud-primary)] hover:opacity-90 text-black font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-105"
+          className="mt-6 w-full bg-whiskyPapa-yellow hover:opacity-90 text-black font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-105"
         >
           {currentQuestionIndex < questions.length - 1 ? generalMessages.nextQuestion : generalMessages.finishQuiz}
         </button>

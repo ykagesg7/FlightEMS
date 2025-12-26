@@ -47,10 +47,8 @@ temp/
 *.backup*
 .env.local.backup*
 
-# Gemini CLI
-.gemini/auth/
-.gemini/cache/
-.gemini/logs/
+# Gemini CLI (not in use)
+.gemini/
 .env.gemini.local
 
 # Python virtual environment (CRITICAL FOR CURSOR PERFORMANCE)
@@ -91,3 +89,18 @@ phase*.md
 batch_processing_*.json
 batch_processing_*.md
 .vercel
+
+# Archive directory (not to be committed to GitHub)
+archive/
+
+# Test coverage and cache
+coverage/
+.vitest/
+
+# Large binary files
+public/images/
+public/geojson/
+**/*.pdf
+**/*.zip
+**/*.jpg
+**/*.png

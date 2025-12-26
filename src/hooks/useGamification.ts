@@ -1,15 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../stores/authStore';
-import { supabase } from '../utils/supabase';
 import type {
-  UserRank,
   Mission,
-  UserMission,
-  UserGamificationProfile,
-  RankInfo,
   MissionCompletionResult,
+  RankInfo,
+  UserGamificationProfile,
+  UserMission,
+  UserRank,
 } from '../types/gamification';
 import { RANK_INFO } from '../types/gamification';
+import { supabase } from '../utils/supabase';
 
 /**
  * useGamification Hook
@@ -87,9 +87,9 @@ export const useGamification = () => {
   const rankProgress =
     rankInfo && rankInfo.nextRankXpRequired
       ? Math.min(
-          100,
-          ((profile?.xp_points || 0) / rankInfo.nextRankXpRequired) * 100
-        )
+        100,
+        ((profile?.xp_points || 0) / rankInfo.nextRankXpRequired) * 100
+      )
       : 100;
 
   // ミッション達成処理
@@ -133,16 +133,19 @@ export const useGamification = () => {
     for (const mission of missions) {
       // デイリー/ウィークリーミッションの場合は、既に今日/今週達成済みかチェック
       if (mission.mission_type === 'daily' || mission.mission_type === 'weekly') {
-        const { data: recentCompletion } = await supabase
+        const { data: recentCompletions, error: completionError } = await supabase
           .from('user_missions')
           .select('completed_at')
           .eq('user_id', user.id)
           .eq('mission_id', mission.id)
           .order('completed_at', { ascending: false })
-          .limit(1)
-          .single();
+          .limit(1);
 
-        if (recentCompletion) {
+        // エラーが発生した場合や結果がない場合はスキップ
+        if (completionError || !recentCompletions || recentCompletions.length === 0) {
+          // エラーは無視して続行（初回達成の可能性があるため）
+        } else {
+          const recentCompletion = recentCompletions[0];
           const completedAt = new Date(recentCompletion.completed_at);
           const now = new Date();
           const daysDiff = Math.floor(

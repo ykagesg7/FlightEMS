@@ -3,10 +3,9 @@
  * Unified UI components for Whisky Papa Flight Academy
  */
 
-export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './Button';
-export { Card, CardHeader, CardTitle, CardContent, CardFooter, type CardProps, type CardVariant } from './Card';
-export { Typography, type TypographyProps, type TypographyVariant, type TypographyColor } from './Typography';
+export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from './Button';
+export { Card, CardContent, CardFooter, CardHeader, CardTitle, type CardProps, type CardVariant } from './Card';
+export { Typography, type TypographyColor, type TypographyProps, type TypographyVariant } from './Typography';
 
 // Legacy exports (for backward compatibility)
-export { HudButton, HudCard, HudLine } from './HudPrimitives';
 

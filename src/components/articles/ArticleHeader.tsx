@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import type { ArticleMeta } from '../../types/articles';
 
 interface ArticleHeaderProps {
@@ -7,7 +6,6 @@ interface ArticleHeaderProps {
 }
 
 const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
-  const { effectiveTheme } = useTheme();
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return null;
@@ -25,45 +23,21 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
   const readingTimeText = meta.readingTime ? `約${meta.readingTime}分` : null;
 
   return (
-    <header className={`
-      mb-8 pb-6 border-b transition-colors duration-200
-      ${effectiveTheme === 'dark'
-        ? 'border-[color:var(--hud-primary)] border-opacity-30'
-        : 'border-[color:var(--hud-primary)] border-opacity-40'
-      }
-    `}>
+    <header className="mb-8 pb-6 border-b border-whiskyPapa-yellow/30 transition-colors duration-200">
       {/* タイトル */}
-      <h1 className={`
-        text-3xl sm:text-4xl font-bold mb-4 leading-tight transition-colors duration-200
-        ${effectiveTheme === 'dark'
-          ? 'text-[color:var(--hud-primary)]'
-          : 'text-[color:var(--hud-primary)]'
-        }
-      `}>
+      <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight text-whiskyPapa-yellow transition-colors duration-200">
         {meta.title}
       </h1>
 
       {/* 要約 */}
       {meta.excerpt && (
-        <p className={`
-          text-lg mb-6 leading-relaxed transition-colors duration-200
-          ${effectiveTheme === 'dark'
-            ? 'text-[color:var(--text-primary)] opacity-90'
-            : 'text-[color:var(--text-primary)] opacity-85'
-          }
-        `}>
+        <p className="text-lg mb-6 leading-relaxed text-white opacity-90 transition-colors duration-200">
           {meta.excerpt}
         </p>
       )}
 
       {/* メタ情報 */}
-      <div className={`
-        flex flex-wrap items-center gap-4 text-sm transition-colors duration-200
-        ${effectiveTheme === 'dark'
-          ? 'text-[color:var(--text-primary)] opacity-80'
-          : 'text-[color:var(--text-primary)] opacity-75'
-        }
-      `}>
+      <div className="flex flex-wrap items-center gap-4 text-sm text-white opacity-80 transition-colors duration-200">
         {/* 公開日 */}
         {meta.publishedAt && (
           <div className="flex items-center gap-1">
@@ -101,10 +75,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
           {meta.tags.map((tag, index) => (
             <span
               key={index}
-              className={`px-3 py-1 text-xs rounded-full border transition-colors duration-200 ${effectiveTheme === 'dark'
-                ? 'bg-indigo-900 bg-opacity-30 border-indigo-700 text-indigo-300'
-                : 'bg-indigo-100 border-indigo-300 text-indigo-700'
-                }`}
+              className="px-3 py-1 text-xs rounded-full border bg-indigo-900 bg-opacity-30 border-indigo-700 text-indigo-300 transition-colors duration-200"
             >
               {tag}
             </span>
@@ -114,25 +85,13 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
 
       {/* シリーズ情報 */}
       {meta.series && (
-        <div className={`
-          mt-4 p-3 rounded-lg border transition-all duration-200
-          ${effectiveTheme === 'dark'
-            ? 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-20'
-            : 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] border-opacity-30'
-          }
-        `}>
-          <div className={`
-            flex items-center gap-2 text-sm transition-colors duration-200
-            ${effectiveTheme === 'dark'
-              ? 'text-[color:var(--hud-primary)]'
-              : 'text-[color:var(--hud-primary)]'
-            }
-          `}>
+        <div className="mt-4 p-3 rounded-lg border border-whiskyPapa-yellow/20 bg-whiskyPapa-black-dark transition-all duration-200">
+          <div className="flex items-center gap-2 text-sm text-whiskyPapa-yellow transition-colors duration-200">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14-7l2 2m0 0l2 2m-2-2v6m-2 5.5V16a2 2 0 00-2-2h-4m-2 2.5V20a2 2 0 01-2-2v-2a2 2 0 012-2h4a2 2 0 012 2z" />
             </svg>
             <span className="font-medium">シリーズ: {meta.series}</span>
-            {meta.order && <span className="text-[color:var(--text-primary)] opacity-70">第{meta.order}回</span>}
+            {meta.order && <span className="text-white opacity-70">第{meta.order}回</span>}
           </div>
         </div>
       )}

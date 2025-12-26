@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
 
@@ -11,7 +10,6 @@ interface BasicStats {
 }
 
 const BasicLearningDashboard: React.FC = () => {
-  const { theme } = useTheme();
   const { user } = useAuthStore();
   const { learningContents, userProgress, isLoading } = useLearningProgress();
   const [stats, setStats] = useState<BasicStats>({
@@ -50,7 +48,7 @@ const BasicLearningDashboard: React.FC = () => {
 
   if (!user) {
     return (
-      <div className={`p-6 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'}`}>
+      <div className="p-6 rounded-lg bg-gray-50">
         <p className="text-center text-gray-600 dark:text-gray-400">
           ログインすると学習進捗が表示されます
         </p>
@@ -63,34 +61,34 @@ const BasicLearningDashboard: React.FC = () => {
     : 0;
 
   return (
-    <div className={`p-6 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg mb-6`}>
+    <div className="p-6 rounded-lg bg-white shadow-lg mb-6">
       <h2 className="text-xl font-semibold mb-4 flex items-center">
         📊 学習進捗ダッシュボード
       </h2>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-blue-50'}`}>
+        <div className="p-4 rounded-lg bg-blue-50">
           <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
             {stats.totalContents}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">利用可能記事</div>
         </div>
 
-        <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-green-50'}`}>
+        <div className="p-4 rounded-lg bg-green-50">
           <div className="text-2xl font-bold text-green-600 dark:text-green-400">
             {stats.completedContents}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">完了記事</div>
         </div>
 
-        <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-purple-50'}`}>
+        <div className="p-4 rounded-lg bg-purple-50">
           <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
             {completionRate}%
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">完了率</div>
         </div>
 
-        <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-orange-50'}`}>
+        <div className="p-4 rounded-lg bg-orange-50">
           <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
             {stats.averageProgress}%
           </div>

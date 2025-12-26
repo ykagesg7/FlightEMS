@@ -44,6 +44,10 @@ export interface RouteSegment {
   eta: string;
   distance: number;
   duration?: string; // セグメントの所要時間（時分秒形式）
+  fuelUsedLb?: number;
+  fuelRemainingLb?: number;
+  frequency?: string;
+  frequencySourceId?: string;
 }
 
 export interface FlightPlan {
@@ -61,6 +65,13 @@ export interface FlightPlan {
   tas: number;
   mach: number;
   routeSegments: RouteSegment[];
+  aircraftId?: string;
+  initialFuelLb?: number;
+  reserveFuelLb?: number;
+  taxiFuelLb?: number;
+  cruiseFuelFlowLbPerHr?: number;
+  totalFuelUsedLb?: number;
+  totalFuelRemainingLb?: number;
 }
 
 export interface Navaid {
@@ -206,5 +217,35 @@ export interface ExternalWeatherData {
         sunset: string;
       };
     }>;
+  };
+}
+
+// 機体プリセット・燃料計算
+export interface AircraftPreset {
+  id: string;
+  name: string;
+  cruiseFuelFlowLbPerHr: number;
+  taxiFuelLb: number;
+  reserveFuelLb: number;
+  defaultInitialFuelLb: number;
+}
+
+// 計画データの正本(JSON)スキーマ
+export interface PlanDocumentV1 {
+  schemaVersion: 1;
+  createdAt: string;
+  updatedAt: string;
+  units: {
+    fuel: 'lb';
+    fuelFlow: 'lb/hr';
+    remainingDisplay: 'klb';
+  };
+  planInput: FlightPlan;
+  derived?: {
+    notes?: string;
+    extensions?: Record<string, unknown>;
+  };
+  meta?: {
+    appVersion?: string;
   };
 }

@@ -1,11 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
-import { AuthButton } from '../../../src/components/auth/AuthButton';
-import * as authStore from '../../../src/stores/authStore';
+import { AuthButton } from '@/components/auth/AuthButton';
+import * as authStore from '@/stores/authStore';
 
 // Zustandストアのモック
-vi.mock('../../../src/stores/authStore');
+vi.mock('@/stores/authStore');
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async (importOriginal) => {

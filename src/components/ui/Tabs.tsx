@@ -88,22 +88,19 @@ const TabsComponent: React.FC<TabsProps> = () => {
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-4 sm:space-x-8" aria-label="Tabs">
           <button
-            className={`${activeTab === 'planning' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
-            style={{ color: '#39FF14' }}
+            className={`${activeTab === 'planning' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm text-whiskyPapa-yellow`}
             onClick={() => setActiveTab('planning')}
           >
             Planning
           </button>
           <button
-            className={`${activeTab === 'map' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
-            style={{ color: '#39FF14' }}
+            className={`${activeTab === 'map' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm text-whiskyPapa-yellow`}
             onClick={() => setActiveTab('map')}
           >
             Map
           </button>
           <button
-            className={`${activeTab === 'learning' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm`}
-            style={{ color: '#39FF14' }}
+            className={`${activeTab === 'learning' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm text-whiskyPapa-yellow`}
             onClick={() => setActiveTab('learning')}
           >
             Learning

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import supabase from '../../utils/supabase';
 
@@ -48,7 +47,6 @@ interface DashboardStats {
 }
 
 const LearningTestIntegrationDashboard: React.FC = () => {
-  const { theme } = useTheme();
   const { user } = useAuthStore();
 
   const [learningProgress, setLearningProgress] = useState<LearningProgress[]>([]);
@@ -177,7 +175,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
 
   if (!user) {
     return (
-      <div className={`text-center py-12 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+      <div className="text-center py-12 text-gray-600">
         <p>ダッシュボードを表示するにはログインが必要です。</p>
       </div>
     );
@@ -202,11 +200,11 @@ const LearningTestIntegrationDashboard: React.FC = () => {
   };
 
   return (
-    <div className={`max-w-7xl mx-auto p-6 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}`}>
+    <div className="max-w-7xl mx-auto p-6 text-gray-800">
       {/* ヘッダー */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4">📊 学習統合ダッシュボード</h1>
-        <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+        <p className="text-lg text-gray-600">
           学習進捗とテスト成績を統合して効率的な学習を支援します
         </p>
 
@@ -218,12 +216,8 @@ const LearningTestIntegrationDashboard: React.FC = () => {
               onClick={() => setSelectedTimeframe(timeframe)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedTimeframe === timeframe
-                  ? theme === 'dark'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-blue-500 text-white'
-                  : theme === 'dark'
-                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
               {timeframe === 'week' ? '今週' : timeframe === 'month' ? '今月' : '全期間'}
@@ -235,9 +229,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
       {/* 統計カード */}
       {dashboardStats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
-          <div className={`p-4 rounded-lg shadow ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          }`}>
+          <div className="p-4 rounded-lg shadow bg-white">
             <div className="flex items-center">
               <div className="text-2xl mr-3">📚</div>
               <div>
@@ -249,9 +241,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className={`p-4 rounded-lg shadow ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          }`}>
+          <div className="p-4 rounded-lg shadow bg-white">
             <div className="flex items-center">
               <div className="text-2xl mr-3">📝</div>
               <div>
@@ -263,9 +253,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className={`p-4 rounded-lg shadow ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          }`}>
+          <div className="p-4 rounded-lg shadow bg-white">
             <div className="flex items-center">
               <div className="text-2xl mr-3">🎯</div>
               <div>
@@ -277,9 +265,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className={`p-4 rounded-lg shadow ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          }`}>
+          <div className="p-4 rounded-lg shadow bg-white">
             <div className="flex items-center">
               <div className="text-2xl mr-3">⏱️</div>
               <div>
@@ -291,9 +277,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className={`p-4 rounded-lg shadow ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          }`}>
+          <div className="p-4 rounded-lg shadow bg-white">
             <div className="flex items-center">
               <div className="text-2xl mr-3">🔥</div>
               <div>
@@ -305,9 +289,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className={`p-4 rounded-lg shadow ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          }`}>
+          <div className="p-4 rounded-lg shadow bg-white">
             <div className="flex items-center">
               <div className="text-2xl mr-3">🏆</div>
               <div>
@@ -323,9 +305,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* 学習進捗 */}
-        <div className={`p-6 rounded-lg shadow-lg ${
-          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-        }`}>
+        <div className="p-6 rounded-lg shadow-lg bg-white">
           <h2 className="text-xl font-bold mb-4 flex items-center">
             <span className="text-2xl mr-2">📈</span>
             学習進捗一覧
@@ -336,11 +316,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
               <Link
                 key={progress.learning_content_id}
                 to={`/learning/${progress.learning_content_id}`}
-                className={`block p-3 rounded-lg border transition-all hover:scale-[1.02] ${
-                  theme === 'dark'
-                    ? 'bg-gray-700/50 border-gray-600 hover:border-gray-500'
-                    : 'bg-gray-50 border-gray-200 hover:border-gray-300'
-                }`}
+                className="block p-3 rounded-lg border transition-all hover:scale-[1.02] bg-gray-50 border-gray-200 hover:border-gray-300"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -375,9 +351,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
         </div>
 
         {/* 学習推奨 */}
-        <div className={`p-6 rounded-lg shadow-lg ${
-          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-        }`}>
+        <div className="p-6 rounded-lg shadow-lg bg-white">
           <h2 className="text-xl font-bold mb-4 flex items-center">
             <span className="text-2xl mr-2">🎯</span>
             今日の推奨学習
@@ -392,11 +366,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
                   index === 0 ? 'border-red-400' :
                   index === 1 ? 'border-orange-400' :
                   index === 2 ? 'border-yellow-400' : 'border-blue-400'
-                } ${
-                  theme === 'dark'
-                    ? 'bg-gray-700/30 hover:bg-gray-700/50'
-                    : 'bg-gray-50 hover:bg-gray-100'
-                }`}
+                } bg-gray-50 hover:bg-gray-100`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -413,9 +383,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
                         {rec.content_title}
                       </h3>
                     </div>
-                    <p className={`text-xs mb-2 ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                    }`}>
+                    <p className="text-xs mb-2 text-gray-600">
                       {rec.recommendation_reason}
                     </p>
                     <div className="flex items-center text-xs opacity-75 space-x-2">
@@ -439,9 +407,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
 
       {/* 弱点領域分析 */}
       {weakAreas.length > 0 && (
-        <div className={`mt-8 p-6 rounded-lg shadow-lg ${
-          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-        }`}>
+        <div className="mt-8 p-6 rounded-lg shadow-lg bg-white">
           <h2 className="text-xl font-bold mb-4 flex items-center">
             <span className="text-2xl mr-2">🔍</span>
             弱点領域分析
@@ -457,7 +423,7 @@ const LearningTestIntegrationDashboard: React.FC = () => {
                     : area.improvement_trend === 'declining'
                     ? 'border-red-400 bg-red-900/10'
                     : 'border-yellow-400 bg-yellow-900/10'
-                } ${theme === 'dark' ? 'bg-opacity-20' : 'bg-opacity-80'}`}
+                } bg-opacity-80`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-medium text-sm">
@@ -489,40 +455,24 @@ const LearningTestIntegrationDashboard: React.FC = () => {
       )}
 
       {/* クイックアクション */}
-      <div className={`mt-8 p-6 rounded-lg shadow-lg text-center ${
-        theme === 'dark'
-          ? 'bg-gradient-to-r from-blue-900/30 to-indigo-900/30'
-          : 'bg-gradient-to-r from-blue-50 to-indigo-50'
-      }`}>
+      <div className="mt-8 p-6 rounded-lg shadow-lg text-center bg-gradient-to-r from-blue-50 to-indigo-50">
         <h2 className="text-xl font-bold mb-4">🚀 クイックアクション</h2>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/test/cpl"
-            className={`px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 ${
-              theme === 'dark'
-                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'bg-blue-500 hover:bg-blue-600 text-white'
-            }`}
+            className="px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 bg-blue-500 hover:bg-blue-600 text-white"
           >
             📝 CPLテストを受ける
           </Link>
           <Link
             to="/learning"
-            className={`px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 ${
-              theme === 'dark'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-green-500 hover:bg-green-600 text-white'
-            }`}
+            className="px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 bg-green-500 hover:bg-green-600 text-white"
           >
             📚 学習記事を読む
           </Link>
           <Link
             to="/learning/analytics"
-            className={`px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 ${
-              theme === 'dark'
-                ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                : 'bg-purple-500 hover:bg-purple-600 text-white'
-            }`}
+            className="px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 bg-purple-500 hover:bg-purple-600 text-white"
           >
             📊 詳細分析を見る
           </Link>

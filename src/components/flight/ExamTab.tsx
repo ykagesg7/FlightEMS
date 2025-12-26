@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
+import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../../stores/authStore';
+import CPLExamResults from '../quiz/CPLExamResults';
 import CPLExamSelector from '../quiz/CPLExamSelector';
 import CPLExamSession from '../quiz/CPLExamSession';
-import CPLExamResults from '../quiz/CPLExamResults';
 
 interface CPLExamSettings {
   subjects: string[];
@@ -19,7 +18,6 @@ interface ExamTabState {
 }
 
 const ExamTab: React.FC = () => {
-  const { theme } = useTheme();
   const { user } = useAuthStore();
   const [state, setState] = useState<ExamTabState>({ phase: 'selection', sessionId: null });
   const [settings, setSettings] = useState<CPLExamSettings | null>(null);
@@ -56,12 +54,8 @@ const ExamTab: React.FC = () => {
   // 認証が必要な旨を表示
   if (!user) {
     return (
-      <div className={`min-h-screen ${
-        theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
-      } flex items-center justify-center p-4`}>
-        <div className={`${
-          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-        } rounded-lg shadow-lg p-8 max-w-md w-full text-center`}>
+      <div className="min-h-screen bg-whiskyPapa-black flex items-center justify-center p-4">
+        <div className="bg-whiskyPapa-black-dark rounded-lg shadow-lg p-8 max-w-md w-full text-center border border-whiskyPapa-yellow/20">
           <div className="mb-6">
             <svg className="mx-auto h-12 w-12 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 0h12a2 2 0 002-2v-9a2 2 0 00-2-2H6a2 2 0 00-2 2v9a2 2 0 002 2z" />
@@ -85,9 +79,7 @@ const ExamTab: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen ${
-      theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
-    } py-4 px-4 sm:px-6 lg:px-8`}>
+    <div className="min-h-screen bg-whiskyPapa-black py-4 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -135,4 +127,4 @@ const ExamTab: React.FC = () => {
   );
 };
 
-export default ExamTab; 
+export default ExamTab;

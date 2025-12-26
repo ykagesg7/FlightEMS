@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { ArticleStats } from '../../types/articles';
 
 interface ArticleStatsBarProps {
@@ -15,8 +14,6 @@ export const ArticleStatsBar: React.FC<ArticleStatsBarProps> = ({
   onCommentClick,
   compact = false
 }) => {
-  const { effectiveTheme } = useTheme();
-
   const formatCount = (count: number): string => {
     if (count >= 1000) {
       return `${(count / 1000).toFixed(1)}k`;
@@ -35,9 +32,7 @@ export const ArticleStatsBar: React.FC<ArticleStatsBarProps> = ({
           }}
           className={`flex items-center space-x-1 transition-colors duration-200 ${stats.user_liked
               ? 'text-red-500 hover:text-red-600'
-              : effectiveTheme === 'dark'
-                ? 'text-gray-400 hover:text-red-400'
-                : 'text-gray-500 hover:text-red-500'
+              : 'text-gray-500 hover:text-red-500'
             }`}
           title="いいね（ログイン不要）"
         >
@@ -63,10 +58,7 @@ export const ArticleStatsBar: React.FC<ArticleStatsBarProps> = ({
             e.stopPropagation();
             onCommentClick();
           }}
-          className={`flex items-center space-x-1 transition-colors duration-200 ${effectiveTheme === 'dark'
-              ? 'text-gray-400 hover:text-blue-400'
-              : 'text-gray-500 hover:text-blue-500'
-            }`}
+          className="flex items-center space-x-1 transition-colors duration-200 text-gray-500 hover:text-blue-500"
           title="コメント（ログイン必要）"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,8 +73,7 @@ export const ArticleStatsBar: React.FC<ArticleStatsBarProps> = ({
         </button>
 
         {/* 閲覧数 */}
-        <div className={`flex items-center space-x-1 ${effectiveTheme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-          }`}>
+        <div className="flex items-center space-x-1 text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -104,8 +95,7 @@ export const ArticleStatsBar: React.FC<ArticleStatsBarProps> = ({
   }
 
   return (
-    <div className={`flex items-center justify-between p-3 border-t ${effectiveTheme === 'dark' ? 'border-gray-600' : 'border-gray-200'
-      }`}>
+    <div className="flex items-center justify-between p-3 border-t border-gray-200">
       <div className="flex items-center space-x-6">
         {/* いいね */}
         <button
@@ -115,9 +105,7 @@ export const ArticleStatsBar: React.FC<ArticleStatsBarProps> = ({
           }}
           className={`flex items-center space-x-2 transition-all duration-200 hover:scale-105 ${stats.user_liked
               ? 'text-red-500 hover:text-red-600'
-              : effectiveTheme === 'dark'
-                ? 'text-gray-400 hover:text-red-400'
-                : 'text-gray-500 hover:text-red-500'
+              : 'text-gray-500 hover:text-red-500'
             }`}
           title="いいね（ログイン不要）"
         >
@@ -144,10 +132,7 @@ export const ArticleStatsBar: React.FC<ArticleStatsBarProps> = ({
             e.stopPropagation();
             onCommentClick();
           }}
-          className={`flex items-center space-x-2 transition-all duration-200 hover:scale-105 ${effectiveTheme === 'dark'
-              ? 'text-gray-400 hover:text-blue-400'
-              : 'text-gray-500 hover:text-blue-500'
-            }`}
+          className="flex items-center space-x-2 transition-all duration-200 hover:scale-105 text-gray-500 hover:text-blue-500"
           title="コメント（ログイン必要）"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,8 +149,7 @@ export const ArticleStatsBar: React.FC<ArticleStatsBarProps> = ({
       </div>
 
       {/* 閲覧数 */}
-      <div className={`flex items-center space-x-2 text-sm ${effectiveTheme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-        }`}>
+      <div className="flex items-center space-x-2 text-sm text-gray-400">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"

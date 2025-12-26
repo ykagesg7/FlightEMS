@@ -1,7 +1,6 @@
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import { ContentEffectiveness, LearningAnalytics, UserProfile } from '../../types';
 import supabase from '../../utils/supabase';
@@ -88,7 +87,6 @@ interface LearningAnalytics {
 }
 
 const LearningAnalyticsDashboard: React.FC = () => {
-  const { theme } = useTheme();
   const { user } = useAuthStore();
   const [analytics, setAnalytics] = useState<LearningAnalytics | null>(null);
   const [contentEffectiveness, setContentEffectiveness] = useState<ContentEffectiveness[]>([]);
@@ -346,7 +344,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
 
   if (error || !analytics) {
     return (
-      <div className={`p-6 rounded-lg ${theme === 'dark' ? 'bg-red-900/20' : 'bg-red-50'}`}>
+      <div className="p-6 rounded-lg bg-red-50">
         <p className="text-red-600 dark:text-red-400">{error || 'データが見つかりません'}</p>
       </div>
     );
@@ -402,9 +400,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
               onClick={() => setTimeRange(range)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${timeRange === range
                 ? 'bg-indigo-600 text-white'
-                : theme === 'dark'
-                  ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
             >
               {range === 'week' ? '1週間' : range === 'month' ? '1ヶ月' : '3ヶ月'}
@@ -415,28 +411,28 @@ const LearningAnalyticsDashboard: React.FC = () => {
 
       {/* KPI カード */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+        <div className="p-4 rounded-xl bg-white shadow-lg">
           <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
             {analytics.totalStudyTime}分
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">総学習時間</div>
         </div>
 
-        <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+        <div className="p-4 rounded-xl bg-white shadow-lg">
           <div className="text-2xl font-bold text-green-600 dark:text-green-400">
             {analytics.averageTestScore}%
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">平均正答率</div>
         </div>
 
-        <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+        <div className="p-4 rounded-xl bg-white shadow-lg">
           <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
             {analytics.completionRate}%
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">理解度</div>
         </div>
 
-        <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+        <div className="p-4 rounded-xl bg-white shadow-lg">
           <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
             {analytics.streakData.current}日
           </div>
@@ -506,7 +502,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
 
       {/* 学習効率指標 */}
       <div className="grid md:grid-cols-3 gap-4">
-        <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+        <div className="p-4 rounded-xl bg-white shadow-lg">
           <h3 className="font-semibold mb-2">⚡ 学習速度</h3>
           <div className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
             {analytics.learningVelocity}
@@ -514,7 +510,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
           <div className="text-xs text-gray-500">問題/時間</div>
         </div>
 
-        <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+        <div className="p-4 rounded-xl bg-white shadow-lg">
           <h3 className="font-semibold mb-2">🧠 定着率</h3>
           <div className="text-xl font-bold text-green-600 dark:text-green-400">
             {analytics.retentionRate}%
@@ -522,7 +518,7 @@ const LearningAnalyticsDashboard: React.FC = () => {
           <div className="text-xs text-gray-500">初回正解率</div>
         </div>
 
-        <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+        <div className="p-4 rounded-xl bg-white shadow-lg">
           <h3 className="font-semibold mb-2">🏆 最長記録</h3>
           <div className="text-xl font-bold text-purple-600 dark:text-purple-400">
             {analytics.streakData.longest}日

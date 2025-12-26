@@ -23,9 +23,15 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "src",
     "paths": {
-      "@types/*": [
-        "types/*"
-      ]
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/hooks/*": ["./hooks/*"],
+      "@/utils/*": ["./utils/*"],
+      "@/types/*": ["./types/*"],
+      "@/pages/*": ["./pages/*"],
+      "@/stores/*": ["./stores/*"],
+      "@/content/*": ["./content/*"],
+      "@mdx/*": ["./components/mdx/*"]
     },
     "typeRoots": [
       "./node_modules/@types"

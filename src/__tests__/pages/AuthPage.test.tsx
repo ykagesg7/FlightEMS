@@ -1,12 +1,11 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
-import AuthPage from '../../../src/pages/AuthPage';
-import * as authStore from '../../../src/stores/authStore';
+import AuthPage from '@/pages/AuthPage';
+import * as authStore from '@/stores/authStore';
 
 // Zustandストアのモック
-vi.mock('../../../src/stores/authStore');
-vi.mock('../../../src/contexts/ThemeContext', () => ({ useTheme: () => ({ theme: 'light' }) }));
+vi.mock('@/stores/authStore');
 
 describe('AuthPage', () => {
   beforeEach(() => {
