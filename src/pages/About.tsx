@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BadgeCheck, Camera, Mic, Plane, ShoppingBag } from 'lucide-react';
+import { BadgeCheck, Camera, Code, ExternalLink, Mic, ShoppingBag } from 'lucide-react';
 import React from 'react';
 import { Typography } from '../components/ui';
 
@@ -12,31 +12,72 @@ const About: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-whiskyPapa-black via-whiskyPapa-black/80 to-transparent" />
 
         <div className="container mx-auto px-4 relative z-10">
-          <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="max-w-2xl">
-            <div className="flex items-center gap-2 mb-4 text-whiskyPapa-yellow">
-              <BadgeCheck className="w-6 h-6" />
-              <span className="font-bold tracking-widest uppercase">The Chief Pilot</span>
-            </div>
-            <Typography variant="display" className="mb-6 leading-tight">
-              内海 昌浩
-              <br />
-              <span className="text-whiskyPapa-yellow">
-                "MASA"
-              </span>
-            </Typography>
-            <Typography variant="h3" className="mb-8 font-light italic text-gray-300">
-              "空の仲間になろう！"
-            </Typography>
-            <div className="prose prose-invert prose-lg text-gray-400">
-              <p>
-                日本人初、そして唯一のFAA（米連邦航空局）エアショーライセンス最高位「Unlimted」クラス保持者。
+          <div className="grid md:grid-cols-12 gap-4 lg:gap-6 items-center">
+            {/* テキストを左側に配置 */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="md:col-span-7 lg:col-span-6"
+            >
+              <div className="flex items-center gap-2 mb-4 text-whiskyPapa-yellow">
+                <BadgeCheck className="w-6 h-6" />
+                <span className="font-bold tracking-widest uppercase">The Chief Pilot</span>
+              </div>
+              <Typography variant="display" className="mb-6 leading-tight">
+                内海 昌浩
                 <br />
-                エアロバティックパイロットとしての規律と情熱を併せ持つ。
-                <br />
-                その操縦桿さばきは「空に絵を描く」と評される。
-              </p>
-            </div>
-          </motion.div>
+                <span className="text-whiskyPapa-yellow">
+                  "MASA"
+                </span>
+              </Typography>
+              <Typography variant="h3" className="mb-8 font-light italic text-gray-300">
+                "空の仲間になろう！"
+              </Typography>
+              <div className="prose prose-invert prose-lg text-gray-400">
+                <p>
+                  日本人初、そして唯一のFAA（米連邦航空局）エアショーライセンス最高位「Unlimited」クラス保持者。
+                  <br />
+                  エアロバティックパイロットとしての規律と情熱を併せ持つ。
+                  <br />
+                  その操縦桿さばきは「空に絵を描く」と評される。
+                </p>
+              </div>
+            </motion.div>
+
+            {/* 画像を右側に配置 - 丸いフレーム + グロー効果 */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="md:col-span-5 lg:col-span-6 flex items-center justify-center md:justify-start"
+            >
+              <a
+                href="https://twitter.com/ja14wp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block group/image w-full max-w-sm relative"
+              >
+                {/* 外側のグローリング効果（丸形） */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-whiskyPapa-yellow/20 via-whiskyPapa-yellow/10 to-transparent blur-xl group-hover/image:blur-2xl transition-all duration-300 scale-110" />
+                {/* 丸いフレーム - 特別感を演出するグロー効果付き */}
+                <div className="relative aspect-square w-full rounded-full overflow-hidden border-2 border-white/10 group-hover/image:border-whiskyPapa-yellow/50 transition-colors bg-gray-800 shadow-[0_0_30px_rgba(255,215,0,0.3)] group-hover/image:shadow-[0_0_40px_rgba(255,215,0,0.5)]">
+                  <img
+                    src="/images/ContentImages/About/masa.jpg"
+                    alt="内海昌浩 MASA"
+                    className="w-full h-full object-cover group-hover/image:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-colors flex items-center justify-center pointer-events-none rounded-full">
+                    <ExternalLink className="w-8 h-8 text-white opacity-0 group-hover/image:opacity-100 transition-opacity" />
+                  </div>
+                </div>
+              </a>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -47,28 +88,42 @@ const About: React.FC = () => {
             <Typography variant="h2" className="mb-4">
               THE CREW
             </Typography>
-            <p className="text-gray-400">チームを支える、それぞれのプロフェッショナル。</p>
+            <p className="text-gray-400">チームを支えるプロフェッショナル。</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 role: 'Narrator',
                 name: 'Jun',
                 icon: Mic,
-                desc: '空の物語を紡ぐ、チームの声。ショーのナレーションを担い、エアロバティックの魅力を言葉で伝えるプロフェッショナル。',
+                desc: '空の物語を紡ぐチームの声。エアショーのナレーションを担い、エアロバティックの魅力を言葉で伝える。',
+                image: '/images/ContentImages/About/jun.jpg',
+                twitterUrl: 'https://twitter.com/JMASU24',
               },
               {
-                role: 'Director',
-                name: 'Ohgane',
+                role: 'Photographer & PR Manager',
+                name: 'Ogane',
                 icon: Camera,
-                desc: '一瞬の奇跡を切り取る。公式ギャラリーの監修と、ファンフォトのアワード選定を担う。',
+                desc: '一瞬の奇跡を切り取るチームの目。GALLERYの監修を担い、エアロバティックの魅力を写真と文字で伝える。',
+                image: '/images/ContentImages/About/ohgane.jpg',
+                twitterUrl: 'https://twitter.com/Ayumi_Bluebase',
               },
               {
-                role: 'Quartermaster',
-                name: 'Osyu',
+                role: 'Quarter & Designer',
+                name: 'おしゅ士長',
                 icon: ShoppingBag,
-                desc: 'チームの装備品（グッズ）を管理。Wingmanのための限定アイテムを開発・提供する。',
+                desc: 'チームの装備を支える補給係。ランクに応じた特別なグッズや限定アイテムの開発・デザインを担う。',
+                image: '/images/ContentImages/About/osyu.jpg',
+                twitterUrl: 'https://twitter.com/jieitaiotaku',
+              },
+              {
+                role: 'Developer',
+                name: 'しゃどー',
+                icon: Code,
+                desc: 'デジタルの世界でコミュニティ基盤を支える技術者。公式Webページの開発・管理を担う。',
+                image: '/images/ContentImages/About/shadow.jpg',
+                twitterUrl: 'https://twitter.com/ChatterMiracle',
               },
             ].map((member, i) => (
               <motion.div
@@ -79,6 +134,30 @@ const About: React.FC = () => {
                 transition={{ delay: i * 0.1 }}
                 className="bg-whiskyPapa-black border border-white/10 p-8 rounded-xl hover:border-whiskyPapa-yellow/50 transition-colors group"
               >
+                {member.image && member.twitterUrl && (
+                  <a
+                    href={member.twitterUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block mb-6 group/image"
+                  >
+                    <div className="relative aspect-square w-full rounded-full overflow-hidden border-2 border-white/10 group-hover/image:border-whiskyPapa-yellow/50 transition-colors bg-gray-800">
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-full h-full object-cover group-hover/image:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          // 画像が読み込めない場合はアイコンを表示
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-colors flex items-center justify-center pointer-events-none rounded-full">
+                        <ExternalLink className="w-8 h-8 text-white opacity-0 group-hover/image:opacity-100 transition-opacity" />
+                      </div>
+                    </div>
+                  </a>
+                )}
                 <div className="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center mb-6 group-hover:bg-whiskyPapa-yellow group-hover:text-black transition-colors">
                   <member.icon className="w-6 h-6" />
                 </div>
@@ -133,11 +212,21 @@ const About: React.FC = () => {
               transition={{ duration: 0.8 }}
               className="relative"
             >
-              <div className="aspect-[4/3] bg-gradient-to-tr from-green-900/20 to-transparent border border-green-500/20 rounded-lg flex items-center justify-center relative">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Plane className="w-64 h-64 text-green-500/20 stroke-[0.5]" />
-                </div>
-                <div className="absolute top-4 right-4 text-green-500/50 font-mono text-xs">
+              <div className="aspect-[4/3] bg-gradient-to-tr from-green-900/20 to-transparent border border-green-500/20 rounded-lg overflow-hidden relative">
+                {/* 画像を背景として表示 */}
+                <img
+                  src="/images/ContentImages/About/extra300.jpg"
+                  alt="EXTRA 300L"
+                  className="absolute inset-0 w-full h-full object-cover opacity-80"
+                  onError={(e) => {
+                    // 画像が読み込めない場合はフォールバック表示
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+                {/* オーバーレイ: グラデーションとHUDスタイルの情報 */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/40" />
+                <div className="absolute top-4 right-4 text-green-500/50 font-mono text-xs bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
                   STATUS: READY
                   <br />
                   FUEL: 100%

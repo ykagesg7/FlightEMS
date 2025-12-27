@@ -29,9 +29,10 @@
 | 役割 | メンバー | 機能・コンテンツ |
 | :--- | :--- | :--- |
 | **Pilot** | **Masa (内海昌浩)** | **Master Instructor**: ミッションの総監修。トップメッセージ。 |
-| **Narrator** | **Jun (ナレーター)** | **Briefing Officer**: ミッション通達、ブログ（脚本風）、体験搭乗時のナレーション。 |
-| **Photographer** | **Ohgane (PR)** | **Visual Director**: 公式ギャラリー（パララックス演出）。ファンの投稿写真の選定（Award）。 |
-| **Shop** | **Osu (おす士長)** | **Quartermaster (補給係)**: PX（売店）の管理。ランク限定グッズ（ワッペン等）の提供。 |
+| **Narrator** | **Jun** | **Briefing Officer**: エアショーのナレーションを担い、エアロバティックの魅力を言葉で伝える。 |
+| **Photographer & PR Manager** | **Ogane** | **Visual Director**: GALLERYの監修を担い、エアロバティックの魅力を写真と文字で伝える。 |
+| **Quarter & Designer** | **おしゅ士長** | **Quartermaster (補給係)**: ランクに応じた特別なグッズや限定アイテムの開発・デザインを担う。 |
+| **Developer** | **しゃどー** | **Technical Lead**: デジタルの世界でコミュニティ基盤を支える技術者。公式Webページの開発・管理を担う。 |
 
 ---
 
