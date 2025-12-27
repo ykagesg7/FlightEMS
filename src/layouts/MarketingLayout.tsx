@@ -21,7 +21,7 @@ export const MarketingLayout: React.FC = () => {
       <header className="sticky top-0 z-50 bg-whiskyPapa-black/90 backdrop-blur-md border-b border-whiskyPapa-yellow/20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo and HUD Time Display (logged in only) */}
+            {/* Logo and HUD Time Display */}
             <div className="flex items-center gap-4">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -29,25 +29,30 @@ export const MarketingLayout: React.FC = () => {
                 transition={{ duration: 0.5 }}
               >
                 <Link to="/" className="flex items-center gap-3">
-                  <Typography variant="h2" color="brand" className="!text-2xl">
-                    WP
-                  </Typography>
-                  <Typography variant="h4" className="!text-lg">
-                    Whisky Papa
-                  </Typography>
+                  <img
+                    src="public/images/ContentImages/Home/yellow-robin-logo.png"
+                    alt="Yellow Robin"
+                    className="h-10 w-10 object-contain"
+                  />
+                  <div className="flex flex-col">
+                    <Typography variant="h4" className="!text-lg !font-bold leading-tight">
+                      Whisky Papa
+                    </Typography>
+                    <Typography variant="caption" className="!text-xs !text-whiskyPapa-yellow/80 !font-medium tracking-wider uppercase">
+                      Competition Aerobatic Team
+                    </Typography>
+                  </div>
                 </Link>
               </motion.div>
-              {/* HUD Time Display - Only shown when logged in */}
-              {user && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: 0.2 }}
-                  className="hidden md:block"
-                >
-                  <HUDTimeDisplay />
-                </motion.div>
-              )}
+              {/* HUD Time Display - Always shown */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+                className="hidden md:block"
+              >
+                <HUDTimeDisplay />
+              </motion.div>
             </div>
 
             {/* Navigation */}
@@ -132,17 +137,15 @@ export const MarketingLayout: React.FC = () => {
               className="md:hidden overflow-hidden bg-whiskyPapa-black/95 backdrop-blur-md border-b border-whiskyPapa-yellow/20"
             >
               <div className="container mx-auto px-4 py-4">
-                {/* HUD Time Display - Only shown when logged in */}
-                {user && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.05 }}
-                    className="mb-4"
-                  >
-                    <HUDTimeDisplay />
-                  </motion.div>
-                )}
+                {/* HUD Time Display - Always shown */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.05 }}
+                  className="mb-4"
+                >
+                  <HUDTimeDisplay />
+                </motion.div>
                 <nav className="flex flex-col gap-2">
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}

@@ -27,10 +27,10 @@ const Home: React.FC = () => {
     <div className="relative min-h-screen bg-whiskyPapa-black text-white overflow-hidden">
       {/* Hero Section: Immersion */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Dynamic Background (Placeholder for Video) */}
+        {/* Dynamic Background - Pilot's View from Cockpit */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-t from-whiskyPapa-black via-whiskyPapa-black/50 to-transparent z-10" />
-          <div className="absolute inset-0 bg-[url('/images/ContentImages/topgun1.jpg')] bg-cover bg-center opacity-40 scale-105 animate-pulse-slow" />
+          <div className="absolute inset-0 bg-[url('public/images/ContentImages/Home/wp_cockpit_view.jpg')] bg-cover bg-center opacity-40 scale-105" />
         </div>
 
         <div className="relative z-20 container mx-auto px-4 text-center">
@@ -52,7 +52,7 @@ const Home: React.FC = () => {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-medium leading-relaxed"
           >
-            空は厳しくも自由で美しい。
+            空は自由で美しい。
             <br className="md:hidden" />
 
             <br />
@@ -69,7 +69,7 @@ const Home: React.FC = () => {
               <Link to="/mission">
                 <Button variant="brand" size="lg" className="px-8 py-6 text-lg min-w-[240px]">
                   <Target className="mr-2 h-5 w-5" />
-                  MISSION START
+                  Start MISSION
                 </Button>
               </Link>
             ) : (
@@ -91,8 +91,8 @@ const Home: React.FC = () => {
       </section>
 
       {/* Concept: The Narrative */}
-      <section className="py-24 bg-whiskyPapa-black relative">
-        <div className="container mx-auto px-4">
+      <section className="py-24 bg-whiskyPapa-black relative overflow-hidden">
+        <div className="container mx-auto px-4 relative z-20">
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -100,52 +100,59 @@ const Home: React.FC = () => {
             viewport={{ once: true, margin: '-100px' }}
             className="grid md:grid-cols-2 gap-16 items-center"
           >
-            <motion.div variants={itemVariants}>
-              <div className="relative">
-                <div className="absolute -top-10 -left-10 text-[120px] font-black text-whiskyPapa-yellow/5 select-none z-0">
-                  WHY
-                </div>
-                <h2 className="text-4xl md:text-5xl font-bold mb-6 relative z-10">
-                  その熱狂には
-                  <br />
-                  <span className="text-whiskyPapa-yellow">
-                    理由－LOGIC－
-                    <br />
-                  </span>
-                  がある。
-                </h2>
+            <motion.div variants={itemVariants} className="relative">
+              {/* Background - Cockpit Instrument Panel (only for text section) */}
+              <div className="absolute inset-0 z-0 md:rounded-lg overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-whiskyPapa-black/70 via-whiskyPapa-black/60 to-whiskyPapa-black/70 z-10" />
+                <div className="absolute inset-0 bg-[url('/images/ContentImages/Home/wp_cockpit_instruments.jpg')] bg-cover bg-center opacity-60" />
               </div>
-              <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                アクロバット飛行は、単なるショーではありません。
-                <br />
-                気象、航空力学、生理学、そして緻密な計画。
-                <br />
-                膨大な理論と準備の先にある「必然の美しさ」です。
-              </p>
-              <p className="text-gray-400 text-lg leading-relaxed mb-8">
-                Whisky Papaは、その「裏側（コクピットの思考）」まで公開します。
-                <br />
-                見るだけのファンから、知性で飛ぶ「ウイングマン」へ。
-              </p>
-              <Link to="/about">
-                <span className="inline-flex items-center text-whiskyPapa-yellow hover:text-white transition-colors font-bold border-b border-whiskyPapa-yellow pb-1">
-                  READ our Philosophy <ChevronRight className="ml-1 w-4 h-4" />
-                </span>
-              </Link>
+              <div className="relative z-10 p-8 md:p-12">
+                <div className="relative">
+                  <div className="absolute -top-10 -left-10 text-[120px] font-black text-whiskyPapa-yellow/5 select-none z-0">
+                    WHY
+                  </div>
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6 relative z-10">
+                    その熱狂には
+                    <br />
+                    <span className="text-whiskyPapa-yellow">
+                      理由－LOGIC－
+                      <br />
+                    </span>
+                    がある。
+                  </h2>
+                </div>
+                <p className="text-gray-400 text-lg leading-relaxed mb-6">
+                  アクロバット飛行は、単なるショーではありません。
+                  <br />
+                  気象、航空力学、生理学、そして緻密な計画。
+                  <br />
+                  膨大な理論と準備の先にある「必然の美しさ」です。
+                </p>
+                <p className="text-gray-400 text-lg leading-relaxed mb-8">
+                  Whisky Papaは、その「裏側（コクピットの思考）」まで公開します。
+                  <br />
+                  見るだけのファンから、ともに飛ぶ「ウイングマン」へ。
+                </p>
+                <Link to="/about">
+                  <span className="inline-flex items-center text-whiskyPapa-yellow hover:text-white transition-colors font-bold border-b border-whiskyPapa-yellow pb-1">
+                    READ our Philosophy <ChevronRight className="ml-1 w-4 h-4" />
+                  </span>
+                </Link>
+              </div>
             </motion.div>
 
             <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
               <div className="space-y-4 mt-8">
                 <div className="h-48 bg-gray-800 rounded-lg overflow-hidden border border-white/10">
                   <img
-                    src="/images/ContentImages/topgun2.jpg"
+                    src="/images/ContentImages/Home/wp_planning.avif"
                     alt="Planning"
                     className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity"
                   />
                 </div>
                 <div className="h-64 bg-gray-800 rounded-lg overflow-hidden border border-white/10">
                   <img
-                    src="/images/ContentImages/topgun1.jpg"
+                    src="/images/ContentImages/Home/wp_cockpit.jfif"
                     alt="Cockpit"
                     className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity"
                   />
@@ -154,14 +161,14 @@ const Home: React.FC = () => {
               <div className="space-y-4">
                 <div className="h-64 bg-gray-800 rounded-lg overflow-hidden border border-white/10">
                   <img
-                    src="/images/ContentImages/topgun1.jpg"
+                    src="public/images/ContentImages/Home/wp_aerobatics.avif"
                     alt="Aerobatics"
                     className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity"
                   />
                 </div>
                 <div className="h-48 bg-gray-800 rounded-lg overflow-hidden border border-white/10">
                   <img
-                    src="/images/ContentImages/topgun2.jpg"
+                    src="/images/ContentImages/Home/wp_team.jfif"
                     alt="Team"
                     className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity"
                   />
@@ -173,8 +180,13 @@ const Home: React.FC = () => {
       </section>
 
       {/* Wingman Program (Roadmap) */}
-      <section className="py-24 bg-gradient-to-b from-whiskyPapa-black-light to-whiskyPapa-black border-t border-white/5">
-        <div className="container mx-auto px-4">
+      <section className="py-24 bg-gradient-to-b from-whiskyPapa-black-light to-whiskyPapa-black border-t border-white/5 relative overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-whiskyPapa-black/75 via-whiskyPapa-black/65 to-whiskyPapa-black/75 z-10" />
+          <div className="absolute inset-0 bg-[url('/images/ContentImages/Home/wp_aerobatic_flight2.jpg')] bg-cover bg-center opacity-80" />
+        </div>
+        <div className="container mx-auto px-4 relative z-20">
           <div className="text-center mb-16">
             <Typography variant="h4" color="brand" className="mb-2 uppercase tracking-widest">
               Wingman Program
@@ -223,7 +235,7 @@ const Home: React.FC = () => {
                 <Card
                   variant="brand"
                   padding="none"
-                  className="h-full border border-white/10 bg-whiskyPapa-black-light p-8 hover:border-whiskyPapa-yellow/50 transition-colors group"
+                  className="h-full border border-white/20 bg-whiskyPapa-black-light/60 backdrop-blur-sm p-8 hover:border-whiskyPapa-yellow/50 hover:bg-whiskyPapa-black-light/70 transition-all group"
                 >
                   <CardContent className="text-center">
                     <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6 text-2xl font-bold bg-gray-800 text-gray-500 group-hover:bg-whiskyPapa-yellow group-hover:text-black transition-colors">
@@ -253,8 +265,13 @@ const Home: React.FC = () => {
       </section>
 
       {/* CTA to Mission Blog */}
-      <section className="py-20 bg-whiskyPapa-black text-center border-t border-white/10">
-        <div className="container mx-auto px-4">
+      <section className="py-20 bg-whiskyPapa-black text-center border-t border-white/10 relative overflow-hidden">
+        {/* Background - Aerobatic Flight */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-whiskyPapa-black/70 via-whiskyPapa-black/60 to-whiskyPapa-black/70 z-10" />
+          <div className="absolute inset-0 bg-[url('/images/ContentImages/Home/wp_aerobatic_flight.jpg')] bg-cover bg-center opacity-45" />
+        </div>
+        <div className="container mx-auto px-4 relative z-20">
           <Typography variant="h3" className="mb-4 text-whiskyPapa-yellow">
             THE PILOT&apos;S NARRATIVE
           </Typography>
