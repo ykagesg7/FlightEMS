@@ -1,9 +1,13 @@
 import { motion } from 'framer-motion';
 import { BadgeCheck, Camera, Code, ExternalLink, Mic, ShoppingBag } from 'lucide-react';
 import React from 'react';
-import { Typography } from '../components/ui';
+import { Link } from 'react-router-dom';
+import { Button, Typography } from '../components/ui';
+import { useAuthStore } from '../stores/authStore';
 
 const About: React.FC = () => {
+  const { user } = useAuthStore();
+
   return (
     <div className="min-h-screen bg-whiskyPapa-black text-white">
       {/* Hero: The Pilot's Portrait */}
@@ -248,12 +252,19 @@ const About: React.FC = () => {
             <br />
             コクピットの思考を読むならここから。
           </p>
-          <a
-            href="/mission?tab=blog"
-            className="inline-flex items-center px-6 py-3 rounded-lg bg-whiskyPapa-yellow text-black font-bold hover:bg-whiskyPapa-yellow/90 transition-colors"
-          >
-            JOIN our Formation
-          </a>
+          {user ? (
+            <Link to="/mission?tab=blog">
+              <Button variant="brand" size="lg" className="px-6 py-3">
+                JOIN our Formation
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/auth">
+              <Button variant="brand" size="lg" className="px-6 py-3">
+                JOIN our Formation
+              </Button>
+            </Link>
+          )}
         </div>
       </section>
     </div>
