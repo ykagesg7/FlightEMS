@@ -30,7 +30,7 @@ export const MarketingLayout: React.FC = () => {
               >
                 <Link to="/" className="flex items-center gap-3">
                   <img
-                    src="public/images/ContentImages/Home/yellow-robin-logo.png"
+                    src="/images/ContentImages/Home/yellow-robin-logo.png"
                     alt="Yellow Robin"
                     className="h-10 w-10 object-contain"
                   />

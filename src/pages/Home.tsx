@@ -30,7 +30,7 @@ const Home: React.FC = () => {
         {/* Dynamic Background - Pilot's View from Cockpit */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-t from-whiskyPapa-black via-whiskyPapa-black/50 to-transparent z-10" />
-          <div className="absolute inset-0 bg-[url('public/images/ContentImages/Home/wp_cockpit_view.jpg')] bg-cover bg-center opacity-40 scale-105" />
+          <div className="absolute inset-0 bg-[url('/images/ContentImages/Home/wp_cockpit_view.jpg')] bg-cover bg-center opacity-40 scale-105" />
         </div>
 
         <div className="relative z-20 container mx-auto px-4 text-center">
@@ -161,7 +161,7 @@ const Home: React.FC = () => {
               <div className="space-y-4">
                 <div className="h-64 bg-gray-800 rounded-lg overflow-hidden border border-white/10">
                   <img
-                    src="public/images/ContentImages/Home/wp_aerobatics.avif"
+                    src="/images/ContentImages/Home/wp_aerobatics.avif"
                     alt="Aerobatics"
                     className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity"
                   />
