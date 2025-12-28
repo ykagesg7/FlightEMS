@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
-import AuthPage from '@/pages/AuthPage';
+import AuthPage from '@/pages/auth/AuthPage';
 import * as authStore from '@/stores/authStore';
 
 // Zustandストアのモック

@@ -117,7 +117,7 @@ export const useGamification = () => {
   });
 
   // アクションに基づいてミッションを達成
-  const completeMissionByAction = async (action: string, metadata?: any) => {
+  const completeMissionByAction = async (action: string) => {
     if (!user?.id) return;
 
     // 該当するミッションを取得

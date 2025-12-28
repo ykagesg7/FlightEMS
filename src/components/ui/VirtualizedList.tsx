@@ -20,6 +20,7 @@ function VirtualizedList<T>({
     <div className={className}>
       <List
         height={height}
+        width="100%"
         itemCount={items.length}
         itemSize={itemHeight}
         itemData={items}

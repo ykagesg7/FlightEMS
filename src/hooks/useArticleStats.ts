@@ -22,7 +22,6 @@ export function useArticleStats() {
   const [stats, setStats] = useState<Record<string, ArticleStats>>({});
   const [comments, setComments] = useState<Record<string, ArticleComment[]>>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [loadedArticleIds, setLoadedArticleIds] = useState<string[]>([]);
 
   const supabase = supabaseClient;
 
@@ -90,7 +89,6 @@ export function useArticleStats() {
       }
 
       setStats(articleStats);
-      setLoadedArticleIds(prev => [...prev, ...newArticleIds]);
     } catch (error) {
       console.error('記事統計の取得に失敗しました:', error);
     } finally {

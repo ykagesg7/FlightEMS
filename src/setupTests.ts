@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Supabaseのモック設定
 vi.mock('@supabase/supabase-js', () => ({
@@ -26,4 +27,4 @@ vi.mock('leaflet', () => ({
   tileLayer: vi.fn(),
   marker: vi.fn(),
   icon: vi.fn(),
-})); 
+}));

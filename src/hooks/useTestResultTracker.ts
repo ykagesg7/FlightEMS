@@ -30,7 +30,7 @@ export const useTestResultTracker = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentSession, setCurrentSession] = useState<string | null>(null);
 
-  const startTestSession = useCallback((learningContentId?: string) => {
+  const startTestSession = useCallback(() => {
     const sessionId = crypto.randomUUID();
     setCurrentSession(sessionId);
     return sessionId;
@@ -115,7 +115,8 @@ export const useTestResultTracker = () => {
       return { success: true, sessionId: session.sessionId };
     } catch (error) {
       console.error('Error recording test results:', error);
-      return { success: false, error: error.message };
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
     }
@@ -175,7 +176,8 @@ export const useTestResultTracker = () => {
             subjectCategory: result.subject_category,
             totalQuestions: 0,
             correctAnswers: 0,
-            date: result.created_at
+            date: result.created_at,
+            accuracy: 0
           };
         }
         acc[sessionId].totalQuestions++;

@@ -101,3 +101,6 @@ coverage/
 public/geojson/
 **/*.pdf
 **/*.zip
+
+# Scripts dependencies
+scripts/docs-auto-update/node_modules/

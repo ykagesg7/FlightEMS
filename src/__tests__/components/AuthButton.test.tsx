@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
-import { AuthButton } from '@/components/auth/AuthButton';
+import { AuthButton } from '@/pages/auth/components/AuthButton';
 import * as authStore from '@/stores/authStore';
 
 // Zustandストアのモック

@@ -105,11 +105,54 @@ http://localhost:5173/
 2. マニューバーが含まれるスライドに移動
 3. ビューアで機動を確認し、再生/一時停止/リセットボタンで操作
 
+## テスト
+
+### テストの実行
+
+プロジェクトにはVitestを使用したテストスイートが含まれています。
+
+```bash
+# テストを実行（ウォッチモード）
+npm test
+
+# テストを1回実行
+npm run test:run
+
+# テストカバレッジを生成
+npm run test:coverage
+
+# テストUIを起動
+npm run test:ui
+```
+
+### CI/CD
+
+プロジェクトはGitHub Actionsを使用したCI/CDパイプラインを設定しています：
+
+- **プルリクエスト時**: 自動的にLint、テスト、ビルドを実行
+- **プッシュ時**: main/master/developブランチへのプッシュ時に自動検証
+- **テストカバレッジ**: プルリクエストにカバレッジレポートを自動コメント
+
+#### CI/CDとは？
+
+**CI (Continuous Integration: 継続的統合)**
+- コードをリポジトリにプッシュするたびに自動的にテストを実行
+- バグを早期に発見し、品質を保証
+- 複数の開発者が協力する際の統合問題を防止
+
+**CD (Continuous Deployment: 継続的デプロイ)**
+- テストが成功したら自動的に本番環境にデプロイ
+- 手動デプロイの手間を削減
+- 迅速な機能リリースを実現
+
+現在のプロジェクトでは、CI（継続的統合）が設定されており、プルリクエストやプッシュ時に自動的にテストが実行されます。
+
 ## 技術スタック
 
 - **フロントエンド**: React, TypeScript, Vite, Tailwind CSS
+- **テスト**: Vitest, Testing Library
 - **マップ表示**: Leaflet.js
-- **状態管理**: React Context API
+- **状態管理**: React Context API, Zustand
 - **データ形式**: GeoJSON
 - **APIクライアント**: Axios
 - **ドキュメント**: MDX, Mermaid

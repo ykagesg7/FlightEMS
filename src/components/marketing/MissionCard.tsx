@@ -9,7 +9,6 @@ interface MissionCardProps {
   mission: Mission;
   isCompleted?: boolean;
   completedAt?: string;
-  onComplete?: (missionId: string) => void;
   userRank?: UserRank;
 }
 
@@ -21,7 +20,6 @@ export const MissionCard: React.FC<MissionCardProps> = ({
   mission,
   isCompleted = false,
   completedAt,
-  onComplete,
   userRank = 'spectator',
 }) => {
   const rankInfo = RANK_INFO[mission.min_rank_required];
@@ -36,7 +34,7 @@ export const MissionCard: React.FC<MissionCardProps> = ({
       case 'article_read':
         return '/articles';
       case 'lesson_complete':
-        return '/learning';
+        return '/articles';
       default:
         return '#';
     }

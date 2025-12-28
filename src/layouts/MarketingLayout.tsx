@@ -295,7 +295,7 @@ export const MarketingLayout: React.FC = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/learning" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
+                  <Link to="/articles" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
                     Academy
                   </Link>
                 </li>

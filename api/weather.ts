@@ -62,14 +62,31 @@ export default async function handler(
       });
     }
 
-    // 外部APIへのリクエスト
+    // 外部APIへのリクエスト（10秒タイムアウト）
     console.log(`Fetching from Weather API: lat=${latNum}, lon=${lonNum}`);
-    const weatherResponse = await fetch(
-      `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${latNum},${lonNum}&days=1&aqi=no`,
-      {
-        timeout: 10000 // 10秒タイムアウト
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    let weatherResponse: Response;
+    try {
+      weatherResponse = await fetch(
+        `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${latNum},${lonNum}&days=1&aqi=no`,
+        {
+          signal: controller.signal
+        }
+      );
+      clearTimeout(timeoutId);
+    } catch (fetchError: unknown) {
+      clearTimeout(timeoutId);
+      if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+        return response.status(504).json({
+          error: '天気データの取得に失敗しました',
+          code: 'TIMEOUT',
+          message: 'リクエストがタイムアウトしました'
+        });
       }
-    );
+      throw fetchError;
+    }
 
     if (!weatherResponse.ok) {
       console.error(`Weather API error: ${weatherResponse.status} - ${weatherResponse.statusText}`);

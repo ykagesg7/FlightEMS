@@ -151,7 +151,7 @@ async function getContinueTasks(userId: string, supabase: ReturnType<typeof crea
         title: content.title,
         estimatedMinutes: 25,
         priority: 50 + (p.progress_percentage || 0) / 2, // 進捗が高いほど優先
-        linkTo: `/learning/${p.content_id}`,
+        linkTo: `/articles/${p.content_id}`,
         completed: false,
       };
     })

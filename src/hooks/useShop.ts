@@ -1,15 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAuthStore } from '../stores/authStore';
+import type { Product } from '../types/engagement';
 import { supabase } from '../utils/supabase';
 import { useGamification } from './useGamification';
-import type { Product } from '../types/engagement';
 
 /**
  * useShop Hook
  * 商品一覧の取得とランクチェック
  */
 export const useShop = () => {
-  const { user } = useAuthStore();
   const { profile: gamificationProfile } = useGamification();
 
   // 商品一覧を取得

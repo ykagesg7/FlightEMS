@@ -4,10 +4,18 @@ import { cn } from '../../utils';
 export type TypographyVariant = 'display' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'body-sm' | 'caption' | 'mono';
 export type TypographyColor = 'default' | 'muted' | 'primary' | 'brand' | 'hud';
 
+// HTML要素のみを許可する型
+type HTMLElementTagName =
+  | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+  | 'p' | 'span' | 'div' | 'section' | 'article' | 'aside' | 'header' | 'footer'
+  | 'code' | 'pre' | 'strong' | 'em' | 'b' | 'i' | 'u' | 'mark' | 'small'
+  | 'blockquote' | 'cite' | 'q' | 'abbr' | 'dfn' | 'time' | 'var' | 'samp'
+  | 'kbd' | 'sub' | 'sup' | 'del' | 'ins' | 'address' | 'label' | 'legend';
+
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   variant?: TypographyVariant;
   color?: TypographyColor;
-  as?: keyof JSX.IntrinsicElements;
+  as?: HTMLElementTagName;
   children: React.ReactNode;
 }
 
@@ -23,7 +31,7 @@ export const Typography: React.FC<TypographyProps> = ({
   children,
   ...props
 }) => {
-  const variantStyles: Record<TypographyVariant, { element: keyof JSX.IntrinsicElements; className: string }> = {
+  const variantStyles: Record<TypographyVariant, { element: HTMLElementTagName; className: string }> = {
     display: {
       element: 'h1',
       className: 'font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight',

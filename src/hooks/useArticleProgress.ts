@@ -23,8 +23,11 @@ export interface LearningStats {
   totalArticles: number;
   readArticles: number;
   completedArticles: number;
-  streakDays: number;
-  averageRating: number;
+  streakDays: number; // 後方互換性のため残す
+  averageRating: number; // 後方互換性のため残す
+  completedMissions: number; // 完了したミッションの総数
+  rankProgress: number; // 次のランクまでの進捗率（0-100）
+  currentRank?: string | null; // 現在のランク（オプション、表示用）
   categoriesProgress: Record<string, { read: number; total: number; percentage: number }>;
   seriesProgress: Record<string, { read: number; total: number; percentage: number }>;
   recentActivity: ArticleProgress[];
@@ -43,6 +46,9 @@ const DEMO_STATS: LearningStats = {
   completedArticles: 8,
   streakDays: 7,
   averageRating: 4.2,
+  completedMissions: 5,
+  rankProgress: 45,
+  currentRank: 'spectator',
   categoriesProgress: {
     '思考法': { read: 6, total: 8, percentage: 75 },
     'メンタリティー': { read: 4, total: 6, percentage: 67 },
@@ -122,7 +128,7 @@ const DEMO_PROGRESS: Record<string, ArticleProgress> = {
 
 export const useArticleProgress = () => {
   const { user } = useAuth();
-  const { completeMissionByAction } = useGamification();
+  const { completeMissionByAction, profile, rankProgress: gamificationRankProgress } = useGamification();
   const [userProgress, setUserProgress] = useState<Record<string, ArticleProgress>>({});
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -153,7 +159,12 @@ export const useArticleProgress = () => {
   }, []);
 
   // 統計の計算
-  const calculateStats = useCallback((progress: Record<string, ArticleProgress>, userProfile?: { current_streak_days?: number }): LearningStats => {
+  const calculateStats = useCallback((
+    progress: Record<string, ArticleProgress>,
+    userProfile?: { current_streak_days?: number },
+    gamificationProfile?: { completed_missions?: Array<{ mission_id: string }>; rank?: string } | null,
+    rankProgressValue?: number
+  ): LearningStats => {
     const articles = Object.values(articleIndex);
     const progressList = Object.values(progress);
 
@@ -213,8 +224,13 @@ export const useArticleProgress = () => {
       ? ratingsWithValue.reduce((sum, p) => sum + (p.rating || 0), 0) / ratingsWithValue.length
       : 0;
 
-    // 連続日数: user_learning_profilesから取得
+    // 連続日数: user_learning_profilesから取得（後方互換性のため残す）
     const streakDays = userProfile?.current_streak_days || 0;
+
+    // XPシステムからデータを取得
+    const completedMissions = gamificationProfile?.completed_missions?.length || 0;
+    const rankProgress = rankProgressValue !== undefined ? rankProgressValue : 0;
+    const currentRank = gamificationProfile?.rank || null;
 
     // 今日の完了記事数を計算（日付ベース）
     const today = new Date();
@@ -231,6 +247,9 @@ export const useArticleProgress = () => {
       completedArticles,
       streakDays,
       averageRating,
+      completedMissions,
+      rankProgress,
+      currentRank,
       categoriesProgress,
       seriesProgress,
       recentActivity: progressList
@@ -307,7 +326,8 @@ export const useArticleProgress = () => {
           });
 
           setUserProgress(progressMap);
-          setStats(calculateStats(progressMap, userProfile));
+          // useGamificationから取得したデータを使用
+          setStats(calculateStats(progressMap, userProfile, profile, gamificationRankProgress));
         } else {
           // 未登録ユーザーの場合：ダミーデータを使用
           setUserProgress(DEMO_PROGRESS);
@@ -324,7 +344,7 @@ export const useArticleProgress = () => {
     if (Object.keys(articleIndex).length > 0 && Object.keys(articleIndexByFilename).length > 0) {
       loadInitialData();
     }
-  }, [user, articleIndex, articleIndexByFilename, calculateStats]);
+  }, [user, articleIndex, articleIndexByFilename, calculateStats, profile, gamificationRankProgress]);
 
   // 記事の進捗を更新
   const updateArticleProgress = useCallback(async (
@@ -391,7 +411,7 @@ export const useArticleProgress = () => {
       // プロファイル取得は非同期で実行し、完了後に統計を再計算
       // これにより、プロファイル取得が失敗しても進捗更新は成功する
       const updateStatsWithProfile = async () => {
-        let profile: { current_streak_days?: number } | undefined;
+        let userLearningProfile: { current_streak_days?: number } | undefined;
         try {
           const profileResult = await supabase
             .from('user_learning_profiles')
@@ -409,18 +429,20 @@ export const useArticleProgress = () => {
               // エラーログは出力しない（コンソールを汚さない）
             }
           } else if (profileResult.data) {
-            profile = profileResult.data;
+            userLearningProfile = profileResult.data;
           }
         } catch (profileError) {
           // ネットワークエラーなどは無視（エラーログは出力しない）
         }
 
         // プロファイル取得後に統計を再計算
-        setStats(calculateStats(newProgressMap, profile));
+        // userLearningProfileは第2引数（userProfile）、profileは第3引数（gamificationProfile）
+        setStats(calculateStats(newProgressMap, userLearningProfile, profile, gamificationRankProgress));
       };
 
       // まずプロファイルなしで統計を計算（即座にUIを更新）
-      setStats(calculateStats(newProgressMap, undefined));
+      // userLearningProfileはundefined、profileはuseGamificationから取得済み
+      setStats(calculateStats(newProgressMap, undefined, profile, gamificationRankProgress));
 
       // その後、プロファイルを取得して統計を再計算（バックグラウンドで実行）
       updateStatsWithProfile().catch(() => {

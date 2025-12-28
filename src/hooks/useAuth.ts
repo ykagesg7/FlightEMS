@@ -1,18 +1,17 @@
 import type { User } from '@supabase/supabase-js';
 import { useMemo } from 'react';
-import { useAuthStore } from '../stores/authStore';
-import type { UserProfile } from '../types';
+import { useAuthStore, type Profile } from '../stores/authStore';
 
 export interface AuthState {
   user: User | null;
-  profile: UserProfile | null;
+  profile: Profile | null;
   loading: boolean;
   initialized: boolean;
 }
 
 export interface AuthActions {
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, userData?: Partial<UserProfile>) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<{ error: import('@supabase/supabase-js').AuthError | Error | null }>;
+  signUp: (email: string, password: string, username: string) => Promise<{ error: import('@supabase/supabase-js').AuthError | Error | null; user: User | null; emailConfirmRequired: boolean }>;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
 }

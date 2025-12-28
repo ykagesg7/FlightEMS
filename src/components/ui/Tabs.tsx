@@ -1,9 +1,9 @@
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import React from 'react';
+import PlanningTab from '../../pages/planning/components/flight/PlanningTab';
+import MapTab from '../../pages/planning/components/map/MapTab';
 import { FlightPlan } from '../../types/index';
 import { calculateAirspeeds, calculateMach, calculateTAS, cn, formatTime } from '../../utils';
-import PlanningTab from '../flight/PlanningTab';
-import MapTab from '../map/MapTab';
 import LearningTabMDX from '../mdx/LearningTabMDX';
 
 const Tabs = TabsPrimitive.Root;

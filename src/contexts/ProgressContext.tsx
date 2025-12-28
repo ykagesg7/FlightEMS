@@ -1,33 +1,35 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { useLearningProgress } from '../hooks/useLearningProgress';
-// import { useAuth } from './AuthContext';
-// ProgressContextで認証情報が必要な場合はuseAuthStoreやuseAuthを直接使ってください。
-import { LearningContent, ProgressStats } from '../types';
+import { LearningContent } from '../types';
 
-interface Progress {
-  [contentId: string]: {
-    completed: boolean;
-    lastReadPosition: number; // スクロール位置
-    lastReadDate: string; // 最後に読んだ日時
-    readCount: number; // 読んだ回数
-  };
+interface LearningProgress {
+  id: string;
+  user_id: string;
+  content_id: string;
+  completed: boolean;
+  progress_percentage: number;
+  last_position: number;
+  last_read_at: string;
+  read_count: number;
+  created_at: string;
+  updated_at: string;
 }
 
 interface ProgressContextType {
-  progress: ProgressStats | null;
-  updateProgress: (unitId: string) => void;
-  getProgress: () => number;
-  isUnitCompleted: (unitId: string) => boolean;
-  completedUnits: string[];
-  userStats: {
-    totalLessons: number;
-    completedLessons: number;
-  };
+  userProgress: Record<string, LearningProgress>;
   learningContents: LearningContent[];
-  loading: boolean;
-  error: string | null;
+  isLoading: boolean;
+  error: Error | null;
+  updateProgress: (contentId: string, position: number) => Promise<void>;
+  markAsCompleted: (contentId: string) => Promise<void>;
+  getProgress: (contentId: string) => number;
+  isCompleted: (contentId: string) => boolean;
+  getLastReadInfo: (contentId: string) => { position: number; date: string } | null;
+  resetProgress: (contentId: string) => Promise<void>;
+  loadUserProgress: () => Promise<void>;
+  loadLearningContents: () => Promise<void>;
   getContentsByCategory: (category?: string) => LearningContent[];
-  refreshContents: () => Promise<void>;
+  getAllCategories: () => string[];
 }
 
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
@@ -36,14 +38,36 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const progressData = useLearningProgress();
 
   // Context値をuseMemoでラップ
-  const contextValue = useMemo(() => ({
-    ...progressData
+  const contextValue = useMemo<ProgressContextType>(() => ({
+    userProgress: progressData.userProgress,
+    learningContents: progressData.learningContents,
+    isLoading: progressData.isLoading,
+    error: progressData.error,
+    updateProgress: progressData.updateProgress,
+    markAsCompleted: progressData.markAsCompleted,
+    getProgress: progressData.getProgress,
+    isCompleted: progressData.isCompleted,
+    getLastReadInfo: progressData.getLastReadInfo,
+    resetProgress: progressData.resetProgress,
+    loadUserProgress: progressData.loadUserProgress,
+    loadLearningContents: progressData.loadLearningContents,
+    getContentsByCategory: progressData.getContentsByCategory,
+    getAllCategories: progressData.getAllCategories,
   }), [
     progressData.userProgress,
     progressData.learningContents,
     progressData.isLoading,
-    progressData.error
-    // 必要に応じて他の依存も追加
+    progressData.error,
+    progressData.updateProgress,
+    progressData.markAsCompleted,
+    progressData.getProgress,
+    progressData.isCompleted,
+    progressData.getLastReadInfo,
+    progressData.resetProgress,
+    progressData.loadUserProgress,
+    progressData.loadLearningContents,
+    progressData.getContentsByCategory,
+    progressData.getAllCategories,
   ]);
 
   return (

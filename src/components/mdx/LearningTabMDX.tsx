@@ -4,11 +4,11 @@ import { useSearchParams } from 'react-router-dom';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
 // import { useAuthStore } from '../../stores/authStore';
 
-import { KeyboardShortcuts } from '../articles/KeyboardShortcuts';
-import { PrevNextNav } from '../articles/PrevNextNav';
-import { ReadingProgressBar } from '../articles/ReadingProgressBar';
-import { ScrollToButtons } from '../articles/ScrollToButtons';
-import { usePrevNext } from '../articles/usePrevNext';
+import { KeyboardShortcuts } from '../../pages/articles/components/KeyboardShortcuts';
+import { PrevNextNav } from '../../pages/articles/components/PrevNextNav';
+import { ReadingProgressBar } from '../../pages/articles/components/ReadingProgressBar';
+import { ScrollToButtons } from '../../pages/articles/components/ScrollToButtons';
+import { usePrevNext } from '../../pages/articles/components/usePrevNext';
 // Legacy dashboard was removed; analytics dashboard not used here anymore
 // import LearningAnalyticsDashboard from '../learning/LearningAnalyticsDashboard';
 import MDXLoader from './MDXLoader';
@@ -67,8 +67,6 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
   const {
     learningContents,
     getProgress,
-    isCompleted,
-    getLastReadInfo,
     loadLearningContents,
     isLoading
   } = useLearningProgress();
@@ -182,14 +180,6 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
     });
   }, [displayContents, selectedCategory]);
 
-  // ナビゲーション関数
-  const navigateToHome = () => {
-    setCurrentView('home');
-    setSelectedCategory(null);
-    setSelectedContent(null);
-    // URLパラメータをクリア
-    window.history.replaceState({}, '', window.location.pathname);
-  };
 
   const navigateToCategory = (category: string) => {
     setCurrentView('category');
@@ -213,7 +203,7 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
     }
     if (contentType === 'learning') {
       try {
-        window.location.href = '/learning';
+        window.location.href = '/articles';
       } catch {
         // no-op
       }
@@ -357,7 +347,7 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
 
           <ReadingProgressBar contentId={selectedContent} />
           <MDXLoader contentId={selectedContent} />
-          <PrevNextNav currentId={selectedContent} listPath={contentType === 'articles' ? '/articles' : '/learning'} />
+          <PrevNextNav currentId={selectedContent} listPath="/articles" />
           <ScrollToButtons />
           <KeyboardShortcuts prevId={prev?.id} nextId={next?.id} />
         </div>
