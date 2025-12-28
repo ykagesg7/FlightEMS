@@ -35,27 +35,16 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
   const currentSlug = slug || contentId || '';
   useArticlePrefetch(currentSlug, true);
 
+  // セクションベースの進捗計算はTableOfContentsで行うため、
+  // ここでは学習進捗のみ更新（スクロール位置の記録用）
   const compute = useThrottle(() => {
-    const totalScrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const currentScrollY = Math.max(0, window.scrollY);
-    const pct = Math.min(100, Math.max(0, (currentScrollY / totalScrollable) * 100));
-    setProgressPct(pct);
 
-    // 学習進捗を更新
+    // 学習進捗を更新（スクロール位置の記録用）
     updateProgress(currentSlug, Math.floor(currentScrollY));
 
-    // 記事進捗も更新（ログインユーザーのみ、5%以上読んだ場合）
-    if (user && currentSlug && pct >= 5) {
-      const isCompleted = pct >= 95;
-      updateArticleProgress(currentSlug, {
-        scrollProgress: pct,
-        completed: isCompleted,
-        lastPosition: Math.floor(currentScrollY),
-        readAt: new Date()
-      }).catch(error => {
-        console.error('進捗保存エラー:', error);
-      });
-    }
+    // 記事進捗の更新はTableOfContentsでセクションベースで行うため、
+    // ここでは更新しない
   }, 1000);
 
   useEffect(() => {
@@ -91,18 +80,12 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
     window.addEventListener('resize', onResize);
     window.addEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as unknown as EventListener);
     return () => {
-      // ページ離脱時に進捗を保存（ログインユーザーのみ、5%以上読んだ場合）
-      if (user && currentSlug && progressPct >= 5) {
-        const isCompleted = progressPct >= 95;
-        updateArticleProgress(currentSlug, {
-          scrollProgress: progressPct,
-          completed: isCompleted,
-          lastPosition: Math.floor(window.scrollY),
-          readAt: new Date()
-        }).catch(error => {
-          console.error('進捗保存エラー:', error);
-        });
-      }
+      // ページ離脱時の進捗保存は削除
+      // 理由：
+      // 1. スクロール時に既に進捗を保存しているため、重複保存は不要
+      // 2. コンポーネントがアンマウントされた後にfetchが実行され、ネットワークエラーが発生する
+      // 3. ページ離脱時の非同期処理は信頼性が低い
+      // 進捗はスクロール時に自動保存されるため、ページ離脱時の保存は不要
 
       window.removeEventListener('scroll', onScroll as any);
       window.removeEventListener('resize', onResize as any);
@@ -110,20 +93,9 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
     };
   }, [compute, user, currentSlug, progressPct, updateArticleProgress]);
 
-  return (
-    <>
-      {/* 読了時間表示（右上に固定） */}
-      {progressPct > 0 && (
-        <div className="fixed top-4 right-4 z-40">
-          <ReadingTimeEstimate
-            totalReadingTime={readingTime}
-            progress={progressPct / 100}
-            compact={true}
-          />
-        </div>
-      )}
-    </>
-  );
+  // 進捗更新機能のみ実行（表示は削除）
+  // 進捗は目次の下に表示されるため、ここでは表示しない
+  return null;
 };
 
 

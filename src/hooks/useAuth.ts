@@ -51,13 +51,3 @@ export const useAuth = (): UseAuthReturn => {
   ]);
 };
 
-export const useRequireAuth = () => {
-  const auth = useAuth();
-  if (!auth.initialized) {
-    return { ...auth, requiresAuth: true };
-  }
-  if (!auth.isAuthenticated) {
-    return { ...auth, requiresAuth: true };
-  }
-  return { ...auth, requiresAuth: false };
-};

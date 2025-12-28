@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useAuth, useRequireAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import { useAuthStore } from '../../stores/authStore';
 
 // Zustandストアのモック
@@ -49,7 +49,7 @@ describe('useAuth', () => {
       ...mockAuthState,
       user: { id: '123', email: 'test@example.com' },
     };
-    
+
     mockUseAuthStore.mockImplementation((selector) => selector(authStateWithUser));
 
     const { result } = renderHook(() => useAuth());
@@ -64,7 +64,7 @@ describe('useAuth', () => {
       loading: true,
       initialized: false,
     };
-    
+
     mockUseAuthStore.mockImplementation((selector) => selector(loadingAuthState));
 
     const { result } = renderHook(() => useAuth());
@@ -78,7 +78,7 @@ describe('useAuth', () => {
       ...mockAuthState,
       signIn: mockSignIn,
     };
-    
+
     mockUseAuthStore.mockImplementation((selector) => selector(authStateWithSignIn));
 
     const { result } = renderHook(() => useAuth());
@@ -90,62 +90,3 @@ describe('useAuth', () => {
     expect(mockSignIn).toHaveBeenCalledWith('test@example.com', 'password');
   });
 });
-
-describe('useRequireAuth', () => {
-  const mockAuthState = {
-    user: null,
-    profile: null,
-    loading: false,
-    initialized: true,
-    signIn: vi.fn(),
-    signUp: vi.fn(),
-    signOut: vi.fn(),
-    refreshSession: vi.fn(),
-  };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should return requiresAuth as true when not initialized', () => {
-    const notInitializedState = {
-      ...mockAuthState,
-      initialized: false,
-    };
-    
-    mockUseAuthStore.mockImplementation((selector) => selector(notInitializedState));
-
-    const { result } = renderHook(() => useRequireAuth());
-
-    expect(result.current.requiresAuth).toBe(true);
-  });
-
-  it('should return requiresAuth as true when not authenticated', () => {
-    const notAuthenticatedState = {
-      ...mockAuthState,
-      user: null,
-      initialized: true,
-    };
-    
-    mockUseAuthStore.mockImplementation((selector) => selector(notAuthenticatedState));
-
-    const { result } = renderHook(() => useRequireAuth());
-
-    expect(result.current.requiresAuth).toBe(true);
-  });
-
-  it('should return requiresAuth as false when authenticated', () => {
-    const authenticatedState = {
-      ...mockAuthState,
-      user: { id: '123', email: 'test@example.com' },
-      initialized: true,
-    };
-    
-    mockUseAuthStore.mockImplementation((selector) => selector(authenticatedState));
-
-    const { result } = renderHook(() => useRequireAuth());
-
-    expect(result.current.requiresAuth).toBe(false);
-    expect(result.current.isAuthenticated).toBe(true);
-  });
-}); 

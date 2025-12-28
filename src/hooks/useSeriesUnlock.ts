@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useAuth } from './useAuth';
-import { useArticleProgress } from './useArticleProgress';
 import { ArticleMeta } from '../types/articles';
+import { useArticleProgress } from './useArticleProgress';
+import { useAuth } from './useAuth';
 
 interface SeriesUnlockResult {
   isUnlocked: (contentId: string) => boolean;
@@ -123,17 +123,39 @@ export function useSeriesUnlock(
     }
 
     // 直前の記事の進捗をチェック
-    // contentIdはlearning_contents.idなので、userProgressのキーと一致するはず
-    // ただし、userProgressはslugベースの可能性もあるため、両方チェック
+    // userProgressのキーはcontent_id（filename）として保存されている
+    // previousArticleIdはcontentId（learning_contents.id）で、これがfilenameと一致している前提
+    // そのため、previousArticleIdをそのままisArticleCompletedに渡せる
+
+    // 直前の記事の進捗をチェック
+    // userProgressのキーはcontent_id（filename）として保存されている
+    // previousArticleIdはcontentId（learning_contents.id）で、これがfilenameと一致している前提
+
+    // まず、previousArticleIdをそのままキーとして試す（filenameとして保存されている場合）
     const previousProgress = userProgress[previousArticleId];
-    if (previousProgress && previousProgress.completed) {
+    if (previousProgress) {
+      // completedフラグまたは進捗率95%以上で完了とみなす
+      if (previousProgress.completed || previousProgress.scrollProgress >= 95) {
+        return true;
+      }
+    }
+
+    // isArticleCompletedでもチェック（念のため）
+    if (isArticleCompleted(previousArticleId)) {
       return true;
     }
 
-    // 念のため、slugベースでもチェック（ArticleMetaのslugを使用）
+    // 見つからない場合、articleMetasからslugを取得して試す
     const previousMeta = getMetaForContentId(previousArticleId);
-    if (previousMeta && userProgress[previousMeta.slug]?.completed) {
-      return true;
+    if (previousMeta) {
+      // slugベースでもチェック
+      const progressBySlug = userProgress[previousMeta.slug];
+      if (progressBySlug && (progressBySlug.completed || progressBySlug.scrollProgress >= 95)) {
+        return true;
+      }
+      if (previousMeta.slug && isArticleCompleted(previousMeta.slug)) {
+        return true;
+      }
     }
 
     return false;

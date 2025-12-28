@@ -7,7 +7,6 @@ import { ReadingProgressBar } from '../components/articles/ReadingProgressBar';
 import { ScrollToButtons } from '../components/articles/ScrollToButtons';
 import { usePrevNext } from '../components/articles/usePrevNext';
 import MDXLoader from '../components/mdx/MDXLoader';
-import FreemiumUpgradePrompt from '../components/learning/FreemiumUpgradePrompt';
 import { useArticleStats } from '../hooks/useArticleStats';
 import { useAuth } from '../hooks/useAuth';
 import { useSeriesUnlock } from '../hooks/useSeriesUnlock';
@@ -131,8 +130,6 @@ const ArticleDetailPage: React.FC = () => {
                 </Link>
               </div>
             )}
-
-            <FreemiumUpgradePrompt contentId={contentId} />
           </div>
         </div>
       </div>
@@ -141,8 +138,6 @@ const ArticleDetailPage: React.FC = () => {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
-      {/* 読了時間表示と進捗管理（プログレスバーは非表示） */}
-      <ReadingProgressBar contentId={contentId} />
       <div className="container mx-auto px-4 py-6">
         <div className="mb-4">
           <Link to="/articles" className="text-sm text-[color:var(--hud-primary)] underline">← 記事一覧へ</Link>

@@ -49,7 +49,7 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
         </div>
 
         {/* メイン統計 */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
           {/* 読了記事数 */}
           <div className="p-3 sm:p-4 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20">
             <div className="text-center">
@@ -58,18 +58,6 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
               </div>
               <div className="text-xs font-medium text-gray-400">
                 読了記事
-              </div>
-            </div>
-          </div>
-
-          {/* 学習時間 */}
-          <div className="p-3 sm:p-4 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20">
-            <div className="text-center">
-              <div className="text-2xl font-bold mb-1 text-green-400">
-                {Math.floor(stats.totalReadingTime / 60)}h
-              </div>
-              <div className="text-xs font-medium text-gray-400">
-                学習時間
               </div>
             </div>
           </div>

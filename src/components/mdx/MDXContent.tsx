@@ -139,9 +139,10 @@ import type { ArticleMeta } from '../../types/articles';
 interface MDXContentProps {
   children: React.ReactNode;
   meta?: ArticleMeta | null;
+  contentId?: string;
 }
 
-const MDXContent: React.FC<MDXContentProps> = ({ children, meta }) => {
+const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId }) => {
   // 現在のURLを取得
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
@@ -173,13 +174,13 @@ const MDXContent: React.FC<MDXContentProps> = ({ children, meta }) => {
 
         {/* デスクトップ用サイドバー目次 */}
         <div className="hidden xl:block flex-shrink-0">
-          <TableOfContents mode="sidebar" compact={true} />
+          <TableOfContents mode="sidebar" compact={true} contentId={contentId || meta?.filename} />
         </div>
       </div>
 
       {/* モバイル・タブレット用ドロワー目次 */}
       <div className="xl:hidden">
-        <TableOfContents mode="drawer" />
+        <TableOfContents mode="drawer" contentId={contentId || meta?.filename} />
       </div>
     </>
   );

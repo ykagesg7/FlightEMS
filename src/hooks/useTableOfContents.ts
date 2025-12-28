@@ -13,6 +13,8 @@ export interface TocItem {
 export const useTableOfContents = (containerSelector: string = '.mdx-container') => {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
+  const [readSections, setReadSections] = useState<Set<string>>(new Set());
+  const [sectionProgress, setSectionProgress] = useState<{ current: number; total: number; percentage: number }>({ current: 0, total: 0, percentage: 0 });
 
   useEffect(() => {
     const generateToc = () => {
@@ -35,8 +37,9 @@ export const useTableOfContents = (containerSelector: string = '.mdx-container')
         const level = parseInt(element.tagName.charAt(1));
         const text = element.textContent || '';
 
-        // 「目次」というテキストの見出しは除外
-        if (text.trim() === '目次' || text.trim() === 'Table of Contents') {
+        // 「目次」というテキストの見出しは除外（関連記事は目次に表示するが進捗計算からは除外）
+        const trimmedText = text.trim();
+        if (trimmedText === '目次' || trimmedText === 'Table of Contents') {
           return;
         }
 
@@ -105,47 +108,212 @@ export const useTableOfContents = (containerSelector: string = '.mdx-container')
     };
   }, [containerSelector]);
 
-  // スクロールスパイ
+  // スクロールスパイと進捗計算
   useEffect(() => {
-    if (tocItems.length === 0) return;
+    if (tocItems.length === 0) {
+      setSectionProgress({ current: 0, total: 0, percentage: 0 });
+      setReadSections(new Set());
+      return;
+    }
+
+    // 通過した見出しを追跡するSet（クロージャーで保持）
+    const readSetRef = { current: new Set<string>() };
+    let lastReadIndexRef = { current: -1 };
+
+    const updateProgress = () => {
+      const totalSections = tocItems.length;
+      if (totalSections === 0) return;
+
+      // 「関連記事」セクションを探す（進捗計算から除外するため）
+      const relatedArticlesIndex = tocItems.findIndex(item => {
+        const text = item.element.textContent?.trim() || '';
+        return text === '関連記事' || text === 'Related Articles';
+      });
+
+      // 進捗計算に使用する見出し数（関連記事を含まない）
+      const progressSections = relatedArticlesIndex >= 0 ? relatedArticlesIndex : totalSections;
+
+      // 最後の本文セクション（関連記事の前）に到達したかチェック
+      const lastContentSectionIndex = relatedArticlesIndex >= 0 ? relatedArticlesIndex - 1 : totalSections - 1;
+      const lastContentSection = lastContentSectionIndex >= 0 ? tocItems[lastContentSectionIndex] : null;
+      const isLastContentSectionRead = lastContentSection && readSetRef.current.has(lastContentSection.id);
+
+      // 関連記事セクションに到達した場合も100%とする（関連記事に到達 = 最終セクション読了）
+      const relatedArticlesReached = relatedArticlesIndex >= 0 &&
+        readSetRef.current.has(tocItems[relatedArticlesIndex].id);
+
+      // 最後の本文セクションまたは関連記事に到達したら100%
+      let currentSections = 0;
+
+      // 通過した見出しをカウント（関連記事は除外）
+      const maxCountIndex = relatedArticlesIndex >= 0 ? relatedArticlesIndex : totalSections;
+      for (let i = 0; i < maxCountIndex; i++) {
+        if (readSetRef.current.has(tocItems[i].id)) {
+          currentSections++;
+        }
+      }
+
+      if (isLastContentSectionRead || relatedArticlesReached) {
+        currentSections = progressSections;
+      } else if (lastReadIndexRef.current >= 0) {
+        // 最後に通過した見出しのインデックス+1（0ベースなので+1）
+        // ただし、関連記事以降はカウントしない
+        const maxIndex = relatedArticlesIndex >= 0
+          ? Math.min(lastReadIndexRef.current, relatedArticlesIndex - 1)
+          : lastReadIndexRef.current;
+        currentSections = Math.max(currentSections, maxIndex + 1);
+      }
+
+      const percentage = progressSections > 0
+        ? Math.min(100, Math.round((currentSections / progressSections) * 100))
+        : 0;
+
+      setReadSections(new Set(readSetRef.current));
+      setSectionProgress({
+        current: currentSections,
+        total: progressSections, // 進捗計算用の総数（関連記事を除く）
+        percentage
+      });
+    };
+
+    // アクティブな見出しを更新する関数
+    const updateActiveHeading = () => {
+      const scrollY = window.scrollY;
+      const headerOffset = 100; // ヘッダー分のオフセット
+      let activeHeadingId = '';
+      let minDistance = Infinity;
+
+      // 各見出しについて、画面の上部（ヘッダーより下）に最も近い見出しを探す
+      tocItems.forEach(item => {
+        const rect = item.element.getBoundingClientRect();
+        const elementTop = rect.top + scrollY;
+        const distanceFromTop = elementTop - scrollY - headerOffset;
+
+        // 見出しが画面の上部（ヘッダーより下）を通過している、または通過した直後
+        if (distanceFromTop <= headerOffset && distanceFromTop >= -200) {
+          const distance = Math.abs(distanceFromTop);
+          if (distance < minDistance) {
+            minDistance = distance;
+            activeHeadingId = item.id;
+          }
+        }
+      });
+
+      // 見出しが見つからない場合、最も近い上の見出しを探す
+      if (!activeHeadingId) {
+        tocItems.forEach(item => {
+          const rect = item.element.getBoundingClientRect();
+          const elementTop = rect.top + scrollY;
+          const distance = elementTop - scrollY - headerOffset;
+
+          // 見出しがまだ画面の上にある場合
+          if (distance > headerOffset && distance < minDistance) {
+            minDistance = distance;
+            activeHeadingId = item.id;
+          }
+        });
+      }
+
+      if (activeHeadingId) {
+        setActiveId(activeHeadingId);
+      }
+    };
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // 画面内に見える見出しを取得
-        const visibleHeadings = entries
-          .filter(entry => entry.isIntersecting)
-          .map(entry => entry.target.id)
-          .filter(Boolean);
+        // 通過した見出しを記録（画面の上部を通過した見出し）
+        let progressUpdated = false;
+        entries.forEach(entry => {
+          const headingId = entry.target.id;
+          if (!headingId) return;
 
-        if (visibleHeadings.length > 0) {
-          // 最初に見える見出しをアクティブに
-          setActiveId(visibleHeadings[0]);
-        } else {
-          // 何も見えない場合は、最も近い上の見出しを探す
-          const scrollY = window.scrollY;
-          let closestId = '';
-          let closestDistance = Infinity;
+          // 見出しが画面の上部（100px以内）を通過したかチェック
+          const rect = entry.boundingClientRect;
+          if (rect.top <= 100 && rect.bottom >= 0) {
+            if (!readSetRef.current.has(headingId)) {
+              readSetRef.current.add(headingId);
+              progressUpdated = true;
 
-          tocItems.forEach(item => {
-            const rect = item.element.getBoundingClientRect();
-            const distance = Math.abs(rect.top);
-
-            if (rect.top <= 100 && distance < closestDistance) {
-              closestDistance = distance;
-              closestId = item.id;
+              // 通過した見出しのインデックスを更新
+              const index = tocItems.findIndex(item => item.id === headingId);
+              if (index > lastReadIndexRef.current) {
+                lastReadIndexRef.current = index;
+              }
             }
-          });
-
-          if (closestId) {
-            setActiveId(closestId);
           }
+        });
+
+        if (progressUpdated) {
+          updateProgress();
         }
       },
       {
-        rootMargin: '-20% 0% -35% 0%',
-        threshold: 0,
+        rootMargin: '-100px 0% -50% 0%', // ヘッダー分のオフセットを考慮
+        threshold: [0, 0.1, 0.5, 1.0], // 複数の閾値で監視
       }
     );
+
+    // スクロール位置から既に通過した見出しを初期化
+    const initializeReadSections = () => {
+      const scrollY = window.scrollY;
+      tocItems.forEach((item, index) => {
+        const rect = item.element.getBoundingClientRect();
+        const elementTop = rect.top + scrollY;
+
+        // 画面の上部（100px以内）を通過している見出しを記録
+        if (elementTop <= scrollY + 100) {
+          readSetRef.current.add(item.id);
+          if (index > lastReadIndexRef.current) {
+            lastReadIndexRef.current = index;
+          }
+        }
+      });
+
+      updateProgress();
+      updateActiveHeading(); // 初期化時にもアクティブな見出しを設定
+    };
+
+    // 初期化
+    setTimeout(initializeReadSections, 100);
+
+    // スクロール時にも進捗とアクティブな見出しを更新
+    const handleScroll = () => {
+      // アクティブな見出しを更新
+      updateActiveHeading();
+
+      const scrollY = window.scrollY;
+      let updated = false;
+
+      tocItems.forEach((item, index) => {
+        const rect = item.element.getBoundingClientRect();
+        const elementTop = rect.top + scrollY;
+
+        // 画面の上部（100px以内）を通過している見出しを記録
+        if (elementTop <= scrollY + 100 && !readSetRef.current.has(item.id)) {
+          readSetRef.current.add(item.id);
+          if (index > lastReadIndexRef.current) {
+            lastReadIndexRef.current = index;
+          }
+          updated = true;
+        }
+      });
+
+      if (updated) {
+        updateProgress();
+      }
+    };
+
+    // スクロールイベントをthrottleして追加
+    let scrollTimeout: NodeJS.Timeout | null = null;
+    const throttledHandleScroll = () => {
+      if (scrollTimeout) return;
+      scrollTimeout = setTimeout(() => {
+        handleScroll();
+        scrollTimeout = null;
+      }, 50); // 50msごとに更新
+    };
+
+    window.addEventListener('scroll', throttledHandleScroll, { passive: true });
 
     tocItems.forEach(item => {
       observer.observe(item.element);
@@ -153,6 +321,10 @@ export const useTableOfContents = (containerSelector: string = '.mdx-container')
 
     return () => {
       observer.disconnect();
+      window.removeEventListener('scroll', throttledHandleScroll);
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
     };
   }, [tocItems]);
 
@@ -177,6 +349,8 @@ export const useTableOfContents = (containerSelector: string = '.mdx-container')
     tocItems,
     activeId,
     scrollToHeading,
+    sectionProgress,
+    readSections,
   };
 };
 

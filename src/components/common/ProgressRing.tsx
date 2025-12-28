@@ -35,13 +35,22 @@ const ProgressRing: React.FC<ProgressRingProps> = ({ size = 32, stroke = 4, prog
     });
   }, [progress, circumference, animate]);
 
+  // 進捗に応じた色を決定
+  const getProgressColor = (progress: number) => {
+    if (progress >= 95) return '#4ade80'; // green-400
+    if (progress >= 50) return '#facc15'; // yellow-400
+    return '#60a5fa'; // blue-400
+  };
+
+  const progressColor = getProgressColor(progress);
+
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       <circle
         cx={size / 2}
         cy={size / 2}
         r={radius}
-        stroke="var(--hud-grid)"
+        stroke="rgba(255, 255, 255, 0.1)"
         strokeWidth={stroke}
         fill="transparent"
       />
@@ -50,7 +59,7 @@ const ProgressRing: React.FC<ProgressRingProps> = ({ size = 32, stroke = 4, prog
         cx={size / 2}
         cy={size / 2}
         r={radius}
-        stroke="var(--hud-primary)"
+        stroke={progressColor}
         strokeWidth={stroke}
         fill="transparent"
         strokeLinecap="round"

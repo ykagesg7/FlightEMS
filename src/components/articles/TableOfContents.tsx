@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { useArticleProgress } from '../../hooks/useArticleProgress';
+import { useAuth } from '../../hooks/useAuth';
 import { useTableOfContents } from '../../hooks/useTableOfContents';
+import ProgressRing from '../common/ProgressRing';
 
 interface TableOfContentsProps {
   /** 表示モード */
@@ -8,15 +11,83 @@ interface TableOfContentsProps {
   maxLevel?: number;
   /** コンパクト表示 */
   compact?: boolean;
+  /** コンテンツID（進捗表示用） */
+  contentId?: string;
 }
 
 const TableOfContents: React.FC<TableOfContentsProps> = ({
   mode = 'sidebar',
   maxLevel = 3,
-  compact = false
+  compact = false,
+  contentId
 }) => {
-  const { tocItems, activeId, scrollToHeading } = useTableOfContents();
+  const { tocItems, activeId, scrollToHeading, sectionProgress } = useTableOfContents();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { getArticleProgress, updateArticleProgress } = useArticleProgress();
+  const { user } = useAuth();
+
+  // セクションベースの進捗を使用
+  // 注意: totalSectionsは全見出し数、filteredItemsは表示される見出し数（maxLevelでフィルタ）
+  // 進捗計算は全見出し数で行うが、表示はfilteredItemsの数も表示
+  const progressPercentage = sectionProgress.percentage;
+  const currentSections = sectionProgress.current;
+  const totalSections = sectionProgress.total;
+  const isCompleted = progressPercentage >= 100 || (totalSections > 0 && currentSections >= totalSections);
+
+  // 進捗をSupabaseに保存（セクションベース、throttle付き）
+  const lastSaveRef = React.useRef<{ percentage: number; timestamp: number }>({ percentage: 0, timestamp: 0 });
+
+  React.useEffect(() => {
+    // ページ遷移中やアンマウント時は保存しない
+    if (!user || !contentId || totalSections === 0 || currentSections === 0) {
+      return;
+    }
+
+    const now = Date.now();
+    const timeSinceLastSave = now - lastSaveRef.current.timestamp;
+    const percentageChanged = Math.abs(progressPercentage - lastSaveRef.current.percentage) >= 5; // 5%以上の変化時のみ保存
+
+    // 1秒以上経過しているか、5%以上の変化がある場合のみ保存
+    if (timeSinceLastSave < 1000 && !percentageChanged && !isCompleted) {
+      return;
+    }
+
+    // ページがアンマウントされていないか確認
+    let isMounted = true;
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    // 少し遅延させて保存（ページ遷移時のリクエストを避ける）
+    timeoutId = setTimeout(() => {
+      if (!isMounted) return;
+
+      updateArticleProgress(contentId, {
+        scrollProgress: progressPercentage,
+        completed: isCompleted,
+        readAt: new Date()
+      }).then(() => {
+        if (isMounted) {
+          lastSaveRef.current = { percentage: progressPercentage, timestamp: now };
+        }
+      }).catch(error => {
+        // ネットワークエラーやページ遷移時のエラーは無視
+        if (!isMounted) return;
+        if (error?.message?.includes('Failed to fetch') ||
+            error?.message?.includes('network') ||
+            error?.message?.includes('ERR_FAILED') ||
+            error?.code === 'ERR_FAILED') {
+          return;
+        }
+        console.error('進捗保存エラー:', error);
+      });
+    }, 300); // 300ms遅延
+
+    return () => {
+      isMounted = false;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [user, contentId, progressPercentage, isCompleted, currentSections, totalSections, updateArticleProgress]);
 
   // 指定レベル以下の見出しのみフィルタ
   const filteredItems = tocItems.filter(item => item.level <= maxLevel);
@@ -61,12 +132,65 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
           目次
         </h3>
         <span className={`text-xs text-white opacity-60 ${compact ? 'hidden' : ''}`}>
-          ({filteredItems.length})
+          ({totalSections > 0 ? totalSections : filteredItems.length})
         </span>
       </div>
       <ul className="space-y-1 max-h-96 overflow-y-auto">
         {filteredItems.map(renderTocItem)}
       </ul>
+
+      {/* 進捗表示 */}
+      {contentId && (
+        <div className={`mt-4 pt-4 border-t border-whiskyPapa-yellow/20 ${compact ? 'mt-3 pt-3' : ''}`}>
+          <div className="flex items-center gap-3">
+            {/* 円形メーター */}
+            <div className="relative flex-shrink-0">
+              <ProgressRing
+                size={compact ? 40 : 48}
+                stroke={compact ? 3 : 4}
+                progress={progressPercentage}
+                animate={true}
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className={`font-bold ${compact ? 'text-xs' : 'text-sm'} ${
+                  isCompleted ? 'text-green-400' : progressPercentage >= 50 ? 'text-yellow-400' : 'text-blue-400'
+                }`}>
+                  {progressPercentage}%
+                </span>
+              </div>
+            </div>
+
+            {/* パーセンテージ表示 */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-1">
+                <span className={`text-xs ${compact ? 'text-xs' : 'text-sm'} text-white opacity-80`}>
+                  読了率
+                </span>
+                {totalSections > 0 && (
+                  <span className={`text-xs ${compact ? 'text-xs' : 'text-sm'} text-white opacity-60`}>
+                    {currentSections}/{totalSections}
+                  </span>
+                )}
+                {isCompleted && (
+                  <span className="text-xs text-green-400 ml-1">✓ 読了</span>
+                )}
+              </div>
+              <div className="h-1.5 rounded-full overflow-hidden bg-gray-700">
+                <div
+                  className={`h-full transition-all duration-300 ease-out rounded-full ${
+                    isCompleted
+                      ? 'bg-green-400'
+                      : progressPercentage >= 50
+                        ? 'bg-yellow-400'
+                        : 'bg-blue-400'
+                  }`}
+                  style={{ width: `${Math.min(100, progressPercentage)}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 

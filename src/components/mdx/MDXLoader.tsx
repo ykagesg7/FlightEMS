@@ -143,7 +143,7 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
       )}
       {Content ? (
         <MDXProvider>
-          <MDXContent meta={meta}>
+          <MDXContent meta={meta} contentId={contentId}>
             <Content />
           </MDXContent>
         </MDXProvider>

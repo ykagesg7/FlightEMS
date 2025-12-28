@@ -64,29 +64,3 @@ async function prefetchArticle(slug: string): Promise<void> {
   }
 }
 
-/**
- * 関連記事のプリフェッチフック
- * より積極的なプリフェッチを行う場合に使用
- */
-export const useRelatedArticlesPrefetch = (currentSlug: string, limit: number = 2) => {
-  useEffect(() => {
-    const prefetchRelated = async () => {
-      try {
-        const { getRelatedArticles } = await import('../utils/articlesIndex');
-        const relatedArticles = await getRelatedArticles(currentSlug, limit);
-
-        const prefetchPromises = relatedArticles.map(article =>
-          prefetchArticle(article.meta.slug)
-        );
-
-        await Promise.all(prefetchPromises);
-      } catch (error) {
-        console.warn('関連記事のプリフェッチに失敗しました:', error);
-      }
-    };
-
-    // より長い遅延で関連記事をプリフェッチ
-    const timer = setTimeout(prefetchRelated, 3000);
-    return () => clearTimeout(timer);
-  }, [currentSlug, limit]);
-};

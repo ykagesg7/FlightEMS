@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useFreemiumAccess } from '../../hooks/useFreemiumAccess';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
 // import { useAuthStore } from '../../stores/authStore';
 
@@ -66,18 +65,49 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
   // const { user } = useAuthStore();
 
   const {
+    learningContents,
     getProgress,
     isCompleted,
     getLastReadInfo,
-    loadLearningContents
+    loadLearningContents,
+    isLoading
   } = useLearningProgress();
 
-  const {
-    displayContents,
-    canAccessContent,
-    isFreemiumContent,
-    isLoading
-  } = useFreemiumAccess(contentType);
+  // コンテンツタイプに基づくフィルタリング
+  const displayContents = useMemo(() => {
+    if (!contentType) return learningContents;
+
+    return learningContents.filter(content => {
+      if (contentType === 'learning') {
+        // LearningタブではCPL関連のコンテンツのみ
+        return content.category?.includes('CPL') ||
+          content.category?.includes('航空') ||
+          content.id.startsWith('3.') ||
+          content.id.includes('Aviation') ||
+          content.id.includes('TacanApproach');
+      } else if (contentType === 'articles') {
+        // Articlesタブではメンタリティー・思考法関連のコンテンツのみ（CPL記事を明確に除外）
+        return (content.category?.includes('メンタリティー') ||
+          content.category?.includes('思考法') ||
+          content.category?.includes('自己啓発') ||
+          content.id.startsWith('1.') ||
+          content.id.startsWith('2.') ||
+          content.title?.includes('メンタリティー') ||
+          content.title?.includes('思考法') ||
+          content.title?.includes('７つの習慣')) &&
+          // CPL記事を明確に除外
+          !content.id.startsWith('3.') &&
+          !content.id.includes('Aviation') &&
+          !content.id.includes('TacanApproach') &&
+          !content.category?.includes('CPL') &&
+          !content.category?.includes('航空') &&
+          !content.title?.includes('CPL') &&
+          !content.title?.includes('航空法');
+      }
+      return true;
+    });
+  }, [learningContents, contentType]);
+
 
   // URLパラメータの変更を監視
   useEffect(() => {
@@ -238,50 +268,42 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
           {/* カテゴリ別記事一覧 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredContents.map((content) => {
-              const hasAccess = canAccessContent(content.id);
               const progressPercentage = getProgress(content.id);
 
               return (
                 <div
                   key={content.id}
-                  className={`p-6 rounded-lg border bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 hover:border-whiskyPapa-yellow/40 transition-all duration-200 ${hasAccess ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
-                  onClick={() => hasAccess && selectContent(content.id)}
+                  className="p-6 rounded-lg border bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 hover:border-whiskyPapa-yellow/40 transition-all duration-200 cursor-pointer"
+                  onClick={() => selectContent(content.id)}
                 >
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-bold text-lg text-whiskyPapa-yellow leading-tight">
                       {content.title}
                     </h3>
-                    {!hasAccess && (
-                      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
-                        🔒 ログイン必要
-                      </span>
-                    )}
                   </div>
 
                   <p className="text-sm text-gray-300 mb-4">
                     {content.description || '詳細な学習内容をご確認いただけます。'}
                   </p>
 
-                  {hasAccess && (
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-full bg-gray-700 rounded-full h-2 min-w-[60px]">
-                          <div
-                            className="bg-whiskyPapa-yellow h-2 rounded-full"
-                            style={{ width: `${progressPercentage}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-xs text-gray-300">
-                          {Math.round(progressPercentage)}%
-                        </span>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-full bg-gray-700 rounded-full h-2 min-w-[60px]">
+                        <div
+                          className="bg-whiskyPapa-yellow h-2 rounded-full"
+                          style={{ width: `${progressPercentage}%` }}
+                        ></div>
                       </div>
-                      <button
-                        className="ml-4 text-xs px-3 py-2 bg-whiskyPapa-yellow text-black hover:bg-whiskyPapa-yellow/90 rounded transition-colors duration-200"
-                      >
-                        {progressPercentage > 0 ? '続きを読む' : '読む'}
-                      </button>
+                      <span className="text-xs text-gray-300">
+                        {Math.round(progressPercentage)}%
+                      </span>
                     </div>
-                  )}
+                    <button
+                      className="ml-4 text-xs px-3 py-2 bg-whiskyPapa-yellow text-black hover:bg-whiskyPapa-yellow/90 rounded transition-colors duration-200"
+                    >
+                      {progressPercentage > 0 ? '続きを読む' : '読む'}
+                    </button>
+                  </div>
                 </div>
               );
             })}

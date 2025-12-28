@@ -23,7 +23,6 @@ export interface LearningStats {
   totalArticles: number;
   readArticles: number;
   completedArticles: number;
-  totalReadingTime: number; // 分
   streakDays: number;
   averageRating: number;
   categoriesProgress: Record<string, { read: number; total: number; percentage: number }>;
@@ -42,7 +41,6 @@ const DEMO_STATS: LearningStats = {
   totalArticles: 26,
   readArticles: 12,
   completedArticles: 8,
-  totalReadingTime: 180, // 3時間
   streakDays: 7,
   averageRating: 4.2,
   categoriesProgress: {
@@ -130,18 +128,22 @@ export const useArticleProgress = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // 記事インデックスを取得
+  // 記事インデックスを取得（slugとfilenameの両方で検索可能）
   const [articleIndex, setArticleIndex] = useState<Record<string, ArticleMeta>>({});
+  const [articleIndexByFilename, setArticleIndexByFilename] = useState<Record<string, ArticleMeta>>({});
 
   useEffect(() => {
     const loadArticleIndex = async () => {
       try {
         const index = await buildArticleIndex();
         const indexMap: Record<string, ArticleMeta> = {};
+        const indexMapByFilename: Record<string, ArticleMeta> = {};
         index.forEach(entry => {
           indexMap[entry.meta.slug] = entry.meta;
+          indexMapByFilename[entry.filename] = entry.meta;
         });
         setArticleIndex(indexMap);
+        setArticleIndexByFilename(indexMapByFilename);
       } catch (err) {
         console.error('記事インデックス読み込みエラー:', err);
       }
@@ -151,7 +153,7 @@ export const useArticleProgress = () => {
   }, []);
 
   // 統計の計算
-  const calculateStats = useCallback((progress: Record<string, ArticleProgress>): LearningStats => {
+  const calculateStats = useCallback((progress: Record<string, ArticleProgress>, userProfile?: { current_streak_days?: number }): LearningStats => {
     const articles = Object.values(articleIndex);
     const progressList = Object.values(progress);
 
@@ -179,7 +181,8 @@ export const useArticleProgress = () => {
 
     // 読了記事をカウント
     progressList.forEach(prog => {
-      const article = articleIndex[prog.articleSlug];
+      // articleSlugはcontent_id（filename）の可能性があるため、両方を試す
+      const article = articleIndex[prog.articleSlug] || articleIndexByFilename[prog.articleSlug];
       if (!article) return;
 
       const category = article.tags[0] || 'その他';
@@ -204,26 +207,28 @@ export const useArticleProgress = () => {
     });
 
     const completedArticles = progressList.filter(p => p.completed).length;
-    const totalReadingTime = Math.round(progressList.reduce((sum, p) => sum + p.readingTime, 0) / 60); // 分に変換
+
     const ratingsWithValue = progressList.filter(p => p.rating && p.rating > 0);
     const averageRating = ratingsWithValue.length > 0
       ? ratingsWithValue.reduce((sum, p) => sum + (p.rating || 0), 0) / ratingsWithValue.length
       : 0;
 
-    // 連続日数計算（簡易版）
+    // 連続日数: user_learning_profilesから取得
+    const streakDays = userProfile?.current_streak_days || 0;
+
+    // 今日の完了記事数を計算（日付ベース）
     const today = new Date();
-    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
-    const recentReads = progressList.filter(p =>
-      p.readAt.toDateString() === today.toDateString() ||
-      p.readAt.toDateString() === yesterday.toDateString()
-    );
-    const streakDays = recentReads.length > 0 ? 1 : 0; // 簡易計算
+    today.setHours(0, 0, 0, 0);
+    const todayCompletedArticles = progressList.filter(p => {
+      const readDate = new Date(p.readAt);
+      readDate.setHours(0, 0, 0, 0);
+      return p.completed && readDate.getTime() === today.getTime();
+    }).length;
 
     return {
       totalArticles: articles.length,
       readArticles: progressList.length,
       completedArticles,
-      totalReadingTime,
       streakDays,
       averageRating,
       categoriesProgress,
@@ -238,10 +243,10 @@ export const useArticleProgress = () => {
       readingGoals: {
         daily: 2,
         weekly: 10,
-        achieved: completedArticles >= 2 // 簡易判定
+        achieved: todayCompletedArticles >= 2 // 今日の完了記事数で判定
       }
     };
-  }, [articleIndex]);
+  }, [articleIndex, articleIndexByFilename]);
 
   // 初期データ読み込み
   useEffect(() => {
@@ -249,20 +254,47 @@ export const useArticleProgress = () => {
       setIsLoading(true);
       try {
         if (user) {
-          // 登録ユーザーの場合：Supabaseから進捗データを読み込み
-          const { data, error: fetchError } = await supabase
+          // 登録ユーザーの場合：Supabaseから進捗データとプロファイルを読み込み
+          const progressResult = await supabase
             .from('learning_progress')
             .select('*')
             .eq('user_id', user.id);
 
-          if (fetchError) {
-            console.error('進捗データ取得エラー:', fetchError);
-            throw fetchError;
+          if (progressResult.error) {
+            console.error('進捗データ取得エラー:', progressResult.error);
+            throw progressResult.error;
+          }
+
+          // プロファイルデータを取得（エラーが発生しても続行）
+          let userProfile: { current_streak_days?: number } | undefined;
+          try {
+            const profileResult = await supabase
+              .from('user_learning_profiles')
+              .select('current_streak_days')
+              .eq('user_id', user.id)
+              .maybeSingle(); // single()の代わりにmaybeSingle()を使用（レコードが存在しない場合もエラーにならない）
+
+            // エラーをチェック
+            if (profileResult.error) {
+              // PGRST116はレコードが存在しない場合のエラーコード
+              // その他のエラー（406など）はRLSポリシーやテーブル設定の問題の可能性
+              if (profileResult.error.code === 'PGRST116') {
+                // レコードが存在しない場合は正常（初回ユーザーなど）
+                console.debug('プロファイルレコードが存在しません（初回ユーザーの可能性）');
+              } else {
+                console.warn('プロファイルデータ取得エラー（無視して続行）:', profileResult.error);
+              }
+            } else if (profileResult.data) {
+              userProfile = profileResult.data;
+            }
+          } catch (profileError) {
+            // 予期しないエラーも無視
+            console.warn('プロファイルデータ取得エラー（無視して続行）:', profileError);
           }
 
           // データをArticleProgress形式に変換
           const progressMap: Record<string, ArticleProgress> = {};
-          data?.forEach(record => {
+          progressResult.data?.forEach(record => {
             progressMap[record.content_id] = {
               articleSlug: record.content_id,
               readAt: new Date(record.last_read_at),
@@ -275,7 +307,7 @@ export const useArticleProgress = () => {
           });
 
           setUserProgress(progressMap);
-          setStats(calculateStats(progressMap));
+          setStats(calculateStats(progressMap, userProfile));
         } else {
           // 未登録ユーザーの場合：ダミーデータを使用
           setUserProgress(DEMO_PROGRESS);
@@ -289,10 +321,10 @@ export const useArticleProgress = () => {
       }
     };
 
-    if (Object.keys(articleIndex).length > 0) {
+    if (Object.keys(articleIndex).length > 0 && Object.keys(articleIndexByFilename).length > 0) {
       loadInitialData();
     }
-  }, [user, articleIndex, calculateStats]);
+  }, [user, articleIndex, articleIndexByFilename, calculateStats]);
 
   // 記事の進捗を更新
   const updateArticleProgress = useCallback(async (
@@ -309,12 +341,12 @@ export const useArticleProgress = () => {
       const newProgress: ArticleProgress = {
         ...existing,
         articleSlug,
-        readAt: new Date(),
+        readAt: updates.readAt || existing?.readAt || new Date(),
         readingTime: existing?.readingTime || 0,
-        scrollProgress: 0,
-        completed: false,
+        scrollProgress: updates.scrollProgress ?? existing?.scrollProgress ?? 0,
+        completed: updates.completed ?? (updates.scrollProgress !== undefined ? updates.scrollProgress >= 95 : existing?.completed ?? false),
         bookmarked: existing?.bookmarked || false,
-        lastPosition: 0,
+        lastPosition: updates.lastPosition ?? existing?.lastPosition ?? 0,
         ...updates
       };
 
@@ -325,7 +357,7 @@ export const useArticleProgress = () => {
           user_id: user.id,
           content_id: articleSlug,
           progress_percentage: Math.round(newProgress.scrollProgress),
-          completed: newProgress.scrollProgress >= 95, // 95%以上で完了
+          completed: newProgress.completed || newProgress.scrollProgress >= 95, // completedフラグまたは95%以上で完了
           last_position: newProgress.lastPosition,
           last_read_at: newProgress.readAt.toISOString(),
           read_count: existing ? (existing.readingTime > 0 ? 2 : 1) : 1,
@@ -335,8 +367,15 @@ export const useArticleProgress = () => {
         });
 
       if (upsertError) {
-        console.error('Supabase保存エラー:', upsertError);
-        throw upsertError;
+        // ネットワークエラー（ERR_QUIC_PROTOCOL_ERROR、ERR_FAILEDなど）は無視
+        // ページ離脱時やネットワーク不安定時に発生する可能性がある
+        if (upsertError.message?.includes('Failed to fetch') || upsertError.message?.includes('network')) {
+          // ネットワークエラーは無視（エラーログは出力しない）
+          return;
+        }
+        // その他のエラーは警告のみ（致命的ではない）
+        console.warn('Supabase保存エラー（無視して続行）:', upsertError);
+        return;
       }
 
       // ローカル状態を更新
@@ -345,9 +384,48 @@ export const useArticleProgress = () => {
         [articleSlug]: newProgress
       }));
 
-      // 統計を再計算
+      // ローカル状態を更新（先に実行してUIを即座に更新）
       const newProgressMap = { ...userProgress, [articleSlug]: newProgress };
-      setStats(calculateStats(newProgressMap));
+
+      // 統計を再計算（プロファイルは非同期で取得、失敗しても続行）
+      // プロファイル取得は非同期で実行し、完了後に統計を再計算
+      // これにより、プロファイル取得が失敗しても進捗更新は成功する
+      const updateStatsWithProfile = async () => {
+        let profile: { current_streak_days?: number } | undefined;
+        try {
+          const profileResult = await supabase
+            .from('user_learning_profiles')
+            .select('current_streak_days')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          if (profileResult.error) {
+            // PGRST116はレコードが存在しない場合のエラーコード
+            if (profileResult.error.code === 'PGRST116') {
+              // レコードが存在しない場合は正常（初回ユーザーなど）
+              // エラーログは出力しない
+            } else {
+              // その他のエラー（ネットワークエラー、CORS、502など）は無視
+              // エラーログは出力しない（コンソールを汚さない）
+            }
+          } else if (profileResult.data) {
+            profile = profileResult.data;
+          }
+        } catch (profileError) {
+          // ネットワークエラーなどは無視（エラーログは出力しない）
+        }
+
+        // プロファイル取得後に統計を再計算
+        setStats(calculateStats(newProgressMap, profile));
+      };
+
+      // まずプロファイルなしで統計を計算（即座にUIを更新）
+      setStats(calculateStats(newProgressMap, undefined));
+
+      // その後、プロファイルを取得して統計を再計算（バックグラウンドで実行）
+      updateStatsWithProfile().catch(() => {
+        // エラーは無視（既にプロファイルなしで統計を計算済み）
+      });
 
       // 記事完了時にミッション達成をチェック
       if (newProgress.scrollProgress >= 95 || newProgress.completed) {
@@ -359,8 +437,16 @@ export const useArticleProgress = () => {
         }
       }
     } catch (err) {
-      console.error('進捗更新エラー:', err);
-      setError(err instanceof Error ? err : new Error('進捗の更新に失敗しました'));
+      // ネットワークエラー（ERR_QUIC_PROTOCOL_ERROR、ERR_FAILEDなど）は無視
+      // ページ離脱時やネットワーク不安定時に発生する可能性がある
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('network')) {
+        // ネットワークエラーは無視（エラーログは出力しない）
+        return;
+      }
+      // その他のエラーは警告のみ（致命的ではない）
+      console.warn('進捗更新エラー（無視して続行）:', err);
+      // setErrorは呼ばない（ネットワークエラーは正常）
     }
   }, [user, userProgress, calculateStats, completeMissionByAction]);
 
@@ -419,10 +505,6 @@ export const useArticleProgress = () => {
     // ゲッター
     getArticleProgress,
     isArticleCompleted,
-    isArticleBookmarked,
-
-    // ダミーデータ（デモ用）
-    demoStats: DEMO_STATS,
-    demoProgress: DEMO_PROGRESS
+    isArticleBookmarked
   };
 };

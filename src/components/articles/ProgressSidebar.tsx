@@ -136,9 +136,6 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                     <div className="text-xs">🔖</div>
                   )}
                 </div>
-                <div className="text-xs text-gray-400">
-                  {Math.round(activity.readingTime / 60)}分
-                </div>
               </div>
 
               <div className="text-sm font-medium mb-1 truncate text-gray-200">

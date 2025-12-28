@@ -29,13 +29,14 @@ const ReadingTimeEstimate: React.FC<ReadingTimeEstimateProps> = ({
   };
 
   const getProgressColor = () => {
+    // Whisky Papaブランドテーマは固定ダークテーマのため、常にダークテーマ用のスタイルを使用
     if (progress >= 0.9) {
-      return effectiveTheme === 'dark' ? 'text-green-400' : 'text-green-600';
+      return 'text-green-400';
     }
     if (progress >= 0.5) {
-      return effectiveTheme === 'dark' ? 'text-yellow-400' : 'text-yellow-600';
+      return 'text-yellow-400';
     }
-    return effectiveTheme === 'dark' ? 'text-blue-400' : 'text-blue-600';
+    return 'text-blue-400';
   };
 
   const getIcon = () => {
