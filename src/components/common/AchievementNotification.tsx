@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 
-export type AchievementType = 'rank_up' | 'milestone' | 'xp_gained' | 'streak';
+export type AchievementType = 'rank_up' | 'milestone' | 'xp_gained' | 'streak' | 'ppl_rank';
 
 interface AchievementNotificationProps {
   type: AchievementType;
@@ -61,6 +61,11 @@ export const AchievementNotification: React.FC<AchievementNotificationProps> = (
       bgColor: 'bg-gradient-to-r from-orange-600 to-orange-400',
       borderColor: 'border-orange-400',
       icon: icon || '🔥',
+    },
+    ppl_rank: {
+      bgColor: 'bg-gradient-to-r from-cyan-600 to-cyan-400',
+      borderColor: 'border-cyan-400',
+      icon: icon || '🎖️',
     },
   };
 

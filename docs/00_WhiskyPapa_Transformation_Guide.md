@@ -111,7 +111,7 @@ src/
 
 ### ✅ Phase 2: Gamification (完了)
 
-- ランクシステム (Spectator/Trainee/Wingman)
+- ランクシステム（統合版: PPL中間ランク + XPベースランク）
 - ミッション機能、XP獲得ロジック
 - データベース: `profiles`拡張、`missions`、`user_missions`テーブル
 
@@ -227,8 +227,12 @@ src/
 ### ゲーミフィケーション関連（既存）
 
 - **`profiles` テーブル拡張**:
-  - `rank` (user_rank_type): 'spectator' | 'trainee' | 'wingman'
+  - `rank` (user_rank_type): 'fan' | 'ppl-aero-basics-phase1' | ... | 'ppl' | 'wingman' | 'cpl' | 'ace' | 'master' | 'legend'
   - `xp_points` (INTEGER): ユーザーの経験値
+- **`ppl_rank_definitions` テーブル** (2026年1月実装):
+  - PPL Syllabus階層構造に基づくランク定義（Phase、Section、Category、Subjectレベル）
+- **`user_ppl_ranks` テーブル** (2026年1月実装):
+  - ユーザーの取得済みPPLランク
 - **`missions` テーブル**: ミッション定義
 - **`user_missions` テーブル**: ユーザーのミッション達成状況
 

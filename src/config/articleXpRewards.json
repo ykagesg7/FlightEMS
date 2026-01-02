@@ -4,11 +4,15 @@
     "基礎": 20,
     "中級": 30,
     "上級": 50,
-    "プレミアム": 100
+    "プレミアム": 100,
+    "PPL": 2,
+    "CPL": 2
   },
   "series_completion_bonus": {
     "enabled": true,
-    "multiplier": 1.5
+    "multiplier": 1.5,
+    "ppl_completion_bonus": 200,
+    "cpl_completion_bonus": 400
   },
   "first_read_bonus": {
     "enabled": true,

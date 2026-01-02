@@ -5,12 +5,22 @@
 
 export type UserRank =
   | 'fan'
-  | 'spectator'
-  | 'trainee'
-  | 'student'
-  | 'apprentice'
-  | 'pilot'
+  // PPL中間ランク（Phaseレベル）
+  | 'ppl-aero-basics-phase1'
+  | 'ppl-aero-basics-phase2'
+  | 'ppl-aero-basics-master'
+  | 'ppl-aero-performance-phase1'
+  | 'ppl-aero-performance-phase2'
+  | 'ppl-aero-performance-master'
+  // PPL中間ランク（Sectionレベル）
+  | 'ppl-aerodynamics-master'
+  // PPL中間ランク（Categoryレベル）
+  | 'ppl-engineering-master'
+  // PPL最終ランク
+  | 'ppl'
+  // 上位ランク
   | 'wingman'
+  | 'cpl'
   | 'ace'
   | 'master'
   | 'legend';
@@ -70,87 +80,132 @@ export const RANK_INFO: Record<UserRank, RankInfo> = {
     color: '#808080', // グレー
     icon: '👤',
     xpRequired: 0,
-    nextRank: 'spectator',
-    nextRankXpRequired: 100,
+    nextRank: 'ppl-aero-basics-phase1',
+    nextRankXpRequired: 0, // 記事完了ベース
   },
-  spectator: {
-    rank: 'spectator',
-    displayName: '観客',
-    color: '#CD7F32', // 銅色
-    icon: '👁️',
-    xpRequired: 100,
-    nextRank: 'trainee',
-    nextRankXpRequired: 200,
-  },
-  trainee: {
-    rank: 'trainee',
-    displayName: '訓練生',
-    color: '#C0C0C0', // 銀色
-    icon: '✈️',
-    xpRequired: 200,
-    nextRank: 'student',
-    nextRankXpRequired: 300,
-  },
-  student: {
-    rank: 'student',
-    displayName: '学生',
+  'ppl-aero-basics-phase1': {
+    rank: 'ppl-aero-basics-phase1',
+    displayName: 'PPL空力基礎初級',
     color: '#87CEEB', // スカイブルー
     icon: '📚',
-    xpRequired: 300,
-    nextRank: 'apprentice',
-    nextRankXpRequired: 400,
+    xpRequired: 0, // 記事完了ベース
+    nextRank: 'ppl-aero-basics-phase2',
+    nextRankXpRequired: 0,
   },
-  apprentice: {
-    rank: 'apprentice',
-    displayName: '見習い',
+  'ppl-aero-basics-phase2': {
+    rank: 'ppl-aero-basics-phase2',
+    displayName: 'PPL空力基礎中級',
     color: '#9370DB', // ミディアムパープル
-    icon: '🎓',
-    xpRequired: 400,
-    nextRank: 'pilot',
+    icon: '📖',
+    xpRequired: 0, // 記事完了ベース
+    nextRank: 'ppl-aero-basics-master',
+    nextRankXpRequired: 0,
+  },
+  'ppl-aero-basics-master': {
+    rank: 'ppl-aero-basics-master',
+    displayName: 'PPL空力基礎マスター',
+    color: '#FFD700', // 金色
+    icon: '👑',
+    xpRequired: 0, // 記事完了ベース
+    nextRank: 'ppl-aero-performance-phase1',
+    nextRankXpRequired: 0,
+  },
+  'ppl-aero-performance-phase1': {
+    rank: 'ppl-aero-performance-phase1',
+    displayName: 'PPL性能基礎初級',
+    color: '#87CEEB', // スカイブルー
+    icon: '📊',
+    xpRequired: 0, // 記事完了ベース
+    nextRank: 'ppl-aero-performance-phase2',
+    nextRankXpRequired: 0,
+  },
+  'ppl-aero-performance-phase2': {
+    rank: 'ppl-aero-performance-phase2',
+    displayName: 'PPL性能基礎中級',
+    color: '#9370DB', // ミディアムパープル
+    icon: '📈',
+    xpRequired: 0, // 記事完了ベース
+    nextRank: 'ppl-aero-performance-master',
+    nextRankXpRequired: 0,
+  },
+  'ppl-aero-performance-master': {
+    rank: 'ppl-aero-performance-master',
+    displayName: 'PPL性能基礎マスター',
+    color: '#FFD700', // 金色
+    icon: '🏆',
+    xpRequired: 0, // 記事完了ベース
+    nextRank: 'ppl-aerodynamics-master',
+    nextRankXpRequired: 0,
+  },
+  'ppl-aerodynamics-master': {
+    rank: 'ppl-aerodynamics-master',
+    displayName: 'PPL航空力学マスター',
+    color: '#FF6347', // トマトレッド
+    icon: '✈️',
+    xpRequired: 0, // 記事完了ベース
+    nextRank: 'ppl-engineering-master',
+    nextRankXpRequired: 0,
+  },
+  'ppl-engineering-master': {
+    rank: 'ppl-engineering-master',
+    displayName: 'PPL航空工学マスター',
+    color: '#FF1493', // ディープピンク
+    icon: '🛩️',
+    xpRequired: 0, // 記事完了ベース
+    nextRank: 'ppl',
     nextRankXpRequired: 500,
   },
-  pilot: {
-    rank: 'pilot',
-    displayName: 'パイロット',
-    color: '#4169E1', // ロイヤルブルー
-    icon: '🛩️',
-    xpRequired: 500,
+  ppl: {
+    rank: 'ppl',
+    displayName: '自家用操縦士',
+    color: '#00CED1', // ダークターコイズ
+    icon: '🎖️',
+    xpRequired: 500, // PPL全記事読了で到達
     nextRank: 'wingman',
-    nextRankXpRequired: 600,
+    nextRankXpRequired: 1200,
   },
   wingman: {
     rank: 'wingman',
     displayName: '僚機',
     color: '#FFD700', // 金色
     icon: '🎖️',
-    xpRequired: 600,
+    xpRequired: 1200, // 更新
+    nextRank: 'cpl',
+    nextRankXpRequired: 1000,
+  },
+  cpl: {
+    rank: 'cpl',
+    displayName: '事業用操縦士',
+    color: '#FF8C00', // ダークオレンジ
+    icon: '✈️',
+    xpRequired: 1000, // CPL全記事読了で到達
     nextRank: 'ace',
-    nextRankXpRequired: 700,
+    nextRankXpRequired: 1500,
   },
   ace: {
     rank: 'ace',
     displayName: 'エース',
     color: '#FF6347', // トマトレッド
     icon: '⭐',
-    xpRequired: 700,
+    xpRequired: 1500, // 更新
     nextRank: 'master',
-    nextRankXpRequired: 800,
+    nextRankXpRequired: 2000,
   },
   master: {
     rank: 'master',
     displayName: 'マスター',
     color: '#FF1493', // ディープピンク
     icon: '👑',
-    xpRequired: 800,
+    xpRequired: 2000, // 更新
     nextRank: 'legend',
-    nextRankXpRequired: 900,
+    nextRankXpRequired: 2500,
   },
   legend: {
     rank: 'legend',
     displayName: 'レジェンド',
     color: '#8A2BE2', // ブルーバイオレット
     icon: '🌟',
-    xpRequired: 900,
+    xpRequired: 2500, // 更新
   },
 };
 

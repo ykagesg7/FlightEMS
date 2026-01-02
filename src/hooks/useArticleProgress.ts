@@ -6,6 +6,7 @@ import { useAuth } from './useAuth';
 import { useGamification } from './useGamification';
 import { calculateTotalArticleXp } from '../utils/articleXpRewards';
 import { updateStreak } from '../utils/streak';
+import { usePPLRanks } from './usePPLRanks';
 
 // 記事の進捗情報
 export interface ArticleProgress {
@@ -131,6 +132,7 @@ const DEMO_PROGRESS: Record<string, ArticleProgress> = {
 export const useArticleProgress = () => {
   const { user } = useAuth();
   const { completeMissionByAction, profile, rankProgress: gamificationRankProgress } = useGamification();
+  const { checkRanksForContent, refreshRanks } = usePPLRanks();
   const [userProgress, setUserProgress] = useState<Record<string, ArticleProgress>>({});
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -387,6 +389,23 @@ export const useArticleProgress = () => {
         }, {
           onConflict: 'user_id,content_id'
         });
+
+      // 記事が完了した場合、PPLランクをチェック
+      if (newProgress.completed && (!existing || !existing.completed)) {
+        // データベースのトリガーが自動的にランクをチェックするが、
+        // フロントエンドでもランクを再取得して通知を表示できるようにする
+        checkRanksForContent(articleSlug).then((newRanks) => {
+          refreshRanks();
+          // 新しいランクが取得された場合、通知を表示（グローバル通知システムが設定されている場合）
+          if (newRanks && newRanks.length > 0) {
+            // 通知はグローバル通知システムで処理される（将来実装）
+            // 現時点では、コンソールログで確認可能
+            console.log('PPLランク取得:', newRanks);
+          }
+        }).catch(err => {
+          console.warn('PPLランクチェックエラー（無視して続行）:', err);
+        });
+      }
 
       if (upsertError) {
         // ネットワークエラー（ERR_QUIC_PROTOCOL_ERROR、ERR_FAILEDなど）は無視

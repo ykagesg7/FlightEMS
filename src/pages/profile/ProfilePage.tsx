@@ -11,6 +11,7 @@ import supabase from '../../utils/supabase';
 import { AvatarUploader } from './components/AvatarUploader';
 import { NotificationPreferences } from './components/NotificationPreferences';
 import { SocialLinksForm } from './components/SocialLinksForm';
+import { PPLRankList } from '../../components/ppl/PPLRankList';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 type SocialLinks = {
@@ -37,7 +38,7 @@ const ProfilePage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [formLoading, setFormLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'social' | 'notifications'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'social' | 'notifications' | 'ppl-ranks'>('profile');
 
   // 状態変更の監視（デバッグ用）
   useEffect(() => {
@@ -246,6 +247,7 @@ const ProfilePage: React.FC = () => {
     { id: 'security' as const, name: 'セキュリティ', icon: '🔒' },
     { id: 'social' as const, name: 'ソーシャル', icon: '🔗' },
     { id: 'notifications' as const, name: '通知', icon: '🔔' },
+    { id: 'ppl-ranks' as const, name: 'PPLランク', icon: '🎖️' },
   ];
 
   return (
@@ -650,6 +652,27 @@ const ProfilePage: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 <NotificationPreferences onError={(err) => setError(err)} />
+              </motion.div>
+            )
+          }
+
+          {
+            activeTab === 'ppl-ranks' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card variant="brand" padding="lg">
+                  <CardHeader>
+                    <Typography variant="h3" color="brand" className="text-xl font-bold">
+                      PPLランク
+                    </Typography>
+                  </CardHeader>
+                  <CardContent>
+                    <PPLRankList groupBy="level" showProgress={false} />
+                  </CardContent>
+                </Card>
               </motion.div>
             )
           }
