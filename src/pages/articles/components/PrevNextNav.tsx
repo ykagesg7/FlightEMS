@@ -2,16 +2,24 @@ import React, { useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLearningProgress } from '../../../hooks/useLearningProgress';
 
-const articleCategories = ['メンタリティー', '思考法', '操縦'];
+const articleCategories = ['メンタリティー', '思考法', '操縦', 'CPL学科', 'PPL'];
 
 function prefetchMDX(id: string) {
-  try {
-    // @ts-ignore - best-effort prefetch; Vite will ignore unknown
-    // Try articles first, then lessons
-    import(`../../content/articles/${id}.mdx`).catch(() =>
-      import(`../../content/lessons/${id}.mdx`)
-    );
-  } catch { }
+  // 存在しないファイルのインポートエラーを静かに無視
+  // @ts-ignore - best-effort prefetch; Vite will ignore unknown
+  import(`../../content/articles/${id}.mdx`)
+    .catch(() => {
+      // articlesにない場合はlessonsを試す
+      return import(`../../content/lessons/${id}.mdx`);
+    })
+    .catch(() => {
+      // narratorも試す
+      return import(`../../content/narrator/${id}.mdx`);
+    })
+    .catch(() => {
+      // すべて失敗した場合は静かに無視（ファイルが存在しない可能性）
+      // エラーをコンソールに表示しない
+    });
 }
 
 export const PrevNextNav: React.FC<{ currentId: string; listPath?: string }> = ({ currentId, listPath = '/articles' }) => {

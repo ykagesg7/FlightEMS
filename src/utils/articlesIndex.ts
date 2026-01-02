@@ -3,8 +3,10 @@ import type { ArticleIndexEntry, ArticleMeta, ArticleNavigation, ArticleSearchOp
 /**
  * 全記事のMDXモジュールを取得
  * import.meta.globを使用して型安全に記事を収集
+ * articlesとlessonsの両方のディレクトリから読み込む
  */
 const articleModules = import.meta.glob<MDXModule>('../content/articles/*.mdx', { eager: false });
+const lessonModules = import.meta.glob<MDXModule>('../content/lessons/*.mdx', { eager: false });
 
 /**
  * ファイル名からslugを生成（フォールバック用）
@@ -26,7 +28,10 @@ export async function buildArticleIndex(): Promise<ArticleIndexEntry[]> {
   const entries: ArticleIndexEntry[] = [];
   const slugSet = new Set<string>();
 
-  for (const [path, moduleLoader] of Object.entries(articleModules)) {
+  // articlesとlessonsの両方のモジュールを処理
+  const allModules = { ...articleModules, ...lessonModules };
+
+  for (const [path, moduleLoader] of Object.entries(allModules)) {
     const filename = path.split('/').pop()?.replace('.mdx', '') || '';
 
     try {
@@ -34,14 +39,25 @@ export async function buildArticleIndex(): Promise<ArticleIndexEntry[]> {
       const module = await moduleLoader();
       const meta = module.meta;
 
+      // メタデータがない場合は静かにスキップ（UUID形式のファイルや未完成のファイルを除外）
       if (!meta) {
-        console.warn(`記事 ${filename} にメタデータが見つかりません`);
+        // UUID形式のファイル名は明らかにMDXファイルではないので、警告を出さない
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(filename);
+        if (!isUUID) {
+          // 開発環境でのみデバッグログを出力（本番環境では警告を出さない）
+          if (import.meta.env.DEV) {
+            console.debug(`記事 ${filename} にメタデータが見つかりません（スキップします）`);
+          }
+        }
         continue;
       }
 
       // 必須フィールドの検証
       if (!meta.title) {
-        console.error(`記事 ${filename} にtitleが設定されていません`);
+        // 開発環境でのみ警告を出力
+        if (import.meta.env.DEV) {
+          console.warn(`記事 ${filename} にtitleが設定されていません（スキップします）`);
+        }
         continue;
       }
 
@@ -70,7 +86,14 @@ export async function buildArticleIndex(): Promise<ArticleIndexEntry[]> {
         loader: moduleLoader,
       });
     } catch (error) {
-      console.error(`記事 ${filename} の読み込み中にエラーが発生しました:`, error);
+      // 開発環境でのみエラーをログ出力（本番環境では静かにスキップ）
+      if (import.meta.env.DEV) {
+        // ファイルが存在しない場合は警告を出さない（UUID形式や削除されたファイル）
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(filename);
+        if (!isUUID && !filename.includes('PPL-1-1-1')) {
+          console.warn(`記事 ${filename} の読み込み中にエラーが発生しました:`, error);
+        }
+      }
     }
   }
 

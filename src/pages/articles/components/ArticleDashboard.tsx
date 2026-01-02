@@ -99,12 +99,12 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   // 記事グループの定義
   const articleGroups = {
     'マインド': ['メンタリティー', '思考法'],
-    '学科知識': ['CPL学科'],
+    '学科知識': ['CPL学科', 'PPL'],
     '操縦技': ['操縦']
   };
 
   // Articles専用のコンテンツフィルタリング
-  const articleCategories = ['メンタリティー', '思考法', '操縦', 'CPL学科'];
+  const articleCategories = ['メンタリティー', '思考法', '操縦', 'CPL学科', 'PPL'];
   const articleContents = useMemo(() => {
     return learningContents.filter(
       (content) => content.is_published && articleCategories.includes(content.category)

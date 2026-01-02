@@ -1,0 +1,21 @@
+{
+  "default": 25,
+  "categories": {
+    "基礎": 20,
+    "中級": 30,
+    "上級": 50,
+    "プレミアム": 100
+  },
+  "series_completion_bonus": {
+    "enabled": true,
+    "multiplier": 1.5
+  },
+  "first_read_bonus": {
+    "enabled": true,
+    "amount": 10
+  },
+  "articles": {
+    "millionaire-teaching-1": 30,
+    "logical-presentation-1": 25
+  }
+}

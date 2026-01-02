@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -25,8 +27,8 @@ export default defineConfig(({ mode }) => {
       mdx({
         // MDX設定
         providerImportSource: '@mdx-js/react',
-        remarkPlugins: [],
-        rehypePlugins: []
+        remarkPlugins: [remarkMath],
+        rehypePlugins: [rehypeKatex]
       }),
       // Bundle分析プラグイン（開発時のみ）
       mode === 'development' && visualizer({

@@ -261,12 +261,6 @@ const Schedule: React.FC = () => {
         >
           <Card variant="brand" padding="lg" className="border-brand-primary/50 bg-gradient-to-br from-brand-primary/5 to-transparent">
             <CardHeader>
-              {/* #region agent log */}
-              {(() => {
-                fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'Schedule.tsx:263', message: 'CardTitle removed, Typography directly in CardHeader', data: { hasCardTitle: false, hasTypographyH2: true }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'post-fix', hypothesisId: 'A' }) }).catch(() => { });
-                return null;
-              })()}
-              {/* #endregion */}
               <Typography variant="h2" color="brand" className="mb-3">
                 あなたのイベントに彩りと感動を
               </Typography>

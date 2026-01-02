@@ -147,3 +147,20 @@ export interface DeleteCommentRequest {
   comment_id: string;
   article_id: string;
 }
+
+/**
+ * 記事経験値設定
+ */
+export interface ArticleXpConfig {
+  default: number;
+  categories?: Record<string, number>;
+  series_completion_bonus?: {
+    enabled: boolean;
+    multiplier: number;
+  };
+  first_read_bonus?: {
+    enabled: boolean;
+    amount: number;
+  };
+  articles?: Record<string, number>;
+}

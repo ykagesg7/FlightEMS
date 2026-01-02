@@ -14,22 +14,10 @@ import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 import { MarketingLayout } from './layouts/MarketingLayout';
 
 // Marketing Pages (lazy)
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'App.tsx:17', message: 'Lazy import path check', data: { path: './pages/home/Home' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
-// #endregion
 const Home = lazy(() => import('./pages/home/Home'));
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'App.tsx:19', message: 'Lazy import MissionDashboard', data: { path: './pages/mission/Dashboard' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
-// #endregion
 const About = lazy(() => import('./pages/about/About'));
 const MissionDashboard = lazy(() => {
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'App.tsx:22', message: 'MissionDashboard lazy import start', data: { path: './pages/mission/Dashboard' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
-  // #endregion
   return import('./pages/mission/Dashboard').catch((err) => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'App.tsx:25', message: 'MissionDashboard import error', data: { error: String(err), path: './pages/mission/Dashboard' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
-    // #endregion
     throw err;
   });
 });
@@ -48,6 +36,11 @@ const ArticleDetailPage = lazy(() => import('./pages/articles/ArticleDetailPage'
 const ProfilePage = lazy(() => import('./pages/profile/ProfilePage'));
 const AuthPage = lazy(() => import('./pages/auth/AuthPage')); // AuthPageを追加
 const TestPage = lazy(() => import('./pages/test/TestPage')); // Testページを追加
+// Admin Pages
+const RankConfigPage = lazy(() => import('./pages/admin/RankConfigPage'));
+const XpConfigPage = lazy(() => import('./pages/admin/XpConfigPage'));
+// Rank Benefits Page
+const RankBenefitsPage = lazy(() => import('./pages/mission/components/RankBenefitsPage'));
 // 必要に応じて他のページも追加
 
 // NotFoundPageの簡易実装
@@ -124,6 +117,11 @@ const App: React.FC = () => {
               <Route path="articles/:contentId" element={<ArticleDetailPage />} />
               <Route path="account" element={<Navigate to="/profile" replace />} />
               <Route path="test" element={<TestPage />} />
+              {/* Rank Benefits */}
+              <Route path="ranks" element={<RankBenefitsPage />} />
+              {/* Admin Pages */}
+              <Route path="admin/ranks" element={<RankConfigPage />} />
+              <Route path="admin/xp" element={<XpConfigPage />} />
             </Route>
 
             {/* Fallback */}

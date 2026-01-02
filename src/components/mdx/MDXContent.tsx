@@ -1,24 +1,9 @@
 import { MDXProvider } from '@mdx-js/react';
 import React from 'react';
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'MDXContent.tsx:3', message: 'Importing ArticleHeader', data: { path: '../../pages/articles/components/ArticleHeader' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-// #endregion
 import ArticleHeader from '../../pages/articles/components/ArticleHeader';
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'MDXContent.tsx:7', message: 'Importing RelatedArticles', data: { path: '../../pages/articles/components/RelatedArticles' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-// #endregion
 import RelatedArticles from '../../pages/articles/components/RelatedArticles';
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'MDXContent.tsx:11', message: 'Importing TableOfContents', data: { path: '../../pages/articles/components/TableOfContents' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-// #endregion
 import TableOfContents from '../../pages/articles/components/TableOfContents';
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'MDXContent.tsx:15', message: 'Importing ArticleJsonLd', data: { path: '../../pages/articles/components/seo/ArticleJsonLd' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-// #endregion
 import ArticleJsonLd from '../../pages/articles/components/seo/ArticleJsonLd';
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'MDXContent.tsx:19', message: 'Importing ArticleMetaTags', data: { path: '../../pages/articles/components/seo/ArticleMetaTags' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-// #endregion
 import ArticleMetaTags from '../../pages/articles/components/seo/ArticleMetaTags';
 import { Callout, Footnote, FootnoteRef } from './CalloutComponents';
 import ImageWithOptimization from './ImageWithOptimization';

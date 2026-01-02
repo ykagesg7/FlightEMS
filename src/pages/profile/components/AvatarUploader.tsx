@@ -27,20 +27,12 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
 
   // 画像アクセステスト関数（画像読み込みで確認、タイムアウトを短縮）
   const testImageAccess = async (imageUrl: string): Promise<{ canAccess: boolean; error?: string }> => {
-    // #region agent log
-    const testStartTime = Date.now();
-    fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:29', message: 'testImageAccess started', data: { imageUrl }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-    // #endregion
     return new Promise((resolve) => {
       let resolved = false;
       const img = new Image();
       const timeoutId = setTimeout(() => {
         if (!resolved) {
           resolved = true;
-          // #region agent log
-          const testEndTime = Date.now();
-          fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:47', message: 'testImageAccess timeout', data: { duration: testEndTime - testStartTime }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-          // #endregion
           resolve({ canAccess: false, error: 'タイムアウト' });
         }
       }, 1000); // タイムアウトを1秒に短縮
@@ -49,10 +41,6 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
         if (!resolved) {
           resolved = true;
           clearTimeout(timeoutId);
-          // #region agent log
-          const testEndTime = Date.now();
-          fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:35', message: 'testImageAccess success', data: { duration: testEndTime - testStartTime }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-          // #endregion
           resolve({ canAccess: true });
         }
       };
@@ -60,10 +48,6 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
         if (!resolved) {
           resolved = true;
           clearTimeout(timeoutId);
-          // #region agent log
-          const testEndTime = Date.now();
-          fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:40', message: 'testImageAccess error', data: { duration: testEndTime - testStartTime }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-          // #endregion
           resolve({ canAccess: false, error: '画像の読み込みに失敗しました' });
         }
       };
@@ -88,11 +72,6 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
         return;
       }
 
-      // #region agent log
-      const uploadStartTime = Date.now();
-      fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:45', message: 'handleAvatarUpload started', data: { fileSize: file.size, fileType: file.type }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'B' }) }).catch(() => { });
-      // #endregion
-
       setIsUploading(true);
       setUploadProgress(0);
 
@@ -111,20 +90,12 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
         setUploadProgress(30);
 
         // Supabaseストレージにアップロード
-        // #region agent log
-        const storageUploadStartTime = Date.now();
-        fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:77', message: 'Storage upload started', data: { fileName }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
-        // #endregion
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('avatars')
           .upload(fileName, file, {
             cacheControl: '3600',
             upsert: false,
           });
-        // #region agent log
-        const storageUploadEndTime = Date.now();
-        fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:85', message: 'Storage upload completed', data: { duration: storageUploadEndTime - storageUploadStartTime, error: uploadError?.message }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
-        // #endregion
 
         if (uploadError) {
           throw new Error(uploadError.message || 'アップロードに失敗しました');
@@ -167,10 +138,6 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
         setUploadProgress(90);
 
         // プロフィールの存在確認と更新
-        // #region agent log
-        const profileUpdateStartTime = Date.now();
-        fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:120', message: 'Profile update started', data: {}, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
-        // #endregion
         const { data: existingProfile, error: selectError } = await supabase
           .from('profiles')
           .select('id')
@@ -208,20 +175,11 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
         }
 
         // プロフィールストアを更新（非同期、UIをブロックしない）
-        updateProfile({ avatar_url: finalImageUrl }).then(() => {
-          // #region agent log
-          const profileUpdateEndTime = Date.now();
-          fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:155', message: 'Profile update completed', data: { duration: profileUpdateEndTime - profileUpdateStartTime }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
-          // #endregion
-        }).catch(() => {
+        updateProfile({ avatar_url: finalImageUrl }).catch(() => {
           // エラーは無視（既にDBに保存されているため）
         });
 
         setUploadProgress(100);
-        // #region agent log
-        const uploadEndTime = Date.now();
-        fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:160', message: 'handleAvatarUpload completed', data: { totalDuration: uploadEndTime - uploadStartTime }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'B' }) }).catch(() => { });
-        // #endregion
         onUploadComplete?.(finalImageUrl);
 
         // プログレスバーをリセット
@@ -252,11 +210,6 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
       return;
     }
 
-    // #region agent log
-    const deleteStartTime = Date.now();
-    fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:248', message: 'handleDeleteAvatar started', data: { currentAvatarUrl }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'G' }) }).catch(() => { });
-    // #endregion
-
     setIsUploading(true);
 
     try {
@@ -265,33 +218,17 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
       const fileName = urlParts[urlParts.length - 1];
 
       // Supabaseストレージから画像を削除
-      // #region agent log
-      const storageDeleteStartTime = Date.now();
-      fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:263', message: 'Storage delete started', data: { fileName }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'H' }) }).catch(() => { });
-      // #endregion
       const { error: deleteError } = await supabase.storage.from('avatars').remove([fileName]);
-      // #region agent log
-      const storageDeleteEndTime = Date.now();
-      fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:267', message: 'Storage delete completed', data: { duration: storageDeleteEndTime - storageDeleteStartTime, error: deleteError?.message }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'H' }) }).catch(() => { });
-      // #endregion
 
       if (deleteError) {
         console.warn('Storage delete error:', deleteError);
       }
 
       // プロフィールのavatar_urlをnullに更新
-      // #region agent log
-      const profileDeleteStartTime = Date.now();
-      fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:273', message: 'Profile delete started', data: {}, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'I' }) }).catch(() => { });
-      // #endregion
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ avatar_url: null })
         .eq('id', user.id);
-      // #region agent log
-      const profileDeleteEndTime = Date.now();
-      fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:277', message: 'Profile delete completed', data: { duration: profileDeleteEndTime - profileDeleteStartTime, error: updateError?.message }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'I' }) }).catch(() => { });
-      // #endregion
 
       if (updateError) {
         throw new Error(updateError.message || 'プロフィール更新に失敗しました');
@@ -301,20 +238,11 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
       setPreviewUrl(null);
 
       // プロフィールストアを更新（非同期、UIをブロックしない）
-      updateProfile({ avatar_url: null }).then(() => {
-        // #region agent log
-        const storeUpdateEndTime = Date.now();
-        fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:285', message: 'Store update completed', data: { duration: storeUpdateEndTime - profileDeleteEndTime }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'J' }) }).catch(() => { });
-        // #endregion
-      }).catch(() => {
+      updateProfile({ avatar_url: null }).catch(() => {
         // エラーは無視（既にDBに保存されているため）
       });
 
       onUploadComplete?.('');
-      // #region agent log
-      const deleteEndTime = Date.now();
-      fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AvatarUploader.tsx:289', message: 'handleDeleteAvatar completed', data: { totalDuration: deleteEndTime - deleteStartTime }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'G' }) }).catch(() => { });
-      // #endregion
     } catch (err: unknown) {
       console.error('Avatar delete error:', err);
       const appError = toAppError(err);

@@ -4,6 +4,8 @@ import { buildArticleIndex } from '../utils/articlesIndex';
 import { supabase } from '../utils/supabase';
 import { useAuth } from './useAuth';
 import { useGamification } from './useGamification';
+import { calculateTotalArticleXp } from '../utils/articleXpRewards';
+import { updateStreak } from '../utils/streak';
 
 // 記事の進捗情報
 export interface ArticleProgress {
@@ -470,7 +472,7 @@ export const useArticleProgress = () => {
       console.warn('進捗更新エラー（無視して続行）:', err);
       // setErrorは呼ばない（ネットワークエラーは正常）
     }
-  }, [user, userProgress, calculateStats, completeMissionByAction]);
+  }, [user, userProgress, calculateStats, completeMissionByAction, articleIndex, articleIndexByFilename]);
 
   // 記事をブックマーク
   const toggleBookmark = useCallback(async (articleSlug: string) => {

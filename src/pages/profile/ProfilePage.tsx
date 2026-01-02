@@ -41,9 +41,7 @@ const ProfilePage: React.FC = () => {
 
   // 状態変更の監視（デバッグ用）
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:42', message: 'State changed', data: { username, bio, fullName, website, isEditing }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'E' }) }).catch(() => { });
-    // #endregion
+    // 状態変更の監視は削除済み
   }, [username, bio, fullName, website, isEditing]);
 
   // パスワード変更状態
@@ -65,21 +63,12 @@ const ProfilePage: React.FC = () => {
 
   // プロフィール情報の初期化
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:60', message: 'Profile init effect triggered', data: { profileExists: !!profile, isEditing, currentUsername: username, profileUsername: profile?.username }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-    // #endregion
     if (profile && !isEditing) {
       // 編集モードでない場合のみプロフィールデータを更新
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:64', message: 'Setting profile values', data: { beforeUsername: username, newUsername: profile.username || '', beforeBio: bio, newBio: profile.bio || '' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-      // #endregion
       setUsername(profile.username || '');
       setFullName(profile.full_name || '');
       setBio(profile.bio || '');
       setWebsite(profile.website || '');
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:70', message: 'Profile values set', data: { username: profile.username || '', bio: profile.bio || '' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-      // #endregion
     }
   }, [profile, isEditing]);
 
@@ -351,17 +340,11 @@ const ProfilePage: React.FC = () => {
                           variant={isEditing ? 'ghost' : 'brand'}
                           size="sm"
                           onClick={() => {
-                            // #region agent log
-                            fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:327', message: 'Edit button clicked - BEFORE', data: { currentIsEditing: isEditing, username, bio, fullName, profileUsername: profile?.username, profileBio: profile?.bio }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
-                            // #endregion
                             // 編集モードを切り替え
                             const newIsEditing = !isEditing;
 
                             // キャンセル時にプロフィールデータを再読み込み
                             if (isEditing && profile) {
-                              // #region agent log
-                              fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:335', message: 'Resetting profile values', data: { beforeUsername: username, newUsername: profile.username || '', beforeBio: bio, newBio: profile.bio || '' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
-                              // #endregion
                               setUsername(profile.username || '');
                               setFullName(profile.full_name || '');
                               setBio(profile.bio || '');
@@ -369,9 +352,6 @@ const ProfilePage: React.FC = () => {
                             }
 
                             setIsEditing(newIsEditing);
-                            // #region agent log
-                            fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:345', message: 'Edit button clicked - AFTER', data: { newIsEditing, username, bio, fullName }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
-                            // #endregion
                           }}
                         >
                           {isEditing ? 'キャンセル' : '編集'}
@@ -390,20 +370,7 @@ const ProfilePage: React.FC = () => {
                             type="text"
                             value={username}
                             onChange={(e) => {
-                              // #region agent log
-                              fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:385', message: 'Username onChange', data: { oldValue: username, newValue: e.target.value, isEditing }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'B' }) }).catch(() => { });
-                              // #endregion
                               setUsername(e.target.value);
-                            }}
-                            onFocus={(e) => {
-                              // #region agent log
-                              fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:392', message: 'Username onFocus', data: { value: username, isEditing, inputValue: e.target.value }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
-                              // #endregion
-                            }}
-                            onClick={(e) => {
-                              // #region agent log
-                              fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:399', message: 'Username onClick', data: { value: username, isEditing, inputValue: (e.target as HTMLInputElement).value }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
-                              // #endregion
                             }}
                             disabled={!isEditing}
                             className={`w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 ${isEditing
@@ -442,20 +409,7 @@ const ProfilePage: React.FC = () => {
                           <textarea
                             value={bio}
                             onChange={(e) => {
-                              // #region agent log
-                              fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:426', message: 'Bio onChange', data: { oldValue: bio, newValue: e.target.value, isEditing }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'B' }) }).catch(() => { });
-                              // #endregion
                               setBio(e.target.value);
-                            }}
-                            onFocus={(e) => {
-                              // #region agent log
-                              fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:433', message: 'Bio onFocus', data: { value: bio, isEditing, textareaValue: e.target.value }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
-                              // #endregion
-                            }}
-                            onClick={(e) => {
-                              // #region agent log
-                              fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'ProfilePage.tsx:439', message: 'Bio onClick', data: { value: bio, isEditing, textareaValue: (e.target as HTMLTextAreaElement).value }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
-                              // #endregion
                             }}
                             disabled={!isEditing}
                             rows={4}

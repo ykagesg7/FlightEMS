@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArticleProgress } from '../../../hooks/useArticleProgress';
 import { useAuth } from '../../../hooks/useAuth';
 import { LearningContent } from '../../../types';
 import { ArticleMeta } from '../../../types/articles';
+import { calculateBaseArticleXp } from '../../../utils/articleXpRewards';
 
 interface EnhancedArticleCardProps {
   article: LearningContent;
@@ -55,6 +56,12 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
   const isCompleted = progress?.completed || false;
   const isBookmarked = progress?.bookmarked || false;
   const readingTime = articleMeta?.readingTime || 10;
+
+  // 経験値計算（記事の基本XPを表示）
+  const articleXp = useMemo(() => {
+    if (!articleMeta) return 0;
+    return calculateBaseArticleXp(article.id, articleMeta);
+  }, [article.id, articleMeta]);
 
   // デモ用ブラー効果の判定
   const shouldBlur = isDemo && Math.random() > 0.6; // 40%の記事をブラー
@@ -209,6 +216,12 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
               <div className="flex items-center space-x-1 text-gray-400">
                 <span>📖</span>
                 <span>{readingTime}分</span>
+              </div>
+
+              {/* 経験値 */}
+              <div className="flex items-center space-x-1 text-yellow-400">
+                <span>⭐</span>
+                <span className="font-semibold">+{articleXp} XP</span>
               </div>
 
               {/* 公開日 */}

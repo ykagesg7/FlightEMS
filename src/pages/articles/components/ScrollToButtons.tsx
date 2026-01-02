@@ -15,21 +15,19 @@ export const ScrollToButtons: React.FC = () => {
   return (
     <div style={{ position: 'fixed', right: 'clamp(12px, 2vw, 20px)', bottom: 'max(12px, calc(env(safe-area-inset-bottom, 0px) + 12px))', display: 'grid', gap: 8, zIndex: 60 }}>
       <button
-        aria-label="ペ�Eジ上部へ"
+        aria-label="ページ上部へ"
         className="px-3 py-2 rounded-md border hud-border hud-surface hud-text shadow hover:shadow-lg focus:outline-none focus:ring"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       >
-        ↁE上へ
+        ページ上へ
       </button>
       <button
-        aria-label="ペ�Eジ下部へ"
+        aria-label="ページ下部へ"
         className="px-3 py-2 rounded-md border hud-border hud-surface hud-text shadow hover:shadow-lg focus:outline-none focus:ring"
         onClick={() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })}
       >
-        ↁE下へ
+        ページ下へ
       </button>
     </div>
   );
 };
-
-
