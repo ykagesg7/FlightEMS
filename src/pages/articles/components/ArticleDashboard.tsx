@@ -437,18 +437,6 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
   return (
     <div className="min-h-screen py-8 relative bg-whiskyPapa-black text-white">
-      {/* HUD枠線 */}
-      {/* 上部のHUDライン */}
-          <div className="hud-line" />
-          {/* 左右のHUDライン */}
-          <div className="absolute top-0 left-0 h-full" style={{ width: 1 }}>
-            <div className="hud-line" style={{ width: 1, height: '100%' }} />
-          </div>
-          <div className="absolute top-0 right-0 h-full" style={{ width: 1 }}>
-            <div className="hud-line" style={{ width: 1, height: '100%' }} />
-          </div>
-        </>
-      )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 進捗サマリーヘッダー */}
         {stats && (
