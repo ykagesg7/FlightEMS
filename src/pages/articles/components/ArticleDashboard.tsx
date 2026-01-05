@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation, Link } from 'react-router-dom';
 import { useArticleProgress } from '../../../hooks/useArticleProgress';
 import { useArticleStats } from '../../../hooks/useArticleStats';
 import { useSeriesUnlock } from '../../../hooks/useSeriesUnlock';
@@ -438,6 +438,19 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   return (
     <div className="min-h-screen py-8 relative bg-whiskyPapa-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Mission Dashboardへの戻るボタン */}
+        <div className="mb-6">
+          <Link
+            to="/mission"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Mission Dashboardへ戻る
+          </Link>
+        </div>
+
         {/* 進捗サマリーヘッダー */}
         {stats && (
           <ProgressSummaryHeader
