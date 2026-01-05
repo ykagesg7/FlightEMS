@@ -529,6 +529,64 @@ export const useArticleProgress = () => {
     return userProgress[articleSlug]?.bookmarked || false;
   }, [userProgress]);
 
+  // Supabaseから最新の進捗データを再取得
+  const refreshProgress = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      const progressResult = await supabase
+        .from('learning_progress')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (progressResult.error) {
+        console.error('進捗データ再取得エラー:', progressResult.error);
+        return;
+      }
+
+      // プロファイルデータを取得（エラーが発生しても続行）
+      let userProfile: { current_streak_days?: number } | undefined;
+      try {
+        const profileResult = await supabase
+          .from('user_learning_profiles')
+          .select('current_streak_days')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (profileResult.error) {
+          if (profileResult.error.code === 'PGRST116') {
+            console.debug('プロファイルレコードが存在しません（初回ユーザーの可能性）');
+          } else {
+            console.warn('プロファイルデータ取得エラー（無視して続行）:', profileResult.error);
+          }
+        } else if (profileResult.data) {
+          userProfile = profileResult.data;
+        }
+      } catch (profileError) {
+        console.warn('プロファイルデータ取得エラー（無視して続行）:', profileError);
+      }
+
+      // データをArticleProgress形式に変換して更新
+      const progressMap: Record<string, ArticleProgress> = {};
+      progressResult.data?.forEach(record => {
+        progressMap[record.content_id] = {
+          articleSlug: record.content_id,
+          readAt: new Date(record.last_read_at),
+          readingTime: 0,
+          scrollProgress: record.progress_percentage,
+          completed: record.completed,
+          bookmarked: false,
+          lastPosition: record.last_position
+        };
+      });
+
+      setUserProgress(progressMap);
+      setStats(calculateStats(progressMap, userProfile, profile, gamificationRankProgress));
+    } catch (err) {
+      console.error('進捗データ再取得エラー:', err);
+    }
+  }, [user, calculateStats, profile, gamificationRankProgress]);
+
   return {
     // データ
     stats,
@@ -544,6 +602,7 @@ export const useArticleProgress = () => {
     toggleBookmark,
     markAsCompleted,
     rateArticle,
+    refreshProgress,
 
     // ゲッター
     getArticleProgress,

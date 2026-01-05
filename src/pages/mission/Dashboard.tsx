@@ -3,42 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGamification } from '../../hooks/useGamification';
 import { useAuthStore } from '../../stores/authStore';
-import { RANK_INFO } from '../../types/gamification';
-import { BlogTab } from './components/BlogTab';
-import { ExperienceTab } from './components/ExperienceTab';
+import MissionCard from '../../components/marketing/MissionCard';
 import { MissionRankSection } from './components/MissionRankSection';
-import { MissionsTab } from './components/MissionsTab';
 import { MissionTabs } from './components/MissionTabs';
-import { ToolsTab } from './components/ToolsTab';
-import { MissionBlogPost } from './types';
 
-// 会員向けブログ（沿革/曲技飛行/機体詳細をここへ移設）
-const missionBlogPosts: MissionBlogPost[] = [
-  {
-    id: 'team-history',
-    contentId: 'team-history',
-    title: 'Whisky Papa の歩みとミッション',
-    excerpt: '2008年の結成から、岡南飛行場を拠点に世界選手権を目指すまでの物語。',
-    author: 'pilot',
-    publishedAt: '2025-06-10',
-  },
-  {
-    id: 'what-is-aerobatics',
-    contentId: 'what-is-aerobatics',
-    title: '曲技飛行とは何か？競技のルールと魅力',
-    excerpt: '1km立方体の空域で美しさと正確さを競う競技の仕組みと、安全の思想。',
-    author: 'narrator',
-    publishedAt: '2025-06-11',
-  },
-  {
-    id: 'extra-300l-deep-dive',
-    contentId: 'extra-300l-deep-dive',
-    title: 'EXTRA 300L Deep Dive（機体詳細）',
-    excerpt: '+/-10G を耐える機体構造と、計器を削ぎ落としたコクピット哲学。',
-    author: 'staff',
-    publishedAt: '2025-06-12',
-  },
-];
 
 /**
  * Mission Dashboard Page
@@ -48,8 +16,7 @@ const MissionDashboard: React.FC = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<'missions' | 'blog' | 'experience' | 'tools'>('missions');
-  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'blog' | 'test' | 'planning' | 'experience'>('blog');
   const { profile, rankInfo, xpToNextRank, rankProgress, isLoadingProfile } = useGamification();
 
   // 認証ガード: 未ログイン時は/authへリダイレクト
@@ -62,21 +29,30 @@ const MissionDashboard: React.FC = () => {
   // クエリパラメータから初期タブを決定
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab === 'blog' || tab === 'experience' || tab === 'tools' || tab === 'missions') {
+    if (tab === 'blog' || tab === 'test' || tab === 'planning' || tab === 'experience') {
       setActiveTab(tab);
     }
   }, [searchParams]);
 
-  // タブ変更時にクエリも同期（不要なパラメータは消す）
+  // タブ変更時の処理（外部ページへのナビゲーションまたはタブ表示）
   const handleTabChange = (tab: typeof activeTab) => {
     setActiveTab(tab);
-    setSelectedPostId(null);
     const next = new URLSearchParams(searchParams);
-    if (tab === 'missions') {
-      next.delete('tab');
-    } else {
-      next.set('tab', tab);
+
+    // 外部ページへのナビゲーション
+    if (tab === 'blog') {
+      navigate('/articles');
+      return;
+    } else if (tab === 'test') {
+      navigate('/test');
+      return;
+    } else if (tab === 'planning') {
+      navigate('/planning');
+      return;
     }
+
+    // 体験搭乗はタブコンテンツとして表示
+    next.set('tab', tab);
     setSearchParams(next, { replace: true });
   };
 
@@ -130,9 +106,6 @@ const MissionDashboard: React.FC = () => {
   const oneTimeMissions = profile.available_missions.filter(
     (m) => m.mission_type === 'one_time'
   );
-  const dailyMissions = profile.available_missions.filter(
-    (m) => m.mission_type === 'daily'
-  );
   const weeklyMissions = profile.available_missions.filter(
     (m) => m.mission_type === 'weekly'
   );
@@ -141,8 +114,49 @@ const MissionDashboard: React.FC = () => {
     profile.completed_missions.map((m) => [m.mission_id, m])
   );
 
-  const isWingman = profile.rank === 'wingman';
-  const currentRankInfo = RANK_INFO[profile.rank];
+  // ミッションをカテゴリごとに分類
+  const blogMissions = oneTimeMissions.filter(
+    (m) => m.required_action === 'article_read' || m.required_action === 'lesson_complete'
+  );
+  const testMissions = oneTimeMissions.filter(
+    (m) => m.required_action === 'quiz_pass'
+  );
+  const planningMissions = oneTimeMissions.filter(
+    (m) => m.required_action === 'plan_create'
+  );
+
+  // 各カテゴリから直近1つを選択（未完了を優先、完了済みは最新を選択）
+  const getLatestMission = (missions: typeof oneTimeMissions) => {
+    if (missions.length === 0) return null;
+
+    // 未完了のミッションを優先
+    const incompleteMissions = missions.filter(
+      (m) => !completedMissionsMap.has(m.id)
+    );
+
+    if (incompleteMissions.length > 0) {
+      // 未完了のミッションをcreated_atでソートして最新を選択
+      return incompleteMissions.sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )[0];
+    }
+
+    // すべて完了済みの場合は最新を選択
+    return missions.sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    )[0];
+  };
+
+  const latestBlogMission = getLatestMission(blogMissions);
+  const latestTestMission = getLatestMission(testMissions);
+  const latestPlanningMission = getLatestMission(planningMissions);
+
+  // 表示する通常ミッション（各カテゴリから1つずつ）
+  const displayedOneTimeMissions = [
+    latestBlogMission,
+    latestTestMission,
+    latestPlanningMission,
+  ].filter((m): m is typeof oneTimeMissions[0] => m !== null);
 
   return (
     <div className="min-h-screen bg-whiskyPapa-black text-white py-12">
@@ -170,30 +184,88 @@ const MissionDashboard: React.FC = () => {
           rankProgress={rankProgress}
         />
 
-        {/* Tab Content */}
-        {activeTab === 'missions' && (
-          <MissionsTab
-            profile={profile}
-            oneTimeMissions={oneTimeMissions}
-            dailyMissions={dailyMissions}
-            weeklyMissions={weeklyMissions}
-            completedMissionsMap={completedMissionsMap}
-          />
-        )}
+        {/* Missions Section - Always visible */}
+        <div className="space-y-8 mb-12">
+          {/* One-time Missions */}
+          {displayedOneTimeMissions.length > 0 && (
+            <section>
+              <div className="flex items-center gap-3 mb-6">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <h2 className="text-2xl font-bold">通常ミッション</h2>
+                </motion.div>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {displayedOneTimeMissions.map((mission) => (
+                  <MissionCard
+                    key={mission.id}
+                    mission={mission}
+                    isCompleted={completedMissionsMap.has(mission.id)}
+                    completedAt={completedMissionsMap.get(mission.id)?.completed_at}
+                    userRank={profile.rank}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
 
-        {activeTab === 'blog' && (
-          <BlogTab
-            missionBlogPosts={missionBlogPosts}
-            selectedPostId={selectedPostId}
-            setSelectedPostId={setSelectedPostId}
-          />
-        )}
+          {/* Weekly Missions */}
+          {weeklyMissions.length > 0 && (
+            <section>
+              <div className="flex items-center gap-3 mb-6">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                >
+                  <h2 className="text-2xl font-bold">ウィークリーミッション</h2>
+                </motion.div>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {weeklyMissions.map((mission) => (
+                  <MissionCard
+                    key={mission.id}
+                    mission={mission}
+                    isCompleted={completedMissionsMap.has(mission.id)}
+                    completedAt={completedMissionsMap.get(mission.id)?.completed_at}
+                    userRank={profile.rank}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
 
+          {/* No Missions Available */}
+          {oneTimeMissions.length === 0 && weeklyMissions.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg">利用可能なミッションはありません</p>
+            </div>
+          )}
+        </div>
+
+        {/* Tab Content - Only for experience tab */}
         {activeTab === 'experience' && (
-          <ExperienceTab profile={profile} isWingman={isWingman} currentRankInfo={currentRankInfo} />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-16"
+          >
+            <div className="max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-whiskyPapa-yellow mb-4">体験搭乗</h2>
+              <p className="text-gray-300 text-lg mb-6">
+                体験搭乗プログラムは現在準備中です。
+                <br />
+                承認が完了次第、お知らせいたします。
+              </p>
+              <div className="inline-block px-4 py-2 bg-whiskyPapa-yellow/10 border border-whiskyPapa-yellow/30 rounded-lg">
+                <p className="text-whiskyPapa-yellow font-semibold">承認待ち</p>
+              </div>
+            </div>
+          </motion.div>
         )}
-
-        {activeTab === 'tools' && <ToolsTab />}
       </div>
     </div>
   );

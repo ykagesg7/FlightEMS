@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { useGamification } from '../../hooks/useGamification';
 import { QuestionType, QuizQuestion, UserQuizAnswer } from '../../types/quiz';
 import supabase from '../../utils/supabase';
@@ -390,6 +391,17 @@ const TestPage: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto py-8" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
+      {/* Mission Dashboardへの戻るボタン */}
+      <div className="mb-6">
+        <Link
+          to="/mission"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Mission Dashboardへ戻る
+        </Link>
+      </div>
+
       {/* モード切替 */}
       <div className="mb-6 flex justify-center gap-2">
         <button

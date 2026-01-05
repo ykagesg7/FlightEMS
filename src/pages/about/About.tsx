@@ -175,96 +175,146 @@ const About: React.FC = () => {
       </section>
 
       {/* The Machine: HUD Style Specs */}
-      <section className="py-24 bg-whiskyPapa-black relative overflow-hidden">
-        {/* Decorative Grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(57,255,20,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(57,255,20,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
+      <motion.section
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="relative py-24 md:py-32 overflow-hidden min-h-[600px] md:min-h-[700px] flex items-center"
+      >
+        {/* 背景画像 */}
+        <div className="absolute inset-0">
+          <img
+            src="/images/ContentImages/About/extra300.jpg"
+            alt="EXTRA 300L"
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+            }}
+          />
+          {/* ダークオーバーレイ（可読性確保） */}
+          <div className="absolute inset-0 bg-black/50 md:bg-black/40" />
+          {/* グリッド背景 */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(57,255,20,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(57,255,20,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
+        </div>
 
+        {/* コンテンツ */}
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-block px-3 py-1 bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-mono mb-6">
-                SYSTEM: ACTIVE
-              </div>
-              <Typography variant="display" className="mb-2 text-5xl font-mono">
+          <div className="max-w-4xl">
+            {/* セクションタイトル */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="mb-8"
+            >
+              <Typography variant="h1" className="mb-4">
+                AIRCRAFT
+              </Typography>
+            </motion.div>
+            {/* 機体名タイトル */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mb-6"
+            >
+              <Typography
+                variant="display"
+                className="text-4xl md:text-6xl font-mono text-[#39FF14]"
+                style={{
+                  textShadow: '0 0 10px rgba(57, 255, 20, 0.5), 0 0 20px rgba(57, 255, 20, 0.3)',
+                }}
+              >
                 EXTRA 300L
               </Typography>
-              <p className="text-gray-400 mb-8 max-w-md">
-                ドイツのエクストラ社が開発した、世界最高峰の曲技飛行専用機。
-                カーボン複合材の主翼と鋼管フレームにより、+/-10Gの過酷な荷重に耐える。
-              </p>
+            </motion.div>
 
-              <div className="grid grid-cols-2 gap-4 font-mono text-sm">
-                {[
-                  { label: 'ENGINE', val: 'Lycoming AEIO-540' },
-                  { label: 'POWER', val: '300 HP' },
-                  { label: 'Vne (Max Speed)', val: '220 kts (407 km/h)' },
-                  { label: 'G-LOAD', val: '+/- 10G' },
-                  { label: 'ROLL RATE', val: '400 deg/sec' },
-                  { label: 'SEATS', val: '2 (Tandem)' },
-                ].map((spec) => (
-                  <div key={spec.label} className="border-b border-white/10 pb-2">
-                    <div className="text-gray-500 text-xs">{spec.label}</div>
-                    <div className="text-white text-lg">{spec.val}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="relative"
+            {/* 説明文 */}
+            <motion.p
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-[#39FF14]/90 mb-8 md:mb-12 max-w-2xl text-sm md:text-base leading-relaxed"
+              style={{
+                textShadow: '0 0 4px rgba(57, 255, 20, 0.3)',
+              }}
             >
-              <div className="aspect-[4/3] bg-gradient-to-tr from-green-900/20 to-transparent border border-green-500/20 rounded-lg overflow-hidden relative">
-                {/* 画像を背景として表示 */}
-                <img
-                  src="/images/ContentImages/About/extra300.jpg"
-                  alt="EXTRA 300L"
-                  className="absolute inset-0 w-full h-full object-cover opacity-80"
-                  onError={(e) => {
-                    // 画像が読み込めない場合はフォールバック表示
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
-                {/* オーバーレイ: グラデーションとHUDスタイルの情報 */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/40" />
-                <div className="absolute top-4 right-4 text-green-500/50 font-mono text-xs bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
-                  STATUS: READY
-                  <br />
-                  FUEL: 100%
-                </div>
-              </div>
+              ドイツのエクストラ社が開発した、世界最高峰の曲技飛行専用機。
+              <br className="hidden md:block" />
+              カーボン複合材の主翼と鋼管フレームにより、+/-10Gの過酷な荷重に耐える。
+            </motion.p>
+
+            {/* スペック情報 */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 font-mono"
+            >
+              {[
+                { label: 'ENGINE', val: 'Lycoming AEIO-540' },
+                { label: 'POWER', val: '300 HP' },
+                { label: 'Vne (Max Speed)', val: '220 kts (407 km/h)' },
+                { label: 'G-LOAD', val: '+/- 10G' },
+                { label: 'ROLL RATE', val: '400 deg/sec' },
+                { label: 'SEATS', val: '2 (Tandem)' },
+              ].map((spec, index) => (
+                <motion.div
+                  key={spec.label}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
+                  className="border-b border-[#39FF14]/20 pb-3"
+                >
+                  <div className="text-[#39FF14]/70 text-xs md:text-sm mb-1 uppercase tracking-wider font-semibold">
+                    {spec.label}
+                  </div>
+                  <div
+                    className="text-[#39FF14] text-lg md:text-xl font-semibold"
+                    style={{
+                      textShadow: '0 0 8px rgba(57, 255, 20, 0.4), 0 0 4px rgba(57, 255, 20, 0.2)',
+                    }}
+                  >
+                    {spec.val}
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Secondary info is now moved to Mission Blog */}
-      <section className="py-16 bg-whiskyPapa-black text-center border-t border-white/10">
+      <section className="py-20 bg-whiskyPapa-black-light border-t border-white/10">
         <div className="container mx-auto px-4">
-          <Typography variant="h4" className="mb-3 text-whiskyPapa-yellow">
-            SKY NOTES
-          </Typography>
-          <p className="text-gray-300 mb-6">
-            沿革・競技の仕組み・機体詳細は、会員向けブログで公開中。
-            <br />
-            コクピットの思考を読むならここから。
-          </p>
-          {user ? (
-            <Link to="/mission?tab=blog">
-              <Button variant="brand" size="lg" className="px-6 py-3">
-                JOIN our Formation
-              </Button>
-            </Link>
-          ) : (
-            <Link to="/auth">
-              <Button variant="brand" size="lg" className="px-6 py-3">
-                JOIN our Formation
-              </Button>
-            </Link>
-          )}
+          <div className="text-center mb-16">
+            <Typography variant="h2" className="mb-4">
+              MISSION BRIEF
+            </Typography>
+            <p className="text-gray-400">沿革・競技の仕組み・機体詳細は、会員向けブログで公開中。<br />コクピットの思考を読むならここから。</p>
+          </div>
+          <div className="text-center">
+            {user ? (
+              <Link to="/mission?tab=blog">
+                <Button variant="brand" size="lg" className="px-6 py-3">
+                  JOIN our Formation
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/auth">
+                <Button variant="brand" size="lg" className="px-6 py-3">
+                  JOIN our Formation
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
       </section>
     </div>

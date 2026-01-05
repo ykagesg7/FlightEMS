@@ -37,9 +37,34 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
   // 進捗をSupabaseに保存（セクションベース、throttle付き）
   const lastSaveRef = React.useRef<{ percentage: number; timestamp: number }>({ percentage: 0, timestamp: 0 });
 
+  // 完了時は即座に保存
+  React.useEffect(() => {
+    if (!user || !contentId || !isCompleted) {
+      return;
+    }
+
+    // 完了状態の場合は即座に保存（遅延なし）
+    updateArticleProgress(contentId, {
+      scrollProgress: 100,
+      completed: true,
+      readAt: new Date()
+    }).then(() => {
+      lastSaveRef.current = { percentage: 100, timestamp: Date.now() };
+    }).catch(error => {
+      if (error?.message?.includes('Failed to fetch') ||
+        error?.message?.includes('network') ||
+        error?.message?.includes('ERR_FAILED') ||
+        error?.code === 'ERR_FAILED') {
+        return;
+      }
+      console.error('進捗保存エラー:', error);
+    });
+  }, [user, contentId, isCompleted, updateArticleProgress]);
+
+  // 通常の進捗保存（完了時以外）
   React.useEffect(() => {
     // ページ遷移中やアンマウント時は保存しない
-    if (!user || !contentId || totalSections === 0 || currentSections === 0) {
+    if (!user || !contentId || totalSections === 0 || currentSections === 0 || isCompleted) {
       return;
     }
 
@@ -48,7 +73,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
     const percentageChanged = Math.abs(progressPercentage - lastSaveRef.current.percentage) >= 5; // 5%以上の変化時のみ保存
 
     // 1秒以上経過しているか、5%以上の変化がある場合のみ保存
-    if (timeSinceLastSave < 1000 && !percentageChanged && !isCompleted) {
+    if (timeSinceLastSave < 1000 && !percentageChanged) {
       return;
     }
 
@@ -62,7 +87,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
 
       updateArticleProgress(contentId, {
         scrollProgress: progressPercentage,
-        completed: isCompleted,
+        completed: false,
         readAt: new Date()
       }).then(() => {
         if (isMounted) {
@@ -88,6 +113,45 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
       }
     };
   }, [user, contentId, progressPercentage, isCompleted, currentSections, totalSections, updateArticleProgress]);
+
+  // ページ遷移時に確実に進捗を保存
+  React.useEffect(() => {
+    if (!user || !contentId || progressPercentage === 0) {
+      return;
+    }
+
+    const handleBeforeUnload = () => {
+      // beforeunloadでは同期的な処理のみ可能
+      // 非同期処理は実行されない可能性があるため、visibilitychangeで事前に保存
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        // ページが非表示になる前に進捗を保存
+        updateArticleProgress(contentId, {
+          scrollProgress: progressPercentage,
+          completed: isCompleted,
+          readAt: new Date()
+        }).catch(error => {
+          // エラーは無視（ネットワークエラーの可能性）
+          if (error?.message?.includes('Failed to fetch') ||
+            error?.message?.includes('network') ||
+            error?.message?.includes('ERR_FAILED') ||
+            error?.code === 'ERR_FAILED') {
+            return;
+          }
+        });
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user, contentId, progressPercentage, isCompleted, updateArticleProgress]);
 
   // 指定レベル以下の見出しのみフィルタ
   const filteredItems = tocItems.filter(item => item.level <= maxLevel);

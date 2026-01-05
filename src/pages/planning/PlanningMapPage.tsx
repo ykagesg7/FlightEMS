@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs';
 import { WeatherCacheProvider } from '../../contexts/WeatherCacheContext';
 import { FlightPlan } from '../../types/index';
@@ -36,6 +38,17 @@ function PlanningMapPage() {
 
   return (
     <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
+      {/* Mission Dashboardへの戻るボタン */}
+      <div className="px-4 pt-4 pb-2">
+        <Link
+          to="/mission"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Mission Dashboardへ戻る
+        </Link>
+      </div>
+
       <div className="mb-2">
         <Tabs defaultValue="planning">
           <TabsList className="bg-transparent border-b border-whiskyPapa-yellow/20 w-full flex">

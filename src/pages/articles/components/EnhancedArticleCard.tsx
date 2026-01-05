@@ -22,6 +22,8 @@ interface EnhancedArticleCardProps {
   locked?: boolean;
   lockedReason?: string | null;
   onArticleClick?: () => void;
+  isNextToRead?: boolean;
+  articleStatus?: 'completed' | 'in-progress' | null;
 }
 
 export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
@@ -34,7 +36,9 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
   highlightId,
   locked = false,
   lockedReason,
-  onArticleClick
+  onArticleClick,
+  isNextToRead = false,
+  articleStatus = null
 }) => {
   const { user } = useAuth();
   const [isHighlighted, setIsHighlighted] = useState(false);
@@ -71,7 +75,19 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
       group relative transition-all duration-300 transform ${!locked ? 'hover:scale-[1.02] hover:-translate-y-1' : ''}
       ${isHighlighted ? 'highlight-article' : ''}
       ${locked ? 'opacity-75' : ''}
+      ${isNextToRead && articleStatus === 'in-progress' ? 'ring-2 ring-whiskyPapa-yellow ring-offset-2 ring-offset-whiskyPapa-black shadow-lg shadow-whiskyPapa-yellow/50' : ''}
     `}>
+      {/* ステータスバッジ */}
+      {articleStatus === 'completed' && (
+        <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded-full bg-[#39FF14]/20 text-[#39FF14] border border-[#39FF14]/30 text-xs font-bold">
+          完了
+        </div>
+      )}
+      {articleStatus === 'in-progress' && (
+        <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded-full bg-whiskyPapa-yellow/20 text-whiskyPapa-yellow border border-whiskyPapa-yellow/30 text-xs font-bold">
+          進行中
+        </div>
+      )}
       {/* ロックオーバーレイ */}
       {locked && (
         <div className="absolute inset-0 z-20 rounded-xl bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm flex items-center justify-center cursor-not-allowed">

@@ -1,7 +1,7 @@
-import { BookOpen, Plane, Target } from 'lucide-react';
+import { BookOpen, FileText, Plane, Route } from 'lucide-react';
 import React from 'react';
 
-type TabType = 'missions' | 'blog' | 'experience' | 'tools';
+type TabType = 'blog' | 'test' | 'planning' | 'experience';
 
 interface MissionTabsProps {
   activeTab: TabType;
@@ -11,17 +11,6 @@ interface MissionTabsProps {
 export const MissionTabs: React.FC<MissionTabsProps> = ({ activeTab, onTabChange }) => {
   return (
     <div className="flex justify-center mb-8 border-b border-whiskyPapa-yellow/20">
-      <button
-        onClick={() => onTabChange('missions')}
-        className={`px-6 py-3 font-medium transition-colors ${
-          activeTab === 'missions'
-            ? 'text-whiskyPapa-yellow border-b-2 border-whiskyPapa-yellow'
-            : 'text-gray-400 hover:text-white'
-        }`}
-      >
-        <Target className="w-5 h-5 inline-block mr-2" />
-        ミッション
-      </button>
       <button
         onClick={() => onTabChange('blog')}
         className={`px-6 py-3 font-medium transition-colors ${
@@ -34,6 +23,28 @@ export const MissionTabs: React.FC<MissionTabsProps> = ({ activeTab, onTabChange
         ブログ
       </button>
       <button
+        onClick={() => onTabChange('test')}
+        className={`px-6 py-3 font-medium transition-colors ${
+          activeTab === 'test'
+            ? 'text-whiskyPapa-yellow border-b-2 border-whiskyPapa-yellow'
+            : 'text-gray-400 hover:text-white'
+        }`}
+      >
+        <FileText className="w-5 h-5 inline-block mr-2" />
+        学科試験
+      </button>
+      <button
+        onClick={() => onTabChange('planning')}
+        className={`px-6 py-3 font-medium transition-colors ${
+          activeTab === 'planning'
+            ? 'text-whiskyPapa-yellow border-b-2 border-whiskyPapa-yellow'
+            : 'text-gray-400 hover:text-white'
+        }`}
+      >
+        <Route className="w-5 h-5 inline-block mr-2" />
+        飛行計画
+      </button>
+      <button
         onClick={() => onTabChange('experience')}
         className={`px-6 py-3 font-medium transition-colors ${
           activeTab === 'experience'
@@ -43,17 +54,6 @@ export const MissionTabs: React.FC<MissionTabsProps> = ({ activeTab, onTabChange
       >
         <Plane className="w-5 h-5 inline-block mr-2" />
         体験搭乗
-      </button>
-      <button
-        onClick={() => onTabChange('tools')}
-        className={`px-6 py-3 font-medium transition-colors ${
-          activeTab === 'tools'
-            ? 'text-whiskyPapa-yellow border-b-2 border-whiskyPapa-yellow'
-            : 'text-gray-400 hover:text-white'
-        }`}
-      >
-        <Target className="w-5 h-5 inline-block mr-2" />
-        ツール
       </button>
     </div>
   );

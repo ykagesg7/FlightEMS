@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useArticleProgress } from '../../../hooks/useArticleProgress';
 import { useArticleStats } from '../../../hooks/useArticleStats';
 import { useSeriesUnlock } from '../../../hooks/useSeriesUnlock';
@@ -23,13 +23,15 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 }) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
 
   // 進捗管理
   const {
     stats,
     isDemo,
     getArticleProgress,
-    isLoading: progressLoading
+    isLoading: progressLoading,
+    refreshProgress
   } = useArticleProgress();
 
   // ソーシャル機能
@@ -44,13 +46,21 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
   // URLパラメータから状態を取得
   const categoryFromUrl = searchParams.get('category');
-  const groupFromUrl = searchParams.get('group');
+  const mainFilterFromUrl = searchParams.get('mainFilter');
   const tagsFromUrl = searchParams.get('tags') || '';
   const sortFromUrl = searchParams.get('sort') || '';
 
+  // メインフィルターの定義
+  const mainFilters: Record<string, string[]> = {
+    'すべて': [],
+    'マインド': ['メンタリティー', '思考法'],
+    '学科': ['CPL学科', 'PPL'],
+    '操縦法': ['操縦']
+  };
+
   // フィルタリング状態
-  const [activeGroup, setActiveGroup] = useState<string | null>(
-    groupFromUrl || null
+  const [activeMainFilter, setActiveMainFilter] = useState<string>(
+    mainFilterFromUrl || 'すべて'
   );
   const [activeCategory, setActiveCategory] = useState<string>(
     categoryFromUrl || 'すべて'
@@ -58,15 +68,23 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
   // URLパラメータの変更を監視
   React.useEffect(() => {
-    const groupParam = searchParams.get('group');
+    const mainFilterParam = searchParams.get('mainFilter');
     const categoryParam = searchParams.get('category');
-    if (groupParam !== activeGroup) {
-      setActiveGroup(groupParam);
+    if (mainFilterParam && mainFilterParam !== activeMainFilter) {
+      setActiveMainFilter(mainFilterParam);
     }
     if (categoryParam !== activeCategory && categoryParam) {
       setActiveCategory(categoryParam);
     }
   }, [searchParams]);
+
+  // ページ遷移後に進捗を再読み込み
+  React.useEffect(() => {
+    // /articlesページに戻った時に進捗を再読み込み
+    if (location.pathname === '/articles') {
+      refreshProgress();
+    }
+  }, [location.pathname, refreshProgress]);
   const [selectedTags, setSelectedTags] = useState<string[]>(
     tagsFromUrl ? tagsFromUrl.split(',').filter(Boolean) : []
   );
@@ -96,15 +114,16 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     loadArticleMetas();
   }, [loadArticleStats]);
 
-  // 記事グループの定義
-  const articleGroups = {
-    'マインド': ['メンタリティー', '思考法'],
-    '学科知識': ['CPL学科', 'PPL'],
-    '操縦技': ['操縦']
-  };
-
   // Articles専用のコンテンツフィルタリング
   const articleCategories = ['メンタリティー', '思考法', '操縦', 'CPL学科', 'PPL'];
+
+  // サブフィルター（カテゴリー）の取得
+  const subCategories = useMemo(() => {
+    if (activeMainFilter === 'すべて') {
+      return articleCategories;
+    }
+    return mainFilters[activeMainFilter as keyof typeof mainFilters] || [];
+  }, [activeMainFilter, articleCategories]);
   const articleContents = useMemo(() => {
     return learningContents.filter(
       (content) => content.is_published && articleCategories.includes(content.category)
@@ -127,13 +146,13 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   const filteredContents = useMemo(() => {
     let filtered = articleContents;
 
-    // グループフィルタ
-    if (activeGroup) {
-      const groupCategories = articleGroups[activeGroup as keyof typeof articleGroups] || [];
-      filtered = filtered.filter((content) => groupCategories.includes(content.category));
+    // メインフィルター
+    if (activeMainFilter !== 'すべて') {
+      const mainFilterCategories = mainFilters[activeMainFilter as keyof typeof mainFilters] || [];
+      filtered = filtered.filter((content) => mainFilterCategories.includes(content.category));
     }
 
-    // カテゴリーフィルタ
+    // カテゴリーフィルタ（サブフィルター）
     if (activeCategory !== 'すべて') {
       filtered = filtered.filter((content) => content.category === activeCategory);
     }
@@ -202,7 +221,75 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     });
 
     return sorted;
-  }, [articleContents, activeGroup, activeCategory, selectedTags, articleMetas, sortBy, sortOrder, socialStats, articleGroups]);
+  }, [articleContents, activeMainFilter, activeCategory, selectedTags, articleMetas, sortBy, sortOrder, socialStats, mainFilters]);
+
+  // 表示する記事を決定するフィルタリング（既読・アンロック・次にアンロックされる記事のみ）
+  const displayableContents = useMemo(() => {
+    return filteredContents.filter((article) => {
+      // 記事のメタデータを取得
+      const meta = Object.values(articleMetas).find(m =>
+        m.slug.includes(article.id) || article.title.includes(m.title)
+      );
+
+      // 進捗情報を取得
+      const progress = meta ? getArticleProgress(meta.slug) : undefined;
+
+      // 1. 既読の記事（読了済み）
+      if (progress?.completed === true) {
+        return true;
+      }
+
+      // 2. アンロックされた記事
+      if (seriesUnlock.isUnlocked(article.id)) {
+        return true;
+      }
+
+      // 3. 次にアンロックされる記事（ロックされているが、直前の記事がアンロックされている）
+      const previousArticleId = seriesUnlock.getPreviousArticleInSeries(article.id);
+      if (previousArticleId) {
+        // 直前の記事がアンロックされているかチェック
+        if (seriesUnlock.isUnlocked(previousArticleId)) {
+          return true;
+        }
+      }
+
+      // 上記のいずれにも該当しない場合は非表示
+      return false;
+    });
+  }, [filteredContents, articleMetas, getArticleProgress, seriesUnlock]);
+
+  // 記事ステータスの計算
+  const articleStatuses = useMemo(() => {
+    const statusMap = new Map<string, 'completed' | 'in-progress' | null>();
+
+    displayableContents.forEach((article) => {
+      // content_id（article.id）を使用して進捗を取得
+      const progress = getArticleProgress(article.id);
+
+      if (progress?.completed === true) {
+        statusMap.set(article.id, 'completed');
+      } else if (seriesUnlock.isUnlocked(article.id)) {
+        statusMap.set(article.id, 'in-progress');
+      } else {
+        statusMap.set(article.id, null);
+      }
+    });
+
+    return statusMap;
+  }, [displayableContents, getArticleProgress, seriesUnlock]);
+
+  // アンロックされた記事（未読）を識別
+  const isNextToRead = useMemo(() => {
+    const nextToReadIds = new Set<string>();
+
+    articleStatuses.forEach((status, articleId) => {
+      if (status === 'in-progress') {
+        nextToReadIds.add(articleId);
+      }
+    });
+
+    return nextToReadIds;
+  }, [articleStatuses]);
 
   // 記事クリック時の閲覧数記録とロックチェック
   const handleArticleClick = async (articleId: string, isLocked: boolean) => {
@@ -223,25 +310,60 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     }
   };
 
-  // 利用可能なタグを抽出
+  // タグフィルタリング前のフィルタリング結果（メインフィルター + サブフィルター）
+  const contentsBeforeTagFilter = useMemo(() => {
+    let filtered = articleContents;
+
+    // メインフィルター
+    if (activeMainFilter !== 'すべて') {
+      const mainFilterCategories = mainFilters[activeMainFilter as keyof typeof mainFilters] || [];
+      filtered = filtered.filter((content) => mainFilterCategories.includes(content.category));
+    }
+
+    // カテゴリーフィルタ（サブフィルター）
+    if (activeCategory !== 'すべて') {
+      filtered = filtered.filter((content) => content.category === activeCategory);
+    }
+
+    return filtered;
+  }, [articleContents, activeMainFilter, activeCategory, mainFilters]);
+
+  // 利用可能なタグを抽出（フィルタリングされた記事のタグのみ、ソート済み）
   const availableTags = useMemo(() => {
     const tags = new Set<string>();
-    Object.values(articleMetas).forEach(meta => {
-      meta.tags.forEach(tag => tags.add(tag));
+    contentsBeforeTagFilter.forEach(content => {
+      const meta = articleMetas[content.id];
+      if (meta) {
+        meta.tags.forEach(tag => tags.add(tag));
+      }
     });
-    return Array.from(tags).sort();
-  }, [articleMetas]);
+    // 日本語と英語を分けてソート
+    const japaneseTags: string[] = [];
+    const englishTags: string[] = [];
+    Array.from(tags).forEach(tag => {
+      // 日本語かどうかの判定（ひらがな、カタカナ、漢字が含まれるか）
+      if (/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(tag)) {
+        japaneseTags.push(tag);
+      } else {
+        englishTags.push(tag);
+      }
+    });
+    // 英語はアルファベット順、日本語は読み順（localeCompare使用）
+    englishTags.sort();
+    japaneseTags.sort((a, b) => a.localeCompare(b, 'ja'));
+    return [...englishTags, ...japaneseTags];
+  }, [contentsBeforeTagFilter, articleMetas]);
 
 
-  // グループ変更時の処理
-  const handleGroupChange = useCallback((group: string | null) => {
-    setActiveGroup(group);
+  // メインフィルター変更時の処理
+  const handleMainFilterChange = useCallback((mainFilter: string) => {
+    setActiveMainFilter(mainFilter);
     setActiveCategory('すべて');
     const newSearchParams = new URLSearchParams(searchParams);
-    if (group) {
-      newSearchParams.set('group', group);
+    if (mainFilter === 'すべて') {
+      newSearchParams.delete('mainFilter');
     } else {
-      newSearchParams.delete('group');
+      newSearchParams.set('mainFilter', mainFilter);
     }
     newSearchParams.delete('category');
     setSearchParams(newSearchParams);
@@ -250,7 +372,6 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   // カテゴリ変更時のURLパラメータ更新とソート適用
   const handleCategoryChange = useCallback((category: string) => {
     setActiveCategory(category);
-    setActiveGroup(null); // カテゴリ選択時はグループをクリア
 
     // カテゴリーに応じたデフォルトソートを適用
     let defaultSort = 'date';
@@ -272,7 +393,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     } else {
       newSearchParams.set('category', category);
     }
-    newSearchParams.delete('group');
+    newSearchParams.delete('mainFilter');
     newSearchParams.set('sort', defaultSort);
     setSearchParams(newSearchParams);
   }, [searchParams, setSearchParams]);
@@ -356,37 +477,32 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 isDemo={isDemo}
                 onRegisterClick={showRegistrationModal}
                 getArticleProgress={getArticleProgress}
+                activeMainFilter={activeMainFilter}
+                subCategories={subCategories}
               />
             )}
           </div>
 
           {/* メインエリア: 記事一覧 */}
           <div className="xl:col-span-3 order-1 xl:order-2">
-            {/* グループタブ */}
+            {/* メインフィルター */}
             <div className="mb-6">
               <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => handleGroupChange(null)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${!activeGroup
-                    ? 'bg-whiskyPapa-yellow text-black shadow-lg shadow-whiskyPapa-yellow/50'
-                    : 'bg-gray-800 text-gray-300 border-2 border-gray-600 hover:bg-gray-700 hover:border-gray-500'
-                    }`}
-                >
-                  すべて
-                </button>
-                {Object.keys(articleGroups).map((group) => {
-                  const groupCategories = articleGroups[group as keyof typeof articleGroups];
-                  const groupCount = articleContents.filter(c => groupCategories.includes(c.category)).length;
+                {Object.keys(mainFilters).map((filter) => {
+                  const filterCategories = mainFilters[filter as keyof typeof mainFilters];
+                  const filterCount = filter === 'すべて'
+                    ? articleContents.length
+                    : articleContents.filter(c => filterCategories.includes(c.category)).length;
                   return (
                     <button
-                      key={group}
-                      onClick={() => handleGroupChange(group)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeGroup === group
+                      key={filter}
+                      onClick={() => handleMainFilterChange(filter)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeMainFilter === filter
                         ? 'bg-whiskyPapa-yellow text-black shadow-lg shadow-whiskyPapa-yellow/50'
                         : 'bg-gray-800 text-gray-300 border-2 border-gray-600 hover:bg-gray-700 hover:border-gray-500'
                         }`}
                     >
-                      {group} ({groupCount})
+                      {filter} ({filterCount})
                     </button>
                   );
                 })}
@@ -399,16 +515,24 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 selectedTags={selectedTags}
                 setSelectedTags={setSelectedTags}
                 availableTags={availableTags}
-                categories={['すべて', ...articleCategories]}
+                categories={['すべて', ...subCategories]}
                 activeCategory={activeCategory}
                 onCategoryChange={handleCategoryChange}
                 categoryCounts={{
-                  'すべて': articleContents.length,
-                  ...articleCategories.reduce((acc, cat) => ({
-                    ...acc,
-                    [cat]: articleContents.filter(c => c.category === cat).length
-                  }), {})
+                  'すべて': displayableContents.length,
+                  ...subCategories.reduce((acc, cat) => {
+                    const count = articleContents.filter(c => {
+                      // メインフィルターが適用されている場合は、その範囲内でカウント
+                      if (activeMainFilter !== 'すべて') {
+                        const mainFilterCategories = mainFilters[activeMainFilter as keyof typeof mainFilters];
+                        return c.category === cat && mainFilterCategories.includes(c.category);
+                      }
+                      return c.category === cat;
+                    }).length;
+                    return { ...acc, [cat]: count };
+                  }, {})
                 }}
+                mainFilter={activeMainFilter}
               />
             </div>
 
@@ -425,80 +549,43 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
             {/* 記事一覧 */}
             <div className="space-y-8">
-              {filteredContents.length > 0 ? (
-                (() => {
-                  // グループごとに記事を分類
-                  const groupedContents: Record<string, typeof filteredContents> = {};
-                  Object.keys(articleGroups).forEach(group => {
-                    const groupCategories = articleGroups[group as keyof typeof articleGroups];
-                    groupedContents[group] = filteredContents.filter(c => groupCategories.includes(c.category));
-                  });
+              {displayableContents.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {displayableContents.map((article) => {
+                    // 記事のメタデータを取得
+                    const meta = Object.values(articleMetas).find(m =>
+                      m.slug.includes(article.id) || article.title.includes(m.title)
+                    );
 
-                  // アクティブなグループがある場合はそのグループのみ表示、ない場合は全グループ表示
-                  const displayGroups = activeGroup
-                    ? [activeGroup]
-                    : Object.keys(articleGroups).filter(group => groupedContents[group].length > 0);
+                    // 進捗情報を取得
+                    const progress = meta ? getArticleProgress(meta.slug) : undefined;
 
-                  return (
-                    <>
-                      {displayGroups.map((group) => {
-                        const groupArticles = groupedContents[group];
-                        if (groupArticles.length === 0) return null;
+                    // ソーシャル統計を取得（デフォルト値を提供）
+                    const stats = socialStats[article.id] || {
+                      likes_count: 0,
+                      comments_count: 0,
+                      views_count: 0,
+                      user_liked: false
+                    };
 
-                        return (
-                          <div key={group} className="space-y-4">
-                            {/* グループヘッダー */}
-                            <div className="flex items-center space-x-3 mb-4">
-                              <h2 className="text-2xl font-bold bg-gradient-to-r bg-clip-text text-transparent from-white to-gray-200">
-                                {group}
-                              </h2>
-                              <span className="text-sm text-gray-400">
-                                ({groupArticles.length}件)
-                              </span>
-                              <div className="flex-1 h-px bg-gradient-to-r from-gray-700 to-transparent"></div>
-                            </div>
-
-                            {/* グループの記事 */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              {groupArticles.map((article) => {
-                                // 記事のメタデータを取得
-                                const meta = Object.values(articleMetas).find(m =>
-                                  m.slug.includes(article.id) || article.title.includes(m.title)
-                                );
-
-                                // 進捗情報を取得
-                                const progress = meta ? getArticleProgress(meta.slug) : undefined;
-
-                                // ソーシャル統計を取得（デフォルト値を提供）
-                                const stats = socialStats[article.id] || {
-                                  likes_count: 0,
-                                  comments_count: 0,
-                                  views_count: 0,
-                                  user_liked: false
-                                };
-
-                                return (
-                                  <EnhancedArticleCard
-                                    key={article.id}
-                                    article={article}
-                                    articleMeta={meta}
-                                    progress={progress || undefined}
-                                    isDemo={isDemo}
-                                    onRegisterPrompt={showRegistrationModal}
-                                    stats={stats}
-                                    locked={!seriesUnlock.isUnlocked(article.id)}
-                                    lockedReason={seriesUnlock.getLockedReason(article.id)}
-                                    onArticleClick={() => handleArticleClick(article.id, !seriesUnlock.isUnlocked(article.id))}
-                                  />
-                                );
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </>
-                  );
-                })()
+                    return (
+                      <EnhancedArticleCard
+                        key={article.id}
+                        article={article}
+                        articleMeta={meta}
+                        progress={progress || undefined}
+                        isDemo={isDemo}
+                        onRegisterPrompt={showRegistrationModal}
+                        stats={stats}
+                        locked={!seriesUnlock.isUnlocked(article.id)}
+                        lockedReason={seriesUnlock.getLockedReason(article.id)}
+                        onArticleClick={() => handleArticleClick(article.id, !seriesUnlock.isUnlocked(article.id))}
+                        isNextToRead={isNextToRead.has(article.id)}
+                        articleStatus={articleStatuses.get(article.id) || null}
+                      />
+                    );
+                  })}
+                </div>
               ) : (
                 <div className={`
                   text-center py-12 p-8 rounded-xl border backdrop-blur-sm
@@ -519,7 +606,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
             </div>
 
             {/* デモ用追加機能 */}
-            {isDemo && filteredContents.length > 0 && (
+            {isDemo && displayableContents.length > 0 && (
               <div className={`
                  mt-12 p-6 rounded-xl border-2 border-dashed text-center backdrop-blur-sm
                  transition-all duration-300 hover:scale-[1.02] hover:shadow-lg
