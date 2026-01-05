@@ -6,8 +6,8 @@ import type { Database } from '../types/database.types';
 export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 export const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// 環境変数の検証
-if (!supabaseUrl || !supabaseKey) {
+// 環境変数の検証（テスト環境ではスキップ）
+if (import.meta.env.MODE !== 'test' && (!supabaseUrl || !supabaseKey)) {
   throw new Error('Supabase環境変数が設定されていません。VITE_SUPABASE_URLとVITE_SUPABASE_ANON_KEYを設定してください。');
 }
 

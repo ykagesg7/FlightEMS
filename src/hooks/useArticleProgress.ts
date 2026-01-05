@@ -4,8 +4,6 @@ import { buildArticleIndex } from '../utils/articlesIndex';
 import { supabase } from '../utils/supabase';
 import { useAuth } from './useAuth';
 import { useGamification } from './useGamification';
-import { calculateTotalArticleXp } from '../utils/articleXpRewards';
-import { updateStreak } from '../utils/streak';
 import { usePPLRanks } from './usePPLRanks';
 
 // 記事の進捗情報
@@ -452,7 +450,7 @@ export const useArticleProgress = () => {
           } else if (profileResult.data) {
             userLearningProfile = profileResult.data;
           }
-        } catch (profileError) {
+        } catch {
           // ネットワークエラーなどは無視（エラーログは出力しない）
         }
 
@@ -491,7 +489,7 @@ export const useArticleProgress = () => {
       console.warn('進捗更新エラー（無視して続行）:', err);
       // setErrorは呼ばない（ネットワークエラーは正常）
     }
-  }, [user, userProgress, calculateStats, completeMissionByAction, articleIndex, articleIndexByFilename]);
+  }, [user, userProgress, calculateStats, completeMissionByAction, articleIndex, articleIndexByFilename, checkRanksForContent, refreshRanks, profile, gamificationRankProgress]);
 
   // 記事をブックマーク
   const toggleBookmark = useCallback(async (articleSlug: string) => {

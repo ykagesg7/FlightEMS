@@ -172,17 +172,18 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
 
       switch (sortBy) {
-        case 'date':
+        case 'date': {
           const dateA = new Date(a.created_at || 0).getTime();
           const dateB = new Date(b.created_at || 0).getTime();
           comparison = dateA - dateB;
           break;
+        }
 
         case 'title':
           comparison = a.title.localeCompare(b.title, 'ja');
           break;
 
-        case 'readingTime':
+        case 'readingTime': {
           const metaA = Object.values(articleMetas).find(m =>
             m.slug.includes(a.id) || a.title.includes(m.title)
           );
@@ -193,8 +194,9 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
           const timeB = metaB?.readingTime || 10;
           comparison = timeA - timeB;
           break;
+        }
 
-        case 'popularity':
+        case 'popularity': {
           const statsA = Object.values(articleMetas).find(m =>
             m.slug.includes(a.id) || a.title.includes(m.title)
           );
@@ -207,11 +209,11 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
           const likesB = socialB?.likes_count || 0;
           comparison = likesA - likesB;
           break;
+        }
 
         case 'category':
           comparison = a.category.localeCompare(b.category, 'ja');
           break;
-
 
         default:
           comparison = 0;
@@ -423,13 +425,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   if (isLoading || progressLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-whiskyPapa-black text-white">
-        <div className={`
-          text-center p-8 rounded-xl border backdrop-blur-sm
-          ${true
-            ? 'bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20'
-            : 'bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20'
-          }
-        `}>
+        <div className="text-center p-8 rounded-xl border backdrop-blur-sm bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-whiskyPapa-yellow mx-auto mb-4"></div>
           <p className="text-lg font-medium text-white">
             学習データを読み込み中...
@@ -442,9 +438,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   return (
     <div className="min-h-screen py-8 relative bg-whiskyPapa-black text-white">
       {/* HUD枠線 */}
-      {false && (
-        <>
-          {/* 上部のHUDライン */}
+      {/* 上部のHUDライン */}
           <div className="hud-line" />
           {/* 左右のHUDライン */}
           <div className="absolute top-0 left-0 h-full" style={{ width: 1 }}>
@@ -607,45 +601,18 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
             {/* デモ用追加機能 */}
             {isDemo && displayableContents.length > 0 && (
-              <div className={`
-                 mt-12 p-6 rounded-xl border-2 border-dashed text-center backdrop-blur-sm
-                 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg
-                 ${true
-                  ? 'border-blue-500/60 bg-blue-900/30 hover:bg-blue-900/40 shadow-blue-900/20'
-                  : 'bg-whiskyPapa-black-dark hover:bg-whiskyPapa-yellow/10'
-                }
-               `}>
+              <div className="mt-12 p-6 rounded-xl border-2 border-dashed text-center backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border-blue-500/60 bg-blue-900/30 hover:bg-blue-900/40 shadow-blue-900/20">
                 <div className="text-3xl mb-4">🎯</div>
-                <h3 className={`
-                   text-xl font-bold mb-2 bg-gradient-to-r bg-clip-text text-transparent
-                   ${true
-                    ? 'from-white to-gray-200'
-                    : 'from-[#39FF14] to-green-600'
-                  }
-                 `}>
+                <h3 className="text-xl font-bold mb-2 bg-gradient-to-r bg-clip-text text-transparent from-white to-gray-200">
                   さらに詳しい学習分析を体験
                 </h3>
-                <p className={`
-                  mb-4
-                  ${true
-                    ? 'text-gray-300'
-                    : 'text-white'
-                  }
-                `}>
+                <p className="mb-4 text-gray-300">
                   登録すると、AI による学習パターン分析、パーソナライズされた推薦、
                   詳細な成績レポートなどが利用できます。
                 </p>
                 <button
                   onClick={showRegistrationModal}
-                  className={`
-                     px-8 py-3 rounded-xl font-medium transition-all duration-300
-                     shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1
-                     border backdrop-blur-sm
-                     ${true
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500 border-blue-500/30'
-                      : 'bg-whiskyPapa-black-dark text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10'
-                    }
-                   `}
+                  className="px-8 py-3 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 border backdrop-blur-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500 border-blue-500/30"
                 >
                   無料で始める✨
                 </button>

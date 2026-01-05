@@ -19,7 +19,7 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
   activeCategory = 'すべて',
   onCategoryChange,
   categoryCounts = {},
-  mainFilter = 'すべて'
+  mainFilter: _mainFilter = 'すべて'
 }) => {
 
   const handleTagToggle = (tag: string) => {
