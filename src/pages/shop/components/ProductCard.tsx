@@ -12,17 +12,41 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, userRank, onPurchase: _onPurchase }) => {
-  const rankOrder: Record<UserRank, number> = {
-    spectator: 1,
-    trainee: 2,
-    wingman: 3,
+  // RANK_INFOに存在するランクのみを使用したランク順序
+  const rankOrder: Partial<Record<UserRank, number>> = {
+    fan: 1,
+    'ppl-aero-basics-phase1': 2,
+    'ppl-aero-basics-phase2': 3,
+    'ppl-aero-basics-master': 4,
+    'ppl-aero-performance-phase1': 5,
+    'ppl-aero-performance-phase2': 6,
+    'ppl-aero-performance-master': 7,
+    'ppl-aerodynamics-master': 8,
+    'ppl-engineering-master': 9,
+    ppl: 10,
+    wingman: 11,
+    cpl: 12,
+    ace: 13,
+    master: 14,
+    legend: 15,
   };
 
   const userRankOrder = rankOrder[userRank] || 0;
   const requiredRankOrder = rankOrder[product.required_rank] || 0;
   const isLocked = userRankOrder < requiredRankOrder;
 
-  const requiredRankInfo = RANK_INFO[product.required_rank];
+  // RANK_INFOに存在しないランクの場合はフォールバック
+  const requiredRankInfo = RANK_INFO[product.required_rank] || {
+    displayName: product.required_rank,
+    color: '#808080',
+    icon: '👤',
+  };
+
+  const userRankInfo = RANK_INFO[userRank] || {
+    displayName: userRank,
+    color: '#808080',
+    icon: '👤',
+  };
 
   const handleClick = () => {
     if (!isLocked && product.external_link) {
@@ -45,7 +69,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, userRank, onP
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
           <Lock className="w-12 h-12 text-gray-400 mb-2" />
           <p className="text-white font-semibold text-sm mb-1">Rank {requiredRankInfo.displayName} Required</p>
-          <p className="text-gray-400 text-xs">現在のランク: {RANK_INFO[userRank].displayName}</p>
+          <p className="text-gray-400 text-xs">現在のランク: {userRankInfo.displayName}</p>
         </div>
       )}
 

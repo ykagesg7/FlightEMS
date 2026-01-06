@@ -1,7 +1,7 @@
 # FlightAcademyTsx ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年2月（PPL記事15件完了、進捗10.0%達成）
-**バージョン**: Documentation Index v3.3
+**最終更新**: 2026年1月6日（バグ修正・改善完了）
+**バージョン**: Documentation Index v3.4
 
 ---
 
@@ -240,6 +240,18 @@ npm run lint         # Lintチェック
 
 ## 🔄 最近の主要変更（2025年1月）
 
+### バグ修正・改善（2026年1月6日）
+- ✅ **Shopページのエラー修正**: `RANK_INFO`に存在しないランク（`spectator`、`trainee`）への参照を修正
+  - `ProductCard.tsx`と`useShop.ts`でフォールバック処理を追加
+  - `rankOrder`を`RANK_INFO`に存在するすべてのランクを含むように更新
+- ✅ **FlightPlanner地図タブのレイヤー表示修正**: 地球を一周してもレイヤーが表示されるように修正
+  - `MapContainer`に`worldCopyJump={true}`を追加
+  - 経度のラップ処理を有効化
+- ✅ **ランクアップ進捗表示の改善**: Missionページのランクアップ進捗が正しく表示されるように修正
+  - `useGamification.ts`の進捗計算ロジックを修正（現在のランクの必要XPと次のランクの必要XPの差を考慮）
+  - `RANK_INFO`の`wingman`の`nextRankXpRequired`を修正（1500に更新）
+  - PPL中間ランク（XPベースでないランク）の進捗表示を改善
+
 ### フォルダ・コンポーネント整理
 - ✅ `src/components/`フォルダの整理（未使用ファイル5件削除）
   - `ErrorBoundary.tsx`削除（`EnhancedErrorBoundary.tsx`が使用中）
@@ -320,6 +332,6 @@ npm run lint         # Lintチェック
 
 ---
 
-**最終更新**: 2026年2月（PPL記事15件完了、進捗10.0%達成）
+**最終更新**: 2026年1月6日（バグ修正・改善完了）
 **バージョン**: Documentation Index v3.2
 **管理者**: FlightAcademy開発チーム

@@ -52,7 +52,9 @@ export const MissionRankSection: React.FC<MissionRankSectionProps> = ({
         </div>
         <p className="text-sm text-gray-400">
           {rankInfo.nextRank
-            ? `次のランクまで: ${xpToNextRank} XP`
+            ? rankInfo.nextRankXpRequired && rankInfo.nextRankXpRequired > 0
+              ? `次のランクまで: ${xpToNextRank} XP`
+              : '次のランクは記事完了で到達'
             : '最高ランク達成！'}
         </p>
       </motion.div>
@@ -78,7 +80,9 @@ export const MissionRankSection: React.FC<MissionRankSectionProps> = ({
         </div>
         <p className="text-sm text-gray-400">
           {rankInfo.nextRank
-            ? `${rankProgress.toFixed(1)}% 完了`
+            ? rankInfo.nextRankXpRequired && rankInfo.nextRankXpRequired > 0
+              ? `${rankProgress.toFixed(1)}% 完了`
+              : '記事完了で進捗'
             : '最高ランク達成'}
         </p>
       </motion.div>

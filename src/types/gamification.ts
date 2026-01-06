@@ -169,9 +169,9 @@ export const RANK_INFO: Record<UserRank, RankInfo> = {
     displayName: '僚機',
     color: '#FFD700', // 金色
     icon: '🎖️',
-    xpRequired: 1200, // 更新
-    nextRank: 'cpl',
-    nextRankXpRequired: 1000,
+    xpRequired: 1200, // check_rank_up関数と一致
+    nextRank: 'ace',
+    nextRankXpRequired: 1500, // aceへの必要XP
   },
   cpl: {
     rank: 'cpl',

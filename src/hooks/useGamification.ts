@@ -84,13 +84,31 @@ export const useGamification = () => {
       : 0;
 
   // ランクアップまでの進捗率を計算
-  const rankProgress =
-    rankInfo && rankInfo.nextRankXpRequired
-      ? Math.min(
-        100,
-        ((profile?.xp_points || 0) / rankInfo.nextRankXpRequired) * 100
-      )
-      : 100;
+  // 現在のランクの必要XPと次のランクの必要XPの差を考慮
+  let rankProgress = 0;
+  if (rankInfo) {
+    const currentRankXpRequired = rankInfo.xpRequired || 0;
+    const nextRankXpRequired = rankInfo.nextRankXpRequired || 0;
+    const currentXp = profile?.xp_points || 0;
+
+    // 次のランクまでの必要XPの差
+    const xpRange = nextRankXpRequired - currentRankXpRequired;
+
+    if (xpRange > 0) {
+      // 現在のランクを超えているXP
+      const xpOverCurrentRank = Math.max(0, currentXp - currentRankXpRequired);
+      // 進捗率を計算（0-100%）
+      rankProgress = Math.min(100, (xpOverCurrentRank / xpRange) * 100);
+    } else if (nextRankXpRequired === 0 && currentRankXpRequired === 0) {
+      // PPL中間ランクなど、XPベースでないランクの場合は0%
+      rankProgress = 0;
+    } else if (!rankInfo.nextRank) {
+      // 最高ランクの場合は100%
+      rankProgress = 100;
+    }
+  } else {
+    rankProgress = 0;
+  }
 
   // ミッション達成処理
   const completeMissionMutation = useMutation({

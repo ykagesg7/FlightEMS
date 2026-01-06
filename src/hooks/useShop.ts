@@ -30,10 +30,23 @@ export const useShop = () => {
   const availableProducts = products?.filter((product) => {
     if (!gamificationProfile) return false;
 
-    const rankOrder: Record<string, number> = {
-      spectator: 1,
-      trainee: 2,
-      wingman: 3,
+    // RANK_INFOに存在するランクのみを使用したランク順序
+    const rankOrder: Partial<Record<string, number>> = {
+      fan: 1,
+      'ppl-aero-basics-phase1': 2,
+      'ppl-aero-basics-phase2': 3,
+      'ppl-aero-basics-master': 4,
+      'ppl-aero-performance-phase1': 5,
+      'ppl-aero-performance-phase2': 6,
+      'ppl-aero-performance-master': 7,
+      'ppl-aerodynamics-master': 8,
+      'ppl-engineering-master': 9,
+      ppl: 10,
+      wingman: 11,
+      cpl: 12,
+      ace: 13,
+      master: 14,
+      legend: 15,
     };
 
     const userRankOrder = rankOrder[gamificationProfile.rank] || 0;
@@ -46,10 +59,23 @@ export const useShop = () => {
   const lockedProducts = products?.filter((product) => {
     if (!gamificationProfile) return true;
 
-    const rankOrder: Record<string, number> = {
-      spectator: 1,
-      trainee: 2,
-      wingman: 3,
+    // RANK_INFOに存在するランクのみを使用したランク順序
+    const rankOrder: Partial<Record<string, number>> = {
+      fan: 1,
+      'ppl-aero-basics-phase1': 2,
+      'ppl-aero-basics-phase2': 3,
+      'ppl-aero-basics-master': 4,
+      'ppl-aero-performance-phase1': 5,
+      'ppl-aero-performance-phase2': 6,
+      'ppl-aero-performance-master': 7,
+      'ppl-aerodynamics-master': 8,
+      'ppl-engineering-master': 9,
+      ppl: 10,
+      wingman: 11,
+      cpl: 12,
+      ace: 13,
+      master: 14,
+      legend: 15,
     };
 
     const userRankOrder = rankOrder[gamificationProfile.rank] || 0;
@@ -64,7 +90,7 @@ export const useShop = () => {
     lockedProducts: lockedProducts || [],
     isLoading,
     error,
-    userRank: gamificationProfile?.rank || 'spectator',
+    userRank: gamificationProfile?.rank || 'fan',
   };
 };
 

@@ -162,6 +162,7 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
         zoom={DEFAULT_ZOOM}
         className="h-full w-full"
         ref={setMap}
+        worldCopyJump={true}
       >
         <MapContent
           flightPlan={flightPlan}
