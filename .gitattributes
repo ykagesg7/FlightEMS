@@ -1,0 +1,44 @@
+# Git attributes for FlightAcademyTsx
+# エンコーディングと改行コードの設定
+
+# テキストファイルはUTF-8、LF改行を使用
+* text=auto eol=lf
+
+# ソースコードファイル
+*.ts text eol=lf charset=utf-8
+*.tsx text eol=lf charset=utf-8
+*.js text eol=lf charset=utf-8
+*.jsx text eol=lf charset=utf-8
+*.json text eol=lf charset=utf-8
+*.md text eol=lf charset=utf-8
+*.css text eol=lf charset=utf-8
+*.html text eol=lf charset=utf-8
+*.yml text eol=lf charset=utf-8
+*.yaml text eol=lf charset=utf-8
+
+# 設定ファイル
+*.config.* text eol=lf charset=utf-8
+*.conf text eol=lf charset=utf-8
+.env* text eol=lf charset=utf-8
+
+# ドキュメント
+docs/** text eol=lf charset=utf-8
+
+# バイナリファイル
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.pdf binary
+*.zip binary
+*.tar binary
+*.gz binary
+
+# 実行ファイル
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+
