@@ -39,7 +39,7 @@ export const MarketingLayout: React.FC = () => {
                       Whisky Papa
                     </Typography>
                     <Typography variant="caption" className="!text-xs !text-whiskyPapa-yellow/80 !font-medium tracking-wider uppercase">
-                      Competition Aerobatic Team
+                      Fan Site
                     </Typography>
                   </div>
                 </Link>
@@ -249,7 +249,7 @@ export const MarketingLayout: React.FC = () => {
                 Whisky Papa
               </Typography>
               <Typography variant="body-sm" color="muted">
-                エアロバティックチーム「ウイスキーパパ」公式サイト
+                エアロバティックチーム「ウイスキーパパ」ファンサイト
               </Typography>
             </div>
             <div>

@@ -31,7 +31,7 @@ git rebase -i HEAD~3
 git push origin main --force-with-lease
 ```
 
-**注意**: 
+**注意**:
 - 既にプッシュされているコミットを修正する場合は、force pushが必要です
 - 他の開発者と共有しているブランチでは注意が必要です
 

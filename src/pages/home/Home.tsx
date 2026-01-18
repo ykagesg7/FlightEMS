@@ -5,6 +5,10 @@ import { Link } from 'react-router-dom';
 import { Button, Card, CardContent, Typography } from '../../components/ui';
 import { useAuthStore } from '../../stores/authStore';
 
+/**
+ * Home
+ * WhiskyPapaファンサイトのホームページ
+ */
 const Home: React.FC = () => {
   const { user } = useAuthStore();
 
@@ -115,7 +119,7 @@ const Home: React.FC = () => {
                     その熱狂には
                     <br />
                     <span className="text-whiskyPapa-yellow">
-                      理解とLOGICが
+                      LOGIC
                       <br />
                     </span>
                     がある。
@@ -292,4 +296,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-

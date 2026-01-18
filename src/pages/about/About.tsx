@@ -1,10 +1,15 @@
 import { motion } from 'framer-motion';
-import { BadgeCheck, Camera, Code, ExternalLink, Mic, ShoppingBag } from 'lucide-react';
+import { BadgeCheck, ExternalLink } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Typography } from '../../components/ui';
 import { useAuthStore } from '../../stores/authStore';
 
+/**
+ * About
+ * WhiskyPapaファンサイトのAboutページ
+ * メンバー紹介（THE CREW）セクションはコメントアウト済み（将来的に復活可能）
+ */
 const About: React.FC = () => {
   const { user } = useAuthStore();
 
@@ -85,7 +90,12 @@ const About: React.FC = () => {
         </div>
       </section>
 
-      {/* The Crew: Role Cards */}
+      {/*
+        THE CREW セクション（メンバー紹介）
+        将来的に復活させる場合は、このコメントを外して有効化してください。
+        元のコードはAboutWhiskyPapa.tsxを参照してください。
+      */}
+      {/*
       <section className="py-20 bg-whiskyPapa-black-light">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -151,7 +161,6 @@ const About: React.FC = () => {
                         alt={member.name}
                         className="w-full h-full object-cover group-hover/image:scale-105 transition-transform duration-300"
                         onError={(e) => {
-                          // 画像が読み込めない場合はアイコンを表示
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';
                         }}
@@ -173,6 +182,7 @@ const About: React.FC = () => {
           </div>
         </div>
       </section>
+      */}
 
       {/* The Machine: HUD Style Specs */}
       <motion.section
@@ -322,4 +332,3 @@ const About: React.FC = () => {
 };
 
 export default About;
-
