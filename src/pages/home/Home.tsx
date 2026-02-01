@@ -42,11 +42,12 @@ const Home: React.FC = () => {
             <h2 className="text-whiskyPapa-yellow tracking-[0.2em] text-sm md:text-base font-bold mb-4 uppercase">
               Competition Aerobatic Team
             </h2>
-            <Typography variant="display" className="mb-2 !text-6xl md:!text-8xl font-black italic tracking-tighter">
-              Sync with
-            </Typography>
+
             <Typography variant="display" color="brand" className="mb-8 !text-6xl md:!text-8xl font-black italic tracking-tighter">
               WHISKY PAPA
+            </Typography>
+            <Typography variant="display" className="mb-2 !text-6xl md:!text-8xl font-black italic tracking-tighter">
+              FAN SITE
             </Typography>
           </motion.div>
 
@@ -56,11 +57,8 @@ const Home: React.FC = () => {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-medium leading-relaxed"
           >
-            空は自由で美しい。
+            空の仲間になろう！
             <br className="md:hidden" />
-
-            <br />
-            空の仲間になろう。
           </motion.p>
 
           <motion.div
@@ -119,7 +117,7 @@ const Home: React.FC = () => {
                     その熱狂には
                     <br />
                     <span className="text-whiskyPapa-yellow">
-                      LOGIC
+                      ロジック
                       <br />
                     </span>
                     がある。
@@ -130,16 +128,16 @@ const Home: React.FC = () => {
                   <br />
                   気象、航空力学、生理学、そして緻密な計画。
                   <br />
-                  膨大な知識と準備の先にある「完璧の美しさ」です。
+                  膨大な知識と準備の先にある「美しさ」の結晶です。
                 </p>
                 <p className="text-gray-400 text-lg leading-relaxed mb-8">
-                  Whisky Papaは、その「裏側のコクピットの思考」まで公開します。
+                  当サイトではその「裏側」にもスポットをあてます。
                   <br />
-                  見るだけのファンから、ともに飛ぶ「ウイングマン」へ。
+                  見るだけのファンから、「空の仲間」へ！
                 </p>
                 <Link to="/about">
                   <span className="inline-flex items-center text-whiskyPapa-yellow hover:text-white transition-colors font-bold border-b border-whiskyPapa-yellow pb-1">
-                    READ our Philosophy <ChevronRight className="ml-1 w-4 h-4" />
+                    READ the Philosophy <ChevronRight className="ml-1 w-4 h-4" />
                   </span>
                 </Link>
               </div>
@@ -207,7 +205,7 @@ const Home: React.FC = () => {
                 step: '01',
                 role: 'Fan',
                 desc: 'まずは「観る」ことから。',
-                features: ['Galleryの閲覧・投稿', 'Shopの利用', 'Blogの閲覧'],
+                features: ['Galleryの閲覧・投稿', 'Blogの閲覧'],
                 icon: Users,
                 active: true,
               },
@@ -215,15 +213,15 @@ const Home: React.FC = () => {
                 step: '02',
                 role: 'Trainee',
                 desc: 'パイロットの知識を学ぶ。',
-                features: ['学科試験への挑戦', 'Flight Plannerの利用', 'XP（経験値）の獲得'],
+                features: ['学科試験への挑戦', 'Flight Plannerの利用'],
                 icon: BookOpen,
                 active: !!user,
               },
               {
                 step: '03',
                 role: 'Wingman',
-                desc: '空の仲間として認められる。',
-                features: ['体験搭乗権', '限定グッズ購入', 'Briefingへの参加'],
+                desc: '空の仲間へ',
+                features: [],
                 icon: Trophy,
                 active: false,
               },
@@ -282,7 +280,7 @@ const Home: React.FC = () => {
           <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
             沿革、競技の仕組み、機体説明。会員向けブログで公開中。
             <br />
-            さあ、コクピットを覗きに行こう。
+            さあ、コクピットを覗きに行こう！
           </p>
           <Link to="/mission?tab=blog">
             <Button variant="brand" size="lg" className="px-8 py-4 text-lg">
