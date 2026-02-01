@@ -16,7 +16,6 @@ build/
 
 # Generated / large data
 public/images/
-public/geojson/
 cpl_exam_data/
 **/*.pdf
 **/*.zip

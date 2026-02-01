@@ -36,4 +36,23 @@ export interface WaypointProps {
   [key: string]: unknown;
 }
 
+export interface ACCSectorProps {
+  ID?: string;
+  Callsign?: string;
+  Freq_VHF?: string;
+  Freq_UHF?: string;
+  Floor?: string;
+  Ceiling?: string;
+  [key: string]: unknown;
+}
+
+export interface RAPCONProps {
+  Area_ID?: string;
+  Callsign?: string;
+  Freq_VHF?: string;
+  Freq_UHF?: string;
+  Floor?: string;
+  Ceiling?: string;
+  [key: string]: unknown;
+}
 

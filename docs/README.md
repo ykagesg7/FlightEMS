@@ -1,7 +1,7 @@
 # FlightAcademyTsx ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年1月6日（バグ修正・改善完了）
-**バージョン**: Documentation Index v3.4
+**最終更新**: 2026年2月1日（地図機能・GeoJSON管理改善）
+**バージョン**: Documentation Index v3.5
 
 ---
 

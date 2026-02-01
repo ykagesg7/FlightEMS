@@ -22,6 +22,7 @@ import { fetchAirportWeather as fetchAirportWeatherLayer } from './layers/airpor
 import { bindNavaidPopup, navaidMarkerOptions } from './layers/navaids';
 import { bindWaypointPopup } from './layers/waypoints';
 import './mapStyles.css';
+import { bindACCSectorPopup, bindRAPCONPopup } from './popups/airspacePopup';
 import { simplifiedAirportInfoContent } from './popups/airportPopup';
 
 import React from 'react';
@@ -361,15 +362,15 @@ const MapContent: React.FC<{
       }),
       "RAPCON": L.geoJSON(null, {
         style: { color: 'orange', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup
+        onEachFeature: (feature, layer) => bindRAPCONPopup(feature, layer)
       }),
       "ACC-Sector High": L.geoJSON(null, {
         style: { color: 'blue', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup
+        onEachFeature: (feature, layer) => bindACCSectorPopup(feature, layer)
       }),
       "ACC-Sector Low": L.geoJSON(null, {
         style: { color: 'green', weight: 2, opacity: 0.7 },
-        onEachFeature: onEachFeaturePopup
+        onEachFeature: (feature, layer) => bindACCSectorPopup(feature, layer)
       })
     };
 

@@ -101,7 +101,6 @@ coverage/
 .vitest/
 
 # Large binary files
-public/geojson/
 **/*.pdf
 **/*.zip
 
