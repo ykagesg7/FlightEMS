@@ -76,12 +76,6 @@ export const MarketingLayout: React.FC = () => {
                 GALLERY
               </Link>
               <Link
-                to="/shop"
-                className="px-4 py-2 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
-              >
-                SHOP
-              </Link>
-              <Link
                 to="/schedule"
                 className="px-4 py-2 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
               >
@@ -192,19 +186,6 @@ export const MarketingLayout: React.FC = () => {
                     transition={{ delay: 0.25 }}
                   >
                     <Link
-                      to="/shop"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
-                    >
-                      SHOP
-                    </Link>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <Link
                       to="/schedule"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
@@ -265,11 +246,6 @@ export const MarketingLayout: React.FC = () => {
                 <li>
                   <Link to="/gallery" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
                     Gallery
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/shop" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
-                    Shop
                   </Link>
                 </li>
                 <li>

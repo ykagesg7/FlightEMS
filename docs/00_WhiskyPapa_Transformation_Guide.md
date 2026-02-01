@@ -1,6 +1,11 @@
 # Whisky Papa Transformation Guide: "The Pilot's Narrative"
 
-**最終更新: 2025年1月（CI/CD統合反映）**
+**最終更新: 2026年2月（ファンサイト仕様強化反映）**
+
+### 現在の非表示・コメントアウト状態（2026年2月）
+- **About**: パイロット紹介（Hero）、THE CREW（メンバー紹介）はコメントアウト済み（許可取得後に復活可能）
+- **Shop**: ナビ・ルート非表示（/shopはホームへリダイレクト）。公式公認取得後に復活予定
+- **Schedule**: Marketing Section（曲技飛行サービス紹介）、Footer Noteはコメントアウト済み
 
 ## 📖 このドキュメントを読むべき人
 

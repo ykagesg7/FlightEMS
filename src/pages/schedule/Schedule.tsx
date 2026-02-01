@@ -8,9 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle, Typography } from '../../comp
 // 例: 'dQw4w9WgXcQ' (URL: https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 const PROMOTION_VIDEO_ID = ''; // プロモーション用動画ID（空の場合はチャンネル最新動画を表示）
 
-// 今シーズンのスケジュールデータ（将来的にはDB/CMSから取得）
-// 日程は確定次第更新されます
-// 過去実績のあるイベントを紹介しています（2026年の参加は未定です）
+// 2026年 空のイベントスケジュール（将来的にはDB/CMSから取得）
+// 日程は確定次第更新されます。各イベントの詳細は公式発表をご確認ください。
+// ウイスキーパパの参加は未定です。
 const scheduleData: Array<{
   id: string;
   date: string | null; // nullの場合は「未定」
@@ -18,74 +18,207 @@ const scheduleData: Array<{
   title: string;
   description: string;
   typicalDate: string; // 例年の開催時期
-  sortOrder: number; // ソート順（5月=5, 10月=10, 11月=11）
+  sortOrder: number; // ソート順（3月=3, 5月=5, 8月=8, 9月=9, 10月=10, 11月=11, 12月=12）
   type: 'practice' | 'event' | 'demo';
 }> = [
-    {
-      id: '1',
-      date: '2026-05-03',
-      location: '岩国航空基地（山口県）',
-      title: '海上自衛隊/米海兵隊 岩国航空基地フレンドシップデー',
-      description: '2010年の初参加以来、毎年参加している日本最大級の航空イベント。13万人超の来場者を誇るゴールデンウィークの恒例イベントで、ウイスキーパパの曲技飛行が多くの観客を魅了しています。',
-      typicalDate: '例年5月3日または5月5日前後（ゴールデンウィーク期）',
-      sortOrder: 5,
-      type: 'event' as const,
-    },
-    {
-      id: '2',
-      date: null,
-      location: '鹿屋航空基地（鹿児島県）',
-      title: 'エアーメモリアル in かのや',
-      description: '海上自衛隊 鹿屋航空基地で開催される航空イベント。過去に展示飛行を実施し、観客から高い評価をいただいています。迫力ある曲技飛行で会場を盛り上げます。',
-      typicalDate: '例年4月下旬〜5月上旬',
-      sortOrder: 5,
-      type: 'event' as const,
-    },
-    {
-      id: '3',
-      date: null,
-      location: '芦屋基地（福岡県）',
-      title: '航空自衛隊 芦屋基地航空祭',
-      description: '航空自衛隊 芦屋基地で開催される航空祭。2018年に初参加し、以降も定期的に展示飛行を行っています。プロフェッショナルな曲技飛行でイベントを彩ります。',
-      typicalDate: '例年10月中旬（10月第2〜3週の日曜日）',
-      sortOrder: 10,
-      type: 'event' as const,
-    },
-    {
-      id: '4',
-      date: null,
-      location: '徳島航空基地（徳島県）',
-      title: '海上自衛隊 徳島航空基地 航空祭',
-      description: '海上自衛隊 徳島航空基地で開催される航空祭。過去に展示飛行を実施し、多くの観客に感動をお届けしています。精密な曲技飛行でイベントのクライマックスを演出します。',
-      typicalDate: '例年11月中旬',
-      sortOrder: 11,
-      type: 'event' as const,
-    },
-    {
-      id: '5',
-      date: null,
-      location: '岡南飛行場（岡山県）',
-      title: '岡南飛行場まつり',
-      description: '岡南飛行場で開催される航空まつり。過去に曲技飛行を実施し、地域の皆様に大変好評をいただいています。地域密着型イベントを盛り上げるパフォーマンスをお届けします。',
-      typicalDate: '例年11月17日頃',
-      sortOrder: 11,
-      type: 'event' as const,
-    },
-    {
-      id: '6',
-      date: null,
-      location: '築城基地（福岡県）',
-      title: '航空自衛隊 築城基地航空祭',
-      description: '航空自衛隊 築城基地で開催される航空祭。複数年にわたり参加実績のあるイベントで、過去に曲技飛行を披露しています。観客の心に残る感動的なフライトを提供します。',
-      typicalDate: '例年11月下旬',
-      sortOrder: 11,
-      type: 'event' as const,
-    },
-  ];
+  // 確定イベント
+  {
+    id: '1',
+    date: '2026-03-01',
+    location: '小牧基地（愛知県小牧市）',
+    title: '航空自衛隊 小牧基地航空祭（小牧基地オープンベース2026）',
+    description: '航空自衛隊 小牧基地で開催されるオープンベース。ブルーインパルスの飛行展示、航空機地上展示、装備品展示など。一般開放時間8:30～15:00、入場無料。駐車場は基地内にないため、名鉄小牧線「牛山駅」からの公共交通機関利用推奨。',
+    typicalDate: '2026年3月1日（日）',
+    sortOrder: 3,
+    type: 'event' as const,
+  },
+  {
+    id: '2',
+    date: '2026-03-07',
+    location: '大阪国際空港（大阪府豊中市）',
+    title: '空の日エアポートフェスティバル',
+    description: '関西3空港（大阪国際空港・関西空港・神戸空港）の「空の日イベント」を2026年3月に統合開催。航空会社の格納庫見学、管制塔見学、制服着用体験、航空機部品展示など。雨天決行。一部プログラムは事前応募や当日整理券が必要。',
+    typicalDate: '2026年3月7日（土）',
+    sortOrder: 3,
+    type: 'event' as const,
+  },
+  {
+    id: '3',
+    date: '2026-03-15',
+    location: '石巻市（宮城県）',
+    title: '第9回いしのまき復興マラソン',
+    description: '東日本大震災からの復興を祈念して開催されるマラソン大会。ブルーインパルスの展示飛行が予定されている。沿道から空のパフォーマンスを楽しめる。',
+    typicalDate: '2026年3月15日（日）',
+    sortOrder: 3,
+    type: 'event' as const,
+  },
+  {
+    id: '4',
+    date: '2026-05-03',
+    location: '岩国航空基地（山口県岩国市）',
+    title: '海上自衛隊/米海兵隊 岩国航空基地フレンドシップデー',
+    description: '第47回を迎える日本最大級の航空イベント。13万人超の来場者を誇るゴールデンウィークの恒例イベント。海上自衛隊・米海兵隊の航空機展示や飛行演示。前日5/2にはインクルーシブデーの開催が予想される。',
+    typicalDate: '2026年5月3日（日）',
+    sortOrder: 5,
+    type: 'event' as const,
+  },
+  // 例年開催（海上自衛隊）
+  {
+    id: '5',
+    date: null,
+    location: '鹿屋航空基地（鹿児島県鹿屋市）',
+    title: 'エアーメモリアル in かのや',
+    description: '海上自衛隊 鹿屋航空基地で開催される航空イベント。航空機の地上展示や飛行展示、海上自衛隊の活躍を間近で体験できる。2025年は4月27日に開催。',
+    typicalDate: '例年4月下旬〜5月上旬',
+    sortOrder: 5,
+    type: 'event' as const,
+  },
+  {
+    id: '6',
+    date: null,
+    location: '大村航空基地（長崎県大村市）',
+    title: '海上自衛隊 大村航空基地 一般開放',
+    description: '海上自衛隊 大村航空基地の一般開放イベント。おおむらキッズフェスタとして子供向け企画も開催。2025年は12月7日に開催実績あり。',
+    typicalDate: '例年5月下旬〜12月',
+    sortOrder: 5,
+    type: 'event' as const,
+  },
+  // 例年開催（航空自衛隊・夏〜秋）
+  {
+    id: '7',
+    date: null,
+    location: '松島基地（宮城県東松島市）',
+    title: '航空自衛隊 松島基地航空祭',
+    description: '東北地方を代表する航空祭。ブルーインパルスをはじめとした飛行展示、航空機の地上展示。東松島夏まつりと同時開催の年あり。2025年は8月31日に開催。',
+    typicalDate: '例年8月下旬',
+    sortOrder: 8,
+    type: 'event' as const,
+  },
+  {
+    id: '8',
+    date: null,
+    location: '千歳基地周辺（北海道千歳市）',
+    title: '千歳のまちの航空祭',
+    description: '航空自衛隊 千歳基地周辺で開催される航空祭。ブルーインパルスの飛行展示が楽しめる。北海道を代表する空のイベント。2025年は9月7日に開催。',
+    typicalDate: '例年9月上旬',
+    sortOrder: 9,
+    type: 'event' as const,
+  },
+  {
+    id: '9',
+    date: null,
+    location: '全国の空港',
+    title: '空の日・空の旬間（9月20日〜30日）',
+    description: '9月20日は「空の日」、9月20日〜30日は「空の旬間」。1992年民間航空再開40周年を記念して制定。全国の空港で施設見学、航空教室、格納庫見学などのイベントを実施。空の日netで各空港の実施スケジュールを確認可能。',
+    typicalDate: '例年9月20日〜30日',
+    sortOrder: 9,
+    type: 'event' as const,
+  },
+  {
+    id: '10',
+    date: null,
+    location: '三沢基地（青森県三沢市）',
+    title: '航空自衛隊 三沢基地航空祭',
+    description: '航空自衛隊 三沢基地で開催される航空祭。ブルーインパルスの飛行展示、戦闘機の地上展示など。北東北の空を彩る秋の恒例イベント。2025年は9月21日に開催。',
+    typicalDate: '例年9月下旬',
+    sortOrder: 9,
+    type: 'event' as const,
+  },
+  {
+    id: '11',
+    date: null,
+    location: '岐阜基地（岐阜県各務原市）',
+    title: '航空自衛隊 岐阜基地航空祭',
+    description: '航空自衛隊 岐阜基地で開催される航空祭。ブルーインパルスの飛行展示、開発・試験が行われる航空機の展示など。2025年は10月12日に開催。',
+    typicalDate: '例年10月中旬',
+    sortOrder: 10,
+    type: 'event' as const,
+  },
+  {
+    id: '12',
+    date: null,
+    location: '芦屋基地（福岡県芦屋町）',
+    title: '航空自衛隊 芦屋基地航空祭',
+    description: '航空自衛隊 芦屋基地で開催される航空祭。飛行展示や地上展示で自衛隊機の迫力を体感。九州北部の恒例航空イベント。例年10月第2〜3週の日曜日。',
+    typicalDate: '例年10月中旬',
+    sortOrder: 10,
+    type: 'event' as const,
+  },
+  {
+    id: '13',
+    date: null,
+    location: '浜松基地（静岡県浜松市）',
+    title: 'エアフェスタ浜松',
+    description: '航空自衛隊 浜松基地で開催される航空祭。ブルーインパルスの飛行展示、F-2やF-15などの戦闘機展示。中部地方を代表する空のイベント。2025年は10月26日に開催。',
+    typicalDate: '例年10月下旬',
+    sortOrder: 10,
+    type: 'event' as const,
+  },
+  {
+    id: '14',
+    date: null,
+    location: '入間基地（埼玉県狭山市・入間市）',
+    title: '航空自衛隊 入間航空祭',
+    description: '航空自衛隊 入間基地で開催される航空祭。ブルーインパルスの飛行展示、輸送機・ヘリコプターなどの地上展示。関東を代表する秋の航空イベント。例年文化の日（11月3日）に開催。',
+    typicalDate: '例年11月3日',
+    sortOrder: 11,
+    type: 'event' as const,
+  },
+  {
+    id: '15',
+    date: null,
+    location: '徳島航空基地（徳島県小松島市）',
+    title: '海上自衛隊 徳島航空基地 航空祭',
+    description: '海上自衛隊 徳島航空基地で開催される航空祭。海上自衛隊機の飛行展示や地上展示。四国を代表する空のイベント。徳島小松島港では潜水艦一般公開（2026年2月15日予定）も別途開催。',
+    typicalDate: '例年11月中旬',
+    sortOrder: 11,
+    type: 'event' as const,
+  },
+  {
+    id: '16',
+    date: null,
+    location: '岡南飛行場（岡山県岡山市）',
+    title: '岡南飛行場まつり',
+    description: '岡南飛行場で開催される航空まつり。地域密着型の航空イベント。航空機の展示や関連イベントで空の魅力を体験できる。',
+    typicalDate: '例年11月17日頃',
+    sortOrder: 11,
+    type: 'event' as const,
+  },
+  {
+    id: '17',
+    date: null,
+    location: '築城基地（福岡県築上町）',
+    title: '航空自衛隊 築城基地航空祭',
+    description: '航空自衛隊 築城基地で開催される航空祭。戦闘機をはじめとした航空機の飛行展示・地上展示。九州の空を彩る秋の恒例イベント。2025年は11月30日に開催。',
+    typicalDate: '例年11月下旬',
+    sortOrder: 11,
+    type: 'event' as const,
+  },
+  {
+    id: '18',
+    date: null,
+    location: '百里基地（茨城県小美玉市）',
+    title: '航空自衛隊 百里基地航空祭',
+    description: '戦闘機の拠点として知られる百里基地で開催される航空祭。ブルーインパルスなど華麗な飛行展示が楽しめる。関東屈指の航空イベント。',
+    typicalDate: '例年11月〜12月',
+    sortOrder: 12,
+    type: 'event' as const,
+  },
+  {
+    id: '19',
+    date: null,
+    location: '新田原基地（宮崎県新富町）',
+    title: '航空自衛隊 新田原基地エアフェスタ',
+    description: '航空自衛隊 新田原基地で開催されるエアフェスタ。F-15戦闘機の拠点。F-35Bの展示飛行など最新鋭機も注目。2025年は12月7日に開催。',
+    typicalDate: '例年12月上旬',
+    sortOrder: 12,
+    type: 'event' as const,
+  },
+];
 
 /**
  * Schedule Page
- * 今シーズンのスケジュールを表示するページ
+ * 2026年の空のイベント（航空祭・空港イベント等）スケジュールを表示するページ
  */
 const Schedule: React.FC = () => {
   // 例年の開催時期順にソート（sortOrderでソート、同じ場合は日付順）
@@ -166,14 +299,13 @@ const Schedule: React.FC = () => {
             SCHEDULE
           </Typography>
           <Typography variant="h3" className="text-gray-300 mb-2">
-            過去実績のあるイベント
+            2026年 空のイベントスケジュール
           </Typography>
           <Typography variant="body" className="text-gray-300 max-w-2xl mx-auto mb-4">
-            ウイスキーパパは、日本各地の航空祭・エアショーで曲技飛行を披露してきました。
-            プロフェッショナルなパフォーマンスで、イベントをより魅力的に、観客に感動をお届けします。
+            航空自衛隊・海上自衛隊の航空祭、各空港のイベントなど、2026年に開催予定の空のイベントをまとめました。
           </Typography>
           <Typography variant="body-sm" color="muted" className="mt-2">
-            2026年の参加は未定です。日程が確定次第、更新いたします。
+            各イベントの日程は公式発表をご確認ください。ウイスキーパパの参加は未定です。
           </Typography>
         </motion.div>
 
@@ -252,7 +384,8 @@ const Schedule: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Marketing Section */}
+        {/* Marketing Section - コメントアウト済み（復活時は false を true に変更） */}
+        {false && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -269,7 +402,6 @@ const Schedule: React.FC = () => {
               </Typography>
             </CardHeader>
             <CardContent>
-              {/* Video Section */}
               <div className="mb-8">
                 <div className="flex items-center gap-2 mb-4">
                   <Youtube className="w-5 h-5 text-brand-primary" />
@@ -281,7 +413,6 @@ const Schedule: React.FC = () => {
                   実際の曲技飛行パフォーマンスをご覧ください。迫力ある演技で、イベントをより魅力的に彩ります。
                 </Typography>
                 <div className="grid md:grid-cols-2 gap-6">
-                  {/* メイン動画 - プロモーション用または代表的な動画 */}
                   <div className="space-y-2">
                     <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-800 border border-brand-primary/30 shadow-lg">
                       {PROMOTION_VIDEO_ID ? (
@@ -318,7 +449,6 @@ const Schedule: React.FC = () => {
                       {PROMOTION_VIDEO_ID ? 'プロモーション動画' : '動画設定後、こちらに表示されます'}
                     </Typography>
                   </div>
-                  {/* チャンネルリンク */}
                   <div className="space-y-2">
                     <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-brand-primary/10 to-brand-primary/5 border border-brand-primary/30 flex items-center justify-center hover:border-brand-primary/50 transition-colors">
                       <a
@@ -410,7 +540,6 @@ const Schedule: React.FC = () => {
                 </div>
               </div>
 
-              {/* Call to Action */}
               <div className="pt-6 border-t border-gray-700/50">
                 <div className="bg-brand-primary/10 rounded-lg p-6 border border-brand-primary/20">
                   <Typography variant="h4" color="brand" className="mb-3">
@@ -479,8 +608,10 @@ const Schedule: React.FC = () => {
             </CardContent>
           </Card>
         </motion.div>
+        )}
 
-        {/* Footer Note */}
+        {/* Footer Note - コメントアウト済み（復活時は false を true に変更） */}
+        {false && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -491,6 +622,7 @@ const Schedule: React.FC = () => {
             各イベントの日程や参加については、公式発表をご確認ください。最新情報は公式SNSでもお知らせします。
           </Typography>
         </motion.div>
+        )}
       </div>
     </div>
   );

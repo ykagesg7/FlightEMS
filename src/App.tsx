@@ -21,7 +21,7 @@ const MissionDashboard = lazy(() => {
     throw err;
   });
 });
-const Shop = lazy(() => import('./pages/shop/Shop'));
+// Shop は公式公認取得後に復活予定（現状非表示・/shop はホームへリダイレクト）
 const Gallery = lazy(() => import('./pages/gallery/Gallery'));
 const Schedule = lazy(() => import('./pages/schedule/Schedule'));
 const Links = lazy(() => import('./pages/links/Links'));
@@ -98,7 +98,7 @@ const App: React.FC = () => {
               <Route path="/" element={<Home />} />
               <Route path="about" element={<About />} />
               <Route path="mission" element={<MissionDashboard />} />
-              <Route path="shop" element={<Shop />} />
+              <Route path="shop" element={<Navigate to="/" replace />} />
               <Route path="gallery" element={<Gallery />} />
               <Route path="schedule" element={<Schedule />} />
               <Route path="links" element={<Links />} />
