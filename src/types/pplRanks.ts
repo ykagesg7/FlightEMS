@@ -48,7 +48,7 @@ export interface PPLRankWithDefinition extends UserPPLRank {
 export enum PPLRankLevel {
   Phase = 1,      // Phase 1-3
   Section = 2,    // セクションマスター
-  Category = 2,   // カテゴリーマスター（rank_level=2だがsection_code=NULL）
+  // Category は Section と同じ rank_level=2 なので Section を使用
   Subject = 3,    // 科目マスター
   PPL = 4         // PPL全体マスター
 }

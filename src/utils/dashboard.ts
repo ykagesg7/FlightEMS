@@ -11,7 +11,7 @@ import type { DashboardMetrics } from '../types/dashboard';
  * 既存テーブルから必要な情報を集計して返す
  */
 export async function fetchDashboardMetrics(userId: string): Promise<DashboardMetrics> {
-  const supabase = createBrowserSupabaseClient();
+  const _supabase = createBrowserSupabaseClient();
 
   try {
     // 1. 学習進捗の集計

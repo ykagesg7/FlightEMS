@@ -21,7 +21,7 @@ function createMockChain(tableName: string) {
   const response = () =>
     tableResponses[tableName] || { data: null, error: null };
 
-  const terminator = {
+  const _terminator = {
     single: () => Promise.resolve(response()),
     then: (resolve: (v: MockResponse) => void) => resolve(response()),
   };

@@ -1,4 +1,4 @@
-import type { Feature, FeatureCollection, Geometry, Polygon, Position } from 'geojson';
+import type { Feature, FeatureCollection, Geometry, Position } from 'geojson';
 
 export interface AirspaceHit {
   frequency?: string;

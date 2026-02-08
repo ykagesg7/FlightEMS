@@ -44,7 +44,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
     }
   };
 
-  const getStepColor = (step: ProgressStep) => {
+  const _getStepColor = (step: ProgressStep) => {
     switch (step.status) {
       case 'completed':
         return 'bg-green-500';
@@ -83,7 +83,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
         )}
 
         <div className="space-y-3">
-          {steps.map((step, index) => (
+          {steps.map((step, _index) => (
             <div
               key={step.id}
               className={`flex items-start space-x-3 p-3 rounded-lg transition-all duration-200 ${step.status === 'current'

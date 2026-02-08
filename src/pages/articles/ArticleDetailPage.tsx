@@ -52,6 +52,37 @@ const ArticleDetailPage: React.FC = () => {
   const allContentIds = useMemo(() => Object.keys(articleMetas), [articleMetas]);
   const seriesUnlock = useSeriesUnlock(articleMetas, allContentIds);
 
+  // All hooks must be called before any early return (rules-of-hooks)
+  const { prev, next } = usePrevNext(contentId ?? '');
+
+  // 記事の統計情報とコメントを読み込む
+  useEffect(() => {
+    if (!contentId) return;
+    loadArticleStats([contentId]);
+    loadComments(contentId);
+  }, [contentId, loadArticleStats, loadComments]);
+
+  // コメント操作のハンドラー
+  const handleLoadComments = useCallback(async () => {
+    if (!contentId) return;
+    await loadComments(contentId);
+  }, [loadComments, contentId]);
+
+  const handleAddComment = useCallback(async (content: string) => {
+    if (!contentId) return;
+    await createComment({ article_id: contentId, content });
+  }, [createComment, contentId]);
+
+  const handleEditComment = useCallback(async (commentId: string, content: string) => {
+    if (!contentId) return;
+    await updateComment({ comment_id: commentId, article_id: contentId, content });
+  }, [updateComment, contentId]);
+
+  const handleDeleteComment = useCallback(async (commentId: string) => {
+    if (!contentId) return;
+    await deleteComment({ comment_id: commentId, article_id: contentId });
+  }, [deleteComment, contentId]);
+
   if (!contentId) {
     return (
       <div className="text-center py-12">
@@ -61,7 +92,6 @@ const ArticleDetailPage: React.FC = () => {
     );
   }
 
-  const { prev, next } = usePrevNext(contentId);
   const articleComments = comments[contentId] || [];
 
   // ロック状態をチェック
@@ -69,29 +99,6 @@ const ArticleDetailPage: React.FC = () => {
   const lockedReason = seriesUnlock.getLockedReason(contentId);
   const previousArticleId = seriesUnlock.getPreviousArticleInSeries(contentId);
   const previousMeta = previousArticleId ? articleMetas[previousArticleId] : null;
-
-  // 記事の統計情報とコメントを読み込む
-  useEffect(() => {
-    loadArticleStats([contentId]);
-    loadComments(contentId);
-  }, [contentId, loadArticleStats, loadComments]);
-
-  // コメント操作のハンドラー
-  const handleLoadComments = useCallback(async () => {
-    await loadComments(contentId);
-  }, [loadComments, contentId]);
-
-  const handleAddComment = useCallback(async (content: string) => {
-    await createComment({ article_id: contentId, content });
-  }, [createComment, contentId]);
-
-  const handleEditComment = useCallback(async (commentId: string, content: string) => {
-    await updateComment({ comment_id: commentId, article_id: contentId, content });
-  }, [updateComment, contentId]);
-
-  const handleDeleteComment = useCallback(async (commentId: string) => {
-    await deleteComment({ comment_id: commentId, article_id: contentId });
-  }, [deleteComment, contentId]);
 
   // ロックされている場合はCTAを表示
   if (isLocked && !isLoadingMetas) {

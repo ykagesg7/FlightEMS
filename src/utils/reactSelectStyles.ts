@@ -8,7 +8,7 @@ export interface SelectOption {
 }
 
 export const reactSelectStyles: StylesConfig<SelectOption, false> = {
-  control: (provided: React.CSSProperties, state: ControlProps<SelectOption, false>) => ({
+  control: (provided: React.CSSProperties, _state: ControlProps<SelectOption, false>) => ({
     ...provided,
     borderRadius: '0.5rem',
     borderColor: 'var(--hud-primary)',
@@ -19,7 +19,7 @@ export const reactSelectStyles: StylesConfig<SelectOption, false> = {
       borderColor: 'var(--hud-primary)',
     },
   }),
-  menu: (provided: React.CSSProperties, state: MenuProps<SelectOption, false>) => ({
+  menu: (provided: React.CSSProperties, _state: MenuProps<SelectOption, false>) => ({
     ...provided,
     backgroundColor: 'rgba(0,0,0,0.85)',
     border: '1px solid var(--hud-primary)',
@@ -31,15 +31,15 @@ export const reactSelectStyles: StylesConfig<SelectOption, false> = {
     color: 'var(--text-primary)',
     borderBottom: '1px solid rgba(255,255,255,0.06)'
   }),
-  placeholder: (provided: React.CSSProperties, state: PlaceholderProps<SelectOption, false>) => ({
+  placeholder: (provided: React.CSSProperties, _state: PlaceholderProps<SelectOption, false>) => ({
     ...provided,
     color: 'var(--text-primary)',
   }),
-  input: (provided: React.CSSProperties, state: InputProps<SelectOption, false>) => ({
+  input: (provided: React.CSSProperties, _state: InputProps<SelectOption, false>) => ({
     ...provided,
     color: 'var(--text-primary)',
   }),
-  singleValue: (provided: React.CSSProperties, state: SingleValueProps<SelectOption, false>) => ({
+  singleValue: (provided: React.CSSProperties, _state: SingleValueProps<SelectOption, false>) => ({
     ...provided,
     color: 'var(--text-primary)',
   }),

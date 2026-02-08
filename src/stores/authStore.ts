@@ -137,7 +137,7 @@ export const useAuthStore = create<AuthState>()(
             session: null,
             loading: false
           });
-        } catch (err) {
+        } catch (_err) {
           set({ loading: false });
         }
       },

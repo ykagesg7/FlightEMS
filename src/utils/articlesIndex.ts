@@ -170,19 +170,21 @@ export async function getArticles(options: ArticleSearchOptions = {}): Promise<A
     let comparison = 0;
 
     switch (sortBy) {
-      case 'publishedAt':
+      case 'publishedAt': {
         const dateA = a.meta.publishedAt || '';
         const dateB = b.meta.publishedAt || '';
         comparison = dateA.localeCompare(dateB);
         break;
+      }
       case 'title':
         comparison = a.meta.title.localeCompare(b.meta.title);
         break;
-      case 'order':
+      case 'order': {
         const orderA = a.meta.order || 999;
         const orderB = b.meta.order || 999;
         comparison = orderA - orderB;
         break;
+      }
     }
 
     return sortOrder === 'asc' ? comparison : -comparison;

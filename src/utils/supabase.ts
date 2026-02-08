@@ -19,8 +19,8 @@ let browserSupabaseClient: ReturnType<typeof createBrowserClient<Database>> | un
 let adminSupabaseClient: ReturnType<typeof createClient<Database>> | undefined;
 
 // ログ制御フラグ
-const browserClientLogged = false;
-const adminClientLogged = false;
+const _browserClientLogged = false;
+const _adminClientLogged = false;
 
 // ブラウザ環境用のSupabaseクライアント（@supabase/ssrパッケージ使用）
 export const createBrowserSupabaseClient = () => {
@@ -352,7 +352,7 @@ export const updateUserProfile = async (userId: string, updates: {
 };
 
 // アバター削除関数
-export const deleteAvatar = async (userId: string, avatarUrl?: string): Promise<{ success: boolean; error?: string }> => {
+export const deleteAvatar = async (userId: string, _avatarUrl?: string): Promise<{ success: boolean; error?: string }> => {
   try {
     // Storage上のファイル削除
     const { data: existingFiles } = await supabase.storage

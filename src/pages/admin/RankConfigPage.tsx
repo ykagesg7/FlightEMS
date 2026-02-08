@@ -64,7 +64,7 @@ export const RankConfigPage: React.FC = () => {
   }, []);
 
   // ランク条件を保存
-  const saveRequirement = useCallback(async (requirement: RankRequirement) => {
+  const _saveRequirement = useCallback(async (requirement: RankRequirement) => {
     try {
       if (requirement.id) {
         // 更新

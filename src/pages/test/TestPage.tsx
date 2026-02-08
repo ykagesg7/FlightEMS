@@ -61,7 +61,7 @@ const TestPage: React.FC = () => {
           )
         );
         setSubjects(['all', ...uniqueSubjects]);
-      } catch (err: any) {
+      } catch (_err) {
         setSubjects(['all']);
       } finally {
         setSubjectLoading(false);
@@ -94,7 +94,7 @@ const TestPage: React.FC = () => {
         );
         setSubSubjects(['all', ...uniqueSubSubjects]);
         setSelectedSubSubject('all');
-      } catch (err: any) {
+      } catch (_err) {
         setSubSubjects(['all']);
         setSelectedSubSubject('all');
       } finally {

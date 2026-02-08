@@ -35,7 +35,7 @@ export const fullAirportInfoContent = (properties: Record<string, any>): string 
   const rows: string[] = [];
   const pushRow = (label: string, value?: string) => {
     if (!value) return;
-    rows.push(`<div class=\"text-sm airport-item\"><div class=\"airport-label\">${escapeHtml(label)}：</div><div class=\"airport-value hud-readout\">${escapeHtml(value)}</div></div>`);
+    rows.push(`<div class="text-sm airport-item"><div class="airport-label">${escapeHtml(label)}：</div><div class="airport-value hud-readout">${escapeHtml(value)}</div></div>`);
   };
 
   pushRow('滑走路２', properties.RWY2);

@@ -118,7 +118,7 @@ export const useTableOfContents = (containerSelector: string = '.mdx-container')
 
     // 通過した見出しを追跡するSet（クロージャーで保持）
     const readSetRef = { current: new Set<string>() };
-    let lastReadIndexRef = { current: -1 };
+    const lastReadIndexRef = { current: -1 };
 
     const updateProgress = () => {
       const totalSections = tocItems.length;

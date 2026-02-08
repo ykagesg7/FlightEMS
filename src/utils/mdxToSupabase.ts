@@ -134,7 +134,7 @@ export async function syncMDXToSupabase(directory: string): Promise<{success: bo
       });
       
       // Supabaseにデータを登録
-      const { data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from('learning_contents')
         .upsert({
           id: filename,

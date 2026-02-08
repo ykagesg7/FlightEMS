@@ -380,39 +380,39 @@ export interface Database {
       learning_content_likes: {
         Row: {
           id: string
-          content        Update: {
-  id ?: string
-  content_id ?: string
-  user_id ?: string | null
-  session_id ?: string | null
-  ip_address ?: string | null
-  created_at ?: string
-}
-Relationships: [
-  {
-    foreignKeyName: "learning_content_likes_user_id_fkey"
+          content_id: string
+          user_id: string | null
+          session_id: string | null
+          ip_address: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          content_id: string
+          user_id?: string | null
+          session_id?: string | null
+          ip_address?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          content_id?: string
+          user_id?: string | null
+          session_id?: string | null
+          ip_address?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_content_likes_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-  }
-]
+          }
+        ]
       }
-learning_content_comments: {
-  ed_at: string
-}
-Insert: {
-  id ?: string
-  content_id: string
-  user_id ?: string | null
-  session_id ?: string | null
-  ip_address ?: string | null
-  created_at ?: string
-}
-Update: {
-  id ?: string
-  content_id ?: string
-  user_id ?: string | nul      learning_content_comments: {
+      learning_content_comments: {
     Row: {
       id: string
       content_id: string
@@ -617,34 +617,19 @@ Update: {
             referencedColumns: ["id"]
       }
     ]
-  } content_id ?: string
-  user_id ?: string
-  content ?: string
-  created_at ?: string
-  updated_at ?: string
-}
-Relationships: [
-  {
-    foreignKeyName: "learning_content_comments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
   }
-]
-      }
     }
-Views: {
-  [_ in never]: never
-}
-Functions: {
-  [_ in never]: never
-}
-Enums: {
-  [_ in never]: never
-}
-CompositeTypes: {
-  [_ in never]: never
-}
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
 }

@@ -584,10 +584,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
               ) : (
                 <div className={`
                   text-center py-12 p-8 rounded-xl border backdrop-blur-sm
-                  ${true
-                    ? 'bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 text-gray-400'
-                    : 'bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 text-gray-400'
-                  }
+                  ${'bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 text-gray-400'}
                 `}>
                   <div className="text-4xl mb-4">📚</div>
                   <p className="text-lg font-medium mb-2 text-white">

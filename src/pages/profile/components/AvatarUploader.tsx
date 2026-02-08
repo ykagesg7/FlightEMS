@@ -113,7 +113,7 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
         setUploadProgress(80);
 
         // 画像アクセステストを実行（非ブロッキング、バックグラウンドで実行）
-        let finalImageUrl = publicUrl;
+        const finalImageUrl = publicUrl;
         // パブリックURLを直接使用し、アクセステストは非同期で実行（ブロッキングしない）
         testImageAccess(publicUrl).then((accessTestResult) => {
           // アクセステストが失敗した場合のみ署名付きURLを生成（非同期）

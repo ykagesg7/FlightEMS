@@ -6,7 +6,7 @@ const articleCategories = ['メンタリティー', '思考法', '操縦', 'CPL�
 
 function prefetchMDX(id: string) {
   // 存在しないファイルのインポートエラーを静かに無視
-  // @ts-ignore - best-effort prefetch; Vite will ignore unknown
+  // @ts-expect-error - best-effort prefetch; Vite will ignore unknown
   import(`../../content/articles/${id}.mdx`)
     .catch(() => {
       // articlesにない場合はlessonsを試す

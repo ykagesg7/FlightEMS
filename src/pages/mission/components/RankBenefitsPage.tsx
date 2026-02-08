@@ -40,7 +40,7 @@ export const RankBenefitsPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ranks.map((rank, index) => {
+          {ranks.map((rank, _index) => {
             const rankInfo = RANK_INFO[rank];
             const benefits = rankBenefits[rank] || [];
 

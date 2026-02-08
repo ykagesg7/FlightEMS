@@ -385,6 +385,7 @@ const Schedule: React.FC = () => {
         )}
 
         {/* Marketing Section - コメントアウト済み（復活時は false を true に変更） */}
+        {/* eslint-disable-next-line no-constant-binary-expression */}
         {false && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -611,6 +612,7 @@ const Schedule: React.FC = () => {
         )}
 
         {/* Footer Note - コメントアウト済み（復活時は false を true に変更） */}
+        {/* eslint-disable-next-line no-constant-binary-expression */}
         {false && (
         <motion.div
           initial={{ opacity: 0 }}

@@ -16,9 +16,34 @@ interface PPLRankListProps {
 export const PPLRankList: React.FC<PPLRankListProps> = ({
   className = '',
   groupBy = 'level',
-  showProgress = false
+  showProgress: _showProgress = false
 }) => {
   const { rankDisplays, isLoading, error } = usePPLRanks();
+
+  // useMemo must be called before any early return (rules-of-hooks)
+  const groupedRanks = React.useMemo(() => {
+    if (groupBy === 'level') {
+      const groups: Record<number, typeof rankDisplays> = {};
+      rankDisplays.forEach(rank => {
+        if (!groups[rank.rank_level]) {
+          groups[rank.rank_level] = [];
+        }
+        groups[rank.rank_level].push(rank);
+      });
+      return groups;
+    } else if (groupBy === 'subject') {
+      const groups: Record<string, typeof rankDisplays> = {};
+      rankDisplays.forEach(rank => {
+        const key = rank.rank_level === 3 ? `Subject ${rank.rank_level}` : 'Other';
+        if (!groups[key]) {
+          groups[key] = [];
+        }
+        groups[key].push(rank);
+      });
+      return groups;
+    }
+    return { all: rankDisplays };
+  }, [rankDisplays, groupBy]);
 
   if (isLoading) {
     return (
@@ -51,31 +76,6 @@ export const PPLRankList: React.FC<PPLRankListProps> = ({
       </div>
     );
   }
-
-  // グループ化
-  const groupedRanks = React.useMemo(() => {
-    if (groupBy === 'level') {
-      const groups: Record<number, typeof rankDisplays> = {};
-      rankDisplays.forEach(rank => {
-        if (!groups[rank.rank_level]) {
-          groups[rank.rank_level] = [];
-        }
-        groups[rank.rank_level].push(rank);
-      });
-      return groups;
-    } else if (groupBy === 'subject') {
-      const groups: Record<string, typeof rankDisplays> = {};
-      rankDisplays.forEach(rank => {
-        const key = rank.rank_level === 3 ? `Subject ${rank.rank_level}` : 'Other';
-        if (!groups[key]) {
-          groups[key] = [];
-        }
-        groups[key].push(rank);
-      });
-      return groups;
-    }
-    return { all: rankDisplays };
-  }, [rankDisplays, groupBy]);
 
   const levelLabels: Record<number, string> = {
     1: 'Phase ランク',
