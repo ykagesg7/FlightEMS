@@ -1,0 +1,58 @@
+---
+description: Git commit message conventions to prevent character encoding issues on Windows
+globs:
+alwaysApply: true
+---
+
+# Git Commit Message Conventions
+
+## Language: English Only
+
+All commit messages MUST be written in **English only** (title, body, and footer).
+
+Japanese characters in commit messages get garbled (mojibake) due to Windows PowerShell encoding issues. This has been confirmed in the project's git history.
+
+## Format: Conventional Commits
+
+```
+<type>: <short description>
+
+<optional body>
+```
+
+### Types
+- `feat:` -- new feature or significant addition
+- `fix:` -- bug fix
+- `refactor:` -- code restructuring without behavior change
+- `docs:` -- documentation changes only
+- `test:` -- adding or updating tests
+- `chore:` -- maintenance tasks (deps, config, CI)
+- `style:` -- formatting, whitespace, missing semicolons (no logic change)
+- `perf:` -- performance improvement
+
+### Rules
+- Title line: max 72 characters, imperative mood ("add" not "added")
+- No period at the end of the title
+- Body: wrap at 72 characters, explain "why" not "what"
+- Reference issue numbers when applicable: `fixes #123`
+
+### Examples
+
+```
+feat: add Sentry error monitoring integration
+
+- Configure @sentry/react with browser tracing
+- Update EnhancedErrorBoundary to report errors to Sentry
+- Add source map upload plugin for production builds
+```
+
+```
+fix: convert MDX frontmatter from YAML to ESM export
+
+7 lesson files used YAML frontmatter which is not supported
+by the MDX parser. Convert to export const meta format.
+```
+
+```
+docs: update roadmap with Phase A completion status
+```

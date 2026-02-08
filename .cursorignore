@@ -23,10 +23,9 @@ cpl_exam_data/
 **/*.png
 
 # Env & secrets
-.env*
+# .env.example and .env.local are accessible
+.env.server.local
 
 # Tests cache
 coverage/
 .vitest/
-
-

@@ -1,4 +1,5 @@
 import mdx from '@mdx-js/rollup';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -37,6 +38,12 @@ export default defineConfig(({ mode }) => {
         gzipSize: true,
         brotliSize: true,
       }),
+      // Sentry ソースマップアップロード（本番ビルド + 認証トークンがある場合のみ）
+      mode === 'production' && env.SENTRY_AUTH_TOKEN && sentryVitePlugin({
+        org: env.SENTRY_ORG,
+        project: env.SENTRY_PROJECT,
+        authToken: env.SENTRY_AUTH_TOKEN,
+      }),
     ].filter(Boolean),
     server: {
       proxy: {
@@ -51,10 +58,11 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_WEATHER_API_KEY': JSON.stringify(weatherApiKey),
       'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
       'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
+      'import.meta.env.VITE_SENTRY_DSN': JSON.stringify(env.VITE_SENTRY_DSN || ''),
     },
     build: {
-      // ソースマップを無効化（本番環境ではAPIキーを隠すため）
-      sourcemap: mode !== 'production',
+      // Sentry のためソースマップを有効化（hidden: デプロイ先には公開しない）
+      sourcemap: true,
       // チャンクサイズ警告を調整
       chunkSizeWarningLimit: 600,
       // 段階的ビルド設定

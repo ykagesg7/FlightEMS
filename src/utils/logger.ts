@@ -1,7 +1,7 @@
- 
 /**
  * 環境に応じてログ出力を制御するロガーユーティリティ
  */
+import * as Sentry from '@sentry/react';
 
 const isDevelopment = import.meta.env.MODE === 'development';
 
@@ -35,6 +35,13 @@ export const logger: Logger = {
   error: (...args: LogValue[]) => {
     // エラーは本番環境でも出力（デバッグに必要）
     console.error(...args);
+    // 本番環境で Error オブジェクトがあれば Sentry に送信
+    if (import.meta.env.PROD) {
+      const err = args.find((a): a is Error => a instanceof Error);
+      if (err) {
+        Sentry.captureException(err);
+      }
+    }
   },
   
   info: (...args: LogValue[]) => {

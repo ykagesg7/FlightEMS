@@ -32,6 +32,22 @@ vi.mock('@supabase/supabase-js', () => ({
   })),
 }));
 
+// Sentryのモック設定（テスト時にSentryが干渉しないようにする）
+vi.mock('@sentry/react', () => ({
+  init: vi.fn(),
+  captureException: vi.fn(),
+  captureMessage: vi.fn(),
+  withScope: vi.fn((cb: (scope: unknown) => void) => cb({
+    setContext: vi.fn(),
+    setExtra: vi.fn(),
+    setTag: vi.fn(),
+  })),
+  browserTracingIntegration: vi.fn(),
+  replayIntegration: vi.fn(),
+  feedbackIntegration: vi.fn(),
+  ErrorBoundary: vi.fn(({ children }: { children: unknown }) => children),
+}));
+
 // Leafletのモック設定
 vi.mock('leaflet', () => ({
   map: vi.fn(),

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
 import React, { Component, ReactNode } from 'react';
 
@@ -57,18 +58,14 @@ class EnhancedErrorBoundary extends Component<EnhancedErrorBoundaryProps, ErrorB
 
   private async reportError(error: Error, errorInfo: React.ErrorInfo) {
     try {
-      // エラー情報をSupabaseに送信（実装時にSupabaseクライアントを使用）
-      const errorData = {
-        message: error.message,
-        stack: error.stack,
-        componentStack: errorInfo.componentStack,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        url: window.location.href
-      };
-
-      console.log('Error reported:', errorData);
-      // 実際の実装時: await supabase.from('error_logs').insert(errorData);
+      Sentry.withScope((scope) => {
+        scope.setContext('react', {
+          componentStack: errorInfo.componentStack,
+        });
+        scope.setExtra('url', window.location.href);
+        scope.setExtra('userAgent', navigator.userAgent);
+        Sentry.captureException(error);
+      });
     } catch (reportingError) {
       console.error('Failed to report error:', reportingError);
     }
