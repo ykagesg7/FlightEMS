@@ -46,12 +46,8 @@ BEGIN
     AND rank_code = 'ppl-master'
   ) INTO has_ppl_master;
 
-  -- CPLマスターレベル（将来実装）をチェック
-  SELECT EXISTS (
-    SELECT 1 FROM user_cpl_ranks
-    WHERE user_id = p_user_id
-    AND rank_code = 'cpl-master'
-  ) INTO has_cpl_master;
+  -- CPLマスターレベル（将来実装）: user_cpl_ranksテーブルは未作成のためfalseで固定
+  has_cpl_master := false;
 
   -- ランク判定ロジック（優先順位: CPL > PPL > PPL中間ランク > XPベース）
   IF has_cpl_master THEN

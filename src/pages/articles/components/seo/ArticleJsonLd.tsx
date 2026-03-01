@@ -62,14 +62,14 @@ const ArticleJsonLd: React.FC<ArticleJsonLdProps> = ({ meta, url }) => {
 };
 
 /**
- * 簡単な斁E��数推定（日本語対応！E
+ * 簡単な語数推定（日本語対応）
  */
 function estimateWordCount(text: string): number {
-  // 日本語文字（�Eらがな、カタカナ、漢字）と英数字を刁E��てカウンチE
+  // 日本語文字（ひらがな、カタカナ、漢字）と英数字を分けてカウント
   const japaneseChars = text.match(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/g) || [];
   const otherWords = text.replace(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\s]/g, ' ').trim().split(/\s+/).filter(word => word.length > 0);
 
-  // 日本語文字�E1斁E��E語、英数字�E単語単位でカウンチE
+  // 日本語文字は1文字1語、英数字は単語単位でカウント
   return japaneseChars.length + otherWords.length;
 }
 

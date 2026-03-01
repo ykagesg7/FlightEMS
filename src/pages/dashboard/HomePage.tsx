@@ -362,13 +362,13 @@ const DashboardContent: React.FC = () => {
           <Card variant="hud" padding="md" className={borderColor}>
             <CardContent>
               <Typography variant="h4" color="hud" className="mb-4">
-                直迁E日間�E学習時閁E
+                直近7日間の学習時間
               </Typography>
               <Typography variant="h2" color="hud">
-                {metrics.weeklyStudyMinutes}刁E
+                {metrics.weeklyStudyMinutes}分
               </Typography>
               <Typography variant="body-sm" color="muted" className="mt-2">
-                目標達成まで頑張りましょぁE
+                目標達成まで頑張りましょう
               </Typography>
             </CardContent>
           </Card>
@@ -379,7 +379,7 @@ const DashboardContent: React.FC = () => {
 };
 
 /**
- * ゲスト向け�Eームペ�Eジ�E�未ログイン時！E
+ * ゲスト向けホームページ（未ログイン時）
  */
 const GuestHomeContent: React.FC = () => {
   const { announcements, isLoading, error } = useAnnouncements();
@@ -440,19 +440,19 @@ const GuestHomeContent: React.FC = () => {
               px-4 py-2 rounded-full backdrop-blur-sm border
               border-whiskyPapa-yellow/30 bg-whiskyPapa-yellow/10
             `}>
-              一部コンチE��チE�E無斁E
+              一部コンテンツは無料
             </span>
             <span className={`
               px-4 py-2 rounded-full backdrop-blur-sm border
               border-whiskyPapa-yellow/30 bg-whiskyPapa-yellow/10
             `}>
-              登録は3刁E��完亁E
+              登録は3分で完了
             </span>
             <span className={`
               px-4 py-2 rounded-full backdrop-blur-sm border
               border-whiskyPapa-yellow/30 bg-whiskyPapa-yellow/10
             `}>
-              Supabaseで安�Eに管琁E
+              Supabaseで安全に管理
             </span>
           </div>
         </div>
@@ -465,7 +465,7 @@ const GuestHomeContent: React.FC = () => {
             最新惁E��
           </h2>
           <p className="text-sm text-gray-400">
-            プラチE��フォームの最新アチE�EチE�Eトとお知らせ
+            プラットフォームの最新アップデートとお知らせ
           </p>
         </div>
 
@@ -677,12 +677,12 @@ const GuestHomeContent: React.FC = () => {
 
 /**
  * 統合されたHomePage/DashboardPage
- * ログイン状態に応じてDashboardまた�EGuestHomeを表示
+ * ログイン状態に応じてDashboardまたはGuestHomeを表示
  */
 const HomePage: React.FC = () => {
   const { user } = useAuthStore();
 
-  // ログイン状態で刁E��E
+  // ログイン状態で分岐
   if (user) {
     return (
       <Suspense fallback={<DashboardSkeleton />}>

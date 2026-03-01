@@ -98,14 +98,11 @@ export const meta = {
 液体じゃなくなって「泡」になったら、もう喉越し（揚力）は味わえん。
 翼の上で、空気が「泡（乱流）」になってしもうたら、飛行機はただの鉄の塊になって落ちるんよ。
 
-{/*
-【Monetization Spot / アフィリエイト枠】
-*/}
 <div className="bg-gray-800 p-6 rounded-lg my-8 border border-yellow-500/50 shadow-lg">
-  <div className="flex flex-col md:flex-row items-center gap-6">
-    <div className="flex-1">
+  <div className="flex flex-col sm:flex-row gap-6 items-start">
+    <div className="flex-1 min-w-0">
       <h3 className="text-xl font-bold text-yellow-400 mb-2">🍺 道真の「燃料」補給推奨</h3>
-      <p className="text-gray-300 text-sm mb-4">
+      <p className="text-gray-300 text-sm mb-4 leading-relaxed">
         「失速」の恐怖を知ったら、喉が乾いたろう？<br/>
         今夜は、九州が誇るクラフトビールで「臨界迎角」のテストフライトをしてみんしゃい。<br/>
         泡（乱流）を作りすぎないように、グラスの迎角をコントロールするのがパイロットの腕の見せ所たい！
@@ -115,8 +112,8 @@ export const meta = {
         <span className="text-xs text-gray-400">👇 ここに『宮崎ひでじビール 飲み比べセット』のリンクを貼るたい！ 👇</span>
       </div>
     </div>
-    <div className="w-full md:w-1/3">
-       <Image src="https://placehold.co/300x300/ffaa00/FFF?text=Craft+Beer" alt="クラフトビール" width={300} height={300} className="rounded-md w-full" />
+    <div className="flex-shrink-0 w-full sm:w-auto sm:max-w-[200px]">
+      <Image src="https://placehold.co/300x300/ffaa00/FFF?text=Craft+Beer" alt="クラフトビール" width={200} height={200} className="rounded-md w-full max-w-[200px] mx-auto sm:mx-0 object-cover aspect-square" />
     </div>
   </div>
 </div>

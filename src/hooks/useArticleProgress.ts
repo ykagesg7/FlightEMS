@@ -372,19 +372,36 @@ export const useArticleProgress = () => {
         ...updates
       };
 
+      // 同一値の連続更新（スクロールイベント由来）を抑止して無限に近い再送を防ぐ
+      const nextProgressRounded = Math.round(newProgress.scrollProgress);
+      const prevProgressRounded = existing ? Math.round(existing.scrollProgress) : null;
+      const isMeaningfulChange = !existing
+        || prevProgressRounded !== nextProgressRounded
+        || !!existing.completed !== !!newProgress.completed
+        || (existing.lastPosition ?? 0) !== (newProgress.lastPosition ?? 0);
+      if (!isMeaningfulChange) {
+        return;
+      }
+
       // Supabaseに保存（UPSERT）
+      const upsertPayload = {
+        user_id: user.id,
+        content_id: articleSlug,
+        progress_percentage: Math.round(newProgress.scrollProgress),
+        completed: newProgress.completed || newProgress.scrollProgress >= 95,
+        last_position: newProgress.lastPosition,
+        last_read_at: newProgress.readAt.toISOString(),
+        read_count: existing ? (existing.readingTime > 0 ? 2 : 1) : 1,
+        updated_at: new Date().toISOString()
+      };
+      // #region agent log
+      if (typeof window !== 'undefined') {
+        fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'27bb54'},body:JSON.stringify({sessionId:'27bb54',runId:'run1',hypothesisId:'H2',location:'useArticleProgress.ts:upsert:before',message:'learning_progress upsert payload',data:{content_id:upsertPayload.content_id,progress_percentage:upsertPayload.progress_percentage,last_position:upsertPayload.last_position,completed:upsertPayload.completed,read_count:upsertPayload.read_count,last_read_at:upsertPayload.last_read_at,isProgressNaN:Number.isNaN(upsertPayload.progress_percentage),isLastPositionNaN:Number.isNaN(Number(upsertPayload.last_position))},timestamp:Date.now()})}).catch(()=>{});
+      }
+      // #endregion
       const { error: upsertError } = await supabase
         .from('learning_progress')
-        .upsert({
-          user_id: user.id,
-          content_id: articleSlug,
-          progress_percentage: Math.round(newProgress.scrollProgress),
-          completed: newProgress.completed || newProgress.scrollProgress >= 95, // completedフラグまたは95%以上で完了
-          last_position: newProgress.lastPosition,
-          last_read_at: newProgress.readAt.toISOString(),
-          read_count: existing ? (existing.readingTime > 0 ? 2 : 1) : 1,
-          updated_at: new Date().toISOString()
-        }, {
+        .upsert(upsertPayload, {
           onConflict: 'user_id,content_id'
         });
 
@@ -406,6 +423,11 @@ export const useArticleProgress = () => {
       }
 
       if (upsertError) {
+        // #region agent log
+        if (typeof window !== 'undefined') {
+          fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'27bb54'},body:JSON.stringify({sessionId:'27bb54',runId:'run1',hypothesisId:'H3',location:'useArticleProgress.ts:upsert:error',message:'learning_progress upsert failed',data:{content_id:upsertPayload.content_id,code:upsertError.code,message:upsertError.message,details:upsertError.details,hint:upsertError.hint},timestamp:Date.now()})}).catch(()=>{});
+        }
+        // #endregion
         // ネットワークエラー（ERR_QUIC_PROTOCOL_ERROR、ERR_FAILEDなど）は無視
         // ページ離脱時やネットワーク不安定時に発生する可能性がある
         if (upsertError.message?.includes('Failed to fetch') || upsertError.message?.includes('network')) {
@@ -468,8 +490,9 @@ export const useArticleProgress = () => {
         // エラーは無視（既にプロファイルなしで統計を計算済み）
       });
 
-      // 記事完了時にミッション達成をチェック
-      if (newProgress.scrollProgress >= 95 || newProgress.completed) {
+      // 記事完了時にミッション達成をチェック（初回完了時のみ、重複呼び出しを防止）
+      const wasAlreadyCompleted = existing?.completed || (existing?.scrollProgress ?? 0) >= 95;
+      if ((newProgress.scrollProgress >= 95 || newProgress.completed) && !wasAlreadyCompleted) {
         try {
           await completeMissionByAction('article_read');
         } catch (missionError) {

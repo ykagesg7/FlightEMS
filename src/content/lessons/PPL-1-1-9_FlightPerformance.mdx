@@ -139,14 +139,11 @@ export const meta = {
 旋回半径 $r = V^2 / (g \tan\theta)$ を思い出さんね。速度を2倍にしたら、旋回半径は4倍に膨らむ。
 「曲がりきれん！」となる前に、速度（V）をコントロールするのがプロのエアマンシップたい。
 
-{/*
-【Monetization Spot / アフィリエイト枠】
-*/}
 <div className="bg-gray-800 p-6 rounded-lg my-8 border border-yellow-600/50 shadow-lg shadow-yellow-900/20">
-  <div className="flex flex-col md:flex-row items-center gap-6">
-    <div className="flex-1">
+  <div className="flex flex-col sm:flex-row gap-6 items-start">
+    <div className="flex-1 min-w-0">
       <h3 className="text-xl font-bold text-yellow-500 mb-2">⚡️ アビエーターの「電気的」補給</h3>
-      <p className="text-gray-300 text-sm mb-4">
+      <p className="text-gray-300 text-sm mb-4 leading-relaxed">
         余剰馬力を計算するには、脳の「利用馬力」を最大化せんといかん。<br/>
         長崎名物・カステラのザラメに含まれる「ブドウ糖」は、脳のクイック・リスポンスに最適たい。<br/>
         糖分を補給して、次のCheck Six（過去問演習）に備えんしゃい。
@@ -155,14 +152,8 @@ export const meta = {
         <span className="text-xs text-gray-400">👇 ここに『長崎老舗のカステラ切り落としセット』のアフィリエイトリンクば貼るたい！ 👇</span>
       </div>
     </div>
-    <div className="w-full md:w-1/3 text-center">
-       <Image
-         src="https://placehold.co/300x300/D4A574/FFF?text=Castella"
-         alt="長崎カステラ"
-         width={300}
-         height={300}
-         className="rounded-md w-full"
-       />
+    <div className="flex-shrink-0 w-full sm:w-auto sm:max-w-[200px]">
+      <Image src="https://placehold.co/300x300/D4A574/FFF?text=Castella" alt="長崎カステラ" width={200} height={200} className="rounded-md w-full max-w-[200px] mx-auto sm:mx-0 object-cover aspect-square" />
     </div>
   </div>
 </div>

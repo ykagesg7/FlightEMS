@@ -103,10 +103,10 @@ export const meta = {
 【Monetization Spot / アフィリエイト枠】
 */}
 <div className="bg-gray-800 p-6 rounded-lg my-8 border border-orange-600/50 shadow-lg">
-  <div className="flex flex-col md:flex-row items-center gap-6">
-    <div className="flex-1">
+  <div className="flex flex-col sm:flex-row gap-6 items-start">
+    <div className="flex-1 min-w-0">
       <h3 className="text-xl font-bold text-orange-500 mb-2">🍢 道真の「燃料」補給推奨</h3>
-      <p className="text-gray-300 text-sm mb-4">
+      <p className="text-gray-300 text-sm mb-4 leading-relaxed">
         三次元の動きを想像して、脳みそがねじれそうか？<br/>
         なら、博多の「ねじねじとりかわ」を食って落ち着きんしゃい。<br/>
         カリッと香ばしいこの皮を齧りながら、「これがロール軸か…」と呟けば、立派な変態パイロットの仲間入りたい。
@@ -116,8 +116,8 @@ export const meta = {
         <span className="text-xs text-gray-400">👇 ここに『博多ぐるぐるとりかわ 10本セット』のリンクを貼るたい！ 👇</span>
       </div>
     </div>
-    <div className="w-full md:w-1/3">
-       <Image src="https://placehold.co/300x300/dd5500/FFF?text=Hakata+Torikawa" alt="博多とりかわ" width={300} height={300} className="rounded-md w-full" />
+    <div className="flex-shrink-0 w-full sm:w-auto sm:max-w-[200px]">
+      <Image src="https://placehold.co/300x300/dd5500/FFF?text=Hakata+Torikawa" alt="博多とりかわ" width={200} height={200} className="rounded-md w-full max-w-[200px] mx-auto sm:mx-0 object-cover aspect-square" />
     </div>
   </div>
 </div>

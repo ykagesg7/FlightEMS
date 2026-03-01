@@ -116,10 +116,10 @@ export const meta = {
 【Monetization Spot / アフィリエイト枠】
 */}
 <div className="bg-gray-800 p-6 rounded-lg my-8 border border-white/50 shadow-lg">
-  <div className="flex flex-col md:flex-row items-center gap-6">
-    <div className="flex-1">
+  <div className="flex flex-col sm:flex-row gap-6 items-start">
+    <div className="flex-1 min-w-0">
       <h3 className="text-xl font-bold text-white mb-2">🍜 道真の「燃料」補給推奨</h3>
-      <p className="text-gray-300 text-sm mb-4">
+      <p className="text-gray-300 text-sm mb-4 leading-relaxed">
         V-n線図で頭がパンクしそうか？<br/>
         なら、博多のソウルフード「やわいうどん」ば食って脳みそを緩めんね。<br/>
         スープを吸って増え続ける麺（通称：食べても減らないうどん）の重量感と、その限界強度を箸先で感じ取れ！
@@ -129,8 +129,8 @@ export const meta = {
         <span className="text-xs text-gray-400">👇 ここに『博多うどん・牧のうどん再現セット』のリンクを貼るたい！ 👇</span>
       </div>
     </div>
-    <div className="w-full md:w-1/3">
-       <Image src="https://placehold.co/300x300/eeeeee/333?text=Hakata+Udon" alt="博多うどん" width={300} height={300} className="rounded-md w-full" />
+    <div className="flex-shrink-0 w-full sm:w-auto sm:max-w-[200px]">
+      <Image src="https://placehold.co/300x300/eeeeee/333?text=Hakata+Udon" alt="博多うどん" width={200} height={200} className="rounded-md w-full max-w-[200px] mx-auto sm:mx-0 object-cover aspect-square" />
     </div>
   </div>
 </div>

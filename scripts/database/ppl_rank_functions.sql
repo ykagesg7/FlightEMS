@@ -4,6 +4,7 @@
 -- ===============================
 
 -- ランクチェック関数：記事完了時にランクをチェック・付与
+-- Note: use upr_check alias in EXISTS to avoid "rank_code is ambiguous" (RETURNS TABLE vs table column)
 CREATE OR REPLACE FUNCTION check_and_award_ppl_ranks(p_user_id UUID, p_content_id TEXT)
 RETURNS TABLE(rank_code TEXT, rank_name TEXT) AS $$
 DECLARE
@@ -35,12 +36,12 @@ BEGIN
     IF v_completed_count >= v_required_count AND v_required_count > 0 THEN
       -- 既に取得済みでないかチェック
       IF NOT EXISTS (
-        SELECT 1 FROM user_ppl_ranks
-        WHERE user_id = p_user_id AND rank_code = v_rank_def.rank_code
+        SELECT 1 FROM user_ppl_ranks upr_check
+        WHERE upr_check.user_id = p_user_id AND upr_check.rank_code = v_rank_def.rank_code
       ) THEN
         INSERT INTO user_ppl_ranks (user_id, rank_code)
         VALUES (p_user_id, v_rank_def.rank_code)
-        ON CONFLICT (user_id, rank_code) DO NOTHING;
+        ON CONFLICT ON CONSTRAINT user_ppl_ranks_user_id_rank_code_key DO NOTHING;
 
         RETURN QUERY SELECT v_rank_def.rank_code, v_rank_def.rank_name;
       END IF;
@@ -65,12 +66,12 @@ BEGIN
     -- Phase 1, 2, 3の3つ全て完了している場合
     IF v_section_ranks_completed >= 3 THEN
       IF NOT EXISTS (
-        SELECT 1 FROM user_ppl_ranks
-        WHERE user_id = p_user_id AND rank_code = v_rank_def.rank_code
+        SELECT 1 FROM user_ppl_ranks upr_check
+        WHERE upr_check.user_id = p_user_id AND upr_check.rank_code = v_rank_def.rank_code
       ) THEN
         INSERT INTO user_ppl_ranks (user_id, rank_code)
         VALUES (p_user_id, v_rank_def.rank_code)
-        ON CONFLICT (user_id, rank_code) DO NOTHING;
+        ON CONFLICT ON CONSTRAINT user_ppl_ranks_user_id_rank_code_key DO NOTHING;
 
         RETURN QUERY SELECT v_rank_def.rank_code, v_rank_def.rank_name;
       END IF;
@@ -97,12 +98,12 @@ BEGIN
     -- 現時点では、1-1-1と1-1-2の2セクションのみ
     IF v_rank_def.category_code = '1-1' AND v_category_ranks_completed >= 2 THEN
       IF NOT EXISTS (
-        SELECT 1 FROM user_ppl_ranks
-        WHERE user_id = p_user_id AND rank_code = v_rank_def.rank_code
+        SELECT 1 FROM user_ppl_ranks upr_check
+        WHERE upr_check.user_id = p_user_id AND upr_check.rank_code = v_rank_def.rank_code
       ) THEN
         INSERT INTO user_ppl_ranks (user_id, rank_code)
         VALUES (p_user_id, v_rank_def.rank_code)
-        ON CONFLICT (user_id, rank_code) DO NOTHING;
+        ON CONFLICT ON CONSTRAINT user_ppl_ranks_user_id_rank_code_key DO NOTHING;
 
         RETURN QUERY SELECT v_rank_def.rank_code, v_rank_def.rank_name;
       END IF;
@@ -129,12 +130,12 @@ BEGIN
     -- 現時点では、1-1, 1-2, 1-3の3カテゴリー
     IF v_rank_def.subject_code = '1' AND v_category_ranks_completed >= 3 THEN
       IF NOT EXISTS (
-        SELECT 1 FROM user_ppl_ranks
-        WHERE user_id = p_user_id AND rank_code = v_rank_def.rank_code
+        SELECT 1 FROM user_ppl_ranks upr_check
+        WHERE upr_check.user_id = p_user_id AND upr_check.rank_code = v_rank_def.rank_code
       ) THEN
         INSERT INTO user_ppl_ranks (user_id, rank_code)
         VALUES (p_user_id, v_rank_def.rank_code)
-        ON CONFLICT (user_id, rank_code) DO NOTHING;
+        ON CONFLICT ON CONSTRAINT user_ppl_ranks_user_id_rank_code_key DO NOTHING;
 
         RETURN QUERY SELECT v_rank_def.rank_code, v_rank_def.rank_name;
       END IF;
@@ -143,8 +144,8 @@ BEGIN
 
   -- PPL全体マスター（全科目完了で判定）
   FOR v_rank_def IN
-    SELECT * FROM ppl_rank_definitions
-    WHERE rank_code = 'ppl-master'
+    SELECT * FROM ppl_rank_definitions prd_master
+    WHERE prd_master.rank_code = 'ppl-master'
   LOOP
     -- 全科目マスターランクが完了しているかチェック
     SELECT COUNT(*) INTO v_subject_ranks_completed
@@ -157,12 +158,12 @@ BEGIN
     -- 全5科目完了している場合
     IF v_subject_ranks_completed >= 5 THEN
       IF NOT EXISTS (
-        SELECT 1 FROM user_ppl_ranks
-        WHERE user_id = p_user_id AND rank_code = v_rank_def.rank_code
+        SELECT 1 FROM user_ppl_ranks upr_check
+        WHERE upr_check.user_id = p_user_id AND upr_check.rank_code = v_rank_def.rank_code
       ) THEN
         INSERT INTO user_ppl_ranks (user_id, rank_code)
         VALUES (p_user_id, v_rank_def.rank_code)
-        ON CONFLICT (user_id, rank_code) DO NOTHING;
+        ON CONFLICT ON CONSTRAINT user_ppl_ranks_user_id_rank_code_key DO NOTHING;
 
         RETURN QUERY SELECT v_rank_def.rank_code, v_rank_def.rank_name;
       END IF;

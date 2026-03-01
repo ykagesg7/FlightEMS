@@ -200,7 +200,7 @@ BEGIN
       ) THEN
         INSERT INTO user_ppl_ranks (user_id, rank_code)
         VALUES (p_user_id, v_rank_def.rank_code)
-        ON CONFLICT (user_id, rank_code) DO NOTHING;
+        ON CONFLICT ON CONSTRAINT user_ppl_ranks_user_id_rank_code_key DO NOTHING;
 
         RETURN QUERY SELECT v_rank_def.rank_code, v_rank_def.rank_name;
       END IF;
@@ -230,7 +230,7 @@ BEGIN
       ) THEN
         INSERT INTO user_ppl_ranks (user_id, rank_code)
         VALUES (p_user_id, v_rank_def.rank_code)
-        ON CONFLICT (user_id, rank_code) DO NOTHING;
+        ON CONFLICT ON CONSTRAINT user_ppl_ranks_user_id_rank_code_key DO NOTHING;
 
         RETURN QUERY SELECT v_rank_def.rank_code, v_rank_def.rank_name;
       END IF;
@@ -262,7 +262,7 @@ BEGIN
       ) THEN
         INSERT INTO user_ppl_ranks (user_id, rank_code)
         VALUES (p_user_id, v_rank_def.rank_code)
-        ON CONFLICT (user_id, rank_code) DO NOTHING;
+        ON CONFLICT ON CONSTRAINT user_ppl_ranks_user_id_rank_code_key DO NOTHING;
 
         RETURN QUERY SELECT v_rank_def.rank_code, v_rank_def.rank_name;
       END IF;
@@ -294,7 +294,7 @@ BEGIN
       ) THEN
         INSERT INTO user_ppl_ranks (user_id, rank_code)
         VALUES (p_user_id, v_rank_def.rank_code)
-        ON CONFLICT (user_id, rank_code) DO NOTHING;
+        ON CONFLICT ON CONSTRAINT user_ppl_ranks_user_id_rank_code_key DO NOTHING;
 
         RETURN QUERY SELECT v_rank_def.rank_code, v_rank_def.rank_name;
       END IF;
@@ -322,7 +322,7 @@ BEGIN
       ) THEN
         INSERT INTO user_ppl_ranks (user_id, rank_code)
         VALUES (p_user_id, v_rank_def.rank_code)
-        ON CONFLICT (user_id, rank_code) DO NOTHING;
+        ON CONFLICT ON CONSTRAINT user_ppl_ranks_user_id_rank_code_key DO NOTHING;
 
         RETURN QUERY SELECT v_rank_def.rank_code, v_rank_def.rank_name;
       END IF;

@@ -24,7 +24,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
         const articles = await getRelatedArticles(currentSlug, limit);
         setRelatedArticles(articles);
       } catch (error) {
-        console.error('関連記事�E取得に失敗しました:', error);
+        console.error('関連記事の取得に失敗しました:', error);
         setRelatedArticles([]);
       } finally {
         setIsLoading(false);
@@ -77,7 +77,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
         </svg>
         <h3 className="text-lg font-semibold text-whiskyPapa-yellow transition-colors duration-200">
-          関連記亁E
+          関連記事
         </h3>
       </div>
 
@@ -96,14 +96,14 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
                 {article.meta.title}
               </h4>
 
-              {/* 要紁E*/}
+              {/* 要約 */}
               {article.meta.excerpt && (
                 <p className="text-sm text-white opacity-80 line-clamp-2">
                   {article.meta.excerpt}
                 </p>
               )}
 
-              {/* メタ惁E�� */}
+              {/* メタデータ */}
               <div className="flex items-center gap-4 text-xs text-white opacity-60">
                 {/* 公開日 */}
                 {article.meta.publishedAt && (
@@ -115,13 +115,13 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
                   </span>
                 )}
 
-                {/* 読亁E��閁E*/}
+                {/* 読了時間 */}
                 {article.meta.readingTime && (
                   <span className="flex items-center gap-1">
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    {article.meta.readingTime}刁E
+                    {article.meta.readingTime}分
                   </span>
                 )}
 

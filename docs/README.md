@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年2月8日（Phase A-5 完了・環境変数整理）
-**バージョン**: Documentation Index v4.1
+**最終更新**: 2026年3月1日（記事・進捗・ランク関連エラー修正）
+**バージョン**: Documentation Index v4.2
 
 ---
 
@@ -240,6 +240,15 @@ npm run lint         # Lintチェック
 
 ## 🔄 最近の主要変更
 
+### 記事・進捗・ランク関連エラー修正（2026年3月1日）
+- ✅ **validateDOMNesting 対策**: MDX の `p` を `<div>` でレンダリング、アフィリエイト枠直前の JSX コメント配置見直し
+- ✅ **learning_progress 400 / rank_code 曖昧**: `ON CONFLICT ON CONSTRAINT` で制約名を明示
+- ✅ **complete_mission 404 / user_cpl_ranks**: CPL 未実装のため `has_cpl_master := false` 固定
+- ✅ **読了判定の簡素化**: TableOfContents のスクロール連動読了を廃止、明示的操作（一覧ボタン・次記事リンク）のみ
+- ✅ **アフィリエイト枠レイアウト**: 画像・テキストのバランス調整（全15記事）
+- ✅ **文字化け修正**: RelatedArticles、ArticleJsonLd、HomePage
+- **ドキュメント**: `04_運用保守ガイド.md` にトラブルシューティングを追加、`mdx-article-guide.mdc` に DOM ネスト回避ルールを追加
+
 ### Phase A テスト基盤構築 + エラー監視導入（2026年2月7日）
 - ✅ **A-1/A-2: コアロジック + ユーティリティのテスト追加完了**
   - `airspace.ts`: ray casting、MultiPolygon、プロパティフォールバック（16テスト）
@@ -352,6 +361,6 @@ npm run lint         # Lintチェック
 
 ---
 
-**最終更新**: 2026年2月8日（Phase A-5 完了・環境変数整理）
-**バージョン**: Documentation Index v4.1
+**最終更新**: 2026年3月1日（記事・進捗・ランク関連エラー修正）
+**バージョン**: Documentation Index v4.2
 **管理者**: Flight Academy 開発チーム
