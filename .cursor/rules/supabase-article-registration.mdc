@@ -1,0 +1,49 @@
+---
+description: Supabase MCP and article registration workflow for learning_contents
+globs:
+alwaysApply: false
+---
+
+# Supabase Article Registration
+
+## When to Use
+
+- Registering new PPL/CPL lesson articles to `learning_contents` table for viewing in the app
+- After creating or updating MDX files in `src/content/lessons/`
+
+## Supabase MCP
+
+Use **Supabase MCP** (`my_supabase_project` server) when available:
+
+1. **execute_sql** tool:
+   - `project_id`: `fstynltdfdetpyvbrswr` (FlightAcademy project)
+   - `query`: SQL for INSERT/UPDATE
+
+2. **Example** (upsert article):
+```sql
+INSERT INTO learning_contents (id, title, category, sub_category, description, order_index, parent_id, content_type, is_published, updated_at)
+VALUES ('PPL-1-1-9_FlightPerformance', '【航空工学】余剰馬力の美学...', 'PPL', '航空工学', '...', 9, NULL, 'text', true, NOW())
+ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, sub_category = EXCLUDED.sub_category, description = EXCLUDED.description, order_index = EXCLUDED.order_index, content_type = EXCLUDED.content_type, is_published = EXCLUDED.is_published, updated_at = EXCLUDED.updated_at;
+```
+
+## Fallback: Node Script
+
+If Supabase MCP is unavailable, use:
+```bash
+node scripts/database/register_ppl_article.mjs PPL-1-1-9_FlightPerformance
+```
+Requires `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` (anon key has no write permission).
+
+## Fallback: SQL File
+
+Run `scripts/database/insert_ppl_1_1_9.sql` via Supabase Dashboard SQL Editor.
+
+## learning_contents Schema
+
+| Column | PPL | CPL |
+|--------|-----|-----|
+| id | filename (e.g. PPL-1-1-9_FlightPerformance) | filename |
+| category | PPL | CPL |
+| sub_category | 航空工学, 航空気象, etc. | subject name |
+| content_type | text | text |
+| is_published | true | true |
