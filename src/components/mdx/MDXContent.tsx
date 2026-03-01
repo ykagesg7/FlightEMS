@@ -196,13 +196,13 @@ const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId }) =>
 
         {/* デスクトップ用サイドバー目次 */}
         <div className="hidden xl:block flex-shrink-0">
-          <TableOfContents mode="sidebar" compact={true} contentId={contentId || meta?.slug} />
+          <TableOfContents mode="sidebar" compact={true} />
         </div>
       </div>
 
       {/* モバイル・タブレット用ドロワー目次 */}
       <div className="xl:hidden">
-        <TableOfContents mode="drawer" contentId={contentId || meta?.slug} />
+        <TableOfContents mode="drawer" />
       </div>
     </>
   );

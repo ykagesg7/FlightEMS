@@ -26,8 +26,8 @@
 ## 📊 進捗サマリー
 
 ### 全体進捗
-- **全体**: 16/150 (10.7%)
-- **Phase 1**: 14/45 (31.1%) - 高頻出・重要トピック
+- **全体**: 17/150 (11.3%)
+- **Phase 1**: 15/45 (33.3%) - 高頻出・重要トピック
 - **Phase 2**: 2/60 (3.3%) - 中頻出トピック
 - **Phase 3**: 0/45 (0%) - 体系的な網羅
 
@@ -35,12 +35,12 @@
 
 | 科目 | 総数 | 完了 | 進捗 | Phase 1 | Phase 2 | Phase 3 |
 |------|------|------|------|---------|---------|---------|
-| **Subject 1: 航空工学** | 45 | 16 | 35.6% | 14/15 | 2/20 | 0/10 |
+| **Subject 1: 航空工学** | 45 | 17 | 37.8% | 15/15 | 2/20 | 0/10 |
 | **Subject 2: 航空気象** | 35 | 0 | 0% | 0/12 | 0/15 | 0/8 |
 | **Subject 3: 空中航法** | 30 | 0 | 0% | 0/10 | 0/12 | 0/8 |
 | **Subject 4: 航空通信** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
 | **Subject 5: 航空法規** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
-| **合計** | **150** | **16** | **10.7%** | **14/45** | **2/60** | **0/45** |
+| **合計** | **150** | **17** | **11.3%** | **15/45** | **2/60** | **0/45** |
 
 ---
 
@@ -70,7 +70,7 @@
   - ✅ [PPL-1-1-1_TemperatureBasics](../src/content/lessons/PPL-1-1-1_TemperatureBasics.mdx) - 温度換算（℃と℉）
   - ✅ [PPL-1-1-3_BernoulliPrinciple](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx) - ベルヌーイの定理
 - [x] **Phase 1** 対気速度: 測定原理、指示対気速度（IAS）と真対気速度（TAS）
-  - ✅ [PPL-1-1-2_AirspeedBasics](../src/content/lessons/PPL-1-1-2_AirspeedBasics.mdx) - 対気速度の基礎（IASとTAS）
+  - ✅ [PPL-1-1-2_AirspeedBasics](../src/content/lessons/PPL-1-1-2_AirspeedBasics.mdx) - IAS/TAS/CAS/EAS、2%ルール、久留米大砲ラーメン比喩
 - [ ] **Phase 1** 二次元翼: 翼断面（エアフォイル）、圧力分布と風圧中心、揚力と抗力、失速とバフェット
   - ✅ [PPL-1-1-4_DragBasics](../src/content/lessons/PPL-1-1-4_DragBasics.mdx) - 抗力の基礎（有害抗力と誘導抗力）
   - ✅ [PPL-1-1-6_StallSpin](../src/content/lessons/PPL-1-1-6_StallSpin.mdx) - 失速とスピン（臨界迎角、剥離、きりもみ）
@@ -88,8 +88,9 @@
 - [x] **Phase 1** 飛行性能: 水平飛行、失速速度、上昇・滑空・旋回性能
   - ✅ [PPL-1-1-9_FlightPerformance](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx) - 必要馬力・利用馬力・余剰馬力、Vx/Vy、旋回性能、滑空性能
 - [x] **Phase 2** 設計強度: 制限荷重（リミットロード）、安全率、V-n線図
-  - ✅ [PPL-1-1-7_VnDiagram](../src/content/lessons/PPL-1-1-7_VnDiagram.mdx) - V-n線図と機体強度（制限荷重、終極荷重、機動速度）
-- [ ] **Phase 1** 離着陸性能: 離陸距離、進入速度、着陸距離
+  - ✅ [PPL-1-1-7_VnDiagram](../src/content/lessons/PPL-1-1-7_VnDiagram.mdx) - V-n線図と機体強度（制限荷重・終極荷重・安全率1.5、Va=Accelerated Stall、大分団子汁比喩）
+- [x] **Phase 1** 離着陸性能: 離陸距離、進入速度、着陸距離
+  - ✅ [PPL-1-1-10_TakeoffLandingPerformance](../src/content/lessons/PPL-1-1-10_TakeoffLandingPerformance.mdx) - 密度高度、加速停止距離、50ft障害物、追い風21%の罠（阿蘇あか牛比喩）
 
 ### 1-2. 航空機の構造及び機能 (Aircraft Systems)
 

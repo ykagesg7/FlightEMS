@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ProgressRing from '../../../components/common/ProgressRing';
 import { useTableOfContents } from '../../../hooks/useTableOfContents';
 
 interface TableOfContentsProps {
@@ -9,26 +8,15 @@ interface TableOfContentsProps {
   maxLevel?: number;
   /** コンパクト表示 */
   compact?: boolean;
-  /** コンテンツID（進捗表示用） */
-  contentId?: string;
 }
 
 const TableOfContents: React.FC<TableOfContentsProps> = ({
   mode = 'sidebar',
   maxLevel = 3,
   compact = false,
-  contentId
 }) => {
-  const { tocItems, activeId, scrollToHeading, sectionProgress } = useTableOfContents();
+  const { tocItems, activeId, scrollToHeading } = useTableOfContents();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  // セクションベースの進捗を使用
-  // 注意: totalSectionsは全見出し数、filteredItemsは表示される見出し数（maxLevelでフィルタ）
-  // 進捗計算は全見出し数で行うが、表示はfilteredItemsの数も表示
-  const progressPercentage = sectionProgress.percentage;
-  const currentSections = sectionProgress.current;
-  const totalSections = sectionProgress.total;
-  const isCompleted = progressPercentage >= 100 || (totalSections > 0 && currentSections >= totalSections);
 
   // 指定レベル以下の見出しのみフィルタ
   const filteredItems = tocItems.filter(item => item.level <= maxLevel);
@@ -73,63 +61,12 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
           目次
         </h3>
         <span className={`text-xs text-white opacity-60 ${compact ? 'hidden' : ''}`}>
-          ({totalSections > 0 ? totalSections : filteredItems.length})
+          ({filteredItems.length})
         </span>
       </div>
       <ul className="space-y-1 max-h-96 overflow-y-auto">
         {filteredItems.map(renderTocItem)}
       </ul>
-
-      {/* 進捗表示 */}
-      {contentId && (
-        <div className={`mt-4 pt-4 border-t border-whiskyPapa-yellow/20 ${compact ? 'mt-3 pt-3' : ''}`}>
-          <div className="flex items-center gap-3">
-            {/* 円形メーター */}
-            <div className="relative flex-shrink-0">
-              <ProgressRing
-                size={compact ? 40 : 48}
-                stroke={compact ? 3 : 4}
-                progress={progressPercentage}
-                animate={true}
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className={`font-bold ${compact ? 'text-xs' : 'text-sm'} ${isCompleted ? 'text-green-400' : progressPercentage >= 50 ? 'text-yellow-400' : 'text-blue-400'
-                  }`}>
-                  {progressPercentage}%
-                </span>
-              </div>
-            </div>
-
-            {/* パーセンテージ表示 */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between mb-1">
-                <span className={`text-xs ${compact ? 'text-xs' : 'text-sm'} text-white opacity-80`}>
-                  読了率
-                </span>
-                {totalSections > 0 && (
-                  <span className={`text-xs ${compact ? 'text-xs' : 'text-sm'} text-white opacity-60`}>
-                    {currentSections}/{totalSections}
-                  </span>
-                )}
-                {isCompleted && (
-                  <span className="text-xs text-green-400 ml-1">✓ 読了</span>
-                )}
-              </div>
-              <div className="h-1.5 rounded-full overflow-hidden bg-gray-700">
-                <div
-                  className={`h-full transition-all duration-300 ease-out rounded-full ${isCompleted
-                    ? 'bg-green-400'
-                    : progressPercentage >= 50
-                      ? 'bg-yellow-400'
-                      : 'bg-blue-400'
-                    }`}
-                  style={{ width: `${Math.min(100, progressPercentage)}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </nav>
   );
 
