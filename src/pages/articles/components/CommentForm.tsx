@@ -66,7 +66,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
           disabled={isSubmitting}
           rows={4}
           maxLength={maxLength}
-          className={`w-full px-4 py-3 rounded-lg border resize-none focus:outline-none focus:ring-2 transition-all bg-white/10 border-[#39FF14]/30 text-[color:var(--text-primary)] focus:ring-[#39FF14] focus:border-[#39FF14] placeholder-gray-400 backdrop-blur-sm ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`w-full px-4 py-3 rounded-lg border resize-none focus:outline-none focus:ring-2 transition-all bg-white/10 border-[color:var(--hud-primary)]/30 text-[color:var(--text-primary)] focus:ring-[color:var(--hud-primary)] focus:border-[color:var(--hud-primary)] placeholder-gray-400 backdrop-blur-sm ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
           aria-label="コメント入力"
         />
         <div className="flex justify-between items-center mt-1 text-sm text-gray-500">
@@ -85,7 +85,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
             type="button"
             onClick={handleCancel}
             disabled={isSubmitting}
-            className={`px-4 py-2 rounded-lg font-medium transition-all bg-white/10 text-[color:var(--text-primary)] hover:bg-white/20 border border-[#39FF14]/30 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`px-4 py-2 rounded-lg font-medium transition-all bg-white/10 text-[color:var(--text-primary)] hover:bg-white/20 border border-[color:var(--hud-primary)]/30 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             キャンセル
           </button>

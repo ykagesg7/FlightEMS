@@ -27,7 +27,7 @@ export const Card: React.FC<CardProps> = ({
     default: 'bg-[color:var(--semantic-surface)] border-[color:var(--semantic-border)]',
     // HUD Style (Cockpit)
     hud: 'bg-[color:var(--panel)] border-[color:var(--hud-primary)] shadow-hud-glow',
-    // Whisky Papa Brand (Marketing)
+    // Brand (Marketing)
     brand: 'bg-brand-secondary border-brand-primary shadow-lg',
     // Glassmorphism
     glass: 'bg-[color:var(--panel)]/80 backdrop-blur-md border-[color:var(--hud-primary)]/50 shadow-xl',

@@ -1,10 +1,88 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useGamification } from '../../hooks/useGamification';
-import { QuestionType, QuizQuestion, UserQuizAnswer } from '../../types/quiz';
+import { QuestionType, QuizFetchParams, QuizQuestion, UserQuizAnswer } from '../../types/quiz';
 import supabase from '../../utils/supabase';
+import { FilterListbox, type FilterListboxOption } from './components/FilterListbox';
 import { QuizComponent } from './components/QuizComponent';
+import { QuizResultsView } from './components/QuizResultsView';
+import { buildOrderIndex, MAIN_SUBJECT_ORDER, SUB_SUBJECT_ORDER_BY_MAIN } from './cplSyllabusOrder';
+import { normalizeSubSubjectLabel } from './utils/normalizeSubSubject';
+
+type FilterOption = {
+  value: string;
+  label: string;
+  count: number;
+  avgImportance: number;
+};
+
+type SubSubjectOption = FilterOption & {
+  rawValues: string[];
+};
+
+type FilterSortOrder = 'priority' | 'syllabus';
+
+const ALL_OPTION_VALUE = 'all';
+const PLACEHOLDER_SUBJECT = '__placeholder__';
+const MAIN_SUBJECT_ORDER_INDEX = buildOrderIndex(MAIN_SUBJECT_ORDER);
+const SUB_SUBJECT_ORDER_INDEX_BY_MAIN = Object.fromEntries(
+  Object.entries(SUB_SUBJECT_ORDER_BY_MAIN).map(([mainSubject, labels]) => [mainSubject, buildOrderIndex(labels)]),
+) as Record<string, Map<string, number>>;
+const FILTER_SEARCH_INPUT_CLASS =
+  'quiz-filter-search block w-full appearance-none rounded-xl border border-brand-primary/15 bg-[var(--panel)]/60 px-4 py-2 text-sm text-[var(--text-primary)] shadow-sm transition placeholder:text-[var(--text-muted)]/80 hover:border-brand-primary/30 focus:outline-none focus:ring-2 focus:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-60';
+const SORT_TOGGLE_BASE_CLASS =
+  'rounded-xl border px-3 py-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-60';
+
+const formatFilterOptionLabel = (label: string, count: number) => `${label} (${count}問)`;
+
+const sortFilterOptionsByPriority = (a: FilterOption, b: FilterOption) => {
+  if (b.avgImportance !== a.avgImportance) return b.avgImportance - a.avgImportance;
+  if (b.count !== a.count) return b.count - a.count;
+  const orderA = MAIN_SUBJECT_ORDER_INDEX.get(a.value) ?? Number.MAX_SAFE_INTEGER;
+  const orderB = MAIN_SUBJECT_ORDER_INDEX.get(b.value) ?? Number.MAX_SAFE_INTEGER;
+  if (orderA !== orderB) return orderA - orderB;
+  return a.label.localeCompare(b.label, 'ja');
+};
+
+const sortFilterOptionsBySyllabus = (
+  a: FilterOption,
+  b: FilterOption,
+  orderIndex: Map<string, number> | undefined,
+) => {
+  const orderA = orderIndex?.get(a.value);
+  const orderB = orderIndex?.get(b.value);
+
+  if (orderA !== undefined && orderB !== undefined && orderA !== orderB) {
+    return orderA - orderB;
+  }
+  if (orderA !== undefined) return -1;
+  if (orderB !== undefined) return 1;
+
+  return sortFilterOptionsByPriority(a, b);
+};
+
+const sortOptionList = <T extends FilterOption>(
+  options: T[],
+  comparator: (a: T, b: T) => number,
+  pinValue: string = ALL_OPTION_VALUE,
+) => {
+  const pinnedOption = options.find((option) => option.value === pinValue);
+  const rest = options.filter((option) => option.value !== pinValue).sort(comparator);
+  return pinnedOption ? [pinnedOption, ...rest] : rest;
+};
+
+const mergeSelectedIntoMatches = <T extends FilterOption>(
+  matches: T[],
+  selected: T | undefined,
+) => {
+  if (!selected || matches.some((option) => option.value === selected.value)) {
+    return matches;
+  }
+  const allOption = matches.find((option) => option.value === ALL_OPTION_VALUE);
+  const others = matches.filter((option) => option.value !== ALL_OPTION_VALUE);
+  return allOption ? [allOption, selected, ...others] : [selected, ...others];
+};
 
 const TestPage: React.FC = () => {
   const { completeMissionByAction } = useGamification();
@@ -15,23 +93,28 @@ const TestPage: React.FC = () => {
   const [userAnswers, setUserAnswers] = useState<UserQuizAnswer[]>([]);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const [subjects, setSubjects] = useState<string[]>([]);
-  const [selectedSubject, setSelectedSubject] = useState<string>('all');
+  const [subjects, setSubjects] = useState<FilterOption[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<string>(PLACEHOLDER_SUBJECT);
+  const [subjectSearch, setSubjectSearch] = useState('');
   const [subjectLoading, setSubjectLoading] = useState(true);
-  const [subSubjects, setSubSubjects] = useState<string[]>([]);
-  const [selectedSubSubject, setSelectedSubSubject] = useState<string>('all');
+  const [subSubjects, setSubSubjects] = useState<SubSubjectOption[]>([]);
+  const [selectedSubSubject, setSelectedSubSubject] = useState<string>(ALL_OPTION_VALUE);
+  const [subSubjectSearch, setSubSubjectSearch] = useState('');
   const [subSubjectLoading, setSubSubjectLoading] = useState(false);
   const [questionCount, setQuestionCount] = useState<number>(10);
   // 最大値は選択肢生成のみに使用するため、状態として保持しない
   const [questionCountOptions, setQuestionCountOptions] = useState<number[]>([10]);
   const [mode, setMode] = useState<'practice' | 'exam' | 'review'>('practice');
   const [contentId, setContentId] = useState<string | null>(null);
+  const [retryIncorrectMode, setRetryIncorrectMode] = useState(false);
+  const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<string[]>([]);
+  const [sortOrder, setSortOrder] = useState<FilterSortOrder>('priority');
 
   // クエリパラメータから初期値を設定
   const [sp] = useSearchParams();
   useEffect(() => {
-    const qs = sp.get('subject') || 'all';
-    const qss = sp.get('sub') || 'all';
+    const qs = sp.get('subject') || PLACEHOLDER_SUBJECT;
+    const qss = sp.get('sub') || ALL_OPTION_VALUE;
     const qc = Number(sp.get('count') || '10');
     const qm = (sp.get('mode') as 'practice' | 'exam' | 'review') || 'practice';
     const cid = sp.get('contentId');
@@ -44,25 +127,49 @@ const TestPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // main_subject一覧取得
+  // main_subject一覧取得（科目選択必須のため「すべての科目」は出題対象外）
   useEffect(() => {
     const fetchSubjects = async () => {
       setSubjectLoading(true);
       try {
         const { data, error } = await supabase
           .from('unified_cpl_questions')
-          .select('main_subject', { count: 'exact', head: false });
+          .select('main_subject, importance_score', { count: 'exact', head: false })
+          .eq('verification_status', 'verified')
+          .limit(5000);
         if (error) throw error;
-        const uniqueSubjects = Array.from(
-          new Set(
-            ((data ?? []) as Array<{ main_subject: unknown }>)
-              .map((q) => q.main_subject)
-              .filter((s): s is string => typeof s === 'string' && s.length > 0)
-          )
-        );
-        setSubjects(['all', ...uniqueSubjects]);
+        const subjectStats = new Map<string, { count: number; importanceTotal: number }>();
+        ((data ?? []) as Array<{ main_subject: unknown; importance_score: unknown }>)
+          .filter((q): q is { main_subject: string; importance_score: number | null } => typeof q.main_subject === 'string' && q.main_subject.length > 0)
+          .forEach(({ main_subject, importance_score }) => {
+            const entry = subjectStats.get(main_subject) ?? { count: 0, importanceTotal: 0 };
+            entry.count += 1;
+            entry.importanceTotal += typeof importance_score === 'number' ? importance_score : 0;
+            subjectStats.set(main_subject, entry);
+          });
+
+        const subjectOptions = Array.from(subjectStats.entries())
+          .map(([value, entry]) => ({
+            value,
+            label: value,
+            count: entry.count,
+            avgImportance: entry.count > 0 ? entry.importanceTotal / entry.count : 0,
+          }))
+          .sort(sortFilterOptionsByPriority);
+
+        const options: FilterOption[] = [
+          {
+            value: PLACEHOLDER_SUBJECT,
+            label: '科目を選択してください',
+            count: 0,
+            avgImportance: 0,
+          },
+          ...subjectOptions,
+        ];
+        setSubjects(options);
+        setSelectedSubject((prev) => (options.some((option) => option.value === prev) ? prev : PLACEHOLDER_SUBJECT));
       } catch (_err) {
-        setSubjects(['all']);
+        setSubjects([{ value: PLACEHOLDER_SUBJECT, label: '科目を選択してください', count: 0, avgImportance: 0 }]);
       } finally {
         setSubjectLoading(false);
       }
@@ -72,31 +179,68 @@ const TestPage: React.FC = () => {
 
   // main_subject選択時にsub_subject一覧取得
   useEffect(() => {
-    if (!selectedSubject || selectedSubject === 'all') {
+    if (!selectedSubject || selectedSubject === ALL_OPTION_VALUE || selectedSubject === PLACEHOLDER_SUBJECT) {
       setSubSubjects([]);
-      setSelectedSubSubject('all');
+      setSelectedSubSubject(ALL_OPTION_VALUE);
+      setSubSubjectSearch('');
       return;
     }
     setSubSubjectLoading(true);
+    setSubSubjectSearch('');
     const fetchSubSubjects = async () => {
       try {
         const { data, error } = await supabase
           .from('unified_cpl_questions')
-          .select('sub_subject', { count: 'exact', head: false })
-          .eq('main_subject', selectedSubject);
+          .select('sub_subject, importance_score', { count: 'exact', head: false })
+          .eq('main_subject', selectedSubject)
+          .eq('verification_status', 'verified');
         if (error) throw error;
-        const uniqueSubSubjects = Array.from(
-          new Set(
-            ((data ?? []) as Array<{ sub_subject: unknown }>)
-              .map((q) => q.sub_subject)
-              .filter((s): s is string => typeof s === 'string' && s.length > 0)
-          )
-        );
-        setSubSubjects(['all', ...uniqueSubSubjects]);
-        setSelectedSubSubject('all');
+        const normalizedMap = new Map<string, { rawValues: Set<string>; count: number; importanceTotal: number }>();
+        ((data ?? []) as Array<{ sub_subject: unknown; importance_score: unknown }>)
+          .filter((q): q is { sub_subject: string; importance_score: number | null } => typeof q.sub_subject === 'string' && q.sub_subject.length > 0)
+          .forEach(({ sub_subject: rawValue, importance_score }) => {
+            const normalized = normalizeSubSubjectLabel(rawValue);
+            if (!normalized) return;
+            const entry = normalizedMap.get(normalized) ?? { rawValues: new Set<string>(), count: 0, importanceTotal: 0 };
+            entry.rawValues.add(rawValue);
+            entry.count += 1;
+            entry.importanceTotal += typeof importance_score === 'number' ? importance_score : 0;
+            normalizedMap.set(normalized, entry);
+          });
+
+        const options: SubSubjectOption[] = [
+          {
+            value: ALL_OPTION_VALUE,
+            label: 'すべてのサブ科目',
+            count: Array.from(normalizedMap.values()).reduce((sum, entry) => sum + entry.count, 0),
+            avgImportance:
+              normalizedMap.size > 0
+                ? Array.from(normalizedMap.values()).reduce((sum, entry) => sum + entry.importanceTotal, 0) /
+                  Array.from(normalizedMap.values()).reduce((sum, entry) => sum + entry.count, 0)
+                : 0,
+            rawValues: [],
+          },
+          ...Array.from(normalizedMap.entries())
+            .map(([value, entry]) => ({
+              value,
+              label: value,
+              count: entry.count,
+              avgImportance: entry.count > 0 ? entry.importanceTotal / entry.count : 0,
+              rawValues: Array.from(entry.rawValues).sort((a, b) => a.localeCompare(b, 'ja')),
+            }))
+            .sort(sortFilterOptionsByPriority),
+        ];
+
+        setSubSubjects(options);
+        setSelectedSubSubject((prev) => {
+          const direct = options.find((option) => option.value === prev);
+          if (direct) return direct.value;
+          const byRawValue = options.find((option) => option.rawValues.includes(prev));
+          return byRawValue?.value ?? ALL_OPTION_VALUE;
+        });
       } catch (_err) {
-        setSubSubjects(['all']);
-        setSelectedSubSubject('all');
+        setSubSubjects([{ value: ALL_OPTION_VALUE, label: 'すべてのサブ科目', count: 0, avgImportance: 0, rawValues: [] }]);
+        setSelectedSubSubject(ALL_OPTION_VALUE);
       } finally {
         setSubSubjectLoading(false);
       }
@@ -104,26 +248,112 @@ const TestPage: React.FC = () => {
     fetchSubSubjects();
   }, [selectedSubject]);
 
+  const selectedSubSubjectRawValues = useMemo(() => {
+    if (selectedSubSubject === ALL_OPTION_VALUE) return [] as string[];
+    return subSubjects.find((option) => option.value === selectedSubSubject)?.rawValues ?? [];
+  }, [selectedSubSubject, subSubjects]);
+
+  const orderedSubjects = useMemo(() => {
+    const comparator =
+      sortOrder === 'syllabus'
+        ? (a: FilterOption, b: FilterOption) => sortFilterOptionsBySyllabus(a, b, MAIN_SUBJECT_ORDER_INDEX)
+        : sortFilterOptionsByPriority;
+
+    return sortOptionList(subjects, comparator, PLACEHOLDER_SUBJECT);
+  }, [sortOrder, subjects]);
+
+  const orderedSubSubjects = useMemo(() => {
+    const syllabusOrderIndex =
+      selectedSubject !== ALL_OPTION_VALUE ? SUB_SUBJECT_ORDER_INDEX_BY_MAIN[selectedSubject] : undefined;
+    const comparator =
+      sortOrder === 'syllabus'
+        ? (a: SubSubjectOption, b: SubSubjectOption) => sortFilterOptionsBySyllabus(a, b, syllabusOrderIndex)
+        : sortFilterOptionsByPriority;
+
+    return sortOptionList(subSubjects, comparator);
+  }, [selectedSubject, sortOrder, subSubjects]);
+
+  const filteredSubjects = useMemo(() => {
+    const keyword = subjectSearch.trim().toLocaleLowerCase('ja');
+    if (!keyword) return orderedSubjects;
+    const selected = orderedSubjects.find((option) => option.value === selectedSubject);
+    const matches = orderedSubjects.filter((option) => {
+      if (option.value === PLACEHOLDER_SUBJECT) return true;
+      return option.label.toLocaleLowerCase('ja').includes(keyword);
+    });
+    return mergeSelectedIntoMatches(matches, selected);
+  }, [orderedSubjects, selectedSubject, subjectSearch]);
+
+  const filteredSubSubjects = useMemo(() => {
+    const keyword = subSubjectSearch.trim().toLocaleLowerCase('ja');
+    if (!keyword) return orderedSubSubjects;
+    const selected = orderedSubSubjects.find((option) => option.value === selectedSubSubject);
+    const matches = orderedSubSubjects.filter((option) => {
+      if (option.value === ALL_OPTION_VALUE) return true;
+      return option.label.toLocaleLowerCase('ja').includes(keyword);
+    });
+    return mergeSelectedIntoMatches(matches, selected);
+  }, [orderedSubSubjects, selectedSubSubject, subSubjectSearch]);
+
+  const subjectSelected = selectedSubject !== PLACEHOLDER_SUBJECT && selectedSubject !== ALL_OPTION_VALUE;
+  const filtersLocked = mode === 'review' || !!contentId;
+  // 課目一覧の件数は limit(5000) 後のフロント集計のため誤解を招くため表示しない
+  const subjectListboxOptions = useMemo<FilterListboxOption<string>[]>(
+    () =>
+      filteredSubjects.map((subject) => ({
+        value: subject.value,
+        label: subject.label,
+        disabled: subject.value === PLACEHOLDER_SUBJECT ? false : undefined,
+      })),
+    [filteredSubjects],
+  );
+  const subSubjectListboxOptions = useMemo<FilterListboxOption<string>[]>(
+    () =>
+      (filteredSubSubjects.length === 0
+        ? [{ value: ALL_OPTION_VALUE, label: formatFilterOptionLabel('一致するサブ科目なし', 0), disabled: true }]
+        : filteredSubSubjects.map((subject) => ({
+            value: subject.value,
+            label: formatFilterOptionLabel(subject.label, subject.count),
+          }))),
+    [filteredSubSubjects],
+  );
+  const questionCountListboxOptions = useMemo<FilterListboxOption<number>[]>(
+    () =>
+      questionCountOptions.length === 0
+        ? [{ value: 0, label: '0問', disabled: true }]
+        : questionCountOptions.map((count) => ({ value: count, label: `${count}問` })),
+    [questionCountOptions],
+  );
+
   // main_subject, sub_subject選択時に該当問題数をカウントし最大値を更新
   useEffect(() => {
     const fetchCount = async () => {
+      if (selectedSubject === PLACEHOLDER_SUBJECT || selectedSubject === ALL_OPTION_VALUE) {
+        setQuestionCountOptions([]);
+        setQuestionCount(0);
+        return;
+      }
       let query = supabase
         .from('unified_cpl_questions')
         .select('*', { count: 'exact', head: true })
-        .eq('verification_status', 'verified');
-      if (selectedSubject && selectedSubject !== 'all') {
-        query = query.eq('main_subject', selectedSubject);
-        if (selectedSubSubject && selectedSubSubject !== 'all') {
-          query = query.eq('sub_subject', selectedSubSubject);
-        }
+        .eq('verification_status', 'verified')
+        .eq('main_subject', selectedSubject);
+      if (selectedSubSubjectRawValues.length > 0) {
+        query = query.in('sub_subject', selectedSubSubjectRawValues);
       }
       const { count, error } = await query;
       let maxCount = count || 0;
       if (error) maxCount = 0;
+      if (maxCount <= 0) {
+        setQuestionCountOptions([]);
+        setQuestionCount(0);
+        return;
+      }
+
       // 10未満なら最大値のみ、10以上なら10から最大値まで5問単位
       let options: number[] = [];
       if (maxCount < 10) {
-        options = maxCount > 0 ? [maxCount] : [10];
+        options = [maxCount];
       } else {
         for (let i = 10; i <= maxCount; i += 5) {
           options.push(i);
@@ -131,31 +361,41 @@ const TestPage: React.FC = () => {
         if (options[options.length - 1] !== maxCount) options.push(maxCount);
       }
       setQuestionCountOptions(options);
-      setQuestionCount(options[0]);
+      setQuestionCount((prev) => (options.includes(prev) ? prev : options[0]));
     };
     fetchCount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSubject, selectedSubSubject]);
+  }, [selectedSubject, selectedSubSubject, selectedSubSubjectRawValues]);
 
   // 問題取得（科目ベース）
-  const fetchQuestions = async (subject: string, subSubject: string, count: number) => {
+  const fetchQuestions = async (subject: string, subSubjectValues: string[], count: number) => {
     setLoading(true);
     setError(null);
     try {
+      if (count <= 0) {
+        setQuestions([]);
+        setError('条件に合う問題がありません。科目または問題数を変更してください。');
+        return;
+      }
       let query = supabase
         .from('unified_cpl_questions')
         .select('*')
         .eq('verification_status', 'verified');
-      if (subject && subject !== 'all') {
+      if (subject && subject !== ALL_OPTION_VALUE) {
         query = query.eq('main_subject', subject);
-        if (subSubject && subSubject !== 'all') {
-          query = query.eq('sub_subject', subSubject);
+        if (subSubjectValues.length > 0) {
+          query = query.in('sub_subject', subSubjectValues);
         }
       }
       const { data, error } = await query;
       if (error) throw error;
       if (!data) throw new Error('データが取得できませんでした');
       const shuffled = data.sort(() => Math.random() - 0.5).slice(0, count);
+      if (shuffled.length === 0) {
+        setQuestions([]);
+        setError('条件に合う問題がありません。フィルタ条件を変更してください。');
+        return;
+      }
       const parsed: QuizQuestion[] = shuffled.map((q: any) => ({
         id: q.id,
         deck_id: q.deck_id || '',
@@ -172,6 +412,8 @@ const TestPage: React.FC = () => {
         updated_at: q.updated_at,
         type: QuestionType.MULTIPLE_CHOICE,
         correctAnswer: typeof q.correct_answer === 'number' ? q.correct_answer - 1 : 0,
+        main_subject: q.main_subject || undefined,
+        sub_subject: q.sub_subject || undefined,
       }));
       setQuestions(parsed);
     } catch (err: any) {
@@ -187,6 +429,11 @@ const TestPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
+      if (count <= 0) {
+        setQuestions([]);
+        setError('条件に合う問題がありません。');
+        return;
+      }
       const { data, error } = await supabase
         .from('v_mapped_questions')
         .select('*')
@@ -194,6 +441,11 @@ const TestPage: React.FC = () => {
       if (error) throw error;
       const pool = Array.isArray(data) ? data : [];
       const shuffled = pool.sort(() => Math.random() - 0.5).slice(0, count);
+      if (shuffled.length === 0) {
+        setQuestions([]);
+        setError('この記事に紐づく問題がありません。');
+        return;
+      }
       const parsed: QuizQuestion[] = shuffled.map((q: any) => ({
         id: q.id,
         deck_id: q.deck_id || '',
@@ -210,6 +462,8 @@ const TestPage: React.FC = () => {
         updated_at: q.updated_at,
         type: QuestionType.MULTIPLE_CHOICE,
         correctAnswer: typeof q.correct_answer === 'number' ? q.correct_answer - 1 : 0,
+        main_subject: q.main_subject || undefined,
+        sub_subject: q.sub_subject || undefined,
       }));
       setQuestions(parsed);
     } catch (err: any) {
@@ -251,6 +505,11 @@ const TestPage: React.FC = () => {
         .select('*')
         .in('id', pickIds);
       if (qErr) throw qErr;
+      if (!qData || qData.length === 0) {
+        setQuestions([]);
+        setError('本日の復習対象はありません');
+        return;
+      }
       const parsed: QuizQuestion[] = (qData || []).map((q: any) => ({
         id: q.id,
         deck_id: q.deck_id || '',
@@ -267,6 +526,8 @@ const TestPage: React.FC = () => {
         updated_at: q.updated_at,
         type: QuestionType.MULTIPLE_CHOICE,
         correctAnswer: typeof q.correct_answer === 'number' ? q.correct_answer - 1 : 0,
+        main_subject: q.main_subject || undefined,
+        sub_subject: q.sub_subject || undefined,
       }));
       setQuestions(parsed);
     } catch (err: any) {
@@ -277,22 +538,45 @@ const TestPage: React.FC = () => {
     }
   };
 
-  // クエリ/選択モード変更時に問題取得
+  const fetchParams: QuizFetchParams = {
+    mode,
+    main_subject: subjectSelected ? selectedSubject : undefined,
+    sub_subject: selectedSubSubject === ALL_OPTION_VALUE ? undefined : selectedSubSubject,
+    question_count: questionCount,
+    content_id: contentId,
+  };
+
+  // フィルタ変更時にクイズ状態をリセット
   useEffect(() => {
-    if (mode === 'review') {
-      fetchReviewQuestions(questionCount);
-    } else if (contentId) {
-      fetchMappedQuestions(contentId, questionCount);
+    setRetryIncorrectMode(false);
+    setQuizFinished(false);
+    setUserAnswers([]);
+    setFlaggedQuestionIds([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSubject, selectedSubSubject, questionCount, mode, contentId]);
+
+  // クエリ/選択モード変更時に問題取得（retryIncorrectMode のときは再取得しない）
+  useEffect(() => {
+    if (retryIncorrectMode) return;
+    if (fetchParams.mode === 'review') {
+      fetchReviewQuestions(fetchParams.question_count);
+    } else if (fetchParams.content_id) {
+      fetchMappedQuestions(fetchParams.content_id, fetchParams.question_count);
+    } else if (subjectSelected) {
+      fetchQuestions(selectedSubject, selectedSubSubjectRawValues, fetchParams.question_count);
     } else {
-      fetchQuestions(selectedSubject, selectedSubSubject, questionCount);
+      setQuestions([]);
+      setError(null);
+      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSubject, selectedSubSubject, questionCount, contentId, mode]);
+  }, [selectedSubject, selectedSubSubject, selectedSubSubjectRawValues, questionCount, contentId, mode, retryIncorrectMode, subjectSelected]);
 
   // 回答送信
-  const handleSubmitQuiz = async (answers: UserQuizAnswer[]) => {
+  const handleSubmitQuiz = async (answers: UserQuizAnswer[], flaggedIds?: string[]) => {
     setQuizFinished(true);
     setUserAnswers(answers);
+    setFlaggedQuestionIds(flaggedIds ?? []);
     setSaving(true);
     setSaveError(null);
     try {
@@ -344,17 +628,19 @@ const TestPage: React.FC = () => {
         const userAnswer = typeof a.answer === 'number' ? a.answer : Number(a.answer);
         const correct = (q as any)?.correct_option_index ?? (q as any)?.correctAnswer ?? null;
         const text = (q as any)?.text ?? (q as any)?.question_text ?? null;
-        const subject = (q as any)?.subject_category ?? (q as any)?.main_subject ?? null;
+        const main = (q as any)?.main_subject ?? (q as any)?.subject_category ?? null;
+        const sub = (q as any)?.sub_subject;
+        const subject = main && sub ? `${main} - ${sub}` : main;
         return {
           user_id,
-          session_id: sessionId, // セッションIDを設定
+          session_id: sessionId,
           question_id: String(a.questionId),
           unified_question_id: isUuid(a.questionId) ? a.questionId : null,
           question_text: text,
           user_answer: Number.isFinite(userAnswer) ? userAnswer : null,
           correct_answer: Number.isFinite(correct) ? Number(correct) : null,
           is_correct: !!a.isCorrect,
-          answered_at: nowIso,
+          answered_at: a.answeredAt ?? nowIso,
           learning_content_id: contentId ?? null,
           subject_category: subject,
         } as Record<string, unknown>;
@@ -368,6 +654,44 @@ const TestPage: React.FC = () => {
         // eslint-disable-next-line no-console
         console.error('user_test_results insert error:', resultError);
         throw resultError;
+      }
+
+      // 学習時間・ヒートマップ用に learning_sessions へ記録（失敗しても致命的ではない）
+      try {
+        const totalResponseMs = answers.reduce(
+          (sum, a) => sum + (typeof a.responseTimeMs === 'number' ? a.responseTimeMs : 0),
+          0,
+        );
+        const sessionDurationSec = Math.max(60, Math.round(totalResponseMs / 1000));
+        const sessionType = mode === 'exam' ? 'testing' : mode === 'review' ? 'review' : 'practice';
+        const answeredAts = answers.map(a => a.answeredAt).filter((t): t is string => !!t);
+        const firstAnswered = answeredAts.length > 0 ? answeredAts.reduce((a, b) => (a < b ? a : b)) : null;
+        const lastAnswered = answeredAts.length > 0 ? answeredAts.reduce((a, b) => (a > b ? a : b)) : null;
+        const wallClockSec =
+          firstAnswered && lastAnswered
+            ? Math.round((new Date(lastAnswered).getTime() - new Date(firstAnswered).getTime()) / 1000)
+            : undefined;
+
+        const { error: lsError } = await supabase.from('learning_sessions').insert({
+          user_id: user_id,
+          session_type: sessionType,
+          content_id: contentId ?? 'cpl_quiz',
+          content_type: 'test',
+          session_duration: sessionDurationSec,
+          session_metadata: {
+            questions_attempted: answers.length,
+            correct_count: answers.filter(a => a.isCorrect).length,
+            mode,
+            wall_clock_seconds: wallClockSec,
+          },
+        } as Record<string, unknown>);
+        if (lsError) {
+          // eslint-disable-next-line no-console
+          console.warn('learning_sessions insert skipped:', lsError);
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('learning_sessions insert skipped:', e);
       }
 
       // ミッション達成をチェック
@@ -391,151 +715,225 @@ const TestPage: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto py-8" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
-      {/* Mission Dashboardへの戻るボタン */}
+      {/* 戻るボタン */}
       <div className="mb-6">
         <Link
-          to="/mission"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
+          to="/"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-brand-primary hover:text-brand-primary/80 border border-brand-primary/30 rounded-lg hover:border-brand-primary/50 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Mission Dashboardへ戻る
+          Home へ戻る
         </Link>
       </div>
 
       {/* モード切替 */}
       <div className="mb-6 flex justify-center gap-2">
         <button
-          className={`px-4 py-2 rounded-lg border border-whiskyPapa-yellow/20 text-sm font-semibold transition ${mode === 'practice' ? 'bg-whiskyPapa-yellow/20 text-whiskyPapa-yellow' : 'hover:bg-whiskyPapa-yellow/10'}`}
+          className={`px-4 py-2 rounded-lg border text-sm font-semibold transition ${mode === 'practice' ? 'bg-brand-primary/20 text-brand-primary border-brand-primary/40' : 'border-brand-primary/20 hover:bg-brand-primary/10 text-[var(--text-primary)]'}`}
           onClick={() => setMode('practice')}
           aria-pressed={mode === 'practice'}
         >Practice</button>
         <button
-          className={`px-4 py-2 rounded-lg border hud-border text-sm font-semibold transition ${mode === 'exam' ? 'bg-[color:var(--panel)]/60 text-[color:var(--hud-primary)]' : 'hover:bg-[color:var(--panel)]/40'}`}
+          className={`px-4 py-2 rounded-lg border text-sm font-semibold transition ${mode === 'exam' ? 'bg-brand-primary/20 text-brand-primary border-brand-primary/40' : 'border-brand-primary/20 hover:bg-brand-primary/10 text-[var(--text-primary)]'}`}
           onClick={() => setMode('exam')}
           aria-pressed={mode === 'exam'}
         >Exam</button>
         <button
-          className={`px-4 py-2 rounded-lg border border-whiskyPapa-yellow/20 text-sm font-semibold transition ${mode === 'review' ? 'bg-whiskyPapa-yellow/20 text-whiskyPapa-yellow' : 'hover:bg-whiskyPapa-yellow/10'}`}
+          className={`px-4 py-2 rounded-lg border text-sm font-semibold transition ${mode === 'review' ? 'bg-brand-primary/20 text-brand-primary border-brand-primary/40' : 'border-brand-primary/20 hover:bg-brand-primary/10 text-[var(--text-primary)]'}`}
           onClick={() => setMode('review')}
           aria-pressed={mode === 'review'}
         >Review</button>
       </div>
       {mode === 'exam' && (
-        <p className="text-center text-xs mb-2 opacity-80">Examモード：解説は結果画面まで表示されません。</p>
+        <p className="text-center text-xs mb-2 text-[var(--text-muted)]">Examモード：解説は結果画面まで表示されません。</p>
       )}
-      <div className="mb-10 flex flex-col md:flex-row md:justify-center md:items-end gap-6 md:gap-10">
-        {/* 科目 */}
-        <div className="flex flex-col items-start md:items-center md:flex-row md:space-x-2 w-full md:w-auto">
-          <label className="text-lg font-bold text-whiskyPapa-yellow mb-1 md:mb-0">科目選択</label>
-          <div className="relative w-full md:w-56">
-            <select
-              className="block w-full appearance-none p-3 pr-10 text-lg bg-whiskyPapa-black-dark border-2 border-whiskyPapa-yellow/20 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow text-white font-semibold hover:bg-whiskyPapa-yellow/10 cursor-pointer"
+      {mode === 'review' && (
+        <p className="text-center text-xs mb-2 text-[var(--text-muted)]">Reviewモード：本日の復習対象（弱点復習）を出題します。ログイン必須。</p>
+      )}
+      <section className="mb-10 rounded-2xl border border-brand-primary/15 bg-[var(--panel)]/85 p-5 shadow-[0_18px_40px_rgba(11,18,32,0.28)]">
+        <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-brand-primary/70">Quiz Filters</p>
+            <h2 className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">出題条件を絞り込む</h2>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
+              科目を選んでから、サブ科目と問題数を決めて出題します。学習効率のため科目選択は必須です。
+            </p>
+          </div>
+          <div className="rounded-xl border border-brand-primary/10 bg-[var(--bg)]/40 px-4 py-3 text-sm text-[var(--text-muted)]">
+            {mode === 'review'
+              ? 'Review では復習対象に合わせてフィルタを固定します。'
+              : !subjectSelected
+                ? '科目を選択してください'
+                : selectedSubSubject !== ALL_OPTION_VALUE
+                  ? `${selectedSubSubject} から ${questionCount} 問`
+                  : `${selectedSubject} から ${questionCount} 問`}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[1.05fr_1.35fr_1fr_0.8fr]">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-brand-primary">科目</label>
+            <FilterListbox
               value={selectedSubject}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSubject(e.target.value)}
-              disabled={subjectLoading || mode === 'review' || !!contentId}
-            >
-              {subjects.map(subj => (
-                <option key={subj} value={subj} className="text-base py-2 bg-whiskyPapa-black-dark text-white">
-                  {subj === 'all' ? 'すべての科目' : subj}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-              <svg className="w-6 h-6 text-whiskyPapa-yellow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-            </div>
+              options={subjectListboxOptions}
+              onChange={setSelectedSubject}
+              disabled={subjectLoading || filtersLocked}
+            />
+            <input
+              type="search"
+              value={subjectSearch}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSubjectSearch(e.target.value)}
+              placeholder="科目名で検索"
+              className={FILTER_SEARCH_INPUT_CLASS}
+              disabled={subjectLoading || filtersLocked}
+            />
+            <p className="text-xs text-[var(--text-muted)]">
+              Practice と Exam では科目別に絞り込めます。下の検索欄は候補表示の絞り込み専用です。
+            </p>
           </div>
-        </div>
-        {/* サブ科目 */}
-        <div className="flex flex-col items-start md:items-center md:flex-row md:space-x-2 w-full md:w-auto">
-          <label className="text-lg font-bold text-whiskyPapa-yellow mb-1 md:mb-0">サブ科目選択</label>
-          <div className="relative w-full md:w-56">
-            <select
-              className="block w-full appearance-none p-3 pr-10 text-lg bg-whiskyPapa-black-dark border-2 border-whiskyPapa-yellow/20 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow text-white font-semibold hover:bg-whiskyPapa-yellow/10 cursor-pointer"
+
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-brand-primary">サブ科目</label>
+            <FilterListbox
               value={selectedSubSubject}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSubSubject(e.target.value)}
-              disabled={selectedSubject === 'all' || subSubjectLoading || mode === 'review' || !!contentId}
-            >
-              {subSubjects.length === 0 ? (
-                <option value="all">サブ科目なし</option>
-              ) : (
-                subSubjects.map(subj => (
-                  <option key={subj} value={subj} className="text-base py-2 bg-[color:var(--panel)] text-[color:var(--text-primary)]">
-                    {subj === 'all' ? 'すべてのサブ科目' : subj}
-                  </option>
-                ))
-              )}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-              <svg className="w-6 h-6 hud-text" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-            </div>
+              options={subSubjectListboxOptions}
+              onChange={setSelectedSubSubject}
+              disabled={!subjectSelected || subSubjectLoading || filtersLocked}
+            />
+            <input
+              type="search"
+              value={subSubjectSearch}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSubSubjectSearch(e.target.value)}
+              placeholder="サブ科目名で検索"
+              className={FILTER_SEARCH_INPUT_CLASS}
+              disabled={!subjectSelected || subSubjectLoading || filtersLocked}
+            />
+            <p className="text-xs text-[var(--text-muted)]">
+              旧分類記号つきの表記は統合表示しています。件数は統合後の候補数です。下の検索欄は候補表示だけを絞り込みます。
+            </p>
           </div>
-        </div>
-        {/* 問題数 */}
-        <div className="flex flex-col items-start md:items-center md:flex-row md:space-x-2 w-full md:w-auto">
-          <label className="text-lg font-bold hud-text mb-1 md:mb-0">問題数選択</label>
-          <div className="relative w-full md:w-40">
-            <select
-              className="block w-full appearance-none p-3 pr-10 text-lg bg-whiskyPapa-black-dark border-2 border-whiskyPapa-yellow/20 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow text-white font-semibold hover:bg-whiskyPapa-yellow/10 cursor-pointer"
+
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-brand-primary">並び順</label>
+            <div className="grid grid-cols-2 gap-2 rounded-xl border border-brand-primary/15 bg-[var(--panel)]/55 p-2">
+              <button
+                type="button"
+                className={`${SORT_TOGGLE_BASE_CLASS} ${sortOrder === 'priority' ? 'border-brand-primary bg-brand-primary/15 text-brand-primary' : 'border-brand-primary/20 text-[var(--text-primary)] hover:bg-brand-primary/10'}`}
+                onClick={() => setSortOrder('priority')}
+                disabled={filtersLocked}
+                aria-pressed={sortOrder === 'priority'}
+              >
+                優先度順
+              </button>
+              <button
+                type="button"
+                className={`${SORT_TOGGLE_BASE_CLASS} ${sortOrder === 'syllabus' ? 'border-brand-primary bg-brand-primary/15 text-brand-primary' : 'border-brand-primary/20 text-[var(--text-primary)] hover:bg-brand-primary/10'}`}
+                onClick={() => setSortOrder('syllabus')}
+                disabled={filtersLocked}
+                aria-pressed={sortOrder === 'syllabus'}
+              >
+                シラバス順
+              </button>
+            </div>
+            <div className="rounded-xl border border-brand-primary/10 bg-[var(--panel)]/35 px-4 py-2 text-sm text-[var(--text-primary)]/90">
+              {sortOrder === 'priority'
+                ? '重要度平均と問題数を優先して、頻出トピックを先頭に表示します。'
+                : '国交省シラバスに近い学習順で、科目とサブ科目を並べます。'}
+            </div>
+            <p className="text-xs text-[var(--text-muted)]">
+              Review と記事連動出題ではフィルタを固定するため、この切替も無効化します。
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-brand-primary">問題数</label>
+            <FilterListbox
               value={questionCount}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setQuestionCount(Number(e.target.value))}
+              options={questionCountListboxOptions}
+              onChange={setQuestionCount}
               disabled={questionCountOptions.length === 0}
-            >
-              {questionCountOptions.map(opt => (
-                <option key={opt} value={opt} className="text-base py-2 bg-whiskyPapa-black-dark text-white">
-                  {opt}問
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-              <svg className="w-6 h-6 text-whiskyPapa-yellow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h8M12 8v8" /></svg>
-            </div>
+            />
+            <p className="text-xs text-[var(--text-muted)]">選択条件に応じて上限を自動調整します。</p>
           </div>
         </div>
-      </div>
+      </section>
       {loading ? (
         <div className="p-8 text-center text-lg">問題を取得中...</div>
       ) : error ? (
         <div className="p-8 text-center text-red-500">{error}</div>
       ) : quizFinished ? (
-        <div className="max-w-xl mx-auto p-8 bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-2xl shadow-2xl text-center flex flex-col items-center justify-center min-h-[320px]">
-          <h2 className="text-3xl font-bold mb-6 text-whiskyPapa-yellow drop-shadow">テスト結果</h2>
-          <p className="mb-4 text-lg text-white font-semibold tracking-wide">
-            正解数: <span className="text-2xl text-green-600 dark:text-green-400 font-bold">{userAnswers.filter(a => a.isCorrect).length}</span>
-            <span className="mx-2 text-gray-400">/</span>
-            <span className="text-2xl text-gray-600 dark:text-gray-300 font-bold">{userAnswers.length}</span>
+        <QuizResultsView
+          userAnswers={userAnswers}
+          questions={questions}
+          saveError={saveError}
+          saving={saving}
+          onRetryAll={() => {
+            setRetryIncorrectMode(false);
+            setQuizFinished(false);
+            setUserAnswers([]);
+            setFlaggedQuestionIds([]);
+            if (contentId) {
+              fetchMappedQuestions(contentId, questionCount);
+            } else if (mode === 'review') {
+              fetchReviewQuestions(questionCount);
+            } else {
+              fetchQuestions(selectedSubject, selectedSubSubjectRawValues, questionCount);
+            }
+          }}
+          onRetryIncorrect={() => {
+            const incorrectIds = new Set(userAnswers.filter(a => !a.isCorrect).map(a => a.questionId));
+            const incorrectQuestions = questions.filter(q => incorrectIds.has(String(q.id)));
+            if (incorrectQuestions.length === 0) return;
+            setQuestions(incorrectQuestions);
+            setQuizFinished(false);
+            setUserAnswers([]);
+            setRetryIncorrectMode(true);
+          }}
+          onRetryFlagged={() => {
+            const flaggedSet = new Set(flaggedQuestionIds);
+            const flaggedQuestions = questions.filter(q => flaggedSet.has(String(q.id)));
+            if (flaggedQuestions.length === 0) return;
+            setQuestions(flaggedQuestions);
+            setQuizFinished(false);
+            setUserAnswers([]);
+            setRetryIncorrectMode(true);
+          }}
+          onRetryFlaggedAndIncorrect={() => {
+            const incorrectIds = new Set(userAnswers.filter(a => !a.isCorrect).map(a => a.questionId));
+            const combinedIds = new Set([...incorrectIds, ...flaggedQuestionIds]);
+            const combinedQuestions = questions.filter(q => combinedIds.has(String(q.id)));
+            if (combinedQuestions.length === 0) return;
+            setQuestions(combinedQuestions);
+            setQuizFinished(false);
+            setUserAnswers([]);
+            setRetryIncorrectMode(true);
+          }}
+          incorrectCount={userAnswers.filter(a => !a.isCorrect).length}
+          flaggedCount={flaggedQuestionIds.length}
+          flaggedAndIncorrectCount={
+            new Set([
+              ...userAnswers.filter(a => !a.isCorrect).map(a => a.questionId),
+              ...flaggedQuestionIds,
+            ]).size
+          }
+          contentId={contentId}
+        />
+      ) : questions.length === 0 ? (
+        <div className="rounded-2xl border border-brand-primary/15 bg-[var(--panel)]/80 p-10 text-center shadow-lg">
+          <p className="text-lg font-semibold text-[var(--text-primary)]">
+            {!subjectSelected && (mode === 'practice' || mode === 'exam')
+              ? '科目を選択してください'
+              : '出題できる問題が見つかりませんでした。'}
           </p>
-          {saveError && (
-            <div className="text-red-500 text-base mb-4 font-semibold">
-              {saveError.includes('ログインが必須') ? (
-                <>
-                  {saveError}
-                  <div className="mt-2">
-                    <a href="/auth" className="inline-block px-6 py-2 rounded-lg border hud-border text-[color:var(--hud-primary)] hover:bg-[color:var(--panel)]/60 font-bold transition">ログイン/新規登録</a>
-                  </div>
-                </>
-              ) : (
-                saveError
-              )}
-            </div>
-          )}
-          {saving && <p className="text-whiskyPapa-yellow text-base mb-2 animate-pulse">結果を保存中...</p>}
-          <button
-            className="mt-6 px-8 py-3 rounded-xl border border-whiskyPapa-yellow/20 text-whiskyPapa-yellow shadow-lg transition-all duration-200 ease-in-out hover:bg-whiskyPapa-yellow/10 focus-visible:focus:ring-2 focus-visible:focus:ring-whiskyPapa-yellow"
-            onClick={() => {
-              setQuizFinished(false);
-              if (contentId) {
-                fetchMappedQuestions(contentId, questionCount);
-              } else {
-                fetchQuestions(selectedSubject, selectedSubSubject, questionCount);
-              }
-            }}
-          >
-            もう一度挑戦
-          </button>
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
+            {!subjectSelected && (mode === 'practice' || mode === 'exam')
+              ? '科目を選ぶと、サブ科目と問題数で出題条件を絞り込めます。'
+              : '科目・サブ科目・モードを変更して再度お試しください。'}
+          </p>
         </div>
       ) : (
         <QuizComponent
-          quizTitle={selectedSubject === 'all' ? 'CPL 4択テスト' : `${selectedSubject} 4択テスト`}
+          quizTitle={retryIncorrectMode ? `不正解復習 (${questions.length}問)` : `${selectedSubject} 4択テスト`}
           questions={questions}
           onSubmitQuiz={handleSubmitQuiz}
           onBackToContents={() => { }}

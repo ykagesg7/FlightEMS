@@ -10,7 +10,7 @@ interface AnnouncementCardProps {
 
 /**
  * お知らせカードコンポーネント
- * モダンなカードデザインでお知らせを表示
+ * Home のトーンに合わせた上質なカードデザイン
  */
 export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
   announcement,
@@ -89,9 +89,10 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
       className={`
         reveal opacity-0 translate-y-4 transition-all duration-700 ease-out
         relative overflow-hidden rounded-xl border-2
-        backdrop-blur-md shadow-lg hover:shadow-xl
+        backdrop-blur-md
         transform hover:scale-[1.03] cursor-pointer group
-        hud-surface border-green-500/50 shadow-green-900/10 hover:bg-white/10 hover:border-green-500/70
+        bg-[var(--panel)]/95 border-brand-primary/20 shadow-[0_18px_50px_rgba(3,8,20,0.35)]
+        hover:border-brand-primary/45 hover:bg-[var(--panel)] hover:shadow-[0_22px_60px_rgba(3,8,20,0.45)]
       `}
       style={{
         transitionDelay: `${animationDelay}ms`,
@@ -100,17 +101,19 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
       aria-label={`お知らせ: ${announcement.title}`}
       data-announcement-id={announcement.id}
     >
-      {/* グラデーションボーダー効果（上部アクセント） */}
+      {/* 上部アクセント */}
       <div
-        className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500/0 via-green-500/80 to-green-500/0"
+        className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-primary/80 to-transparent"
       />
+
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(125,170,247,0.14),transparent_34%)] opacity-80 pointer-events-none" />
 
       {/* カードコンテンツ */}
       <div className="p-6 relative z-10">
         {/* 日付バッジ */}
         <div className="flex items-center justify-between mb-3">
           <time
-            className="text-xs font-medium px-3 py-1 rounded-full bg-green-100/50 text-green-700 border border-green-300/50"
+            className="rounded-full border border-brand-primary/20 bg-brand-primary/10 px-3 py-1 text-xs font-medium text-brand-primary"
             dateTime={announcement.date}
           >
             {formatDate(announcement.date)}
@@ -119,25 +122,21 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
 
         {/* タイトル */}
         <h3
-          className="text-lg font-bold mb-2 line-clamp-2 transition-colors duration-300 hud-text hover:text-[color:var(--hud-primary)]"
+          className="mb-3 line-clamp-2 text-lg font-bold text-[var(--text-primary)] transition-colors duration-300 group-hover:text-brand-primary"
         >
           {announcement.title}
         </h3>
 
         {/* ホバー時のアクションヒント */}
-        <div className="mt-4 flex items-center text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="mt-5 flex items-center text-xs font-medium text-[color:var(--text-muted)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <span className="mr-2 h-px w-6 bg-brand-primary/40" />
           <span
-            className="text-green-600 transform group-hover:translate-x-1 transition-transform duration-300"
+            className="text-brand-primary transform transition-transform duration-300 group-hover:translate-x-1"
           >
-            →
+            View update →
           </span>
         </div>
       </div>
-
-      {/* グロー効果（ホバー時） */}
-      <div
-        className="absolute inset-0 rounded-xl opacity-0 hover:opacity-20 transition-opacity duration-300 pointer-events-none bg-green-500"
-      />
     </div>
   );
 };

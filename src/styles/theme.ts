@@ -1,27 +1,27 @@
 /**
- * Whisky Papa Flight Academy Theme Constants
+ * Flight Academy Cockpit Academy Theme Constants
  * TypeScript用のテーマ定数定義
  * Tailwind設定とCSS変数と同期
  */
 
 /**
- * Whisky Papa Brand Colors (Marketing/Show)
+ * Flight Academy Brand Colors (USAF-inspired)
  */
 export const BrandColors = {
-  primary: '#FFD700',      // Whisky Papa Yellow
-  primaryDark: '#FFC700',
-  primaryLight: '#FFE44D',
-  secondary: '#121212',    // Whisky Papa Black
-  secondaryLight: '#1a1a1a',
-  secondaryDark: '#0a0a0a',
+  primary: '#7DAAF7',      // Air Force Blue
+  primaryDark: '#5C86CC',
+  primaryLight: '#9BC4FF',
+  secondary: '#0B1220',   // Dark Navy
+  secondaryLight: '#132033',
+  secondaryDark: '#060B14',
 } as const;
 
 /**
  * HUD/Cockpit Colors (App/Focus)
  */
 export const HUDColors = {
-  green: '#39FF14',        // Day mode HUD green
-  red: '#ff3b3b',          // Dark/Night mode HUD red
+  green: '#7CFFB2',       // HUD success accent
+  red: '#ff3b3b',         // Dark/Night mode HUD red
   redLight: '#ff6666',
   warning: '#ffaa00',
   danger: '#ff2244',
@@ -55,7 +55,7 @@ export const Typography = {
 } as const;
 
 /**
- * Legacy Whisky Papa Theme (Backward compatibility)
+ * Legacy Theme (Backward compatibility - maps to Cockpit Academy)
  * @deprecated Use BrandColors instead
  */
 export const WhiskyPapaTheme = {

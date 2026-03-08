@@ -1,24 +1,23 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { Plane } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { UserMenu } from '../components/marketing/UserMenu';
 import { Typography } from '../components/ui';
 import { HUDTimeDisplay } from '../components/ui/HUDDashboard';
-import { useAuthStore } from '../stores/authStore';
 
 /**
  * MarketingLayout
- * Whisky Papaブランド用の広報レイアウト
- * 黒×黄色基調、Framer Motionを使用したアニメーション
+ * Flight Academy Cockpit Academy テーマ
+ * ネイビー×エアフォースブルー基調
  */
 export const MarketingLayout: React.FC = () => {
-  const { user } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-whiskyPapa-black text-white">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)]">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-whiskyPapa-black/90 backdrop-blur-md border-b border-whiskyPapa-yellow/20">
+      <header className="sticky top-0 z-50 bg-[var(--bg)]/90 backdrop-blur-md border-b border-brand-primary/20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {/* Logo and HUD Time Display */}
@@ -29,17 +28,15 @@ export const MarketingLayout: React.FC = () => {
                 transition={{ duration: 0.5 }}
               >
                 <Link to="/" className="flex items-center gap-3">
-                  <img
-                    src="/images/ContentImages/Home/yellow-robin-logo.png"
-                    alt="Yellow Robin"
-                    className="h-10 w-10 object-contain"
-                  />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-primary/20 border border-brand-primary/40">
+                    <Plane className="h-5 w-5 text-brand-primary" strokeWidth={2.5} aria-hidden />
+                  </div>
                   <div className="flex flex-col">
                     <Typography variant="h4" className="!text-lg !font-bold leading-tight">
-                      Whisky Papa
+                      Flight Academy
                     </Typography>
-                    <Typography variant="caption" className="!text-xs !text-whiskyPapa-yellow/80 !font-medium tracking-wider uppercase">
-                      Fan Site
+                    <Typography variant="caption" className="!text-xs !text-brand-primary/80 !font-medium tracking-wider uppercase">
+                      Learn Smart.
                     </Typography>
                   </div>
                 </Link>
@@ -55,41 +52,32 @@ export const MarketingLayout: React.FC = () => {
               </motion.div>
             </div>
 
-            {/* Navigation */}
+            {/* Navigation - Flight Academy: HOME, BLOG, PLANNING, QUIZ */}
             <nav className="hidden md:flex items-center gap-6">
               <Link
                 to="/"
-                className="px-4 py-2 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                className="px-4 py-2 rounded-lg hover:bg-brand-primary/10 text-[var(--text-primary)] transition-colors"
               >
                 HOME
               </Link>
               <Link
-                to="/about"
-                className="px-4 py-2 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                to="/articles"
+                className="px-4 py-2 rounded-lg hover:bg-brand-primary/10 text-[var(--text-primary)] transition-colors"
               >
-                ABOUT
+                BLOG
               </Link>
               <Link
-                to="/gallery"
-                className="px-4 py-2 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                to="/planning"
+                className="px-4 py-2 rounded-lg hover:bg-brand-primary/10 text-[var(--text-primary)] transition-colors"
               >
-                GALLERY
+                PLANNING
               </Link>
               <Link
-                to="/schedule"
-                className="px-4 py-2 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                to="/test"
+                className="px-4 py-2 rounded-lg hover:bg-brand-primary/10 text-[var(--text-primary)] transition-colors"
               >
-                SCHEDULE
+                QUIZ
               </Link>
-              {/* MISSION Link - Only shown when logged in */}
-              {user && (
-                <Link
-                  to="/mission"
-                  className="px-4 py-2 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
-                >
-                  MISSION
-                </Link>
-              )}
             </nav>
 
             {/* User Menu / Login Button */}
@@ -102,7 +90,7 @@ export const MarketingLayout: React.FC = () => {
               <UserMenu />
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10 rounded-lg transition-colors"
+                className="p-2 text-brand-primary hover:bg-brand-primary/10 rounded-lg transition-colors"
                 aria-label="メニューを開く"
                 aria-expanded={isMobileMenuOpen}
               >
@@ -128,7 +116,7 @@ export const MarketingLayout: React.FC = () => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden overflow-hidden bg-whiskyPapa-black/95 backdrop-blur-md border-b border-whiskyPapa-yellow/20"
+              className="md:hidden overflow-hidden bg-[var(--bg)]/95 backdrop-blur-md border-b border-brand-primary/20"
             >
               <div className="container mx-auto px-4 py-4">
                 {/* HUD Time Display - Always shown */}
@@ -149,7 +137,7 @@ export const MarketingLayout: React.FC = () => {
                     <Link
                       to="/"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                      className="block px-4 py-3 rounded-lg hover:bg-brand-primary/10 text-[var(--text-primary)] transition-colors"
                     >
                       HOME
                     </Link>
@@ -160,11 +148,11 @@ export const MarketingLayout: React.FC = () => {
                     transition={{ delay: 0.15 }}
                   >
                     <Link
-                      to="/about"
+                      to="/articles"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                      className="block px-4 py-3 rounded-lg hover:bg-brand-primary/10 text-[var(--text-primary)] transition-colors"
                     >
-                      ABOUT
+                      BLOG
                     </Link>
                   </motion.div>
                   <motion.div
@@ -173,11 +161,11 @@ export const MarketingLayout: React.FC = () => {
                     transition={{ delay: 0.2 }}
                   >
                     <Link
-                      to="/gallery"
+                      to="/planning"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                      className="block px-4 py-3 rounded-lg hover:bg-brand-primary/10 text-[var(--text-primary)] transition-colors"
                     >
-                      GALLERY
+                      PLANNING
                     </Link>
                   </motion.div>
                   <motion.div
@@ -186,29 +174,13 @@ export const MarketingLayout: React.FC = () => {
                     transition={{ delay: 0.25 }}
                   >
                     <Link
-                      to="/schedule"
+                      to="/test"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
+                      className="block px-4 py-3 rounded-lg hover:bg-brand-primary/10 text-[var(--text-primary)] transition-colors"
                     >
-                      SCHEDULE
+                      QUIZ
                     </Link>
                   </motion.div>
-                  {/* MISSION Link - Only shown when logged in */}
-                  {user && (
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.35 }}
-                    >
-                      <Link
-                        to="/mission"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="block px-4 py-3 rounded-lg hover:bg-whiskyPapa-yellow/10 text-white transition-colors"
-                      >
-                        MISSION
-                      </Link>
-                    </motion.div>
-                  )}
                 </nav>
               </div>
             </motion.div>
@@ -222,70 +194,63 @@ export const MarketingLayout: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-whiskyPapa-black-dark border-t border-whiskyPapa-yellow/20 py-8">
+      <footer className="bg-[var(--panel)] border-t border-brand-primary/20 py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <Typography variant="h3" color="brand" className="mb-4">
-                Whisky Papa
+                Flight Academy
               </Typography>
               <Typography variant="body-sm" color="muted">
-                エアロバティックチーム「ウイスキーパパ」ファンサイト
+                Learn Smart.
+              </Typography>
+              <Typography variant="body-sm" color="muted" className="mt-2">
+                学習・試験対策・フライトプランニングを、ひとつの流れで。
               </Typography>
             </div>
             <div>
               <Typography variant="h4" className="mb-4">
-                Quick Links
+                Platform
               </Typography>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/about" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
-                    About
+                  <Link to="/auth" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
+                    Login / Sign up
                   </Link>
                 </li>
                 <li>
-                  <Link to="/gallery" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
-                    Gallery
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/schedule" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
-                    Schedule
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/links" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
-                    Links
+                  <Link to="/profile" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
+                    Profile
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
               <Typography variant="h4" className="mb-4">
-                Tools
+                Core Modules
               </Typography>
               <ul className="space-y-2">
                 <li>
                   <Link to="/planning" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
-                    Flight Planner
+                    Flight Planning
                   </Link>
                 </li>
                 <li>
                   <Link to="/articles" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
-                    Academy
+                    Blog
                   </Link>
                 </li>
                 <li>
                   <Link to="/test" className="text-sm text-gray-400 hover:text-brand-primary transition-colors">
-                    CPL Quiz
+                    Quiz
                   </Link>
                 </li>
               </ul>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-whiskyPapa-yellow/10 text-center">
+          <div className="mt-8 pt-8 border-t border-brand-primary/10 text-center">
             <Typography variant="caption" color="muted">
-              &copy; {new Date().getFullYear()} Whisky Papa. All rights reserved.
+              &copy; {new Date().getFullYear()} Flight Academy. All rights reserved.
             </Typography>
           </div>
         </div>

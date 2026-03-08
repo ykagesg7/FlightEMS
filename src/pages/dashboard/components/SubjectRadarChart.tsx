@@ -54,7 +54,7 @@ export const SubjectRadarChart: React.FC = () => {
   }, [user]);
 
   const borderColor = 'border-green-500/50';
-  const chartColor = 'rgba(57, 255, 20, 0.6)'; // HUD green (#39FF14)
+  const chartColor = 'rgba(124, 255, 178, 0.6)'; // HUD accent (#7CFFB2)
   const chartBorderColor = 'rgb(57, 255, 20)';
 
   if (loading) {

@@ -9,41 +9,49 @@ import type { DashboardMetrics } from '../types/dashboard';
 /**
  * ダッシュボード用の統合メトリクスを取得
  * 既存テーブルから必要な情報を集計して返す
+ * 一部指標の取得に失敗しても、他はフォールバックで返し全体を落とさない
  */
 export async function fetchDashboardMetrics(userId: string): Promise<DashboardMetrics> {
-  const _supabase = createBrowserSupabaseClient();
+  const defaults: DashboardMetrics = {
+    overallProgressPct: 0,
+    testAccuracyPct: 0,
+    weeklyStudyMinutes: 0,
+    streakDays: 0,
+    weakTopics: [],
+  };
 
-  try {
-    // 1. 学習進捗の集計
-    const learningProgress = await getLearningProgress(userId);
+  const safeGet = async <T>(
+    fn: () => Promise<T>,
+    fallback: T,
+    label: string,
+  ): Promise<T> => {
+    try {
+      return await fn();
+    } catch (e) {
+      console.warn(`${label} 取得エラー（フォールバック使用）:`, e);
+      return fallback;
+    }
+  };
 
-    // 2. テスト結果の集計
-    const testResults = await getTestResults(userId);
+  const [learningProgress, testResults, studyTime, streakDays, nextLesson, weakTopics] =
+    await Promise.all([
+      safeGet(() => getLearningProgress(userId), { progressPct: 0 }, '学習進捗'),
+      safeGet(() => getTestResults(userId), { accuracyPct: 0 }, 'テスト結果'),
+      safeGet(() => getStudyTime(userId), { weeklyMinutes: 0 }, '学習時間'),
+      safeGet(() => getStreakDays(userId), 0, '継続日数'),
+      safeGet(() => getNextRecommendedLesson(userId), undefined, '推奨レッスン'),
+      safeGet(() => getWeakTopics(userId), [], '弱点トピック'),
+    ]);
 
-    // 3. 学習時間の集計
-    const studyTime = await getStudyTime(userId);
-
-    // 4. 連続学習日数の計算
-    const streakDays = await getStreakDays(userId);
-
-    // 5. 次の推奨レッスン取得
-    const nextLesson = await getNextRecommendedLesson(userId);
-
-    // 6. 弱点トピック取得
-    const weakTopics = await getWeakTopics(userId);
-
-    return {
-      overallProgressPct: learningProgress.progressPct,
-      testAccuracyPct: testResults.accuracyPct,
-      weeklyStudyMinutes: studyTime.weeklyMinutes,
-      streakDays,
-      nextLesson,
-      weakTopics,
-    };
-  } catch (error) {
-    console.error('ダッシュボードメトリクス取得エラー:', error);
-    throw error;
-  }
+  return {
+    ...defaults,
+    overallProgressPct: learningProgress.progressPct ?? 0,
+    testAccuracyPct: testResults.accuracyPct ?? 0,
+    weeklyStudyMinutes: studyTime.weeklyMinutes ?? 0,
+    streakDays: streakDays ?? 0,
+    nextLesson,
+    weakTopics: weakTopics ?? [],
+  };
 }
 
 /**
@@ -171,9 +179,9 @@ async function getStreakDays(userId: string): Promise<number> {
     .from('user_learning_profiles')
     .select('current_streak_days')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
-  return profile?.current_streak_days || 0;
+  return profile?.current_streak_days ?? 0;
 }
 
 /**
@@ -221,7 +229,7 @@ async function getWeakTopics(userId: string) {
 
   const { data: results, error } = await supabase
     .from('user_test_results')
-    .select('subject_category, sub_category, is_correct')
+    .select('subject_category, is_correct')
     .eq('user_id', userId);
 
   if (error || !results) {

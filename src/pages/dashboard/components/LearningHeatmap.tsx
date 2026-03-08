@@ -1,13 +1,35 @@
 /**
  * 学習履歴カレンダー（ヒートマップ）コンポーネント
- * GitHubスタイルのヒートマップ表示
+ * GitHubスタイル: 縦軸=曜日、横軸=週のカレンダー型表示
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, Typography } from '../../../components/ui';
 import { useAuthStore } from '../../../stores/authStore';
 import type { DailyStudyStat } from '../../../utils/heatmapData';
 import { buildDailyStudyStats } from '../../../utils/heatmapData';
+
+const WEEKDAY_LABELS = ['日', '月', '火', '水', '木', '金', '土'];
+const CELL_SIZE = 14;
+const WEEKS = 13;
+const LABEL_WIDTH = 28;
+const MONTH_LABEL_HEIGHT = 18;
+
+function formatDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function parseDate(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function formatDateLabel(date: Date): string {
+  return `${date.getMonth() + 1}/${date.getDate()}`;
+}
 
 export const LearningHeatmap: React.FC = () => {
   const { user } = useAuthStore();
@@ -40,42 +62,57 @@ export const LearningHeatmap: React.FC = () => {
   }, [user]);
 
   const borderColor = 'border-green-500/50';
+  const todayStr = formatDate(new Date());
 
-  // 強度に応じた色を取得（HUDグリーン固定）
-  const getIntensityColor = (intensity: DailyStudyStat['intensity']) => {
+  // 縦=曜日(日〜土)、横=週(左=古い、右=新しい)のグリッドを構築
+  const { grid, monthLabels } = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const firstDate = new Date(today);
+    firstDate.setDate(firstDate.getDate() - 90);
+    const firstSunday = new Date(firstDate);
+    firstSunday.setDate(firstSunday.getDate() - firstSunday.getDay());
+
+    const gridData: (DailyStudyStat & { isFuture?: boolean })[][] = [];
+    const months: { weekIndex: number; label: string }[] = [];
+    let lastMonth = -1;
+
+    for (let weekIndex = 0; weekIndex < WEEKS; weekIndex++) {
+      const weekRow: (DailyStudyStat & { isFuture?: boolean })[] = [];
+      for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+        const date = new Date(firstSunday);
+        date.setDate(firstSunday.getDate() + weekIndex * 7 + dayOfWeek);
+        const dateStr = formatDate(date);
+        const isFuture = dateStr > todayStr;
+        const stat = stats.find(s => s.date === dateStr);
+        weekRow.push(
+          stat
+            ? { ...stat, isFuture }
+            : { date: dateStr, minutes: 0, intensity: 0, sessionCount: 0, isFuture },
+        );
+
+        const m = date.getMonth();
+        if (m !== lastMonth && dateStr <= todayStr) {
+          lastMonth = m;
+          months.push({ weekIndex, label: `${m + 1}月` });
+        }
+      }
+      gridData.push(weekRow);
+    }
+
+    return { grid: gridData, monthLabels: months };
+  }, [stats, todayStr]);
+
+  const getIntensityColor = (intensity: DailyStudyStat['intensity'], isFuture?: boolean) => {
+    if (isFuture) return 'rgba(100, 100, 100, 0.15)';
     const colors = [
-      'rgba(57, 255, 20, 0.1)',   // 0: なし (#39FF14)
-      'rgba(57, 255, 20, 0.3)',   // 1: 軽い
-      'rgba(57, 255, 20, 0.6)',   // 2: 中
-      'rgba(57, 255, 20, 0.9)',   // 3: 高
+      'rgba(57, 255, 20, 0.1)',
+      'rgba(57, 255, 20, 0.3)',
+      'rgba(57, 255, 20, 0.6)',
+      'rgba(57, 255, 20, 0.9)',
     ];
     return colors[intensity];
   };
-
-  // 週ごとにデータをグループ化（過去13週分）
-  const weeks: DailyStudyStat[][] = [];
-  const today = new Date();
-
-  // 過去90日間（約13週）のデータを週ごとに分割
-  for (let weekIndex = 0; weekIndex < 13; weekIndex++) {
-    const weekStart = new Date(today);
-    weekStart.setDate(weekStart.getDate() - (weekIndex * 7 + 6));
-    weekStart.setHours(0, 0, 0, 0);
-
-    const weekEnd = new Date(today);
-    weekEnd.setDate(weekEnd.getDate() - (weekIndex * 7));
-    weekEnd.setHours(23, 59, 59, 999);
-
-    const weekData: DailyStudyStat[] = [];
-    for (let dayOffset = 6; dayOffset >= 0; dayOffset--) {
-      const day = new Date(weekStart);
-      day.setDate(day.getDate() + dayOffset);
-      const dateStr = formatDate(day);
-      const stat = stats.find(s => s.date === dateStr);
-      weekData.push(stat || { date: dateStr, minutes: 0, intensity: 0 });
-    }
-    weeks.push(weekData);
-  }
 
   if (loading) {
     return (
@@ -91,20 +128,25 @@ export const LearningHeatmap: React.FC = () => {
   }
 
   if (error || stats.length === 0) {
-    return null; // エラーまたはデータがない場合は非表示
+    return null;
   }
 
   const hoveredStat = hoveredDate ? stats.find(s => s.date === hoveredDate) : null;
+  const svgWidth = LABEL_WIDTH + WEEKS * CELL_SIZE + 8;
+  const svgHeight = MONTH_LABEL_HEIGHT + 7 * CELL_SIZE + 8;
 
   return (
     <Card variant="hud" padding="md" className={borderColor}>
       <CardContent>
-        <Typography variant="h4" color="hud" className="mb-4">
+        <Typography variant="h4" color="hud" className="mb-2">
           過去90日の学習履歴
+        </Typography>
+        <Typography variant="caption" color="muted" className="mb-4 block">
+          縦軸: 曜日（日〜土）、横軸: 週（左が古い、右が新しい）
         </Typography>
 
         {/* 凡例 */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <Typography variant="caption" color="muted">
             学習時間が少ない
           </Typography>
@@ -121,29 +163,62 @@ export const LearningHeatmap: React.FC = () => {
 
         {/* ヒートマップ */}
         <div className="overflow-x-auto">
-          <svg width="100%" height="120" viewBox="0 0 800 120" className="min-w-[600px]">
-            {weeks.map((week, weekIndex) =>
-              week.map((day, dayIndex) => {
-                const x = weekIndex * 14 + 20;
-                const y = dayIndex * 14 + 20;
+          <svg
+            width="100%"
+            height={svgHeight}
+            viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+            className="min-w-[280px]"
+          >
+            {/* 月ラベル */}
+            {monthLabels.map(({ weekIndex, label }) => (
+              <text
+                key={`month-${weekIndex}`}
+                x={LABEL_WIDTH + weekIndex * CELL_SIZE}
+                y={12}
+                className="fill-[color:var(--text-muted)]"
+                style={{ fontSize: 10 }}
+              >
+                {label}
+              </text>
+            ))}
+
+            {/* 曜日ラベル */}
+            {WEEKDAY_LABELS.map((label, dayOfWeek) => (
+              <text
+                key={`day-${dayOfWeek}`}
+                x={LABEL_WIDTH - 4}
+                y={MONTH_LABEL_HEIGHT + dayOfWeek * CELL_SIZE + CELL_SIZE - 3}
+                textAnchor="end"
+                className="fill-[color:var(--text-muted)]"
+                style={{ fontSize: 10 }}
+              >
+                {label}
+              </text>
+            ))}
+
+            {/* セル */}
+            {grid.map((week, weekIndex) =>
+              week.map((day, dayOfWeek) => {
+                const x = LABEL_WIDTH + weekIndex * CELL_SIZE;
+                const y = MONTH_LABEL_HEIGHT + dayOfWeek * CELL_SIZE;
 
                 return (
                   <rect
-                    key={`${day.date}-${weekIndex}-${dayIndex}`}
+                    key={`${day.date}-${weekIndex}-${dayOfWeek}`}
                     x={x}
                     y={y}
-                    width="12"
-                    height="12"
+                    width={CELL_SIZE - 1}
+                    height={CELL_SIZE - 1}
                     rx="2"
-                    fill={getIntensityColor(day.intensity)}
+                    fill={getIntensityColor(day.intensity, day.isFuture)}
                     stroke={hoveredDate === day.date ? '#39FF14' : 'transparent'}
                     strokeWidth="2"
-                    onMouseEnter={() => setHoveredDate(day.date)}
+                    onMouseEnter={() => !day.isFuture && setHoveredDate(day.date)}
                     onMouseLeave={() => setHoveredDate(null)}
                     className="cursor-pointer transition-all"
                   />
                 );
-              })
+              }),
             )}
           </svg>
         </div>
@@ -156,6 +231,9 @@ export const LearningHeatmap: React.FC = () => {
             </Typography>
             <Typography variant="caption" color="muted">
               {hoveredStat.minutes}分 学習
+              {typeof hoveredStat.sessionCount === 'number' && hoveredStat.sessionCount > 0 && (
+                <>（{hoveredStat.sessionCount}セッション）</>
+              )}
             </Typography>
           </div>
         )}
@@ -163,29 +241,3 @@ export const LearningHeatmap: React.FC = () => {
     </Card>
   );
 };
-
-/**
- * 日付をYYYY-MM-DD形式からDateオブジェクトに変換
- */
-function parseDate(dateStr: string): Date {
-  const [year, month, day] = dateStr.split('-').map(Number);
-  return new Date(year, month - 1, day);
-}
-
-/**
- * 日付を表示用ラベルに変換（例: "1月1日"）
- */
-function formatDateLabel(date: Date): string {
-  return `${date.getMonth() + 1}/${date.getDate()}`;
-}
-
-/**
- * 日付をYYYY-MM-DD形式に変換
- */
-function formatDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-

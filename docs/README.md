@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年3月1日（記事・進捗・ランク関連エラー修正）
-**バージョン**: Documentation Index v4.2
+**最終更新**: 2026年3月（/test・Dashboard・学習時間・docs整備）
+**バージョン**: Documentation Index v4.3
 
 ---
 
@@ -157,13 +157,8 @@ npm run lint         # Lintチェック
 ## 🎨 デザインシステム
 
 ### テーマ戦略
-- **MarketingLayout**: 現在はWhisky Papaブランド（黒×黄色基調）— Phase Cでブランド移行予定
-- **AppLayout**: HUD固定スタイル（Dayモード、HUDグリーン `#39FF14`）
-
-### 現行ブランドカラー（Phase Cで変更予定）
-- **Primary Yellow**: `#FFD700`
-- **Primary Black**: `#121212`
-- **HUD Green**: `#39FF14`（Dayモード）
+- **Cockpit Academy**: ダークネイビー + エアフォースブルー基調（`#0B1220`, `#7DAAF7`）
+- **AppLayout**: HUD補助アクセント（`#8FD3FF`）、計器風の緑（`#7CFFB2`）
 
 ### 共通UIコンポーネント
 - `Button`, `Card`, `Typography`, `Tabs` など（`src/components/ui/`）
@@ -176,8 +171,10 @@ npm run lint         # Lintチェック
 - **profiles**: ユーザープロファイル（ランク、XP含む）
 - **learning_contents**: 学習記事メタデータ
 - **learning_progress**: 学習進捗（セクションベース）
-- **unified_cpl_questions**: CPL試験問題
-- **user_test_results**: テスト結果
+- **learning_sessions**: 学習セッション（クイズ・記事の学習時間、ヒートマップ・今週の学習時間の元データ）
+- **user_learning_profiles**: 学習プロファイル（継続日数、ブートストラップ済み）
+- **unified_cpl_questions**: CPL試験問題（verified ベースで出題）
+- **user_test_results**: テスト結果（科目・サブ科目・正誤）
 - **missions**, **user_missions**: ゲーミフィケーション
 - **gallery_events**, **fan_photos**: ギャラリー機能
 - **streak_records**: 連続学習日数追跡（2025年1月実装）
@@ -204,9 +201,11 @@ npm run lint         # Lintチェック
 
 ### 📖 詳細ドキュメント（必要に応じて参照）
 
+- **[05_設計仕様書.md](05_設計仕様書.md)** - 現行仕様の正本（DB、API、/test、Dashboard）
+- **[07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md)** - `src/` 構造の正本（新規コンポーネント追加時）
+- **[12_Quiz_Analytics_Phase_Design.md](12_Quiz_Analytics_Phase_Design.md)** - クイズ分析・後続フェーズ
 - **[03_計画改善ロードマップ.md](03_計画改善ロードマップ.md)** - Phase A-Eの実行計画とKPI
 - **[04_運用保守ガイド.md](04_運用保守ガイド.md)** - 運用時の手順、トラブルシューティング
-- **[05_設計仕様書.md](05_設計仕様書.md)** - データベース設計、API仕様、UI/UX仕様
 - **[06_記事作成ロードマップ.md](06_記事作成ロードマップ.md)** - MDX記事の作成計画とガイドライン
 - **[07_PPL_Master_Syllabus.md](07_PPL_Master_Syllabus.md)** - PPL学科試験対策記事のMaster Syllabus
 - **[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)** - PPL/CPL統合Syllabus管理ガイド
@@ -239,6 +238,15 @@ npm run lint         # Lintチェック
 ---
 
 ## 🔄 最近の主要変更
+
+### /test・Dashboard・学習時間・プロフィール整備（2026年3月）
+- ✅ **/test 科目選択必須**: 全科目一括出題を廃止し、科目選択後にサブ科目・問題数を絞る導線へ変更
+- ✅ **クイズフィルタ**: verified ベース出題、サブ科目正規化、優先度順/シラバス順切替、カスタム Listbox でダークテーマ統一
+- ✅ **結果画面**: 不正解だけ復習、フラグだけ復習、フラグ+不正解、弱点サブ科目表示
+- ✅ **学習時間**: `answeredAt` / `responseTimeMs` を記録し、`learning_sessions` に実測ベースで保存
+- ✅ **ヒートマップ**: 縦軸=曜日、横軸=週のカレンダー型、ツールチップに学習分・セッション数
+- ✅ **user_learning_profiles ブートストラップ**: 初回クイズ/記事学習時に自動で行を作成（migration: `20260309_bootstrap_user_learning_profiles.sql`）
+- ✅ **Dashboard エラー解消**: `getStreakDays` を `.maybeSingle()` に、`getWeakTopics` から `sub_category` 参照を削除
 
 ### Supabase learning_contents 登録（2026年3月）
 - PPL-1-1-2, PPL-1-1-7, PPL-1-1-10 を `learning_contents` に登録
@@ -377,6 +385,6 @@ npm run lint         # Lintチェック
 
 ---
 
-**最終更新**: 2026年3月1日（記事・進捗・ランク関連エラー修正）
-**バージョン**: Documentation Index v4.2
+**最終更新**: 2026年3月（/test・Dashboard・学習時間・docs整備）
+**バージョン**: Documentation Index v4.3
 **管理者**: Flight Academy 開発チーム

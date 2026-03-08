@@ -12,7 +12,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 /**
  * Unified Button Component
- * Supports both Whisky Papa Brand and HUD/Cockpit styles
+ * Flight Academy Cockpit Academy theme
  */
 export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
@@ -22,17 +22,13 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg)] disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variantStyles: Record<ButtonVariant, string> = {
-    // Whisky Papa Brand (Marketing)
-    brand: 'bg-brand-primary text-brand-secondary hover:bg-brand-primary-dark focus:ring-brand-primary shadow-lg hover:shadow-xl',
-    // Primary Action (Whisky Papa Yellow)
-    primary: 'bg-whiskyPapa-yellow text-black hover:bg-whiskyPapa-yellow/90 focus:ring-whiskyPapa-yellow shadow-lg',
-    // Secondary Action (Whisky Papa Outline)
-    secondary: 'bg-transparent border-2 border-whiskyPapa-yellow text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10 focus:ring-whiskyPapa-yellow',
-    // Ghost (Minimal)
-    ghost: 'bg-transparent text-white hover:bg-whiskyPapa-yellow/10 focus:ring-whiskyPapa-yellow',
+    brand: 'bg-brand-primary text-[var(--bg)] hover:bg-brand-primary-dark focus:ring-brand-primary shadow-lg hover:shadow-xl',
+    primary: 'bg-brand-primary text-[var(--bg)] hover:bg-brand-primary-dark focus:ring-brand-primary shadow-lg',
+    secondary: 'bg-transparent border-2 border-brand-primary text-brand-primary hover:bg-brand-primary/10 focus:ring-brand-primary',
+    ghost: 'bg-transparent text-[var(--text-primary)] hover:bg-brand-primary/10 focus:ring-brand-primary',
   };
 
   const sizeStyles: Record<ButtonSize, string> = {

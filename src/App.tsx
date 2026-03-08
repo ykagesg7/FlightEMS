@@ -93,9 +93,9 @@ const App: React.FC = () => {
         <ScrollManager />
         <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
           <Routes>
-            {/* All Routes (Whisky Papa Brand) */}
+            {/* Flight Academy (primary) + Whisky Papa routes kept for restoration */}
             <Route element={<MarketingLayout />}>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="about" element={<About />} />
               <Route path="mission" element={<MissionDashboard />} />
               <Route path="shop" element={<Navigate to="/" replace />} />
@@ -104,12 +104,12 @@ const App: React.FC = () => {
               <Route path="links" element={<Links />} />
               <Route path="auth" element={<AuthPage />} />
               <Route path="profile" element={<ProfilePage />} />
-              {/* Blog and Experience are now integrated into Mission */}
-              <Route path="blog" element={<Navigate to="/mission" replace />} />
-              <Route path="blog/:slug" element={<Navigate to="/mission" replace />} />
+              {/* Blog redirects to Articles (Flight Academy) */}
+              <Route path="blog" element={<Navigate to="/articles" replace />} />
+              <Route path="blog/:slug" element={<Navigate to="/articles" replace />} />
               <Route path="experience" element={<Navigate to="/mission" replace />} />
               {/* Flight Academy Tools */}
-              <Route path="dashboard" element={<HomePage />} />
+              <Route path="dashboard" element={<Navigate to="/" replace />} />
               <Route path="planning" element={<PlanningMapPage />} />
               <Route path="learning" element={<LearningRedirect />} />
               <Route path="learning/:contentId" element={<LearningContentRedirect />} />

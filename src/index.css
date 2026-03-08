@@ -5,33 +5,122 @@
 
 @layer base {
 
-  /* Whisky Papa Brand Colors (Marketing/Show) */
+  /* Flight Academy Cockpit Academy Theme (USAF-inspired) */
   :root {
-    --brand-primary: #FFD700;
-    --brand-primary-dark: #FFC700;
-    --brand-primary-light: #FFE44D;
-    --brand-secondary: #121212;
-    --brand-secondary-light: #1a1a1a;
-    --brand-secondary-dark: #0a0a0a;
+    /* Brand / Marketing */
+    --brand-primary: #7DAAF7;
+    --brand-primary-dark: #5C86CC;
+    --brand-primary-light: #9BC4FF;
+    --brand-secondary: #0B1220;
+    --brand-secondary-light: #132033;
+    --brand-secondary-dark: #060B14;
+
+    /* Semantic (context-aware) */
+    --semantic-primary: #7DAAF7;
+    --semantic-secondary: #132033;
+    --semantic-accent: #8FD3FF;
+    --semantic-surface: #132033;
+    --semantic-border: #1B2B45;
+    --semantic-text: #E6EEF8;
+    --semantic-text-muted: #94A6BD;
+
+    /* HUD / Cockpit */
+    --hud-primary: #8FD3FF;
+    --hud-primary-color: #8FD3FF;
+    --hud-secondary-color: #7DAAF7;
+    --hud-accent-color: #7CFFB2;
+    --hud-dim-color: #1B2B45;
+    --hud-glow-color: rgba(143, 211, 255, 0.6);
+    --hud-grid-color: rgba(125, 170, 247, 0.2);
+
+    /* Layout */
+    --bg: #0B1220;
+    --panel: #132033;
+    --text-primary: #E6EEF8;
+    --text-muted: #94A6BD;
   }
 
   body {
-    @apply bg-gray-900 font-body;
-    color: white;
+    @apply font-body;
+    background: var(--bg);
+    color: var(--text-primary);
     letter-spacing: 0.01em;
   }
 }
 
 @layer components {
-  /* Brand Text (Whisky Papa) */
+  /* Brand Text (Flight Academy) */
   .brand-text {
     color: var(--brand-primary);
   }
 
-  /* Brand Surface (Whisky Papa) */
+  /* Brand Surface (Flight Academy) */
   .brand-surface {
     background: var(--brand-secondary);
     border: 1px solid var(--brand-primary);
+  }
+
+  /* HUD utility classes */
+  .hud-border {
+    border-color: var(--hud-primary);
+  }
+  .hud-surface {
+    background-color: var(--panel);
+  }
+  .hud-text {
+    color: var(--hud-primary);
+  }
+  .hud-readout {
+    color: var(--hud-primary);
+    font-family: 'Courier New', Consolas, monospace;
+  }
+  .hud-overlay-panel {
+    background: rgba(11, 18, 32, 0.85);
+    border: 1px solid var(--hud-primary);
+  }
+  .focus-hud:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hud-primary);
+  }
+
+  .quiz-filter-search {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: color-mix(in srgb, var(--panel) 60%, transparent);
+    color: var(--text-primary);
+    color-scheme: dark;
+  }
+
+  .quiz-filter-button {
+    color-scheme: dark;
+  }
+
+  .quiz-filter-popup {
+    backdrop-filter: blur(14px);
+  }
+
+  .quiz-filter-popup::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .quiz-filter-popup::-webkit-scrollbar-track {
+    background: color-mix(in srgb, var(--panel) 78%, transparent);
+    border-radius: 9999px;
+  }
+
+  .quiz-filter-popup::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--brand-primary) 42%, var(--panel));
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .quiz-filter-search::-webkit-search-decoration,
+  .quiz-filter-search::-webkit-search-cancel-button,
+  .quiz-filter-search::-webkit-search-results-button,
+  .quiz-filter-search::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   /* Time input calendar picker indicator styling */

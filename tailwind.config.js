@@ -5,18 +5,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Whisky Papa Brand Colors (Marketing/Show)
+        // Flight Academy Cockpit Academy (USAF-inspired)
         brand: {
-          primary: '#FFD700',      // Whisky Papa Yellow
-          'primary-dark': '#FFC700',
-          'primary-light': '#FFE44D',
-          secondary: '#121212',     // Whisky Papa Black
-          'secondary-light': '#1a1a1a',
-          'secondary-dark': '#0a0a0a',
-          accent: '#FFD700',       // Alias for primary
-          surface: '#121212',      // Alias for secondary
-          'surface-light': '#1a1a1a',
-          'surface-dark': '#0a0a0a',
+          primary: '#7DAAF7',      // Air Force Blue
+          'primary-dark': '#5C86CC',
+          'primary-light': '#9BC4FF',
+          secondary: '#0B1220',     // Dark Navy
+          'secondary-light': '#132033',
+          'secondary-dark': '#060B14',
+          accent: '#7DAAF7',       // Alias for primary
+          surface: '#132033',      // Alias for secondary
+          'surface-light': '#1B2B45',
+          'surface-dark': '#060B14',
         },
         // HUD/Cockpit Colors (App/Focus)
         hud: {
@@ -63,14 +63,14 @@ module.exports = {
             hull: '#374151',
           }
         },
-        // Whisky Papa (Legacy alias - kept for backward compatibility)
+        // Legacy alias (maps to Cockpit Academy for backward compat)
         whiskyPapa: {
-          yellow: '#FFD700',
-          'yellow-dark': '#FFC700',
-          'yellow-light': '#FFE44D',
-          black: '#121212',
-          'black-light': '#1a1a1a',
-          'black-dark': '#0a0a0a',
+          yellow: '#7DAAF7',       // Now Air Force Blue
+          'yellow-dark': '#5C86CC',
+          'yellow-light': '#9BC4FF',
+          black: '#0B1220',        // Now Dark Navy
+          'black-light': '#132033',
+          'black-dark': '#060B14',
         }
       },
       fontFamily: {

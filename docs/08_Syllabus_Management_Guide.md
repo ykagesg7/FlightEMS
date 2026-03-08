@@ -335,6 +335,7 @@ const pplSyllabus = await getArticles({
 ### 関連ドキュメント
 - `docs/07_PPL_Master_Syllabus.md` - PPL Master Syllabus
 - `docs/06_記事作成ロードマップ.md` - CPL記事作成ロードマップ
+- `docs/10_航空工学_学科試験攻略ブログ_ロードマップ.md` - 航空工学の科目別ロードマップ（中・小分類マッピング、4ChoiceQuiz連携）
 - `docs/templates/PPL_Article_Template.mdx` - PPL記事テンプレート
 - `docs/05_設計仕様書.md` - データベース設計仕様
 

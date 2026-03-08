@@ -23,7 +23,9 @@
     "docs:validate": "cd scripts/docs-auto-update && npm run validate-docs",
     "docs:setup": "cd scripts/docs-auto-update && npm install && node setup-git-hooks.js",
     "lint:encoding": "node scripts/utils/check-encoding.js",
-    "fix:encoding": "node scripts/utils/fix-encoding.js"
+    "fix:encoding": "node scripts/utils/fix-encoding.js",
+    "cpl:import": "python scripts/cpl_exam/import_cpl_master_csv.py",
+    "cpl:import:dry": "python scripts/cpl_exam/import_cpl_master_csv.py --dry-run"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.18",

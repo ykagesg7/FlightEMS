@@ -9,6 +9,7 @@ export interface DailyStudyStat {
   date: string; // YYYY-MM-DD形式
   minutes: number;
   intensity: 0 | 1 | 2 | 3; // 0: なし, 1: 軽い, 2: 中, 3: 高
+  sessionCount?: number; // その日のセッション数（ツールチップ用）
 }
 
 /**
@@ -32,8 +33,8 @@ export async function buildDailyStudyStats(userId: string, days: number = 90): P
     return [];
   }
 
-  // 日付ごとに集計
-  const dailyMap = new Map<string, number>();
+  // 日付ごとに集計（分数とセッション数）
+  const dailyMap = new Map<string, { minutes: number; sessionCount: number }>();
 
   // 過去90日間の日付を初期化
   const today = new Date();
@@ -41,23 +42,27 @@ export async function buildDailyStudyStats(userId: string, days: number = 90): P
     const date = new Date(today);
     date.setDate(date.getDate() - i);
     const dateStr = formatDate(date);
-    dailyMap.set(dateStr, 0);
+    dailyMap.set(dateStr, { minutes: 0, sessionCount: 0 });
   }
 
   // セッションデータを集計
   sessions?.forEach(session => {
     const sessionDate = new Date(session.created_at);
     const dateStr = formatDate(sessionDate);
-    const currentMinutes = dailyMap.get(dateStr) || 0;
-    dailyMap.set(dateStr, currentMinutes + (session.duration_minutes || 0));
+    const current = dailyMap.get(dateStr) || { minutes: 0, sessionCount: 0 };
+    dailyMap.set(dateStr, {
+      minutes: current.minutes + (session.duration_minutes || 0),
+      sessionCount: current.sessionCount + 1,
+    });
   });
 
   // 強度を計算して返す
   return Array.from(dailyMap.entries())
-    .map(([date, minutes]) => ({
+    .map(([date, { minutes, sessionCount }]) => ({
       date,
       minutes,
       intensity: calculateIntensity(minutes),
+      sessionCount,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
 }

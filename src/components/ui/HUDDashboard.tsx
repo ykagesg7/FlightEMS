@@ -51,10 +51,10 @@ export const HUDTimeDisplay: React.FC<HUDTimeDisplayProps> = ({ className = '' }
   return (
     <div className={`hud-time-display ${className}`}>
       <div className="text-center">
-        <div className="text-lg font-bold text-whiskyPapa-yellow">
+        <div className="text-lg font-bold text-[color:var(--hud-primary)]">
           {formattedTime}
         </div>
-        <div className="text-sm mt-1 text-gray-400">
+        <div className="text-sm mt-1 text-[color:var(--semantic-text-muted)]">
           {currentDate}
         </div>
       </div>

@@ -1,0 +1,116 @@
+[
+  {
+    "main_subject": "航空工学",
+    "sub_subject": "空力の基礎理論/三次元翼",
+    "question_text": "翼面積が同じで翼幅を2倍にした場合のアスペクト比（縦横比）で正しいものはどれか。",
+    "options": [
+      "2倍になる。",
+      "1／2になる。",
+      "4倍になる。",
+      "1／4になる。"
+    ],
+    "correct_answer": 3,
+    "explanation": "アスペクト比(AR)は「翼幅の2乗 ÷ 翼面積 (b^2 / S)」で計算されます。翼面積(S)が同じで、翼幅(b)を2倍にすると、2の2乗でアスペクト比は「4倍」になります。",
+    "source_documents": {
+      "sources": [
+        {
+          "type": "cpl_master_csv",
+          "year": 2017,
+          "month": 5,
+          "question_no": 1,
+          "subject_code": "AD",
+          "file": "_master_AD.csv"
+        }
+      ],
+      "weight": 2.0,
+      "originality": "official"
+    },
+    "difficulty_level": 3,
+    "importance_score": 6.0,
+    "appearance_frequency": 1,
+    "verification_status": "verified",
+    "tags": [
+      "CPL",
+      "航空工学",
+      "アスペクト比",
+      "計算"
+    ],
+    "exam_type": "CPL"
+  },
+  {
+    "main_subject": "航空工学",
+    "sub_subject": "空力の基礎理論/力学の基礎",
+    "question_text": "層流と乱流の特性で正しいものはどれか。",
+    "options": [
+      "層流は乱流よりも摩擦抵抗が大きい。",
+      "乱流は層流よりも境界層が厚い。",
+      "乱流中では流速は規則的に変化しているが、層流中では流速の変化は不規則である。",
+      "層流はエネルギーが豊富で剥離しにくいが、乱流はエネルギーが少なく剥離しやすい。"
+    ],
+    "correct_answer": 2,
+    "explanation": "乱流は空気が混ざり合いながら流れるため、滑らかに流れる層流に比べて摩擦抵抗が大きく、境界層が「厚く」なります。しかし乱流は周囲からエネルギーを取り込むため、層流よりも「剥離（失速）しにくい」という長所があります。",
+    "source_documents": {
+      "sources": [
+        {
+          "type": "cpl_master_csv",
+          "year": 2017,
+          "month": 5,
+          "question_no": 2,
+          "subject_code": "AD",
+          "file": "_master_AD.csv"
+        }
+      ],
+      "weight": 2.0,
+      "originality": "official"
+    },
+    "difficulty_level": 3,
+    "importance_score": 6.0,
+    "appearance_frequency": 1,
+    "verification_status": "verified",
+    "tags": [
+      "CPL",
+      "航空工学",
+      "層流と乱流",
+      "理論"
+    ],
+    "exam_type": "CPL"
+  },
+  {
+    "main_subject": "航空工学",
+    "sub_subject": "空力の基礎理論/二次元翼",
+    "question_text": "迎え角が失速角以上になった場合の説明で正しいものはどれか。",
+    "options": [
+      "翼に当たる空気の流速が急激に減る。",
+      "翼の上面の気流が剥離し、同時に抗力が急増、揚力が急減する。",
+      "翼の周囲の気流が乱れて上下面の圧力が急減する。",
+      "翼の下面に渦が発生し、振動が生ずる。"
+    ],
+    "correct_answer": 2,
+    "explanation": "迎え角が大きくなり限界（失速角）を超えると、翼の上面を流れる空気が表面に沿って流れられなくなり（剥離）、揚力が急激に減少すると同時に、抵抗（抗力）が急激に増加します。",
+    "source_documents": {
+      "sources": [
+        {
+          "type": "cpl_master_csv",
+          "year": 2017,
+          "month": 5,
+          "question_no": 3,
+          "subject_code": "AD",
+          "file": "_master_AD.csv"
+        }
+      ],
+      "weight": 2.0,
+      "originality": "official"
+    },
+    "difficulty_level": 3,
+    "importance_score": 6.0,
+    "appearance_frequency": 1,
+    "verification_status": "verified",
+    "tags": [
+      "CPL",
+      "航空工学",
+      "失速",
+      "理論"
+    ],
+    "exam_type": "CPL"
+  }
+]

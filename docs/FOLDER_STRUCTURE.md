@@ -1,7 +1,9 @@
 # プロジェクトフォルダ構造ガイド
 
-**最終更新**: 2025年1月
-**バージョン**: Folder Structure Guide v1.0
+**最終更新**: 2026年3月
+**バージョン**: Folder Structure Guide v1.1
+
+**責務**: repo 全体のフォルダ概要。`src/` の詳細は [07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md) を参照。
 
 ---
 
@@ -70,7 +72,10 @@
 
 #### `scripts/`
 - **目的**: 開発・運用スクリプト
-- **内容**: データベース操作、PDF変換、ドキュメント自動更新など
+- **内容**:
+  - `database/`: マイグレーション（例: `20260309_bootstrap_user_learning_profiles.sql`）、記事登録
+  - `cpl_exam/`: CPL 問題 CSV 取込、`CPL_CSV_IMPORT_SPEC.md` 参照
+  - `docs-auto-update/`: ドキュメント自動更新
 
 #### `public/`
 - **目的**: 静的ファイル（画像、GeoJSONなど）

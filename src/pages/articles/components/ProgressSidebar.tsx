@@ -117,7 +117,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
       </div>
 
       {/* シリーズ別進捗（サブフィルター/カテゴリー別進捗） */}
-      <div className="p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-[#39FF14]/20 shadow-[#39FF14]/20">
+      <div className="p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-[color:var(--hud-accent)]/20 shadow-[color:var(--hud-accent)]/20">
         <h3 className="text-lg font-bold mb-4 flex items-center bg-gradient-to-r bg-clip-text text-transparent from-[#39FF14] to-[#39FF14]/80">
           📖 カテゴリー別進捗
         </h3>
@@ -154,7 +154,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                       {read}/{total}
                     </span>
                   </div>
-                  <div className="w-full h-3 rounded-full overflow-hidden bg-whiskyPapa-black border border-[#39FF14]/30">
+                  <div className="w-full h-3 rounded-full overflow-hidden bg-whiskyPapa-black border border-[color:var(--hud-accent)]/30">
                     <div
                       className={`h-full rounded-full transition-all duration-500 bg-gradient-to-r shadow-lg ${
                         percentage === 100
@@ -196,7 +196,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
                   <div className={`text-xs px-2 py-1 rounded-full ${activity.completed
-                      ? 'bg-[#39FF14]/20 text-[#39FF14] border border-[#39FF14]/30'
+                      ? 'bg-[#39FF14]/20 text-[#39FF14] border border-[color:var(--hud-accent)]/30'
                       : 'bg-whiskyPapa-yellow/20 text-whiskyPapa-yellow border border-whiskyPapa-yellow/30'
                     }`}>
                     {activity.completed ? '完了' : '進行中'}

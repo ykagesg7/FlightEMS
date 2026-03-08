@@ -1,0 +1,33 @@
+---
+description: Confirm docs update necessity on significant changes and keep docs in sync with implementation
+globs:
+alwaysApply: true
+---
+
+# Docs Sync Rule
+
+When making significant changes to the project, always confirm whether `docs/` needs to be updated.
+
+## When to Check
+
+Confirm docs update necessity when you:
+
+- Change important specifications (behavior, flows, business rules)
+- Change UI flows or user-facing behavior
+- Change DB schema or add/modify migrations
+- Add or remove major features
+
+## Which Doc to Update
+
+Before updating docs, decide which file(s) to change:
+
+| Role | File | Content |
+|------|------|---------|
+| **Entry & summary** | `docs/README.md` | Overview, recent changes, main tables, links to detailed docs |
+| **Specification** | `docs/05_設計仕様書.md` | Current specs for /test, Dashboard, DB, data flows |
+| **Structure** | `docs/07_コンポーネント構造ガイド.md` | `src/` layout, component placement, key modules |
+
+## Before Finishing
+
+- Do not stop at implementation only. Before completing a task, verify there are no docs update gaps.
+- Avoid duplicating information. Keep README as summary, 05 as spec, 07 as structure.

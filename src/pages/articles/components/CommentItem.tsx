@@ -151,7 +151,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div
-            className="max-w-md w-full p-6 rounded-xl shadow-2xl bg-[#0b1d3a] border border-[#39FF14]/30"
+            className="max-w-md w-full p-6 rounded-xl shadow-2xl bg-[#0b1d3a] border border-[color:var(--hud-primary)]/30"
           >
             <h3
               className="text-lg font-bold mb-4 text-[color:var(--text-primary)]"
@@ -166,7 +166,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 rounded-lg font-medium transition-all bg-white/10 text-[color:var(--text-primary)] hover:bg-white/20 border border-[#39FF14]/30"
+                className="px-4 py-2 rounded-lg font-medium transition-all bg-white/10 text-[color:var(--text-primary)] hover:bg-white/20 border border-[color:var(--hud-primary)]/30"
               >
                 キャンセル
               </button>

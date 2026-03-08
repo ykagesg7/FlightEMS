@@ -58,6 +58,9 @@ export interface Question {
   // フロントエンド互換フィールド（旧版コンポーネント用）
   text?: string;            // = question_text
   options?: Option[];       // 詳細型オプション（id,text）
+  // DB由来（結果分析・弱点科目用）
+  main_subject?: string;
+  sub_subject?: string;
 }
 
 export interface LearningRecord {
@@ -139,6 +142,21 @@ export interface QuizSettings {
   shuffle_questions?: boolean;
   shuffle_options?: boolean;
   review_mode?: boolean; // SRSで復習対象の問題のみ
+}
+
+/** 出題条件（拡張可能）。contentId 起点と通常出題で同じ UI で一貫させる */
+export interface QuizFetchParams {
+  mode: 'practice' | 'exam' | 'review';
+  main_subject?: string;
+  sub_subject?: string;
+  question_count: number;
+  content_id?: string | null;
+  /** 将来: 試験年月、タグ、重要度、タイプ、キーワードなど */
+  // exam_date?: string;
+  // tags?: string[];
+  // importance?: ('low' | 'medium' | 'high')[];
+  // question_type?: string;
+  // keyword?: string;
 }
 
 // ===============================
@@ -381,6 +399,10 @@ export interface UserQuizAnswer {
   questionId: string;
   answer: string | number;
   isCorrect: boolean;
+  /** 回答した時刻（ISO文字列）。学習時間の正確な集計用 */
+  answeredAt?: string;
+  /** 問題表示から回答までの応答時間（ミリ秒）。能動的学習時間の算出用 */
+  responseTimeMs?: number;
 }
 
 // 空のインターフェースを削除し、必要に応じて適切な型を定義

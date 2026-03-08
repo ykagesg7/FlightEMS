@@ -618,6 +618,114 @@ export interface Database {
       }
     ]
   }
+  learning_sessions: {
+    Row: {
+      id: string
+      user_id: string
+      session_type: string
+      content_id: string
+      content_type: string | null
+      session_duration: number | null
+      completion_rate: number | null
+      session_metadata: Json | null
+      created_at: string | null
+      ended_at: string | null
+      duration_minutes: number | null
+      status: string | null
+      comprehension_score: number | null
+      engagement_score: number | null
+    }
+    Insert: {
+      id?: string
+      user_id: string
+      session_type: string
+      content_id: string
+      content_type?: string | null
+      session_duration?: number | null
+      completion_rate?: number | null
+      session_metadata?: Json | null
+      created_at?: string | null
+      ended_at?: string | null
+      duration_minutes?: number | null
+      status?: string | null
+      comprehension_score?: number | null
+      engagement_score?: number | null
+    }
+    Update: {
+      id?: string
+      user_id?: string
+      session_type?: string
+      content_id?: string
+      content_type?: string | null
+      session_duration?: number | null
+      completion_rate?: number | null
+      session_metadata?: Json | null
+      created_at?: string | null
+      ended_at?: string | null
+      duration_minutes?: number | null
+      status?: string | null
+      comprehension_score?: number | null
+      engagement_score?: number | null
+    }
+    Relationships: []
+  }
+  user_learning_profiles: {
+    Row: {
+      id: string
+      user_id: string | null
+      current_level: number | null
+      learning_style: string | null
+      preferred_difficulty: string | null
+      target_test_date: string | null
+      daily_study_goal_minutes: number | null
+      weekly_study_goal_minutes: number | null
+      current_streak_days: number | null
+      longest_streak_days: number | null
+      strong_subjects: string[] | null
+      weak_subjects: string[] | null
+      mastery_scores: Json | null
+      learning_preferences: Json | null
+      created_at: string | null
+      updated_at: string | null
+    }
+    Insert: {
+      id?: string
+      user_id?: string | null
+      current_level?: number | null
+      learning_style?: string | null
+      preferred_difficulty?: string | null
+      target_test_date?: string | null
+      daily_study_goal_minutes?: number | null
+      weekly_study_goal_minutes?: number | null
+      current_streak_days?: number | null
+      longest_streak_days?: number | null
+      strong_subjects?: string[] | null
+      weak_subjects?: string[] | null
+      mastery_scores?: Json | null
+      learning_preferences?: Json | null
+      created_at?: string | null
+      updated_at?: string | null
+    }
+    Update: {
+      id?: string
+      user_id?: string | null
+      current_level?: number | null
+      learning_style?: string | null
+      preferred_difficulty?: string | null
+      target_test_date?: string | null
+      daily_study_goal_minutes?: number | null
+      weekly_study_goal_minutes?: number | null
+      current_streak_days?: number | null
+      longest_streak_days?: number | null
+      strong_subjects?: string[] | null
+      weak_subjects?: string[] | null
+      mastery_scores?: Json | null
+      learning_preferences?: Json | null
+      created_at?: string | null
+      updated_at?: string | null
+    }
+    Relationships: []
+  }
     }
     Views: {
       [_ in never]: never
