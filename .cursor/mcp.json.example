@@ -1,13 +1,15 @@
 {
   "mcpServers": {
-    "github": {
-      "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "Bearer YOUR_GITHUB_PAT"
+    "my_supabase_project": {
+      "command": "npx",
+      "args": ["@supabase/mcp-server-supabase"],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "YOUR_SUPABASE_ACCESS_TOKEN",
+        "SUPABASE_PROJECT_ID": "YOUR_SUPABASE_PROJECT_REF"
       }
     },
     "vercel": {
-      "url": "https://mcp.vercel.com"
+      "url": "https://mcp.vercel.com/YOUR_TEAM_SLUG/YOUR_PROJECT_SLUG"
     }
   }
 }
