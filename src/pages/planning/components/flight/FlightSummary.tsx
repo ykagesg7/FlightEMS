@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { FlightPlan, RouteSegment } from '../../../../types/index';
 import { calculateAirspeeds, calculateTAS } from '../../../../utils';
+import { parseFlightPlanTime } from '../../../../utils/flightTime';
 import { formatBearing } from '../../../../utils/format';
 
 interface FlightSummaryProps {
@@ -14,42 +15,6 @@ interface FlightSummaryProps {
  * 総距離、ETE、ETAの表示を行う
  */
 export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan }) => {
-  // 時刻文字列をDate型に変換する関数
-  const parseTimeString = useCallback((timeStr: string): Date => {
-    if (!timeStr || timeStr === '--' || typeof timeStr !== 'string') {
-      console.warn('Invalid or empty time string provided:', timeStr);
-      return new Date(NaN);
-    }
-    const parts = timeStr.split(':').map((p) => parseInt(p, 10));
-    const now = new Date();
-    const date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    if (parts.length === 2) {
-      const [h, m] = parts;
-      if (!isNaN(h) && !isNaN(m)) {
-        date.setHours(h, m, 0, 0);
-      } else {
-        console.error('Failed to parse hh:mm:', timeStr);
-        return new Date(NaN);
-      }
-    } else if (parts.length === 3) {
-      const [h, m, s] = parts;
-      if (!isNaN(h) && !isNaN(m) && !isNaN(s)) {
-        date.setHours(h, m, s, 0);
-      } else {
-        console.error('Failed to parse hh:mm:ss:', timeStr);
-        return new Date(NaN);
-      }
-    } else {
-      console.error('Invalid time format detected:', timeStr);
-      return new Date(NaN);
-    }
-    if (isNaN(date.getTime())) {
-      console.error('Resulting date is invalid after parsing:', timeStr);
-      return new Date(NaN);
-    }
-    return date;
-  }, []);
-
   // 時間を「hh:mm:ss」形式でフォーマットする関数
   const formatTime = useCallback((date: Date): string => {
     if (isNaN(date.getTime())) {
@@ -117,7 +82,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
     }
 
     // 出発時刻をパース
-    let currentTime = parseTimeString(flightPlan.departureTime);
+    let currentTime = parseFlightPlanTime(flightPlan.departureTime);
     if (isNaN(currentTime.getTime())) {
       console.error("無効な出発時刻です", flightPlan.departureTime);
       return;
@@ -211,7 +176,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       ...prev,
       ...updatedPlan,
     }));
-  }, [editableSegments, flightPlan.departureTime, flightPlan.groundTempC, flightPlan.groundElevationFt, parseTimeString, formatTime, calculateTAS, calculateAirspeeds, setFlightPlan]);
+  }, [editableSegments, flightPlan.departureTime, flightPlan.groundTempC, flightPlan.groundElevationFt, formatTime, calculateTAS, calculateAirspeeds, setFlightPlan]);
 
   const debouncedRecalculate = useDebouncedCallback(recalculateETAs, 300);
 

@@ -1,5 +1,6 @@
 import L from 'leaflet';
-import { Waypoint } from '@/types';
+import React from 'react';
+import { FlightPlan, Waypoint } from '@/types';
 import { getNavaidColor } from '@/utils';
 import { escapeHtml, kvItem, sectionHeader } from '../popups/common';
 import { NavaidProps } from '../types';
@@ -16,7 +17,7 @@ export const navaidMarkerOptions = (type?: string) => ({
 export const bindNavaidPopup = (
   feature: GeoJSON.Feature,
   layer: L.Layer,
-  setFlightPlan: React.Dispatch<React.SetStateAction<any>>,
+  setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>,
   map: L.Map | null
 ) => {
   const coords = (feature.geometry as GeoJSON.Point).coordinates;
@@ -39,7 +40,7 @@ export const bindNavaidPopup = (
   popup.setContent(popupContent);
   layer.bindPopup(popup);
 
-  (layer as any).bindTooltip(`${props.id}（${props.name1} ${props.name2}）`, {
+  layer.bindTooltip(`${props.id}（${props.name1} ${props.name2}）`, {
     permanent: false,
     direction: 'top',
     className: 'navaid-tooltip',
@@ -53,16 +54,16 @@ export const bindNavaidPopup = (
           e.preventDefault();
           e.stopPropagation();
           const newWaypoint: Waypoint = {
-            id: (feature.properties as any).id,
-            name: (feature.properties as any).name || (feature.properties as any).id,
+            id: props.id ?? '',
+            name: props.name || props.name1 || props.id || '',
             type: 'navaid',
-            sourceId: (feature.properties as any).id,
-            ch: (feature.properties as any).ch,
+            sourceId: props.id,
+            ch: props.ch,
             coordinates: [coords[0], coords[1]] as [number, number],
             latitude: coords[1] as number,
             longitude: coords[0] as number,
-          } as any;
-          setFlightPlan((prev: any) => ({ ...prev, waypoints: [...prev.waypoints, newWaypoint] }));
+          };
+          setFlightPlan((prev) => ({ ...prev, waypoints: [...prev.waypoints, newWaypoint] }));
           map?.closePopup();
         });
       }

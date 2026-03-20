@@ -1,4 +1,5 @@
 import { escapeHtml } from './common';
+import type { AirportProps } from '../types';
 
 const formatRunway = (runwayInfo: string): string => {
   if (!runwayInfo) return '';
@@ -13,7 +14,7 @@ const formatRunway = (runwayInfo: string): string => {
   return runwayInfo;
 };
 
-export const simplifiedAirportInfoContent = (properties: Record<string, any>): string => {
+export const simplifiedAirportInfoContent = (properties: AirportProps): string => {
   const rwy1Info = properties.RWY1
     ? `<div class="text-sm airport-item">
          <div class="airport-label">滑走路１：</div>
@@ -31,7 +32,7 @@ export const simplifiedAirportInfoContent = (properties: Record<string, any>): s
   return `${rwy1Info}${elevInfo}`;
 };
 
-export const fullAirportInfoContent = (properties: Record<string, any>): string => {
+export const fullAirportInfoContent = (properties: AirportProps): string => {
   const rows: string[] = [];
   const pushRow = (label: string, value?: string) => {
     if (!value) return;

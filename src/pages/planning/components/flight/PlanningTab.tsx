@@ -13,13 +13,14 @@ import RoutePlanning from './RoutePlanning';
 interface PlanningTabProps {
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
+  onClearLocalDraft: () => void;
 }
 
 /**
  * Planning Tab コンポーネント
  * フライトプランの入力と計算結果の表示を行うメインコンポーネント
  */
-const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) => {
+const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan, onClearLocalDraft }) => {
   const [airportOptions, setAirportOptions] = React.useState<AirportGroupOption[]>([]);
   const [navaidOptions, setNavaidOptions] = React.useState<NavaidOption[]>([]);
   const [selectedNavaid, setSelectedNavaid] = React.useState<NavaidOption | null>(null);
@@ -425,6 +426,13 @@ const PlanningTab: React.FC<PlanningTabProps> = ({ flightPlan, setFlightPlan }) 
                 className="px-3 py-2 bg-whiskyPapa-yellow/20 hover:bg-whiskyPapa-yellow/30 text-white text-sm rounded border border-whiskyPapa-yellow/40"
               >
                 印刷
+              </button>
+              <button
+                type="button"
+                onClick={onClearLocalDraft}
+                className="px-3 py-2 bg-red-900/40 hover:bg-red-900/60 text-white text-sm rounded border border-red-500/40"
+              >
+                下書き消去
               </button>
               <input
                 type="file"

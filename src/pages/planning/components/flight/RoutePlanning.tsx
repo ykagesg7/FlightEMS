@@ -1,7 +1,8 @@
 import React from 'react';
 import Select from 'react-select';
-import { AirportGroupOption, FlightPlan, NavaidOption, ReactSelectStylesProps, Waypoint, WaypointOption } from '../../../../types/index';
-import { reactSelectStyles } from '../../../../utils/reactSelectStyles';
+import { AirportGroupOption, FlightPlan, NavaidOption, Waypoint, WaypointOption } from '../../../../types/index';
+import { MAGNETIC_DECLINATION } from '../../../../utils/bearing';
+import { planningRouteSelectStyles } from '../../../../utils/reactSelectStyles';
 import NavaidSelector from './NavaidSelector';
 import WaypointForm from './WaypointForm';
 import WaypointList from './WaypointList';
@@ -40,58 +41,12 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
     setFlightPlan({ ...flightPlan, waypoints: [...flightPlan.waypoints, waypoint] });
   };
 
-  // モバイル対応のカスタムスタイル
-  const customStyles = {
-    ...reactSelectStyles,
-    control: (provided: any) => ({
-      ...provided,
-      minHeight: '32px',
-      padding: '0px',
-      fontSize: '0.75rem',
-      backgroundColor: '#4b5563',
-      borderColor: '#6b7280',
-    }),
-    menu: (provided: any) => ({
-      ...provided,
-      fontSize: '0.75rem',
-      zIndex: 50,
-      backgroundColor: '#4b5563',
-    }),
-    option: (provided: any, state: ReactSelectStylesProps) => ({
-      ...provided,
-      padding: '4px 8px',
-      fontSize: '0.75rem',
-      backgroundColor: state.isFocused ? '#6b7280' : '#4b5563',
-      color: '#f9fafb',
-    }),
-    placeholder: (provided: any) => ({
-      ...provided,
-      color: '#d1d5db',
-      fontSize: '0.75rem',
-    }),
-    input: (provided: any) => ({
-      ...provided,
-      color: '#f9fafb',
-      fontSize: '0.75rem',
-    }),
-    singleValue: (provided: any) => ({
-      ...provided,
-      color: '#f9fafb',
-      fontSize: '0.75rem',
-    }),
-    valueContainer: (provided: any) => ({
-      ...provided,
-      padding: '0 8px',
-    }),
-    dropdownIndicator: (provided: any) => ({
-      ...provided,
-      padding: '4px',
-    }),
-  };
-
   return (
     <div className="bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-lg p-3 sm:p-4 md:p-6">
-      <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 text-white">経路計画</h2>
+      <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 text-white">経路計画</h2>
+      <p className="text-2xs sm:text-xs text-gray-400 mb-2 sm:mb-3 md:mb-4 leading-relaxed">
+        磁気方位は教育用モデルとして固定の磁気偏差（{MAGNETIC_DECLINATION}°、<code className="text-gray-500">bearing.ts</code>）を用いています。実運航の計画には使用しないでください。
+      </p>
 
       {/* 空港選択部 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
@@ -105,7 +60,7 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
             options={airportOptions}
             value={flightPlan.departure}
             onChange={(option) => setFlightPlan({ ...flightPlan, departure: option || undefined })}
-            styles={customStyles as any}
+            styles={planningRouteSelectStyles}
             classNamePrefix="react-select"
             className="text-xs sm:text-sm"
           />
@@ -120,7 +75,7 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
             options={airportOptions}
             value={flightPlan.arrival}
             onChange={(option) => setFlightPlan({ ...flightPlan, arrival: option || undefined })}
-            styles={customStyles as any}
+            styles={planningRouteSelectStyles}
             classNamePrefix="react-select"
             className="text-xs sm:text-sm"
           />

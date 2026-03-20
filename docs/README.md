@@ -47,7 +47,7 @@
 - **Vercel**: デプロイメント、Serverless Functions（APIプロキシ）
 
 #### テスト・CI/CD
-- **Vitest**: テストフレームワーク（103テスト、10ファイル）
+- **Vitest**: テストフレームワーク（109テスト、`planDocument` / `flightTime` 等を含む）
 - **Testing Library**: Reactコンポーネントテスト
 - **GitHub Actions**: CI/CDパイプライン（Lint、テスト、ビルド、カバレッジ）
 

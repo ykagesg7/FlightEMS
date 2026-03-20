@@ -1,44 +1,59 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { useDebouncedCallback } from 'use-debounce';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs';
 import { WeatherCacheProvider } from '../../contexts/WeatherCacheContext';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { FlightPlan } from '../../types/index';
-import { calculateAirspeeds, calculateMach, calculateTAS, formatTime } from '../../utils';
 import PlanningTab from './components/flight/PlanningTab';
 import MapTab from './components/map/MapTab';
+import { createInitialFlightPlan } from './createInitialFlightPlan';
+import {
+  clearFlightPlanDraft,
+  loadFlightPlanDraft,
+  persistFlightPlanDraft,
+} from './flightPlanDraft';
 
-function PlanningMapPage() {
-  const [flightPlan, setFlightPlan] = React.useState<FlightPlan>(() => {
-    const initialSpeed = 250;
-    const initialAltitude = 30000;
-    const initialGroundTempC = 15;
-    const initialGroundElevationFt = 0;
-    const initialFuelLb = 5000;
-    const taxiFuelLb = 200;
-    const reserveFuelLb = 800;
-    const cruiseFuelFlowLbPerHr = 2200;
-    const airspeedsResult = calculateAirspeeds(initialSpeed, initialAltitude, initialGroundTempC, initialGroundElevationFt);
-    const initialTas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(initialSpeed, initialAltitude);
-    const initialMach = airspeedsResult ? airspeedsResult.mach : calculateMach(initialTas, initialAltitude);
-    const departureTime = formatTime(new Date().getHours() * 60 + new Date().getMinutes());
-    return {
-      departure: undefined, arrival: undefined, waypoints: [],
-      altitude: initialAltitude, speed: initialSpeed, tas: initialTas, mach: initialMach,
-      totalDistance: 0, ete: '', eta: '', departureTime,
-      groundTempC: initialGroundTempC, groundElevationFt: initialGroundElevationFt,
-      routeSegments: [],
-      aircraftId: 't4',
-      initialFuelLb,
-      taxiFuelLb,
-      reserveFuelLb,
-      cruiseFuelFlowLbPerHr,
-    };
-  });
+interface PlanningMapPageInnerProps {
+  flightPlan: FlightPlan;
+  setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
+  onClearLocalDraft: () => void;
+}
+
+function PlanningMapPageInner({ flightPlan, setFlightPlan, onClearLocalDraft }: PlanningMapPageInnerProps) {
+  const isLg = useMediaQuery('(min-width: 1024px)');
+
+  if (isLg) {
+    return (
+      <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
+        <div className="px-4 pt-4 pb-2 shrink-0">
+          <Link
+            to="/mission"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Mission Dashboardへ戻る
+          </Link>
+        </div>
+        <div className="mb-2 flex-1 grid grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] gap-0 items-stretch min-h-[calc(100vh-5rem)]">
+          <div className="overflow-y-auto border-r border-whiskyPapa-yellow/20 p-2 sm:p-4 md:p-6 min-h-0">
+            <PlanningTab
+              flightPlan={flightPlan}
+              setFlightPlan={setFlightPlan}
+              onClearLocalDraft={onClearLocalDraft}
+            />
+          </div>
+          <div className="h-full min-h-[calc(100vh-5rem)]">
+            <MapTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
-      {/* Mission Dashboardへの戻るボタン */}
       <div className="px-4 pt-4 pb-2">
         <Link
           to="/mission"
@@ -73,21 +88,51 @@ function PlanningMapPage() {
           </TabsList>
           <TabsContent value="planning" className="mt-0">
             <div className="p-2 sm:p-4 md:p-6 container mx-auto">
-              <WeatherCacheProvider>
-                <PlanningTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
-              </WeatherCacheProvider>
+              <PlanningTab
+                flightPlan={flightPlan}
+                setFlightPlan={setFlightPlan}
+                onClearLocalDraft={onClearLocalDraft}
+              />
             </div>
           </TabsContent>
           <TabsContent value="map" className="mt-0">
             <div className="h-full">
-              <WeatherCacheProvider>
-                <MapTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
-              </WeatherCacheProvider>
+              <MapTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
             </div>
           </TabsContent>
         </Tabs>
       </div>
     </div>
+  );
+}
+
+function PlanningMapPage() {
+  const [flightPlan, setFlightPlan] = React.useState<FlightPlan>(() => {
+    const draft = loadFlightPlanDraft();
+    return draft ?? createInitialFlightPlan();
+  });
+
+  const debouncedPersistDraft = useDebouncedCallback((plan: FlightPlan) => {
+    persistFlightPlanDraft(plan);
+  }, 400);
+
+  React.useEffect(() => {
+    debouncedPersistDraft(flightPlan);
+  }, [flightPlan, debouncedPersistDraft]);
+
+  const handleClearLocalDraft = React.useCallback(() => {
+    clearFlightPlanDraft();
+    setFlightPlan(createInitialFlightPlan());
+  }, []);
+
+  return (
+    <WeatherCacheProvider>
+      <PlanningMapPageInner
+        flightPlan={flightPlan}
+        setFlightPlan={setFlightPlan}
+        onClearLocalDraft={handleClearLocalDraft}
+      />
+    </WeatherCacheProvider>
   );
 }
 

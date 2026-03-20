@@ -1,10 +1,6 @@
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import React from 'react';
-import PlanningTab from '../../pages/planning/components/flight/PlanningTab';
-import MapTab from '../../pages/planning/components/map/MapTab';
-import { FlightPlan } from '../../types/index';
-import { calculateAirspeeds, calculateMach, calculateTAS, cn, formatTime } from '../../utils';
-import LearningTabMDX from '../mdx/LearningTabMDX';
+import { cn } from '../../utils';
 
 const Tabs = TabsPrimitive.Root;
 
@@ -38,95 +34,4 @@ const TabsContent = ({ className, ...props }: React.ComponentPropsWithoutRef<typ
   />
 );
 
-interface TabsProps {
-}
-
-const TabsComponent: React.FC<TabsProps> = () => {
-  const [activeTab, setActiveTab] = React.useState<string>('planning');
-
-  const [flightPlan, setFlightPlan] = React.useState<FlightPlan>(() => {
-    // 初期設定値
-    const initialSpeed = 250;
-    const initialAltitude = 30000;
-    const initialGroundTempC = 15;
-    const initialGroundElevationFt = 0;
-
-    // 高精度計算モデルで各種値を計算
-    const airspeedsResult = calculateAirspeeds(initialSpeed, initialAltitude, initialGroundTempC, initialGroundElevationFt);
-
-    // 高精度計算が失敗した場合は従来の計算方法で代替
-    const initialTas = airspeedsResult
-      ? airspeedsResult.tasKt
-      : calculateTAS(initialSpeed, initialAltitude);
-    const initialMach = airspeedsResult
-      ? airspeedsResult.mach
-      : calculateMach(initialTas, initialAltitude);
-    const departureTime = formatTime(
-      new Date().getHours() * 60 + new Date().getMinutes()
-    );
-
-    return {
-      departure: undefined,
-      arrival: undefined,
-      waypoints: [],
-      altitude: initialAltitude,
-      speed: initialSpeed,
-      tas: initialTas,
-      mach: initialMach,
-      totalDistance: 0,
-      ete: '',
-      eta: '',
-      departureTime,
-      groundTempC: initialGroundTempC,
-      groundElevationFt: initialGroundElevationFt,
-      routeSegments: [],
-    };
-  });
-
-  return (
-    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-4 sm:space-x-8" aria-label="Tabs">
-          <button
-            className={`${activeTab === 'planning' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm text-whiskyPapa-yellow`}
-            onClick={() => setActiveTab('planning')}
-          >
-            Planning
-          </button>
-          <button
-            className={`${activeTab === 'map' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm text-whiskyPapa-yellow`}
-            onClick={() => setActiveTab('map')}
-          >
-            Map
-          </button>
-          <button
-            className={`${activeTab === 'learning' ? 'border-indigo-500' : 'border-transparent'} whitespace-nowrap border-b-2 px-1 py-3 sm:py-4 font-medium text-xs sm:text-sm text-whiskyPapa-yellow`}
-            onClick={() => setActiveTab('learning')}
-          >
-            Learning
-          </button>
-        </nav>
-      </div>
-
-      <div className="mt-2 sm:mt-4">
-        {activeTab === 'planning' && (
-          <PlanningTab
-            flightPlan={flightPlan}
-            setFlightPlan={setFlightPlan}
-          />
-        )}
-        {activeTab === 'map' && (
-          <MapTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
-        )}
-        {activeTab === 'learning' && (
-          <LearningTabMDX contentId="" />
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default TabsComponent;
-
 export { Tabs, TabsContent, TabsList, TabsTrigger };
-

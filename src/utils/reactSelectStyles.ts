@@ -44,3 +44,52 @@ export const reactSelectStyles: StylesConfig<SelectOption, false> = {
     color: 'var(--text-primary)',
   }),
 };
+
+/** /planning 経路フォーム用（ダークパネル・コンパクト） */
+export const planningRouteSelectStyles: StylesConfig<SelectOption, false> = {
+  ...reactSelectStyles,
+  control: (provided, state) => ({
+    ...(reactSelectStyles.control?.(provided, state as ControlProps<SelectOption, false>) ?? provided),
+    minHeight: '32px',
+    padding: '0px',
+    fontSize: '0.75rem',
+    backgroundColor: '#4b5563',
+    borderColor: '#6b7280',
+  }),
+  menu: (provided, state) => ({
+    ...(reactSelectStyles.menu?.(provided, state as MenuProps<SelectOption, false>) ?? provided),
+    fontSize: '0.75rem',
+    zIndex: 50,
+    backgroundColor: '#4b5563',
+  }),
+  option: (provided, state) => ({
+    ...(reactSelectStyles.option?.(provided, state as OptionProps<SelectOption, false>) ?? provided),
+    padding: '4px 8px',
+    fontSize: '0.75rem',
+    backgroundColor: state.isFocused ? '#6b7280' : '#4b5563',
+    color: '#f9fafb',
+  }),
+  placeholder: (provided, state) => ({
+    ...(reactSelectStyles.placeholder?.(provided, state as PlaceholderProps<SelectOption, false>) ?? provided),
+    color: '#d1d5db',
+    fontSize: '0.75rem',
+  }),
+  input: (provided, state) => ({
+    ...(reactSelectStyles.input?.(provided, state as InputProps<SelectOption, false>) ?? provided),
+    color: '#f9fafb',
+    fontSize: '0.75rem',
+  }),
+  singleValue: (provided, state) => ({
+    ...(reactSelectStyles.singleValue?.(provided, state as SingleValueProps<SelectOption, false>) ?? provided),
+    color: '#f9fafb',
+    fontSize: '0.75rem',
+  }),
+  valueContainer: (provided) => ({
+    ...provided,
+    padding: '0 8px',
+  }),
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    padding: '4px',
+  }),
+};

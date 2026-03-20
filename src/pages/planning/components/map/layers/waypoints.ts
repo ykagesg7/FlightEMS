@@ -1,9 +1,11 @@
 import L from 'leaflet';
-import { Waypoint } from '@/types';
+import type { Feature, Point } from 'geojson';
+import React from 'react';
+import { FlightPlan, Waypoint } from '@/types';
 import { escapeHtml, kvItem, sectionHeader } from '../popups/common';
 import { WaypointProps } from '../types';
 
-export const waypointStyle = (feature: any) => {
+export const waypointStyle = (feature: Feature<Point, WaypointProps>) => {
   return {
     radius: 4,
     fillColor: feature.properties?.type === 'Compulsory' ? '#FF9900' : '#66CCFF',
@@ -17,7 +19,7 @@ export const waypointStyle = (feature: any) => {
 export const bindWaypointPopup = (
   feature: GeoJSON.Feature,
   layer: L.Layer,
-  setFlightPlan: React.Dispatch<React.SetStateAction<any>>,
+  setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>,
   map: L.Map | null
 ) => {
   const coords = (feature.geometry as GeoJSON.Point).coordinates;
@@ -38,7 +40,7 @@ export const bindWaypointPopup = (
   layer.bindPopup(popup);
 
   // ツールチップ
-  (layer as any).bindTooltip(props?.id || '', {
+  layer.bindTooltip(props?.id || '', {
     permanent: false,
     direction: 'top',
     className: 'waypoint-tooltip',
@@ -55,19 +57,19 @@ export const bindWaypointPopup = (
           e.stopPropagation();
 
           const newWaypoint: Waypoint = {
-            id: (feature.properties as any)?.id || '',
-            name: (feature.properties as any)?.name1 || (feature.properties as any)?.id || '',
+            id: props?.id || '',
+            name: props?.name1 || props?.id || '',
             type: 'custom',
             coordinates: [coords[0], coords[1]] as [number, number],
             latitude: coords[1] as number,
             longitude: coords[0] as number,
           };
 
-          setFlightPlan((prev: any) => ({ ...prev, waypoints: [...prev.waypoints, newWaypoint] }));
+          setFlightPlan((prev) => ({ ...prev, waypoints: [...prev.waypoints, newWaypoint] }));
 
           if (map) {
             const successMsg = L.DomUtil.create('div', 'success-message');
-            successMsg.innerHTML = `${(feature.properties as any)?.id}をルートに追加しました`;
+            successMsg.innerHTML = `${props?.id ?? ''}をルートに追加しました`;
             successMsg.style.position = 'absolute';
             successMsg.style.bottom = '10px';
             successMsg.style.left = '50%';

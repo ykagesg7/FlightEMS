@@ -1,5 +1,8 @@
 import { MAGNETIC_DECLINATION } from './constants';
 
+/** 磁気方位計算で使用する固定偏差（度）。UI の注記と共有する。 */
+export { MAGNETIC_DECLINATION };
+
 export function calculateMagneticBearing(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const φ1 = lat1 * Math.PI / 180;
   const φ2 = lat2 * Math.PI / 180;
