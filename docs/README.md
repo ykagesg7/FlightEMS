@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年3月（/test・Dashboard・学習時間・docs整備）
-**バージョン**: Documentation Index v4.3
+**最終更新**: 2026年3月（/test・Dashboard・学習時間・docs整備・Cursor MCP 手順）
+**バージョン**: Documentation Index v4.4
 
 ---
 
@@ -54,6 +54,24 @@
 #### 外部API
 - **WeatherAPI.com**: 一般気象情報（要APIキー）
 - **NOAA Aviation Weather Center API**: METAR/TAF航空気象データ（無料・認証不要）
+
+### Cursor MCP（GitHub / Vercel）
+
+エージェントから GitHub（PR・Issue・Actions 等）と Vercel（デプロイ・ログ等）に接続するための設定例です。機密はコミットしない方針のため、実ファイル [`.cursor/mcp.json`](../.cursor/mcp.json) は `.gitignore` 対象です。リポジトリには [`.cursor/mcp.json.example`](../.cursor/mcp.json.example) のみ置いています。
+
+**手順**
+
+1. `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーする。
+2. `YOUR_GITHUB_PAT` を [Personal Access Token](https://github.com/settings/personal-access-tokens/new)（Fine-grained または classic）に差し替える。スコープは利用するツールに合わせて最小限にする（例: リポジトリの contents、pull requests、issues、Actions など）。**トークンをリポジトリに書かないこと。**
+3. 既に `~/.cursor/mcp.json` に Supabase / Chrome DevTools 等がある場合は、**上書きせず** 同じ `mcpServers` オブジェクトへ `github` と `vercel` のエントリだけ追加する。
+4. Cursor を再起動する（GitHub リモート MCP は Streamable HTTP のため [Cursor v0.48.0+](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) を推奨）。
+5. **Settings → Tools & Integrations → MCP** で各サーバーを確認。Vercel は `Needs login` から OAuth で Vercel アカウントを認可する。
+
+**Vercel のプロジェクト文脈を固定したい場合**（チーム slug・プロジェクト slug を毎回渡さない）は、公式どおり URL を `https://mcp.vercel.com/<team_slug>/<project_slug>` に差し替えられる。チーム・プロジェクト slug は [Vercel ダッシュボード](https://vercel.com/dashboard) の Settings → General や `vercel projects ls` で確認できる。詳細は [Use Vercel MCP](https://vercel.com/docs/mcp/vercel-mcp#project-specific-mcp-access)。
+
+**組織・Enterprise** で GitHub Copilot Business/Enterprise を利用している場合、組織の「MCP servers in Copilot」等のポリシーにより利用可否が制限されることがある。公式: [About MCP](https://docs.github.com/en/copilot/concepts/about-mcp)。
+
+**GitHub MCP の代替（Docker）**: PAT をコンテナに渡すローカル実行は [Install GitHub MCP Server in Cursor（Local Server Setup）](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) を参照。Docker Desktop が必要。非推奨の旧 npm パッケージ `@modelcontextprotocol/server-github` は使わない。
 
 ---
 
@@ -385,6 +403,6 @@ npm run lint         # Lintチェック
 
 ---
 
-**最終更新**: 2026年3月（/test・Dashboard・学習時間・docs整備）
-**バージョン**: Documentation Index v4.3
+**最終更新**: 2026年3月（/test・Dashboard・学習時間・docs整備・Cursor MCP 手順）
+**バージョン**: Documentation Index v4.4
 **管理者**: Flight Academy 開発チーム
