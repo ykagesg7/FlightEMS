@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年3月（Cursor MCP: Global / プロジェクト分割）
-**バージョン**: Documentation Index v4.5
+**最終更新**: 2026年3月（Cursor MCP: GitHub は Global またはプロジェクトの一方）
+**バージョン**: Documentation Index v4.6
 
 ---
 
@@ -57,19 +57,19 @@
 
 ### Cursor MCP（配置方針: Global とプロジェクト）
 
-複数リポジトリで同じ GitHub アカウントを使う場合、**汎用サーバーは Global**、**クラウド上のプロジェクト単位のものは各リポジトリの `.cursor/mcp.json`** に分けると、取り違えと設定の重複が減ります。
+複数リポジトリで同じ GitHub アカウントを使う場合、**ブラウザ系など汎用サーバーは Global**、**Vercel / Supabase などアプリ単位のものは各リポジトリの `.cursor/mcp.json`** に分けると取り違えが減ります。**GitHub MCP は Global とプロジェクトのどちらか一方だけ**に置く（両方に同じ `github` エントリを重複させない）。
 
 | 置き場所 | 対象の例 |
 |----------|-----------|
-| **Global**（`%USERPROFILE%\.cursor\mcp.json`） | `github`（PAT）、`chrome-devtools` |
-| **プロジェクト**（[`.cursor/mcp.json`](../.cursor/mcp.json)、`.gitignore` 済み） | `vercel`、Supabase MCP（`SUPABASE_PROJECT_ID` がアプリごとに異なる） |
+| **Global**（`%USERPROFILE%\.cursor\mcp.json`） | `chrome-devtools`、（任意）全リポジトリ共通にしたい `github`（PAT） |
+| **プロジェクト**（[`.cursor/mcp.json`](../.cursor/mcp.json)、`.gitignore` 済み） | `vercel`、Supabase MCP、`github`（PAT・このリポジトリでだけ使う場合）など |
 
 コミット可能なテンプレートは [`.cursor/mcp.json.example`](../.cursor/mcp.json.example)（**プロジェクト側のエントリのみ**。GitHub / Chrome は含めない）。
 
 **手順（初回・このリポジトリ）**
 
-1. **Global**: `~/.cursor/mcp.json` に `chrome-devtools` と `github` を定義する。`github` の `YOUR_GITHUB_PAT` を [Personal Access Token](https://github.com/settings/personal-access-tokens/new) に差し替える（スコープは最小限）。**PAT はリポジトリにコミットしない。**
-2. **プロジェクト**: `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。
+1. **Global**: `~/.cursor/mcp.json` に `chrome-devtools` を定義する。GitHub を **プロジェクトの `.cursor/mcp.json` にだけ**書く場合は、Global には `github` を置かない。
+2. **プロジェクト**: `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。GitHub MCP を使う場合は [Personal Access Token](https://github.com/settings/personal-access-tokens/new) を `Authorization: Bearer …` に設定する（スコープは最小限）。**PAT はリポジトリにコミットしない。**
 3. Cursor を再起動する（GitHub リモート MCP は [Cursor v0.48.0+](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) 推奨）。
 4. **Settings → Tools & Integrations → MCP** で接続を確認。Vercel は `Needs login` から OAuth で認可する。
 
@@ -412,6 +412,6 @@ npm run lint         # Lintチェック
 
 ---
 
-**最終更新**: 2026年3月（Cursor MCP: Global / プロジェクト分割）
-**バージョン**: Documentation Index v4.5
+**最終更新**: 2026年3月（Cursor MCP: GitHub は Global またはプロジェクトの一方）
+**バージョン**: Documentation Index v4.6
 **管理者**: Flight Academy 開発チーム
