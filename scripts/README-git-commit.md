@@ -79,3 +79,11 @@ git config --global --get i18n.logoutputencoding
 - 設定変更後、新しいコミットから効果が反映されます
 - 既存のコミットメッセージは変更されません
 
+## 過去にコミットしたメッセージが文字化けしている場合
+
+- **GitHub Web**: リポジトリのコミット履歴 → 該当コミットの「…」→ **Edit commit message** で UTF-8 の文面に修正（既にプッシュ済みでも比較的安全）。
+- **rebase**: `git rebase -i` で `reword` 後、**force push**（`--force-with-lease`）が必要。共有ブランチでは注意。
+- **直近のみ**: `git commit --amend` 後、同様に force push が必要な場合あり。
+- **UTF-8 で amend する例（PowerShell）**: メッセージを一時ファイルに `WriteAllText`（UTF-8）で書き、`git commit --amend -F $tempFile`。
+
+本リポジトリの**新規コミット**は [`.cursor/rules/git-conventions.mdc`](../.cursor/rules/git-conventions.mdc) に従い、**英語のみ**（タイトル・本文）を推奨。

@@ -1,227 +1,34 @@
-# FlightAcademyTsx - プロジェクト概要
+# Flight Academy (FlightAcademyTsx)
 
-FlightAcademyTsxは、フライトプランニングとナビゲーション学習を支援するためのインタラクティブなWeb アプリケーションです。本ドキュメントでは、プロジェクトの概要、セットアップ方法、基本的な使い方について説明します。
+航空学習プラットフォーム **Flight Academy** の Web アプリです。React / TypeScript / Vite / Supabase / Vercel を使用し、学習記事（MDX）、クイズ（CPL）、フライトプランニング（地図・METAR/TAF）、ゲーミフィケーションなどを提供します。
 
-## プロジェクトの概要
+## クイックスタート
 
-FlightAcademyTsxは、以下の機能を提供します：
+- **要件**: Node.js 18+、npm 9+ を推奨（古い README の 16.x 記載は廃止）。
+- **依存関係**: `npm install`
+- **環境変数**: ルートの `.env.example` を参照し `.env.local` を作成（`VITE_SUPABASE_*`、`VITE_WEATHER_API_KEY` など）。
+- **開発**（推奨）:
+  - ターミナル1: `npm run dev:weather`（ローカル API、ポート 3001）
+  - ターミナル2: `npm run dev`（Vite、`http://localhost:5173`）
+- **テスト**: `npm run test:run` / **Lint**: `npm run lint`
 
-- インタラクティブな地図表示（Leaflet.jsベース）
-- フライトプランの作成と管理
-- 空港、ウェイポイント、NAVAIDの表示と操作
-- 気象データの取得と表示
-  - 一般気象情報（温度、風向風速、気圧、視程など）
-  - **METAR/TAF情報**（日本国内空港のリアルタイム航空気象データ）
-- フライトパラメータの計算
-- 学習コンテンツとマニューバービューア
+## ドキュメント
 
-## セットアップ方法
+| 用途 | ドキュメント |
+|------|----------------|
+| **全体索引（AI・開発者向け）** | [docs/README.md](docs/README.md) |
+| **戦略・Phase / KPI** | [docs/00_Flight_Academy_Strategy.md](docs/00_Flight_Academy_Strategy.md)、[docs/03_計画改善ロードマップ.md](docs/03_計画改善ロードマップ.md) |
+| **現行仕様（DB・/test 等）** | [docs/05_設計仕様書.md](docs/05_設計仕様書.md) |
+| **`src/` 構成** | [docs/07_コンポーネント構造ガイド.md](docs/07_コンポーネント構造ガイド.md) |
+| **リポジトリフォルダ索引** | [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) |
+| **Cursor MCP** | [docs/13_Cursor_MCP_Setup.md](docs/13_Cursor_MCP_Setup.md) |
 
-### 必要条件
-- Node.js 16.x以上
-- npm 7.x以上
-- Vercel CLI（開発環境でAPI機能を使用する場合）
-
-### インストール手順
-1. リポジトリのクローン：
-```bash
-git clone https://github.com/yourusername/FlightAcademyTsx.git
-cd FlightAcademyTsx
-```
-
-2. 依存関係のインストール：
-```bash
-npm install
-```
-
-3. 環境変数の設定：
-`.env.local`ファイルを作成し、以下の内容を追加します：
-```
-VITE_WEATHER_API_KEY=your_weather_api_key
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-4. 開発サーバーの起動：
-
-**推奨: ローカル開発環境（APIサーバー + フロントエンド）**
-
-2つのターミナルを開いて以下を実行：
-
-```bash
-# ターミナル1: ローカルAPIサーバー起動
-npm run dev:weather
-
-# ターミナル2: フロントエンド開発サーバー起動
-npm run dev
-```
-
-**オプション: Vercel Dev環境（フルスタック統合）**
-```bash
-# Vercel CLIのインストール（初回のみ）
-npm install -g vercel
-
-# 環境変数をVercelに設定
-vercel env add WEATHER_API_KEY
-
-# フルスタック開発サーバー起動
-npm run dev:full
-```
-※ Vercel Devは日本語のPC名がある環境で問題が発生する場合があります。その場合は上記の推奨方法を使用してください。
-
-5. ブラウザで以下のURLにアクセス：
-```
-http://localhost:5173/
-```
-
-### 開発環境での注意事項
-
-- **推奨開発方法**: `npm run dev:weather`でローカルAPIサーバー（ポート3001）を起動し、別ターミナルで`npm run dev`を実行
-- **API機能**: ローカルAPIサーバーは以下のエンドポイントを提供します：
-  - `/api/weather` - 一般気象情報
-  - `/api/aviation-weather` - METAR/TAF航空気象情報
-  - `/api/health` - ヘルスチェック
-- **プロキシ設定**: Viteが`/api/*`リクエストを自動的に`localhost:3001`に転送します
-- **環境変数**: `.env.local`にWEATHER_API_KEY（WeatherAPI.com）を設定してください。METAR/TAFは認証不要です
-- **本番環境**: Vercelにデプロイする際は、`api/weather.ts`と`api/aviation-weather.ts`が自動的に使用されます
-
-## 基本的な使い方
-
-### マップの操作
-- ズームイン/アウト：マウスホイールまたは「+」「-」ボタン
-- 移動：マウスドラッグ
-- レイヤー切替：右上のレイヤーコントロール
-
-### フライトプランの作成
-1. 「Planning」タブに移動
-2. 出発空港を選択
-3. 目的空港を選択
-4. ウェイポイントを追加
-5. フライトパラメータを設定
-6. フライトサマリーを確認
-
-### マニューバービューアの使用
-1. 「Learning」タブに移動
-2. マニューバーが含まれるスライドに移動
-3. ビューアで機動を確認し、再生/一時停止/リセットボタンで操作
-
-## テスト
-
-### テストの実行
-
-プロジェクトにはVitestを使用したテストスイートが含まれています。
-
-```bash
-# テストを実行（ウォッチモード）
-npm test
-
-# テストを1回実行
-npm run test:run
-
-# テストカバレッジを生成
-npm run test:coverage
-
-# テストUIを起動
-npm run test:ui
-```
-
-### CI/CD
-
-プロジェクトはGitHub Actionsを使用したCI/CDパイプラインを設定しています：
-
-- **プルリクエスト時**: 自動的にLint、テスト、ビルドを実行
-- **プッシュ時**: main/master/developブランチへのプッシュ時に自動検証
-- **テストカバレッジ**: プルリクエストにカバレッジレポートを自動コメント
-
-#### CI/CDとは？
-
-**CI (Continuous Integration: 継続的統合)**
-- コードをリポジトリにプッシュするたびに自動的にテストを実行
-- バグを早期に発見し、品質を保証
-- 複数の開発者が協力する際の統合問題を防止
-
-**CD (Continuous Deployment: 継続的デプロイ)**
-- テストが成功したら自動的に本番環境にデプロイ
-- 手動デプロイの手間を削減
-- 迅速な機能リリースを実現
-
-現在のプロジェクトでは、CI（継続的統合）が設定されており、プルリクエストやプッシュ時に自動的にテストが実行されます。
-
-## 技術スタック
-
-- **フロントエンド**: React, TypeScript, Vite, Tailwind CSS
-- **テスト**: Vitest, Testing Library
-- **マップ表示**: Leaflet.js
-- **状態管理**: React Context API, Zustand
-- **データ形式**: GeoJSON
-- **APIクライアント**: Axios
-- **ドキュメント**: MDX, Mermaid
-
-## ドキュメント構成
-
-本プロジェクトのドキュメントは以下のように構成されています：
-
-- **README.md** (本ドキュメント): プロジェクト概要、セットアップ、基本的な使い方
-- **DEVELOPMENT.md**: 開発ガイドライン、コーディング規約、プロジェクト構造
-- **ADVANCED.md**: 高度な機能、トラブルシューティング、自動化機能
-
-詳細なAPIドキュメントやコンポーネント仕様については、`src`ディレクトリ内の各ファイルのコメントを参照してください。
-
-## CPL試験学習資料
-
-本プロジェクトには、事業用操縦士（飛行機）学科試験の学習支援資料が含まれています：
-
-### 構造化学習資料（`cpl_exam_data/converted_md/`）
-- **`structured_aviation_engineering.md`** - 航空工学（航空力学、航空機構造、動力装置等）
-- **`structured_aviation_weather.md`** - 航空気象（大気の物理、気象障害、気象情報等）
-- **`structured_air_navigation.md`** - 空中航法（航法技術、運航方式、ヒューマンファクター等）
-- **`structured_aviation_communication.md`** - 航空通信（航空交通業務、管制業務、緊急時通信等）
-- **`structured_aviation_regulations.md`** - 航空法規（国際条約、航空法、実務適用等）
-
-各資料には以下の特徴があります：
-- 📋 クリック可能な目次機能
-- 🎯 重要度に応じた視覚的強調
-- 💡 実用的な技能ガイド
-- 🔄 他分野との関連性明示
-- ⚡ 効率的な学習方法の提案
-
-### 過去問データベース
-- 2022年9月〜2025年9月の実際の試験問題
-- 各試験回の詳細な問題と解答
-
-## 最近の更新
-
-- **METAR/TAF航空気象情報の統合**: 日本国内空港のリアルタイムMETAR/TAF情報を無料で取得・表示（NOAA Aviation Weather Center API使用）
-- **CPL試験学習資料の構造化**: 事業用操縦士学科試験出題範囲を5つの分野別資料に体系化
-- mermaidライブラリの追加によるダイアグラム描画機能の実装
-- ドキュメント構造の整理（3つの主要ドキュメントに統合）
-- 各種コンポーネントのリファクタリングとバグ修正
-
-### METAR/TAF機能の詳細
-
-**対象空港**: 日本国内の主要空港（ICAOコードがRJで始まる空港）
-
-**表示情報**:
-- **METAR（定時飛行場実況気象通報式）**
-  - 観測時刻
-  - フライトカテゴリー（VFR/MVFR/IFR/LIFR）
-  - 天気現象
-  - 生METARテキスト
-- **TAF（飛行場予報）**
-  - 発表時刻
-  - 有効期間
-  - 生TAFテキスト
-
-**技術仕様**:
-- データソース: NOAA Aviation Weather Center API（無料、認証不要）
-- キャッシュ: 1時間
-- 並列取得: 一般気象情報とMETAR/TAFを同時取得
-- エラーハンドリング: データ取得失敗時の適切なフォールバック
+過去のルート README にあったマップ操作・CPL 資料の詳細は、上記 `docs/` およびアプリ内ヘルプを参照してください。`cpl_exam_data/` の実データは `.gitignore` 対象の場合があります。
 
 ## ライセンス
 
-本プロジェクトは[MIT License](../LICENSE)の下で公開されています。
+リポジトリ方針に従ってください（ルートに `LICENSE` ファイルを追加する場合は本READMEのリンクを追記）。
 
 ---
 
-最終更新日: 2025年11月1日
+**最終更新**: 2026年3月

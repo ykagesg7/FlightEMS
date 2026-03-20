@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年3月（Serena MCP・`.serena/project.yml`）
-**バージョン**: Documentation Index v4.7
+**最終更新**: 2026年3月（ドキュメント整理・13 MCP 分離）
+**バージョン**: Documentation Index v4.8
 
 ---
 
@@ -55,76 +55,21 @@
 - **WeatherAPI.com**: 一般気象情報（要APIキー）
 - **NOAA Aviation Weather Center API**: METAR/TAF航空気象データ（無料・認証不要）
 
-### Cursor MCP（配置方針: Global とプロジェクト）
+### Cursor MCP
 
-複数リポジトリで同じ GitHub アカウントを使う場合、**ブラウザ系など汎用サーバーは Global**、**Vercel / Supabase などアプリ単位のものは各リポジトリの `.cursor/mcp.json`** に分けると取り違えが減ります。**GitHub MCP は Global とプロジェクトのどちらか一方だけ**に置く（両方に同じ `github` エントリを重複させない）。
-
-| 置き場所 | 対象の例 |
-|----------|-----------|
-| **Global**（`%USERPROFILE%\.cursor\mcp.json`） | `chrome-devtools`、（任意）全リポジトリ共通にしたい `github`（PAT） |
-| **プロジェクト**（[`.cursor/mcp.json`](../.cursor/mcp.json)、`.gitignore` 済み） | `vercel`、Supabase MCP、[Serena](https://oraios.github.io/serena/)、`github`（PAT・このリポジトリでだけ使う場合）など |
-
-コミット可能なテンプレートは [`.cursor/mcp.json.example`](../.cursor/mcp.json.example)（**プロジェクト側のエントリのみ**。GitHub / Chrome は含めない）。
-
-**Serena（シンボリック編集 MCP）**
-
-- リポジトリ直下に [`.serena/project.yml`](../.serena/project.yml) がある（言語は TypeScript 中心）。別マシンで初めて使う場合は [uv](https://docs.astral.sh/uv/) を入れ、対話プロンプトを避けるなら例:  
-  `uvx --from git+https://github.com/oraios/serena serena project create . --name FlightAcademyTsx --language typescript`
-- Cursor の **ワークスペース単位**で使うには、`.cursor/mcp.json` の Serena に **`--project` とこのリポジトリの絶対パス**（Windows では `C:/...` のフォワードスラッシュ推奨）を渡す。[公式: Connecting Your MCP Client](https://oraios.github.io/serena/02-usage/030_clients.html)
-- ローカルだけの上書きは `.serena/project.local.yml`（`.gitignore` 済み）。
-
-**手順（初回・このリポジトリ）**
-
-1. **Global**: `~/.cursor/mcp.json` に `chrome-devtools` を定義する。GitHub を **プロジェクトの `.cursor/mcp.json` にだけ**書く場合は、Global には `github` を置かない。
-2. **プロジェクト**: `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。GitHub MCP を使う場合は [Personal Access Token](https://github.com/settings/personal-access-tokens/new) を `Authorization: Bearer …` に設定する（スコープは最小限）。**PAT はリポジトリにコミットしない。**
-3. Cursor を再起動する（GitHub リモート MCP は [Cursor v0.48.0+](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) 推奨）。
-4. **Settings → Tools & Integrations → MCP** で接続を確認。Vercel は `Needs login` から OAuth で認可する。
-
-**Vercel の URL**
-
-- 汎用: `https://mcp.vercel.com`（都度プロジェクトを指定するツールもある）
-- このアプリに固定: `https://mcp.vercel.com/<team_slug>/<project_slug>`（[公式: project-specific](https://vercel.com/docs/mcp/vercel-mcp#project-specific-mcp-access)）。slug はダッシュボードの Settings → General や `vercel projects ls` で確認。
-
-**組織・Enterprise** で GitHub Copilot Business/Enterprise を利用している場合、組織の「MCP servers in Copilot」等のポリシーにより利用可否が制限されることがある。公式: [About MCP](https://docs.github.com/en/copilot/concepts/about-mcp)。
-
-**GitHub MCP の代替（Docker）**: [Install GitHub MCP Server in Cursor（Local Server Setup）](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md)。非推奨の `@modelcontextprotocol/server-github` は使わない。
+開発者向けの MCP 設定（Global / プロジェクトの分担、Serena、Vercel、GitHub PAT、トラブルシューティング）は **[13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md)** に集約した。
 
 ---
 
 ## 🏗️ プロジェクト構造（重要）
 
-### ディレクトリ構成（ハイブリッド方式）
-
-```
-src/
-├── components/          # 共通コンポーネント
-│   ├── ui/             # デザインシステム（Button, Card, Typography）
-│   ├── marketing/      # マーケティング共通（RankBadge, MissionCard）
-│   ├── mdx/            # MDX関連（MDXLoader, MDXContent）
-│   └── common/         # 汎用ユーティリティコンポーネント
-├── pages/              # ページコンポーネント
-│   ├── {page}/         # 各ページ
-│   └── {page}/components/  # ページ固有コンポーネント
-├── hooks/              # カスタムフック
-├── stores/             # Zustandストア（authStore）
-├── utils/              # ユーティリティ関数
-├── types/              # TypeScript型定義
-├── layouts/            # レイアウト（MarketingLayout, AppLayout）
-└── content/            # MDX記事コンテンツ
-    ├── articles/       # 学習記事
-    ├── pilot/          # Pilot記事
-    └── narrator/       # Narrator記事
-```
-
-### コンポーネント配置方針
-- **共通コンポーネント**: `src/components/`（複数ページで使用）
-- **ページ固有コンポーネント**: `src/pages/{page}/components/`（単一ページ専用）
-
-詳細は [07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md) を参照。
+リポジトリ全体のフォルダ索引は **[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)**。`src/` 以下の配置ルールとモジュールの正本は **[07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md)**。
 
 ---
 
 ## 📊 現在の実装状況（2026年2月）
+
+**KPI・Phase 表の単一ソース**: 優先度・未完了項目の詳細は **[03_計画改善ロードマップ.md](03_計画改善ロードマップ.md)** を正とする。以下は要約（数値は 03・シラバスと同期）。
 
 ### ✅ 完了済み機能
 
@@ -144,6 +89,8 @@ src/
 ### 📝 今後の開発（ハイブリッド戦略ロードマップに基づく）
 
 現在は **Phase A: 基盤安定化** に位置。詳細は [03_計画改善ロードマップ.md](03_計画改善ロードマップ.md) を参照。
+
+**直近のフォーカス**: PPL 記事の量産・品質、テストカバレッジの段階的上げ。パートナーシップ依存機能（Shop / 体験搭乗等）は **Phase E** まで明示的に後回し（[00](00_Flight_Academy_Strategy.md) 参照）。
 
 - ⏳ PPL記事: 17/150（11.3%）— 50%を2026年末目標
 - ⏳ テストカバレッジ: 4.85% — 50%を2026年末目標
@@ -238,11 +185,14 @@ npm run lint         # Lintチェック
 - **[05_設計仕様書.md](05_設計仕様書.md)** - 現行仕様の正本（DB、API、/test、Dashboard）
 - **[07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md)** - `src/` 構造の正本（新規コンポーネント追加時）
 - **[12_Quiz_Analytics_Phase_Design.md](12_Quiz_Analytics_Phase_Design.md)** - クイズ分析・後続フェーズ
-- **[03_計画改善ロードマップ.md](03_計画改善ロードマップ.md)** - Phase A-Eの実行計画とKPI
 - **[04_運用保守ガイド.md](04_運用保守ガイド.md)** - 運用時の手順、トラブルシューティング
 - **[06_記事作成ロードマップ.md](06_記事作成ロードマップ.md)** - MDX記事の作成計画とガイドライン
 - **[07_PPL_Master_Syllabus.md](07_PPL_Master_Syllabus.md)** - PPL学科試験対策記事のMaster Syllabus
 - **[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)** - PPL/CPL統合Syllabus管理ガイド
+- **[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)** - 航空工学（AD）科目別ロードマップ
+- **[11_ドキュメント整合性検討.md](11_ドキュメント整合性検討.md)** - 06/07/08/10 の役割と相互参照方針
+- **[13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md)** - Cursor MCP・Serena・コミットメッセージ関連リンク
+- **[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)** - リポジトリ直下のフォルダ索引
 
 ---
 
@@ -419,6 +369,6 @@ npm run lint         # Lintチェック
 
 ---
 
-**最終更新**: 2026年3月（Serena MCP・`.serena/project.yml`）
-**バージョン**: Documentation Index v4.7
+**最終更新**: 2026年3月（ドキュメント整理・13 MCP 分離）  
+**バージョン**: Documentation Index v4.8  
 **管理者**: Flight Academy 開発チーム

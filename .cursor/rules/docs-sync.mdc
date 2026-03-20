@@ -26,6 +26,8 @@ Before updating docs, decide which file(s) to change:
 | **Entry & summary** | `docs/README.md` | Overview, recent changes, main tables, links to detailed docs |
 | **Specification** | `docs/05_設計仕様書.md` | Current specs for /test, Dashboard, DB, data flows |
 | **Structure** | `docs/07_コンポーネント構造ガイド.md` | `src/` layout, component placement, key modules |
+| **Repo folders** | `docs/FOLDER_STRUCTURE.md` | Top-level directories (non-`src/`) |
+| **Cursor MCP** | `docs/13_Cursor_MCP_Setup.md` | MCP layout, Serena, Vercel/GitHub PAT notes |
 
 ## Before Finishing
 

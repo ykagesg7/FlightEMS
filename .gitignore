@@ -96,8 +96,9 @@ batch_processing_*.json
 batch_processing_*.md
 .vercel
 
-# Archive directory (not to be committed to GitHub)
-archive/
+# Archive: optional staging (only .gitkeep is tracked; add exceptions if needed)
+archive/*
+!archive/.gitkeep
 
 # Test coverage and cache
 coverage/
