@@ -8,6 +8,21 @@
         "SUPABASE_PROJECT_ID": "YOUR_SUPABASE_PROJECT_REF"
       }
     },
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide-assistant",
+        "--project",
+        "C:/absolute/path/to/FlightAcademyTsx",
+        "--enable-web-dashboard",
+        "false"
+      ]
+    },
     "vercel": {
       "url": "https://mcp.vercel.com/YOUR_TEAM_SLUG/YOUR_PROJECT_SLUG"
     }

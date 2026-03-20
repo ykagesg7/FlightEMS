@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年3月（Cursor MCP: GitHub は Global またはプロジェクトの一方）
-**バージョン**: Documentation Index v4.6
+**最終更新**: 2026年3月（Serena MCP・`.serena/project.yml`）
+**バージョン**: Documentation Index v4.7
 
 ---
 
@@ -62,9 +62,16 @@
 | 置き場所 | 対象の例 |
 |----------|-----------|
 | **Global**（`%USERPROFILE%\.cursor\mcp.json`） | `chrome-devtools`、（任意）全リポジトリ共通にしたい `github`（PAT） |
-| **プロジェクト**（[`.cursor/mcp.json`](../.cursor/mcp.json)、`.gitignore` 済み） | `vercel`、Supabase MCP、`github`（PAT・このリポジトリでだけ使う場合）など |
+| **プロジェクト**（[`.cursor/mcp.json`](../.cursor/mcp.json)、`.gitignore` 済み） | `vercel`、Supabase MCP、[Serena](https://oraios.github.io/serena/)、`github`（PAT・このリポジトリでだけ使う場合）など |
 
 コミット可能なテンプレートは [`.cursor/mcp.json.example`](../.cursor/mcp.json.example)（**プロジェクト側のエントリのみ**。GitHub / Chrome は含めない）。
+
+**Serena（シンボリック編集 MCP）**
+
+- リポジトリ直下に [`.serena/project.yml`](../.serena/project.yml) がある（言語は TypeScript 中心）。別マシンで初めて使う場合は [uv](https://docs.astral.sh/uv/) を入れ、対話プロンプトを避けるなら例:  
+  `uvx --from git+https://github.com/oraios/serena serena project create . --name FlightAcademyTsx --language typescript`
+- Cursor の **ワークスペース単位**で使うには、`.cursor/mcp.json` の Serena に **`--project` とこのリポジトリの絶対パス**（Windows では `C:/...` のフォワードスラッシュ推奨）を渡す。[公式: Connecting Your MCP Client](https://oraios.github.io/serena/02-usage/030_clients.html)
+- ローカルだけの上書きは `.serena/project.local.yml`（`.gitignore` 済み）。
 
 **手順（初回・このリポジトリ）**
 
@@ -412,6 +419,6 @@ npm run lint         # Lintチェック
 
 ---
 
-**最終更新**: 2026年3月（Cursor MCP: GitHub は Global またはプロジェクトの一方）
-**バージョン**: Documentation Index v4.6
+**最終更新**: 2026年3月（Serena MCP・`.serena/project.yml`）
+**バージョン**: Documentation Index v4.7
 **管理者**: Flight Academy 開発チーム

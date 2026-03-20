@@ -34,6 +34,9 @@ dist-ssr
 .env*.local
 .env.production
 
+# Serena: per-machine overrides (committed baseline is .serena/project.yml)
+.serena/project.local.yml
+
 # Security: MCP configuration with sensitive data
 .cursor/mcp.json
 .cursor/mcp.json.backup*
