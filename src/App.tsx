@@ -14,7 +14,6 @@ import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 import { MarketingLayout } from './layouts/MarketingLayout';
 
 // Marketing Pages (lazy)
-const Home = lazy(() => import('./pages/home/Home'));
 const About = lazy(() => import('./pages/about/About'));
 const MissionDashboard = lazy(() => {
   return import('./pages/mission/Dashboard').catch((err) => {

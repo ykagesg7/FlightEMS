@@ -164,7 +164,7 @@ interface MDXContentProps {
   contentId?: string;
 }
 
-const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId }) => {
+const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId: _contentId }) => {
   // 現在のURLを取得
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 

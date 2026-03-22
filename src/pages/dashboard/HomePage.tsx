@@ -427,7 +427,7 @@ const GuestHomeContent: React.FC = () => {
       <div className="absolute inset-0 pointer-events-none select-none" aria-hidden>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(125,170,247,0.18),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(143,211,255,0.10),transparent_30%)]" />
         <img
-          src="/images/ContentImages/topgun1.jpg"
+          src="/images/ContentImages/topgun_michizane1.jpg"
           alt="Flight Academy background"
           className="h-full w-full object-cover opacity-10"
         />
@@ -477,7 +477,7 @@ const GuestHomeContent: React.FC = () => {
             <div className="reveal opacity-0 translate-y-4 transition-all duration-700 ease-out">
               <div className="relative overflow-hidden rounded-3xl border border-brand-primary/20 bg-[var(--panel)] shadow-2xl">
                 <img
-                  src="images/ContentImages/WorryVsThink4.jpg"
+                  src="/images/ContentImages/WorryVsThink4.jpg"
                   alt="Pilot training visual"
                   className="h-[420px] w-full object-cover opacity-75"
                 />

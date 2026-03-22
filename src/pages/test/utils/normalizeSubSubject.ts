@@ -27,7 +27,7 @@ export const normalizeSubSubjectLabel = (value: string | null | undefined): stri
 
   const normalized = value
     .replace(/／/g, '/')
-    .replace(/　/g, ' ')
+    .replace(/\u3000/g, ' ')
     .replace(/\s*\/\s*/g, '/')
     .replace(/^[アイウエオカキクケコ]\s+/, '')
     .replace(/[（(]AIP[)）]/g, '')

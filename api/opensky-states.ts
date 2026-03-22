@@ -5,14 +5,13 @@
  * クエリはサーバ側で日本域 BBOX に再度クリップする。
  *
  * オプション: OPENSKY_USERNAME / OPENSKY_PASSWORD で Basic 認証（レート緩和）
+ *
+ * 共有ロジックは静的 import（@vercel/node の依存トレースで lib がバンドルに含まれる）。
+ * vercel dev で CJS/ESM 不整合が出る場合は `npm run dev:full` または Vite プラグイン経由を利用。
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { proxyOpenSkyStates } from '../lib/openskyStatesCore';
 
-/**
- * vercel dev は api/*.ts を CJS の require 経由で読み込むことがあり、
- * package.json の "type":"module" 下の ../lib/*.ts を静的 import すると ESM エラーになる。
- * 動的 import() はランタイムの ESM ローダを使うためここで解決する。
- */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -28,7 +27,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const { proxyOpenSkyStates } = await import('../lib/openskyStatesCore');
-  const result = await proxyOpenSkyStates(req.query);
-  res.status(result.status).json(result.body);
+  try {
+    const result = await proxyOpenSkyStates(req.query);
+    res.status(result.status).json(result.body);
+  } catch (err) {
+    console.error('[opensky-states]', err);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: err instanceof Error ? err.message : 'handler failed',
+    });
+  }
 }
