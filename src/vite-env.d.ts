@@ -2,6 +2,8 @@
 
 // 環境変数の型定義
 interface ImportMetaEnv {
+  /** vercel dev 時、API を Vite プロキシではなくこのオリジンへ直接送る（例: http://localhost:3000） */
+  readonly VITE_VERCEL_DEV_API_ORIGIN?: string;
   readonly VITE_WEATHER_API_KEY: string;
   readonly VITE_SUPABASE_URL: string;
   readonly VITE_SUPABASE_ANON_KEY: string;

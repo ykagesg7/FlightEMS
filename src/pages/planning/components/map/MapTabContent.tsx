@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CACHE_DURATION, useWeatherCache } from '../../../../contexts/WeatherCacheContext';
 import { fetchWeatherData } from '../../../../services/weather';
 import { FlightPlan } from '../../../../types/index';
@@ -9,6 +9,11 @@ import { bindWaypointPopup } from './layers/waypoints';
 import { bindACCSectorPopup, bindRAPCONPopup } from './popups/airspacePopup';
 import { simplifiedAirportInfoContent } from './popups/airportPopup';
 import { FlightPlanRouteLayer } from './FlightPlanRouteLayer';
+import { useLiveTrafficLayer } from './hooks/useLiveTrafficLayer';
+import { useRainViewerRadarLayer } from './hooks/useRainViewerRadarLayer';
+import { usePlanningMapWindGrid } from './hooks/usePlanningMapWindGrid';
+import { useWindBarbLayer } from './hooks/useWindBarbLayer';
+import { useWindGridOverlaySetter } from './windGridOverlayContext';
 import type { LayerControlRef, PlanningMapRegion } from './planningMapTypes';
 import type { NavaidProps } from './types';
 
@@ -20,6 +25,29 @@ export interface MapTabContentProps {
 }
 
 export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions }) => {
+  const liveTrafficLayerRef = useRef<L.LayerGroup | null>(null);
+  if (!liveTrafficLayerRef.current) {
+    liveTrafficLayerRef.current = L.layerGroup();
+  }
+  const rainViewerLayerRef = useRef<L.LayerGroup | null>(null);
+  if (!rainViewerLayerRef.current) {
+    rainViewerLayerRef.current = L.layerGroup();
+  }
+  const [liveTrafficEnabled, setLiveTrafficEnabled] = useState(false);
+  const [rainViewerEnabled, setRainViewerEnabled] = useState(false);
+  const windBarbsLayerRef = useRef<L.LayerGroup | null>(null);
+  if (!windBarbsLayerRef.current) {
+    windBarbsLayerRef.current = L.layerGroup();
+  }
+  const [windBarbsEnabled, setWindBarbsEnabled] = useState(false);
+
+  const { gridPoints, overlay: windGridOverlay } = usePlanningMapWindGrid(map, windBarbsEnabled);
+  const setWindGridOverlay = useWindGridOverlaySetter();
+  useEffect(() => {
+    setWindGridOverlay?.(windGridOverlay);
+    return () => setWindGridOverlay?.(null);
+  }, [windGridOverlay, setWindGridOverlay]);
+
   const layerControlRef = useRef<L.Control.Layers | null>(null) as LayerControlRef;
   // 各地域のWaypointレイヤーを保持する参照
   const regionLayersRef = useRef<{ [key: string]: L.GeoJSON }>({});
@@ -112,7 +140,10 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
       "ACC-Sector Low": L.geoJSON(null, {
         style: { color: 'green', weight: 2, opacity: 0.7 },
         onEachFeature: (feature, layer) => bindACCSectorPopup(feature, layer)
-      })
+      }),
+      "航空機（参考・OpenSky）": liveTrafficLayerRef.current,
+      "降水レーダー（参考・RainViewer）": rainViewerLayerRef.current,
+      "上層風バーブ（参考・Open-Meteo）": windBarbsLayerRef.current,
     };
 
     // Waypointsグループの作成
@@ -687,6 +718,66 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
       "衛星写真": esriLayer,
     };
   }, [osmLayer, esriLayer]);
+
+  useEffect(() => {
+    if (!map || !liveTrafficLayerRef.current) return;
+    const layer = liveTrafficLayerRef.current;
+    const onAdd = (e: L.LayersControlEvent) => {
+      if (e.layer === layer) setLiveTrafficEnabled(true);
+    };
+    const onRemove = (e: L.LayersControlEvent) => {
+      if (e.layer === layer) setLiveTrafficEnabled(false);
+    };
+    map.on('overlayadd', onAdd);
+    map.on('overlayremove', onRemove);
+    if (map.hasLayer(layer)) setLiveTrafficEnabled(true);
+    return () => {
+      map.off('overlayadd', onAdd);
+      map.off('overlayremove', onRemove);
+    };
+  }, [map]);
+
+  useLiveTrafficLayer(map, liveTrafficLayerRef.current, liveTrafficEnabled);
+
+  useEffect(() => {
+    if (!map || !rainViewerLayerRef.current) return;
+    const layer = rainViewerLayerRef.current;
+    const onAdd = (e: L.LayersControlEvent) => {
+      if (e.layer === layer) setRainViewerEnabled(true);
+    };
+    const onRemove = (e: L.LayersControlEvent) => {
+      if (e.layer === layer) setRainViewerEnabled(false);
+    };
+    map.on('overlayadd', onAdd);
+    map.on('overlayremove', onRemove);
+    if (map.hasLayer(layer)) setRainViewerEnabled(true);
+    return () => {
+      map.off('overlayadd', onAdd);
+      map.off('overlayremove', onRemove);
+    };
+  }, [map]);
+
+  useRainViewerRadarLayer(map, rainViewerLayerRef.current, rainViewerEnabled);
+
+  useEffect(() => {
+    if (!map) return;
+    const barbs = windBarbsLayerRef.current;
+    const onAdd = (e: L.LayersControlEvent) => {
+      if (e.layer === barbs) setWindBarbsEnabled(true);
+    };
+    const onRemove = (e: L.LayersControlEvent) => {
+      if (e.layer === barbs) setWindBarbsEnabled(false);
+    };
+    map.on('overlayadd', onAdd);
+    map.on('overlayremove', onRemove);
+    if (barbs && map.hasLayer(barbs)) setWindBarbsEnabled(true);
+    return () => {
+      map.off('overlayadd', onAdd);
+      map.off('overlayremove', onRemove);
+    };
+  }, [map]);
+
+  useWindBarbLayer(map, windBarbsLayerRef.current, windBarbsEnabled, gridPoints);
 
   // レイヤーコントロールの更新
   useEffect(() => {

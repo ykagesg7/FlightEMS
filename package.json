@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:full": "vercel dev --yes",
+    "dev:full": "cross-env VITE_VERCEL_DEV_API_ORIGIN=http://localhost:3000 vercel dev --yes",
     "dev:weather": "tsx scripts/dev-weather-server.ts",
     "build": "vite build",
     "build:prod": "vite build --mode production",
@@ -92,7 +92,9 @@
     "@vitejs/plugin-react": "^4.3.1",
     "@vitest/coverage-v8": "^3.2.4",
     "autoprefixer": "^10.4.20",
+    "baseline-browser-mapping": "^2.8.32",
     "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
     "eslint": "^9.9.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.11",

@@ -1,3 +1,127 @@
+/* OpenSky 航空機マーカー（L.divIcon）— 枠・背景を消してブランドアイコンのみ表示 */
+.leaflet-opensky-ac-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.opensky-ac-rot {
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+.opensky-ac-img {
+  display: block;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.55));
+}
+
+.opensky-ac-on-ground .opensky-ac-img {
+  filter: grayscale(1) brightness(0.88) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+
+.leaflet-wind-barb-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* OpenSky 航空機ポップアップ（空港・空域ポップアップと同系の HUD トークン） */
+.opensky-traffic-popup .leaflet-popup-content-wrapper {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.82);
+  color: var(--text-primary);
+  border: 1px solid var(--hud-primary);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.45);
+}
+
+.opensky-traffic-popup .leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+  min-width: 200px;
+}
+
+.opensky-traffic-popup .leaflet-popup-tip {
+  background: rgba(0, 0, 0, 0.82);
+  box-shadow: none;
+}
+
+.opensky-ac-popup {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.opensky-ac-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.88);
+  border-bottom: 1px solid var(--hud-primary);
+}
+
+.opensky-ac-popup-icao {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--hud-primary);
+  letter-spacing: 0.02em;
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+}
+
+.opensky-ac-popup-thumb {
+  display: block;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+}
+
+.opensky-ac-popup-body {
+  padding: 8px 10px 6px;
+}
+
+.opensky-ac-popup-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.opensky-ac-popup-row:last-of-type {
+  border-bottom: none;
+}
+
+.opensky-ac-popup-label {
+  flex-shrink: 0;
+  color: var(--hud-primary);
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.opensky-ac-popup-value {
+  text-align: right;
+  color: var(--text-primary);
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.opensky-ac-popup-foot {
+  padding: 6px 10px 8px;
+  margin: 0;
+  font-size: 10px;
+  font-style: italic;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+}
+
 /* Waypointのツールチップスタイル */
 .waypoint-tooltip {
   background-color: rgba(0, 0, 0, 0.8);
@@ -126,12 +250,24 @@
 
 .popup-compact .weather-info-grid,
 .popup-compact .airport-info-grid {
-  gap: 2px 6px;
+  gap: 4px 10px;
+}
+
+.popup-compact .weather-section,
+.popup-compact .airport-info-section {
+  margin: 6px 0;
+  padding: 6px 8px;
+}
+
+.popup-compact .weather-section > h4 {
+  margin-top: 0;
+  margin-bottom: 4px;
 }
 
 .popup-compact .weather-icon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
+  margin-left: 6px;
 }
 
 .popup-compact .popup-section-header {
@@ -144,11 +280,6 @@
 }
 
 /* 旧トグルUIのスタイルは不使用になったため削除 */
-
-/* 区切り線の撤廃（フラット表示） */
-.weather-update-time {
-  border-top: none;
-}
 
 /* 共通のポップアップ本文色（Navaid/Waypoint等の値テキスト） */
 .popup-value {
@@ -340,13 +471,34 @@
 
 /* 空港の気象情報ポップアップスタイル */
 .airport-weather-popup .leaflet-popup-content-wrapper {
-  max-width: clamp(360px, 90vw, 720px);
+  max-width: clamp(260px, 88vw, 400px);
   width: auto;
-  max-height: 70vh;
+  max-height: 65vh;
   overflow-y: auto;
   border: 1px solid var(--hud-primary);
   background: rgba(0, 0, 0, 0.7);
   color: var(--text-primary);
+}
+
+/* 長文・ISO日時でポップアップ最小幅が膨らまないようにする */
+.airport-weather-popup .leaflet-popup-content {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.airport-popup.airport-weather-popup.popup-compact {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.airport-popup-aviation {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .airport-weather-popup .font-semibold {
@@ -376,17 +528,21 @@
 .weather-info-grid,
 .airport-info-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
-  gap: 8px 12px;
-  align-items: start;
+  grid-template-columns: 1fr;
+  gap: 4px 0;
+  align-items: baseline;
   font-size: 12px;
 }
 
 .weather-item,
 .airport-item {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 4px;
+  row-gap: 0;
+  min-width: 0;
 }
 
 .weather-label,
@@ -394,6 +550,7 @@
   color: var(--hud-primary);
   font-weight: 600;
   margin: 0;
+  flex: 0 0 auto;
 }
 
 .weather-value,
@@ -401,22 +558,33 @@
   color: var(--text-primary);
   font-weight: 500;
   line-height: 1.35;
+  min-width: 0;
+  word-break: break-word;
 }
 
-.weather-update-time {
-  grid-column: span 2;
+.weather-info-grid .weather-update-time {
+  grid-column: 1 / -1;
   text-align: right;
   font-style: italic;
   color: var(--text-primary);
-  margin-top: 8px;
+  margin-top: 4px;
   border-top: 1px dotted var(--hud-primary);
   padding-top: 4px;
 }
 
+.weather-info-grid .weather-update-time span {
+  display: inline-block;
+  max-width: 100%;
+  text-align: right;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
 .weather-icon {
-  width: 64px;
-  height: 64px;
-  margin-left: 10px;
+  width: 48px;
+  height: 48px;
+  margin-left: 8px;
+  vertical-align: middle;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
 }
 
@@ -602,11 +770,9 @@
    METAR/TAF航空気象情報スタイル
    ======================================== */
 
-/* 気象セクション共通スタイル */
+/* 気象セクション共通スタイル（要約・空港情報） */
 .weather-section,
-.airport-info-section,
-.metar-section,
-.taf-section {
+.airport-info-section {
   margin: 15px 0;
   padding: 10px;
   background: rgba(0, 0, 0, 0.05);
@@ -614,10 +780,67 @@
   border: 1px solid rgba(57, 255, 20, 0.2);
 }
 
+/* METAR/TAF は <details> で折りたたみ（既定は閉） */
+details.metar-section,
+details.taf-section {
+  margin: 8px 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  border: 1px solid rgba(57, 255, 20, 0.2);
+  overflow: hidden;
+}
+
+.popup-compact details.metar-section,
+.popup-compact details.taf-section {
+  margin: 6px 0;
+}
+
+.metar-taf-collapsible > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 8px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--hud-primary);
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid rgba(57, 255, 20, 0.12);
+  user-select: none;
+}
+
+.metar-taf-collapsible > summary::-webkit-details-marker {
+  display: none;
+}
+
+.metar-taf-summary-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.metar-taf-summary-hint {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.72;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+details.metar-taf-collapsible[open] > summary {
+  border-bottom-color: rgba(57, 255, 20, 0.35);
+}
+
+.metar-taf-body {
+  padding: 8px 10px 10px;
+}
+
 .weather-section h4,
-.airport-info-section h4,
-.metar-section h4,
-.taf-section h4 {
+.airport-info-section h4 {
   font-size: 1em;
   font-weight: bold;
   margin-bottom: 8px;
@@ -635,13 +858,13 @@
   color: #00ff00;
   padding: 8px;
   border-radius: 4px;
-  margin: 8px 0;
-  font-size: 0.85em;
+  margin: 0 0 8px;
+  font-size: 0.8em;
   overflow-x: auto;
   white-space: pre-wrap;
-  word-break: break-all;
+  word-break: break-word;
   border: 1px solid rgba(0, 255, 0, 0.3);
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 /* 詳細情報 */
@@ -693,25 +916,32 @@
   color: #fff;
 }
 
-/* METAR/TAF利用不可メッセージ */
+/* METAR/TAF利用不可メッセージ（長文で横に伸びないよう折り返し） */
 .no-aviation-weather {
-  margin: 15px 0;
-  padding: 12px;
+  margin: 8px 0 10px;
+  padding: 8px 10px;
+  max-width: 100%;
+  box-sizing: border-box;
   background: rgba(255, 165, 0, 0.1);
   border: 1px solid rgba(255, 165, 0, 0.3);
   border-radius: 5px;
-  text-align: center;
+  text-align: left;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .no-aviation-weather p {
-  margin: 5px 0;
+  margin: 4px 0;
+  max-width: 100%;
   color: var(--text-primary);
 }
 
-.no-aviation-weather .note {
-  font-size: 0.85em;
+.no-aviation-weather p.no-aviation-weather-line {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--text-muted);
-  font-style: italic;
+  letter-spacing: 0.02em;
 }
 
 /* ダークテーマ対応 */
@@ -732,8 +962,8 @@
 
 .dark .weather-section h4,
 .dark .airport-info-section h4,
-.dark .metar-section h4,
-.dark .taf-section h4 {
+.dark details.metar-section > summary,
+.dark details.taf-section > summary {
   color: #ff4444;
 }
 
@@ -751,18 +981,25 @@
   }
 
   .weather-section,
-  .airport-info-section,
-  .metar-section,
-  .taf-section {
+  .airport-info-section {
     margin: 10px 0;
     padding: 8px;
   }
 
+  details.metar-section,
+  details.taf-section {
+    margin: 10px 0;
+    padding: 0;
+  }
+
   .weather-section h4,
-  .airport-info-section h4,
-  .metar-section h4,
-  .taf-section h4 {
+  .airport-info-section h4 {
     font-size: 0.9em;
+  }
+
+  .metar-taf-collapsible > summary {
+    font-size: 0.9em;
+    padding: 6px 8px;
   }
 
   .metar-details,
@@ -784,11 +1021,20 @@
   }
 
   .weather-section,
-  .airport-info-section,
-  .metar-section,
-  .taf-section {
+  .airport-info-section {
     margin: 8px 0;
     padding: 6px;
+  }
+
+  details.metar-section,
+  details.taf-section {
+    margin: 8px 0;
+    padding: 0;
+  }
+
+  .metar-taf-collapsible > summary {
+    padding: 6px;
+    font-size: 0.85em;
   }
 
   .flight-category {

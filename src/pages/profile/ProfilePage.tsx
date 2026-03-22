@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Card, CardContent, CardHeader } from '../../components/ui/Card';
 import { Typography } from '../../components/ui/Typography';
@@ -22,12 +22,27 @@ type SocialLinks = {
   linkedin?: string;
 };
 
+const PROFILE_TAB_IDS = [
+  'profile',
+  'security',
+  'social',
+  'notifications',
+  'ppl-ranks',
+] as const;
+
+type ProfileTabId = (typeof PROFILE_TAB_IDS)[number];
+
+function isProfileTabId(value: string): value is ProfileTabId {
+  return (PROFILE_TAB_IDS as readonly string[]).includes(value);
+}
+
 const ProfilePage: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const profile = useAuthStore((state) => state.profile);
   const loading = useAuthStore((state) => state.loading);
   const updateProfile = useAuthStore((state) => state.updateProfile);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // プロフィール編集状態
   const [username, setUsername] = useState('');
@@ -38,7 +53,23 @@ const ProfilePage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [formLoading, setFormLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'social' | 'notifications' | 'ppl-ranks'>('profile');
+  const [activeTab, setActiveTab] = useState<ProfileTabId>('profile');
+
+  // ?tab= から初期タブ・共有URLを同期
+  useEffect(() => {
+    const raw = searchParams.get('tab');
+    if (raw && isProfileTabId(raw)) {
+      setActiveTab(raw);
+    }
+  }, [searchParams]);
+
+  const selectTab = useCallback(
+    (id: ProfileTabId) => {
+      setActiveTab(id);
+      setSearchParams({ tab: id }, { replace: true });
+    },
+    [setSearchParams],
+  );
 
   // 状態変更の監視（デバッグ用）
   useEffect(() => {
@@ -299,7 +330,7 @@ const ProfilePage: React.FC = () => {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => selectTab(tab.id)}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-200 ${activeTab === tab.id
                   ? 'bg-brand-primary text-brand-secondary font-semibold shadow-lg'
                   : 'text-white hover:bg-whiskyPapa-yellow/10'

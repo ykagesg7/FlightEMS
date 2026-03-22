@@ -25,6 +25,10 @@
     },
     "vercel": {
       "url": "https://mcp.vercel.com/YOUR_TEAM_SLUG/YOUR_PROJECT_SLUG"
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
     }
   }
 }

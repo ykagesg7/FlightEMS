@@ -48,6 +48,11 @@ export interface RouteSegment {
   fuelRemainingLb?: number;
   frequency?: string;
   frequencySourceId?: string;
+  /** Open-Meteo 反映時: 気象風（吹いてくる方位・kt） */
+  windFromDeg?: number;
+  windSpeedKt?: number;
+  /** 地速 kt（風補正後。未設定時は TAS を地速扱い） */
+  groundSpeedKt?: number;
 }
 
 export interface FlightPlan {
@@ -72,6 +77,8 @@ export interface FlightPlan {
   cruiseFuelFlowLbPerHr?: number;
   totalFuelUsedLb?: number;
   totalFuelRemainingLb?: number;
+  /** true のとき経路 ETE/燃料に Open-Meteo の上層風を反映（参考・非商用枠） */
+  useOpenMeteoWind?: boolean;
 }
 
 export interface Navaid {

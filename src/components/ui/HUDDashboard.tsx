@@ -2,9 +2,17 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 
 interface HUDTimeDisplayProps {
   className?: string;
+  /** ヘッダー横並びなどで左揃えにしたいとき */
+  textAlign?: 'center' | 'start';
+  /** ヘッダー帯用の小さめタイポ */
+  density?: 'default' | 'compact';
 }
 
-export const HUDTimeDisplay: React.FC<HUDTimeDisplayProps> = ({ className = '' }) => {
+export const HUDTimeDisplay: React.FC<HUDTimeDisplayProps> = ({
+  className = '',
+  textAlign = 'center',
+  density = 'default',
+}) => {
   const [currentTime, setCurrentTime] = useState(() => new Date());
   const [currentDate, setCurrentDate] = useState(() => {
     const now = new Date();
@@ -48,13 +56,24 @@ export const HUDTimeDisplay: React.FC<HUDTimeDisplayProps> = ({ className = '' }
     });
   }, [currentTime]);
 
+  const alignCls = textAlign === 'start' ? 'text-left' : 'text-center';
+  const compact = density === 'compact';
+
   return (
     <div className={`hud-time-display ${className}`}>
-      <div className="text-center">
-        <div className="text-lg font-bold text-[color:var(--hud-primary)]">
+      <div className={alignCls}>
+        <div
+          className={`font-bold tabular-nums text-[color:var(--hud-primary)] ${
+            compact ? 'text-sm md:text-base leading-none' : 'text-lg leading-tight'
+          }`}
+        >
           {formattedTime}
         </div>
-        <div className="text-sm mt-1 text-[color:var(--semantic-text-muted)]">
+        <div
+          className={`text-[color:var(--semantic-text-muted)] ${
+            compact ? 'mt-0.5 text-[10px] md:text-xs leading-tight' : 'mt-1 text-sm'
+          }`}
+        >
           {currentDate}
         </div>
       </div>

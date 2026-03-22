@@ -14,7 +14,7 @@ export const escapeHtml = (raw: unknown): string => {
 };
 
 /**
- * Build a vertical key/value item where label sits above value.
+ * Build a key/value row (label and value on one line; wraps if needed).
  * prefix controls CSS class names (weather|airport)
  */
 export const kvItem = (
@@ -28,8 +28,7 @@ export const kvItem = (
   const safeValue = escapeHtml(value);
   return `
     <div class="text-sm ${prefix}-item">
-      <div class="${prefix}-label">${safeLabel}</div>
-      <div class="${prefix}-value${readoutClass}">${safeValue}</div>
+      <span class="${prefix}-label">${safeLabel}</span><span class="${prefix}-value${readoutClass}">${safeValue}</span>
     </div>
   `;
 };
@@ -49,7 +48,7 @@ export const sectionHeader = (title: string, iconHtml?: string): string => {
 export const createPopup = (latlng: [number, number]) =>
   L.popup({
     className: 'airport-weather-popup',
-    maxWidth: 720,
+    maxWidth: 400,
     keepInView: true,
     autoPan: true,
     autoPanPadding: L.point(24, 24),

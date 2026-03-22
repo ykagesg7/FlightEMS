@@ -4,6 +4,10 @@ import React, { useMemo } from 'react';
 import { FlightPlan, Waypoint } from '../../../../types/index';
 import { calculateMagneticBearing } from '../../../../utils/bearing';
 
+function isFiniteLatLon(lat: unknown, lon: unknown): lat is number {
+  return typeof lat === 'number' && typeof lon === 'number' && Number.isFinite(lat) && Number.isFinite(lon);
+}
+
 export interface FlightPlanRouteLayerProps {
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
@@ -25,7 +29,9 @@ export const FlightPlanRouteLayer: React.FC<FlightPlanRouteLayerProps> = ({
     }
     if (flightPlan.waypoints?.length) {
       flightPlan.waypoints.forEach((wp: Waypoint) => {
-        pts.push([wp.latitude, wp.longitude]);
+        if (isFiniteLatLon(wp.latitude, wp.longitude)) {
+          pts.push([wp.latitude, wp.longitude]);
+        }
       });
     }
     if (flightPlan.arrival) {
@@ -101,9 +107,13 @@ export const FlightPlanRouteLayer: React.FC<FlightPlanRouteLayerProps> = ({
         </CircleMarker>
       )}
 
-      {flightPlan.waypoints.map((waypoint: Waypoint, index: number) => (
+      {flightPlan.waypoints.map((waypoint: Waypoint, index: number) => {
+        if (!isFiniteLatLon(waypoint.latitude, waypoint.longitude)) {
+          return null;
+        }
+        return (
         <CircleMarker
-          key={index}
+          key={waypoint.id || index}
           center={[waypoint.latitude, waypoint.longitude]}
           radius={5}
           fillColor="blue"
@@ -163,7 +173,8 @@ export const FlightPlanRouteLayer: React.FC<FlightPlanRouteLayerProps> = ({
             </div>
           </Popup>
         </CircleMarker>
-      ))}
+        );
+      })}
     </>
   );
 };

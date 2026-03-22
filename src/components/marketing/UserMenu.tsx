@@ -46,7 +46,7 @@ export const UserMenu: React.FC = () => {
         <img
           src={profile.avatar_url}
           alt={profile.username || 'User'}
-          className="w-8 h-8 rounded-full object-cover border-2 border-whiskyPapa-yellow/50"
+          className="h-8 w-8 rounded-full border-2 border-brand-primary/50 object-cover"
         />
       );
     }
@@ -57,7 +57,7 @@ export const UserMenu: React.FC = () => {
       : user?.email?.charAt(0).toUpperCase() || 'U';
 
     return (
-      <div className="w-8 h-8 rounded-full bg-whiskyPapa-yellow/20 border-2 border-whiskyPapa-yellow/50 flex items-center justify-center text-whiskyPapa-yellow font-bold text-sm">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-brand-primary/50 bg-brand-primary/20 text-sm font-bold text-brand-primary">
         {initials}
       </div>
     );
@@ -67,7 +67,11 @@ export const UserMenu: React.FC = () => {
   if (!user) {
     return (
       <Link to="/auth">
-        <Button variant="brand" size="md" className="px-4 py-2">
+        <Button
+          variant="brand"
+          size="sm"
+          className="!px-3 !py-1.5 text-xs font-semibold uppercase tracking-wide shadow-md hover:shadow-lg"
+        >
           LOGIN
         </Button>
       </Link>
@@ -79,12 +83,12 @@ export const UserMenu: React.FC = () => {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-whiskyPapa-yellow/10 transition-colors focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow/50"
+        className="flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-brand-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
         aria-label="ユーザーメニュー"
         aria-expanded={isOpen}
       >
         {getAvatarDisplay()}
-        <span className="hidden md:block text-sm text-white font-medium">
+        <span className="hidden font-medium text-[var(--text-primary)] md:block md:text-sm">
           {profile?.username || user.email?.split('@')[0] || 'User'}
         </span>
       </button>
@@ -96,18 +100,18 @@ export const UserMenu: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-2 w-48 bg-whiskyPapa-black border border-whiskyPapa-yellow/30 rounded-lg shadow-xl z-50 overflow-hidden"
+            className="absolute right-0 z-[60] mt-2 w-48 overflow-hidden rounded-lg border border-brand-primary/20 bg-[var(--panel)] shadow-xl"
           >
             <div className="py-2">
               {/* プロフィール情報 */}
-              <div className="px-4 py-3 border-b border-whiskyPapa-yellow/10">
+              <div className="border-b border-brand-primary/15 px-4 py-3">
                 <div className="flex items-center gap-3">
                   {getAvatarDisplay()}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-[var(--text-primary)]">
                       {profile?.username || user.email?.split('@')[0] || 'User'}
                     </p>
-                    <p className="text-xs text-gray-400 truncate">
+                    <p className="truncate text-xs text-[var(--text-muted)]">
                       {user.email}
                     </p>
                   </div>
@@ -116,9 +120,9 @@ export const UserMenu: React.FC = () => {
 
               {/* メニュー項目 */}
               <Link
-                to="/account?tab=profile"
+                to="/profile?tab=profile"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:bg-whiskyPapa-yellow/10 transition-colors"
+                className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-primary)] transition-colors hover:bg-brand-primary/10"
               >
                 <UserCircle className="w-4 h-4" />
                 プロフィール設定

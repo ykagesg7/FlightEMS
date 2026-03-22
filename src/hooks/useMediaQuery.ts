@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
  * CSS メディアクエリに一致するか（SSR では false、マウント後に評価）。
  */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
+  const [matches, setMatches] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia(query).matches
+  );
 
   useEffect(() => {
     const m = window.matchMedia(query);

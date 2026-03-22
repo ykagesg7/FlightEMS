@@ -2,6 +2,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
+import { proxyOpenSkyStates } from '../lib/openskyStatesCore';
 
 // Load env: prefer server-specific file, then fallback to .env.local
 const serverEnvPath = fs.existsSync('.env.server.local') ? '.env.server.local' : '.env.local';
@@ -196,10 +197,60 @@ app.get('/api/aviation-weather', async (req, res) => {
   }
 });
 
+// OpenSky states（api/opensky-states.ts と同ロジック。Vite の /api プロキシ先で利用）
+app.options('/api/opensky-states', (_req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.status(200).end();
+});
+app.get('/api/opensky-states', async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  try {
+    const result = await proxyOpenSkyStates(req.query as Record<string, string | string[] | undefined>);
+    return res.status(result.status).json(result.body);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'unknown';
+    return res.status(500).json({ error: 'Internal Server Error', message });
+  }
+});
+
+// RainViewer manifest（api/rainviewer-maps.ts と同様）
+app.options('/api/rainviewer-maps', (_req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.status(200).end();
+});
+app.get('/api/rainviewer-maps', async (_req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  try {
+    const upstream = await fetch('https://api.rainviewer.com/public/weather-maps.json', {
+      headers: { Accept: 'application/json', 'User-Agent': 'FlightAcademyTsx/1.0' },
+    });
+    if (!upstream.ok) {
+      return res.status(upstream.status).json({ error: 'Upstream error', status: upstream.status });
+    }
+    const data = await upstream.json();
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    return res.json(data);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'unknown';
+    return res.status(502).json({ error: 'Proxy failed', message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`[dev-weather-server] listening on http://localhost:${PORT} (env: ${serverEnvPath})`);
   console.log(`[dev-weather-server] Available endpoints:`);
   console.log(`  - GET /api/health`);
   console.log(`  - GET /api/weather?lat={lat}&lon={lon}`);
   console.log(`  - GET /api/aviation-weather?type={metar|taf}&icao={ICAO}`);
+  console.log(`  - GET /api/opensky-states?lamin=&lamax=&lomin=&lomax=`);
+  console.log(`  - GET /api/rainviewer-maps`);
 });

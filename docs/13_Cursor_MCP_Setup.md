@@ -11,8 +11,31 @@
 
 | 置き場所 | 対象の例 |
 |----------|-----------|
-| **Global**（`%USERPROFILE%\.cursor\mcp.json`） | `chrome-devtools`、（任意）全リポジトリ共通にしたい `github`（PAT） |
-| **プロジェクト**（`.cursor/mcp.json`） | `vercel`、Supabase MCP、[Serena](https://oraios.github.io/serena/)、`github`（このリポジトリ専用）など |
+| **Global**（`%USERPROFILE%\.cursor\mcp.json`） | （任意）全リポジトリ共通の `github`（PAT）のみ、など |
+| **プロジェクト**（`.cursor/mcp.json`） | `chrome-devtools`、`vercel`、Supabase MCP、[Serena](https://oraios.github.io/serena/)、`github`（このリポジトリ専用）など |
+
+---
+
+## Chrome DevTools MCP（ブラウザデバッグ）
+
+[Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) を有効にすると、エージェントが **実際の Chrome** を操作し、コンソール・ネットワーク・スクリーンショット・Lighthouse 等にアクセスできます。
+
+**要件**: Node.js **v20.19+**、**Chrome（安定版）**、npm。
+
+**設定（このリポジトリ）**: `.cursor/mcp.json` の `mcpServers` に次を追加する（[`.cursor/mcp.json.example`](../.cursor/mcp.json.example) に同梱）。
+
+```json
+"chrome-devtools": {
+  "command": "npx",
+  "args": ["-y", "chrome-devtools-mcp@latest"]
+}
+```
+
+- **Cursor**: **Settings → Tools & Integrations → MCP** で `chrome-devtools` が緑／接続済みか確認。変更後は **Cursor を再起動**。
+- **利用統計のオプトアウト**（Google へのテレメトリ無効）: `args` に `"--no-usage-statistics"` を追加。または環境変数 `CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS=1` や `CI=1`。
+- **軽量モード**: 基本操作のみなら `"--slim"`（必要なら `"--headless"` も）。詳細は公式 README の *Slim* 節。
+
+複数リポジトリで同じ設定を使う場合は、上記ブロックを **Global** の `%USERPROFILE%\.cursor\mcp.json` にだけ置き、プロジェクト側では省略してもよい。
 
 ---
 
@@ -27,10 +50,10 @@
 
 ## 初回手順（このリポジトリ）
 
-1. **Global**: `~/.cursor/mcp.json` に `chrome-devtools` を定義する。GitHub を **プロジェクトの `.cursor/mcp.json` にだけ**書く場合は、Global には `github` を置かない。
-2. **プロジェクト**: `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。GitHub MCP を使う場合は [Personal Access Token](https://github.com/settings/personal-access-tokens/new) を `Authorization: Bearer …` に設定する（スコープは最小限）。**PAT はリポジトリにコミットしない。**
+1. **プロジェクト**: `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。例には **`chrome-devtools`** が含まれる（不要なら削除）。GitHub MCP を使う場合は [Personal Access Token](https://github.com/settings/personal-access-tokens/new) を `Authorization: Bearer …` に設定する（スコープは最小限）。**PAT はリポジトリにコミットしない。**
+2. **Global（任意）**: 全リポジトリ共通の MCP だけ `%USERPROFILE%\.cursor\mcp.json` に置く。GitHub を **プロジェクトの `.cursor/mcp.json` にだけ**書く場合は、Global に `github` を重複させない。
 3. Cursor を再起動する（GitHub リモート MCP は [Cursor v0.48.0+](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) 推奨）。
-4. **Settings → Tools & Integrations → MCP** で接続を確認。Vercel は `Needs login` から OAuth で認可する。
+4. **Settings → Tools & Integrations → MCP** で接続を確認。`chrome-devtools` が利用可能か、Vercel は `Needs login` から OAuth で認可する。
 
 ### Vercel の URL
 

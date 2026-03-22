@@ -6,6 +6,8 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
+import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -16,11 +18,39 @@ export default defineConfig(({ mode }) => {
   const weatherApiKey = env.VITE_WEATHER_API_KEY || '';
   console.log(`Mode: ${mode}, Weather API Key: ${weatherApiKey ? '設定済み' : '未設定'}`);
 
-  // ローカル開発時のAPIプロキシ先（優先順位: VITE_API_PROXY_TARGET -> 3001）
-  const apiProxyTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:3001';
+  // ローカル開発時の /api プロキシ先（ブラウザが相対パス /api を 5173 へ送ったときのみ有効）
+  // - /api/weather・/api/aviation-weather は Vite プラグインが先に処理
+  // - /api/opensky-states 同上
+  // - その他 /api/* の既定 3001: npm run dev + npm run dev:weather
+  // - npm run dev:full では VITE_VERCEL_DEV_API_ORIGIN で API を 3000 直叩きするため、ここは主に dev+weather 用
+  // - 子プロセス Vite に VERCEL_* が付く場合は 3000 をフォールバック
+  const proxyFromEnv = process.env.VITE_API_PROXY_TARGET ?? env.VITE_API_PROXY_TARGET;
+  const defaultApiProxy =
+    process.env.VERCEL === '1' || process.env.VERCEL_ENV === 'development'
+      ? 'http://localhost:3000'
+      : 'http://localhost:3001';
+  const apiProxyTarget = proxyFromEnv || defaultApiProxy;
+
+  // ブラウザからの API URL: cross-env が子プロセスに届かない場合があるため、
+  // vercel dev の Vite 子プロセスでは VERCEL_* を見て 3000 を既定にする（define で確実にクライアントへ）
+  const vercelDevApiOriginExplicit =
+    (process.env.VITE_VERCEL_DEV_API_ORIGIN ?? env.VITE_VERCEL_DEV_API_ORIGIN ?? '').trim();
+  const vercelDevApiOrigin =
+    vercelDevApiOriginExplicit ||
+    (mode === 'development' &&
+    (process.env.VERCEL === '1' || process.env.VERCEL_ENV === 'development')
+      ? 'http://localhost:3000'
+      : '');
+  if (mode === 'development') {
+    console.log(
+      `[vite] Client API base: ${vercelDevApiOrigin || '(same origin /api → proxy ' + apiProxyTarget + ')'}`,
+    );
+  }
 
   return {
     plugins: [
+      mode === 'development' && devOpenskyApiPlugin(),
+      mode === 'development' && devWeatherApiPlugin(),
       react({
         // React 18対応の基本設定
         jsxRuntime: 'automatic',
@@ -59,6 +89,7 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
       'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
       'import.meta.env.VITE_SENTRY_DSN': JSON.stringify(env.VITE_SENTRY_DSN || ''),
+      'import.meta.env.VITE_VERCEL_DEV_API_ORIGIN': JSON.stringify(vercelDevApiOrigin),
     },
     build: {
       // Sentry のためソースマップを有効化（hidden: デプロイ先には公開しない）

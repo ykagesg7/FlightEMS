@@ -1,7 +1,7 @@
 # プロジェクトフォルダ構造ガイド
 
 **最終更新**: 2026年3月
-**バージョン**: Folder Structure Guide v1.1
+**バージョン**: Folder Structure Guide v1.2
 
 **責務**: repo 全体のフォルダ概要。プロジェクトのクイックリファレンスと AI 向け索引は [docs/README.md](README.md)。`src/` の詳細は [07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md) を参照。
 
@@ -69,6 +69,11 @@
 #### `docs/`
 - **目的**: プロジェクトドキュメント
 - **詳細**: [docs/README.md](README.md)を参照
+
+##### `docs/SWIM_Portal/`
+- **目的**: 国土交通省航空局 **SWIM**・**デジタルノータムリクエストサービス**の仕様・手続きの参照用 Markdown（共通編、付録 04、サービス説明書、ユーザーズガイド、情報サービス概要）
+- **索引**: [docs/SWIM_Portal/README.md](SWIM_Portal/README.md)
+- **注意**: `PDF/` 配下の原本 PDF は `.gitignore`（`**/*.pdf`）によりコミット対象外。正本は公式資料に従うこと
 
 #### `scripts/`
 - **目的**: 開発・運用スクリプト

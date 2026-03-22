@@ -5,6 +5,7 @@
 
 import axios from 'axios';
 import type { METARData, TAFData, AviationWeatherData } from '../types/aviation';
+import { getDevApiBase } from '../utils/devApiBase';
 
 // 本番環境かどうかを判定する
 const isProd = import.meta.env.PROD;
@@ -20,6 +21,10 @@ function getApiEndpoint(type: 'metar' | 'taf', icaoCode: string): string {
 
   if (deploymentDomain) {
     return `${deploymentDomain}/api/aviation-weather?${params}`;
+  }
+  const devApi = getDevApiBase();
+  if (devApi) {
+    return `${devApi}/api/aviation-weather?${params}`;
   }
   return `/api/aviation-weather?${params}`;
 }

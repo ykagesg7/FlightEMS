@@ -53,6 +53,13 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
     setFlightPlan((prev: FlightPlan) => ({ ...prev, groundElevationFt: newElevation }));
   }, [setFlightPlan]);
 
+  const handleOpenMeteoWindToggle = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setFlightPlan((prev: FlightPlan) => ({ ...prev, useOpenMeteoWind: event.target.checked }));
+    },
+    [setFlightPlan]
+  );
+
   const handleSpeedIncrement = useCallback(() => {
     setFlightPlan((prev: FlightPlan) => ({ ...prev, speed: prev.speed + SPEED_INCREMENT }));
   }, [setFlightPlan]);
@@ -365,6 +372,23 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
               空港: {airportName}
             </div>
           </div>
+        </div>
+
+        <div className="sm:col-span-2 lg:col-span-3 mt-1 pt-3 border-t border-whiskyPapa-yellow/20">
+          <label className="flex items-start gap-2 text-xs sm:text-sm text-gray-200 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              className="mt-0.5 rounded border-whiskyPapa-yellow/40 text-whiskyPapa-yellow focus:ring-whiskyPapa-yellow"
+              checked={flightPlan.useOpenMeteoWind === true}
+              onChange={handleOpenMeteoWindToggle}
+            />
+            <span>
+              Open-Meteo の上層風をセグメント ETE・燃料に反映する（参考・非商用 API）
+            </span>
+          </label>
+          <p className="mt-1 text-2xs text-gray-400 pl-6 leading-relaxed">
+            ルート中点の予報風を使用。磁方位と真風向の偏角は補正していません。取得失敗時は従来どおり TAS を地速として計算します。
+          </p>
         </div>
       </div>
     </div>

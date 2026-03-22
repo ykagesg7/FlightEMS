@@ -3,6 +3,21 @@ import type { AviationWeatherData } from '@/types/aviation';
 import { formatMETAR, formatTAF, translateFlightCategory } from '@/services/aviationWeather';
 import { escapeHtml, kvItem } from './common';
 
+/** ISO 等の長い文字列でポップアップ幅が膨らまないよう表示用に短縮 */
+function formatLastUpdatedLabel(raw: string): string {
+  if (!raw || raw === '不明') return '不明';
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return raw;
+  return d.toLocaleString('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+}
+
 export const createWeatherPopupContent = (
   airportProps: Record<string, unknown>,
   weatherData: FilteredWeatherData,
@@ -44,7 +59,7 @@ export const createWeatherPopupContent = (
   const sunset = astronomy?.sunset || '情報なし';
   const sunriseSunset = `${sunrise}/${sunset}`;
 
-  const lastUpdated = current.last_updated || '不明';
+  const lastUpdated = formatLastUpdatedLabel(current.last_updated || '不明');
 
   const iconUrl = current.condition.icon ? `https:${current.condition.icon}` : '';
   const iconHtml = iconUrl ? `<img src="${iconUrl}" alt="${conditionText}" class="weather-icon">` : '';
@@ -67,15 +82,20 @@ export const createWeatherPopupContent = (
       });
 
       metarSection = `
-        <div class="metar-section">
-          <h4>📡 METAR</h4>
-          <div class="metar-raw">${escapeHtml(formatMETAR(metar.rawOb))}</div>
-          <div class="metar-details">
-            <p><strong>観測:</strong> ${observationTime}</p>
-            ${metar.fltCat ? `<p><strong>カテゴリー:</strong> <span class="flight-category ${metar.fltCat}">${translateFlightCategory(metar.fltCat)}</span></p>` : ''}
-            ${metar.wxString ? `<p><strong>天気:</strong> ${escapeHtml(metar.wxString)}</p>` : ''}
+        <details class="metar-section metar-taf-collapsible">
+          <summary class="metar-taf-summary">
+            <span class="metar-taf-summary-title">📡 METAR</span>
+            <span class="metar-taf-summary-hint">タップで全文</span>
+          </summary>
+          <div class="metar-taf-body">
+            <div class="metar-raw">${escapeHtml(formatMETAR(metar.rawOb))}</div>
+            <div class="metar-details">
+              <p><strong>観測:</strong> ${observationTime}</p>
+              ${metar.fltCat ? `<p><strong>カテゴリー:</strong> <span class="flight-category ${metar.fltCat}">${translateFlightCategory(metar.fltCat)}</span></p>` : ''}
+              ${metar.wxString ? `<p><strong>天気:</strong> ${escapeHtml(metar.wxString)}</p>` : ''}
+            </div>
           </div>
-        </div>
+        </details>
       `;
     }
   }
@@ -106,14 +126,19 @@ export const createWeatherPopupContent = (
       });
 
       tafSection = `
-        <div class="taf-section">
-          <h4>🔮 TAF（飛行場予報）</h4>
-          <div class="taf-raw">${escapeHtml(formatTAF(taf.rawTAF))}</div>
-          <div class="taf-details">
-            <p><strong>発表:</strong> ${issueTime}</p>
-            <p><strong>有効期間:</strong> ${validFrom} 〜 ${validTo}</p>
+        <details class="taf-section metar-taf-collapsible">
+          <summary class="metar-taf-summary">
+            <span class="metar-taf-summary-title">🔮 TAF（飛行場予報）</span>
+            <span class="metar-taf-summary-hint">タップで全文</span>
+          </summary>
+          <div class="metar-taf-body">
+            <div class="taf-raw">${escapeHtml(formatTAF(taf.rawTAF))}</div>
+            <div class="taf-details">
+              <p><strong>発表:</strong> ${issueTime}</p>
+              <p><strong>有効期間:</strong> ${validFrom} 〜 ${validTo}</p>
+            </div>
           </div>
-        </div>
+        </details>
       `;
     }
   }
@@ -123,8 +148,7 @@ export const createWeatherPopupContent = (
   if (aviationWeather && !aviationWeather.metar && !aviationWeather.taf) {
     noAviationWeatherMsg = `
       <div class="no-aviation-weather">
-        <p>⚠️ METAR/TAF情報は現在利用できません</p>
-        <p class="note">このデータは政府機関から提供されており、一時的に利用できない場合があります。</p>
+        <p class="no-aviation-weather-line">METAR/TAF：No-Data</p>
       </div>
     `;
   }
@@ -133,14 +157,14 @@ export const createWeatherPopupContent = (
   const weatherSection = `
     <div class="weather-section">
       <h4>🌤️ 気象情報${iconHtml ? ` ${iconHtml}` : ''}</h4>
-      <p class="text-sm mt-1 popup-value">${escapeHtml(conditionText)}</p>
+      <p class="text-sm mt-0.5 mb-1 popup-value">${escapeHtml(conditionText)}</p>
       <div class="weather-info-grid">
         ${kvItem('weather', '温度：', temp, { readout: true })}
         ${kvItem('weather', '風：', windInfo, { readout: true })}
         ${kvItem('weather', '視程：', visibility, { readout: true })}
         ${kvItem('weather', '気圧：', pressureInch, { readout: true })}
         ${kvItem('weather', '日出/日入：', sunriseSunset)}
-        <p class="text-xs mt-1 weather-update-time">
+        <p class="text-xs mt-0.5 weather-update-time">
           <span>最終更新：${escapeHtml(lastUpdated)}</span>
         </p>
       </div>
@@ -160,13 +184,15 @@ export const createWeatherPopupContent = (
       <div class="airport-popup-header">
         ${airportProps.id as string}（${(airportProps.name1 as string)?.split('(')[0].trim()}）
       </div>
-      <div class="p-3">
+      <div class="px-2 py-2 sm:px-3 sm:py-2">
         ${weatherSection}
         ${airportSection}
       </div>
-      ${metarSection}
-      ${tafSection}
-      ${noAviationWeatherMsg}
+      <div class="airport-popup-aviation px-2 pb-2 sm:px-3">
+        ${metarSection}
+        ${tafSection}
+        ${noAviationWeatherMsg}
+      </div>
     </div>
   `;
 };

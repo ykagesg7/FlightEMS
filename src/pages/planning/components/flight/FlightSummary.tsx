@@ -4,6 +4,7 @@ import { FlightPlan, RouteSegment } from '../../../../types/index';
 import { calculateAirspeeds, calculateTAS } from '../../../../utils';
 import { parseFlightPlanTime } from '../../../../utils/flightTime';
 import { formatBearing } from '../../../../utils/format';
+import { tailwindComponentKt } from '../../../../utils/windComponents';
 
 interface FlightSummaryProps {
   flightPlan: FlightPlan;
@@ -124,8 +125,20 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
         }
       }
 
-      // 所要時間の計算（分単位）
-      const eteMinutes = (segment.distance / tas) * 60;
+      const useWind =
+        flightPlan.useOpenMeteoWind === true &&
+        segment.windFromDeg != null &&
+        segment.windSpeedKt != null &&
+        Number.isFinite(segment.windFromDeg) &&
+        Number.isFinite(segment.windSpeedKt);
+      const tw = useWind
+        ? tailwindComponentKt(segment.windFromDeg!, segment.windSpeedKt!, segment.bearing)
+        : 0;
+      const speedForTime =
+        useWind && !Number.isNaN(tw) ? Math.max(20, tas + tw) : tas;
+
+      // 所要時間の計算（分単位）— 風あり時は地速で除算
+      const eteMinutes = (segment.distance / speedForTime) * 60;
 
       // hh:mm:ss 形式に変換
       const eteHours = Math.floor(eteMinutes / 60);
@@ -176,7 +189,17 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
       ...prev,
       ...updatedPlan,
     }));
-  }, [editableSegments, flightPlan.departureTime, flightPlan.groundTempC, flightPlan.groundElevationFt, formatTime, calculateTAS, calculateAirspeeds, setFlightPlan]);
+  }, [
+    editableSegments,
+    flightPlan.departureTime,
+    flightPlan.groundTempC,
+    flightPlan.groundElevationFt,
+    flightPlan.useOpenMeteoWind,
+    formatTime,
+    calculateTAS,
+    calculateAirspeeds,
+    setFlightPlan,
+  ]);
 
   const debouncedRecalculate = useDebouncedCallback(recalculateETAs, 300);
 

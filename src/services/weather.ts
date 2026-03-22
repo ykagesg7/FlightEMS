@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getDevApiBase } from '../utils/devApiBase';
 
 // Vercelサーバーレス関数から返されるデータの型定義
 // api/weather.ts の filterWeatherData 関数が返すオブジェクトの構造と一致
@@ -85,9 +86,12 @@ const createMockWeatherData = (lat: number, lon: number): FilteredWeatherData =>
 export const fetchWeather = async (lat: number, lon: number): Promise<FilteredWeatherData | null> => {
   // Vercel関数のURLを構築
   // 開発環境ではプロキシされるように相対パスを、本番環境では完全なURLを使用
+  const devApi = getDevApiBase();
   const functionUrl = deploymentDomain
     ? `${deploymentDomain}/api/weather?lat=${lat}&lon=${lon}`
-    : `/api/weather?lat=${lat}&lon=${lon}`;
+    : devApi
+      ? `${devApi}/api/weather?lat=${lat}&lon=${lon}`
+      : `/api/weather?lat=${lat}&lon=${lon}`;
 
   try {
     // サーバーレス関数にリクエストを送信
@@ -97,11 +101,14 @@ export const fetchWeather = async (lat: number, lon: number): Promise<FilteredWe
 
     return response.data;
   } catch (error) {
-    console.error('Vercel関数へのリクエストに失敗しました:', error);
+    // 開発ではプラグイン／モックで通常は成功する。失敗時のみ warn でモックへフォールバック。
+    if (!isProd) {
+      console.warn('天気APIリクエストに失敗しました（開発モックにフォールバック）:', error);
+    } else {
+      console.error('Vercel関数へのリクエストに失敗しました:', error);
+    }
 
-    // エラーがaxiosのエラーであるか、または他のエラーであるかをチェック
     if (axios.isAxiosError(error)) {
-      // 開発環境ではモックデータを返す
       if (!isProd) {
         return createMockWeatherData(lat, lon);
       }

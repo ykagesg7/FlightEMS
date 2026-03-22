@@ -86,7 +86,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               {/* 名無しさんの場合、プロフィール設定を誘導 */}
               {isOwner && comment.user.display_name === '名無しさん' && (
                 <Link
-                  to="/account?tab=profile"
+                  to="/profile?tab=profile"
                   className="text-xs px-2 py-0.5 rounded-full transition-all bg-[#39FF14]/20 text-[#39FF14] hover:bg-[#39FF14]/30"
                   title="プロフィールでユーザー名を設定"
                 >

@@ -54,10 +54,16 @@
 #### 外部API
 - **WeatherAPI.com**: 一般気象情報（要APIキー）
 - **NOAA Aviation Weather Center API**: METAR/TAF航空気象データ（無料・認証不要）
+- **RainViewer / Open-Meteo**: 計画地図のレーダー・上層風バーブ・経路 ETE の風補正オプション（非商用枠・帰属。詳細は `docs/05`・`02`）
 
 ### Cursor MCP
 
-開発者向けの MCP 設定（Global / プロジェクトの分担、Serena、Vercel、GitHub PAT、トラブルシューティング）は **[13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md)** に集約した。
+開発者向けの MCP 設定（Global / プロジェクトの分担、**Chrome DevTools**、Serena、Vercel、GitHub PAT、トラブルシューティング）は **[13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md)** に集約した。
+
+### SWIM / デジタルノータム（参考）
+
+- **フォルダ:** [SWIM_Portal/README.md](SWIM_Portal/README.md) — 国土交通省航空局 SWIM の API 共通編・デジタルノータムリクエスト（S2019）等の **Markdown 転記**と索引。
+- **実装状況:** アプリからの NOTAM 取得は **未接続**（将来はサーバプロキシ・利用申請・AIXM パースを想定）。仕様の正本は PDF／ポータル。
 
 ---
 
@@ -73,7 +79,7 @@
 
 ### ✅ 完了済み機能
 
-- ✅ レイアウト基盤（MarketingLayout、AppLayout）
+- ✅ レイアウト基盤（MarketingLayout、AppLayout）。MarketingLayout: ヘッダー `NavLink` アクティブ表示・ロゴコントラスト・モバイルフォーカス管理・`UserMenu` をパネルトークンに統一、`/profile?tab=` 連携（2026-03）
 - ✅ ゲーミフィケーション（統合ランクシステム、XP、ミッション、ストリーク、達成通知）
 - ✅ Gallery（イベント管理、いいね機能、承認制）
 - ✅ ランクシステム統合（PPL中間ランク + XPベースランク）
@@ -82,7 +88,7 @@
 - ✅ 管理者ページ（ランク条件・XP設定編集）
 - ✅ デュアルテーマ、MarketingLayout統合、リポジトリ整理
 - ✅ 進捗管理（セクションベース）、進捗可視化、学習ダッシュボード
-- ✅ Flight Planning（経路計画、燃料計算、A4印刷、エクスポート/インポート）
+- ✅ Flight Planning（Waypoint 単一パネル3モード、ツールバー JSON/下書き確認、最終保存表示、地図ヘルプ、経路・燃料、A4印刷）
 - ✅ 記事システム（MDX、シリーズアンロック、KaTeX、コメント）
 - ✅ CI/CD（GitHub Actions: test、verify-build）
 
@@ -114,9 +120,10 @@
 
 ### 開発コマンド
 ```bash
-# 開発サーバー起動（推奨: 2ターミナル方式）
-npm run dev:weather  # ターミナル1: APIサーバー（ポート3001）
-npm run dev          # ターミナル2: フロントエンド（ポート5173）
+# 開発サーバー起動
+npm run dev          # フロント（5173）＋ Vite 上で /api/opensky-states・/api/weather（キーなしは天気モック）・/api/aviation-weather（METAR/TAF）
+npm run dev:weather  # 任意: 3001（RainViewer 等その他 /api プロキシ用）
+# 任意: npm run dev:full（vercel dev + API 直 3000）— 初回は npx vercel link、詳細は docs/02_技術開発ガイド.md
 
 # テスト
 npm test             # ウォッチモード

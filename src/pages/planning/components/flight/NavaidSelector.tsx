@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Select, { SingleValue } from 'react-select';
 import { NavaidOption, Waypoint } from '../../../../types/index';
-import { calculateOffsetPoint } from '../../../../utils/offset';
 import { planningRouteSelectStyles } from '../../../../utils/reactSelectStyles';
+import { buildWaypointFromNavaid } from '../../utils/buildWaypointFromNavaid';
 
 interface NavaidSelectorProps {
   options: NavaidOption[];
@@ -11,84 +11,25 @@ interface NavaidSelectorProps {
   onAdd: (waypoint: Waypoint) => void;
 }
 
-const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid, setSelectedNavaid, onAdd }) => {
+const NavaidSelector: React.FC<NavaidSelectorProps> = ({
+  options,
+  selectedNavaid,
+  setSelectedNavaid,
+  onAdd,
+}) => {
   const [bearing, setBearing] = useState<string>('');
   const [distance, setDistance] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   const handleAddWaypoint = () => {
+    setError('');
     if (!selectedNavaid) return;
-
-    // 磁方位と距離の両方が入力されているかチェック
-    const hasBearing = bearing.trim() !== '';
-    const hasDistance = distance.trim() !== '';
-
-    // 片方だけ入力されている場合はエラー
-    if (hasBearing !== hasDistance) {
-      console.error('磁方位と距離は両方入力するか、両方とも空にしてください');
+    const result = buildWaypointFromNavaid(selectedNavaid, bearing, distance);
+    if (!result.ok) {
+      setError(result.error);
       return;
     }
-
-    let waypoint: Waypoint;
-
-    if (hasBearing && hasDistance) {
-      // ✅ 磁方位と距離からオフセット地点を計算
-      const bearingNum = parseFloat(bearing);
-      const distanceNum = parseFloat(distance);
-
-      const offset = calculateOffsetPoint(
-        selectedNavaid.latitude,
-        selectedNavaid.longitude,
-        bearingNum,
-        distanceNum
-      );
-
-      if (!offset) {
-        console.error('オフセット計算に失敗しました');
-        return;
-      }
-
-      // ✅ 計算されたオフセット地点の座標を使用
-      waypoint = {
-        id: `${selectedNavaid.value}-${bearing}-${distance}`,
-        name: `${selectedNavaid.name}/${bearing}°/${distance}nm`,
-        type: 'navaid',
-        sourceId: selectedNavaid.value,
-        ch: selectedNavaid.ch,
-        coordinates: [offset.lon, offset.lat], // ✅ オフセット座標（GeoJSON format）
-        latitude: offset.lat,  // ✅ オフセット緯度
-        longitude: offset.lon, // ✅ オフセット経度
-        nameEditable: true,
-        metadata: {
-          baseNavaid: selectedNavaid.name,
-          bearing: bearingNum,
-          distance: distanceNum,
-          baseLatitude: selectedNavaid.latitude,
-          baseLongitude: selectedNavaid.longitude
-        }
-      };
-    } else {
-      // ✅ NAVAID単体を追加（オフセットなし）
-      waypoint = {
-        id: selectedNavaid.value,
-        name: selectedNavaid.name,
-        type: 'navaid',
-        sourceId: selectedNavaid.value,
-        ch: selectedNavaid.ch,
-        coordinates: [selectedNavaid.longitude, selectedNavaid.latitude], // GeoJSON format
-        latitude: selectedNavaid.latitude,
-        longitude: selectedNavaid.longitude,
-        nameEditable: true,
-        metadata: {
-          baseNavaid: selectedNavaid.name,
-          bearing: undefined,
-          distance: undefined,
-          baseLatitude: selectedNavaid.latitude,
-          baseLongitude: selectedNavaid.longitude
-        }
-      };
-    }
-
-    onAdd(waypoint);
+    onAdd(result.waypoint);
     setBearing('');
     setDistance('');
   };
@@ -104,7 +45,7 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
         options={options}
         value={selectedNavaid}
         onChange={handleNavaidChange}
-        placeholder="Select NAVAID"
+        placeholder="NAVAID を選択"
         isClearable
         styles={planningRouteSelectStyles}
       />
@@ -135,7 +76,10 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({ options, selectedNavaid
         </div>
       </div>
 
+      {error ? <p className="mt-2 text-sm text-red-400">{error}</p> : null}
+
       <button
+        type="button"
         onClick={handleAddWaypoint}
         className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
       >

@@ -13,11 +13,14 @@ export function loadFlightPlanDraft(): FlightPlan | null {
   }
 }
 
-export function persistFlightPlanDraft(plan: FlightPlan): void {
+/** @returns 書き込み成功時 true */
+export function persistFlightPlanDraft(plan: FlightPlan): boolean {
   try {
     localStorage.setItem(FLIGHT_PLAN_DRAFT_STORAGE_KEY, JSON.stringify(toPlanDocument(plan)));
+    return true;
   } catch {
     /* 容量・プライベートモード等 */
+    return false;
   }
 }
 

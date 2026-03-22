@@ -60,9 +60,9 @@ export const AvatarMenu: React.FC = () => {
             {profile?.email ? <div className="opacity-70 text-xs">{profile.email}</div> : null}
           </div>
           <div className="h-px bg-[color:var(--hud-dim)] my-1" />
-          <button className={itemClass} onClick={() => { navigate('/account?tab=overview'); setOpen(false); }}>アカウントセンター</button>
-          <button className={itemClass} onClick={() => { navigate('/account?tab=profile'); setOpen(false); }}>プロフィール</button>
-          <button className={itemClass} onClick={() => { navigate('/account?tab=security'); setOpen(false); }}>セキュリティ</button>
+          <button className={itemClass} onClick={() => { navigate('/profile'); setOpen(false); }}>アカウントセンター</button>
+          <button className={itemClass} onClick={() => { navigate('/profile?tab=profile'); setOpen(false); }}>プロフィール</button>
+          <button className={itemClass} onClick={() => { navigate('/profile?tab=security'); setOpen(false); }}>セキュリティ</button>
           <div className="h-px bg-[color:var(--hud-dim)] my-1" />
           {session ? (
             <button className={itemClass} onClick={async () => { await signOut(); setOpen(false); }}>ログアウト</button>
