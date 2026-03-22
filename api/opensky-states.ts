@@ -6,11 +6,10 @@
  *
  * オプション: OPENSKY_USERNAME / OPENSKY_PASSWORD で Basic 認証（レート緩和）
  *
- * 共有ロジックは静的 import（@vercel/node の依存トレースで lib がバンドルに含まれる）。
- * vercel dev で CJS/ESM 不整合が出る場合は `npm run dev:full` または Vite プラグイン経由を利用。
+ * 共有ロジックは `api/lib/` 配下（プロジェクト直下の lib/ は本番バンドルに含まれないことがある）。
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { proxyOpenSkyStates } from '../lib/openskyStatesCore';
+import { proxyOpenSkyStates } from './lib/openskyStatesCore';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');

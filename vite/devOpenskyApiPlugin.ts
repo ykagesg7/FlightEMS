@@ -35,7 +35,7 @@ export function devOpenskyApiPlugin(): Plugin {
           return;
         }
         try {
-          const mod = await server.ssrLoadModule('/lib/openskyStatesCore.ts');
+          const mod = await server.ssrLoadModule('/api/lib/openskyStatesCore.ts');
           const { proxyOpenSkyStates } = mod as {
             proxyOpenSkyStates: (
               q: Record<string, string | string[] | undefined>

@@ -70,8 +70,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+# Do not ignore project TypeScript lib/ (api/* imports ../lib/*.ts) or api/lib/.
+# Python build outputs live under build/ (ignored above).
 parts/
 sdist/
 var/
