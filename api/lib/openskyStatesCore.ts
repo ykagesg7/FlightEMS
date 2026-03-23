@@ -9,7 +9,7 @@
 const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
 
 /**
- * OpenSky 待ち上限。`vercel.json` の `api/**/*.ts` の `maxDuration`（15s）未満に収める。
+ * OpenSky 待ち上限。`vercel.json` の `functions`（api 配下の `.ts`）の `maxDuration`（15s）未満に収める。
  * iad1 等米国リージョンから opensky-network.org（欧州）へは往復＋混雑で 8s を超えやすく、
  * 短すぎると JSON の「OpenSky request timed out」504 だけが返り航空機が常に出ない。
  */
