@@ -45,7 +45,8 @@ export function useLiveTrafficLayer(
 
   const refresh = useCallback(async () => {
     if (!map || !layerGroup || !enabled) return;
-    if (!map.hasLayer(layerGroup)) return;
+    // レイヤー ON 直後は Leaflet の addLayer と React の state 更新が 1 フレームずれることがあり、
+    // hasLayer が false のまま refresh が走ると一切フェッチしない。enabled を信頼する。
 
     const b = map.getBounds();
     const box = intersectWithJapanBBox({

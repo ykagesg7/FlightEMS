@@ -87,8 +87,10 @@ export function parseStateVector(row: unknown): ParsedOpenSkyAircraft | null {
   if (lat === null || lon === null) return null;
   const icao = row[0];
   if (typeof icao !== 'string' || !icao) return null;
-  const lastContact = numOrNull(row[4]);
-  if (lastContact === null) return null;
+  /** OpenSky は last_contact / time_position が null の行があり得る。位置があれば表示する。 */
+  let lastContact = numOrNull(row[4]);
+  if (lastContact === null) lastContact = numOrNull(row[3]);
+  if (lastContact === null) lastContact = Math.floor(Date.now() / 1000);
   return {
     icao24: icao,
     callsign: strOrNull(row[1]),
