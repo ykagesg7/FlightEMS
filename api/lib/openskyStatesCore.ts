@@ -9,11 +9,11 @@
 const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
 
 /**
- * OpenSky 待ち上限。Vercel の関数全体が `maxDuration`（既定 10s）で打ち切られるため、
- * これより長い fetch だと FUNCTION_INVOCATION_TIMEOUT のプレーン 504 になり得る。
- * 余裕を見て JSON 応答まで含めて 10s 以内に収める。
+ * OpenSky 待ち上限。`vercel.json` の `api/**/*.ts` の `maxDuration`（15s）未満に収める。
+ * iad1 等米国リージョンから opensky-network.org（欧州）へは往復＋混雑で 8s を超えやすく、
+ * 短すぎると JSON の「OpenSky request timed out」504 だけが返り航空機が常に出ない。
  */
-const OPENSKY_FETCH_TIMEOUT_MS = 8000;
+const OPENSKY_FETCH_TIMEOUT_MS = 13000;
 
 const JAPAN = {
   lamin: 20.0,
