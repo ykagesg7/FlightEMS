@@ -3,10 +3,6 @@
   "functions": {
     "api/**/*.ts": {
       "memory": 1024,
-      "maxDuration": 10
-    },
-    "api/opensky-states.ts": {
-      "memory": 1024,
       "maxDuration": 15
     }
   },
