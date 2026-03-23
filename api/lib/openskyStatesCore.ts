@@ -8,6 +8,13 @@
  */
 const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
 
+/**
+ * OpenSky 待ち上限。Vercel の関数全体が `maxDuration`（既定 10s）で打ち切られるため、
+ * これより長い fetch だと FUNCTION_INVOCATION_TIMEOUT のプレーン 504 になり得る。
+ * 余裕を見て JSON 応答まで含めて 10s 以内に収める。
+ */
+const OPENSKY_FETCH_TIMEOUT_MS = 8000;
+
 const JAPAN = {
   lamin: 20.0,
   lamax: 46.5,
@@ -101,7 +108,7 @@ export async function proxyOpenSkyStates(
     const response = await fetch(url, {
       method: 'GET',
       headers,
-      signal: abortAfter(15000),
+      signal: abortAfter(OPENSKY_FETCH_TIMEOUT_MS),
     });
 
     if (response.status === 429) {
