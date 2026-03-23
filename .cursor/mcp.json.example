@@ -2,7 +2,7 @@
   "mcpServers": {
     "my_supabase_project": {
       "command": "npx",
-      "args": ["@supabase/mcp-server-supabase"],
+      "args": ["-y", "@supabase/mcp-server-supabase"],
       "env": {
         "SUPABASE_ACCESS_TOKEN": "YOUR_SUPABASE_ACCESS_TOKEN",
         "SUPABASE_PROJECT_ID": "YOUR_SUPABASE_PROJECT_REF"
@@ -23,8 +23,23 @@
         "false"
       ]
     },
+    "github": {
+      "url": "https://api.githubcopilot.com/mcp/",
+      "transport": "streamableHttp",
+      "headers": {
+        "Authorization": "Bearer YOUR_GITHUB_PAT"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
     "vercel": {
-      "url": "https://mcp.vercel.com/YOUR_TEAM_SLUG/YOUR_PROJECT_SLUG"
+      "url": "https://mcp.vercel.com/YOUR_TEAM_ID_OR_SLUG/YOUR_PROJECT_SLUG"
     },
     "chrome-devtools": {
       "command": "npx",

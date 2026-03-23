@@ -15,6 +15,10 @@ const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
  */
 const OPENSKY_FETCH_TIMEOUT_MS = 13000;
 
+/** Vercel 等から OpenSky への一時的な接続失敗向け（データセンター経路の揺らぎ） */
+const OPENSKY_FETCH_ATTEMPTS = 3;
+const OPENSKY_RETRY_DELAY_MS = 400;
+
 const JAPAN = {
   lamin: 20.0,
   lamax: 46.5,
@@ -104,43 +108,57 @@ export async function proxyOpenSkyStates(
     headers.Authorization = `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`;
   }
 
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers,
-      signal: abortAfter(OPENSKY_FETCH_TIMEOUT_MS),
-    });
+  for (let attempt = 0; attempt < OPENSKY_FETCH_ATTEMPTS; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers,
+        signal: abortAfter(OPENSKY_FETCH_TIMEOUT_MS),
+      });
 
-    if (response.status === 429) {
-      return {
-        status: 429,
-        body: { error: 'Too Many Requests', message: 'OpenSky rate limit' },
-      };
-    }
+      if (response.status === 429) {
+        return {
+          status: 429,
+          body: { error: 'Too Many Requests', message: 'OpenSky rate limit' },
+        };
+      }
 
-    if (!response.ok) {
+      if (!response.ok) {
+        return {
+          status: 502,
+          body: { error: 'Bad Gateway', message: `OpenSky HTTP ${response.status}` },
+        };
+      }
+
+      const data = await response.json();
+      return { status: 200, body: data };
+    } catch (error: unknown) {
+      const name = error instanceof Error ? error.name : '';
+      if (name === 'AbortError' || name === 'TimeoutError') {
+        return {
+          status: 504,
+          body: { error: 'Gateway Timeout', message: 'OpenSky request timed out' },
+        };
+      }
+
+      const lastAttempt = attempt === OPENSKY_FETCH_ATTEMPTS - 1;
+      if (!lastAttempt) {
+        await new Promise((r) => setTimeout(r, OPENSKY_RETRY_DELAY_MS));
+        continue;
+      }
+
       return {
         status: 502,
-        body: { error: 'Bad Gateway', message: `OpenSky HTTP ${response.status}` },
+        body: {
+          error: 'Bad Gateway',
+          message: error instanceof Error ? error.message : 'upstream fetch failed',
+        },
       };
     }
-
-    const data = await response.json();
-    return { status: 200, body: data };
-  } catch (error: unknown) {
-    const name = error instanceof Error ? error.name : '';
-    if (name === 'AbortError' || name === 'TimeoutError') {
-      return {
-        status: 504,
-        body: { error: 'Gateway Timeout', message: 'OpenSky request timed out' },
-      };
-    }
-    return {
-      status: 500,
-      body: {
-        error: 'Internal Server Error',
-        message: error instanceof Error ? error.message : 'fetch failed',
-      },
-    };
   }
+
+  return {
+    status: 502,
+    body: { error: 'Bad Gateway', message: 'upstream fetch failed' },
+  };
 }
