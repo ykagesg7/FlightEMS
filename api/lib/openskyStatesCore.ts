@@ -7,14 +7,74 @@
  * JAPAN は src/utils/openskyTraffic.ts の JAPAN_BBOX と同期すること。
  */
 import dns from 'node:dns';
+import https from 'node:https';
 
-/** Vercel 上の Node fetch(undici) が IPv6 を優先し opensky-network.org へ繋がらず `fetch failed` になる事例への対策 */
+/** 補助: undici fetch が Vercel から失敗しても効くよう DNS 明示 IPv4 + https（SNI 維持） */
 try {
   if (typeof dns.setDefaultResultOrder === 'function') {
     dns.setDefaultResultOrder('ipv4first');
   }
 } catch {
   /* 非 Node ランタイムでは無視 */
+}
+
+/**
+ * opensky-network.org へ IPv4 のみで HTTPS GET（Host/SNI は元ホスト名）。
+ * 本番で global fetch が `fetch failed` となるため undici に依存しない。
+ */
+function httpsGetTextIpv4(
+  urlStr: string,
+  reqHeaders: Record<string, string>,
+  timeoutMs: number
+): Promise<{ statusCode: number; text: string }> {
+  const u = new URL(urlStr);
+  return dns.promises.lookup(u.hostname, { family: 4 }).then(({ address }) => {
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const done = (fn: () => void) => {
+        if (settled) return;
+        settled = true;
+        fn();
+      };
+
+      const req = https.request(
+        {
+          host: address,
+          servername: u.hostname,
+          port: u.port || 443,
+          path: `${u.pathname}${u.search}`,
+          method: 'GET',
+          headers: { ...reqHeaders, Host: u.hostname },
+          agent: false,
+        },
+        (res) => {
+          const chunks: Buffer[] = [];
+          res.on('data', (ch) => chunks.push(ch));
+          res.on('end', () => {
+            done(() =>
+              resolve({
+                statusCode: res.statusCode ?? 0,
+                text: Buffer.concat(chunks).toString('utf8'),
+              })
+            );
+          });
+        }
+      );
+
+      req.setTimeout(timeoutMs, () => {
+        req.destroy();
+        done(() =>
+          reject(Object.assign(new Error('OpenSky upstream timeout'), { name: 'TimeoutError' }))
+        );
+      });
+
+      req.on('error', (err) => {
+        done(() => reject(err instanceof Error ? err : new Error(String(err))));
+      });
+
+      req.end();
+    });
+  });
 }
 
 const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
@@ -32,16 +92,6 @@ const JAPAN = {
   lomin: 122.0,
   lomax: 154.5,
 };
-
-/** Node 18 未満・一部ランタイム向け（AbortSignal.timeout 非対応時） */
-function abortAfter(ms: number): AbortSignal {
-  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
-    return AbortSignal.timeout(ms);
-  }
-  const ctrl = new AbortController();
-  setTimeout(() => ctrl.abort(), ms);
-  return ctrl.signal;
-}
 
 function parseBboxParam(v: string | string[] | undefined): number | null {
   if (v === undefined) return null;
@@ -116,27 +166,31 @@ export async function proxyOpenSkyStates(
   }
 
   try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers,
-      signal: abortAfter(OPENSKY_FETCH_TIMEOUT_MS),
-    });
+    const { statusCode, text } = await httpsGetTextIpv4(url, headers, OPENSKY_FETCH_TIMEOUT_MS);
 
-    if (response.status === 429) {
+    if (statusCode === 429) {
       return {
         status: 429,
         body: { error: 'Too Many Requests', message: 'OpenSky rate limit' },
       };
     }
 
-    if (!response.ok) {
+    if (statusCode < 200 || statusCode >= 300) {
       return {
         status: 502,
-        body: { error: 'Bad Gateway', message: `OpenSky HTTP ${response.status}` },
+        body: { error: 'Bad Gateway', message: `OpenSky HTTP ${statusCode}` },
       };
     }
 
-    const data = await response.json();
+    let data: unknown;
+    try {
+      data = JSON.parse(text) as unknown;
+    } catch {
+      return {
+        status: 502,
+        body: { error: 'Bad Gateway', message: 'OpenSky response was not valid JSON' },
+      };
+    }
     return { status: 200, body: data };
   } catch (error: unknown) {
     const name = error instanceof Error ? error.name : '';
