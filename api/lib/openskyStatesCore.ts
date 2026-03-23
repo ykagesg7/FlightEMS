@@ -9,11 +9,11 @@
 const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
 
 /**
- * OpenSky 待ち上限。`vercel.json` の `functions`（api 配下の `.ts`）の `maxDuration`（15s）未満に収める。
- * コールドスタート・`response.json()` 解析・ハンドラの余裕を見て **13s 未満**に抑える（超えると Vercel が先に打ち切り、
- * ブラウザにはデプロイ 504 相当になり航空機が出ない）。
+ * OpenSky 待ち上限。`vercel.json` の `maxDuration` 未満に収める。
+ * 既定リージョン iad1 から欧州の OpenSky へは往復が重く ~10s 付近で undici が `fetch failed` になりやすい。
+ * `vercel.json` で `api/opensky-states.ts` を `fra1` に寄せる前提で 12s。
  */
-const OPENSKY_FETCH_TIMEOUT_MS = 11500;
+const OPENSKY_FETCH_TIMEOUT_MS = 12000;
 
 const JAPAN = {
   lamin: 20.0,
