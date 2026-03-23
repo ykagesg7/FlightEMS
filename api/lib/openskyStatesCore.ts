@@ -6,6 +6,17 @@
  *
  * JAPAN は src/utils/openskyTraffic.ts の JAPAN_BBOX と同期すること。
  */
+import dns from 'node:dns';
+
+/** Vercel 上の Node fetch(undici) が IPv6 を優先し opensky-network.org へ繋がらず `fetch failed` になる事例への対策 */
+try {
+  if (typeof dns.setDefaultResultOrder === 'function') {
+    dns.setDefaultResultOrder('ipv4first');
+  }
+} catch {
+  /* 非 Node ランタイムでは無視 */
+}
+
 const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
 
 /**
