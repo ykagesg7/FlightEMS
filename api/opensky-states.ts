@@ -28,6 +28,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const result = await proxyOpenSkyStates(req.query);
+    if (result.status === 200) {
+      res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=15, stale-while-revalidate=45'
+      );
+    }
     res.status(result.status).json(result.body);
   } catch (err) {
     console.error('[opensky-states]', err);

@@ -8,6 +8,7 @@
  */
 import dns from 'node:dns';
 import https from 'node:https';
+import type { ClientRequest } from 'node:http';
 
 /** 補助: undici fetch が Vercel から失敗しても効くよう DNS 明示 IPv4 + https（SNI 維持） */
 try {
@@ -21,6 +22,9 @@ try {
 /**
  * opensky-network.org へ IPv4 のみで HTTPS GET（Host/SNI は元ホスト名）。
  * 本番で global fetch が `fetch failed` となるため undici に依存しない。
+ *
+ * 壁時計ベースの絶対期限: `req.setTimeout` は受信チャンクごとに延長されうり、
+ * 大きな JSON の遅い転送で Vercel maxDuration を超えて 504 になるため使わない。
  */
 function httpsGetTextIpv4(
   urlStr: string,
@@ -28,63 +32,77 @@ function httpsGetTextIpv4(
   timeoutMs: number
 ): Promise<{ statusCode: number; text: string }> {
   const u = new URL(urlStr);
-  return dns.promises.lookup(u.hostname, { family: 4 }).then(({ address }) => {
-    return new Promise((resolve, reject) => {
-      let settled = false;
-      const done = (fn: () => void) => {
-        if (settled) return;
-        settled = true;
-        fn();
-      };
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    let req: ClientRequest | null = null;
 
-      const req = https.request(
-        {
-          host: address,
-          servername: u.hostname,
-          port: u.port || 443,
-          path: `${u.pathname}${u.search}`,
-          method: 'GET',
-          headers: { ...reqHeaders, Host: u.hostname },
-          agent: false,
-        },
-        (res) => {
-          const chunks: Buffer[] = [];
-          res.on('data', (ch) => chunks.push(ch));
-          res.on('end', () => {
-            done(() =>
-              resolve({
+    const fail = (err: Error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(deadline);
+      req?.destroy();
+      reject(err);
+    };
+
+    const ok = (v: { statusCode: number; text: string }) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(deadline);
+      resolve(v);
+    };
+
+    const deadline = setTimeout(() => {
+      fail(Object.assign(new Error('OpenSky upstream timeout'), { name: 'TimeoutError' }));
+    }, timeoutMs);
+
+    dns.promises
+      .lookup(u.hostname, { family: 4 })
+      .then(({ address }) => {
+        if (settled) return;
+        req = https.request(
+          {
+            host: address,
+            servername: u.hostname,
+            port: u.port || 443,
+            path: `${u.pathname}${u.search}`,
+            method: 'GET',
+            headers: { ...reqHeaders, Host: u.hostname },
+            agent: false,
+          },
+          (res) => {
+            const chunks: Buffer[] = [];
+            res.on('data', (ch) => chunks.push(ch));
+            res.on('end', () => {
+              ok({
                 statusCode: res.statusCode ?? 0,
                 text: Buffer.concat(chunks).toString('utf8'),
-              })
-            );
-          });
-        }
-      );
-
-      req.setTimeout(timeoutMs, () => {
-        req.destroy();
-        done(() =>
-          reject(Object.assign(new Error('OpenSky upstream timeout'), { name: 'TimeoutError' }))
+              });
+            });
+            res.on('error', (err) => {
+              fail(err instanceof Error ? err : new Error(String(err)));
+            });
+          }
         );
-      });
 
-      req.on('error', (err) => {
-        done(() => reject(err instanceof Error ? err : new Error(String(err))));
-      });
+        req.on('error', (err) => {
+          fail(err instanceof Error ? err : new Error(String(err)));
+        });
 
-      req.end();
-    });
+        req.end();
+      })
+      .catch((err) => {
+        fail(err instanceof Error ? err : new Error(String(err)));
+      });
   });
 }
 
 const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
 
 /**
- * OpenSky 待ち上限。`vercel.json` の `maxDuration` 未満に収める。
- * 既定リージョン iad1 から欧州の OpenSky へは往復が重く ~10s 付近で undici が `fetch failed` になりやすい。
- * `vercel.json` で `api/opensky-states.ts` を `fra1` に寄せる前提で 12s。
+ * OpenSky 待ち上限（壁時計）。`vercel.json` の `api/opensky-states.ts` の maxDuration より
+ * 数秒短くし、JSON 解析とレスポンス送信の余裕を残す。
  */
-const OPENSKY_FETCH_TIMEOUT_MS = 12000;
+const OPENSKY_FETCH_TIMEOUT_MS = 26000;
 
 const JAPAN = {
   lamin: 20.0,
