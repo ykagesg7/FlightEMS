@@ -2,11 +2,14 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
+import { dispatchSwimNotamSearch } from '../api/lib/swimNotamHttpShared';
 import { proxyOpenSkyStates } from '../lib/openskyStatesCore';
 
-// Load env: prefer server-specific file, then fallback to .env.local
-const serverEnvPath = fs.existsSync('.env.server.local') ? '.env.server.local' : '.env.local';
-dotenv.config({ path: serverEnvPath });
+// .env.local を読み、あれば .env.server.local で上書き（SWIM は多くが .env.local のみのため）
+dotenv.config({ path: '.env.local' });
+if (fs.existsSync('.env.server.local')) {
+  dotenv.config({ path: '.env.server.local', override: true });
+}
 
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
@@ -245,12 +248,38 @@ app.get('/api/rainviewer-maps', async (_req, res) => {
   }
 });
 
+app.options('/api/swim-notam-search', (_req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.status(200).end();
+});
+app.get('/api/swim-notam-search', async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  try {
+    const { status, body, cacheControl } = await dispatchSwimNotamSearch(
+      req.query as Record<string, string | string[] | undefined>,
+    );
+    if (cacheControl) res.setHeader('Cache-Control', cacheControl);
+    return res.status(status).json(body);
+  } catch (err: unknown) {
+    console.error('[dev-weather-server] swim-notam-search', err);
+    return res.status(500).json({
+      ok: false,
+      error: err instanceof Error ? err.message : 'Internal error',
+    });
+  }
+});
+
 app.listen(PORT, () => {
-  console.log(`[dev-weather-server] listening on http://localhost:${PORT} (env: ${serverEnvPath})`);
+  console.log(`[dev-weather-server] listening on http://localhost:${PORT}`);
   console.log(`[dev-weather-server] Available endpoints:`);
   console.log(`  - GET /api/health`);
   console.log(`  - GET /api/weather?lat={lat}&lon={lon}`);
   console.log(`  - GET /api/aviation-weather?type={metar|taf}&icao={ICAO}`);
   console.log(`  - GET /api/opensky-states?lamin=&lamax=&lomin=&lomax=`);
   console.log(`  - GET /api/rainviewer-maps`);
+  console.log(`  - GET /api/swim-notam-search?location=|keyword=`);
 });

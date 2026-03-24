@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
   console.log(`Mode: ${mode}, Weather API Key: ${weatherApiKey ? '設定済み' : '未設定'}`);
 
   // ローカル開発時の /api プロキシ先（ブラウザが相対パス /api を 5173 へ送ったときのみ有効）
-  // - /api/weather・/api/aviation-weather は Vite プラグインが先に処理
+  // - /api/weather・/api/aviation-weather・/api/swim-notam-search は Vite プラグインが先に処理
   // - /api/opensky-states 同上
   // - その他 /api/* の既定 3001: npm run dev + npm run dev:weather
   // - npm run dev:full では VITE_VERCEL_DEV_API_ORIGIN で API を 3000 直叩きするため、ここは主に dev+weather 用

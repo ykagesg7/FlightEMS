@@ -1,6 +1,6 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年3月24日（Strategy v1.1・ロードマップ v3.5 同期）
+**最終更新**: 2026年3月24日（Strategy v1.1・ロードマップ v3.5 同期・SWIM デジタルノータム UI 追記）
 **バージョン**: Documentation Index v4.9
 
 ---
@@ -63,8 +63,10 @@
 
 ### SWIM / デジタルノータム（参考）
 
-- **フォルダ:** [SWIM_Portal/README.md](SWIM_Portal/README.md) — 国土交通省航空局 SWIM の API 共通編・デジタルノータムリクエスト（S2019）等の **Markdown 転記**と索引。
-- **実装状況:** アプリからの NOTAM 取得は **未接続**（将来はサーバプロキシ・利用申請・AIXM パースを想定）。仕様の正本は PDF／ポータル。
+- **フォルダ:** [SWIM_Portal/README.md](SWIM_Portal/README.md) — 国土交通省航空局 SWIM の API 共通編・デジタルノータムリクエスト（S2019）等の **Markdown 転記**と索引（付録 04 転記は `API連携仕様書(DigitalNOTAM).md` 等）。
+- **実装状況:** Planning 地図から **`/api/swim-notam-search`** 経由で取得（サーバに `SWIM_LOGIN_ID` / `SWIM_LOGIN_PASSWORD`、任意 `SWIM_SEARCH_USER_ID`）。**`npm run dev`** では `vite/devWeatherApiPlugin.ts` が同 API を処理（`.env.local`）；**`npm run dev:weather`** でも `scripts/dev-weather-server.ts` が提供。
+- **応答・UI（要約）:** サーバが AIXM XML から **`headline` / 期間 / 場所・高度 / `featureLabel` / `detailNotes` / `geometry`（GeoJSON・参考）/ `rawXml`（上限付き）** を組み立て。ポップアップでは **カード表示**、**詳細・原文 XML は折りたたみ**、**「地図に表示」** で Leaflet オーバーレイ（閉じると消去）。負荷軽減時は API クエリ **`includeRawXml=0`**（クライアントは `fetchSwimNotams({ includeRawXml: false })`）。
+- **コード索引:** `api/swim-notam-search.ts`、`api/lib/swimNotamCore.ts`、`api/lib/swimNotamGeometry.ts`、`api/lib/swimNotamHttpShared.ts`；フロント `src/services/swimNotam.ts`、`map/popups/swimNotamPopup.ts`、`swimNotamMapOverlay.ts`。**詳細は [05_設計仕様書.md](05_設計仕様書.md) の NOTAM 節。** 仕様の正本は PDF／ポータル。
 
 ---
 

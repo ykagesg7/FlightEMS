@@ -2,6 +2,7 @@ import type { FilteredWeatherData } from '@/services/weather';
 import type { AviationWeatherData } from '@/types/aviation';
 import { formatMETAR, formatTAF, translateFlightCategory } from '@/services/aviationWeather';
 import { escapeHtml, kvItem } from './common';
+import { swimNotamButtonSection } from './swimNotamPopup';
 
 /** ISO 等の長い文字列でポップアップ幅が膨らまないよう表示用に短縮 */
 function formatLastUpdatedLabel(raw: string): string {
@@ -27,6 +28,11 @@ export const createWeatherPopupContent = (
   const current = weatherData?.current;
 
   if (!current) {
+    const icao =
+      typeof airportProps.id === 'string' && airportProps.id.trim().length >= 3
+        ? airportProps.id.trim()
+        : '';
+    const notam = icao ? swimNotamButtonSection(icao) : '';
     return `
       <div class="airport-popup airport-weather-popup">
         <div class="airport-popup-header">
@@ -35,6 +41,7 @@ export const createWeatherPopupContent = (
         <div class="p-3">
           <p class="text-sm text-red-500">気象データが不完全です</p>
         </div>
+        ${notam}
       </div>
     `;
   }
@@ -153,6 +160,11 @@ export const createWeatherPopupContent = (
     `;
   }
 
+  const notamBlock =
+    typeof airportProps.id === 'string' && airportProps.id.trim().length >= 3
+      ? swimNotamButtonSection(airportProps.id.trim())
+      : '';
+
   // 気象情報カードセクション
   const weatherSection = `
     <div class="weather-section">
@@ -193,6 +205,7 @@ export const createWeatherPopupContent = (
         ${tafSection}
         ${noAviationWeatherMsg}
       </div>
+      ${notamBlock}
     </div>
   `;
 };

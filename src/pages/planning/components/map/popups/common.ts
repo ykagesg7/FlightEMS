@@ -45,6 +45,21 @@ export const sectionHeader = (title: string, iconHtml?: string): string => {
   `;
 };
 
+/** METAR/TAF と同系の折りたたみ（本文は呼び出し側でエスケープ済みを渡す） */
+export const collapsibleHtmlSection = (
+  summaryTitle: string,
+  bodyHtml: string,
+  extraClass = 'metar-taf-collapsible',
+): string => `
+  <details class="${extraClass} notam-collapsible">
+    <summary class="metar-taf-summary cursor-pointer select-none">
+      <span class="metar-taf-summary-title">${escapeHtml(summaryTitle)}</span>
+      <span class="metar-taf-summary-hint text-slate-500">開く</span>
+    </summary>
+    <div class="metar-taf-body mt-1">${bodyHtml}</div>
+  </details>
+`;
+
 export const createPopup = (latlng: [number, number]) =>
   L.popup({
     className: 'airport-weather-popup',

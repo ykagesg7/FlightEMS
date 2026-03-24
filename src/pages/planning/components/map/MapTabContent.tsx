@@ -8,6 +8,7 @@ import { bindNavaidPopup, navaidMarkerOptions } from './layers/navaids';
 import { bindWaypointPopup } from './layers/waypoints';
 import { bindACCSectorPopup, bindRAPCONPopup } from './popups/airspacePopup';
 import { simplifiedAirportInfoContent } from './popups/airportPopup';
+import { bindPlanningSwimNotamButton, swimNotamButtonSection } from './popups/swimNotamPopup';
 import { FlightPlanRouteLayer } from './FlightPlanRouteLayer';
 import { useLiveTrafficLayer } from './hooks/useLiveTrafficLayer';
 import { useRainViewerRadarLayer } from './hooks/useRainViewerRadarLayer';
@@ -363,7 +364,13 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
               },
               onEachFeature: (feature, layer) => {
                 // クリック時のポップアップやイベント処理を追加
-                const popupContent = `<div>
+                const pid = feature.properties?.id as string | undefined;
+                const notam =
+                  pid && String(pid).trim().length >= 3
+                    ? swimNotamButtonSection(String(pid).trim())
+                    : '';
+                const popupContent = `<div class="airport-popup airport-weather-popup">
+                  <div>
                   <h2 class="font-bold text-lg">${feature.properties.name1}</h2>
                   <p class="text-sm">ID: ${feature.properties.id}</p>
                   <p class="text-sm">Type: ${feature.properties.type}</p>
@@ -372,6 +379,8 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
                   ${feature.properties.RWY2 ? `<p class="text-sm">Runway2: ${feature.properties.RWY2}</p>` : ''}
                   ${feature.properties.RWY3 ? `<p class="text-sm">Runway3: ${feature.properties.RWY3}</p>` : ''}
                   ${feature.properties.RWY4 ? `<p class="text-sm">Runway4: ${feature.properties.RWY4}</p>` : ''}
+                  </div>
+                  ${notam}
                 </div>`;
 
                 // ポップアップを作成して設定
@@ -381,6 +390,11 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
                 });
                 popup.setContent(popupContent);
                 layer.bindPopup(popup);
+                if (pid && String(pid).trim().length >= 3) {
+                  layer.on('popupopen', () => {
+                    if (map) bindPlanningSwimNotamButton(map, popup, String(pid).trim(), 'location');
+                  });
+                }
 
                 // レイヤーグループへのクリックイベントも残しておく
                 layer.on('click', () => {

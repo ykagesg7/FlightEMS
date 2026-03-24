@@ -3,6 +3,7 @@ import React from 'react';
 import { FlightPlan, Waypoint } from '@/types';
 import { getNavaidColor } from '@/utils';
 import { escapeHtml, kvItem, sectionHeader } from '../popups/common';
+import { bindPlanningSwimNotamButton, swimNotamButtonSection } from '../popups/swimNotamPopup';
 import { NavaidProps } from '../types';
 
 export const navaidMarkerOptions = (type?: string) => ({
@@ -23,6 +24,8 @@ export const bindNavaidPopup = (
   const coords = (feature.geometry as GeoJSON.Point).coordinates;
   const props = feature.properties as NavaidProps;
   const header = sectionHeader('Navaid');
+  const navId = (props.id || '').trim();
+  const notamBlock = navId ? swimNotamButtonSection(navId) : '';
   const body = `
     <div class="ml-2 weather-info-grid">
       ${kvItem('weather', 'ID：', escapeHtml(props.id || ''))}
@@ -32,6 +35,7 @@ export const bindNavaidPopup = (
       ${kvItem('weather', 'Freq：', props.freq ? `${escapeHtml(props.freq)} MHz` : 'N/A')}
       ${kvItem('weather', '位置：', `${Number(coords[1]).toFixed(4)}°N, ${Number(coords[0]).toFixed(4)}°E`)}
     </div>
+    ${notamBlock}
     <button class="add-to-route-btn mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">ルートに追加</button>
   `;
   const popupContent = `<div class="navaid-popup">${header}<div class="p-2">${body}</div></div>`;
@@ -66,6 +70,9 @@ export const bindNavaidPopup = (
           setFlightPlan((prev) => ({ ...prev, waypoints: [...prev.waypoints, newWaypoint] }));
           map?.closePopup();
         });
+      }
+      if (navId && map) {
+        bindPlanningSwimNotamButton(map, popup, navId, 'keyword');
       }
     }, 100);
   });

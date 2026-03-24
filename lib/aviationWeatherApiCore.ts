@@ -3,6 +3,16 @@
  */
 const AVIATION_WEATHER_API_BASE = 'https://aviationweather.gov/api/data';
 
+/** Node 18 未満等で `AbortSignal.timeout` が無い環境向け */
+function abortAfterMs(ms: number): { signal: AbortSignal; cancel: () => void } {
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+    return { signal: AbortSignal.timeout(ms), cancel: () => {} };
+  }
+  const c = new AbortController();
+  const id = setTimeout(() => c.abort(), ms);
+  return { signal: c.signal, cancel: () => clearTimeout(id) };
+}
+
 export type AviationWeatherProxyResult = { status: number; body: unknown };
 
 export async function proxyAviationWeather(
@@ -46,6 +56,7 @@ export async function proxyAviationWeather(
 
   const noaaUrl = `${AVIATION_WEATHER_API_BASE}/${type}?ids=${icao.toUpperCase()}&format=json`;
 
+  const { signal, cancel } = abortAfterMs(10000);
   try {
     const response = await fetch(noaaUrl, {
       method: 'GET',
@@ -53,7 +64,7 @@ export async function proxyAviationWeather(
         Accept: 'application/json',
         'User-Agent': 'FlightAcademyTsx/1.0',
       },
-      signal: AbortSignal.timeout(10000),
+      signal,
     });
 
     if (!response.ok) {
@@ -99,5 +110,7 @@ export async function proxyAviationWeather(
         message: error instanceof Error ? error.message : 'An unexpected error occurred',
       },
     };
+  } finally {
+    cancel();
   }
 }

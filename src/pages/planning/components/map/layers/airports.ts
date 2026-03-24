@@ -7,6 +7,7 @@ import type { WeatherCache } from '@/contexts/WeatherCacheContext';
 import { simplifiedAirportInfoContent } from '../popups/airportPopup';
 import { createPopup } from '../popups/common';
 import { createWeatherPopupContent } from '../popups/weatherPopup';
+import { bindPlanningSwimNotamButton, swimNotamButtonSection } from '../popups/swimNotamPopup';
 import type { AirportProps } from '../types';
 
 export const fetchAirportWeather = (
@@ -21,11 +22,16 @@ export const fetchAirportWeather = (
 
   const ap = feature.properties as AirportProps;
   const airportId = ap.id;
+  const icao =
+    airportId && typeof airportId === 'string' && airportId.trim().length >= 3
+      ? airportId.trim()
+      : '';
+  const notamHtml = icao ? swimNotamButtonSection(icao) : '';
   const geometry = feature.geometry as GeoJSON.Point;
   const [longitude, latitude] = geometry.coordinates;
 
   const loadingPopupContent = `
-    <div class="airport-popup">
+    <div class="airport-popup airport-weather-popup">
       <div class="airport-popup-header">${ap.id || '不明'}</div>
       <div class="p-2">
         <h3 class="text-base font-bold mb-2">${ap.name1 || '空港'}</h3>
@@ -34,12 +40,14 @@ export const fetchAirportWeather = (
           <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-green-500"></div>
         </div>
       </div>
+      ${notamHtml}
     </div>
   `;
 
   const loadingPopup = createPopup([latitude, longitude])
     .setContent(loadingPopupContent)
     .openOn(map);
+  if (icao) bindPlanningSwimNotamButton(map, loadingPopup, icao, 'location');
 
   const cachedEntry = weatherCache[airportId];
   const now = Date.now();
@@ -54,6 +62,7 @@ export const fetchAirportWeather = (
       );
       loadingPopup.setContent(html);
       loadingPopup.update();
+      if (icao) bindPlanningSwimNotamButton(map, loadingPopup, icao, 'location');
       return;
     }
   }
@@ -87,9 +96,11 @@ export const fetchAirportWeather = (
                 <div class="ml-2">${simplifiedAirportInfoContent(ap)}</div>
               </div>
             </div>
+            ${notamHtml}
           </div>`;
         loadingPopup.setContent(errorPopupContent);
         loadingPopup.update();
+        if (icao) bindPlanningSwimNotamButton(map, loadingPopup, icao, 'location');
         return;
       }
 
@@ -102,6 +113,7 @@ export const fetchAirportWeather = (
       );
       loadingPopup.setContent(html);
       loadingPopup.update();
+      if (icao) bindPlanningSwimNotamButton(map, loadingPopup, icao, 'location');
 
       // キャッシュに保存（航空気象データも含む）
       setWeatherCache((prev) => ({
@@ -127,9 +139,11 @@ export const fetchAirportWeather = (
               <div class="ml-2">${simplifiedAirportInfoContent(ap)}</div>
             </div>
           </div>
+          ${notamHtml}
         </div>`;
       loadingPopup.setContent(errorPopupContent);
       loadingPopup.update();
+      if (icao) bindPlanningSwimNotamButton(map, loadingPopup, icao, 'location');
     });
 };
 

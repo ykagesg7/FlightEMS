@@ -1,7 +1,7 @@
 # プロジェクトフォルダ構造ガイド
 
-**最終更新**: 2026年3月
-**バージョン**: Folder Structure Guide v1.2
+**最終更新**: 2026年3月（api: swim-notam-search）
+**バージョン**: Folder Structure Guide v1.3
 
 **責務**: repo 全体のフォルダ概要。プロジェクトのクイックリファレンスと AI 向け索引は [docs/README.md](README.md)。`src/` の詳細は [07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md) を参照。
 
@@ -38,6 +38,10 @@
 - **内容**:
   - `weather.ts`: 一般気象情報APIプロキシ（WeatherAPI.com）
   - `aviation-weather.ts`: 航空気象情報APIプロキシ（NOAA）
+  - `swim-notam-search.ts`: **SWIM デジタルノータム検索**プロキシ（`GET`、認証はサーバのみ）
+  - `lib/swimNotamCore.ts`: ログイン・検索・AIXM 要約・`geometry` / `rawXml` 付与の共有ロジック
+  - `lib/swimNotamHttpShared.ts`: Vercel ハンドラ・Vite プラグイン・`dev-weather-server` で共有するディスパッチ
+  - `lib/swimNotamGeometry.ts`: GML `posList` / `pos` から GeoJSON を推定（日本域ヒューリスティック・参考表示）
   - `package.json`: CommonJS設定（Vercel用）
 - **重要**: これらのファイルはVercelのServerless Functionsとして自動デプロイされます
 
