@@ -12,6 +12,7 @@ import { AvatarUploader } from './components/AvatarUploader';
 import { NotificationPreferences } from './components/NotificationPreferences';
 import { SocialLinksForm } from './components/SocialLinksForm';
 import { PPLRankList } from '../../components/ppl/PPLRankList';
+import { LeaderboardSettings } from './components/LeaderboardSettings';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 type SocialLinks = {
@@ -27,6 +28,7 @@ const PROFILE_TAB_IDS = [
   'security',
   'social',
   'notifications',
+  'leaderboard',
   'ppl-ranks',
 ] as const;
 
@@ -683,6 +685,29 @@ const ProfilePage: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 <NotificationPreferences onError={(err) => setError(err)} />
+              </motion.div>
+            )
+          }
+
+          {
+            activeTab === 'leaderboard' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <LeaderboardSettings
+                  profile={profile}
+                  updateProfile={updateProfile}
+                  onError={(msg) => {
+                    setError(msg);
+                    setTimeout(() => setError(null), 5000);
+                  }}
+                  onSuccess={(msg) => {
+                    setSuccess(msg);
+                    setTimeout(() => setSuccess(null), 3000);
+                  }}
+                />
               </motion.div>
             )
           }

@@ -17,6 +17,8 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "reset-article-stats": "node scripts/reset-article-stats.js",
     "docs:watch": "cd scripts/docs-auto-update && npm run watch",
     "docs:update": "cd scripts/docs-auto-update && npm run update-docs",
@@ -75,6 +77,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@playwright/test": "^1.52.0",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/react-query-devtools": "^5.81.5",
     "@testing-library/jest-dom": "^6.6.3",

@@ -3,6 +3,28 @@
  * ダッシュボードの進捗データと表示状態を型安全に管理
  */
 
+import type { UserRank } from './gamification';
+
+/** RPC get_learning_xp_benchmark のクライアント向け形（population が十分なときのみ数値表示） */
+export interface LearningXpBenchmark {
+  xpPoints: number;
+  populationN: number;
+  /** XP>0 の母集団のうち、あなたより XP が厳密に低い人の割合（0–100） */
+  percentile: number | null;
+  rankTier: UserRank | null;
+  cohortN: number | null;
+  /** 同一 rank 帯（かつ XP>0）内での同上 */
+  cohortPercentile: number | null;
+}
+
+/** RPC get_public_leaderboard の1行（任意参加のみ） */
+export interface PublicLeaderboardEntry {
+  displayName: string;
+  xpPoints: number;
+  rankTier: UserRank | null;
+  position: number;
+}
+
 export interface DashboardMetrics {
   /** 全体進捗率 (0-100) - 完了したレッスン/記事の割合 */
   overallProgressPct: number;
@@ -27,6 +49,12 @@ export interface DashboardMetrics {
     topic: string;
     accuracyPct: number;
   }>;
+
+  /** 学習 XP の相対位置（RPC 失敗時は未設定） */
+  xpBenchmark?: LearningXpBenchmark;
+
+  /** 任意参加の公開ランキング（取得失敗時は空配列） */
+  publicLeaderboard: PublicLeaderboardEntry[];
 }
 
 export interface LearningProgressSummary {

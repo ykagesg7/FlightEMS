@@ -8,6 +8,8 @@ import { fetchDashboardMetrics } from '../../utils/dashboard';
 import { AnnouncementCard } from './components/AnnouncementCard';
 import { DailyTasks } from './components/DailyTasks';
 import { LearningHeatmap } from './components/LearningHeatmap';
+import { LearningBenchmarkCard } from './components/LearningBenchmarkCard';
+import { PublicLeaderboardSection } from './components/PublicLeaderboardSection';
 import { SubjectRadarChart } from './components/SubjectRadarChart';
 
 const useReveal = (deps?: React.DependencyList) => {
@@ -238,6 +240,13 @@ const DashboardContent: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+
+        {metrics.xpBenchmark ? (
+          <div className="mb-8 max-w-3xl">
+            <LearningBenchmarkCard benchmark={metrics.xpBenchmark} borderColor={borderColor} />
+          </div>
+        ) : null}
+        <PublicLeaderboardSection entries={metrics.publicLeaderboard} borderColor={borderColor} />
 
         {/* 主要導線 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">

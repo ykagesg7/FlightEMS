@@ -150,6 +150,12 @@ type: "lesson"
 - 科目タグで科目別に表示可能
 - シリーズで全体を表示可能
 
+### 問題DBとの対応（`applicable_exams`）
+
+- PPL 記事（`category: PPL`）と紐づく CPL 形式の設問は、Supabase の **`unified_cpl_questions.applicable_exams`** に `PPL` を含める（例: `{PPL,CPL}` で CPL 出題も維持）。
+- タグだけでなく **DB 列**で `/test` の「PPL 基礎のみ」フィルタと整合させる。
+- 詳細・パイロット手順: [docs/db/APPLICABLE_EXAMS_PILOT.md](db/APPLICABLE_EXAMS_PILOT.md)
+
 ---
 
 ## 📁 ファイル構造と命名規則

@@ -282,7 +282,14 @@ export const useAuthStore = create<AuthState>()(
                   updated_at: new Date().toISOString(),
                   full_name: null,
                   avatar_url: null,
-                  website: null
+                  website: null,
+                  rank: null,
+                  xp_points: null,
+                  social_links: null,
+                  bio: null,
+                  password_updated_at: null,
+                  leaderboard_opt_in: false,
+                  leaderboard_display_name: null,
                 };
 
                 console.log('フォールバックプロフィール作成を試みます:', defaultProfile);

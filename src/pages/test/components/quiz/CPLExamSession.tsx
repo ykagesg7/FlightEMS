@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '../../../../stores/authStore';
 import supabase from '../../../../utils/supabase';
 import { useGamification } from '../../../../hooks/useGamification';
+import type { ExamLevelFilter } from '../../examLevelFilter';
 
 interface CPLQuestion {
   id: string;
@@ -21,6 +22,7 @@ interface CPLExamSettings {
   timeLimitMinutes: number;
   shuffleQuestions: boolean;
   reviewMode: boolean;
+  examLevel?: ExamLevelFilter;
 }
 
 interface CPLExamSessionProps {
@@ -68,6 +70,9 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
           .from('unified_cpl_questions')
           .select('*')
           .eq('verification_status', 'verified');
+        if (settings.examLevel === 'ppl') {
+          query = query.contains('applicable_exams', ['PPL']);
+        }
 
         // 複数科目の条件をORで結合
         if (subjectFilters.length > 0) {

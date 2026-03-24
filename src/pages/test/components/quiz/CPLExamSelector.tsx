@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import supabase from '../../../../utils/supabase';
+import type { ExamLevelFilter } from '../../examLevelFilter';
 
 interface CPLSubject {
   main_subject: string;
@@ -13,6 +14,8 @@ interface CPLExamSettings {
   timeLimitMinutes: number;
   shuffleQuestions: boolean;
   reviewMode: boolean;
+  /** 未指定時は CPLExamSession 側で all 扱い */
+  examLevel?: ExamLevelFilter;
 }
 
 interface CPLExamSelectorProps {
@@ -26,6 +29,7 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
   const [timeLimitMinutes, setTimeLimitMinutes] = useState<number>(40);
   const [shuffleQuestions, setShuffleQuestions] = useState(true);
   const [reviewMode, setReviewMode] = useState(false);
+  const [examLevel, setExamLevel] = useState<ExamLevelFilter>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,10 +38,15 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
     const loadSubjects = async () => {
       try {
         setLoading(true);
-        const { data, error } = await supabase
+        let q = supabase
           .from('unified_cpl_questions')
           .select('main_subject, sub_subject')
+          .eq('verification_status', 'verified')
           .order('main_subject, sub_subject');
+        if (examLevel === 'ppl') {
+          q = q.contains('applicable_exams', ['PPL']);
+        }
+        const { data, error } = await q;
 
         if (error) throw error;
 
@@ -63,7 +72,16 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
     };
 
     loadSubjects();
-  }, []);
+  }, [examLevel]);
+
+  useEffect(() => {
+    setSelectedSubjects([]);
+  }, [examLevel]);
+
+  useEffect(() => {
+    if (totalAvailableQuestions < 1) return;
+    setQuestionCount((c) => Math.min(c, totalAvailableQuestions));
+  }, [totalAvailableQuestions]);
 
   const handleSubjectToggle = (subjectKey: string) => {
     setSelectedSubjects(prev =>
@@ -93,15 +111,32 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
       questionCount,
       timeLimitMinutes,
       shuffleQuestions,
-      reviewMode
+      reviewMode,
+      examLevel,
     };
 
     onStartExam(settings);
   };
 
-  const totalAvailableQuestions = subjects
-    .filter(s => selectedSubjects.includes(`${s.main_subject}::${s.sub_subject}`))
-    .reduce((sum, s) => sum + s.question_count, 0);
+  const totalAvailableQuestions = useMemo(
+    () =>
+      subjects
+        .filter(s => selectedSubjects.includes(`${s.main_subject}::${s.sub_subject}`))
+        .reduce((sum, s) => sum + s.question_count, 0),
+    [subjects, selectedSubjects],
+  );
+
+  const totalPoolQuestions = useMemo(
+    () => subjects.reduce((sum, s) => sum + s.question_count, 0),
+    [subjects],
+  );
+
+  const questionCountMax = Math.max(1, totalAvailableQuestions);
+
+  useEffect(() => {
+    if (totalAvailableQuestions < 1) return;
+    setQuestionCount(c => Math.min(c, totalAvailableQuestions));
+  }, [totalAvailableQuestions]);
 
   if (loading) {
     return (
@@ -134,6 +169,42 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
       {error && (
         <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
           {error}
+        </div>
+      )}
+
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">出題レベル:</span>
+        <button
+          type="button"
+          onClick={() => setExamLevel('all')}
+          className={`rounded-lg border px-3 py-1.5 text-sm ${examLevel === 'all' ? 'border-indigo-500 bg-indigo-500/15 text-indigo-700 dark:text-indigo-300' : 'border-gray-300 dark:border-gray-600'}`}
+        >
+          CPL すべて
+        </button>
+        <button
+          type="button"
+          onClick={() => setExamLevel('ppl')}
+          className={`rounded-lg border px-3 py-1.5 text-sm ${examLevel === 'ppl' ? 'border-indigo-500 bg-indigo-500/15 text-indigo-700 dark:text-indigo-300' : 'border-gray-300 dark:border-gray-600'}`}
+        >
+          PPL 基礎のみ
+        </button>
+      </div>
+      {examLevel === 'ppl' && (
+        <p className="mb-3 text-sm text-gray-600 dark:text-gray-300" data-testid="cpl-exam-ppl-pool">
+          PPL 基礎プール（一覧の合計）: <strong>{totalPoolQuestions}</strong> 問
+          {totalPoolQuestions < 100 && (
+            <span className="block mt-1 text-xs text-amber-700 dark:text-amber-300">
+              プールは拡張中です。該当が無い主科目は一覧に表示されません。「CPL すべて」で全 verified を利用できます。
+            </span>
+          )}
+        </p>
+      )}
+      {examLevel === 'ppl' && subjects.length === 0 && (
+        <div
+          className="mb-4 rounded-lg border border-amber-500/50 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-100"
+          role="status"
+        >
+          PPL タグ付きの問題がありません。出題レベルを「CPL すべて」に切り替えるか、データ投入後に再度お試しください。
         </div>
       )}
 
@@ -213,13 +284,14 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
             <input
               type="number"
               min="1"
-              max={totalAvailableQuestions}
-              value={questionCount}
+              max={questionCountMax}
+              value={Math.min(questionCount, questionCountMax)}
               onChange={(e) => setQuestionCount(Number(e.target.value))}
               className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               選択科目から最大{totalAvailableQuestions}問
+              {selectedSubjects.length === 0 && '（科目を選ぶと上限が更新されます）'}
             </p>
           </div>
 

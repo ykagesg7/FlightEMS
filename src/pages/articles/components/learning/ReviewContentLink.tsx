@@ -26,28 +26,43 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
   useEffect(() => {
     const fetchRecommendedContents = async () => {
       try {
-        // 1. 問題IDからマッピングを検索
-        let query = supabase
-          .from('learning_test_mapping')
-          .select(`
+        type MappingRow = { learning_content_id: string; topic_category: string; difficulty_level: number | null };
+        let mappings: MappingRow[] = [];
+
+        if (questionIds.length > 0) {
+          const selectCols = `
             learning_content_id,
             topic_category,
             difficulty_level
-          `);
-
-        if (questionIds.length > 0) {
-          // 特定の問題IDに関連する記事を検索
-          query = query.overlaps('test_question_ids', questionIds);
+          `;
+          const [r1, r2] = await Promise.all([
+            supabase.from('learning_test_mapping').select(selectCols).overlaps('test_question_ids', questionIds).limit(5),
+            supabase.from('learning_test_mapping').select(selectCols).overlaps('unified_cpl_question_ids', questionIds).limit(5),
+          ]);
+          if (r1.error) console.error('Error fetching mappings (test_question_ids):', r1.error);
+          if (r2.error) console.error('Error fetching mappings (unified_cpl_question_ids):', r2.error);
+          const seen = new Set<string>();
+          for (const row of [...(r1.data ?? []), ...(r2.data ?? [])] as MappingRow[]) {
+            if (seen.has(row.learning_content_id)) continue;
+            seen.add(row.learning_content_id);
+            mappings.push(row);
+            if (mappings.length >= 5) break;
+          }
         } else {
-          // 科目カテゴリに基づく推奨記事を検索
-          query = query.eq('topic_category', subjectCategory);
-        }
-
-        const { data: mappings, error: mappingError } = await query.limit(5);
-
-        if (mappingError) {
-          console.error('Error fetching mappings:', mappingError);
-          return;
+          const { data, error: mappingError } = await supabase
+            .from('learning_test_mapping')
+            .select(`
+            learning_content_id,
+            topic_category,
+            difficulty_level
+          `)
+            .eq('topic_category', subjectCategory)
+            .limit(5);
+          if (mappingError) {
+            console.error('Error fetching mappings:', mappingError);
+            return;
+          }
+          mappings = (data ?? []) as MappingRow[];
         }
 
         if (!mappings || mappings.length === 0) {

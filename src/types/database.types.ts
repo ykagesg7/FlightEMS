@@ -186,9 +186,13 @@ export interface Database {
           email: string | null
           created_at: string | null
           roll: string | null
+          rank: Database['public']['Enums']['user_rank_type'] | null
+          xp_points: number | null
           social_links: Json | null
           bio: string | null
           password_updated_at: string | null
+          leaderboard_opt_in: boolean
+          leaderboard_display_name: string | null
         }
         Insert: {
           id: string
@@ -200,9 +204,13 @@ export interface Database {
           email?: string | null
           created_at?: string | null
           roll?: string | null
+          rank?: Database['public']['Enums']['user_rank_type'] | null
+          xp_points?: number | null
           social_links?: Json | null
           bio?: string | null
           password_updated_at?: string | null
+          leaderboard_opt_in?: boolean
+          leaderboard_display_name?: string | null
         }
         Update: {
           id?: string
@@ -214,9 +222,13 @@ export interface Database {
           email?: string | null
           created_at?: string | null
           roll?: string | null
+          rank?: Database['public']['Enums']['user_rank_type'] | null
+          xp_points?: number | null
           social_links?: Json | null
           bio?: string | null
           password_updated_at?: string | null
+          leaderboard_opt_in?: boolean
+          leaderboard_display_name?: string | null
         }
         Relationships: [
           {
@@ -499,8 +511,12 @@ export interface Database {
       question_text: string
       options: string[]
       correct_option_index: number
+      correct_answer?: number
       explanation: string | null
-      difficulty_level: string
+      difficulty_level: string | number
+      verification_status?: string
+      importance_score?: number
+      applicable_exams?: string[]
       created_at: string
       updated_at: string
     }
@@ -511,8 +527,12 @@ export interface Database {
       question_text: string
       options: string[]
       correct_option_index: number
+      correct_answer?: number
       explanation ?: string | null
-      difficulty_level ?: string
+      difficulty_level ?: string | number
+      verification_status?: string
+      importance_score?: number
+      applicable_exams?: string[]
       created_at ?: string
       updated_at ?: string
     }
@@ -523,8 +543,12 @@ export interface Database {
       question_text ?: string
       options ?: string[]
       correct_option_index ?: number
+      correct_answer?: number
       explanation ?: string | null
-      difficulty_level ?: string
+      difficulty_level ?: string | number
+      verification_status?: string
+      importance_score?: number
+      applicable_exams?: string[]
       created_at ?: string
       updated_at ?: string
     }
@@ -731,10 +755,44 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_learning_xp_benchmark: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          xp_points: number
+          population_n: number
+          percentile: number | null
+          rank_tier: Database['public']['Enums']['user_rank_type'] | null
+          cohort_n: number | null
+          cohort_percentile: number | null
+        }[]
+      }
+      get_public_leaderboard: {
+        Args: { p_limit?: number }
+        Returns: {
+          display_name: string
+          xp_points: number
+          rank: Database['public']['Enums']['user_rank_type'] | null
+          leaderboard_position: number
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_rank_type:
+        | 'fan'
+        | 'ppl-aero-basics-phase1'
+        | 'ppl-aero-basics-phase2'
+        | 'ppl-aero-basics-master'
+        | 'ppl-aero-performance-phase1'
+        | 'ppl-aero-performance-phase2'
+        | 'ppl-aero-performance-master'
+        | 'ppl-aerodynamics-master'
+        | 'ppl-engineering-master'
+        | 'ppl'
+        | 'wingman'
+        | 'cpl'
+        | 'ace'
+        | 'master'
+        | 'legend'
     }
     CompositeTypes: {
       [_ in never]: never

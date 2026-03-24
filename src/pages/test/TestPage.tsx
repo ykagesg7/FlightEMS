@@ -8,6 +8,8 @@ import { FilterListbox, type FilterListboxOption } from './components/FilterList
 import { QuizComponent } from './components/QuizComponent';
 import { QuizResultsView } from './components/QuizResultsView';
 import { buildOrderIndex, MAIN_SUBJECT_ORDER, SUB_SUBJECT_ORDER_BY_MAIN } from './cplSyllabusOrder';
+import type { ExamLevelFilter } from './examLevelFilter';
+import { parseExamLevelParam } from './examLevelFilter';
 import { normalizeSubSubjectLabel } from './utils/normalizeSubSubject';
 
 type FilterOption = {
@@ -109,6 +111,9 @@ const TestPage: React.FC = () => {
   const [retryIncorrectMode, setRetryIncorrectMode] = useState(false);
   const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<FilterSortOrder>('priority');
+  const [examLevel, setExamLevel] = useState<ExamLevelFilter>('all');
+  /** PPL モード時の verified 件数（head 集計・科目リストの limit より正確） */
+  const [pplVerifiedExactCount, setPplVerifiedExactCount] = useState<number | null>(null);
 
   // クエリパラメータから初期値を設定
   const [sp] = useSearchParams();
@@ -124,6 +129,7 @@ const TestPage: React.FC = () => {
     setQuestionCount(Number.isFinite(qc) && qc > 0 ? qc : 10);
     setMode(qm);
     setContentId(cid);
+    setExamLevel(parseExamLevelParam(sp.get('exam')));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -132,11 +138,14 @@ const TestPage: React.FC = () => {
     const fetchSubjects = async () => {
       setSubjectLoading(true);
       try {
-        const { data, error } = await supabase
+        let q = supabase
           .from('unified_cpl_questions')
           .select('main_subject, importance_score', { count: 'exact', head: false })
-          .eq('verification_status', 'verified')
-          .limit(5000);
+          .eq('verification_status', 'verified');
+        if (examLevel === 'ppl') {
+          q = q.contains('applicable_exams', ['PPL']);
+        }
+        const { data, error } = await q.limit(5000);
         if (error) throw error;
         const subjectStats = new Map<string, { count: number; importanceTotal: number }>();
         ((data ?? []) as Array<{ main_subject: unknown; importance_score: unknown }>)
@@ -175,7 +184,28 @@ const TestPage: React.FC = () => {
       }
     };
     fetchSubjects();
-  }, []);
+  }, [examLevel]);
+
+  useEffect(() => {
+    if (examLevel !== 'ppl') {
+      setPplVerifiedExactCount(null);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      const { count, error } = await supabase
+        .from('unified_cpl_questions')
+        .select('*', { count: 'exact', head: true })
+        .eq('verification_status', 'verified')
+        .contains('applicable_exams', ['PPL']);
+      if (!cancelled) {
+        setPplVerifiedExactCount(error ? null : count ?? 0);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [examLevel]);
 
   // main_subject選択時にsub_subject一覧取得
   useEffect(() => {
@@ -189,11 +219,15 @@ const TestPage: React.FC = () => {
     setSubSubjectSearch('');
     const fetchSubSubjects = async () => {
       try {
-        const { data, error } = await supabase
+        let sq = supabase
           .from('unified_cpl_questions')
           .select('sub_subject, importance_score', { count: 'exact', head: false })
           .eq('main_subject', selectedSubject)
           .eq('verification_status', 'verified');
+        if (examLevel === 'ppl') {
+          sq = sq.contains('applicable_exams', ['PPL']);
+        }
+        const { data, error } = await sq;
         if (error) throw error;
         const normalizedMap = new Map<string, { rawValues: Set<string>; count: number; importanceTotal: number }>();
         ((data ?? []) as Array<{ sub_subject: unknown; importance_score: unknown }>)
@@ -246,7 +280,7 @@ const TestPage: React.FC = () => {
       }
     };
     fetchSubSubjects();
-  }, [selectedSubject]);
+  }, [selectedSubject, examLevel]);
 
   const selectedSubSubjectRawValues = useMemo(() => {
     if (selectedSubSubject === ALL_OPTION_VALUE) return [] as string[];
@@ -296,6 +330,10 @@ const TestPage: React.FC = () => {
   }, [orderedSubSubjects, selectedSubSubject, subSubjectSearch]);
 
   const subjectSelected = selectedSubject !== PLACEHOLDER_SUBJECT && selectedSubject !== ALL_OPTION_VALUE;
+  const selectableMainSubjectCount = useMemo(
+    () => subjects.filter((s) => s.value !== PLACEHOLDER_SUBJECT).length,
+    [subjects],
+  );
   const filtersLocked = mode === 'review' || !!contentId;
   // 課目一覧の件数は limit(5000) 後のフロント集計のため誤解を招くため表示しない
   const subjectListboxOptions = useMemo<FilterListboxOption<string>[]>(
@@ -338,6 +376,9 @@ const TestPage: React.FC = () => {
         .select('*', { count: 'exact', head: true })
         .eq('verification_status', 'verified')
         .eq('main_subject', selectedSubject);
+      if (examLevel === 'ppl') {
+        query = query.contains('applicable_exams', ['PPL']);
+      }
       if (selectedSubSubjectRawValues.length > 0) {
         query = query.in('sub_subject', selectedSubSubjectRawValues);
       }
@@ -365,7 +406,7 @@ const TestPage: React.FC = () => {
     };
     fetchCount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSubject, selectedSubSubject, selectedSubSubjectRawValues]);
+  }, [selectedSubject, selectedSubSubject, selectedSubSubjectRawValues, examLevel]);
 
   // 問題取得（科目ベース）
   const fetchQuestions = async (subject: string, subSubjectValues: string[], count: number) => {
@@ -381,6 +422,9 @@ const TestPage: React.FC = () => {
         .from('unified_cpl_questions')
         .select('*')
         .eq('verification_status', 'verified');
+      if (examLevel === 'ppl') {
+        query = query.contains('applicable_exams', ['PPL']);
+      }
       if (subject && subject !== ALL_OPTION_VALUE) {
         query = query.eq('main_subject', subject);
         if (subSubjectValues.length > 0) {
@@ -393,7 +437,11 @@ const TestPage: React.FC = () => {
       const shuffled = data.sort(() => Math.random() - 0.5).slice(0, count);
       if (shuffled.length === 0) {
         setQuestions([]);
-        setError('条件に合う問題がありません。フィルタ条件を変更してください。');
+        setError(
+          examLevel === 'ppl'
+            ? 'PPL 基礎としてタグ付けされた問題がありません。出題レベルを「CPL すべて」にするか、別の科目を選んでください。'
+            : '条件に合う問題がありません。フィルタ条件を変更してください。',
+        );
         return;
       }
       const parsed: QuizQuestion[] = shuffled.map((q: any) => ({
@@ -553,7 +601,7 @@ const TestPage: React.FC = () => {
     setUserAnswers([]);
     setFlaggedQuestionIds([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSubject, selectedSubSubject, questionCount, mode, contentId]);
+  }, [selectedSubject, selectedSubSubject, questionCount, mode, contentId, examLevel]);
 
   // クエリ/選択モード変更時に問題取得（retryIncorrectMode のときは再取得しない）
   useEffect(() => {
@@ -570,7 +618,7 @@ const TestPage: React.FC = () => {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSubject, selectedSubSubject, selectedSubSubjectRawValues, questionCount, contentId, mode, retryIncorrectMode, subjectSelected]);
+  }, [selectedSubject, selectedSubSubject, selectedSubSubjectRawValues, questionCount, contentId, mode, retryIncorrectMode, subjectSelected, examLevel]);
 
   // 回答送信
   const handleSubmitQuiz = async (answers: UserQuizAnswer[], flaggedIds?: string[]) => {
@@ -750,6 +798,62 @@ const TestPage: React.FC = () => {
       {mode === 'review' && (
         <p className="text-center text-xs mb-2 text-[var(--text-muted)]">Reviewモード：本日の復習対象（弱点復習）を出題します。ログイン必須。</p>
       )}
+
+      <div className="mb-6 flex flex-col items-center gap-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-primary/70">出題レベル</p>
+        <div className="flex flex-wrap justify-center gap-2">
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-lg border text-sm font-semibold transition ${examLevel === 'all' ? 'bg-brand-primary/20 text-brand-primary border-brand-primary/40' : 'border-brand-primary/20 hover:bg-brand-primary/10 text-[var(--text-primary)]'}`}
+            onClick={() => setExamLevel('all')}
+            disabled={filtersLocked}
+            aria-pressed={examLevel === 'all'}
+          >
+            CPL すべて（既定）
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-lg border text-sm font-semibold transition ${examLevel === 'ppl' ? 'bg-brand-primary/20 text-brand-primary border-brand-primary/40' : 'border-brand-primary/20 hover:bg-brand-primary/10 text-[var(--text-primary)]'}`}
+            onClick={() => setExamLevel('ppl')}
+            disabled={filtersLocked}
+            aria-pressed={examLevel === 'ppl'}
+          >
+            PPL 基礎のみ
+          </button>
+        </div>
+        <p className="text-center text-xs text-[var(--text-muted)] max-w-lg">
+          PPL 基礎は <code className="text-[0.85em]">applicable_exams</code> に PPL を含む問題のみ。記事連携・Review ではフィルタしません。
+          クエリ例: <code className="text-[0.85em]">?exam=ppl</code>
+        </p>
+        {examLevel === 'ppl' && pplVerifiedExactCount !== null && (
+          <p className="text-center text-sm text-[var(--text-primary)] max-w-lg" data-testid="ppl-pool-count">
+            現在の PPL 対象プール（verified）: <strong>{pplVerifiedExactCount}</strong> 問
+            {pplVerifiedExactCount < 100 && (
+              <span className="block mt-1 text-xs text-amber-600 dark:text-amber-400">
+                プールは運用で拡張中です。科目に問題が無い場合は「CPL すべて」に切り替えてください。
+              </span>
+            )}
+          </p>
+        )}
+        {examLevel === 'ppl' && !subjectLoading && (
+          <p
+            className="text-center text-xs text-[var(--text-muted)] max-w-lg"
+            data-testid="ppl-main-subject-count"
+          >
+            PPL モードで選択可能な主科目: <strong>{selectableMainSubjectCount}</strong> 種（全5科目が揃うと最大5）
+          </p>
+        )}
+        {examLevel === 'ppl' && selectableMainSubjectCount === 0 && !subjectLoading && (
+          <div
+            className="max-w-lg rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-center text-sm text-amber-900 dark:text-amber-100"
+            role="status"
+          >
+            PPL タグ付きの問題がまだ登録されていないか、データ取得に失敗しました。ネットワークを確認するか、出題レベルを「CPL
+            すべて」にしてください。
+          </div>
+        )}
+      </div>
+
       <section className="mb-10 rounded-2xl border border-brand-primary/15 bg-[var(--panel)]/85 p-5 shadow-[0_18px_40px_rgba(11,18,32,0.28)]">
         <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>

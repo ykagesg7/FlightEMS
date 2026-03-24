@@ -4,7 +4,11 @@
  */
 
 import { createBrowserSupabaseClient } from './supabase';
-import type { DashboardMetrics } from '../types/dashboard';
+import type { DashboardMetrics, LearningXpBenchmark, PublicLeaderboardEntry } from '../types/dashboard';
+import type { UserRank } from '../types/gamification';
+
+/** この人数未満はベンチマーク数値を出さない（プライバシー・統計的無意味の緩和） */
+export const MIN_POPULATION_FOR_XP_BENCHMARK = 20;
 
 /**
  * ダッシュボード用の統合メトリクスを取得
@@ -18,6 +22,7 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
     weeklyStudyMinutes: 0,
     streakDays: 0,
     weakTopics: [],
+    publicLeaderboard: [],
   };
 
   const safeGet = async <T>(
@@ -33,7 +38,7 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
     }
   };
 
-  const [learningProgress, testResults, studyTime, streakDays, nextLesson, weakTopics] =
+  const [learningProgress, testResults, studyTime, streakDays, nextLesson, weakTopics, xpBenchmark, publicLeaderboard] =
     await Promise.all([
       safeGet(() => getLearningProgress(userId), { progressPct: 0 }, '学習進捗'),
       safeGet(() => getTestResults(userId), { accuracyPct: 0 }, 'テスト結果'),
@@ -41,6 +46,8 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
       safeGet(() => getStreakDays(userId), 0, '継続日数'),
       safeGet(() => getNextRecommendedLesson(userId), undefined, '推奨レッスン'),
       safeGet(() => getWeakTopics(userId), [], '弱点トピック'),
+      safeGet(() => getLearningXpBenchmark(), undefined, 'XPベンチマーク'),
+      safeGet(() => getPublicLeaderboard(), undefined, '公開ランキング'),
     ]);
 
   return {
@@ -51,7 +58,52 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
     streakDays: streakDays ?? 0,
     nextLesson,
     weakTopics: weakTopics ?? [],
+    ...(xpBenchmark ? { xpBenchmark } : {}),
+    publicLeaderboard: publicLeaderboard ?? [],
   };
+}
+
+/**
+ * 認証ユーザーの XP 相対位置（SECURITY DEFINER RPC）。未ログイン・プロフィールなしでは undefined。
+ */
+async function getLearningXpBenchmark(): Promise<LearningXpBenchmark | undefined> {
+  const supabase = createBrowserSupabaseClient();
+  const { data, error } = await supabase.rpc('get_learning_xp_benchmark');
+  if (error) {
+    console.error('XPベンチマーク取得エラー:', error);
+    return undefined;
+  }
+  const row = data?.[0];
+  if (!row) {
+    return undefined;
+  }
+  return {
+    xpPoints: row.xp_points ?? 0,
+    populationN: Number(row.population_n ?? 0),
+    percentile: row.percentile != null ? Number(row.percentile) : null,
+    rankTier: (row.rank_tier as UserRank | null) ?? null,
+    cohortN: row.cohort_n != null ? Number(row.cohort_n) : null,
+    cohortPercentile: row.cohort_percentile != null ? Number(row.cohort_percentile) : null,
+  };
+}
+
+/** 任意参加ランキング（オプトインのみ）。 */
+async function getPublicLeaderboard(): Promise<PublicLeaderboardEntry[] | undefined> {
+  const supabase = createBrowserSupabaseClient();
+  const { data, error } = await supabase.rpc('get_public_leaderboard', { p_limit: 30 });
+  if (error) {
+    console.error('公開ランキング取得エラー:', error);
+    return undefined;
+  }
+  if (!data?.length) {
+    return [];
+  }
+  return data.map((row) => ({
+    displayName: row.display_name,
+    xpPoints: row.xp_points ?? 0,
+    rankTier: (row.rank as UserRank | null) ?? null,
+    position: Number(row.leaderboard_position),
+  }));
 }
 
 /**

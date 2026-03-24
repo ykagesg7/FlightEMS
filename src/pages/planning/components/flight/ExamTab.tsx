@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../../../../stores/authStore';
+import type { ExamLevelFilter } from '../../../test/examLevelFilter';
 import CPLExamResults from '../../../test/components/quiz/CPLExamResults';
 import CPLExamSelector from '../../../test/components/quiz/CPLExamSelector';
 import CPLExamSession from '../../../test/components/quiz/CPLExamSession';
@@ -10,6 +11,7 @@ interface CPLExamSettings {
   timeLimitMinutes: number;
   shuffleQuestions: boolean;
   reviewMode: boolean;
+  examLevel?: ExamLevelFilter;
 }
 
 interface ExamTabState {
