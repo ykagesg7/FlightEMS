@@ -94,15 +94,9 @@ export async function proxyAviationWeather(
       };
     }
 
+    // NOAA に該当報が無いときは空配列を 200 で返す（HTTP 404 にするとブラウザが XHR を赤表示する）
     if (!data || (Array.isArray(data) && data.length === 0)) {
-      return {
-        status: 404,
-        body: {
-          error: 'No data found',
-          message: `No ${type.toUpperCase()} data available for ${icao.toUpperCase()}`,
-          data: [],
-        },
-      };
+      return { status: 200, body: [] };
     }
 
     return { status: 200, body: data };

@@ -10,6 +10,9 @@ import { createWeatherPopupContent } from '../popups/weatherPopup';
 import { bindPlanningSwimNotamButton, swimNotamButtonSection } from '../popups/swimNotamPopup';
 import type { AirportProps } from '../types';
 
+/** ローカル GeoJSON レイヤー用 ID（NOAA METAR/TAF 対象外のため取得しない） */
+const SKIP_AVIATION_WEATHER_IDS = new Set(['RJFA', 'RJFZ']);
+
 export const fetchAirportWeather = (
   feature: GeoJSON.Feature,
   map: L.Map,
@@ -70,9 +73,12 @@ export const fetchAirportWeather = (
   // 既存の気象データを取得
   const weatherDataPromise = fetchWeatherData(latitude, longitude);
 
-  // ICAOコードがRJで始まる日本の空港の場合、METAR/TAFも取得
+  // ICAOコードがRJで始まる日本の空港の場合、METAR/TAFも取得（ローカル訓練レイヤーは除外）
   let aviationWeatherPromise: Promise<AviationWeatherData | null> = Promise.resolve(null);
-  if (airportId && typeof airportId === 'string' && airportId.startsWith('RJ')) {
+  if (
+    icao.startsWith('RJ') &&
+    !SKIP_AVIATION_WEATHER_IDS.has(icao.toUpperCase())
+  ) {
     aviationWeatherPromise = fetchAviationWeather(airportId).catch((error) => {
       console.error(`${airportId}の航空気象データ取得エラー:`, error);
       return null;
