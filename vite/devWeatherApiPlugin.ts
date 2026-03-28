@@ -112,12 +112,13 @@ export function devWeatherApiPlugin(): Plugin {
           }
 
           if (isAviation) {
-            const mod = await server.ssrLoadModule('/lib/aviationWeatherApiCore.ts');
-            const { proxyAviationWeather } = mod as {
+            const rawAviation = await server.ssrLoadModule('/api/lib/aviationWeatherApiCore.ts');
+            const mod = unwrapSsrModuleExports<{
               proxyAviationWeather: (
                 q: Record<string, string | string[] | undefined>,
               ) => Promise<{ status: number; body: unknown }>;
-            };
+            }>(rawAviation);
+            const { proxyAviationWeather } = mod;
             const result = await proxyAviationWeather(query);
             sendCorsJson(res, result.status, result.body);
             return;
@@ -126,13 +127,14 @@ export function devWeatherApiPlugin(): Plugin {
           const env = loadEnv(server.config.mode, process.cwd(), '');
           const apiKey = env.WEATHER_API_KEY || process.env.WEATHER_API_KEY || '';
 
-          const mod = await server.ssrLoadModule('/lib/weatherApiCore.ts');
-          const { proxyWeatherForecast } = mod as {
+          const rawWeather = await server.ssrLoadModule('/api/lib/weatherApiCore.ts');
+          const mod = unwrapSsrModuleExports<{
             proxyWeatherForecast: (
               q: Record<string, string | string[] | undefined>,
               opts?: { apiKey?: string; allowMockWithoutKey?: boolean },
             ) => Promise<{ status: number; body: unknown; cacheControl?: string }>;
-          };
+          }>(rawWeather);
+          const { proxyWeatherForecast } = mod;
           const result = await proxyWeatherForecast(query, {
             apiKey: apiKey || undefined,
             allowMockWithoutKey: true,

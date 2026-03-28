@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { proxyWeatherForecast } from '../lib/weatherApiCore';
+import { proxyWeatherForecast } from './lib/weatherApiCore';
 
 export default async function handler(
   request: VercelRequest,

@@ -7,7 +7,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { proxyAviationWeather } from '../lib/aviationWeatherApiCore';
+import { proxyAviationWeather } from './lib/aviationWeatherApiCore';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
