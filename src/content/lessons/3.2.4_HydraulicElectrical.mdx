@@ -1,0 +1,52 @@
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空工学】油圧・航空機電気（CPL学科）',
+  slug: '3-2-4-hydraulic-electrical',
+  date: '2026-03-29',
+  author: 'Michizane (Shadow)',
+  tags: ['CPL', '学科試験', '航空工学', '油圧', '電気'],
+  series: 'CPL-Learning-Stub',
+  order: 4,
+  readingTime: 12,
+  excerpt:
+    'sub_subject に「油圧」または「航空機電気」を含むクラスタ向け。系統・冗長性など学科頻出を整理する。',
+  publishedAt: '2026-03-29'
+};
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Hydraulic+Electrical"
+  alt="油圧・航空機電気のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## この記事で書く内容（執筆スコープ）
+
+**データ上の正本**は `main_subject = 航空工学` かつ、次のいずれかです。
+
+- `sub_subject` に **「油圧」** を含む
+- `sub_subject` に **「航空機電気」** を含む
+
+（バッチ: `LIKE '%油圧%' OR LIKE '%航空機電気%'`）
+
+本文では油圧系の役割、主要コンポーネント、**電源・配電・保護**の考え方など、設問クラスタに合わせて**油圧と電気の両方**を扱う構成にしてください（同一記事 id に両系が束ねられています）。
+
+> **データ連携**: [`20260325_batch_ppl_engineering_series_and_mapping.sql`](../../../scripts/database/20260325_batch_ppl_engineering_series_and_mapping.sql) が `3.2.4_HydraulicElectrical` に上記条件の UUID を束ねます。
+
+---
+
+## 学習目標（執筆時のチェックリスト）
+
+- [ ] 油圧と電気で、それぞれ**典型トラブル・冗長化**の論点を説明できる。
+- [ ] 一つの記事に**二系統まとめ**られていることを意識し、見出しで領域を分ける。
+
+<Callout type="info" title="本文は準備中">
+  将来、油圧のみ・電気のみに記事分割する場合は、マッピング SQL も分割し docs/08 の契約に沿って移行してください。
+</Callout>
+
+---
+
+export default ({ children }) => <>{children}</>

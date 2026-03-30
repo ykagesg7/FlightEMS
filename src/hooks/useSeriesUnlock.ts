@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ArticleMeta } from '../types/articles';
 import { useArticleProgress } from './useArticleProgress';
 import { useAuth } from './useAuth';
+import { unlockAllSeriesArticles } from '../utils/featureFlags';
 
 interface SeriesUnlockResult {
   isUnlocked: (contentId: string) => boolean;
@@ -90,6 +91,10 @@ export function useSeriesUnlock(
 
   // 記事が解放されているかチェック
   const isUnlocked = (contentId: string): boolean => {
+    if (unlockAllSeriesArticles) {
+      return true;
+    }
+
     const meta = getMetaForContentId(contentId);
 
     // シリーズ外の記事は常に解放
@@ -163,6 +168,9 @@ export function useSeriesUnlock(
 
   // ロック理由を取得
   const getLockedReason = (contentId: string): string | null => {
+    if (unlockAllSeriesArticles) {
+      return null;
+    }
     if (isUnlocked(contentId)) {
       return null;
     }

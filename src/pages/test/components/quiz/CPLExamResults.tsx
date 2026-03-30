@@ -35,6 +35,32 @@ interface SubjectStats {
   percentage: number;
 }
 
+interface CplQuestionMetaRow {
+  id: string;
+  main_subject: string;
+  sub_subject: string;
+}
+
+/** 集計キー `${main} - ${sub}` に一致する設問 ID のみ（メタ無し・0件時は全設問にフォールバック） */
+function questionIdsForSubjectStat(
+  stat: SubjectStats,
+  answers: QuizAnswer[],
+  meta: CplQuestionMetaRow[]
+): string[] {
+  const allIds = answers.map((a) => a.questionId);
+  if (!answers.length || meta.length === 0) return allIds;
+
+  const filtered = answers
+    .filter((a) => {
+      const q = meta.find((m) => m.id === a.questionId);
+      if (!q) return false;
+      return `${q.main_subject} - ${q.sub_subject}` === stat.subject;
+    })
+    .map((a) => a.questionId);
+
+  return filtered.length > 0 ? filtered : allIds;
+}
+
 const CPLExamResults: React.FC<CPLExamResultsProps> = ({
   sessionId,
   onRestartExam,
@@ -42,6 +68,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
 }) => {
   const [session, setSession] = useState<ExamSession | null>(null);
   const [subjectStats, setSubjectStats] = useState<SubjectStats[]>([]);
+  const [cplQuestionMeta, setCplQuestionMeta] = useState<CplQuestionMetaRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,6 +76,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
     const loadResults = async () => {
       try {
         setLoading(true);
+        setCplQuestionMeta([]);
 
         // セッション結果を取得
         const { data: sessionData, error: sessionError } = await supabase
@@ -72,6 +100,8 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
               .in('id', questionIds);
 
             if (questionsError) throw questionsError;
+
+            setCplQuestionMeta((questionsData ?? []) as CplQuestionMetaRow[]);
 
             // 科目別統計を集計
             const statsMap: { [key: string]: { total: number; correct: number } } = {};
@@ -98,7 +128,11 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
             }));
 
             setSubjectStats(stats);
+          } else {
+            setCplQuestionMeta([]);
           }
+        } else {
+          setCplQuestionMeta([]);
         }
       } catch (err) {
         console.error('Failed to load results:', err);
@@ -261,7 +295,11 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
                 key={index}
                 subjectCategory={stat.subject.split(' - ')[0]} // メイン科目のみ使用
                 accuracy={stat.percentage}
-                questionIds={session?.answers?.map((a: QuizAnswer) => a.questionId) || []}
+                questionIds={
+                  session?.answers
+                    ? questionIdsForSubjectStat(stat, session.answers, cplQuestionMeta)
+                    : []
+                }
               />
             ))
           }

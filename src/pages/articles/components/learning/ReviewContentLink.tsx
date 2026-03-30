@@ -1,6 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import supabase from '../../../../utils/supabase';
+
+/** セッション設問 ID とマッピング行の重なり数（同一 UUID は二重に数えない） */
+function overlapCount(
+  questionIds: string[],
+  unified: string[] | null | undefined,
+  test: string[] | null | undefined
+): number {
+  const want = new Set(questionIds.map(String));
+  const hit = new Set<string>();
+  for (const x of unified ?? []) {
+    const s = String(x);
+    if (want.has(s)) hit.add(s);
+  }
+  for (const x of test ?? []) {
+    const s = String(x);
+    if (want.has(s)) hit.add(s);
+  }
+  return hit.size;
+}
 
 interface ReviewContentLinkProps {
   subjectCategory: string;
@@ -23,31 +42,53 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
   const [recommendedContents, setRecommendedContents] = useState<LearningContent[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const questionIdsKey = useMemo(
+    () => [...questionIds].map(String).sort().join(','),
+    [questionIds]
+  );
+
   useEffect(() => {
     const fetchRecommendedContents = async () => {
       try {
-        type MappingRow = { learning_content_id: string; topic_category: string; difficulty_level: number | null };
+        type MappingRow = {
+          learning_content_id: string;
+          topic_category: string;
+          difficulty_level: number | null;
+          unified_cpl_question_ids?: string[] | null;
+          test_question_ids?: string[] | null;
+        };
         let mappings: MappingRow[] = [];
 
         if (questionIds.length > 0) {
           const selectCols = `
             learning_content_id,
             topic_category,
-            difficulty_level
+            difficulty_level,
+            unified_cpl_question_ids,
+            test_question_ids
           `;
+          const limit = 40;
           const [r1, r2] = await Promise.all([
-            supabase.from('learning_test_mapping').select(selectCols).overlaps('test_question_ids', questionIds).limit(5),
-            supabase.from('learning_test_mapping').select(selectCols).overlaps('unified_cpl_question_ids', questionIds).limit(5),
+            supabase.from('learning_test_mapping').select(selectCols).overlaps('test_question_ids', questionIds).limit(limit),
+            supabase.from('learning_test_mapping').select(selectCols).overlaps('unified_cpl_question_ids', questionIds).limit(limit),
           ]);
           if (r1.error) console.error('Error fetching mappings (test_question_ids):', r1.error);
           if (r2.error) console.error('Error fetching mappings (unified_cpl_question_ids):', r2.error);
-          const seen = new Set<string>();
+          const byId = new Map<string, MappingRow>();
           for (const row of [...(r1.data ?? []), ...(r2.data ?? [])] as MappingRow[]) {
-            if (seen.has(row.learning_content_id)) continue;
-            seen.add(row.learning_content_id);
-            mappings.push(row);
-            if (mappings.length >= 5) break;
+            const id = row.learning_content_id;
+            const score = overlapCount(questionIds, row.unified_cpl_question_ids, row.test_question_ids);
+            const prev = byId.get(id);
+            if (!prev || overlapCount(questionIds, prev.unified_cpl_question_ids, prev.test_question_ids) < score) {
+              byId.set(id, row);
+            }
           }
+          const ranked = [...byId.values()].sort(
+            (a, b) =>
+              overlapCount(questionIds, b.unified_cpl_question_ids, b.test_question_ids) -
+              overlapCount(questionIds, a.unified_cpl_question_ids, a.test_question_ids)
+          );
+          mappings = ranked.slice(0, 5);
         } else {
           const { data, error: mappingError } = await supabase
             .from('learning_test_mapping')
@@ -66,17 +107,35 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
         }
 
         if (!mappings || mappings.length === 0) {
-          // マッピングがない場合、科目カテゴリで直接learning_contentsを検索
-          const { data: contents, error: contentError } = await supabase
+          // マッピングがない場合: subjectCategory は main_subject（例: 航空工学）なので
+          // learning_contents.sub_category と照合する（category は PPL / CPL学科 等のため不一致になりやすい）
+          const { data: bySub, error: subErr } = await supabase
             .from('learning_contents')
             .select('id, title, category, description')
-            .eq('category', subjectCategory)
+            .eq('sub_category', subjectCategory)
             .eq('is_published', true)
             .limit(3);
 
-          if (contentError) {
-            console.error('Error fetching contents:', contentError);
-          } else if (contents) {
+          if (subErr) {
+            console.error('Error fetching contents (sub_category fallback):', subErr);
+          }
+
+          let contents = bySub ?? [];
+          if (contents.length === 0) {
+            const { data: byCat, error: catErr } = await supabase
+              .from('learning_contents')
+              .select('id, title, category, description')
+              .eq('category', subjectCategory)
+              .eq('is_published', true)
+              .limit(3);
+            if (catErr) {
+              console.error('Error fetching contents (category fallback):', catErr);
+            } else if (byCat?.length) {
+              contents = byCat;
+            }
+          }
+
+          if (contents.length > 0) {
             setRecommendedContents(contents);
           }
           return;
@@ -93,7 +152,11 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
         if (contentError) {
           console.error('Error fetching contents:', contentError);
         } else if (contents) {
-          setRecommendedContents(contents);
+          const order = new Map(contentIds.map((id, i) => [id, i]));
+          const sorted = [...contents].sort(
+            (a, b) => (order.get(a.id) ?? 999) - (order.get(b.id) ?? 999)
+          );
+          setRecommendedContents(sorted);
         }
       } catch (error) {
         console.error('Error fetching recommended contents:', error);
@@ -103,7 +166,7 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
     };
 
     fetchRecommendedContents();
-  }, [subjectCategory, questionIds]);
+  }, [subjectCategory, questionIdsKey, questionIds]);
 
   if (loading) {
     return (

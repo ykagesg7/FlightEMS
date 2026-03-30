@@ -82,12 +82,13 @@
 #### `scripts/`
 - **目的**: 開発・運用スクリプト
 - **内容**:
-  - `database/`: マイグレーション（例: `20260309_bootstrap_user_learning_profiles.sql`）、記事登録
+  - `database/`: マイグレーション（例: `20260309_bootstrap_user_learning_profiles.sql`）、記事登録、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`（気象・航法・通信の科目ハブ＋`learning_contents` オーファン修復）、`20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`（法規 `3.1.2` を `sub_subject` クラスタへ差し替え）
   - `cpl_exam/`: CPL 問題 CSV 取込、`CPL_CSV_IMPORT_SPEC.md` 参照
   - `docs-auto-update/`: ドキュメント自動更新
 
 #### `public/`
 - **目的**: 静的ファイル（画像、GeoJSONなど）
+- **`public/docs/`**: `docs/` の一部をミラー（例: `09_CPL_Learning_Stub.md` および 09 からリンクする `06`・`08`・`10`）。MDX から `/docs/*.md` で参照しブラウザで 404 にしない。正本を更新したらコピーを同期すること。
 - **注意**: 一部の大きなファイルは`.gitignore`で除外されています
 
 ---

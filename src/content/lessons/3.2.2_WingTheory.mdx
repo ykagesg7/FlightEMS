@@ -1,0 +1,52 @@
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空工学】翼理論・揚力と全機空力（CPL学科）',
+  slug: '3-2-2-wing-theory',
+  date: '2026-03-29',
+  author: 'Michizane (Shadow)',
+  tags: ['CPL', '学科試験', '航空工学', '翼', '揚力', '空力'],
+  series: 'CPL-Learning-Stub',
+  order: 2,
+  readingTime: 12,
+  excerpt:
+    '二次元翼・全機の空力特性など sub_subject に含まれるクラスタ向け。揚力・抗力・翼断面の学科頻出を整理する。',
+  publishedAt: '2026-03-29'
+};
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Wing+Theory"
+  alt="翼・揚力のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## この記事で書く内容（執筆スコープ）
+
+**データ上の正本**は `main_subject = 航空工学` かつ、次のいずれかに合致する `sub_subject` です。
+
+- `sub_subject` に **「二次元翼」** を含む
+- `sub_subject` に **「全機の空力特性」** を含む
+
+（バッチ: `LIKE '%二次元翼%' OR LIKE '%全機の空力特性%'`）
+
+本文では揚力・抗力の基礎、翼断面（翼型）、迎角と失速のイメージ、**二次元翼と三次元翼／全機**の違いなど、上記クラスタの設問に沿った説明を中心にしてください。
+
+> **データ連携**: [`20260325_batch_ppl_engineering_series_and_mapping.sql`](../../../scripts/database/20260325_batch_ppl_engineering_series_and_mapping.sql) が `3.2.2_WingTheory` に上記条件の UUID を束ねます。
+
+---
+
+## 学習目標（執筆時のチェックリスト）
+
+- [ ] 揚力が生じる**説明のレベル**（学科で求められる深度）に合わせて話せる。
+- [ ] 「二次元」「全機」など、**設問の分類語と本文の見出し**を対応させられる。
+
+<Callout type="info" title="本文は準備中">
+  実クラスタ名は DB の `sub_subject` 一覧で確認し、章立てをそれに寄せるとマッピングと読者の期待が一致します。
+</Callout>
+
+---
+
+export default ({ children }) => <>{children}</>

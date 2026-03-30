@@ -1,0 +1,52 @@
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空工学】エンジン・推進（CPL学科）',
+  slug: '3-2-5-engine-theory',
+  date: '2026-03-29',
+  author: 'Michizane (Shadow)',
+  tags: ['CPL', '学科試験', '航空工学', 'エンジン', '推進'],
+  series: 'CPL-Learning-Stub',
+  order: 5,
+  readingTime: 12,
+  excerpt:
+    'sub_subject に「エンジン」または「推進」を含むクラスタ向け。ピストン・推進系の学科頻出を整理する。',
+  publishedAt: '2026-03-29'
+};
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Engine+Theory"
+  alt="エンジン・推進のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## この記事で書く内容（執筆スコープ）
+
+**データ上の正本**は `main_subject = 航空工学` かつ、次のいずれかです。
+
+- `sub_subject` に **「エンジン」** を含む
+- `sub_subject` に **「推進」** を含む
+
+（バッチ: `LIKE '%エンジン%' OR LIKE '%推進%'`）
+
+本文ではピストンエンジンのサイクル、出力・燃費・高度の関係、プロペラ記事（`3.2.1`）と**境界が重なる場合は相互リンク**すると読者が迷いにくくなります。
+
+> **データ連携**: [`20260325_batch_ppl_engineering_series_and_mapping.sql`](../../../scripts/database/20260325_batch_ppl_engineering_series_and_mapping.sql) が `3.2.5_EngineTheory` に上記条件の UUID を束ねます。
+
+---
+
+## 学習目標（執筆時のチェックリスト）
+
+- [ ] エンジン性能に関する**学科で頻出のグラフ・用語**を整理できる。
+- [ ] 「推進」系の sub_subject が**プロペラとエンジンのどちら寄りか**を DB で確認し、本文の厚みを配分できる。
+
+<Callout type="info" title="本文は準備中">
+  `%推進%` は広めにヒットする可能性があるため、執筆前に該当 `sub_subject` の一覧を一度エクスポートしておくと構成が安定します。
+</Callout>
+
+---
+
+export default ({ children }) => <>{children}</>

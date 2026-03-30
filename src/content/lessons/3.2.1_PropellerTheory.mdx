@@ -1,0 +1,51 @@
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空工学】プロペラ・推進（CPL学科）',
+  slug: '3-2-1-propeller-theory',
+  date: '2026-03-29',
+  author: 'Michizane (Shadow)',
+  tags: ['CPL', '学科試験', '航空工学', 'プロペラ', '推進'],
+  series: 'CPL-Learning-Stub',
+  order: 1,
+  readingTime: 12,
+  excerpt:
+    'unified_cpl_questions で sub_subject に「プロペラ」を含むクラスタに対応。推進・プロペラ効率など学科頻出を整理する。',
+  publishedAt: '2026-03-29'
+};
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Propeller+Theory"
+  alt="プロペラ・推進のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## この記事で書く内容（執筆スコープ）
+
+**データ上の正本**は `unified_cpl_questions` の **`main_subject = 航空工学`** かつ **`sub_subject` に「プロペラ」を含む**設問クラスタです（バッチ内では `LIKE '%プロペラ%'`）。
+
+本文では例えば次を扱うと、マッピングと齟齬が出にくくなります。
+
+- プロペラの**推力・トルク**、効率、回転と出力の関係
+- **固定ピッチ／可変ピッチ**など、問題で区別される概念
+- 学科で図・数式とセットで出やすい**定性的説明**
+
+> **データ連携**: [`20260325_batch_ppl_engineering_series_and_mapping.sql`](../../../scripts/database/20260325_batch_ppl_engineering_series_and_mapping.sql) で、この記事 id（`3.2.1_PropellerTheory`）に上記条件の **verified 設問 UUID** が `learning_test_mapping` に載ります（`mapping_source`: `batch_20260325_engineering`）。クイズ誤答の UUID がこの束と重なると `ReviewContentLink` で候補に上がりやすくなります。
+
+---
+
+## 学習目標（執筆時のチェックリスト）
+
+- [ ] プロペラまわりの用語と、試験で問われる**典型的な因果関係**を説明できる。
+- [ ] 設問の `sub_subject`（プロペラ系）に合わせて**余計な翼理論だけ**に逃げない。
+
+<Callout type="info" title="本文は準備中">
+  Supabase で `航空工学` かつ `sub_subject ILIKE '%プロペラ%'` を実行し、実際のクラスタ名を本文の見出しに反映すると運用が楽です。
+</Callout>
+
+---
+
+export default ({ children }) => <>{children}</>
