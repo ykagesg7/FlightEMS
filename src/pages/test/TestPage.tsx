@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, BookOpen } from 'lucide-react';
 import { useGamification } from '../../hooks/useGamification';
 import { QuestionType, QuizFetchParams, QuizQuestion, UserQuizAnswer } from '../../types/quiz';
 import supabase from '../../utils/supabase';
@@ -11,6 +11,7 @@ import { buildOrderIndex, MAIN_SUBJECT_ORDER, SUB_SUBJECT_ORDER_BY_MAIN } from '
 import type { ExamLevelFilter } from './examLevelFilter';
 import { parseExamLevelParam } from './examLevelFilter';
 import { normalizeSubSubjectLabel } from './utils/normalizeSubSubject';
+import { LEARNING_ARTICLES_HUB_LABEL } from '../../constants/learningArticleNav';
 
 type FilterOption = {
   value: string;
@@ -778,8 +779,8 @@ const TestPage: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto py-8" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
-      {/* 戻るボタン */}
-      <div className="mb-6">
+      {/* 戻る・記事ハブ */}
+      <div className="mb-6 flex flex-wrap items-center gap-2">
         <Link
           to="/"
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-brand-primary hover:text-brand-primary/80 border border-brand-primary/30 rounded-lg hover:border-brand-primary/50 transition-colors"
@@ -787,6 +788,22 @@ const TestPage: React.FC = () => {
           <ArrowLeft className="w-4 h-4" />
           Home へ戻る
         </Link>
+        <Link
+          to="/articles"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-brand-primary hover:text-brand-primary/80 border border-brand-primary/30 rounded-lg hover:border-brand-primary/50 transition-colors"
+        >
+          <BookOpen className="w-4 h-4" aria-hidden />
+          {LEARNING_ARTICLES_HUB_LABEL}
+        </Link>
+        {contentId && (
+          <Link
+            to={`/articles/${contentId}`}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-brand-primary hover:text-brand-primary/80 border border-brand-primary/40 rounded-lg hover:border-brand-primary/60 transition-colors"
+          >
+            <BookOpen className="w-4 h-4" aria-hidden />
+            この単元の記事へ
+          </Link>
+        )}
       </div>
 
       {/* モード切替 */}
@@ -1038,6 +1055,7 @@ const TestPage: React.FC = () => {
             ]).size
           }
           contentId={contentId}
+          selectedSubjectForFallback={subjectSelected ? selectedSubject : null}
         />
         </div>
       ) : questions.length === 0 ? (

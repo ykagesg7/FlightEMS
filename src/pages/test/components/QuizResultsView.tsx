@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { UserQuizAnswer } from '../../../types/quiz';
 import { QuizQuestion } from '../../../types/quiz';
 import { normalizeSubSubjectLabel } from '../utils/normalizeSubSubject';
-import { LEARNING_ARTICLE_CTA_LABEL } from '../../../constants/learningArticleNav';
+import { LEARNING_ARTICLE_CTA_LABEL, LEARNING_ARTICLES_HUB_LABEL } from '../../../constants/learningArticleNav';
+import ReviewContentLink from '../../articles/components/learning/ReviewContentLink';
 
 const CHOICE_LABELS = ['A', 'B', 'C', 'D'] as const;
 
@@ -21,6 +22,8 @@ interface QuizResultsViewProps {
   flaggedCount?: number;
   flaggedAndIncorrectCount?: number;
   contentId?: string | null;
+  /** 全問正解時のフォールバック（main_subject）。未選択科目のときは null */
+  selectedSubjectForFallback?: string | null;
 }
 
 export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
@@ -36,6 +39,7 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
   flaggedCount = 0,
   flaggedAndIncorrectCount = 0,
   contentId,
+  selectedSubjectForFallback = null,
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const correctCount = userAnswers.filter(a => a.isCorrect).length;
@@ -72,6 +76,57 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
   })();
+
+  const subjectArticleBlocks = useMemo(() => {
+    const qMap = new Map(questions.map((q) => [String(q.id), q]));
+    type Row = {
+      mainSubject: string;
+      total: number;
+      correct: number;
+      incorrectQuestionIds: string[];
+      allQuestionIds: string[];
+      percentage: number;
+    };
+    const bySubject = new Map<
+      string,
+      { total: number; correct: number; incorrectQuestionIds: string[]; allQuestionIds: string[] }
+    >();
+
+    for (const a of userAnswers) {
+      const qid = String(a.questionId);
+      const q = qMap.get(qid);
+      const raw = (q as QuizQuestion & { main_subject?: string })?.main_subject;
+      const mainSubject = typeof raw === 'string' && raw.trim() ? raw.trim() : 'その他';
+      let row = bySubject.get(mainSubject);
+      if (!row) {
+        row = { total: 0, correct: 0, incorrectQuestionIds: [], allQuestionIds: [] };
+        bySubject.set(mainSubject, row);
+      }
+      row.total += 1;
+      row.allQuestionIds.push(qid);
+      if (a.isCorrect) row.correct += 1;
+      else row.incorrectQuestionIds.push(qid);
+    }
+
+    const list: Row[] = [...bySubject.entries()].map(([mainSubject, r]) => ({
+      mainSubject,
+      total: r.total,
+      correct: r.correct,
+      incorrectQuestionIds: r.incorrectQuestionIds,
+      allQuestionIds: r.allQuestionIds,
+      percentage: r.total > 0 ? Math.round((r.correct / r.total) * 100) : 0,
+    }));
+
+    const withIncorrect = list
+      .filter((s) => s.incorrectQuestionIds.length > 0)
+      .sort((a, b) => b.incorrectQuestionIds.length - a.incorrectQuestionIds.length);
+
+    const allSessionIds = userAnswers.map((a) => String(a.questionId));
+    const allCorrect = withIncorrect.length === 0 && allSessionIds.length > 0;
+    const firstSubject = list[0]?.mainSubject ?? 'その他';
+
+    return { withIncorrect, allCorrect, allSessionIds, firstSubject };
+  }, [userAnswers, questions]);
 
   return (
     <div className="max-w-2xl mx-auto p-8 bg-[var(--panel)] border border-brand-primary/20 rounded-2xl shadow-2xl">
@@ -110,6 +165,32 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {(subjectArticleBlocks.withIncorrect.length > 0 || subjectArticleBlocks.allCorrect) && (
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-brand-primary mb-3">関連する学習記事</h3>
+          {subjectArticleBlocks.withIncorrect.length > 0
+            ? subjectArticleBlocks.withIncorrect.map((s) => (
+                <ReviewContentLink
+                  key={s.mainSubject}
+                  subjectCategory={s.mainSubject}
+                  accuracy={s.percentage}
+                  questionIds={s.incorrectQuestionIds}
+                  excludeContentId={contentId}
+                  variant="panel"
+                />
+              ))
+            : (
+                <ReviewContentLink
+                  subjectCategory={selectedSubjectForFallback ?? subjectArticleBlocks.firstSubject}
+                  accuracy={100}
+                  questionIds={subjectArticleBlocks.allSessionIds}
+                  excludeContentId={contentId}
+                  variant="panel"
+                />
+              )}
         </div>
       )}
 
@@ -218,6 +299,12 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
             {LEARNING_ARTICLE_CTA_LABEL}
           </Link>
         )}
+        <Link
+          to="/articles"
+          className="px-6 py-3 rounded-xl border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10 transition-all duration-200"
+        >
+          {LEARNING_ARTICLES_HUB_LABEL}
+        </Link>
         <Link
           to="/"
           className="px-6 py-3 rounded-xl border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10 transition-all duration-200"
