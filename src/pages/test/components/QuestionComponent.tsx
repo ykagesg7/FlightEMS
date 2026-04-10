@@ -1,9 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Option, Question, QuestionType } from '../../../types/quiz';
 
 const CHOICE_LABELS = ['A', 'B', 'C', 'D'] as const;
 const RESPONSE_FIELD_CLASS =
   'w-full rounded-xl border border-brand-primary/20 bg-[var(--panel)]/70 p-3 text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)]/75 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-60';
+
+function isFocusInEditableField(): boolean {
+  const el = document.activeElement;
+  if (!el || !(el instanceof HTMLElement)) return false;
+  const tag = el.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+  return el.isContentEditable;
+}
 
 interface QuestionComponentProps {
   question: Question;
@@ -31,37 +39,49 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
   generalMessages
 }) => {
   const [currentAnswer, setCurrentAnswer] = useState<number | string>('');
+  const currentAnswerRef = useRef<number | string>('');
   const questionTextId = `question-text-${question.id}`;
 
   useEffect(() => {
     if (initialUserAnswer !== undefined) {
       setCurrentAnswer(initialUserAnswer);
+      currentAnswerRef.current = initialUserAnswer;
     } else {
       setCurrentAnswer(''); // Reset for new questions
+      currentAnswerRef.current = '';
     }
   }, [initialUserAnswer, question.id]);
 
-  // Keyboard shortcuts: 1-4 for choices, Enter to submit
+  useEffect(() => {
+    currentAnswerRef.current = currentAnswer;
+  }, [currentAnswer]);
+
+  // Keyboard shortcuts: 1-4 for MC only; Enter submits using ref so digit+Enter is reliable
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (feedback !== undefined) return;
+    if (isFocusInEditableField()) return;
+
     if (e.key >= '1' && e.key <= '4') {
+      if (question.type !== QuestionType.MULTIPLE_CHOICE) return;
       const idx = Number(e.key) - 1;
       const opts = question.options ?? [];
       if (idx < opts.length) {
         e.preventDefault();
+        currentAnswerRef.current = idx;
         setCurrentAnswer(idx);
       }
+      return;
     }
     if (e.key === 'Enter') {
       e.preventDefault();
-      const val = currentAnswer;
+      const val = currentAnswerRef.current;
       if (question.type === QuestionType.MULTIPLE_CHOICE) {
         if (val !== '' && val !== undefined) onSubmit(val);
       } else {
         onSubmit(val);
       }
     }
-  }, [feedback, question.type, question.options, currentAnswer, onSubmit]);
+  }, [feedback, question.type, question.options, onSubmit]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -106,6 +126,10 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
               const selected = currentAnswer === index;
               const label = CHOICE_LABELS[index] ?? String(index + 1);
               const disabled = feedback !== undefined;
+              const correctIdx = typeof question.correctAnswer === 'number' ? question.correctAnswer : question.correct_option_index ?? 0;
+              const userIdx = typeof feedback?.userAnswer === 'number' ? feedback.userAnswer : -1;
+              const isCorrectChoice = feedback !== undefined && index === correctIdx;
+              const isWrongUserChoice = feedback !== undefined && index === userIdx && !feedback.isCorrect;
               return (
                 <label
                   key={index}
@@ -115,17 +139,32 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
                   `}
                 >
                   <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-current font-bold text-lg"
+                    className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-current font-bold text-lg"
                     aria-hidden
                   >
                     {label}
+                    {isCorrectChoice && (
+                      <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-hud-green text-[10px] font-bold text-[var(--bg)]" title="正解">
+                        ○
+                      </span>
+                    )}
+                    {isWrongUserChoice && (
+                      <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center rounded-full bg-hud-red text-[10px] font-bold leading-none text-[var(--bg)]" title="不正解">
+                        ×
+                      </span>
+                    )}
                   </span>
                   <input
                     type="radio"
                     name={question.id}
                     value={index}
                     checked={selected}
-                    onChange={() => !disabled && setCurrentAnswer(index)}
+                    onChange={() => {
+                      if (!disabled) {
+                        currentAnswerRef.current = index;
+                        setCurrentAnswer(index);
+                      }
+                    }}
                     className="sr-only"
                     disabled={disabled}
                     aria-labelledby={`${questionTextId} option-text-${index}`}
@@ -141,7 +180,11 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
           <input
             type="number"
             value={currentAnswer}
-            onChange={(e) => setCurrentAnswer(e.target.value === '' ? '' : parseFloat(e.target.value))}
+            onChange={(e) => {
+              const v = e.target.value === '' ? '' : parseFloat(e.target.value);
+              currentAnswerRef.current = v;
+              setCurrentAnswer(v);
+            }}
             className={RESPONSE_FIELD_CLASS}
             placeholder="数値を入力"
             disabled={feedback !== undefined}
@@ -152,7 +195,11 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
         return (
           <textarea
             value={currentAnswer as string}
-            onChange={(e) => setCurrentAnswer(e.target.value)}
+            onChange={(e) => {
+              const v = e.target.value;
+              currentAnswerRef.current = v;
+              setCurrentAnswer(v);
+            }}
             rows={3}
             className={RESPONSE_FIELD_CLASS}
             placeholder="回答を入力してください..."
@@ -169,15 +216,18 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
     <form onSubmit={handleSubmit} className="space-y-4">
       <p id={questionTextId} className={`whitespace-pre-line leading-relaxed mb-3 hud-text`}>{question.text}</p>
       {question.imagePlaceholder && (
-        <div className={`my-3 p-2 rounded text-center hud-surface`}>
-          <p className={`text-sm italic text-[color:var(--text-muted)]`}>[図示: {question.imagePlaceholder}]</p>
-          <img src={`https://picsum.photos/seed/${question.id}/300/150`} alt={question.imagePlaceholder} className="mx-auto mt-1 rounded opacity-50" />
+        <div className={`my-3 rounded border border-dashed border-brand-primary/25 bg-[var(--panel)]/50 p-4 text-center hud-surface`}>
+          <p className={`text-xs font-medium uppercase tracking-wide text-[color:var(--text-muted)]`}>図プレースホルダー</p>
+          <p className={`mt-1 text-sm text-[color:var(--text-primary)]`}>{question.imagePlaceholder}</p>
         </div>
       )}
       {(!feedback || question.type === QuestionType.MULTIPLE_CHOICE) && renderInput()}
 
       {feedback && (
         <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
           className={`p-4 rounded-xl mt-4 border ${feedback.isCorrect
             ? 'bg-green-500/10 border-green-400'
             : 'bg-red-500/10 border-red-400'

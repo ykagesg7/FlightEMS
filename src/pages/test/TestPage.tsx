@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useGamification } from '../../hooks/useGamification';
@@ -114,6 +114,7 @@ const TestPage: React.FC = () => {
   const [examLevel, setExamLevel] = useState<ExamLevelFilter>('all');
   /** PPL モード時の verified 件数（head 集計・科目リストの limit より正確） */
   const [pplVerifiedExactCount, setPplVerifiedExactCount] = useState<number | null>(null);
+  const quizResultsAnchorRef = useRef<HTMLDivElement>(null);
 
   // クエリパラメータから初期値を設定
   const [sp] = useSearchParams();
@@ -620,6 +621,20 @@ const TestPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSubject, selectedSubSubject, selectedSubSubjectRawValues, questionCount, contentId, mode, retryIncorrectMode, subjectSelected, examLevel]);
 
+  useEffect(() => {
+    if (!quizFinished) return;
+    const el = quizResultsAnchorRef.current;
+    if (!el) return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const behavior: ScrollBehavior = reducedMotion ? 'auto' : 'smooth';
+    const raf = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        el.scrollIntoView({ behavior, block: 'start' });
+      });
+    });
+    return () => window.cancelAnimationFrame(raf);
+  }, [quizFinished]);
+
   // 回答送信
   const handleSubmitQuiz = async (answers: UserQuizAnswer[], flaggedIds?: string[]) => {
     setQuizFinished(true);
@@ -967,6 +982,7 @@ const TestPage: React.FC = () => {
       ) : error ? (
         <div className="p-8 text-center text-red-500">{error}</div>
       ) : quizFinished ? (
+        <div ref={quizResultsAnchorRef} className="scroll-mt-20 md:scroll-mt-24">
         <QuizResultsView
           userAnswers={userAnswers}
           questions={questions}
@@ -1023,6 +1039,7 @@ const TestPage: React.FC = () => {
           }
           contentId={contentId}
         />
+        </div>
       ) : questions.length === 0 ? (
         <div className="rounded-2xl border border-brand-primary/15 bg-[var(--panel)]/80 p-10 text-center shadow-lg">
           <p className="text-lg font-semibold text-[var(--text-primary)]">
