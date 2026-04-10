@@ -8,6 +8,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+# Generated SQL chunks for Supabase MCP/API runs (regenerate with split-cpl-stub-sql-chunks.mjs write-all)
+scripts/sql-chunks-cpl-stub/
+
 dist
 dist-ssr
 *.local

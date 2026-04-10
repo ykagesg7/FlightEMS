@@ -1,0 +1,45 @@
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: "【航空法規】戦闘機乗りへの第一歩（CPL学科・スタブ同期）",
+  slug: "3-1-1-aviation-legal-0",
+  date: '2026-04-10',
+  author: 'Michizane (Shadow)',
+  tags: ["CPL","学科試験","航空法規","スタブ"],
+  series: 'CPL-Learning-Stub',
+  order: 325,
+  readingTime: 5,
+  excerpt: "Supabase の learning_contents / learning_test_mapping と id を一致させるプレースホルダ。本文は後から拡充。",
+  publishedAt: '2026-04-10'
+};
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Aviation%2BLegal%2B0"
+  alt="【航空法規】戦闘機乗りへの第一歩（CPL学科・スタブ同期）"
+  width={1200}
+  height={630}
+/>
+
+## この記事で書く内容（執筆スコープ）
+
+**データ上の正本**は `unified_cpl_questions` の **航空法規**科目で、既存バッチ（四分位）により本記事 id に束ねられた verified 設問クラスタです。
+
+- 法規シリーズ全体の入口として、試験で繰り返し出る「枠組み」用語を整理する。
+- 条文番号の暗記に逃げず、**定義・主体・義務**の型で読む。
+
+> **データ連携**: [`20260410_cpl_stub_lessons_contents_and_mapping.sql`](../../../scripts/database/20260410_cpl_stub_lessons_contents_and_mapping.sql) で `learning_contents` と `learning_test_mapping`（対象クラスタの verified 設問 UUID）を冪等投入する想定です。
+
+<Callout type="info" title="本文は準備中">
+  Supabase で `unified_cpl_questions` の当該 `sub_subject` を確認し、本文の見出しをクラスタ名に合わせると運用が楽です。
+</Callout>
+
+---
+
+## 学習目標（執筆時のチェックリスト）
+
+- [ ] 対象クラスタの用語と試験で問われる因果関係を整理する
+- [ ] クイズの `main_subject` / `sub_subject` と本文の見出しを一致させる
+
+export default ({ children }) => <>{children}</>

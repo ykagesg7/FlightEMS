@@ -26,7 +26,7 @@
 
 | id | 科目イメージ |
 |----|----------------|
-| `3.1.1_AviationLegal0` 〜 `3.1.4_AviationLegal3` | 航空法規シリーズ |
+| `3.1.1_AviationLegal0` 〜 `3.1.4_AviationLegal3` | 航空法規シリーズ（`3.1.1` は DB 登録あり・リポジトリ MDX の有無は [14_記事単元網羅とバックログ.md](14_記事単元網羅とバックログ.md) を参照） |
 | `3.2.1_PropellerTheory` 〜 `3.2.6_InstrumentSystem` | 航空工学シリーズ |
 | `engineering_basics` | 工学・航空力学クラスタ入口 |
 | `CPL-Hub-Meteorology` / `Navigation` / `Communication` | 科目ハブ（広い束のマッピング） |

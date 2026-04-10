@@ -1,0 +1,48 @@
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: "【航空通信】航空情報業務（CPL学科・スタブ）",
+  slug: "3-5-2-aeronautical-information",
+  date: '2026-04-10',
+  author: 'Michizane (Shadow)',
+  tags: ["CPL","学科試験","航空通信","航空情報"],
+  series: 'CPL-Learning-Stub',
+  order: 391,
+  readingTime: 5,
+  excerpt: "航空情報（AIP/NOTAM 等）業務クラスタ向けスタブ。",
+  publishedAt: '2026-04-10'
+};
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=AIS"
+  alt="【航空通信】航空情報業務（CPL学科・スタブ）"
+  width={1200}
+  height={630}
+/>
+
+## この記事で書く内容（執筆スコープ）
+
+**main_subject**: `航空通信` / **sub_subject**: `航空情報` を含むクラスタ。
+
+- 情報の種類と優先度
+- 運航判断との接続（後続）
+
+
+**科目ハブ**: [同科目の全体プールへ](/articles/CPL-Hub-Communication)
+
+> **データ連携**: [`20260410_cpl_stub_lessons_contents_and_mapping.sql`](../../../scripts/database/20260410_cpl_stub_lessons_contents_and_mapping.sql) で `learning_contents` と `learning_test_mapping`（対象クラスタの verified 設問 UUID）を冪等投入する想定です。
+
+<Callout type="info" title="本文は準備中">
+  Supabase で `unified_cpl_questions` の当該 `sub_subject` を確認し、本文の見出しをクラスタ名に合わせると運用が楽です。
+</Callout>
+
+---
+
+## 学習目標（執筆時のチェックリスト）
+
+- [ ] 対象クラスタの用語と試験で問われる因果関係を整理する
+- [ ] クイズの `main_subject` / `sub_subject` と本文の見出しを一致させる
+
+export default ({ children }) => <>{children}</>

@@ -82,7 +82,7 @@
 #### `scripts/`
 - **目的**: 開発・運用スクリプト
 - **内容**:
-  - `database/`: マイグレーション（例: `20260309_bootstrap_user_learning_profiles.sql`）、記事登録、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`（気象・航法・通信の科目ハブ＋`learning_contents` オーファン修復）、`20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`（法規 `3.1.2` を `sub_subject` クラスタへ差し替え）
+  - `database/`: マイグレーション（例: `20260309_bootstrap_user_learning_profiles.sql`）、記事登録、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`（気象・航法・通信の科目ハブ＋`learning_contents` オーファン修復）、`20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`（法規 `3.1.2` を `sub_subject` クラスタへ差し替え）、`20260410_cpl_stub_lessons_contents_and_mapping.sql`（docs/06 Phase1+2 スタブ記事の `learning_contents` + `learning_test_mapping`）
   - `cpl_exam/`: CPL 問題 CSV 取込、`CPL_CSV_IMPORT_SPEC.md` 参照
   - `docs-auto-update/`: ドキュメント自動更新
 

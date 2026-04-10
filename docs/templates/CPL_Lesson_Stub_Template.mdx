@@ -1,0 +1,57 @@
+import { Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【CPL・科目名】記事タイトル（スタブ）',
+  slug: 'topic-slug-kebab-case',
+  date: '2026-04-10',
+  author: 'Michizane (Shadow)',
+  tags: ['CPL', '学科試験', '主科目タグ', 'トピックタグ'],
+  series: 'CPL-Learning-Stub',
+  order: 0,
+  readingTime: 3,
+  excerpt: '単元網羅用スタブ。本文・図は後から拡充。クイズ連携は learning_test_mapping で設問 UUID を紐付け。',
+  publishedAt: '2026-04-10',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Stub+Lesson"
+  alt="プレースホルダ画像"
+  width={1200}
+  height={630}
+/>
+
+> ひな形: 複製して `src/content/lessons/{id}.mdx` に置く（`id` = `learning_contents.id`）。運用は [14_記事単元網羅とバックログ.md](../14_記事単元網羅とバックログ.md)。
+
+## 対象クラスタ（必須）
+
+- **main_subject**: （例: 航空気象）
+- **sub_subject**: （`unified_cpl_questions` の全文と一致させる）
+
+## 試験で問われる範囲（シラバス要約）
+
+- （箇条書き 5〜10。後から精緻化）
+
+## 頻出論点・用語（設問ドリブン）
+
+- （クイズ DB の当該クラスタから用語を列挙。解説は後回しで可）
+
+## 典型問題の型
+
+- （例: 条文当てはめ / 数値読取 / 定義選択）
+
+## クイズの絞り方（学習者向け）
+
+- `/test` で **主科目** を ○○、**サブ科目** で ○○ を選ぶと、この単元の問題に近いセットが出やすい、等。
+
+## 関連記事
+
+- （同一 main_subject の前後の MDX へリンク）
+
+## DB 作業メモ（執筆者・運用）
+
+- [ ] `learning_contents` に `id` = 本ファイル名（拡張子なし）で行があること
+- [ ] `learning_test_mapping` に `unified_cpl_question_ids`（当該クラスタの verified UUID）を登録（[08_Syllabus_Management_Guide.md](../08_Syllabus_Management_Guide.md)）
+
+export default ({ children }) => <>{children}</>

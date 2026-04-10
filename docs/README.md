@@ -210,6 +210,7 @@ npm run lint         # Lintチェック
 - **[07_PPL_Master_Syllabus.md](07_PPL_Master_Syllabus.md)** - PPL学科試験対策記事のMaster Syllabus
 - **[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)** - PPL/CPL統合Syllabus管理ガイド（**分類ツリーの正本は CPL クラスタ**、**問題–記事連携**・`learning_test_mapping` テンプレは同文書内。記事 ID 対照は [11](11_ドキュメント整合性検討.md) §2.4。PPL 工学マッピング投入例: `scripts/database/20260329_learning_test_mapping_incremental_ppl_clusters.sql`。**気象・航法・通信の科目ハブと CPL 系 `learning_contents` 補完**: `scripts/database/20260330_learning_test_mapping_cpl_clusters_by_subject.sql`）
 - **[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)** - CPL-Learning-Stub シリーズの索引・クイズ連携の要約（Web からは `/docs/09_CPL_Learning_Stub.md`。`public/docs/` にミラーし MDX からリンク可能）
+- **[14_記事単元網羅とバックログ.md](14_記事単元網羅とバックログ.md)** - verified クラスタ数・マッピング済み記事・リポジトリ MDX 突合・未マッピング優先度（`public/docs/` にミラー推奨）
 - **[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)** - 航空工学（AD）科目別ロードマップ
 - **[11_ドキュメント整合性検討.md](11_ドキュメント整合性検討.md)** - 06/07/08/10 の役割と相互参照方針
 - **[13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md)** - Cursor MCP・Serena・コミットメッセージ関連リンク
