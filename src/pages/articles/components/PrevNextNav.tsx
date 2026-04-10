@@ -13,10 +13,6 @@ function prefetchMDX(id: string) {
       return import(`../../content/lessons/${id}.mdx`);
     })
     .catch(() => {
-      // narratorも試す
-      return import(`../../content/narrator/${id}.mdx`);
-    })
-    .catch(() => {
       // すべて失敗した場合は静かに無視（ファイルが存在しない可能性）
       // エラーをコンソールに表示しない
     });

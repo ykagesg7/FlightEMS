@@ -10,13 +10,17 @@ import { MissionTabs } from './components/MissionTabs';
 
 /**
  * Mission Dashboard Page
- * ランク・バッジ確認とミッション一覧、ブログ、体験搭乗情報を統合
+ * ランク・バッジ確認とミッション一覧、体験搭乗など。学習記事は /articles へ誘導。
  */
 const MissionDashboard: React.FC = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<'blog' | 'test' | 'planning' | 'experience'>('blog');
+  const [activeTab, setActiveTab] = useState<'blog' | 'test' | 'planning' | 'experience'>(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab');
+    if (tab === 'test' || tab === 'planning' || tab === 'experience') return tab;
+    return 'experience';
+  });
   const { profile, rankInfo, xpToNextRank, rankProgress, isLoadingProfile } = useGamification();
 
   // 認証ガード: 未ログイン時は/authへリダイレクト
@@ -26,10 +30,17 @@ const MissionDashboard: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // クエリパラメータから初期タブを決定
+  // 旧リンク互換: ?tab=blog は学習記事一覧へ
+  useEffect(() => {
+    if (searchParams.get('tab') === 'blog') {
+      navigate('/articles', { replace: true });
+    }
+  }, [searchParams, navigate]);
+
+  // クエリパラメータから初期タブを決定（blog は上でリダイレクト）
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab === 'blog' || tab === 'test' || tab === 'planning' || tab === 'experience') {
+    if (tab === 'test' || tab === 'planning' || tab === 'experience') {
       setActiveTab(tab);
     }
   }, [searchParams]);

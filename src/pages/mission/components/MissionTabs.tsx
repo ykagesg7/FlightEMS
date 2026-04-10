@@ -20,7 +20,7 @@ export const MissionTabs: React.FC<MissionTabsProps> = ({ activeTab, onTabChange
         }`}
       >
         <BookOpen className="w-5 h-5 inline-block mr-2" />
-        ブログ
+        学習記事
       </button>
       <button
         onClick={() => onTabChange('test')}

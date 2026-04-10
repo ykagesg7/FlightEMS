@@ -399,7 +399,7 @@ const About: React.FC = () => {
             className="text-center"
           >
             {user ? (
-              <Link to="/mission?tab=blog">
+              <Link to="/articles">
                 <Button variant="brand" size="lg" className="px-6 py-3">
                   JOIN our Formation
                 </Button>

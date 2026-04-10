@@ -4,6 +4,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { UserQuizAnswer } from '../../../types/quiz';
 import { QuizQuestion } from '../../../types/quiz';
 import { normalizeSubSubjectLabel } from '../utils/normalizeSubSubject';
+import { LEARNING_ARTICLE_CTA_LABEL } from '../../../constants/learningArticleNav';
 
 const CHOICE_LABELS = ['A', 'B', 'C', 'D'] as const;
 
@@ -214,7 +215,7 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
             to={`/articles/${contentId}`}
             className="px-6 py-3 rounded-xl border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10 transition-all duration-200"
           >
-            関連記事へ戻る
+            {LEARNING_ARTICLE_CTA_LABEL}
           </Link>
         )}
         <Link

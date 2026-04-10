@@ -103,7 +103,7 @@ const App: React.FC = () => {
               <Route path="links" element={<Links />} />
               <Route path="auth" element={<AuthPage />} />
               <Route path="profile" element={<ProfilePage />} />
-              {/* Blog redirects to Articles (Flight Academy) */}
+              {/* Legacy /blog URLs: always drop path slug and send users to the article hub */}
               <Route path="blog" element={<Navigate to="/articles" replace />} />
               <Route path="blog/:slug" element={<Navigate to="/articles" replace />} />
               <Route path="experience" element={<Navigate to="/mission" replace />} />

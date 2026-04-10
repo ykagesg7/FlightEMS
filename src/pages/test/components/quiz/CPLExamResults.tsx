@@ -285,7 +285,7 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
         </div>
       </div>
 
-      {/* 復習記事の推奨 */}
+      {/* 単元記事（learning_test_mapping ベースの推奨） */}
       {subjectStats.length > 0 && (
         <>
           {subjectStats

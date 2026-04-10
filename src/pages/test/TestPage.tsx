@@ -491,7 +491,7 @@ const TestPage: React.FC = () => {
       const shuffled = pool.sort(() => Math.random() - 0.5).slice(0, count);
       if (shuffled.length === 0) {
         setQuestions([]);
-        setError('この記事に紐づく問題がありません。');
+        setError('この単元記事に紐づく問題がありません。');
         return;
       }
       const parsed: QuizQuestion[] = shuffled.map((q: any) => ({
@@ -874,8 +874,8 @@ const TestPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[1.05fr_1.35fr_1fr_0.8fr]">
-          <div className="space-y-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[minmax(11rem,1.1fr)_minmax(13rem,1.35fr)_minmax(15rem,1fr)_minmax(9rem,0.9fr)]">
+          <div className="min-w-0 space-y-2 md:min-w-[11rem]">
             <label className="block text-sm font-semibold text-brand-primary">科目</label>
             <FilterListbox
               value={selectedSubject}
@@ -896,7 +896,7 @@ const TestPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2 md:min-w-[13rem]">
             <label className="block text-sm font-semibold text-brand-primary">サブ科目</label>
             <FilterListbox
               value={selectedSubSubject}
@@ -917,12 +917,12 @@ const TestPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2 md:min-w-[14rem] xl:min-w-[15rem]">
             <label className="block text-sm font-semibold text-brand-primary">並び順</label>
-            <div className="grid grid-cols-2 gap-2 rounded-xl border border-brand-primary/15 bg-[var(--panel)]/55 p-2">
+            <div className="flex flex-wrap gap-2 rounded-xl border border-brand-primary/15 bg-[var(--panel)]/55 p-2">
               <button
                 type="button"
-                className={`${SORT_TOGGLE_BASE_CLASS} ${sortOrder === 'priority' ? 'border-brand-primary bg-brand-primary/15 text-brand-primary' : 'border-brand-primary/20 text-[var(--text-primary)] hover:bg-brand-primary/10'}`}
+                className={`${SORT_TOGGLE_BASE_CLASS} min-h-[2.75rem] min-w-[6.5rem] flex-1 whitespace-nowrap ${sortOrder === 'priority' ? 'border-brand-primary bg-brand-primary/15 text-brand-primary' : 'border-brand-primary/20 text-[var(--text-primary)] hover:bg-brand-primary/10'}`}
                 onClick={() => setSortOrder('priority')}
                 disabled={filtersLocked}
                 aria-pressed={sortOrder === 'priority'}
@@ -931,7 +931,7 @@ const TestPage: React.FC = () => {
               </button>
               <button
                 type="button"
-                className={`${SORT_TOGGLE_BASE_CLASS} ${sortOrder === 'syllabus' ? 'border-brand-primary bg-brand-primary/15 text-brand-primary' : 'border-brand-primary/20 text-[var(--text-primary)] hover:bg-brand-primary/10'}`}
+                className={`${SORT_TOGGLE_BASE_CLASS} min-h-[2.75rem] min-w-[6.5rem] flex-1 whitespace-nowrap ${sortOrder === 'syllabus' ? 'border-brand-primary bg-brand-primary/15 text-brand-primary' : 'border-brand-primary/20 text-[var(--text-primary)] hover:bg-brand-primary/10'}`}
                 onClick={() => setSortOrder('syllabus')}
                 disabled={filtersLocked}
                 aria-pressed={sortOrder === 'syllabus'}
@@ -939,7 +939,7 @@ const TestPage: React.FC = () => {
                 シラバス順
               </button>
             </div>
-            <div className="rounded-xl border border-brand-primary/10 bg-[var(--panel)]/35 px-4 py-2 text-sm text-[var(--text-primary)]/90">
+            <div className="rounded-xl border border-brand-primary/10 bg-[var(--panel)]/35 px-4 py-2 text-sm leading-relaxed text-[var(--text-primary)]/90 break-words">
               {sortOrder === 'priority'
                 ? '重要度平均と問題数を優先して、頻出トピックを先頭に表示します。'
                 : '国交省シラバスに近い学習順で、科目とサブ科目を並べます。'}
@@ -949,13 +949,14 @@ const TestPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2 md:min-w-[9rem] xl:min-w-[9rem]">
             <label className="block text-sm font-semibold text-brand-primary">問題数</label>
             <FilterListbox
               value={questionCount}
               options={questionCountListboxOptions}
               onChange={setQuestionCount}
               disabled={questionCountOptions.length === 0}
+              truncateSelection={false}
             />
             <p className="text-xs text-[var(--text-muted)]">選択条件に応じて上限を自動調整します。</p>
           </div>

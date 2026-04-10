@@ -9,6 +9,7 @@ import { buildArticleIndex } from '../../utils/articlesIndex';
 import { CommentSection } from './components/CommentSection';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 import { PrevNextNav } from './components/PrevNextNav';
+import { RelatedTestsBlock } from './components/RelatedTestsBlock';
 import { ScrollToButtons } from './components/ScrollToButtons';
 import { usePrevNext } from './components/usePrevNext';
 
@@ -152,7 +153,10 @@ const ArticleDetailPage: React.FC = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
           </div>
         ) : (
-          <MDXLoader contentId={contentId} />
+          <>
+            <MDXLoader contentId={contentId} />
+            <RelatedTestsBlock contentId={contentId} />
+          </>
         )}
 
         {/* コメントセクション */}

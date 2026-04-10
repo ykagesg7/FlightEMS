@@ -205,7 +205,7 @@ const Home: React.FC = () => {
                 step: '01',
                 role: 'Fan',
                 desc: 'まずは「観る」ことから。',
-                features: ['Galleryの閲覧・投稿', 'Blogの閲覧'],
+                features: ['Galleryの閲覧・投稿', '学習記事の閲覧'],
                 icon: Users,
                 active: true,
               },
@@ -266,7 +266,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA to Mission Blog */}
+      {/* CTA to learning articles (/articles) */}
       <section className="py-20 bg-whiskyPapa-black text-center border-t border-white/10 relative overflow-hidden">
         {/* Background - Aerobatic Flight */}
         <div className="absolute inset-0 z-0">
@@ -278,11 +278,11 @@ const Home: React.FC = () => {
             THE PILOT&apos;S NARRATIVE
           </Typography>
           <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-            沿革、競技の仕組み、機体説明。会員向けブログで公開中。
+            学科・操縦・思考法など、試験と連動した学習記事を用意しています。
             <br />
-            さあ、コクピットを覗きに行こう！
+            会員の方は学習記事から単元を深めましょう。
           </p>
-          <Link to="/mission?tab=blog">
+          <Link to="/articles">
             <Button variant="brand" size="lg" className="px-8 py-4 text-lg">
               JOIN our Formation
             </Button>

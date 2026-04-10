@@ -11,6 +11,7 @@
 
 ### 更新履歴（抜粋・2026-03-30）
 
+- **2026-04-05 学習記事ハブ**: SKY NOTES / `narrator` MDX 廃止。記事詳細に **関連テスト**（`RelatedTestsBlock`）、テスト結果から記事へ **「単元記事を読む」** で統一。詳細は [05_設計仕様書.md](05_設計仕様書.md) と変更履歴（2026年4月5日）。
 - **CPL 学科 MDX**: 航空法規 `3.1.2` / `3.1.3` を本文化（相互の前後記事リンクを整合）。`3.1.4`・航空工学 `3.2.1`〜`3.2.6`・科目ハブ（気象・航法・通信）・`engineering_basics` / `weather_basics` に、執筆スコープと `unified_cpl_questions` / `learning_test_mapping` との対応を明記。
 - **クイズ誤答→記事**: `ReviewContentLink` がマッピング行を **セッション設問 UUID との重なり件数**でソート（多い順、最大 5 件）。法規 `3.1.2` は `sub_subject` クラスタ単位の冪等更新 SQL（`scripts/database/20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`）。四分位からの移行方針は [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)。
 - **ドキュメント索引**: [09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md) を新設。記事内から `/docs/*.md` で参照できるよう **`public/docs/`** に 09 およびリンク先の 06・08・10 をミラー（正本は `docs/`。更新時は `public/docs/` へ同期すること。[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) 参照）。

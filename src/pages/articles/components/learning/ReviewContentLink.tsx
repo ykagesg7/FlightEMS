@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { LEARNING_ARTICLE_CTA_LABEL } from '../../../../constants/learningArticleNav';
 import supabase from '../../../../utils/supabase';
 
 /** セッション設問 ID とマッピング行の重なり数（同一 UUID は二重に数えない） */
@@ -200,12 +201,12 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
         </div>
         <div>
           <h3 className="text-lg font-semibold">
-            {needsReview ? '復習推奨記事' : '関連学習記事'}
+            単元記事
           </h3>
           <p className="text-sm text-gray-300">
             {needsReview
-              ? `正答率${accuracy}%。理解を深めるために復習をおすすめします`
-              : `正答率${accuracy}%。さらなる理解向上のための関連記事です`
+              ? `正答率${accuracy}%。${LEARNING_ARTICLE_CTA_LABEL}で理解を深めましょう`
+              : `正答率${accuracy}%。${LEARNING_ARTICLE_CTA_LABEL}で関連内容を確認できます`
             }
           </p>
         </div>
@@ -216,6 +217,7 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
           <Link
             key={content.id}
             to={`/articles/${content.id}`}
+            aria-label={`${LEARNING_ARTICLE_CTA_LABEL}: ${content.title}`}
             className="block p-4 rounded-lg border transition-all duration-200 hover:scale-[1.02] bg-gray-800/50 border-gray-600 hover:border-gray-500"
           >
             <div className="flex items-start justify-between">

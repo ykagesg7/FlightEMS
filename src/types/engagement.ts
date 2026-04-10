@@ -93,29 +93,6 @@ export interface PhotoUploadResult {
   error?: string;
 }
 
-// ==================== Blog ====================
-
-export interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  author: 'narrator' | 'pilot' | 'staff';
-  excerpt: string | null;
-  content: string; // MDX content
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface BlogPostMetadata {
-  slug: string;
-  title: string;
-  author: 'narrator' | 'pilot' | 'staff';
-  excerpt: string | null;
-  published_at: string | null;
-  created_at: string;
-}
-
 // ==================== Admin ====================
 
 export interface GalleryReviewItem extends FanPhoto {

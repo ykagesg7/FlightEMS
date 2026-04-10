@@ -62,13 +62,7 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
             try {
               module = await import(`../../content/lessons/${contentId}.mdx`);
             } catch (_err2) {
-              // If lessons fails, try narrator directory
-              try {
-                module = await import(`../../content/narrator/${contentId}.mdx`);
-              } catch (_err3) {
-                // If narrator fails, try legacy path
-                module = await import(`../../content/${contentId}.mdx`);
-              }
+              module = await import(`../../content/${contentId}.mdx`);
             }
           }
           articleMeta = module.meta || null;
