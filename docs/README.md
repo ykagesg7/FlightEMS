@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年3月30日（CPL 記事本文化・クイズ→記事連携・`public/docs` ミラー追記）
-**バージョン**: Documentation Index v4.10
+**最終更新**: 2026年4月11日（ギャラリー・ショップ系テーブル削除・追加スリム化）
+**バージョン**: Documentation Index v4.13
 
 ---
 
@@ -11,6 +11,9 @@
 
 ### 更新履歴（抜粋・2026-03-30）
 
+- **2026-04-11 Supabase DB スリム化（追記）**: `fan_photos` / `gallery_events` / `products` / `purchase_history` 等を削除。`check_rank_requirements` 更新。`migration_log` 削除。`/gallery` ルートはホームへリダイレクト。
+- **2026-04-11 Supabase DB スリム化**: 未使用の分析系・旧 `cpl_exam_questions` / `user_progress` 等を `scripts/database/20260411_drop_legacy_*.sql` で削除。`src/types/database.types.ts` を現行スキーマに同期。詳細は [05_設計仕様書.md](05_設計仕様書.md)「DB スリム化」。
+- **2026-04-11 Cursor MCP（hourei）**: 航空法規 MDX 執筆向けに **法令検索 MCP**（`hourei-mcp-server` / e-Gov）を [13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md) と `.cursor/mcp.json.example` に追加。`.cursor/rules/mdx-article-guide.mdc` に根拠条文・hourei 利用の節を追加。
 - **2026-04-05 学習記事ハブ**: SKY NOTES / `narrator` MDX 廃止。記事詳細に **関連テスト**（`RelatedTestsBlock`）、テスト結果から記事へ **「単元記事を読む」** で統一。詳細は [05_設計仕様書.md](05_設計仕様書.md) と変更履歴（2026年4月5日）。
 - **CPL 学科 MDX**: 航空法規 `3.1.2` / `3.1.3` を本文化（相互の前後記事リンクを整合）。`3.1.4`・航空工学 `3.2.1`〜`3.2.6`・科目ハブ（気象・航法・通信）・`engineering_basics` / `weather_basics` に、執筆スコープと `unified_cpl_questions` / `learning_test_mapping` との対応を明記。
 - **クイズ誤答→記事**: `ReviewContentLink` がマッピング行を **セッション設問 UUID との重なり件数**でソート（多い順、最大 5 件）。法規 `3.1.2` は `sub_subject` クラスタ単位の冪等更新 SQL（`scripts/database/20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`）。四分位からの移行方針は [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)。
@@ -66,7 +69,7 @@
 
 ### Cursor MCP
 
-開発者向けの MCP 設定（Global / プロジェクトの分担、**Chrome DevTools**、Serena、Vercel、GitHub PAT、トラブルシューティング）は **[13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md)** に集約した。
+開発者向けの MCP 設定（Global / プロジェクトの分担、**Chrome DevTools**、**法令検索（hourei / e-Gov）**、Serena、Vercel、GitHub PAT、トラブルシューティング）は **[13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md)** に集約した。
 
 ### SWIM / デジタルノータム（参考）
 
@@ -175,13 +178,19 @@ npm run lint         # Lintチェック
 - **learning_sessions**: 学習セッション（クイズ・記事の学習時間、ヒートマップ・今週の学習時間の元データ）
 - **user_learning_profiles**: 学習プロファイル（継続日数、ブートストラップ済み）
 - **unified_cpl_questions**: CPL試験問題（verified ベースで出題）。**`applicable_exams`**（`PPL` / `CPL` / `ATPL`）で `/test` の PPL 基礎フィルタ。パイロット手順は [db/APPLICABLE_EXAMS_PILOT.md](db/APPLICABLE_EXAMS_PILOT.md)
+- **learning_test_mapping**: 記事と統一設問の対応（`unified_cpl_question_ids`）
+- **quiz_sessions**: クイズセッション（解答・スコア）
 - **user_test_results**: テスト結果（科目・サブ科目・正誤）
+- **user_weak_areas**, **user_unified_srs_status**: 苦手分野・SRS 状態
 - **missions**, **user_missions**: ゲーミフィケーション
-- **gallery_events**, **fan_photos**: ギャラリー機能
+- **ppl_rank_definitions**, **user_ppl_ranks**: PPL ランク定義と付与
 - **streak_records**: 連続学習日数追跡（2025年1月実装）
 - **user_achievements**: マイルストーン報酬（2025年1月実装）
-- **purchase_history**: 購買履歴・エンゲージメント追跡（2025年1月実装）
 - **rank_requirements**: ランク条件管理（2025年1月実装）
+
+**レガシー削除（2026年4月）**: 分析系・旧 CPL ステージング・**ギャラリー／ショップ／purchase_history／migration_log** 等。正本は [05_設計仕様書.md](05_設計仕様書.md)「DB スリム化」と `scripts/database/20260411_drop_*.sql`。
+
+**残る 0 行付近テーブル（監視用）**: `learning_content_likes`, `streak_records`, `user_achievements`, `user_unified_srs_status` 等はコード参照ありのため温存。追加 DROP 時は Supabase MCP で FK・行数を確認すること。
 
 ### セキュリティ
 - **RLS（Row Level Security）**: 全テーブルに適用
@@ -391,6 +400,6 @@ npm run lint         # Lintチェック
 
 ---
 
-**最終更新**: 2026年3月（ドキュメント整理・13 MCP 分離）  
-**バージョン**: Documentation Index v4.8  
+**最終更新**: 2026年4月11日（ギャラリー・ショップ系削除）  
+**バージョン**: Documentation Index v4.13  
 **管理者**: Flight Academy 開発チーム

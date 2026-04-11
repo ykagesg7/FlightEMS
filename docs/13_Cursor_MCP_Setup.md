@@ -18,7 +18,7 @@ Cursor が `child_process.spawn` で `npx` を起動すると、Windows では *
 }
 ```
 
-同様に、`context7`・`playwright`・`my_supabase_project` など **`command` が `npx` のもの**はすべて `command: "cmd"`、`args: ["/c", "npx", "-y", …]` 形式にする。**`uvx`（Serena）や URL 型（GitHub / Vercel）は通常そのままでよい**（`uvx.exe` はネイティブ実行ファイルのため）。
+同様に、`context7`・`playwright`・`my_supabase_project`・`hourei` など **`command` が `npx` のもの**はすべて `command: "cmd"`、`args: ["/c", "npx", "-y", …]` 形式にする。**`uvx`（Serena）や URL 型（GitHub / Vercel）は通常そのままでよい**（`uvx.exe` はネイティブ実行ファイルのため）。
 
 - 初回の `npx` プロンプトで止まるのを防ぐため、**`npx` には必ず `-y`** を付ける（例: `@supabase/mcp-server-supabase`、`@playwright/mcp@latest`）。
 
@@ -33,7 +33,7 @@ Cursor が `child_process.spawn` で `npx` を起動すると、Windows では *
 | 置き場所 | 対象の例 |
 |----------|-----------|
 | **Global**（`%USERPROFILE%\.cursor\mcp.json`） | （任意）全リポジトリ共通の `github`（PAT）のみ、など |
-| **プロジェクト**（`.cursor/mcp.json`） | `chrome-devtools`、`vercel`、Supabase MCP、[Serena](https://oraios.github.io/serena/)、`github`（このリポジトリ専用）など |
+| **プロジェクト**（`.cursor/mcp.json`） | `chrome-devtools`、`hourei`（法令検索）、`vercel`、Supabase MCP、[Serena](https://oraios.github.io/serena/)、`github`（このリポジトリ専用）など |
 
 ---
 
@@ -71,12 +71,62 @@ Cursor が `child_process.spawn` で `npx` を起動すると、Windows では *
 
 ---
 
+## 法令検索 MCP（hourei-mcp-server）
+
+[e-Gov 法令 API](https://laws.e-gov.go.jp/api/) を経由して日本の法令を検索・取得する MCP です。実装は npm パッケージ [`hourei-mcp-server`](https://www.npmjs.com/package/hourei-mcp-server)（[GitHub: groundcobra009/hourei-mcp-server](https://github.com/groundcobra009/hourei-mcp-server)、MIT）。
+
+### Flight Academy での用途
+
+- **`src/content/lessons/` の航空法規系 MDX**（例: `3.1.x`）の執筆・改稿時に、**現行条文**や**改正履歴**を Cursor 上で確認する（本番アプリから e-Gov を呼び出す構成ではない）。
+- 教材は**公式学科試験の解答保証や法律相談**ではない立場のまま、e-Gov 由来の表現と**著者の要約**を混同しないこと（要約は「要約」と明記する）。
+
+### 提供ツール
+
+| ツール | 用途 |
+|--------|------|
+| `search_law` | 法令名・キーワードなどで検索（任意で `category`: 1 法律 / 2 政令 / 3 省令 等） |
+| `get_law_data` | **`lawNum`（法令番号）**で全文に近い構造化データを取得。番号は `search_law` の結果から取得する |
+| `get_law_revision` | 指定法令の改正履歴 |
+
+### 設定例
+
+[`.cursor/mcp.json.example`](../.cursor/mcp.json.example) に `hourei` エントリを同梱している（他の `npx` 系と同様の形）。
+
+**Windows** では [「No tools」節](#windows-で-mcp-がno-toolsになる場合) のとおり、次の **`cmd` ラップ**を推奨する。
+
+```json
+"hourei": {
+  "command": "cmd",
+  "args": ["/c", "npx", "-y", "hourei-mcp-server"]
+}
+```
+
+**macOS / Linux** や Windows で `npx` がそのまま動く場合は、example と同じ `command: "npx"` でよい。
+
+### 手順と確認
+
+1. `.cursor/mcp.json.example` を参考に、ローカルの `.cursor/mcp.json` の `mcpServers` に `hourei` を追加する（不要なら省略可）。
+2. **`npx` には `-y`** を付けて初回プロンプトで止まらないようにする。
+3. **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** で `hourei` が接続済みか確認する。
+4. 動作確認の例: `search_law` でキーワード「航空法」を検索し、結果の**法令番号**を `get_law_data` に渡す。
+
+### 利用上の注意
+
+- **e-Gov 法令 API の利用規約・レート制限・障害時の挙動**は [e-Gov 側の公開情報](https://laws.e-gov.go.jp/api/) に従う。API 不調時は教材の条文確認は別手段（法令検索サイトの人手確認など）を検討する。
+- 記事本文に**長大な条文全文**を貼るより、必要な範囲の**抜粋**と [e-Gov 法令検索](https://laws.e-gov.go.jp/) への誘導を検討する（詳細は [`.cursor/rules/mdx-article-guide.mdc`](../.cursor/rules/mdx-article-guide.mdc) の航空法規節）。
+
+### トラブルシューティング
+
+- ツールが 0 件・サーバーが起動しない: 冒頭の **Windows + `cmd` + `-y`** を確認する。`hourei` も他の `npx` ベース MCP と同様である。
+
+---
+
 ## 初回手順（このリポジトリ）
 
-1. **プロジェクト**: `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。例には **`chrome-devtools`** が含まれる（不要なら削除）。GitHub MCP を使う場合は [Personal Access Token](https://github.com/settings/personal-access-tokens/new) を `Authorization: Bearer …` に設定する（スコープは最小限）。**PAT はリポジトリにコミットしない。**
+1. **プロジェクト**: `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。例には **`chrome-devtools`** と**任意の `hourei`（法令検索）**が含まれる（不要なら削除）。GitHub MCP を使う場合は [Personal Access Token](https://github.com/settings/personal-access-tokens/new) を `Authorization: Bearer …` に設定する（スコープは最小限）。**PAT はリポジトリにコミットしない。**
 2. **Global（任意）**: 全リポジトリ共通の MCP だけ `%USERPROFILE%\.cursor\mcp.json` に置く。GitHub を **プロジェクトの `.cursor/mcp.json` にだけ**書く場合は、Global に `github` を重複させない。
 3. Cursor を再起動する（GitHub リモート MCP は [Cursor v0.48.0+](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) 推奨）。
-4. **Settings → Tools & Integrations → MCP** で接続を確認。`chrome-devtools` が利用可能か、Vercel は `Needs login` から OAuth で認可する。
+4. **Settings → Tools & Integrations → MCP** で接続を確認。`chrome-devtools`・`hourei`（追加した場合）が利用可能か、Vercel は `Needs login` から OAuth で認可する。
 
 ### Vercel の URL
 
