@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年4月12日（Sentry 検証ルート・MCP Marketplace 注記）
-**バージョン**: Documentation Index v4.17
+**最終更新**: 2026年4月12日（本番 URL 明記・GA4 表示差の注記）
+**バージョン**: Documentation Index v4.18
 
 ---
 
@@ -12,7 +12,8 @@
 ### 更新履歴（抜粋・2026-03-30）
 
 - **2026-04-12 MCP / Sentry**: [13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md) に **Marketplace の `plugin-*` と手動 `mcp.json` の関係**を追記。`.cursor/mcp.json.example` の **Windows `cmd` ラップ**を統一。Supabase 記事登録ルール・[MCP_RELEASE_CHECKLIST](ops/MCP_RELEASE_CHECKLIST.md)・[APPLICABLE_EXAMS_PILOT](db/APPLICABLE_EXAMS_PILOT.md) のサーバー名を Marketplace 対応。Sentry 本番検証手順は [04](04_運用保守ガイド.md)。
-- **2026-04-12 KPI・計測（GA4）**: アクセス解析を **Google Analytics 4** に統一。本番かつ `VITE_GA_MEASUREMENT_ID` 設定時のみ `src/lib/googleAnalytics.ts`・`GoogleAnalyticsTracker.tsx`（`.env.example`・[03](03_計画改善ロードマップ.md) v4.0.2 参照）。従来の Plausible 変数は廃止。
+- **2026-04-12 本番 URL**: **Production** は [https://flight-lms.vercel.app/](https://flight-lms.vercel.app/) を正とする（[02](02_技術開発ガイド.md)・[04](04_運用保守ガイド.md)）。
+- **2026-04-12 KPI・計測（GA4）**: アクセス解析を **Google Analytics 4** に統一。本番かつ `VITE_GA_MEASUREMENT_ID` 設定時のみ `src/lib/googleAnalytics.ts`・`GoogleAnalyticsTracker.tsx`（`.env.example`・[03](03_計画改善ロードマップ.md)）。**Playwright で `dataLayer` に `page_view` が積まれても GA の UI に出ない場合**の切り分けは [04](04_運用保守ガイド.md)「GA4」。従来の Plausible 変数は廃止。
 - **2026-04-12 KPI・計測**: [00](00_Flight_Academy_Strategy.md) **v1.2.1**（CPL を「スタブ配置」と「深文化・マッピング」に分解、MDX 66 件を反映）。[03](03_計画改善ロードマップ.md) **v4.0.1**（4月末チェックポイント・5〜7月橋渡し）。[14](14_記事単元網羅とバックログ.md) を MCP 再取得（マッピング 42 記事等）。[06](06_記事作成ロードマップ.md) の気象 3.3 注記を実態に合わせ更新。
 - **2026-04-12 戦略・ロードマップ**: [00](00_Flight_Academy_Strategy.md) **v1.2 独立運営**（パートナーシップ柱・案A/B 廃止）、**CPL 学科最優先**・PPL/CPL 記事分離と相互リンク方針、クイズの **PPL/CPL 範囲フィルタ維持**。[03](03_計画改善ロードマップ.md) **v4.0**（Phase B〜D を CPL 記事主軸 KPI に再定義、Phase E からパートナー交渉を削除）。プロジェクト用 Markdown の正本は **`docs/`**（`public/docs/` は `npm run sync:public-docs` で同期。詳細は [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)）。
 - **2026-04-12 記事 MDX UX**: `MDXContent` に **`prose-invert`**（ダーク地での `code` 可読性）、記事カラムの **`min-w-0` / `overflow-x-auto`** で flex 下の幅潰れを防止。`Callout` 内も `prose-invert`。レッスン MDX の **「データ連携」**は学習者向け文言に統一（`unified_cpl_questions` 等の内部名は本文から除去）。**アフィリエイト枠**は `not-prose` ＋ **CSS Grid** ＋ `break-normal` でレイアウト崩れ（縦一文字折り返し）を修正。詳細は [05](05_設計仕様書.md)・[07](07_コンポーネント構造ガイド.md)、テンプレ [templates/CPL_Lesson_Stub_Template.mdx](templates/CPL_Lesson_Stub_Template.mdx)。
@@ -33,12 +34,15 @@
 ### プロジェクト名
 **Flight Academy**（リポジトリ名: FlightAcademyTsx）
 
+### 本番 URL（Vercel Production）
+- **公開URL**: [https://flight-lms.vercel.app/](https://flight-lms.vercel.app/)（Sentry・GA4 の検証・ストリーム設定の基準）
+
 ### プロジェクトの性質
 - **タイプ**: フルスタックWebアプリケーション（React + TypeScript + Supabase）
 - **目的**: 独立した航空学習プラットフォーム — 学習コンテンツ、実用ツール、コミュニティを提供
 - **コンセプト**: "Learn, Plan, Fly" — 航空知識を学び、フライトプランを作り、仲間として飛び立つ
 - **戦略**: **完全独立運営** — 外部パートナー承認に依存しない。詳細は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)（**3本柱**: Content / Tools / Community）
-- **価値・運営（要約）**: **CPL 学科**受験者をコンテンツの主軸とし、**CPL 記事を最優先**で執筆。**PPL 記事**は別記事として継続し、CPL 記事から**リンクで基礎復習**可能にする。クイズは **PPL のみ / CPL 範囲**の選択を維持。個人開発の持続可能性・表現上の境界は [00](00_Flight_Academy_Strategy.md) **§2・§3**。**Phase・KPI の数値正本**は [03_計画改善ロードマップ.md](03_計画改善ロードマップ.md) v4.0.1（コンテンツ進捗の補助指標は [14_記事単元網羅とバックログ.md](14_記事単元網羅とバックログ.md)）。
+- **価値・運営（要約）**: **CPL 学科**受験者をコンテンツの主軸とし、**CPL 記事を最優先**で執筆。**PPL 記事**は別記事として継続し、CPL 記事から**リンクで基礎復習**可能にする。クイズは **PPL のみ / CPL 範囲**の選択を維持。個人開発の持続可能性・表現上の境界は [00](00_Flight_Academy_Strategy.md) **§2・§3**。**Phase・KPI の数値正本**は [03_計画改善ロードマップ.md](03_計画改善ロードマップ.md) v4.0.4（コンテンツ進捗の補助指標は [14_記事単元網羅とバックログ.md](14_記事単元網羅とバックログ.md)）。
 
 ### コア機能
 1. **学習コンテンツ管理**: MDXベースの記事システム（PPL/CPL統合）、進捗管理（ログインで永続化）、推奨読み順用 `meta.series` / `order`、KaTeX数式記法サポート
