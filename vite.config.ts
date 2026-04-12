@@ -22,6 +22,8 @@ export default defineConfig(({ mode }) => {
   const sentryAuthToken = getEnv('SENTRY_AUTH_TOKEN');
   const sentryOrg = getEnv('SENTRY_ORG');
   const sentryProject = getEnv('SENTRY_PROJECT');
+  /** Vercel は `.env` ではなく process.env で渡すため、他の VITE_* と同様に define で確実にバンドルへ埋め込む */
+  const gaMeasurementId = getEnv('VITE_GA_MEASUREMENT_ID');
 
   // API_KEYが設定されているかチェック
   const weatherApiKey = env.VITE_WEATHER_API_KEY || '';
@@ -101,6 +103,7 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
       'import.meta.env.VITE_SENTRY_DSN': JSON.stringify(sentryClientDsn),
       'import.meta.env.VITE_VERCEL_DEV_API_ORIGIN': JSON.stringify(vercelDevApiOrigin),
+      'import.meta.env.VITE_GA_MEASUREMENT_ID': JSON.stringify(gaMeasurementId),
     },
     build: {
       // Sentry のためソースマップを有効化（hidden: デプロイ先には公開しない）

@@ -48,8 +48,12 @@ export function sendGa4PageView(measurementId: string, pagePath: string): void {
   if (typeof window === 'undefined' || !import.meta.env.PROD) return;
   const id = measurementId.trim();
   if (!id || typeof window.gtag !== 'function') return;
-  window.gtag('config', id, {
+  const title = typeof document !== 'undefined' ? document.title : '';
+  const locationHref = typeof window !== 'undefined' ? window.location.href : '';
+  // send_page_view: false と併用。page_location 付きの明示 page_view で SPA 遷移を送る
+  window.gtag('event', 'page_view', {
     page_path: pagePath,
-    page_title: typeof document !== 'undefined' ? document.title : undefined,
+    page_title: title,
+    page_location: locationHref,
   });
 }
