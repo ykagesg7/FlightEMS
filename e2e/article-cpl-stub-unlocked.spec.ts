@@ -1,11 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * playwright.config の webServer が VITE_UNLOCK_ALL_SERIES_ARTICLES=true でビルドする前提。
- * CPL スタブは同一シリーズで順次ロックされるため、フラグ無しでは本テストは不安定／失敗しうる。
+ * シリーズ順次ロック廃止後: 全記事が常時閲覧可能。通常ビルドの preview で検証する。
  */
-test.describe('CPL stub articles (series unlock bypassed in E2E build)', () => {
-  test('CPL-Hub-Meteorology shows stub body, not series lock', async ({ page }) => {
+test.describe('CPL stub articles (always readable)', () => {
+  test('CPL-Hub-Meteorology shows stub body, not lock screen', async ({ page }) => {
     await page.goto('/articles/CPL-Hub-Meteorology');
     await expect(page.getByRole('heading', { level: 1, name: '【航空気象】CPL 学習ハブ（テスト連携）' })).toBeVisible({
       timeout: 60_000,

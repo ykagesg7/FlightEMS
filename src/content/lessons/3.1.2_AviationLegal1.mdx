@@ -8,7 +8,7 @@ export const meta = {
   date: '2026-03-31',
   author: 'Michizane (Shadow)',
   tags: ['CPL', '学科試験', '航空法規', '技能証明', '特定操縦技能', '航空機の運航'],
-  series: 'CPL-Learning-Stub',
+  series: 'CPL-Aviation-Legal',
   order: 2,
   readingTime: 12,
   excerpt: 'ただの暗記科目と舐めたらいかん！航空法・施行規則における「特定操縦技能の審査」と「技能証明」。空の無免許運転を防ぐための、プロとしての自己管理の極意を伝授する。',
@@ -30,7 +30,7 @@ export const meta = {
 - [ ] 学科試験で引っかけられやすい **審査・証明・身体検査** の主語と客体の関係をズバッと仕分けできる。
 - [ ] 法規を「暗記」ではなく、「自分の命と資格を守る自己管理のツール」として捉え直すことができる。
 
-> **データ連携**: 本記事は `unified_cpl_questions` のクラスタ **`航空機の運航/特定操縦技能の審査等`**（`main_subject = 航空法規`）と `learning_test_mapping` で対応付けとるばい。クイズで間違えたら、この記事に戻ってきんしゃい。
+> **データ連携**: 本記事は学科クイズの **航空機の運航／特定操縦技能の審査等**（航空法規）と対応付けとるばい。クイズで間違えたら、この記事に戻ってきんしゃい。
 
 ---
 
@@ -60,7 +60,7 @@ export const meta = {
     *   いわゆる「パイロットの免許証」たい。国から「あんたは飛行機を飛ばす基礎能力があるばい」とお墨付きをもらった証拠やね。
 *   **特定操縦技能の審査（SPC: Skill Proficiency Check）**
     *   これが今日のキモたい！免許を持っとっても、「お前、最近ちゃんと飛べとるか？ 腕が鈍っとらんか？」を定期的にチェックする制度よ。
-    *   **国交大臣（又はその委任を受けた操縦技能審査員）**による審査に合格して初めて、空を飛ぶことが許される。
+    *   **国土交通大臣の認定を受けた操縦技能審査員**による審査に合格して初めて、空を飛ぶことが許される（制度の枠組みは**航空法第71条の3**ほか。委任・手続の細目は省令で定める）。
 
 車の免許で言えば、技能証明が「運転免許証」で、SPCが「免許の更新（適性検査）」みたいなもんたい。いくらゴールド免許でも、更新を忘れたらただの紙切れやろ？
 この「SPC（審査）」をクリアして初めて、パイロットとしての「鮮度（賞味期限）」が保たれるっちゅうわけたい。
@@ -76,6 +76,10 @@ export const meta = {
 *   **「機体（飛行機）」**に対するもの：型式証明、耐空証明
 
 これをゴチャゴチャに丸暗記しとるから、試験本番で「耐空証明の有効期間は…」みたいな引っかけ選択肢にズバッとやられるんよ。タンスの引き出し（棚）をキッチリ分ける癖をつけるばい。
+
+<Callout type="info" title="根拠の置き場（条文の目安）">
+  特定操縦技能の審査の大枠は**航空法第71条の3**。技能証明・身体検査との関係は**第28条**（業務と身体検査証明等）・**第31条**（航空身体検査証明）などとあわせて整理すると、試験の「主語・客体」問題が撃ちやすくなる。最新の文言は [e-Gov 法令検索](https://laws.e-gov.go.jp/) で確認すること。
+</Callout>
 
 ---
 
@@ -95,9 +99,9 @@ export const meta = {
 {/*
 【Monetization Spot / アフィリエイト枠】
 */}
-<div className="bg-gray-800 p-6 rounded-lg my-8 border border-green-600/50 shadow-lg">
-  <div className="flex flex-col sm:flex-row gap-6 items-start">
-    <div className="flex-1 min-w-0">
+<div className="not-prose w-full max-w-full bg-gray-800 p-6 rounded-lg my-8 border border-green-600/50 shadow-lg">
+  <div className="grid w-full min-w-0 grid-cols-1 gap-6 break-normal [overflow-wrap:normal] sm:grid-cols-[minmax(0,1fr)_minmax(0,200px)] sm:items-start">
+    <div className="min-w-0 break-normal [overflow-wrap:normal]">
       <h3 className="text-xl font-bold text-green-500 mb-2">🍡 道真の「燃料」補給推奨</h3>
       <p className="text-gray-300 text-sm mb-4 leading-relaxed">
         条文の暗記で消耗した脳には、上質な「糖分」が必須たい。<br/>
@@ -108,7 +112,7 @@ export const meta = {
         <span className="text-xs text-gray-400">👇 ここに『太宰府名物 梅ヶ枝餅（冷凍お取り寄せ）』のリンクを貼るたい！ 👇</span>
       </div>
     </div>
-    <div className="flex-shrink-0 w-full sm:w-auto sm:max-w-[200px]">
+    <div className="w-full max-w-[200px] min-w-0 justify-self-center sm:justify-self-end [&_figure]:!my-0">
       <Image src="https://placehold.co/300x300/4a0000/FFF?text=Umegaemochi" alt="梅ヶ枝餅" width={200} height={200} className="rounded-md w-full max-w-[200px] mx-auto sm:mx-0 object-cover aspect-square" />
     </div>
   </div>
@@ -145,16 +149,19 @@ export const meta = {
 
 自分の資格の有効期限も、自分の体調も、フライト前の準備も、すべて自分の責任。そのマインドセットが根付いて初めて、あんさんは真の「事業用操縦士（CPL）」のスタートラインに立てるんよ。
 
-次回は、法規の中でも特にややこしい「航空身体検査」の裏側について解説するばい。お楽しみに！
+次回は、法規の中でも特にややこしい「航空身体検査証明」の裏側について解説するばい。（[次話はこちら](/articles/3.1.3_AviationLegal2)）
 
 ---
 
 ## 🔗 関連リンク
 
+- [前の記事: 【航空法規】ルールの階層ハック術](/articles/3.1.1_AviationLegal0)
 - [次の記事: 【航空法規】航空身体検査証明：数ミリのズレが命を奪う「人間の耐空証明」](/articles/3.1.3_AviationLegal2)
 - [CPL Learning Stub](/docs/09_CPL_Learning_Stub.md)
 - [Syllabus管理ガイド](/docs/08_Syllabus_Management_Guide.md)
 
 ---
+
+> **注:** 本記事に登場する人物・会話・エピソードはフィクションです。
 
 export default ({ children }) => <>{children}</>

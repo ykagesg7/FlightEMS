@@ -82,12 +82,17 @@ const Home: React.FC = () => {
                 </Button>
               </Link>
             )}
-            <Link to="/gallery">
+            <a
+              href="https://ja14wp.wixsite.com/home/gallery"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block"
+            >
               <Button variant="secondary" size="lg" className="px-8 py-6 text-lg min-w-[240px] border-white/20 hover:bg-white/10 text-white">
                 <PlayCircle className="mr-2 h-5 w-5" />
                 Watch GALLERY
               </Button>
-            </Link>
+            </a>
           </motion.div>
         </div>
       </section>
@@ -205,7 +210,7 @@ const Home: React.FC = () => {
                 step: '01',
                 role: 'Fan',
                 desc: 'まずは「観る」ことから。',
-                features: ['Galleryの閲覧・投稿', '学習記事の閲覧'],
+                features: ['学習記事の閲覧', '外部ギャラリー（リンク集）'],
                 icon: Users,
                 active: true,
               },

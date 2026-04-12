@@ -42,7 +42,7 @@ ORDER BY learning_content_id;
 | 手順 | 内容 |
 |------|------|
 | `npm run test:run` | ユニット／コンポーネントテスト |
-| `npm run test:e2e` | Playwright（`VITE_UNLOCK_ALL_SERIES_ARTICLES=true` 付き `build` + `preview`、PPL `/test` と CPL スタブ記事の回帰） |
+| `npm run test:e2e` | Playwright（`build` + `preview`、PPL `/test` と CPL スタブ記事の回帰） |
 | `npm run lint` / `npm run build` | 静的解析と本番ビルド |
 
 ## 5. ブラウザ MCP（任意）

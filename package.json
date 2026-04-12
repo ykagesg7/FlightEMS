@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:unlock-series": "cross-env VITE_UNLOCK_ALL_SERIES_ARTICLES=true vite",
     "dev:full": "cross-env VITE_VERCEL_DEV_API_ORIGIN=http://localhost:3000 vercel dev --yes",
     "dev:weather": "tsx scripts/dev-weather-server.ts",
     "build": "vite build",

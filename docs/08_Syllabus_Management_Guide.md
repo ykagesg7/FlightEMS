@@ -314,6 +314,11 @@ src/content/lessons/
 - **content_type**: `'text'`
 - **is_published**: `true`（公開時）
 
+#### 記事 URL と順序の二系統（CPL 記事）
+
+- **記事詳細 URL**: ルートは `/articles/{id}` で、`id` は **MDX ファイル名（拡張子なし）** と一致させる（例: `3.1.2_AviationLegal1`）。`export const meta.slug` は検索・ナビ用であり、ブラウザ URL の正本ではない。
+- **順序**: （1）**推奨読み順・一覧の「次に読む」**は MDX の `meta.series` / `meta.order`（閲覧ロックは廃止、全記事 URL 開放）。（2）**記事末尾の PrevNext**（カテゴリ内）は **`learning_contents.order_index`**。読み順を変えるときは両方を揃える。航空法規 3.1.x の例: [20260411_learning_contents_cpl_aviation_legal_order.sql](../scripts/database/20260411_learning_contents_cpl_aviation_legal_order.sql)。
+
 #### オプションフィールド
 - **parent_id**: 親記事のID（階層構造が必要な場合）
 
@@ -323,9 +328,8 @@ src/content/lessons/
 - MDXファイルのフロントマターで`series`と`order`を設定
 - データベースには直接保存しない（MDXから動的に取得）
 
-#### 順次アンロック機能
-- 既存の`useSeriesUnlock`フックをPPL記事にも適用
-- シリーズ内の順序（`order`）に基づいて前の記事完了で次が解放
+#### シリーズメタ（`series` / `order`）
+- 記事一覧で同一シリーズ内の「次に読む」ハイライトや、執筆上の推奨順の表現に使用する（順次ロックは行わない）。
 
 ---
 
@@ -456,7 +460,6 @@ const pplSyllabus = await getArticles({
 
 ### 既存システム
 - `src/utils/articlesIndex.ts` - 記事インデックスシステム
-- `src/hooks/useSeriesUnlock.ts` - シリーズ順次アンロック機能
 - `src/hooks/useArticleProgress.ts` - 進捗管理フック
 
 ---
@@ -466,7 +469,8 @@ const pplSyllabus = await getArticles({
 | 日付 | 更新内容 | 更新者 |
 |------|----------|--------|
 | 2025-01 | 初版作成、PPL/CPL統合管理ガイド策定 | System |
-| 2026-01 | PPL記事3件作成完了、KaTeX数式記法サポート追加、シリーズロック機能確認 | System |
+| 2026-01 | PPL記事3件作成完了、KaTeX数式記法サポート追加 | System |
+| 2026-04 | シリーズ順次アンロック廃止。`meta.series`/`order` は推奨順・UI 用に維持 | System |
 | 2026-03 | 問題–記事連携契約（`learning_test_mapping`・自然キー・テンプレ）、PPL/CPL プール例外、`applicable_exams` との関係を追記 | System |
 | 2026-03 | 分類ツリーの正本を CPL クラスタ（`main_subject` / `sub_subject`）と明記、PPL を同一ツリー上の部分集合として定義 | System |
 

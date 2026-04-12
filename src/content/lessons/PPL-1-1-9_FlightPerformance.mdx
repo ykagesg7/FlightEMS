@@ -139,9 +139,9 @@ export const meta = {
 旋回半径 $r = V^2 / (g \tan\theta)$ を思い出さんね。速度を2倍にしたら、旋回半径は4倍に膨らむ。
 「曲がりきれん！」となる前に、速度（V）をコントロールするのがプロのエアマンシップたい。
 
-<div className="bg-gray-800 p-6 rounded-lg my-8 border border-yellow-600/50 shadow-lg shadow-yellow-900/20">
-  <div className="flex flex-col sm:flex-row gap-6 items-start">
-    <div className="flex-1 min-w-0">
+<div className="not-prose w-full max-w-full bg-gray-800 p-6 rounded-lg my-8 border border-yellow-600/50 shadow-lg shadow-yellow-900/20">
+  <div className="grid w-full min-w-0 grid-cols-1 gap-6 break-normal [overflow-wrap:normal] sm:grid-cols-[minmax(0,1fr)_minmax(0,200px)] sm:items-start">
+    <div className="min-w-0 break-normal [overflow-wrap:normal]">
       <h3 className="text-xl font-bold text-yellow-500 mb-2">⚡️ アビエーターの「電気的」補給</h3>
       <p className="text-gray-300 text-sm mb-4 leading-relaxed">
         余剰馬力を計算するには、脳の「利用馬力」を最大化せんといかん。<br/>
@@ -152,7 +152,7 @@ export const meta = {
         <span className="text-xs text-gray-400">👇 ここに『長崎老舗のカステラ切り落としセット』のアフィリエイトリンクば貼るたい！ 👇</span>
       </div>
     </div>
-    <div className="flex-shrink-0 w-full sm:w-auto sm:max-w-[200px]">
+    <div className="w-full max-w-[200px] min-w-0 justify-self-center sm:justify-self-end [&_figure]:!my-0">
       <Image src="https://placehold.co/300x300/D4A574/FFF?text=Castella" alt="長崎カステラ" width={200} height={200} className="rounded-md w-full max-w-[200px] mx-auto sm:mx-0 object-cover aspect-square" />
     </div>
   </div>

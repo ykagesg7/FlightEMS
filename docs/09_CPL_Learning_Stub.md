@@ -9,6 +9,8 @@
 
 [CPL-Learning-Stub](06_記事作成ロードマップ.md) シリーズに属する **CPL 学科向け MDX 記事**の入口です。各レッスンの `meta.series` が `CPL-Learning-Stub` の記事は、本文拡充前でも **クイズ結果からの関連記事**（`ReviewContentLink`）などで参照されます。
 
+**航空法規 3.1.x**（`3.1.1_AviationLegal0` 〜 `3.1.8_AirportOperations`）は推奨読み順・ナビ用に **`meta.series: CPL-Aviation-Legal`**（`order` 1〜8）を別立てしている。工学科など他スタブの鎖とは独立する。
+
 詳細な **シラバス・DB 契約・`learning_test_mapping` の書き方**は [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md) を正とします。
 
 ---
@@ -26,7 +28,7 @@
 
 | id | 科目イメージ |
 |----|----------------|
-| `3.1.1_AviationLegal0` 〜 `3.1.4_AviationLegal3` | 航空法規シリーズ（`3.1.1` は DB 登録あり・リポジトリ MDX の有無は [14_記事単元網羅とバックログ.md](14_記事単元網羅とバックログ.md) を参照） |
+| `3.1.1_AviationLegal0` 〜 `3.1.8_AirportOperations` | 航空法規シリーズ（MDX は `CPL-Aviation-Legal`。`learning_contents.order_index` は [20260411_learning_contents_cpl_aviation_legal_order.sql](../scripts/database/20260411_learning_contents_cpl_aviation_legal_order.sql) で 310〜317 に揃える） |
 | `3.2.1_PropellerTheory` 〜 `3.2.6_InstrumentSystem` | 航空工学シリーズ |
 | `engineering_basics` | 工学・航空力学クラスタ入口 |
 | `CPL-Hub-Meteorology` / `Navigation` / `Communication` | 科目ハブ（広い束のマッピング） |

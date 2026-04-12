@@ -8,7 +8,7 @@ export const meta = {
   date: '2026-03-29',
   author: 'Michizane (Shadow)',
   tags: ['CPL', '学科試験', '航空法規', '身体検査', '航空身体検査証明', '自己管理'],
-  series: 'CPL-Learning-Stub',
+  series: 'CPL-Aviation-Legal',
   order: 3,
   readingTime: 12,
   excerpt: '基準値ひとつ超えれば一発アウト。風邪や二日酔いが空の上で牙を剥く恐怖。航空法規における「航空身体検査証明」の真の意義と、試験で狙われる引っかけポイントを解説する。',
@@ -30,7 +30,7 @@ export const meta = {
 - [ ] 学科で混同しやすい「技能証明」「耐空証明」との違いを瞬時に仕分けできる。
 - [ ] 法律の丸暗記ではなく、「自分の肉体も機体の一部である」というプロの危機感を持てる。
 
-> **データ連携**: 本記事は `unified_cpl_questions` の **身体検査まわりのクラスタ** と紐づいとるばい。クイズでこの単元を落としたら、この記事で体調（知識）を整え直すんよ。
+> **データ連携**: 本記事は学科クイズの **身体検査まわり** と紐づいとるばい。クイズでこの単元を落としたら、この記事で体調（知識）を整え直すんよ。
 
 ---
 
@@ -80,6 +80,10 @@ export const meta = {
 
 試験では「航空機は、有効な航空身体検査証明を受けていなければ飛んではならない」みたいな、主語をすり替えたアホみたいな引っかけが出るけん、秒で撃墜するんよ。
 
+<Callout type="info" title="根拠の置き場（条文の目安）">
+  航空身体検査証明の大枠は**航空法第31条**。有効期間の起算・区分の細目は**航空法施行規則**側に多い。試験の「身体検査を受けた日から起算」などは、必ず [e-Gov 法令検索](https://laws.e-gov.go.jp/) の**現行**条文で確認すること。
+</Callout>
+
 ---
 
 ### ☕ 空中待機（Holding）：道真の燃料補給
@@ -98,9 +102,9 @@ export const meta = {
 {/*
 【Monetization Spot / アフィリエイト枠】
 */}
-<div className="bg-gray-800 p-6 rounded-lg my-8 border border-green-600/50 shadow-lg">
-  <div className="flex flex-col sm:flex-row gap-6 items-start">
-    <div className="flex-1 min-w-0">
+<div className="not-prose w-full max-w-full bg-gray-800 p-6 rounded-lg my-8 border border-green-600/50 shadow-lg">
+  <div className="grid w-full min-w-0 grid-cols-1 gap-6 break-normal [overflow-wrap:normal] sm:grid-cols-[minmax(0,1fr)_minmax(0,200px)] sm:items-start">
+    <div className="min-w-0 break-normal [overflow-wrap:normal]">
       <h3 className="text-xl font-bold text-green-500 mb-2">🍢 道真の「自己管理」補給推奨</h3>
       <p className="text-gray-300 text-sm mb-4 leading-relaxed">
         身体検査が近いパイロットの強い味方。肝臓に負担をかけず、心と体を温める博多のおでんたい。<br/>
@@ -111,7 +115,7 @@ export const meta = {
         <span className="text-xs text-gray-400">👇 ここに『博多屋台のおでん詰め合わせ（レトルト）』のリンクを貼るたい！ 👇</span>
       </div>
     </div>
-    <div className="flex-shrink-0 w-full sm:w-auto sm:max-w-[200px]">
+    <div className="w-full max-w-[200px] min-w-0 justify-self-center sm:justify-self-end [&_figure]:!my-0">
       <Image src="https://placehold.co/300x300/8b4513/FFF?text=Hakata+Oden" alt="博多おでん" width={200} height={200} className="rounded-md w-full max-w-[200px] mx-auto sm:mx-0 object-cover aspect-square" />
     </div>
   </div>
@@ -149,17 +153,19 @@ export const meta = {
 二日酔いの重力と闘うワシの飲み仲間が言う通り、コックピットの中で一番壊れやすくて、一番エラーを起こしやすい部品は、他でもない「あんさん自身の肉体」なんよ。
 この法規は、あんさんを縛るためのもんやない。あんさんの命と、飛行機の安全を守るための「最後の防波堤」たい。
 
-次回も引き続き、CPLの学科試験で壁になる法規や工学のリアルな知識を、バシバシ解説していくばい。
-体調管理を怠らずに、次のブリーフィングに備えんしゃい！
+次回は、機体側の「車検」**耐空証明**と、高度・空域の**相場観**をまとめるばい。（[次話: 耐空証明と空域・高度](/articles/3.1.4_AviationLegal3)）
 
 ---
 
 ## 🔗 関連リンク
 
 - [前の記事: 【航空法規】特定操縦技能の審査（SPC）と技能証明](/articles/3.1.2_AviationLegal1)
+- [次の記事: 【航空法規】耐空証明と空域・高度：空の「相場観」と命の境界線](/articles/3.1.4_AviationLegal3)
 - [CPL Learning Stub](/docs/09_CPL_Learning_Stub.md)
 - [Syllabus管理ガイド](/docs/08_Syllabus_Management_Guide.md)
 
 ---
+
+> **注:** 本記事に登場する人物・会話・エピソードはフィクションです。
 
 export default ({ children }) => <>{children}</>

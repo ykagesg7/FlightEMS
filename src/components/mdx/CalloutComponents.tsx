@@ -117,7 +117,7 @@ export const Callout: React.FC<CalloutProps> = ({
               {getTypeLabel()}
             </div>
           )}
-          <div className="prose prose-sm max-w-none">
+          <div className="prose prose-invert prose-sm max-w-none">
             {children}
           </div>
         </div>

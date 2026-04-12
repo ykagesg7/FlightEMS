@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams, useLocation, Link } from 'react-router-dom';
 import { useArticleProgress } from '../../../hooks/useArticleProgress';
 import { useArticleStats } from '../../../hooks/useArticleStats';
-import { useSeriesUnlock } from '../../../hooks/useSeriesUnlock';
 import { LearningContent } from '../../../types';
 import { ArticleMeta } from '../../../types/articles';
 import { buildArticleIndex } from '../../../utils/articlesIndex';
@@ -130,9 +129,14 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     );
   }, [learningContents]);
 
-  // シリーズアンロック機能
-  const learningContentIds = useMemo(() => articleContents.map(c => c.id), [articleContents]);
-  const seriesUnlock = useSeriesUnlock(articleMetas, learningContentIds);
+  const getMetaForArticle = useCallback(
+    (article: LearningContent): ArticleMeta | undefined =>
+      articleMetas[article.id] ??
+      Object.values(articleMetas).find(
+        m => m.slug.includes(article.id) || article.title.includes(m.title)
+      ),
+    [articleMetas]
+  );
 
   // 記事コンテンツがロードされた後に統計データを読み込み
   React.useEffect(() => {
@@ -225,85 +229,46 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     return sorted;
   }, [articleContents, activeMainFilter, activeCategory, selectedTags, articleMetas, sortBy, sortOrder, socialStats, mainFilters]);
 
-  // 表示する記事を決定するフィルタリング（既読・アンロック・次にアンロックされる記事のみ）
-  const displayableContents = useMemo(() => {
-    return filteredContents.filter((article) => {
-      // 記事のメタデータを取得
-      const meta = Object.values(articleMetas).find(m =>
-        m.slug.includes(article.id) || article.title.includes(m.title)
-      );
-
-      // 進捗情報を取得
-      const progress = meta ? getArticleProgress(meta.slug) : undefined;
-
-      // 1. 既読の記事（読了済み）
-      if (progress?.completed === true) {
-        return true;
-      }
-
-      // 2. アンロックされた記事
-      if (seriesUnlock.isUnlocked(article.id)) {
-        return true;
-      }
-
-      // 3. 次にアンロックされる記事（ロックされているが、直前の記事がアンロックされている）
-      const previousArticleId = seriesUnlock.getPreviousArticleInSeries(article.id);
-      if (previousArticleId) {
-        // 直前の記事がアンロックされているかチェック
-        if (seriesUnlock.isUnlocked(previousArticleId)) {
-          return true;
-        }
-      }
-
-      // 上記のいずれにも該当しない場合は非表示
-      return false;
-    });
-  }, [filteredContents, articleMetas, getArticleProgress, seriesUnlock]);
-
-  // 記事ステータスの計算
+  // 記事ステータス（シリーズロック廃止後は完了 / 進行中のみ）
   const articleStatuses = useMemo(() => {
-    const statusMap = new Map<string, 'completed' | 'in-progress' | null>();
-
-    displayableContents.forEach((article) => {
-      // content_id（article.id）を使用して進捗を取得
+    const statusMap = new Map<string, 'completed' | 'in-progress'>();
+    filteredContents.forEach(article => {
       const progress = getArticleProgress(article.id);
-
-      if (progress?.completed === true) {
-        statusMap.set(article.id, 'completed');
-      } else if (seriesUnlock.isUnlocked(article.id)) {
-        statusMap.set(article.id, 'in-progress');
-      } else {
-        statusMap.set(article.id, null);
-      }
+      const done = progress?.completed === true || (progress?.scrollProgress ?? 0) >= 95;
+      statusMap.set(article.id, done ? 'completed' : 'in-progress');
     });
-
     return statusMap;
-  }, [displayableContents, getArticleProgress, seriesUnlock]);
+  }, [filteredContents, getArticleProgress]);
 
-  // アンロックされた記事（未読）を識別
+  /**
+   * 同一 meta.series 内で、最も order が小さい「未完了」記事 1 件だけを「次に読む」としてハイライトする。
+   * シリーズなしの記事は対象外（一覧の黄色リングが全未読に付くのを避ける）。
+   */
   const isNextToRead = useMemo(() => {
-    const nextToReadIds = new Set<string>();
-
-    articleStatuses.forEach((status, articleId) => {
-      if (status === 'in-progress') {
-        nextToReadIds.add(articleId);
-      }
-    });
-
-    return nextToReadIds;
-  }, [articleStatuses]);
-
-  // 記事クリック時の閲覧数記録とロックチェック
-  const handleArticleClick = async (articleId: string, isLocked: boolean) => {
-    if (isLocked) {
-      // ロックされている場合は遷移しない（トーストなどで通知するか、CTAを表示）
-      const reason = seriesUnlock.getLockedReason(articleId);
-      if (reason) {
-        alert(reason); // TODO: トーストライブラリに置き換え
-      }
-      return;
+    const nextIds = new Set<string>();
+    const bySeries = new Map<string, LearningContent[]>();
+    for (const article of filteredContents) {
+      const meta = getMetaForArticle(article);
+      if (!meta?.series) continue;
+      const list = bySeries.get(meta.series) ?? [];
+      list.push(article);
+      bySeries.set(meta.series, list);
     }
+    for (const [, articles] of bySeries) {
+      articles.sort(
+        (a, b) =>
+          (getMetaForArticle(a)?.order ?? 999) - (getMetaForArticle(b)?.order ?? 999)
+      );
+      const next = articles.find(article => {
+        const p = getArticleProgress(article.id);
+        return !p?.completed && (p?.scrollProgress ?? 0) < 95;
+      });
+      if (next) nextIds.add(next.id);
+    }
+    return nextIds;
+  }, [filteredContents, getArticleProgress, getMetaForArticle]);
 
+  const handleArticleClick = async (articleId: string) => {
     try {
       await recordView({ article_id: articleId });
       navigate(`/articles/${articleId}`);
@@ -514,7 +479,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 activeCategory={activeCategory}
                 onCategoryChange={handleCategoryChange}
                 categoryCounts={{
-                  'すべて': displayableContents.length,
+                  'すべて': filteredContents.length,
                   ...subCategories.reduce((acc, cat) => {
                     const count = articleContents.filter(c => {
                       // メインフィルターが適用されている場合は、その範囲内でカウント
@@ -544,18 +509,12 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
             {/* 記事一覧 */}
             <div className="space-y-8">
-              {displayableContents.length > 0 ? (
+              {filteredContents.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {displayableContents.map((article) => {
-                    // 記事のメタデータを取得
-                    const meta = Object.values(articleMetas).find(m =>
-                      m.slug.includes(article.id) || article.title.includes(m.title)
-                    );
+                  {filteredContents.map((article) => {
+                    const meta = getMetaForArticle(article);
+                    const progress = getArticleProgress(article.id);
 
-                    // 進捗情報を取得
-                    const progress = meta ? getArticleProgress(meta.slug) : undefined;
-
-                    // ソーシャル統計を取得（デフォルト値を提供）
                     const stats = socialStats[article.id] || {
                       likes_count: 0,
                       comments_count: 0,
@@ -572,11 +531,9 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                         isDemo={isDemo}
                         onRegisterPrompt={showRegistrationModal}
                         stats={stats}
-                        locked={!seriesUnlock.isUnlocked(article.id)}
-                        lockedReason={seriesUnlock.getLockedReason(article.id)}
-                        onArticleClick={() => handleArticleClick(article.id, !seriesUnlock.isUnlocked(article.id))}
+                        onArticleClick={() => handleArticleClick(article.id)}
                         isNextToRead={isNextToRead.has(article.id)}
-                        articleStatus={articleStatuses.get(article.id) || null}
+                        articleStatus={articleStatuses.get(article.id) ?? 'in-progress'}
                       />
                     );
                   })}
@@ -598,7 +555,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
             </div>
 
             {/* デモ用追加機能 */}
-            {isDemo && displayableContents.length > 0 && (
+            {isDemo && filteredContents.length > 0 && (
               <div className="mt-12 p-6 rounded-xl border-2 border-dashed text-center backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border-blue-500/60 bg-blue-900/30 hover:bg-blue-900/40 shadow-blue-900/20">
                 <div className="text-3xl mb-4">🎯</div>
                 <h3 className="text-xl font-bold mb-2 bg-gradient-to-r bg-clip-text text-transparent from-white to-gray-200">

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LEARNING_ARTICLE_CTA_LABEL } from '../../../../constants/learningArticleNav';
+import { useAuth } from '../../../../hooks/useAuth';
 import supabase from '../../../../utils/supabase';
 
 /** セッション設問 ID とマッピング行の重なり数（同一 UUID は二重に数えない） */
@@ -56,6 +57,7 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
   excludeContentId = null,
   variant = 'default',
 }) => {
+  const { user, isLoading: authLoading } = useAuth();
   const [recommendedContents, setRecommendedContents] = useState<LearningContent[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -231,13 +233,40 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
       : 'block p-4 rounded-lg border transition-all duration-200 hover:scale-[1.02] bg-gray-800/50 border-gray-600 hover:border-gray-500';
   const chevronClass = variant === 'panel' ? 'w-5 h-5 text-[var(--text-muted)]' : 'w-5 h-5 text-gray-400';
 
+  const guestCtaClass =
+    variant === 'panel'
+      ? 'mb-4 p-4 rounded-lg border border-brand-primary/25 bg-brand-primary/10 text-[var(--text-primary)]'
+      : 'mb-4 p-4 rounded-lg border border-blue-500/40 bg-blue-950/30 text-gray-100';
+
+  const guestCtaTextClass = variant === 'panel' ? 'text-sm text-[var(--text-muted)]' : 'text-sm text-gray-300';
+
+  const guestCtaLinkClass =
+    variant === 'panel'
+      ? 'inline-flex mt-3 px-5 py-2 rounded-lg border border-brand-primary/40 text-brand-primary font-semibold hover:bg-brand-primary/10 transition'
+      : 'inline-flex mt-3 px-5 py-2 rounded-lg border border-blue-400/50 text-blue-200 font-semibold hover:bg-blue-900/40 transition';
+
   const tipBoxClass =
     variant === 'panel'
       ? 'mt-4 p-3 rounded-lg bg-orange-500/10 text-orange-800 dark:text-orange-200 border border-orange-500/25'
       : 'mt-4 p-3 rounded-lg bg-orange-900/20 text-orange-200';
 
+  const showGuestSignupCta = !user && !authLoading;
+
   return (
     <div className={outerClass}>
+      {showGuestSignupCta && (
+        <div className={guestCtaClass}>
+          <p className="text-sm font-medium text-[inherit]">
+            無料登録すると、記事の読了進捗やテスト履歴が保存され、ダッシュボードで傾向を把握できます。
+          </p>
+          <p className={`${guestCtaTextClass} mt-1`}>
+            記事はこのままお読みいただけます。よろしければ登録して学習を続けましょう。
+          </p>
+          <Link to="/auth" className={guestCtaLinkClass}>
+            ログイン / 新規登録
+          </Link>
+        </div>
+      )}
       <div className="flex items-center mb-4">
         <div className="mr-3">
           <svg

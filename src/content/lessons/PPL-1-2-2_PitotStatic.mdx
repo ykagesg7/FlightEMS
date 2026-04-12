@@ -122,9 +122,9 @@ export const meta = {
 {/*
 【Monetization Spot / アフィリエイト枠】
 */}
-<div className="bg-gray-800 p-6 rounded-lg my-8 border border-orange-400/50 shadow-lg">
-  <div className="flex flex-col sm:flex-row gap-6 items-start">
-    <div className="flex-1 min-w-0">
+<div className="not-prose w-full max-w-full bg-gray-800 p-6 rounded-lg my-8 border border-orange-400/50 shadow-lg">
+  <div className="grid w-full min-w-0 grid-cols-1 gap-6 break-normal [overflow-wrap:normal] sm:grid-cols-[minmax(0,1fr)_minmax(0,200px)] sm:items-start">
+    <div className="min-w-0 break-normal [overflow-wrap:normal]">
       <h3 className="text-xl font-bold text-orange-300 mb-2">🍲 道真の「燃料」補給推奨</h3>
       <p className="text-gray-300 text-sm mb-4 leading-relaxed">
         ピトー管の詰まりは命取りやけど、血管の詰まり（コレステロール）もパイロットの大敵たい。<br/>
@@ -136,7 +136,7 @@ export const meta = {
         <span className="text-xs text-gray-400">👇 ここに『博多若杉 牛もつ鍋セット（ちゃんぽん麺付）』のリンクを貼るたい！ 👇</span>
       </div>
     </div>
-    <div className="flex-shrink-0 w-full sm:w-auto sm:max-w-[200px]">
+    <div className="w-full max-w-[200px] min-w-0 justify-self-center sm:justify-self-end [&_figure]:!my-0">
       <Image src="https://placehold.co/300x300/ff9900/333?text=Hakata+Motsunabe" alt="博多もつ鍋" width={200} height={200} className="rounded-md w-full max-w-[200px] mx-auto sm:mx-0 object-cover aspect-square" />
     </div>
   </div>

@@ -20,9 +20,8 @@ export default defineConfig({
   },
   webServer: {
     // dev の依存スキャンが環境によって失敗することがあるため、ビルド済み preview で起動する
-    // シリーズロックを外して CPL スタブ等をそのまま開けるようにする（本番ビルドとは別設定）
     command:
-      'cross-env VITE_UNLOCK_ALL_SERIES_ARTICLES=true npm run build && npx vite preview --host 127.0.0.1 --port 5174 --strictPort',
+      'npm run build && npx vite preview --host 127.0.0.1 --port 5174 --strictPort',
     url: baseURL,
     reuseExistingServer,
     timeout: 300_000,

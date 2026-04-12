@@ -139,32 +139,11 @@ BEGIN
         WHERE user_id = p_user_id;
         requirement_met := current_value >= requirement_record.requirement_value;
 
-      WHEN 'purchases' THEN
-        SELECT COUNT(*) INTO current_value
-        FROM purchase_history
-        WHERE user_id = p_user_id AND purchase_type = COALESCE(
-          (requirement_record.requirement_config->>'purchase_type')::TEXT,
-          'shop'
-        );
-        requirement_met := current_value >= requirement_record.requirement_value;
-
       WHEN 'streak_days' THEN
         SELECT current_streak INTO current_value
         FROM streak_records
         WHERE user_id = p_user_id;
         requirement_met := COALESCE(current_value, 0) >= requirement_record.requirement_value;
-
-      WHEN 'gallery_posts' THEN
-        SELECT COUNT(*) INTO current_value
-        FROM fan_photos
-        WHERE user_id = p_user_id AND is_approved = true;
-        requirement_met := current_value >= requirement_record.requirement_value;
-
-      WHEN 'gallery_likes_given' THEN
-        SELECT COUNT(*) INTO current_value
-        FROM fan_photo_likes
-        WHERE user_id = p_user_id;
-        requirement_met := current_value >= requirement_record.requirement_value;
 
       ELSE
         requirement_met := false;

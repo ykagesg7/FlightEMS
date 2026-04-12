@@ -17,7 +17,7 @@ export const RankBenefitsPage: React.FC = () => {
     trainee: ['限定記事アクセス'],
     student: ['模擬試験無制限'],
     apprentice: ['フライトプラン保存上限UP'],
-    pilot: ['限定Shop商品アクセス'],
+    pilot: ['拡張学習コンテンツ'],
     wingman: ['体験搭乗予約権', '複数条件あり'],
     ace: ['優先サポート'],
     master: ['メンター認定バッジ'],

@@ -147,8 +147,8 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <MDXProvider components={components}>
-      <div className={`prose max-w-none ${bgColor} p-2 sm:p-4 md:p-6 rounded-lg shadow-md transition-all duration-300 break-words overflow-hidden text-base leading-7 sm:leading-8`}>
-        <div className="max-w-3xl mx-auto">
+      <div className={`prose prose-invert max-w-none min-w-0 w-full ${bgColor} p-2 sm:p-4 md:p-6 rounded-lg shadow-md transition-all duration-300 overflow-x-auto text-base leading-7 sm:leading-8`}>
+        <div className="mx-auto w-full min-w-0 max-w-3xl">
           {filteredChildren}
         </div>
       </div>
@@ -183,7 +183,7 @@ const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId: _con
 
       {/* デスクトップでは右側に目次を表示、モバイルではドロワー */}
       <div className="flex gap-8">
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 w-full flex-1">
           <MDXContentWithTheme>{children}</MDXContentWithTheme>
 
           {/* 記事末尾に関連記事を表示 */}
