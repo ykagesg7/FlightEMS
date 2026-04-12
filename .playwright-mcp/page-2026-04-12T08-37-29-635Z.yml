@@ -1,0 +1,184 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - link "Flight Academy home" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e11]:
+            - generic [ref=e12]: Flight Academy
+            - generic [ref=e13]: Learn Smart.
+        - generic [ref=e17]:
+          - generic [ref=e18]: 17:37:29
+          - generic [ref=e19]: April 12, 2026
+      - navigation "Main" [ref=e20]:
+        - link "HOME" [ref=e21] [cursor=pointer]:
+          - /url: /
+        - link "ARTICLES" [ref=e22] [cursor=pointer]:
+          - /url: /articles
+        - link "PLANNING" [ref=e23] [cursor=pointer]:
+          - /url: /planning
+        - link "QUIZ" [ref=e24] [cursor=pointer]:
+          - /url: /test
+      - link "LOGIN" [ref=e26] [cursor=pointer]:
+        - /url: /auth
+        - button "LOGIN" [ref=e27]
+  - main [ref=e28]:
+    - generic [ref=e29]:
+      - generic:
+        - img
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]: Flight Training Platform
+          - heading "Learn Smart." [level=1] [ref=e35]
+          - paragraph [ref=e36]: 学習・試験対策・フライトプランニングを、ひとつの流れで。
+          - generic [ref=e37]:
+            - link "アカウントを作成する" [ref=e38] [cursor=pointer]:
+              - /url: /auth?mode=signup
+            - link "Flight Planning を体験する" [ref=e39] [cursor=pointer]:
+              - /url: /planning
+          - generic [ref=e40]:
+            - generic [ref=e41]: Home ダッシュボードで学習状況を一目で把握
+            - generic [ref=e42]: 主要機能を 3 本柱に整理したシンプルな導線
+            - generic [ref=e43]: 訓練・学習・復習を同じブランド体験で統一
+        - generic [ref=e45]:
+          - img "Pilot training visual" [ref=e46]
+          - generic [ref=e48]:
+            - generic [ref=e49]: Core Modules
+            - generic [ref=e50]:
+              - generic [ref=e51]:
+                - generic [ref=e52]: Flight Planning
+                - generic [ref=e53]: 地図、経路、気象情報をひとつの画面で確認し、訓練前の準備精度を高めます。
+              - generic [ref=e54]:
+                - generic [ref=e55]: Quiz
+                - generic [ref=e56]: Practice、Exam、Review を切り替えながら、理解度と弱点を継続的に把握できます。
+              - generic [ref=e57]:
+                - generic [ref=e58]: Blog
+                - generic [ref=e59]: 記事とレッスンを横断しながら、必要な知識を体系的に積み上げられます。
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - heading "最新情報" [level=2] [ref=e62]
+          - paragraph [ref=e63]: 学習コンテンツ、機能改善、運用上のお知らせをまとめて確認できます。
+        - generic [ref=e64]:
+          - 'article "お知らせ: HomePageにお知らせセクションを追加" [ref=e65] [cursor=pointer]':
+            - generic [ref=e67]:
+              - time [ref=e69]: 2025年11月2日
+              - heading "HomePageにお知らせセクションを追加" [level=3] [ref=e70]
+              - generic [ref=e73]: View update →
+          - 'article "お知らせ: Phase 7: シリーズ順次アンロック機能を実装" [ref=e74] [cursor=pointer]':
+            - generic [ref=e76]:
+              - time [ref=e78]: 2025年11月2日
+              - 'heading "Phase 7: シリーズ順次アンロック機能を実装" [level=3] [ref=e79]'
+              - generic [ref=e82]: View update →
+          - 'article "お知らせ: フライトプランニング機能にMETAR/TAF統合" [ref=e83] [cursor=pointer]':
+            - generic [ref=e85]:
+              - time [ref=e87]: 2025年10月26日
+              - heading "フライトプランニング機能にMETAR/TAF統合" [level=3] [ref=e88]
+              - generic [ref=e91]: View update →
+          - 'article "お知らせ: Phase 5: 記事読書体験向上システムを実装" [ref=e92] [cursor=pointer]':
+            - generic [ref=e94]:
+              - time [ref=e96]: 2025年9月15日
+              - 'heading "Phase 5: 記事読書体験向上システムを実装" [level=3] [ref=e97]'
+              - generic [ref=e100]: View update →
+          - 'article "お知らせ: Phase 6: Lessonページ検索・タグ機能統合を完了" [ref=e101] [cursor=pointer]':
+            - generic [ref=e103]:
+              - time [ref=e105]: 2025年8月17日
+              - 'heading "Phase 6: Lessonページ検索・タグ機能統合を完了" [level=3] [ref=e106]'
+              - generic [ref=e109]: View update →
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - heading "主要機能" [level=2] [ref=e112]
+          - paragraph [ref=e113]: Flight Planning、Quiz、Blog の 3 本柱で学習体験を整理しています。
+        - generic [ref=e114]:
+          - link "Flight Planning Flight Planning 地図、経路、気象情報をひとつの画面で確認し、訓練前の準備精度を高めます。 計画を見る →" [ref=e115] [cursor=pointer]:
+            - /url: /planning
+            - generic [ref=e116]:
+              - generic [ref=e117]: Flight Planning
+              - heading "Flight Planning" [level=3] [ref=e118]
+              - paragraph [ref=e119]: 地図、経路、気象情報をひとつの画面で確認し、訓練前の準備精度を高めます。
+              - generic [ref=e120]: 計画を見る →
+          - link "Quiz Quiz Practice、Exam、Review を切り替えながら、理解度と弱点を継続的に把握できます。 問題を解く →" [ref=e121] [cursor=pointer]:
+            - /url: /test
+            - generic [ref=e122]:
+              - generic [ref=e123]: Quiz
+              - heading "Quiz" [level=3] [ref=e124]
+              - paragraph [ref=e125]: Practice、Exam、Review を切り替えながら、理解度と弱点を継続的に把握できます。
+              - generic [ref=e126]: 問題を解く →
+          - link "Blog Blog 記事とレッスンを横断しながら、必要な知識を体系的に積み上げられます。 記事を読む →" [ref=e127] [cursor=pointer]:
+            - /url: /articles
+            - generic [ref=e128]:
+              - generic [ref=e129]: Blog
+              - heading "Blog" [level=3] [ref=e130]
+              - paragraph [ref=e131]: 記事とレッスンを横断しながら、必要な知識を体系的に積み上げられます。
+              - generic [ref=e132]: 記事を読む →
+      - generic [ref=e134]:
+        - img "Training flow visual" [ref=e136]
+        - generic [ref=e137]:
+          - generic [ref=e138]: Workflow
+          - heading "学習から実践まで、迷わない流れ" [level=2] [ref=e139]
+          - paragraph [ref=e140]: Home のダッシュボードを起点に、読む、解く、計画する、の順で自然に進められる構成にしています。 何を学び、何が不足し、次に何をすべきかを一画面で把握できます。
+          - generic [ref=e141]:
+            - generic [ref=e142]:
+              - generic [ref=e143]: Step 01
+              - generic [ref=e144]: 読む
+              - generic [ref=e145]: ブログとレッスンで背景知識を理解し、用語と原理を先に押さえます。
+            - generic [ref=e146]:
+              - generic [ref=e147]: Step 02
+              - generic [ref=e148]: 解く
+              - generic [ref=e149]: クイズで理解を確認し、モード別に弱点を切り分けながら復習します。
+            - generic [ref=e150]:
+              - generic [ref=e151]: Step 03
+              - generic [ref=e152]: 計画する
+              - generic [ref=e153]: Flight Planning でルートと条件を整理し、実践へつながる判断力を養います。
+          - link "登録して Home ダッシュボードを使う →" [ref=e155] [cursor=pointer]:
+            - /url: /auth?mode=signup
+      - generic [ref=e156]:
+        - generic [ref=e157]:
+          - heading "このプラットフォームでできること" [level=2] [ref=e158]
+          - paragraph [ref=e159]: 教材の閲覧、問題演習、フライト前準備を同じ文脈で進められます。
+        - generic [ref=e160]:
+          - generic [ref=e161]:
+            - generic [ref=e162]: "01"
+            - heading "知識の定着" [level=3] [ref=e163]
+            - paragraph [ref=e164]: 記事やレッスンで得た知識を、そのままクイズに接続して理解へ変えます。
+          - generic [ref=e165]:
+            - generic [ref=e166]: "02"
+            - heading "弱点の可視化" [level=3] [ref=e167]
+            - paragraph [ref=e168]: Home ダッシュボードを入口に、進捗、正答率、復習候補をまとめて確認できます。
+          - generic [ref=e169]:
+            - generic [ref=e170]: "03"
+            - heading "訓練準備の効率化" [level=3] [ref=e171]
+            - paragraph [ref=e172]: Flight Planning でルートと条件を整理し、学習を実践的な判断へつなげます。
+      - generic [ref=e174]:
+        - heading "学習と準備を、毎日のルーティンに。" [level=3] [ref=e175]
+        - paragraph [ref=e176]: アカウントを作成すると、学習進捗、テスト結果、次に進むべきコンテンツを Home からまとめて確認できます。
+        - link "Flight Academy を始める" [ref=e177] [cursor=pointer]:
+          - /url: /auth?mode=signup
+  - contentinfo [ref=e178]:
+    - generic [ref=e179]:
+      - generic [ref=e180]:
+        - generic [ref=e181]:
+          - heading "Flight Academy" [level=3] [ref=e182]
+          - paragraph [ref=e183]: Learn Smart.
+          - paragraph [ref=e184]: 学習・試験対策・フライトプランニングを、ひとつの流れで。
+        - generic [ref=e185]:
+          - heading "Platform" [level=4] [ref=e186]
+          - list [ref=e187]:
+            - listitem [ref=e188]:
+              - link "Login / Sign up" [ref=e189] [cursor=pointer]:
+                - /url: /auth
+            - listitem [ref=e190]:
+              - link "Profile" [ref=e191] [cursor=pointer]:
+                - /url: /profile
+        - generic [ref=e192]:
+          - heading "Core Modules" [level=4] [ref=e193]
+          - list [ref=e194]:
+            - listitem [ref=e195]:
+              - link "Flight Planning" [ref=e196] [cursor=pointer]:
+                - /url: /planning
+            - listitem [ref=e197]:
+              - link "Articles" [ref=e198] [cursor=pointer]:
+                - /url: /articles
+            - listitem [ref=e199]:
+              - link "Quiz" [ref=e200] [cursor=pointer]:
+                - /url: /test
+      - generic [ref=e202]: © 2026 Flight Academy. All rights reserved.

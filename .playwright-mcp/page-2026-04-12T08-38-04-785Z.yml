@@ -1,0 +1,55 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - link "Flight Academy home" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e11]:
+            - generic [ref=e12]: Flight Academy
+            - generic [ref=e13]: Learn Smart.
+        - generic [ref=e17]:
+          - generic [ref=e18]: 17:38:04
+          - generic [ref=e19]: April 12, 2026
+      - navigation "Main" [ref=e20]:
+        - link "HOME" [ref=e21] [cursor=pointer]:
+          - /url: /
+        - link "ARTICLES" [active] [ref=e22] [cursor=pointer]:
+          - /url: /articles
+        - link "PLANNING" [ref=e23] [cursor=pointer]:
+          - /url: /planning
+        - link "QUIZ" [ref=e24] [cursor=pointer]:
+          - /url: /test
+      - link "LOGIN" [ref=e26] [cursor=pointer]:
+        - /url: /auth
+        - button "LOGIN" [ref=e27]
+  - main [ref=e28]:
+    - paragraph [ref=e206]: 学習データを読み込み中...
+  - contentinfo [ref=e178]:
+    - generic [ref=e179]:
+      - generic [ref=e180]:
+        - generic [ref=e181]:
+          - heading "Flight Academy" [level=3] [ref=e182]
+          - paragraph [ref=e183]: Learn Smart.
+          - paragraph [ref=e184]: 学習・試験対策・フライトプランニングを、ひとつの流れで。
+        - generic [ref=e185]:
+          - heading "Platform" [level=4] [ref=e186]
+          - list [ref=e187]:
+            - listitem [ref=e188]:
+              - link "Login / Sign up" [ref=e189] [cursor=pointer]:
+                - /url: /auth
+            - listitem [ref=e190]:
+              - link "Profile" [ref=e191] [cursor=pointer]:
+                - /url: /profile
+        - generic [ref=e192]:
+          - heading "Core Modules" [level=4] [ref=e193]
+          - list [ref=e194]:
+            - listitem [ref=e195]:
+              - link "Flight Planning" [ref=e196] [cursor=pointer]:
+                - /url: /planning
+            - listitem [ref=e197]:
+              - link "Articles" [ref=e198] [cursor=pointer]:
+                - /url: /articles
+            - listitem [ref=e199]:
+              - link "Quiz" [ref=e200] [cursor=pointer]:
+                - /url: /test
+      - generic [ref=e202]: © 2026 Flight Academy. All rights reserved.
