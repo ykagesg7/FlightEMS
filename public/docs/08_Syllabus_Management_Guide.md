@@ -116,7 +116,7 @@ type: "lesson"
 
 #### 既存シリーズ
 - 既存のCPL記事は既にシリーズが設定されている場合がある
-- 例: `'CPL-AviationLegal'`, `'CPL-PropellerTheory'`等
+- 例: `'CPL-AviationLegal'`, `'CPL-Aeronautical-Engineering'`, `'CPL-Learning-Stub'` 等
 
 #### 将来のCPL Master Syllabus
 - 将来的にCPL Master Syllabusを作成する場合

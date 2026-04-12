@@ -11,6 +11,8 @@
 
 ### 更新履歴（抜粋・2026-03-30）
 
+- **2026-04-12 Supabase（航空工学 3.2.1〜4）**: `learning_contents` の title / description と `learning_test_mapping.content_title` を MDX `meta` に一致。冪等 SQL: [scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql](scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql)。手順は [.cursor/rules/supabase-article-registration.mdc](../.cursor/rules/supabase-article-registration.mdc)。
+- **2026-04-12 航空工学 MDX 3.2.1〜4**: 3.1.x に合わせてフィクション注記、`/articles/{contentId}` 関連リンク、アフィ枠（`not-prose`＋Grid）、まとめの次話リンクを統一。`meta.series` を **`CPL-Aeronautical-Engineering`**（`order` 1〜4）に分離。[09](09_CPL_Learning_Stub.md)・[08](08_Syllabus_Management_Guide.md) を追随。`public/docs/` は `npm run sync:public-docs`。
 - **2026-04-12 MCP / Sentry**: [13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md) に **Marketplace の `plugin-*` と手動 `mcp.json` の関係**を追記。`.cursor/mcp.json.example` の **Windows `cmd` ラップ**を統一。Supabase 記事登録ルール・[MCP_RELEASE_CHECKLIST](ops/MCP_RELEASE_CHECKLIST.md)・[APPLICABLE_EXAMS_PILOT](db/APPLICABLE_EXAMS_PILOT.md) のサーバー名を Marketplace 対応。Sentry 本番検証手順は [04](04_運用保守ガイド.md)。
 - **2026-04-12 GA4 MCP / 保留バックログ**: [13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md) に **Google Analytics MCP**（`pipx`・ADC・読み取り専用）を追記。[04](04_運用保守ガイド.md) に **Data API / MCP はタグの代替ではない**節。[03](03_計画改善ロードマップ.md) v4.0.5 に **将来保留バックログ**（GA4 週次レポート案、Planning イタリア AIP）。`.cursor/mcp.json.example` に `google-analytics-mcp` プレースホルダ。
 - **2026-04-12 本番 URL**: **Production** は [https://flight-lms.vercel.app/](https://flight-lms.vercel.app/) を正とする（[02](02_技術開発ガイド.md)・[04](04_運用保守ガイド.md)）。
