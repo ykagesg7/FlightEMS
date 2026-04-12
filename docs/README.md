@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年4月12日（本番 URL 明記・GA4 表示差の注記）
-**バージョン**: Documentation Index v4.18
+**最終更新**: 2026年4月12日（GA4 MCP 手順・将来保留バックログ）
+**バージョン**: Documentation Index v4.19
 
 ---
 
@@ -12,6 +12,7 @@
 ### 更新履歴（抜粋・2026-03-30）
 
 - **2026-04-12 MCP / Sentry**: [13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md) に **Marketplace の `plugin-*` と手動 `mcp.json` の関係**を追記。`.cursor/mcp.json.example` の **Windows `cmd` ラップ**を統一。Supabase 記事登録ルール・[MCP_RELEASE_CHECKLIST](ops/MCP_RELEASE_CHECKLIST.md)・[APPLICABLE_EXAMS_PILOT](db/APPLICABLE_EXAMS_PILOT.md) のサーバー名を Marketplace 対応。Sentry 本番検証手順は [04](04_運用保守ガイド.md)。
+- **2026-04-12 GA4 MCP / 保留バックログ**: [13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md) に **Google Analytics MCP**（`pipx`・ADC・読み取り専用）を追記。[04](04_運用保守ガイド.md) に **Data API / MCP はタグの代替ではない**節。[03](03_計画改善ロードマップ.md) v4.0.5 に **将来保留バックログ**（GA4 週次レポート案、Planning イタリア AIP）。`.cursor/mcp.json.example` に `google-analytics-mcp` プレースホルダ。
 - **2026-04-12 本番 URL**: **Production** は [https://flight-lms.vercel.app/](https://flight-lms.vercel.app/) を正とする（[02](02_技術開発ガイド.md)・[04](04_運用保守ガイド.md)）。
 - **2026-04-12 KPI・計測（GA4）**: アクセス解析を **Google Analytics 4** に統一。本番かつ `VITE_GA_MEASUREMENT_ID` 設定時のみ `src/lib/googleAnalytics.ts`・`GoogleAnalyticsTracker.tsx`（`.env.example`・[03](03_計画改善ロードマップ.md)）。**Playwright で `dataLayer` に `page_view` が積まれても GA の UI に出ない場合**の切り分けは [04](04_運用保守ガイド.md)「GA4」。従来の Plausible 変数は廃止。
 - **2026-04-12 KPI・計測**: [00](00_Flight_Academy_Strategy.md) **v1.2.1**（CPL を「スタブ配置」と「深文化・マッピング」に分解、MDX 66 件を反映）。[03](03_計画改善ロードマップ.md) **v4.0.1**（4月末チェックポイント・5〜7月橋渡し）。[14](14_記事単元網羅とバックログ.md) を MCP 再取得（マッピング 42 記事等）。[06](06_記事作成ロードマップ.md) の気象 3.3 注記を実態に合わせ更新。
@@ -42,7 +43,7 @@
 - **目的**: 独立した航空学習プラットフォーム — 学習コンテンツ、実用ツール、コミュニティを提供
 - **コンセプト**: "Learn, Plan, Fly" — 航空知識を学び、フライトプランを作り、仲間として飛び立つ
 - **戦略**: **完全独立運営** — 外部パートナー承認に依存しない。詳細は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)（**3本柱**: Content / Tools / Community）
-- **価値・運営（要約）**: **CPL 学科**受験者をコンテンツの主軸とし、**CPL 記事を最優先**で執筆。**PPL 記事**は別記事として継続し、CPL 記事から**リンクで基礎復習**可能にする。クイズは **PPL のみ / CPL 範囲**の選択を維持。個人開発の持続可能性・表現上の境界は [00](00_Flight_Academy_Strategy.md) **§2・§3**。**Phase・KPI の数値正本**は [03_計画改善ロードマップ.md](03_計画改善ロードマップ.md) v4.0.4（コンテンツ進捗の補助指標は [14_記事単元網羅とバックログ.md](14_記事単元網羅とバックログ.md)）。
+- **価値・運営（要約）**: **CPL 学科**受験者をコンテンツの主軸とし、**CPL 記事を最優先**で執筆。**PPL 記事**は別記事として継続し、CPL 記事から**リンクで基礎復習**可能にする。クイズは **PPL のみ / CPL 範囲**の選択を維持。個人開発の持続可能性・表現上の境界は [00](00_Flight_Academy_Strategy.md) **§2・§3**。**Phase・KPI の数値正本**は [03_計画改善ロードマップ.md](03_計画改善ロードマップ.md) v4.0.5（コンテンツ進捗の補助指標は [14_記事単元網羅とバックログ.md](14_記事単元網羅とバックログ.md)）。
 
 ### コア機能
 1. **学習コンテンツ管理**: MDXベースの記事システム（PPL/CPL統合）、進捗管理（ログインで永続化）、推奨読み順用 `meta.series` / `order`、KaTeX数式記法サポート
@@ -79,7 +80,7 @@
 
 ### Cursor MCP
 
-開発者向けの MCP 設定（**Cursor Marketplace** の `plugin-*` と手動 `mcp.json` の使い分け、Chrome DevTools、法令検索（hourei）、Serena、Vercel、GitHub、トラブルシューティング）は **[13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md)** に集約した。
+開発者向けの MCP 設定（**Cursor Marketplace** の `plugin-*` と手動 `mcp.json` の使い分け、Chrome DevTools、法令検索（hourei）、任意の **Google Analytics MCP**（読み取り）、Serena、Vercel、GitHub、トラブルシューティング）は **[13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md)** に集約した。
 
 ### SWIM / デジタルノータム（参考）
 

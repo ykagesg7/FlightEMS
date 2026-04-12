@@ -135,9 +135,47 @@ Cursor が `child_process.spawn` で `npx` を起動すると、Windows では *
 
 ---
 
+## Google Analytics MCP（任意・実験的）
+
+Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics/google-analytics-mcp)（PyPI: `analytics-mcp`）は、**Google Analytics Admin API** と **Data API** 経由で **読み取り専用**のツール（`run_report`、`run_realtime_report`、`get_account_summaries` 等）をエージェントに公開する。概要は [Google Developers: Try the Google Analytics MCP server](https://developers.google.com/analytics/devguides/MCP?hl=ja) を参照。
+
+### Flight Academy での位置づけ
+
+- **タグ（`gtag` / `VITE_GA_MEASUREMENT_ID`）の代替にはならない**。ブラウザから `g/collect` が届いていない状態では、Data API のレポートも空に近くなる。収集パイプラインの切り分けは [docs/04_運用保守ガイド.md](04_運用保守ガイド.md)「GA4」を先に参照する。
+- **用途の例**: プロパティ一覧の確認、過去期間の `screenPageViews` 等の有無確認、Cursor 上での自然言語による要約（データが蓄積されたあと）。
+
+### 前提
+
+1. **Python 3.10+** と [**pipx**](https://pipx.pypa.io/) をインストールする。
+2. Google Cloud で **Google Analytics Admin API** と **Google Analytics Data API** を有効化する（[有効化手順](https://support.google.com/googleapi/answer/6158841)）。
+3. [**Application Default Credentials (ADC)**](https://cloud.google.com/docs/authentication/provide-credentials-adc) を、`https://www.googleapis.com/auth/analytics.readonly` を含む形で設定する（OAuth デスクトップクライアント JSON ＋ `gcloud auth application-default login` 等）。手順の詳細は [公式 README（Setup instructions）](https://github.com/googleanalytics/google-analytics-mcp) と [セットアップ動画](https://www.youtube.com/watch?v=nS8HLdwmVlY)。
+4. 認証に使う Google アカウントが、対象 GA4 プロパティに **閲覧者**以上でアクセスできること。
+
+### Cursor への接続例（Windows）
+
+[`.cursor/mcp.json.example`](../.cursor/mcp.json.example) の `google-analytics-mcp` ブロックを参考に、ローカルの `.cursor/mcp.json` に追加する。
+
+- `GOOGLE_APPLICATION_CREDENTIALS`: `gcloud auth application-default login` 完了時に表示された **JSON の絶対パス**（Windows では `C:/...` のスラッシュ推奨）。
+- `GOOGLE_PROJECT_ID`: GCP の [プロジェクト ID](https://support.google.com/googleapi/answer/7014113)（公式 README の `env` 名に合わせる）。
+
+**pipx** が PATH に無い場合は `where pipx` で確認する。`cmd` ラップは他のローカル MCP と同様。
+
+### セキュリティ
+
+- **サービスアカウント JSON や ADC ファイルをリポジトリにコミットしない**。`.cursor/mcp.json` は `.gitignore` 済みのため、実パスはローカルのみに置く。
+- 権限は **読み取り**に留める（MCP サーバーは設定変更不可だが、認証スコープも readonly を守る）。
+
+### トラブルシューティング
+
+- **API not enabled**: Cloud Console で Admin API / Data API がその GCP プロジェクトで有効か確認する。
+- **Permission denied**: GA4 管理画面で当該メール／サービスアカウントにプロパティアクセスがあるか確認する。
+- 詳細は [google-analytics-mcp の Issues](https://github.com/googleanalytics/google-analytics-mcp/issues) を参照。
+
+---
+
 ## 初回手順（このリポジトリ）
 
-1. **プロジェクト**: **Marketplace で Supabase / Vercel / Context7 / Sentry を入れた場合**は、`.cursor/mcp.json` に同系統の手動エントリが残っていないか確認する（重複は削除）。手動のみの場合は `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。例には **`chrome-devtools`** と**任意の `hourei`（法令検索）**が含まれる（不要なら削除）。GitHub MCP を使う場合は [Personal Access Token](https://github.com/settings/personal-access-tokens/new) を `Authorization: Bearer …` に設定する（スコープは最小限）。**PAT はリポジトリにコミットしない。**
+1. **プロジェクト**: **Marketplace で Supabase / Vercel / Context7 / Sentry を入れた場合**は、`.cursor/mcp.json` に同系統の手動エントリが残っていないか確認する（重複は削除）。手動のみの場合は `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。例には **`chrome-devtools`**・**任意の `hourei`（法令検索）**・**任意の `google-analytics-mcp`（GA4 読み取り・pipx 要）**が含まれる（不要なら削除）。GitHub MCP を使う場合は [Personal Access Token](https://github.com/settings/personal-access-tokens/new) を `Authorization: Bearer …` に設定する（スコープは最小限）。**PAT はリポジトリにコミットしない。**
 2. **Global（任意）**: 全リポジトリ共通の MCP だけ `%USERPROFILE%\.cursor\mcp.json` に置く。GitHub を **プロジェクトの `.cursor/mcp.json` にだけ**書く場合は、Global に `github` を重複させない。
 3. Cursor を再起動する（GitHub リモート MCP は [Cursor v0.48.0+](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) 推奨）。
 4. **Settings → Tools & Integrations → MCP** で接続を確認。`chrome-devtools`・`hourei`（追加した場合）が利用可能か、Vercel は `Needs login` から OAuth で認可する。

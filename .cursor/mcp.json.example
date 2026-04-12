@@ -48,6 +48,14 @@
     "hourei": {
       "command": "cmd",
       "args": ["/c", "npx", "-y", "hourei-mcp-server"]
+    },
+    "google-analytics-mcp": {
+      "command": "cmd",
+      "args": ["/c", "pipx", "run", "analytics-mcp"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "C:/absolute/path/to/application_default_credentials.json",
+        "GOOGLE_PROJECT_ID": "YOUR_GCP_PROJECT_ID"
+      }
     }
   }
 }
