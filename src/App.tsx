@@ -39,6 +39,7 @@ const RankConfigPage = lazy(() => import('./pages/admin/RankConfigPage'));
 const XpConfigPage = lazy(() => import('./pages/admin/XpConfigPage'));
 // Rank Benefits Page
 const RankBenefitsPage = lazy(() => import('./pages/mission/components/RankBenefitsPage'));
+const SentryTestPage = lazy(() => import('./pages/debug/SentryTestPage'));
 // 必要に応じて他のページも追加
 
 // NotFoundPageの簡易実装
@@ -120,6 +121,8 @@ const App: React.FC = () => {
               {/* Admin Pages */}
               <Route path="admin/ranks" element={<RankConfigPage />} />
               <Route path="admin/xp" element={<XpConfigPage />} />
+              {/* 一時: Sentry 本番検証用。確認後削除すること */}
+              <Route path="debug/sentry-test" element={<SentryTestPage />} />
             </Route>
 
             {/* Fallback */}

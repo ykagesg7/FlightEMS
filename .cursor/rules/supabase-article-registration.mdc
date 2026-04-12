@@ -13,7 +13,7 @@ alwaysApply: false
 
 ## Supabase MCP
 
-Use **Supabase MCP** (`my_supabase_project` server) when available:
+Use **Supabase MCP** when available (Cursor **Marketplace** では `plugin-supabase-supabase` 等、手動設定では `my_supabase_project` など。**Settings → MCP** の一覧で実際のサーバー名を確認すること):
 
 1. **execute_sql** tool:
    - `project_id`: `fstynltdfdetpyvbrswr` (FlightAcademy project)

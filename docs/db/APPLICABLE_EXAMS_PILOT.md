@@ -9,7 +9,7 @@
 
 ## 別環境への適用（Supabase MCP で実行する場合）
 
-**結論**: Cursor の **my_supabase_project** MCP から実行できます。対象は **`project_id` で選んだプロジェクト**だけが変わり、手順と SQL の正本は **常に `scripts/database/`** のままです。
+**結論**: Cursor の **Supabase MCP**（Marketplace では `plugin-supabase-supabase`、手動では `my_supabase_project` 等）から実行できます。対象は **`project_id` で選んだプロジェクト**だけが変わり、手順と SQL の正本は **常に `scripts/database/`** のままです。
 
 | MCP ツール | 使い分け |
 |------------|----------|

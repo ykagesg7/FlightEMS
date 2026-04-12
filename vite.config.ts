@@ -13,6 +13,15 @@ import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
 export default defineConfig(({ mode }) => {
   // 環境変数をロード - VITE_ プレフィックスなしでも読み込めるように空文字を指定
   const env = loadEnv(mode, process.cwd(), '');
+  /** Vercel 等は `.env` ではなく process.env に渡すため、ファイルとマージして参照する */
+  const getEnv = (name: string): string =>
+    String(env[name] ?? process.env[name] ?? '').trim();
+
+  // Vercel Marketplace / Sentry 連携は NEXT_PUBLIC_SENTRY_DSN を注入する。ローカルは VITE_SENTRY_DSN を推奨
+  const sentryClientDsn = getEnv('VITE_SENTRY_DSN') || getEnv('NEXT_PUBLIC_SENTRY_DSN');
+  const sentryAuthToken = getEnv('SENTRY_AUTH_TOKEN');
+  const sentryOrg = getEnv('SENTRY_ORG');
+  const sentryProject = getEnv('SENTRY_PROJECT');
 
   // API_KEYが設定されているかチェック
   const weatherApiKey = env.VITE_WEATHER_API_KEY || '';
@@ -69,11 +78,13 @@ export default defineConfig(({ mode }) => {
         brotliSize: true,
       }),
       // Sentry ソースマップアップロード（本番ビルド + 認証トークンがある場合のみ）
-      mode === 'production' && env.SENTRY_AUTH_TOKEN && sentryVitePlugin({
-        org: env.SENTRY_ORG,
-        project: env.SENTRY_PROJECT,
-        authToken: env.SENTRY_AUTH_TOKEN,
-      }),
+      mode === 'production' &&
+        sentryAuthToken &&
+        sentryVitePlugin({
+          org: sentryOrg,
+          project: sentryProject,
+          authToken: sentryAuthToken,
+        }),
     ].filter(Boolean),
     server: {
       proxy: {
@@ -88,7 +99,7 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_WEATHER_API_KEY': JSON.stringify(weatherApiKey),
       'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
       'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
-      'import.meta.env.VITE_SENTRY_DSN': JSON.stringify(env.VITE_SENTRY_DSN || ''),
+      'import.meta.env.VITE_SENTRY_DSN': JSON.stringify(sentryClientDsn),
       'import.meta.env.VITE_VERCEL_DEV_API_ORIGIN': JSON.stringify(vercelDevApiOrigin),
     },
     build: {

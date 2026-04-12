@@ -1,8 +1,8 @@
 # リリース前チェック（MCP / 手動）
 
-本番またはステージングに出す前に、以下を **状況に応じて** 実施する。Cursor の MCP サーバー名はプロジェクト設定に合わせて読み替える。
+本番またはステージングに出す前に、以下を **状況に応じて** 実施する。Cursor の MCP サーバー名は **Settings → MCP** の表示に合わせて読み替える（例: Marketplace の **`plugin-supabase-supabase`**、手動の **`my_supabase_project`**）。
 
-## 1. Supabase（`my_supabase_project`）
+## 1. Supabase（`plugin-supabase-supabase` または `my_supabase_project` 等）
 
 | 手順 | 内容 |
 |------|------|
@@ -23,7 +23,7 @@ FROM learning_test_mapping
 ORDER BY learning_content_id;
 ```
 
-## 2. Vercel（`vercel`）
+## 2. Vercel（`plugin-vercel-vercel` または手動 `vercel` URL）
 
 | 手順 | 内容 |
 |------|------|

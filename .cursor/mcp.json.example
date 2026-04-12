@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "my_supabase_project": {
-      "command": "npx",
-      "args": ["-y", "@supabase/mcp-server-supabase"],
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@supabase/mcp-server-supabase"],
       "env": {
         "SUPABASE_ACCESS_TOKEN": "YOUR_SUPABASE_ACCESS_TOKEN",
         "SUPABASE_PROJECT_ID": "YOUR_SUPABASE_PROJECT_REF"
@@ -31,23 +31,23 @@
       }
     },
     "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"]
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@upstash/context7-mcp"]
     },
     "playwright": {
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"]
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@playwright/mcp@latest"]
     },
     "vercel": {
       "url": "https://mcp.vercel.com/YOUR_TEAM_ID_OR_SLUG/YOUR_PROJECT_SLUG"
     },
     "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "chrome-devtools-mcp@latest"]
     },
     "hourei": {
-      "command": "npx",
-      "args": ["-y", "hourei-mcp-server"]
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "hourei-mcp-server"]
     }
   }
 }
