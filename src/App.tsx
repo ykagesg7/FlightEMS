@@ -9,6 +9,7 @@ import { ProgressProvider } from './contexts/ProgressContext';
 import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
 
 // Enhanced Error Boundary and Layout
+import { GoogleAnalyticsTracker } from './components/GoogleAnalyticsTracker';
 import ScrollManager from './components/ScrollManager';
 import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 import { MarketingLayout } from './layouts/MarketingLayout';
@@ -88,6 +89,9 @@ const App: React.FC = () => {
   return (
     <Router>
       <AppProviders>
+        {import.meta.env.PROD && import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ? (
+          <GoogleAnalyticsTracker />
+        ) : null}
         <ScrollManager />
         <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
           <Routes>
