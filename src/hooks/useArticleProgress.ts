@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ArticleMeta } from '../types/articles';
+import type { ArticleMeta } from '../types/articles';
 import { buildArticleIndex } from '../utils/articlesIndex';
 import { supabase } from '../utils/supabase';
 import { useAuth } from './useAuth';
@@ -127,6 +127,106 @@ const DEMO_PROGRESS: Record<string, ArticleProgress> = {
   }
 };
 
+/** 統計集計（`useArticleProgress` から利用・ユニットテスト対象） */
+export function calculateLearningStats(
+  progress: Record<string, ArticleProgress>,
+  articleIndex: Record<string, ArticleMeta>,
+  articleIndexByFilename: Record<string, ArticleMeta>,
+  userProfile?: { current_streak_days?: number },
+  gamificationProfile?: { completed_missions?: Array<{ mission_id: string }>; rank?: string } | null,
+  rankProgressValue?: number
+): LearningStats {
+  const articles = Object.values(articleIndex);
+  const progressList = Object.values(progress);
+
+  const categoriesProgress: Record<string, { read: number; total: number; percentage: number }> = {};
+  const seriesProgress: Record<string, { read: number; total: number; percentage: number }> = {};
+
+  articles.forEach(article => {
+    const category = article.tags[0] || 'その他';
+    if (!categoriesProgress[category]) {
+      categoriesProgress[category] = { read: 0, total: 0, percentage: 0 };
+    }
+    categoriesProgress[category].total++;
+
+    if (article.series) {
+      if (!seriesProgress[article.series]) {
+        seriesProgress[article.series] = { read: 0, total: 0, percentage: 0 };
+      }
+      seriesProgress[article.series].total++;
+    }
+  });
+
+  progressList.forEach(prog => {
+    const article = articleIndex[prog.articleSlug] || articleIndexByFilename[prog.articleSlug];
+    if (!article) return;
+
+    const category = article.tags[0] || 'その他';
+    if (categoriesProgress[category] && prog.completed) {
+      categoriesProgress[category].read++;
+    }
+
+    if (article.series && seriesProgress[article.series] && prog.completed) {
+      seriesProgress[article.series].read++;
+    }
+  });
+
+  Object.keys(categoriesProgress).forEach(category => {
+    const cat = categoriesProgress[category];
+    cat.percentage = cat.total > 0 ? Math.round((cat.read / cat.total) * 100) : 0;
+  });
+
+  Object.keys(seriesProgress).forEach(series => {
+    const ser = seriesProgress[series];
+    ser.percentage = ser.total > 0 ? Math.round((ser.read / ser.total) * 100) : 0;
+  });
+
+  const completedArticles = progressList.filter(p => p.completed).length;
+
+  const ratingsWithValue = progressList.filter(p => p.rating && p.rating > 0);
+  const averageRating = ratingsWithValue.length > 0
+    ? ratingsWithValue.reduce((sum, p) => sum + (p.rating || 0), 0) / ratingsWithValue.length
+    : 0;
+
+  const streakDays = userProfile?.current_streak_days || 0;
+  const completedMissions = gamificationProfile?.completed_missions?.length || 0;
+  const rankProgress = rankProgressValue !== undefined ? rankProgressValue : 0;
+  const currentRank = gamificationProfile?.rank || null;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayCompletedArticles = progressList.filter(p => {
+    const readDate = new Date(p.readAt);
+    readDate.setHours(0, 0, 0, 0);
+    return p.completed && readDate.getTime() === today.getTime();
+  }).length;
+
+  return {
+    totalArticles: articles.length,
+    readArticles: progressList.length,
+    completedArticles,
+    streakDays,
+    averageRating,
+    completedMissions,
+    rankProgress,
+    currentRank,
+    categoriesProgress,
+    seriesProgress,
+    recentActivity: progressList
+      .sort((a, b) => b.readAt.getTime() - a.readAt.getTime())
+      .slice(0, 10),
+    favoriteCategories: Object.entries(categoriesProgress)
+      .sort(([, a], [, b]) => b.percentage - a.percentage)
+      .slice(0, 3)
+      .map(([category]) => category),
+    readingGoals: {
+      daily: 2,
+      weekly: 10,
+      achieved: todayCompletedArticles >= 2
+    }
+  };
+}
+
 export const useArticleProgress = () => {
   const { user } = useAuth();
   const { completeMissionByAction, profile, rankProgress: gamificationRankProgress } = useGamification();
@@ -160,114 +260,20 @@ export const useArticleProgress = () => {
     loadArticleIndex();
   }, []);
 
-  // 統計の計算
   const calculateStats = useCallback((
     progress: Record<string, ArticleProgress>,
     userProfile?: { current_streak_days?: number },
     gamificationProfile?: { completed_missions?: Array<{ mission_id: string }>; rank?: string } | null,
     rankProgressValue?: number
-  ): LearningStats => {
-    const articles = Object.values(articleIndex);
-    const progressList = Object.values(progress);
-
-    // カテゴリー別進捗
-    const categoriesProgress: Record<string, { read: number; total: number; percentage: number }> = {};
-    const seriesProgress: Record<string, { read: number; total: number; percentage: number }> = {};
-
-    // 全記事をカテゴリー・シリーズ別に分類
-    articles.forEach(article => {
-      // タグを疑似カテゴリーとして使用
-      const category = article.tags[0] || 'その他';
-      if (!categoriesProgress[category]) {
-        categoriesProgress[category] = { read: 0, total: 0, percentage: 0 };
-      }
-      categoriesProgress[category].total++;
-
-      // シリーズ進捗
-      if (article.series) {
-        if (!seriesProgress[article.series]) {
-          seriesProgress[article.series] = { read: 0, total: 0, percentage: 0 };
-        }
-        seriesProgress[article.series].total++;
-      }
-    });
-
-    // 読了記事をカウント
-    progressList.forEach(prog => {
-      // articleSlugはcontent_id（filename）の可能性があるため、両方を試す
-      const article = articleIndex[prog.articleSlug] || articleIndexByFilename[prog.articleSlug];
-      if (!article) return;
-
-      const category = article.tags[0] || 'その他';
-      if (categoriesProgress[category] && prog.completed) {
-        categoriesProgress[category].read++;
-      }
-
-      if (article.series && seriesProgress[article.series] && prog.completed) {
-        seriesProgress[article.series].read++;
-      }
-    });
-
-    // パーセンテージ計算
-    Object.keys(categoriesProgress).forEach(category => {
-      const cat = categoriesProgress[category];
-      cat.percentage = cat.total > 0 ? Math.round((cat.read / cat.total) * 100) : 0;
-    });
-
-    Object.keys(seriesProgress).forEach(series => {
-      const ser = seriesProgress[series];
-      ser.percentage = ser.total > 0 ? Math.round((ser.read / ser.total) * 100) : 0;
-    });
-
-    const completedArticles = progressList.filter(p => p.completed).length;
-
-    const ratingsWithValue = progressList.filter(p => p.rating && p.rating > 0);
-    const averageRating = ratingsWithValue.length > 0
-      ? ratingsWithValue.reduce((sum, p) => sum + (p.rating || 0), 0) / ratingsWithValue.length
-      : 0;
-
-    // 連続日数: user_learning_profilesから取得（後方互換性のため残す）
-    const streakDays = userProfile?.current_streak_days || 0;
-
-    // XPシステムからデータを取得
-    const completedMissions = gamificationProfile?.completed_missions?.length || 0;
-    const rankProgress = rankProgressValue !== undefined ? rankProgressValue : 0;
-    const currentRank = gamificationProfile?.rank || null;
-
-    // 今日の完了記事数を計算（日付ベース）
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayCompletedArticles = progressList.filter(p => {
-      const readDate = new Date(p.readAt);
-      readDate.setHours(0, 0, 0, 0);
-      return p.completed && readDate.getTime() === today.getTime();
-    }).length;
-
-    return {
-      totalArticles: articles.length,
-      readArticles: progressList.length,
-      completedArticles,
-      streakDays,
-      averageRating,
-      completedMissions,
-      rankProgress,
-      currentRank,
-      categoriesProgress,
-      seriesProgress,
-      recentActivity: progressList
-        .sort((a, b) => b.readAt.getTime() - a.readAt.getTime())
-        .slice(0, 10),
-      favoriteCategories: Object.entries(categoriesProgress)
-        .sort(([, a], [, b]) => b.percentage - a.percentage)
-        .slice(0, 3)
-        .map(([category]) => category),
-      readingGoals: {
-        daily: 2,
-        weekly: 10,
-        achieved: todayCompletedArticles >= 2 // 今日の完了記事数で判定
-      }
-    };
-  }, [articleIndex, articleIndexByFilename]);
+  ): LearningStats =>
+    calculateLearningStats(
+      progress,
+      articleIndex,
+      articleIndexByFilename,
+      userProfile,
+      gamificationProfile,
+      rankProgressValue
+    ), [articleIndex, articleIndexByFilename]);
 
   // 初期データ読み込み
   useEffect(() => {
