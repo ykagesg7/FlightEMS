@@ -25,7 +25,7 @@ const ArticleDetailPage: React.FC = () => {
     deleteComment
   } = useArticleStats();
 
-  const [articleMetas, setArticleMetas] = useState<Record<string, ArticleMeta>>({});
+  const [, setArticleMetas] = useState<Record<string, ArticleMeta>>({});
   const [isLoadingMetas, setIsLoadingMetas] = useState(true);
 
   useEffect(() => {

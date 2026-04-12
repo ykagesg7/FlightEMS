@@ -7,7 +7,7 @@ import supabase from '../utils/supabase'
 export type Profile = Database['public']['Tables']['profiles']['Row']
 export type AuthErrorResult = AuthError | Error | null
 
-interface AuthState {
+export interface AuthState {
   user: User | null
   profile: Profile | null
   session: Session | null

@@ -2,10 +2,33 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import AuthPage from '@/pages/auth/AuthPage';
+import type { AuthState } from '@/stores/authStore';
 import * as authStore from '@/stores/authStore';
 
-// Zustandストアのモック
 vi.mock('@/stores/authStore');
+
+function createAuthState(overrides: Partial<AuthState> = {}): AuthState {
+  return {
+    user: null,
+    profile: null,
+    session: null,
+    loading: false,
+    initialized: true,
+    setUser: vi.fn(),
+    setProfile: vi.fn(),
+    setSession: vi.fn(),
+    setLoading: vi.fn(),
+    signIn: vi.fn(),
+    signUp: vi.fn(),
+    signOut: vi.fn(),
+    resetPassword: vi.fn(),
+    refreshSession: vi.fn(),
+    updateProfile: vi.fn(),
+    fetchProfile: vi.fn(),
+    createProfile: vi.fn(),
+    ...overrides,
+  };
+}
 
 describe('AuthPage', () => {
   beforeEach(() => {
@@ -14,19 +37,13 @@ describe('AuthPage', () => {
 
   it('ログインフォームのバリデーションとsignIn呼び出し', async () => {
     const signIn = vi.fn().mockResolvedValue({ error: null });
-    (authStore.useAuthStore as any).mockImplementation((selector: any) => selector({
-      user: null,
-      session: null,
-      loading: false,
-      signIn,
-      signUp: vi.fn(),
-      resetPassword: vi.fn(),
-      setLoading: vi.fn(),
-    }));
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState({ signIn })),
+    );
     render(
       <BrowserRouter>
         <AuthPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'password123' } });
@@ -38,19 +55,13 @@ describe('AuthPage', () => {
 
   it('新規登録フォームのバリデーションとsignUp呼び出し', async () => {
     const signUp = vi.fn().mockResolvedValue({ error: null, emailConfirmRequired: false });
-    (authStore.useAuthStore as any).mockImplementation((selector: any) => selector({
-      user: null,
-      session: null,
-      loading: false,
-      signIn: vi.fn(),
-      signUp,
-      resetPassword: vi.fn(),
-      setLoading: vi.fn(),
-    }));
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState({ signUp })),
+    );
     render(
       <BrowserRouter>
         <AuthPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     fireEvent.click(screen.getByText('登録'));
     fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'new@example.com' } });
@@ -65,19 +76,13 @@ describe('AuthPage', () => {
 
   it('パスワードリセットフォームのバリデーションとresetPassword呼び出し', async () => {
     const resetPassword = vi.fn().mockResolvedValue({ error: null });
-    (authStore.useAuthStore as any).mockImplementation((selector: any) => selector({
-      user: null,
-      session: null,
-      loading: false,
-      signIn: vi.fn(),
-      signUp: vi.fn(),
-      resetPassword,
-      setLoading: vi.fn(),
-    }));
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState({ resetPassword })),
+    );
     render(
       <BrowserRouter>
         <AuthPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     fireEvent.click(screen.getByText('パスワードを忘れた場合'));
     fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'reset@example.com' } });
