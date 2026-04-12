@@ -7,6 +7,8 @@
     "dev": "vite",
     "dev:full": "cross-env VITE_VERCEL_DEV_API_ORIGIN=http://localhost:3000 vercel dev --yes",
     "dev:weather": "tsx scripts/dev-weather-server.ts",
+    "sync:public-docs": "node scripts/sync-public-docs.mjs",
+    "prebuild": "npm run sync:public-docs",
     "build": "vite build",
     "build:prod": "vite build --mode production",
     "vercel-build": "vite build --mode production",

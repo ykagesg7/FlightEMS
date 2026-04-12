@@ -57,4 +57,4 @@
 
 ## 静的配信（Web アプリ）
 
-本番・開発サーバーでは `public/docs/` に同内容および関連ファイル（`06`・`08`・`10` 等）が置かれ、`/docs/09_CPL_Learning_Stub.md` からブラウザで閲覧できます。編集の正本はリポジトリの `docs/` です。`public/docs/` のコピーは関連リンクが切れないよう、ドキュメント更新時に同期してください。
+本番・開発サーバーでは `public/docs/` に同内容および関連ファイル（`06`・`08`・`10`・`14` 等）が置かれ、`/docs/09_CPL_Learning_Stub.md` からブラウザで閲覧できます。編集の正本は常に `docs/` です。`public/docs/` は **`npm run sync:public-docs`**（または `npm run build` の `prebuild`）で上書き同期してください。

@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年4月12日（記事 MDX の表示・アフィ枠・データ連携文言の整理）
-**バージョン**: Documentation Index v4.14
+**最終更新**: 2026年4月12日（KPI ドキュメント整合・Plausible オプション）
+**バージョン**: Documentation Index v4.16
 
 ---
 
@@ -11,16 +11,18 @@
 
 ### 更新履歴（抜粋・2026-03-30）
 
+- **2026-04-12 KPI・計測**: [00](00_Flight_Academy_Strategy.md) **v1.2.1**（CPL を「スタブ配置」と「深文化・マッピング」に分解、MDX 66 件を反映）。[03](03_計画改善ロードマップ.md) **v4.0.1**（4月末チェックポイント・5〜7月橋渡し、Plausible 手順）。[14](14_記事単元網羅とバックログ.md) を MCP 再取得（マッピング 42 記事等）。[06](06_記事作成ロードマップ.md) の気象 3.3 注記を実態に合わせ更新。**Plausible**: 本番かつ `VITE_PLAUSIBLE_DOMAIN` 設定時のみ `src/lib/plausible.ts` から読み込み（`.env.example` 参照）。
+- **2026-04-12 戦略・ロードマップ**: [00](00_Flight_Academy_Strategy.md) **v1.2 独立運営**（パートナーシップ柱・案A/B 廃止）、**CPL 学科最優先**・PPL/CPL 記事分離と相互リンク方針、クイズの **PPL/CPL 範囲フィルタ維持**。[03](03_計画改善ロードマップ.md) **v4.0**（Phase B〜D を CPL 記事主軸 KPI に再定義、Phase E からパートナー交渉を削除）。プロジェクト用 Markdown の正本は **`docs/`**（`public/docs/` は `npm run sync:public-docs` で同期。詳細は [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)）。
 - **2026-04-12 記事 MDX UX**: `MDXContent` に **`prose-invert`**（ダーク地での `code` 可読性）、記事カラムの **`min-w-0` / `overflow-x-auto`** で flex 下の幅潰れを防止。`Callout` 内も `prose-invert`。レッスン MDX の **「データ連携」**は学習者向け文言に統一（`unified_cpl_questions` 等の内部名は本文から除去）。**アフィリエイト枠**は `not-prose` ＋ **CSS Grid** ＋ `break-normal` でレイアウト崩れ（縦一文字折り返し）を修正。詳細は [05](05_設計仕様書.md)・[07](07_コンポーネント構造ガイド.md)、テンプレ [templates/CPL_Lesson_Stub_Template.mdx](templates/CPL_Lesson_Stub_Template.mdx)。
 - **2026-04-11 記事ロック廃止**: シリーズ順次アンロックを撤去し全記事を常時閲覧可能に。未ログイン向け登録 CTA を `ReviewContentLink` 先頭に追加。E2E は通常 `build` + `preview`。仕様は [05](05_設計仕様書.md)・[01](01_プロジェクト概要ガイド.md)・[08](08_Syllabus_Management_Guide.md)。
-- **2026-04-11 航空法規 3.1.x MDX**: 根拠（航空法・施行規則等＋e-Gov）の Callout、フィクション明示、飲酒トーン注記、関連リンクを `/articles/{ファイル名}` に統一。`meta.series` を `CPL-Aviation-Legal`（`order` 1〜8）に分離。`learning_contents` 用 [20260411_learning_contents_cpl_aviation_legal_order.sql](scripts/database/20260411_learning_contents_cpl_aviation_legal_order.sql)。[08](08_Syllabus_Management_Guide.md)・[09](09_CPL_Learning_Stub.md) と `public/docs/` ミラーを更新。
+- **2026-04-11 航空法規 3.1.x MDX**: 根拠（航空法・施行規則等＋e-Gov）の Callout、フィクション明示、飲酒トーン注記、関連リンクを `/articles/{ファイル名}` に統一。`meta.series` を `CPL-Aviation-Legal`（`order` 1〜8）に分離。`learning_contents` 用 [20260411_learning_contents_cpl_aviation_legal_order.sql](scripts/database/20260411_learning_contents_cpl_aviation_legal_order.sql)。[08](08_Syllabus_Management_Guide.md)・[09](09_CPL_Learning_Stub.md) と `npm run sync:public-docs`（`public/docs/`）を更新。
 - **2026-04-11 Supabase DB スリム化（追記）**: `fan_photos` / `gallery_events` / `products` / `purchase_history` 等を削除。`check_rank_requirements` 更新。`migration_log` 削除。`/gallery` ルートはホームへリダイレクト。
 - **2026-04-11 Supabase DB スリム化**: 未使用の分析系・旧 `cpl_exam_questions` / `user_progress` 等を `scripts/database/20260411_drop_legacy_*.sql` で削除。`src/types/database.types.ts` を現行スキーマに同期。詳細は [05_設計仕様書.md](05_設計仕様書.md)「DB スリム化」。
 - **2026-04-11 Cursor MCP（hourei）**: 航空法規 MDX 執筆向けに **法令検索 MCP**（`hourei-mcp-server` / e-Gov）を [13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md) と `.cursor/mcp.json.example` に追加。`.cursor/rules/mdx-article-guide.mdc` に根拠条文・hourei 利用の節を追加。
 - **2026-04-05 学習記事ハブ**: SKY NOTES / `narrator` MDX 廃止。記事詳細に **関連テスト**（`RelatedTestsBlock`）、テスト結果から記事へ **「単元記事を読む」** で統一。詳細は [05_設計仕様書.md](05_設計仕様書.md) と変更履歴（2026年4月5日）。
 - **CPL 学科 MDX**: 航空法規 `3.1.2` / `3.1.3` を本文化（相互の前後記事リンクを整合）。`3.1.4`・航空工学 `3.2.1`〜`3.2.6`・科目ハブ（気象・航法・通信）・`engineering_basics` / `weather_basics` に、執筆スコープと `unified_cpl_questions` / `learning_test_mapping` との対応を明記。
 - **クイズ誤答→記事**: `ReviewContentLink` がマッピング行を **セッション設問 UUID との重なり件数**でソート（多い順、最大 5 件）。法規 `3.1.2` は `sub_subject` クラスタ単位の冪等更新 SQL（`scripts/database/20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`）。四分位からの移行方針は [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)。
-- **ドキュメント索引**: [09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md) を新設。記事内から `/docs/*.md` で参照できるよう **`public/docs/`** に 09 およびリンク先の 06・08・10 をミラー（正本は `docs/`。更新時は `public/docs/` へ同期すること。[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) 参照）。
+- **ドキュメント索引**: [09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md) を新設。記事内から `/docs/*.md` で参照するファイルは **`npm run sync:public-docs`** で `docs/` から `public/docs/` へ同期（正本は常に `docs/`）。[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) 参照。
 
 ---
 
@@ -33,20 +35,19 @@
 - **タイプ**: フルスタックWebアプリケーション（React + TypeScript + Supabase）
 - **目的**: 独立した航空学習プラットフォーム — 学習コンテンツ、実用ツール、コミュニティを提供
 - **コンセプト**: "Learn, Plan, Fly" — 航空知識を学び、フライトプランを作り、仲間として飛び立つ
-- **戦略**: ハイブリッド戦略 — コア機能は独立運営、パートナーシップ（Whisky Papa等）は将来オプション
-- **価値・運営（要約）**: 事業用操縦士**学科**の自学効率化を価値の柱の一つとし、個人開発の持続可能性（固定費を賄うキャッシュフロー・再投資）と表現上の境界は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) **§2・§3**、CPL 着手の**案A/案B**は [03_計画改善ロードマップ.md](03_計画改善ロードマップ.md) を正とする。
+- **戦略**: **完全独立運営** — 外部パートナー承認に依存しない。詳細は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)（**3本柱**: Content / Tools / Community）
+- **価値・運営（要約）**: **CPL 学科**受験者をコンテンツの主軸とし、**CPL 記事を最優先**で執筆。**PPL 記事**は別記事として継続し、CPL 記事から**リンクで基礎復習**可能にする。クイズは **PPL のみ / CPL 範囲**の選択を維持。個人開発の持続可能性・表現上の境界は [00](00_Flight_Academy_Strategy.md) **§2・§3**。**Phase・KPI の数値正本**は [03_計画改善ロードマップ.md](03_計画改善ロードマップ.md) v4.0.1（コンテンツ進捗の補助指標は [14_記事単元網羅とバックログ.md](14_記事単元網羅とバックログ.md)）。
 
 ### コア機能
 1. **学習コンテンツ管理**: MDXベースの記事システム（PPL/CPL統合）、進捗管理（ログインで永続化）、推奨読み順用 `meta.series` / `order`、KaTeX数式記法サポート
-2. **テスト・クイズシステム**: CPL試験問題、SRS（間隔反復学習）、進捗追跡
+2. **テスト・クイズシステム**: CPL 試験問題ベースの出題、**試験範囲フィルタ（PPL のみ等）**、SRS（間隔反復学習）、進捗追跡
 3. **フライトプランニング**: インタラクティブ地図、気象データ（METAR/TAF）、経路計画
 4. **ゲーミフィケーション**: 統合ランクシステム（Fan → PPL中間ランク → PPL → Wingman → CPL → Ace → Master → Legend）、XP、ミッション、ストリーク、達成通知
 5. **コミュニティ**: ギャラリー（航空写真投稿）、コメント
 
-### パートナーシップ機能（将来オプション — パートナー確定時に有効化）
-- **ショップ**: ランク連動型物販（Whisky Papaパートナーシップ時）
-- **体験搭乗**: 予約機能（パートナーシップ時）
-- **チーム紹介**: パイロット紹介セクション（パートナーシップ時）
+### レガシー・非表示ルート（戦略ロードマップ外）
+
+`/shop`・`/experience`・About 内のコメントアウト箇所などは**過去 UI の名残**。リダイレクトまたは非表示で維持。詳細は [00](00_Flight_Academy_Strategy.md) §6。
 
 ### 技術スタック（2026年2月現在）
 
@@ -100,7 +101,7 @@
 - ✅ Gallery（イベント管理、いいね機能、承認制）
 - ✅ ランクシステム統合（PPL中間ランク + XPベースランク）
 - ✅ 経験値（XP）システム（記事読了時のXP付与、カテゴリ別設定）
-- ✅ エンゲージメント追跡（ストリーク、達成、購買履歴）
+- ✅ エンゲージメント追跡（ストリーク、達成）
 - ✅ 管理者ページ（ランク条件・XP設定編集）
 - ✅ デュアルテーマ、MarketingLayout統合、リポジトリ整理
 - ✅ 進捗管理（セクションベース）、進捗可視化、学習ダッシュボード（XP 相対位置 RPC・任意参加ランキングは [05](05_設計仕様書.md) ダッシュボード節）
@@ -108,21 +109,19 @@
 - ✅ 記事システム（MDX、全記事閲覧可、テスト結果からの推奨記事＋ゲスト向け登録 CTA、KaTeX、コメント）
 - ✅ CI/CD（GitHub Actions: test、verify-build）
 
-### 📝 今後の開発（ハイブリッド戦略ロードマップに基づく）
+### 📝 今後の開発（[03_計画改善ロードマップ.md](03_計画改善ロードマップ.md) v4.0）
 
-現在は **Phase A: 基盤安定化** に位置。詳細は [03_計画改善ロードマップ.md](03_計画改善ロードマップ.md) を参照。
+**直近のフォーカス**: **CPL 記事 Phase 1（19本）の執筆**、テストカバレッジの段階的上げ、PPL 記事の継続（二次・リンク先整備）。
 
-**直近のフォーカス**: PPL 記事の量産・品質、テストカバレッジの段階的上げ。パートナーシップ依存機能（Shop / 体験搭乗等）は **Phase E** まで明示的に後回し（[00](00_Flight_Academy_Strategy.md) 参照）。
-
-- ⏳ PPL記事: 17/150（11.3%）— 50%を2026年末目標
-- ⏳ テストカバレッジ: 4.85% — 50%を2026年末目標
+- ⏳ **CPL 記事**: Phase 1 **0/19** — Phase B 末 **5/19 以上**、Phase C 末 **10/19 以上**、Phase D 末 **19/19** を目標
+- ⏳ **PPL 記事**: 17/150（11.3%）— 二次 KPI（2026年末 50% は [03](03_計画改善ロードマップ.md) 参照）
+- ⏳ テストカバレッジ: 目標 30%（Phase B）→ 50%（Phase D）。**実測は `npm run test:coverage` と [vitest.config.ts](../vitest.config.ts) を正とする**
 - ✅ エラー監視: Sentry 導入済み（DSN設定で有効化）
 - ⏳ アクセス解析の導入（Phase B）
-- ⏳ Flight Academyブランド移行（Phase C: 2026年6月〜）
+- ⏳ Flight Academy ブランド移行（Phase C: 2026年6月〜）
 - ⏸️ ランキング機能（Phase D）
-- ⏸️ LMS目標設定・弱点分析（Phase D）
-- ⏸️ PWA最適化（Phase C）
-- ⏸️ パートナーシップ機能: Shop/Experience/チーム紹介（Phase E: パートナー確定時）
+- ⏸️ LMS 目標設定・弱点分析（Phase D / E）
+- ⏸️ PWA 最適化（Phase C）
 
 ---
 
@@ -205,7 +204,7 @@ npm run lint         # Lintチェック
 ### 🎯 AIアシスタント向け推奨読み順
 
 1. **このREADME.md** - プロジェクトの全体像を把握
-2. **[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)** - プロジェクトの戦略（ハイブリッド戦略、4本柱、パートナーシップモデル）
+2. **[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)** - プロジェクトの戦略（独立運営、CPL 主軸、PPL/CPL 記事の棲み分け、3本柱）
 3. **[03_計画改善ロードマップ.md](03_計画改善ロードマップ.md)** - Phase A-Eの実行計画とKPI
 4. **[01_プロジェクト概要ガイド.md](01_プロジェクト概要ガイド.md)** - 機能一覧と技術スタック詳細
 5. **[02_技術開発ガイド.md](02_技術開発ガイド.md)** - 開発環境、コーディング規約、実装詳細
@@ -220,8 +219,8 @@ npm run lint         # Lintチェック
 - **[06_記事作成ロードマップ.md](06_記事作成ロードマップ.md)** - MDX記事の作成計画とガイドライン
 - **[07_PPL_Master_Syllabus.md](07_PPL_Master_Syllabus.md)** - PPL学科試験対策記事のMaster Syllabus
 - **[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)** - PPL/CPL統合Syllabus管理ガイド（**分類ツリーの正本は CPL クラスタ**、**問題–記事連携**・`learning_test_mapping` テンプレは同文書内。記事 ID 対照は [11](11_ドキュメント整合性検討.md) §2.4。PPL 工学マッピング投入例: `scripts/database/20260329_learning_test_mapping_incremental_ppl_clusters.sql`。**気象・航法・通信の科目ハブと CPL 系 `learning_contents` 補完**: `scripts/database/20260330_learning_test_mapping_cpl_clusters_by_subject.sql`）
-- **[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)** - CPL-Learning-Stub シリーズの索引・クイズ連携の要約（Web からは `/docs/09_CPL_Learning_Stub.md`。`public/docs/` にミラーし MDX からリンク可能）
-- **[14_記事単元網羅とバックログ.md](14_記事単元網羅とバックログ.md)** - verified クラスタ数・マッピング済み記事・リポジトリ MDX 突合・未マッピング優先度（`public/docs/` にミラー推奨）
+- **[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)** - CPL-Learning-Stub シリーズの索引・クイズ連携の要約（Web からは `/docs/09_CPL_Learning_Stub.md`。`sync:public-docs` 対象）
+- **[14_記事単元網羅とバックログ.md](14_記事単元網羅とバックログ.md)** - verified クラスタ数・マッピング済み記事・リポジトリ MDX 突合・未マッピング優先度（`sync:public-docs` 対象）
 - **[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)** - 航空工学（AD）科目別ロードマップ
 - **[11_ドキュメント整合性検討.md](11_ドキュメント整合性検討.md)** - 06/07/08/10 の役割と相互参照方針
 - **[13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md)** - Cursor MCP・Serena・コミットメッセージ関連リンク
@@ -233,7 +232,7 @@ npm run lint         # Lintチェック
 
 ### コーディング規約
 1. **型安全性**: `any`型の使用を避ける（型エラーは修正必須）
-2. **コンポーネント配置**: ハイブリッド方式に従う（共通 vs ページ固有）
+2. **コンポーネント配置**: [07](07_コンポーネント構造ガイド.md) の「共通 vs ページ固有」に従う
 3. **UI/UX変更**: 事前承認必須（ルールに明記）
 4. **パッケージバージョン**: 明示的な承認なしに変更禁止
 5. **機密情報**: `.env.local`に保存、コードに直接記述禁止
@@ -304,7 +303,7 @@ npm run lint         # Lintチェック
   - ソースマップアップロード対応（CI/CD用）
   - `.env.example` テンプレート追加
 - ✅ **A-5: 外部依存機能の正式分類**
-  - Shop（リダイレクト済）、Experience（Coming Soon UI）、パイロット紹介（コメントアウト）をパートナーシップ待ちとして正式記録
+  - Shop（リダイレクト済）、Experience（Coming Soon UI）、パイロット紹介（コメントアウト）を**レガシー**として記録（後に [00](00_Flight_Academy_Strategy.md) §6 で戦略ロードマップ外と明文化）
 - ✅ **環境変数ファイル整理**
   - `.env.example` を UTF-8 で全変数テンプレートに修正
   - `.env.local` のセクション再構成（クライアント側 / ツール用 / 将来用）
@@ -316,13 +315,9 @@ npm run lint         # Lintチェック
   - Cursor ルール `mdx-article-guide.mdc`（記事作成ガイドライン）を新規追加
   - Cursor ルール `git-conventions.mdc`（英語コミットメッセージ必須）を新規追加
 
-### ハイブリッド戦略への転換（2026年2月7日）
-- ✅ **Flight Academy として独立路線に転換**: Whisky Papaファンサイトから独立した航空学習プラットフォームへ
-  - 外部承認に依存する機能（Shop、Experience、パイロット紹介）をパートナーシップ待ちに分類
-  - コア機能（学習コンテンツ、ツール、ゲーミフィケーション）は独立して推進
-  - コンセプト: "Wingman Program" → "Learn, Plan, Fly"
-- ✅ **戦略ドキュメント刷新**: `00_Flight_Academy_Strategy.md`、`03_計画改善ロードマップ.md` を全面書き換え
-- ✅ **Phase A-E の新ロードマップ策定**: 現実的なKPIと期限を設定
+### 独立プラットフォームへの転換（2026年2月7日〜）
+- ✅ **2026-02**: Flight Academy としての独立路線（学習コンテンツ・ツール・ゲーミフィケーションを自前で推進）。コンセプト "Learn, Plan, Fly"。Shop / Experience 等はレガシー扱いへ。
+- ✅ **2026-04**: [00](00_Flight_Academy_Strategy.md) **v1.2** — **完全独立運営**（パートナーシップを戦略から除外）、**3本柱**、**CPL 記事最優先**・PPL/CPL 記事の分離と相互リンク。[03](03_計画改善ロードマップ.md) **v4.0**（CPL 主軸 KPI）。
 
 ### ACC Sector / RAPCON ポップアップ追加（2026年2月1日）
 - ✅ 空域クリック時の詳細表示（周波数・高度範囲のポップアップ）
@@ -362,7 +357,7 @@ npm run lint         # Lintチェック
 1. **型安全性**: TypeScriptの型エラーは必ず修正
 2. **テスト**: 新機能追加時はテストを追加
 3. **Lint**: `npm run lint`で確認
-4. **コンポーネント配置**: ハイブリッド方式に従う
+4. **コンポーネント配置**: [07](07_コンポーネント構造ガイド.md) の方針に従う
 5. **ドキュメント更新**: 重要な変更はドキュメントも更新
 
 ---
@@ -375,7 +370,7 @@ npm run lint         # Lintチェック
 - **手動更新**: `npm run docs:update`
 - **品質チェック**: `npm run docs:validate`
 
-詳細は `scripts/docs-auto-update/README.md` を参照してください。
+詳細は [docs/scripts/Docs_Auto_Update.md](scripts/Docs_Auto_Update.md) を参照（旧 `scripts/docs-auto-update/README.md` から集約）。
 
 ---
 

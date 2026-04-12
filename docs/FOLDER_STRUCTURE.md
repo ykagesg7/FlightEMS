@@ -1,7 +1,7 @@
 # プロジェクトフォルダ構造ガイド
 
-**最終更新**: 2026年3月（api: swim-notam-search）
-**バージョン**: Folder Structure Guide v1.3
+**最終更新**: 2026年4月12日（sync:public-docs、docs/scripts 集約）
+**バージョン**: Folder Structure Guide v1.4
 
 **責務**: repo 全体のフォルダ概要。プロジェクトのクイックリファレンスと AI 向け索引は [docs/README.md](README.md)。`src/` の詳細は [07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md) を参照。
 
@@ -71,8 +71,12 @@
 - **詳細**: [docs/07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md)を参照
 
 #### `docs/`
-- **目的**: プロジェクトドキュメント
+- **目的**: プロジェクトドキュメントの**正本**（仕様・戦略・運用）
 - **詳細**: [docs/README.md](README.md)を参照
+
+##### `docs/scripts/`
+- **目的**: `scripts/` 配下のツールに対応する**人向けドキュメント**（CPL CSV 取込仕様、Git エンコーディング補足、docs-auto-update 索引）
+- **索引**: [docs/scripts/README.md](scripts/README.md)
 
 ##### `docs/SWIM_Portal/`
 - **目的**: 国土交通省航空局 **SWIM**・**デジタルノータムリクエストサービス**の仕様・手続きの参照用 Markdown（共通編、付録 04、サービス説明書、ユーザーズガイド、情報サービス概要）
@@ -80,15 +84,16 @@
 - **注意**: `PDF/` 配下の原本 PDF は `.gitignore`（`**/*.pdf`）によりコミット対象外。正本は公式資料に従うこと
 
 #### `scripts/`
-- **目的**: 開発・運用スクリプト
+- **目的**: 開発・運用スクリプト（説明の正本は [docs/scripts/README.md](scripts/README.md)）
 - **内容**:
   - `database/`: マイグレーション（例: `20260309_bootstrap_user_learning_profiles.sql`）、記事登録、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`（気象・航法・通信の科目ハブ＋`learning_contents` オーファン修復）、`20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`（法規 `3.1.2` を `sub_subject` クラスタへ差し替え）、`20260410_cpl_stub_lessons_contents_and_mapping.sql`（docs/06 Phase1+2 スタブ記事の `learning_contents` + `learning_test_mapping`）
-  - `cpl_exam/`: CPL 問題 CSV 取込、`CPL_CSV_IMPORT_SPEC.md` 参照
-  - `docs-auto-update/`: ドキュメント自動更新
+  - `cpl_exam/`: CPL 問題 CSV 取込。仕様の正本は **[docs/scripts/CPL_CSV_IMPORT_SPEC.md](scripts/CPL_CSV_IMPORT_SPEC.md)**
+  - `docs-auto-update/`: ドキュメント自動更新（説明は [docs/scripts/Docs_Auto_Update.md](scripts/Docs_Auto_Update.md)）
+  - `sync-public-docs.mjs`: `docs/` から `public/docs/` へのホワイトリスト同期（`npm run sync:public-docs`。`prebuild` でも実行）
 
 #### `public/`
 - **目的**: 静的ファイル（画像、GeoJSONなど）
-- **`public/docs/`**: `docs/` の一部をミラー（例: `09_CPL_Learning_Stub.md` および 09 からリンクする `06`・`08`・`10`）。MDX から `/docs/*.md` で参照しブラウザで 404 にしない。正本を更新したらコピーを同期すること。
+- **`public/docs/`**: **`docs/` のコピー（手編集しない）**。`npm run sync:public-docs` で `06`・`08`・`09`・`10`・`14` 等を上書き。MDX から `/docs/*.md` で配信。
 - **注意**: 一部の大きなファイルは`.gitignore`で除外されています
 
 ---

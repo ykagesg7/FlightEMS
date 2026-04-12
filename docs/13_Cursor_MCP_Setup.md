@@ -151,4 +151,4 @@ Cursor が `child_process.spawn` で `npx` を起動すると、Windows では *
 
 ## コミットメッセージ（英語）
 
-プロジェクト規約ではコミットタイトルは **英語のみ**（Windows 文字化け対策）。詳細は [`.cursor/rules/git-conventions.mdc`](../.cursor/rules/git-conventions.mdc) と [scripts/README-git-commit.md](../scripts/README-git-commit.md) を参照。
+プロジェクト規約ではコミットタイトルは **英語のみ**（Windows 文字化け対策）。詳細は [`.cursor/rules/git-conventions.mdc`](../.cursor/rules/git-conventions.mdc) と [docs/scripts/Git_Commit_Encoding.md](scripts/Git_Commit_Encoding.md) を参照。

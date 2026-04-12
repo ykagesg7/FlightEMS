@@ -77,7 +77,7 @@ cp docs/templates/PPL_Article_Template.mdx src/content/lessons/PPL-1-1-1_Aerodyn
 title: "{記事タイトル}"
 slug: "ppl-{subject}-{section}-{topic}-{title-slug}"
 date: "{YYYY-MM-DD}"
-author: "Whisky Papa"
+author: "Flight Academy"
 tags: ["PPL", "学科試験", "{科目名}", "{トピック名}"]
 series: "PPL-Master-Syllabus"
 order: {順序番号}
@@ -100,7 +100,7 @@ type: "lesson"
 #### オプションフィールド
 
 - **date**: 作成日（YYYY-MM-DD形式）
-- **author**: 著者名（デフォルト: `'Whisky Papa'`）
+- **author**: 著者名（デフォルト: `'Flight Academy'`）
 - **readingTime**: 読了時間（分、目安: 10-20分）
 - **excerpt**: 記事の要約（100-200文字）
 - **publishedAt**: 公開日（YYYY-MM-DD形式、未公開の場合は省略）
@@ -112,7 +112,7 @@ type: "lesson"
 title: "航空力学の基礎理論"
 slug: "ppl-1-1-1-aerodynamics-basics"
 date: "2025-01-15"
-author: "Whisky Papa"
+author: "Flight Academy"
 tags: ["PPL", "学科試験", "航空工学", "航空力学", "ベルヌーイの定理"]
 series: "PPL-Master-Syllabus"
 order: 1

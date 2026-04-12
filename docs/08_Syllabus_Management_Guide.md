@@ -107,7 +107,7 @@ order: 1
 readingTime: 15
 excerpt: "飛行機が飛ぶ仕組みを理解するための基礎理論を解説します。"
 publishedAt: "2025-01-XX"
-author: "Whisky Papa"
+author: "Flight Academy"
 type: "lesson"
 ---
 ```

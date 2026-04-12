@@ -7,6 +7,10 @@ interface ImportMetaEnv {
   readonly VITE_WEATHER_API_KEY: string;
   readonly VITE_SUPABASE_URL: string;
   readonly VITE_SUPABASE_ANON_KEY: string;
+  /** 本番ビルド時のみ使用。未設定なら Sentry は無効 */
+  readonly VITE_SENTRY_DSN?: string;
+  /** Plausible のサイト設定（例: flightacademy.example）。未設定なら送信しない */
+  readonly VITE_PLAUSIBLE_DOMAIN?: string;
   readonly VITE_APP_ENV: 'development' | 'production';
   readonly GOOGLE_GEMINI_API_KEY: string;
   readonly GOOGLE_CLOUD_VISION_API_KEY: string;
