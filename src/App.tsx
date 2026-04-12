@@ -21,11 +21,8 @@ const MissionDashboard = lazy(() => {
     throw err;
   });
 });
-// Shop / Gallery: DB テーブル削除済み（復活時はマイグレーションとルートを再導入）
 const Schedule = lazy(() => import('./pages/schedule/Schedule'));
 const Links = lazy(() => import('./pages/links/Links'));
-// Blog and Experience are now integrated into Mission
-
 // App Pages (lazy)
 const HomePage = lazy(() => import('./pages/dashboard/HomePage'));
 const PlanningMapPage = lazy(() => import('./pages/planning/PlanningMapPage'));
@@ -100,8 +97,6 @@ const App: React.FC = () => {
               <Route path="/" element={<HomePage />} />
               <Route path="about" element={<About />} />
               <Route path="mission" element={<MissionDashboard />} />
-              <Route path="shop" element={<Navigate to="/" replace />} />
-              <Route path="gallery" element={<Navigate to="/" replace />} />
               <Route path="schedule" element={<Schedule />} />
               <Route path="links" element={<Links />} />
               <Route path="auth" element={<AuthPage />} />
@@ -109,7 +104,6 @@ const App: React.FC = () => {
               {/* Legacy /blog URLs: always drop path slug and send users to the article hub */}
               <Route path="blog" element={<Navigate to="/articles" replace />} />
               <Route path="blog/:slug" element={<Navigate to="/articles" replace />} />
-              <Route path="experience" element={<Navigate to="/mission" replace />} />
               {/* Flight Academy Tools */}
               <Route path="dashboard" element={<Navigate to="/" replace />} />
               <Route path="planning" element={<PlanningMapPage />} />

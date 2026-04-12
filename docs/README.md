@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年4月12日（GA4 MCP 手順・将来保留バックログ）
-**バージョン**: Documentation Index v4.19
+**最終更新**: 2026年4月13日（Post-Phase-B DB・[14](14_記事単元網羅とバックログ.md) 同期・カバレッジ記録）
+**バージョン**: Documentation Index v4.21
 
 ---
 
@@ -11,6 +11,8 @@
 
 ### 更新履歴（抜粋・2026-03-30）
 
+- **2026-04-13 Post-Phase-B**: Supabase MCP で PPL 3 本の `learning_contents` と `3.4.5`/`3.4.6`/`3.5.5` の `learning_test_mapping` を本番投入。[14](14_記事単元網羅とバックログ.md) §1 を実測同期（`learning_contents` **90**・マッピング **50**）。GA4 本番確認は [04](04_運用保守ガイド.md) のログ表（人手）。`useArticleProgress` は `calculateLearningStats` 抽出＋テスト、[03](03_計画改善ロードマップ.md) にカバレッジ実測を追記。
+- **2026-04-12 Phase B 一括（CPL 19/19・PPL 20 本・DB SQL）**: [db/CPL_Phase1_KPI_Tracker.md](db/CPL_Phase1_KPI_Tracker.md) **本文化 19/19**。[14](14_記事単元網羅とバックログ.md) に `3.4.1`〜`3.4.3` マッピング SQL 追記。PPL は [07](07_PPL_Master_Syllabus.md) 進捗 **20/150**（記事 3 本追加）。**2026-04-12 CPL KPI トラッカー・レガシー撤去**（旧 12/19 記録）・[03](03_計画改善ロードマップ.md) v4.0.7。旧 `/shop` 等レガシー撤去は [00](00_Flight_Academy_Strategy.md) §6。
 - **2026-04-12 Supabase（航空工学 3.2.1〜4）**: `learning_contents` の title / description と `learning_test_mapping.content_title` を MDX `meta` に一致。冪等 SQL: [scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql](scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql)。手順は [.cursor/rules/supabase-article-registration.mdc](../.cursor/rules/supabase-article-registration.mdc)。
 - **2026-04-12 航空工学 MDX 3.2.1〜4**: 3.1.x に合わせてフィクション注記、`/articles/{contentId}` 関連リンク、アフィ枠（`not-prose`＋Grid）、まとめの次話リンクを統一。`meta.series` を **`CPL-Aeronautical-Engineering`**（`order` 1〜4）に分離。[09](09_CPL_Learning_Stub.md)・[08](08_Syllabus_Management_Guide.md) を追随。`public/docs/` は `npm run sync:public-docs`。
 - **2026-04-12 MCP / Sentry**: [13_Cursor_MCP_Setup.md](13_Cursor_MCP_Setup.md) に **Marketplace の `plugin-*` と手動 `mcp.json` の関係**を追記。`.cursor/mcp.json.example` の **Windows `cmd` ラップ**を統一。Supabase 記事登録ルール・[MCP_RELEASE_CHECKLIST](ops/MCP_RELEASE_CHECKLIST.md)・[APPLICABLE_EXAMS_PILOT](db/APPLICABLE_EXAMS_PILOT.md) のサーバー名を Marketplace 対応。Sentry 本番検証手順は [04](04_運用保守ガイド.md)。
@@ -52,11 +54,11 @@
 2. **テスト・クイズシステム**: CPL 試験問題ベースの出題、**試験範囲フィルタ（PPL のみ等）**、SRS（間隔反復学習）、進捗追跡
 3. **フライトプランニング**: インタラクティブ地図、気象データ（METAR/TAF）、経路計画
 4. **ゲーミフィケーション**: 統合ランクシステム（Fan → PPL中間ランク → PPL → Wingman → CPL → Ace → Master → Legend）、XP、ミッション、ストリーク、達成通知
-5. **コミュニティ**: ギャラリー（航空写真投稿）、コメント
+5. **コミュニティ**: 記事コメント、外部ギャラリー等へのリンク（アプリ内ギャラリー・Shop は撤去済み）
 
-### レガシー・非表示ルート（戦略ロードマップ外）
+### 撤去済みレガシー（戦略ロードマップ外）
 
-`/shop`・`/experience`・About 内のコメントアウト箇所などは**過去 UI の名残**。リダイレクトまたは非表示で維持。詳細は [00](00_Flight_Academy_Strategy.md) §6。
+旧 **Shop / アプリ内ギャラリー / 体験搭乗** ルートとミッション UI、About のコメントアウト紹介ブロックは **2026-04-12 削除**。詳細は [00](00_Flight_Academy_Strategy.md) §6。
 
 ### 技術スタック（2026年2月現在）
 
@@ -71,7 +73,7 @@
 - **Vercel**: デプロイメント、Serverless Functions（APIプロキシ）
 
 #### テスト・CI/CD
-- **Vitest**: テストフレームワーク（109テスト、`planDocument` / `flightTime` 等を含む）
+- **Vitest**: テストフレームワーク（137 テスト前後、`planDocument` / `flightTime` 等を含む）
 - **Testing Library**: Reactコンポーネントテスト
 - **GitHub Actions**: CI/CDパイプライン（Lint、テスト、ビルド、カバレッジ）
 
@@ -99,15 +101,15 @@
 
 ---
 
-## 📊 現在の実装状況（2026年2月）
+## 📊 現在の実装状況（2026年4月）
 
-**KPI・Phase 表の単一ソース**: 優先度・未完了項目の詳細は **[03_計画改善ロードマップ.md](03_計画改善ロードマップ.md)** を正とする。以下は要約（数値は 03・シラバスと同期）。
+**KPI・Phase 表の単一ソース**: 優先度・未完了項目の詳細は **[03_計画改善ロードマップ.md](03_計画改善ロードマップ.md)** を正とする。CPL Phase 1 の **本文化 x/19** の正本は **[db/CPL_Phase1_KPI_Tracker.md](db/CPL_Phase1_KPI_Tracker.md)**。
 
 ### ✅ 完了済み機能
 
 - ✅ レイアウト基盤（MarketingLayout、AppLayout）。MarketingLayout: ヘッダー `NavLink` アクティブ表示・ロゴコントラスト・モバイルフォーカス管理・`UserMenu` をパネルトークンに統一、`/profile?tab=` 連携（2026-03）
 - ✅ ゲーミフィケーション（統合ランクシステム、XP、ミッション、ストリーク、達成通知）
-- ✅ Gallery（イベント管理、いいね機能、承認制）
+- ~~Gallery~~ — **2026年4月撤去**（DB・ルート削除。外部ギャラリーのみリンク）
 - ✅ ランクシステム統合（PPL中間ランク + XPベースランク）
 - ✅ 経験値（XP）システム（記事読了時のXP付与、カテゴリ別設定）
 - ✅ エンゲージメント追跡（ストリーク、達成）
@@ -122,8 +124,8 @@
 
 **直近のフォーカス**: **CPL 記事 Phase 1（19本）の執筆**、テストカバレッジの段階的上げ、PPL 記事の継続（二次・リンク先整備）。
 
-- ⏳ **CPL 記事**: Phase 1 **0/19** — Phase B 末 **5/19 以上**、Phase C 末 **10/19 以上**、Phase D 末 **19/19** を目標
-- ⏳ **PPL 記事**: 17/150（11.3%）— 二次 KPI（2026年末 50% は [03](03_計画改善ロードマップ.md) 参照）
+- ✅ **CPL 記事**: Phase 1 **本文化 19/19**（正本 [db/CPL_Phase1_KPI_Tracker.md](db/CPL_Phase1_KPI_Tracker.md)）。Phase C 以降は Phase 2 拡張・マッピング精緻化
+- ⏳ **PPL 記事**: 20/150（13.3%）— 二次 KPI（2026年末 50% は [03](03_計画改善ロードマップ.md) 参照）
 - ⏳ テストカバレッジ: 目標 30%（Phase B）→ 50%（Phase D）。**実測は `npm run test:coverage` と [vitest.config.ts](../vitest.config.ts) を正とする**
 - ✅ エラー監視: Sentry 導入済み（DSN設定で有効化）
 - ⏳ アクセス解析の導入（Phase B）
@@ -392,20 +394,15 @@ npm run lint         # Lintチェック
 
 ---
 
-## 📊 プロジェクト統計（2026年2月）
+## 📊 プロジェクト統計（2026年4月）
 
-- **テストファイル**: 10ファイル、103テストケース（カバレッジ: 4.85% → 目標50%）
-- **ソースファイル**: 155+（.tsx: 112、.ts: 76）
-- **コンポーネント**: 34（共通）+ 84（ページ）= 118
-- **カスタムフック**: 14ファイル
-- **ユーティリティ**: 21ファイル
-- **記事数**: 49記事（MDX形式、PPL記事17件含む）— PPL目標: 150記事
-- **データベーステーブル**: 20+ テーブル
-- **CI/CD**: GitHub Actions（2ワークフロー）
-- **現在のPhase**: Phase A（基盤安定化）
+- **テスト**: 20 ファイル・137 テスト前後（カバレッジ目標は [03](03_計画改善ロードマップ.md)・`vitest.config.ts`）
+- **記事 MDX**: `src/content/lessons` 66 ファイル前後（PPL 17 本・CPL スタブ含む）
+- **CPL Phase 1 KPI**: 本文化 **19/19**（[db/CPL_Phase1_KPI_Tracker.md](db/CPL_Phase1_KPI_Tracker.md)）
+- **現在の Phase**: **Phase B**（2026年4〜5月 — [03](03_計画改善ロードマップ.md)）
 
 ---
 
-**最終更新**: 2026年4月11日（ギャラリー・ショップ系削除）  
-**バージョン**: Documentation Index v4.13  
+**最終更新**: 2026年4月12日（CPL KPI トラッカー・レガシー UI 撤去）  
+**バージョン**: Documentation Index v4.20  
 **管理者**: Flight Academy 開発チーム
