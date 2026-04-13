@@ -56,36 +56,36 @@ export async function dispatchSwimNotamSearch(
   const swimQuery = parseSwimNotamSearchQuery(query);
   const result = await searchSwimDigitalNotam(swimQuery);
 
-  if (!result.ok) {
-    const status =
-      result.httpStatus === 401
-        ? 401
-        : result.httpStatus === 403
-          ? 403
-          : result.error.includes('タイムアウト')
-            ? 504
-            : 502;
+  if (result.ok === true) {
     return {
-      status,
+      status: 200,
+      cacheControl: 'private, no-store',
       body: {
-        ok: false,
-        error: result.error,
+        ok: true,
+        current: result.current,
+        future: result.future,
         swimErrorCode: result.swimErrorCode,
+        totalCount: result.totalCount,
+        disclaimer:
+          '参考情報です。実際の航行には公式のノータム類を必ず確認してください。',
       },
     };
   }
 
+  const status =
+    result.httpStatus === 401
+      ? 401
+      : result.httpStatus === 403
+        ? 403
+        : result.error.includes('タイムアウト')
+          ? 504
+          : 502;
   return {
-    status: 200,
-    cacheControl: 'private, no-store',
+    status,
     body: {
-      ok: true,
-      current: result.current,
-      future: result.future,
+      ok: false,
+      error: result.error,
       swimErrorCode: result.swimErrorCode,
-      totalCount: result.totalCount,
-      disclaimer:
-        '参考情報です。実際の航行には公式のノータム類を必ず確認してください。',
     },
   };
 }
