@@ -28,6 +28,8 @@ type FilterSortOrder = 'priority' | 'syllabus';
 
 const ALL_OPTION_VALUE = 'all';
 const PLACEHOLDER_SUBJECT = '__placeholder__';
+/** サブ科目「すべて」時の安定参照（useEffect 依存で毎回新しい [] にならないようにする） */
+const EMPTY_SUB_SUBJECT_RAW_VALUES: string[] = [];
 const MAIN_SUBJECT_ORDER_INDEX = buildOrderIndex(MAIN_SUBJECT_ORDER);
 const SUB_SUBJECT_ORDER_INDEX_BY_MAIN = Object.fromEntries(
   Object.entries(SUB_SUBJECT_ORDER_BY_MAIN).map(([mainSubject, labels]) => [mainSubject, buildOrderIndex(labels)]),
@@ -285,8 +287,8 @@ const TestPage: React.FC = () => {
   }, [selectedSubject, examLevel]);
 
   const selectedSubSubjectRawValues = useMemo(() => {
-    if (selectedSubSubject === ALL_OPTION_VALUE) return [] as string[];
-    return subSubjects.find((option) => option.value === selectedSubSubject)?.rawValues ?? [];
+    if (selectedSubSubject === ALL_OPTION_VALUE) return EMPTY_SUB_SUBJECT_RAW_VALUES;
+    return subSubjects.find((option) => option.value === selectedSubSubject)?.rawValues ?? EMPTY_SUB_SUBJECT_RAW_VALUES;
   }, [selectedSubSubject, subSubjects]);
 
   const orderedSubjects = useMemo(() => {
