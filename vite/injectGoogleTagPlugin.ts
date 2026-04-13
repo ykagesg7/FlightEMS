@@ -1,4 +1,4 @@
-import type { Plugin } from 'vite';
+import type { HtmlTagDescriptor, Plugin } from 'vite';
 
 const GTAG_JS = 'https://www.googletagmanager.com/gtag/js';
 
@@ -19,34 +19,45 @@ function resolveGaMeasurementId(configTimeValue: string): string {
 }
 
 /**
- * GA4 公式手順どおり、本番ビルドの index.html の <head> 直後に gtag を挿入する。
- * SPA 向けに send_page_view: false とし、初回・遷移とも GoogleAnalyticsTracker が page_view を送る。
+ * GA4: Vite の公式 `tags` / `head-prepend` で挿入する（文字列 replace は後段の HTML 処理で失うことがある）。
+ * SPA 向け send_page_view: false + GoogleAnalyticsTracker で page_view。
  */
 export function injectGoogleTagPlugin(measurementId: string, production: boolean): Plugin {
   return {
     name: 'inject-google-tag',
-    transformIndexHtml(html) {
-      if (!production) return html;
-      const raw = resolveGaMeasurementId(measurementId);
-      const id = sanitizeGaMeasurementId(raw);
-      if (!id) {
-        if (raw) {
-          console.warn(
-            '[vite] GA measurement id is set but invalid (expected G-XXXXXXXXXX). GA4 snippet not injected.',
-          );
+    transformIndexHtml: {
+      order: 'post',
+      handler(html) {
+        if (!production) return html;
+        const raw = resolveGaMeasurementId(measurementId);
+        const id = sanitizeGaMeasurementId(raw);
+        if (!id) {
+          if (raw) {
+            console.warn(
+              '[vite] GA measurement id is set but invalid (expected G-XXXXXXXXXX). GA4 snippet not injected.',
+            );
+          }
+          return html;
         }
-        return html;
-      }
-      const snippet = `
-    <!-- Google tag (gtag.js): injected after <head> on production build when VITE_GA_MEASUREMENT_ID is set -->
-    <script async src="${GTAG_JS}?id=${id}"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '${id}', { send_page_view: false });
-    </script>`;
-      return html.replace('<head>', `<head>${snippet}`);
+
+        const tags: HtmlTagDescriptor[] = [
+          {
+            tag: 'script',
+            attrs: { async: true, src: `${GTAG_JS}?id=${id}` },
+            injectTo: 'head-prepend',
+          },
+          {
+            tag: 'script',
+            children: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${id}', { send_page_view: false });`,
+            injectTo: 'head-prepend',
+          },
+        ];
+
+        return { html, tags };
+      },
     },
   };
 }
