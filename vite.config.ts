@@ -10,6 +10,9 @@ import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
 import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
 import { injectGoogleTagPlugin } from './vite/injectGoogleTagPlugin';
 
+/** flight-lms Vercel Production 用 GA4 ストリーム（公開 ID）。環境変数が空でも本番デプロイでタグを挿す */
+const GA4_MEASUREMENT_ID_VERCEL_PRODUCTION_FALLBACK = 'G-22VFYSM69J';
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // 環境変数をロード - VITE_ プレフィックスなしでも読み込めるように空文字を指定
@@ -28,7 +31,16 @@ export default defineConfig(({ mode }) => {
     const fromProcess =
       String(process.env.VITE_GA_MEASUREMENT_ID ?? process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? '').trim();
     if (fromProcess) return fromProcess;
-    return getEnv('VITE_GA_MEASUREMENT_ID') || getEnv('NEXT_PUBLIC_GA_MEASUREMENT_ID');
+    const fromFile = getEnv('VITE_GA_MEASUREMENT_ID') || getEnv('NEXT_PUBLIC_GA_MEASUREMENT_ID');
+    if (fromFile) return fromFile;
+    if (
+      mode === 'production' &&
+      process.env.VERCEL === '1' &&
+      process.env.VERCEL_ENV === 'production'
+    ) {
+      return GA4_MEASUREMENT_ID_VERCEL_PRODUCTION_FALLBACK;
+    }
+    return '';
   })();
 
   // API_KEYが設定されているかチェック
@@ -66,7 +78,17 @@ export default defineConfig(({ mode }) => {
 
   if (mode === 'production') {
     if (gaMeasurementId) {
-      console.log('[vite] GA4: injecting gtag.js into index.html (<head>)');
+      const usedFallback =
+        gaMeasurementId === GA4_MEASUREMENT_ID_VERCEL_PRODUCTION_FALLBACK &&
+        !String(process.env.VITE_GA_MEASUREMENT_ID ?? '').trim() &&
+        !String(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? '').trim() &&
+        !getEnv('VITE_GA_MEASUREMENT_ID') &&
+        !getEnv('NEXT_PUBLIC_GA_MEASUREMENT_ID');
+      console.log(
+        usedFallback
+          ? '[vite] GA4: injecting gtag.js (Vercel Production fallback ID; set VITE_GA_MEASUREMENT_ID to override)'
+          : '[vite] GA4: injecting gtag.js into index.html (<head>)',
+      );
     } else {
       console.warn(
         '[vite] GA4: VITE_GA_MEASUREMENT_ID (or NEXT_PUBLIC_GA_MEASUREMENT_ID) not set at build time — index.html will have no gtag. Set the var on Vercel for Production and redeploy.',
