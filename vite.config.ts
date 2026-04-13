@@ -8,6 +8,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
 import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
+import { injectGoogleTagPlugin } from './vite/injectGoogleTagPlugin';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -22,8 +23,13 @@ export default defineConfig(({ mode }) => {
   const sentryAuthToken = getEnv('SENTRY_AUTH_TOKEN');
   const sentryOrg = getEnv('SENTRY_ORG');
   const sentryProject = getEnv('SENTRY_PROJECT');
-  /** Vercel は `.env` ではなく process.env で渡すため、他の VITE_* と同様に define で確実にバンドルへ埋め込む */
-  const gaMeasurementId = getEnv('VITE_GA_MEASUREMENT_ID');
+  /** GA4: Vercel はビルド時に process.env に渡す。.env が空文字だと env[name] が process.env を潰すため process を先に見る */
+  const gaMeasurementId = (() => {
+    const fromProcess =
+      String(process.env.VITE_GA_MEASUREMENT_ID ?? process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? '').trim();
+    if (fromProcess) return fromProcess;
+    return getEnv('VITE_GA_MEASUREMENT_ID') || getEnv('NEXT_PUBLIC_GA_MEASUREMENT_ID');
+  })();
 
   // API_KEYが設定されているかチェック
   const weatherApiKey = env.VITE_WEATHER_API_KEY || '';
@@ -58,6 +64,16 @@ export default defineConfig(({ mode }) => {
     );
   }
 
+  if (mode === 'production') {
+    if (gaMeasurementId) {
+      console.log('[vite] GA4: injecting gtag.js into index.html (<head>)');
+    } else {
+      console.warn(
+        '[vite] GA4: VITE_GA_MEASUREMENT_ID (or NEXT_PUBLIC_GA_MEASUREMENT_ID) not set at build time — index.html will have no gtag. Set the var on Vercel for Production and redeploy.',
+      );
+    }
+  }
+
   return {
     plugins: [
       mode === 'development' && devOpenskyApiPlugin(),
@@ -72,6 +88,7 @@ export default defineConfig(({ mode }) => {
         remarkPlugins: [remarkMath],
         rehypePlugins: [rehypeKatex]
       }),
+      injectGoogleTagPlugin(gaMeasurementId, mode === 'production'),
       // Bundle分析プラグイン（開発時のみ）
       mode === 'development' && visualizer({
         filename: 'dist/stats.html',

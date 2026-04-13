@@ -3,13 +3,9 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import 'katex/dist/katex.min.css';
-import { initGoogleAnalytics } from './lib/googleAnalytics';
 import { useAuthStore } from './stores/authStore';
 
-const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim();
-if (import.meta.env.PROD && gaMeasurementId) {
-  initGoogleAnalytics(gaMeasurementId);
-}
+// GA4: 本番では Vite（injectGoogleTagPlugin）が index.html の <head> に gtag を挿入。ルート遷移は GoogleAnalyticsTracker。
 
 // アプリ起動時に認証状態を初期化
 useAuthStore.getState().refreshSession();
