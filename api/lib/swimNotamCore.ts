@@ -721,9 +721,10 @@ export async function searchSwimDigitalNotam(query: SwimNotamQuery): Promise<Swi
       };
     }
 
-    let loginBody: { error_info?: { error_code?: number } };
+    type SwimLoginJson = { error_info?: { error_code?: number | string } };
+    let loginBody: SwimLoginJson;
     try {
-      loginBody = JSON.parse(loginRes.text) as { error_info?: { error_code?: number } };
+      loginBody = JSON.parse(loginRes.text) as SwimLoginJson;
     } catch {
       return { ok: false, error: 'SWIM ログイン応答の解析に失敗しました' };
     }
