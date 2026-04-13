@@ -110,7 +110,7 @@ async function getPublicLeaderboard(): Promise<PublicLeaderboardEntry[] | undefi
 async function getLearningProgress(userId: string) {
   const { data: progress, error } = await supabase
     .from('learning_progress')
-    .select('completed')
+    .select('completed, progress_percentage')
     .eq('user_id', userId);
 
   if (error) {
@@ -128,7 +128,10 @@ async function getLearningProgress(userId: string) {
     return { completedCount: 0, totalCount: 0, progressPct: 0 };
   }
 
-  const completedCount = progress?.filter(p => p.completed).length || 0;
+  const completedCount =
+    progress?.filter(
+      (p) => p.completed === true || (p.progress_percentage ?? 0) >= 95,
+    ).length || 0;
   const totalCount = totalContentCount || 0;
   const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 

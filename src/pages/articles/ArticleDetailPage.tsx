@@ -8,6 +8,7 @@ import { buildArticleIndex } from '../../utils/articlesIndex';
 import { CommentSection } from './components/CommentSection';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 import { PrevNextNav } from './components/PrevNextNav';
+import { ReadingProgressBar } from './components/ReadingProgressBar';
 import { RelatedTestsBlock } from './components/RelatedTestsBlock';
 import { ScrollToButtons } from './components/ScrollToButtons';
 import { usePrevNext } from './components/usePrevNext';
@@ -98,6 +99,7 @@ const ArticleDetailPage: React.FC = () => {
           </div>
         ) : (
           <>
+            <ReadingProgressBar contentId={contentId} />
             <MDXLoader contentId={contentId} />
             <RelatedTestsBlock contentId={contentId} />
           </>

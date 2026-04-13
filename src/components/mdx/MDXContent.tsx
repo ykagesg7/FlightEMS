@@ -61,24 +61,6 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
     p: (props: ParagraphProps) => {
       // MDXでは子要素が関数コンポーネント経由で最終的に<p>になるケースがあり、
       // 事前判定が難しいため段落ラッパーは常にdivを使ってネスト警告を回避する
-      const childNodes = React.Children.toArray(props.children);
-      const hasBlockChild = childNodes.some((child) => {
-        if (React.isValidElement(child) && typeof child.type === 'string') {
-          return ['div', 'p', 'ul', 'ol', 'blockquote', 'li', 'table', 'pre'].includes(child.type);
-        }
-        return false;
-      });
-      const childTypeSummary = childNodes.slice(0, 6).map((child) => {
-        if (!React.isValidElement(child)) return typeof child;
-        if (typeof child.type === 'string') return child.type;
-        if (typeof child.type === 'function') return child.type.displayName || child.type.name || 'anonymous-fn';
-        return 'unknown';
-      });
-      // #region agent log
-      if (typeof window !== 'undefined' && window.location.pathname.toLowerCase().includes('stall-spin')) {
-        fetch('http://127.0.0.1:7242/ingest/df8c824b-ad69-49a1-bdf1-acbbc4f35ebd',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'27bb54'},body:JSON.stringify({sessionId:'27bb54',runId:'run1',hypothesisId:'H1',location:'MDXContent.tsx:p',message:'paragraph render diagnostics',data:{hasBlockChild,childTypeSummary,childCount:childNodes.length,path:window.location.pathname},timestamp:Date.now()})}).catch(()=>{});
-      }
-      // #endregion
       return <div className={`mb-5 ${textColor} leading-7 sm:leading-8 break-words text-base tracking-wide`} {...props} />;
     },
     ul: (props: ListProps) => <ul className={`list-disc pl-6 space-y-2 my-4 ${textColor}`} {...props} />,
