@@ -7,19 +7,18 @@ import MissionCard from '../../components/marketing/MissionCard';
 import { MissionRankSection } from './components/MissionRankSection';
 import { MissionTabs } from './components/MissionTabs';
 
-
 /**
  * Mission Dashboard Page
- * ランク・バッジ確認とミッション一覧、体験搭乗など。学習記事は /articles へ誘導。
+ * ランク・バッジ確認とミッション一覧。学習記事は /articles へ誘導。
  */
 const MissionDashboard: React.FC = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<'blog' | 'test' | 'planning' | 'experience'>(() => {
+  const [activeTab, setActiveTab] = useState<'blog' | 'test' | 'planning'>(() => {
     const tab = new URLSearchParams(window.location.search).get('tab');
-    if (tab === 'test' || tab === 'planning' || tab === 'experience') return tab;
-    return 'experience';
+    if (tab === 'test' || tab === 'planning') return tab;
+    return 'test';
   });
   const { profile, rankInfo, xpToNextRank, rankProgress, isLoadingProfile } = useGamification();
 
@@ -37,36 +36,37 @@ const MissionDashboard: React.FC = () => {
     }
   }, [searchParams, navigate]);
 
+  // 削除済み「体験搭乗」タブへの deep link を無害化
+  useEffect(() => {
+    if (searchParams.get('tab') === 'experience') {
+      const next = new URLSearchParams(searchParams);
+      next.delete('tab');
+      setSearchParams(next, { replace: true });
+      setActiveTab('test');
+    }
+  }, [searchParams, setSearchParams]);
+
   // クエリパラメータから初期タブを決定（blog は上でリダイレクト）
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab === 'test' || tab === 'planning' || tab === 'experience') {
+    if (tab === 'test' || tab === 'planning') {
       setActiveTab(tab);
     }
   }, [searchParams]);
 
-  // タブ変更時の処理（外部ページへのナビゲーションまたはタブ表示）
+  // タブ変更時の処理（学習・試験・計画は各専用ルートへ）
   const handleTabChange = (tab: typeof activeTab) => {
     setActiveTab(tab);
-    const next = new URLSearchParams(searchParams);
-
-    // 外部ページへのナビゲーション
     if (tab === 'blog') {
       navigate('/articles');
       return;
-    } else if (tab === 'test') {
+    }
+    if (tab === 'test') {
       navigate('/test');
       return;
-    } else if (tab === 'planning') {
-      navigate('/planning');
-      return;
     }
-
-    // 体験搭乗はタブコンテンツとして表示
-    next.set('tab', tab);
-    setSearchParams(next, { replace: true });
+    navigate('/planning');
   };
-
 
   // ユーザーがログインしていない場合はローディング表示（リダイレクト中）
   if (!user) {
@@ -256,31 +256,9 @@ const MissionDashboard: React.FC = () => {
             </div>
           )}
         </div>
-
-        {/* Tab Content - Only for experience tab */}
-        {activeTab === 'experience' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-16"
-          >
-            <div className="max-w-2xl mx-auto">
-              <h2 className="text-3xl font-bold text-whiskyPapa-yellow mb-4">体験搭乗</h2>
-              <p className="text-gray-300 text-lg mb-6">
-                体験搭乗プログラムは現在準備中です。
-                <br />
-                承認が完了次第、お知らせいたします。
-              </p>
-              <div className="inline-block px-4 py-2 bg-whiskyPapa-yellow/10 border border-whiskyPapa-yellow/30 rounded-lg">
-                <p className="text-whiskyPapa-yellow font-semibold">承認待ち</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
       </div>
     </div>
   );
 };
 
 export default MissionDashboard;
-

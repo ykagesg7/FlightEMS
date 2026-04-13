@@ -3,7 +3,7 @@
  * SupabaseMCPを活用して型安全なデータ取得を実装
  */
 
-import { createBrowserSupabaseClient } from './supabase';
+import { supabase } from './supabase';
 import type { DashboardMetrics, LearningXpBenchmark, PublicLeaderboardEntry } from '../types/dashboard';
 import type { UserRank } from '../types/gamification';
 
@@ -67,7 +67,6 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
  * 認証ユーザーの XP 相対位置（SECURITY DEFINER RPC）。未ログイン・プロフィールなしでは undefined。
  */
 async function getLearningXpBenchmark(): Promise<LearningXpBenchmark | undefined> {
-  const supabase = createBrowserSupabaseClient();
   const { data, error } = await supabase.rpc('get_learning_xp_benchmark');
   if (error) {
     console.error('XPベンチマーク取得エラー:', error);
@@ -89,7 +88,6 @@ async function getLearningXpBenchmark(): Promise<LearningXpBenchmark | undefined
 
 /** 任意参加ランキング（オプトインのみ）。 */
 async function getPublicLeaderboard(): Promise<PublicLeaderboardEntry[] | undefined> {
-  const supabase = createBrowserSupabaseClient();
   const { data, error } = await supabase.rpc('get_public_leaderboard', { p_limit: 30 });
   if (error) {
     console.error('公開ランキング取得エラー:', error);
@@ -110,8 +108,6 @@ async function getPublicLeaderboard(): Promise<PublicLeaderboardEntry[] | undefi
  * 学習進捗の集計（学習コンテンツの完了率）
  */
 async function getLearningProgress(userId: string) {
-  const supabase = createBrowserSupabaseClient();
-
   const { data: progress, error } = await supabase
     .from('learning_progress')
     .select('completed')
@@ -143,8 +139,6 @@ async function getLearningProgress(userId: string) {
  * テスト結果の集計（模試正答率）
  */
 async function getTestResults(userId: string) {
-  const supabase = createBrowserSupabaseClient();
-
   const { data: results, error } = await supabase
     .from('user_test_results')
     .select('is_correct, subject_category')
@@ -193,8 +187,6 @@ async function getTestResults(userId: string) {
  * 直近7日間の学習時間を計算
  */
 async function getStudyTime(userId: string) {
-  const supabase = createBrowserSupabaseClient();
-
   // 直近7日間の開始時刻
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -225,8 +217,6 @@ async function getStudyTime(userId: string) {
 async function getStreakDays(userId: string): Promise<number> {
   // TODO: user_learning_profilesテーブルのcurrent_streak_daysを使用
   // 実装は後で拡張
-  const supabase = createBrowserSupabaseClient();
-
   const { data: profile } = await supabase
     .from('user_learning_profiles')
     .select('current_streak_days')
@@ -241,8 +231,6 @@ async function getStreakDays(userId: string): Promise<number> {
  * 未完了かつ学習済みのレッスンの中で最も進捗が高いものを返す
  */
 async function getNextRecommendedLesson(userId: string) {
-  const supabase = createBrowserSupabaseClient();
-
   const { data: progress, error } = await supabase
     .from('learning_progress')
     .select('content_id, progress_percentage, completed')
@@ -277,8 +265,6 @@ async function getNextRecommendedLesson(userId: string) {
  * 弱点トピックを取得（正答率が低いもの上位3件）
  */
 async function getWeakTopics(userId: string) {
-  const supabase = createBrowserSupabaseClient();
-
   const { data: results, error } = await supabase
     .from('user_test_results')
     .select('subject_category, is_correct')

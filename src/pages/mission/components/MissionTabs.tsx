@@ -1,7 +1,7 @@
-import { BookOpen, FileText, Plane, Route } from 'lucide-react';
+import { BookOpen, FileText, Route } from 'lucide-react';
 import React from 'react';
 
-type TabType = 'blog' | 'test' | 'planning' | 'experience';
+type TabType = 'blog' | 'test' | 'planning';
 
 interface MissionTabsProps {
   activeTab: TabType;
@@ -44,18 +44,6 @@ export const MissionTabs: React.FC<MissionTabsProps> = ({ activeTab, onTabChange
         <Route className="w-5 h-5 inline-block mr-2" />
         飛行計画
       </button>
-      <button
-        onClick={() => onTabChange('experience')}
-        className={`px-6 py-3 font-medium transition-colors ${
-          activeTab === 'experience'
-            ? 'text-whiskyPapa-yellow border-b-2 border-whiskyPapa-yellow'
-            : 'text-gray-400 hover:text-white'
-        }`}
-      >
-        <Plane className="w-5 h-5 inline-block mr-2" />
-        体験搭乗
-      </button>
     </div>
   );
 };
-

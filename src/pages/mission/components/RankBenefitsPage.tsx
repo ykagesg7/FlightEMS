@@ -18,7 +18,7 @@ export const RankBenefitsPage: React.FC = () => {
     student: ['模擬試験無制限'],
     apprentice: ['フライトプラン保存上限UP'],
     pilot: ['拡張学習コンテンツ'],
-    wingman: ['体験搭乗予約権', '複数条件あり'],
+    wingman: ['上位ミッション・表示バッジ（予定）', '継続学習のマイルストーン'],
     ace: ['優先サポート'],
     master: ['メンター認定バッジ'],
     legend: ['殿堂入り', '特別イベント招待'],
@@ -109,12 +109,12 @@ export const RankBenefitsPage: React.FC = () => {
           })}
         </div>
 
-        {/* ウイングマンランクの特別条件 */}
+        {/* ウイングマンランク（目安条件・実装は rank 定義に準拠） */}
         <div className="mt-12 p-6 border-2 border-yellow-500 rounded-xl bg-yellow-900/20">
           <h2 className="text-2xl font-bold mb-4 text-yellow-400">ウイングマンランクについて</h2>
           <p className="text-gray-300 mb-4">
-            ウイングマンランクは体験搭乗予約権が付与される特別なランクです。
-            以下の条件を全て満たす必要があります：
+            ウイングマンランクは、継続的な学習と高い正答率を達成したユーザーを示すマイルストーンです。
+            以下は目安条件です（最終的な付与ロジックはランク定義・DB を正とします）：
           </p>
           <ul className="space-y-2 text-gray-300">
             <li className="flex items-start gap-2">
@@ -131,7 +131,7 @@ export const RankBenefitsPage: React.FC = () => {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-yellow-400 mt-1">•</span>
-              <span>ロイヤリティ: 購買3回以上 OR ストリーク30日以上</span>
+              <span>ロイヤリティ: ストリーク30日以上 など（購買連動は廃止）</span>
             </li>
           </ul>
         </div>

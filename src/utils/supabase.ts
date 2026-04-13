@@ -1,5 +1,4 @@
 import { createBrowserClient } from '@supabase/ssr';
-import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../types/database.types';
 
 // Supabaseの設定（環境変数から取得）
@@ -14,13 +13,11 @@ if (import.meta.env.MODE !== 'test' && (!supabaseUrl || !supabaseKey)) {
 // 環境設定
 const isDevelopment = import.meta.env.MODE === 'development';
 
-// シングルトンパターンによるクライアント管理
+// シングルトンパターンによるクライアント管理（@supabase/supabase-js の 2 本目を作らず GoTrue の多重インスタンス警告を避ける）
 let browserSupabaseClient: ReturnType<typeof createBrowserClient<Database>> | undefined;
-let adminSupabaseClient: ReturnType<typeof createClient<Database>> | undefined;
 
 // ログ制御フラグ
 const _browserClientLogged = false;
-const _adminClientLogged = false;
 
 // ブラウザ環境用のSupabaseクライアント（@supabase/ssrパッケージ使用）
 export const createBrowserSupabaseClient = () => {
@@ -43,20 +40,6 @@ export const createBrowserSupabaseClient = () => {
   return browserSupabaseClient;
 };
 
-// サーバーサイド用のSupabaseクライアント（シングルトン）
-export const getSupabaseAdmin = () => {
-  if (!adminSupabaseClient) {
-    // デバッグログを削除
-    adminSupabaseClient = createClient<Database>(supabaseUrl, supabaseKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      }
-    });
-  }
-  return adminSupabaseClient;
-};
-
 // ブラウザ用のデフォルトクライアント
 const supabase = createBrowserSupabaseClient();
 
@@ -75,7 +58,7 @@ export const bypassEmailVerification = async (email: string) => {
     console.log('開発環境: メール検証をバイパスします', { email });
 
     // メール検証リンク取得 (開発環境のみ)
-    const { data, error } = await getSupabaseAdmin().auth.admin.generateLink({
+    const { data, error } = await supabase.auth.admin.generateLink({
       type: 'magiclink',
       email: email,
     });

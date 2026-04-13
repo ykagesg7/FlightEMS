@@ -3,27 +3,26 @@
  * 弱点・復習・継続レッスンから3件を提案
  */
 
-import { createBrowserSupabaseClient } from './supabase';
+import { supabase } from './supabase';
 import type { DailyTask, TaskType } from '../types/tasks';
 
 /**
  * 今日の学習タスクを生成（最大3件）
  */
 export async function generateDailyTasks(userId: string): Promise<DailyTask[]> {
-  const supabase = createBrowserSupabaseClient();
   const tasks: DailyTask[] = [];
 
   try {
     // 1. 弱点トピック（正答率60%以下、最低5試行）
-    const weaknessTasks = await getWeaknessTasks(userId, supabase);
+    const weaknessTasks = await getWeaknessTasks(userId);
     tasks.push(...weaknessTasks);
 
     // 2. SRS復習（due状態）
-    const reviewTasks = await getReviewTasks(userId, supabase);
+    const reviewTasks = await getReviewTasks(userId);
     tasks.push(...reviewTasks);
 
     // 3. 継続レッスン（未完了の直近）
-    const continueTasks = await getContinueTasks(userId, supabase);
+    const continueTasks = await getContinueTasks(userId);
     tasks.push(...continueTasks);
 
     // 優先度でソートして上位3件を返す
@@ -39,7 +38,7 @@ export async function generateDailyTasks(userId: string): Promise<DailyTask[]> {
 /**
  * 弱点トピックからタスクを生成
  */
-async function getWeaknessTasks(userId: string, supabase: ReturnType<typeof createBrowserSupabaseClient>): Promise<DailyTask[]> {
+async function getWeaknessTasks(userId: string): Promise<DailyTask[]> {
   const { data: results, error } = await supabase
     .from('user_test_results')
     .select('subject_category, is_correct')
@@ -85,7 +84,7 @@ async function getWeaknessTasks(userId: string, supabase: ReturnType<typeof crea
 /**
  * SRS復習タスクを生成
  */
-async function getReviewTasks(userId: string, supabase: ReturnType<typeof createBrowserSupabaseClient>): Promise<DailyTask[]> {
+async function getReviewTasks(userId: string): Promise<DailyTask[]> {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -114,7 +113,7 @@ async function getReviewTasks(userId: string, supabase: ReturnType<typeof create
 /**
  * 継続レッスンタスクを生成
  */
-async function getContinueTasks(userId: string, supabase: ReturnType<typeof createBrowserSupabaseClient>): Promise<DailyTask[]> {
+async function getContinueTasks(userId: string): Promise<DailyTask[]> {
   const { data: progress, error } = await supabase
     .from('learning_progress')
     .select('content_id, progress_percentage, last_read_at')

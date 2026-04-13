@@ -3,7 +3,7 @@
  * 学習履歴カレンダー用の日別学習時間データ生成
  */
 
-import { createBrowserSupabaseClient } from './supabase';
+import { supabase } from './supabase';
 
 export interface DailyStudyStat {
   date: string; // YYYY-MM-DD形式
@@ -16,8 +16,6 @@ export interface DailyStudyStat {
  * 過去90日間の日別学習時間を集計
  */
 export async function buildDailyStudyStats(userId: string, days: number = 90): Promise<DailyStudyStat[]> {
-  const supabase = createBrowserSupabaseClient();
-
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
   startDate.setHours(0, 0, 0, 0);

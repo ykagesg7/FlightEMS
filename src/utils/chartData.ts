@@ -3,7 +3,7 @@
  * 科目別レーダーチャート用のデータ生成
  */
 
-import { createBrowserSupabaseClient } from './supabase';
+import { supabase } from './supabase';
 
 /**
  * 科目カテゴリのマッピング定義
@@ -38,8 +38,6 @@ export interface SubjectRadarData {
  * 科目別レーダーチャート用データを生成
  */
 export async function buildSubjectRadarData(userId: string): Promise<SubjectRadarData> {
-  const supabase = createBrowserSupabaseClient();
-
   const { data: results, error } = await supabase
     .from('user_test_results')
     .select('subject_category, is_correct')
