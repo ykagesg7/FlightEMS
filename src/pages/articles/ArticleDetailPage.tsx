@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import MDXLoader from '../../components/mdx/MDXLoader';
+import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
 import { useArticleStats } from '../../hooks/useArticleStats';
 import { useAuth } from '../../hooks/useAuth';
 import { ArticleMeta } from '../../types/articles';
@@ -51,7 +52,7 @@ const ArticleDetailPage: React.FC = () => {
   const { prev, next } = usePrevNext(contentId ?? '');
 
   useEffect(() => {
-    if (!contentId) return;
+    if (!contentId || isWithdrawnArticle(contentId)) return;
     loadArticleStats([contentId]);
     loadComments(contentId);
   }, [contentId, loadArticleStats, loadComments]);
@@ -86,6 +87,7 @@ const ArticleDetailPage: React.FC = () => {
   }
 
   const articleComments = comments[contentId] || [];
+  const withdrawn = isWithdrawnArticle(contentId);
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
@@ -93,7 +95,14 @@ const ArticleDetailPage: React.FC = () => {
         <div className="mb-4">
           <Link to="/articles" className="text-sm text-[color:var(--hud-primary)] underline">← 記事一覧へ</Link>
         </div>
-        {isLoadingMetas ? (
+        {withdrawn ? (
+          <div
+            className="rounded-lg border border-amber-500/40 bg-amber-950/30 px-4 py-6 text-[color:var(--text-primary)]"
+            role="status"
+          >
+            <p className="text-base leading-relaxed">{WITHDRAWN_ARTICLE_MESSAGE}</p>
+          </div>
+        ) : isLoadingMetas ? (
           <div className="flex justify-center items-center h-40">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
           </div>
@@ -105,16 +114,18 @@ const ArticleDetailPage: React.FC = () => {
           </>
         )}
 
-        <CommentSection
-          articleId={contentId}
-          comments={articleComments}
-          isLoading={isLoading}
-          currentUserId={user?.id}
-          onAddComment={handleAddComment}
-          onEditComment={handleEditComment}
-          onDeleteComment={handleDeleteComment}
-          onLoadComments={handleLoadComments}
-        />
+        {!withdrawn && (
+          <CommentSection
+            articleId={contentId}
+            comments={articleComments}
+            isLoading={isLoading}
+            currentUserId={user?.id}
+            onAddComment={handleAddComment}
+            onEditComment={handleEditComment}
+            onDeleteComment={handleDeleteComment}
+            onLoadComments={handleLoadComments}
+          />
+        )}
 
         <PrevNextNav currentId={contentId} listPath="/articles" />
       </div>

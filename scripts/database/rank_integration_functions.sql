@@ -21,7 +21,8 @@ BEGIN
     ELSE 'fan'::user_rank_type
   END;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = public;
 
 -- PPLランク取得時にprofiles.rankを更新する関数
 CREATE OR REPLACE FUNCTION update_profile_rank_for_ppl(p_user_id UUID)
@@ -87,7 +88,8 @@ BEGIN
     WHERE id = p_user_id;
   END IF;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = public;
 
 -- PPLランク取得時に自動的にprofiles.rankを更新するトリガー
 CREATE OR REPLACE FUNCTION trigger_update_profile_rank_on_ppl_rank()
@@ -96,7 +98,8 @@ BEGIN
   PERFORM update_profile_rank_for_ppl(NEW.user_id);
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = public;
 
 DROP TRIGGER IF EXISTS trigger_update_profile_rank_on_ppl_rank_insert ON user_ppl_ranks;
 CREATE TRIGGER trigger_update_profile_rank_on_ppl_rank_insert

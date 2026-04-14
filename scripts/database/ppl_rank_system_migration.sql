@@ -331,7 +331,8 @@ BEGIN
 
   RETURN;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = public;
 
 -- 6. トリガー：記事完了時に自動的にランクをチェック
 CREATE OR REPLACE FUNCTION trigger_check_ppl_ranks()
@@ -343,7 +344,8 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = public;
 
 DROP TRIGGER IF EXISTS trigger_check_ppl_ranks_on_progress ON learning_progress;
 CREATE TRIGGER trigger_check_ppl_ranks_on_progress
@@ -384,5 +386,6 @@ BEGIN
   WHERE upr.user_id = p_user_id
   ORDER BY prd.display_order, upr.earned_at;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = public;
 

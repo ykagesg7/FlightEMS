@@ -1,5 +1,6 @@
 import { MDXProvider } from '@mdx-js/react';
 import React, { useEffect, useState } from 'react';
+import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
 import type { ArticleMeta, MDXModule } from '../../types/articles';
 import { getArticleBySlug } from '../../utils/articlesIndex';
 import MDXContent from './MDXContent';
@@ -33,6 +34,14 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
 
         let module: MDXModule;
         let articleMeta: ArticleMeta | null = null;
+
+        if (!slug && isWithdrawnArticle(contentId)) {
+          setError(WITHDRAWN_ARTICLE_MESSAGE);
+          setContent(null);
+          setMeta(null);
+          setLoading(false);
+          return;
+        }
 
         // slugが指定されている場合は新しいインデックスベースのローディング
         if (slug) {

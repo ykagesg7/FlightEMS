@@ -205,7 +205,8 @@ BEGIN
 
   RETURN result;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = public;
 
 -- 4. 記事読了時のXP付与関数
 CREATE OR REPLACE FUNCTION award_article_xp(

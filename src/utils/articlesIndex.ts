@@ -1,3 +1,4 @@
+import { isWithdrawnArticle } from '../constants/withdrawnArticleIds';
 import type { ArticleIndexEntry, ArticleMeta, ArticleNavigation, ArticleSearchOptions, MDXModule } from '../types/articles';
 
 /**
@@ -70,6 +71,10 @@ export async function buildArticleIndex(): Promise<ArticleIndexEntry[]> {
         continue;
       }
       slugSet.add(slug);
+
+      if (isWithdrawnArticle(filename)) {
+        continue;
+      }
 
       // デフォルト値の設定
       const normalizedMeta: ArticleMeta = {

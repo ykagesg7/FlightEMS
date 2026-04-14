@@ -109,7 +109,8 @@ BEGIN
 
   RETURN result;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = public;
 
 DROP VIEW IF EXISTS public.fan_photo_like_counts CASCADE;
 

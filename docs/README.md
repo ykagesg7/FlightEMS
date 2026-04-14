@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年4月13日（Post-Phase-B DB・[14](14_記事単元網羅とバックログ.md) 同期・カバレッジ記録）
-**バージョン**: Documentation Index v4.21
+**最終更新**: 2026年4月14日（ブログ articles 精査・MCP 非公開 UPDATE・運用手順）
+**バージョン**: Documentation Index v4.22
 
 ---
 
@@ -11,6 +11,8 @@
 
 ### 更新履歴（抜粋・2026-03-30）
 
+- **2026-04-14 ブログ記事 28 本（articles）精査中**: アプリ [`withdrawnArticleIds`](../src/constants/withdrawnArticleIds.ts) ＋ `learning_contents.is_published`（非公開 SQL / 再公開 SQL）。本番 DB は Supabase MCP `execute_sql` で非公開 `UPDATE` 実行済み。手順は [04_運用保守ガイド.md](04_運用保守ガイド.md)「ブログ記事の精査・非公開・再公開」、[05](05_設計仕様書.md) 記事システム節。
+- **2026-04-14 Supabase セキュリティ linter**: DB 関数に `SET search_path = public`、`learning_content_likes` / `learning_content_views` の RLS を実利用に合わせて厳格化、公開バケット `fan-photos` / `post-images` の一覧用 `storage.objects` SELECT ポリシー削除（URL 直参照は維持）。冪等 SQL: [scripts/database/20260414_supabase_security_linter_fixes.sql](scripts/database/20260414_supabase_security_linter_fixes.sql)。**Auth** の漏洩パスワード検知・**Postgres マイナーアップグレード**はダッシュボード側。
 - **2026-04-13 Post-Phase-B**: Supabase MCP で PPL 3 本の `learning_contents` と `3.4.5`/`3.4.6`/`3.5.5` の `learning_test_mapping` を本番投入。[14](14_記事単元網羅とバックログ.md) §1 を実測同期（`learning_contents` **90**・マッピング **50**）。GA4 本番確認は [04](04_運用保守ガイド.md) のログ表（人手）。`useArticleProgress` は `calculateLearningStats` 抽出＋テスト、[03](03_計画改善ロードマップ.md) にカバレッジ実測を追記。
 - **2026-04-12 Phase B 一括（CPL 19/19・PPL 20 本・DB SQL）**: [db/CPL_Phase1_KPI_Tracker.md](db/CPL_Phase1_KPI_Tracker.md) **本文化 19/19**。[14](14_記事単元網羅とバックログ.md) に `3.4.1`〜`3.4.3` マッピング SQL 追記。PPL は [07](07_PPL_Master_Syllabus.md) 進捗 **20/150**（記事 3 本追加）。**2026-04-12 CPL KPI トラッカー・レガシー撤去**（旧 12/19 記録）・[03](03_計画改善ロードマップ.md) v4.0.7。旧 `/shop` 等レガシー撤去は [00](00_Flight_Academy_Strategy.md) §6。
 - **2026-04-12 Supabase（航空工学 3.2.1〜4）**: `learning_contents` の title / description と `learning_test_mapping.content_title` を MDX `meta` に一致。冪等 SQL: [scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql](scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql)。手順は [.cursor/rules/supabase-article-registration.mdc](../.cursor/rules/supabase-article-registration.mdc)。
