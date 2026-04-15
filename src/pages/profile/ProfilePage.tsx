@@ -280,6 +280,7 @@ const ProfilePage: React.FC = () => {
     { id: 'security' as const, name: 'セキュリティ', icon: '🔒' },
     { id: 'social' as const, name: 'ソーシャル', icon: '🔗' },
     { id: 'notifications' as const, name: '通知', icon: '🔔' },
+    { id: 'leaderboard' as const, name: 'ランキング', icon: '🏆' },
     { id: 'ppl-ranks' as const, name: 'PPLランク', icon: '🎖️' },
   ];
 
@@ -696,18 +697,28 @@ const ProfilePage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <LeaderboardSettings
-                  profile={profile}
-                  updateProfile={updateProfile}
-                  onError={(msg) => {
-                    setError(msg);
-                    setTimeout(() => setError(null), 5000);
-                  }}
-                  onSuccess={(msg) => {
-                    setSuccess(msg);
-                    setTimeout(() => setSuccess(null), 3000);
-                  }}
-                />
+                {profile ? (
+                  <LeaderboardSettings
+                    profile={profile}
+                    updateProfile={updateProfile}
+                    onError={(msg) => {
+                      setError(msg);
+                      setTimeout(() => setError(null), 5000);
+                    }}
+                    onSuccess={(msg) => {
+                      setSuccess(msg);
+                      setTimeout(() => setSuccess(null), 3000);
+                    }}
+                  />
+                ) : (
+                  <Card variant="brand" padding="lg">
+                    <CardContent>
+                      <Typography variant="body" color="muted">
+                        プロフィール情報を読み込み中です。しばらく待ってから再度お試しください。
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                )}
               </motion.div>
             )
           }

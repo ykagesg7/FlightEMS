@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { LearningContent } from '../types';
 import supabase from '../utils/supabase';
+import { syncStreakToUserLearningProfile } from '../utils/streak';
 
 interface LearningProgress {
   id: string;
@@ -170,6 +171,7 @@ export const useLearningProgress = () => {
           ...prev,
           [contentId]: data[0]
         }));
+        await syncStreakToUserLearningProfile(stableUser.id);
       }
     } catch (err) {
       console.error('完了マークエラー:', err);

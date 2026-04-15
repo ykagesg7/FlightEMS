@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { ArticleMeta } from '../types/articles';
 import { buildArticleIndex } from '../utils/articlesIndex';
+import { syncStreakToUserLearningProfile } from '../utils/streak';
 import { supabase } from '../utils/supabase';
 import { useAuth } from './useAuth';
 import { useGamification } from './useGamification';
@@ -378,6 +379,8 @@ export const useArticleProgress = () => {
         ...updates
       };
 
+      const wasAlreadyCompleted = existing?.completed || (existing?.scrollProgress ?? 0) >= 95;
+
       // 同一値の連続更新（スクロールイベント由来）を抑止して無限に近い再送を防ぐ
       const nextProgressRounded = Math.round(newProgress.scrollProgress);
       const prevProgressRounded = existing ? Math.round(existing.scrollProgress) : null;
@@ -435,6 +438,12 @@ export const useArticleProgress = () => {
         return;
       }
 
+      const reachedStudyMilestone =
+        (newProgress.completed || newProgress.scrollProgress >= 95) && !wasAlreadyCompleted;
+      if (reachedStudyMilestone) {
+        await syncStreakToUserLearningProfile(user.id);
+      }
+
       // ローカル状態を更新
       setUserProgress(prev => ({
         ...prev,
@@ -487,7 +496,6 @@ export const useArticleProgress = () => {
       });
 
       // 記事完了時にミッション達成をチェック（初回完了時のみ、重複呼び出しを防止）
-      const wasAlreadyCompleted = existing?.completed || (existing?.scrollProgress ?? 0) >= 95;
       if ((newProgress.scrollProgress >= 95 || newProgress.completed) && !wasAlreadyCompleted) {
         try {
           await completeMissionByAction('article_read');

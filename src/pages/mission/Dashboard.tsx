@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { LeaderboardOptInCta } from '../../components/learning/LeaderboardOptInCta';
 import { useGamification } from '../../hooks/useGamification';
 import { useAuthStore } from '../../stores/authStore';
 import MissionCard from '../../components/marketing/MissionCard';
@@ -12,7 +13,7 @@ import { MissionTabs } from './components/MissionTabs';
  * ランク・バッジ確認とミッション一覧。学習記事は /articles へ誘導。
  */
 const MissionDashboard: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user, profile: authProfile } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<'blog' | 'test' | 'planning'>(() => {
@@ -194,6 +195,16 @@ const MissionDashboard: React.FC = () => {
           xpToNextRank={xpToNextRank}
           rankProgress={rankProgress}
         />
+
+        {authProfile && authProfile.leaderboard_opt_in !== true ? (
+          <div className="max-w-3xl mx-auto mb-10 px-2">
+            <LeaderboardOptInCta
+              optedIn={authProfile.leaderboard_opt_in === true}
+              variant="inline"
+              dismissStorageKey="leaderboard_cta_dismiss_mission_v1"
+            />
+          </div>
+        ) : null}
 
         {/* Missions Section - Always visible */}
         <div className="space-y-8 mb-12">

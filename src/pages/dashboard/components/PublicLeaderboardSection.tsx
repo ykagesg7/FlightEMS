@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, Typography } from '../../../components/ui';
+import { useAuthStore } from '../../../stores/authStore';
 import { RANK_INFO } from '../../../types/gamification';
 import type { PublicLeaderboardEntry } from '../../../types/dashboard';
+
+const PROFILE_LEADERBOARD_HREF = '/profile?tab=leaderboard';
 
 interface Props {
   entries: PublicLeaderboardEntry[];
@@ -20,6 +23,10 @@ function rankLabel(tier: PublicLeaderboardEntry['rankTier']): string {
  * 任意参加の XP ランキング（オプトイン利用者のみ表示。メール等は含まない）
  */
 export const PublicLeaderboardSection: React.FC<Props> = ({ entries, borderColor }) => {
+  const profile = useAuthStore((s) => s.profile);
+  const showJoinRankingButton =
+    profile !== null && profile.leaderboard_opt_in !== true;
+
   return (
     <Card variant="hud" padding="md" className={`${borderColor} mb-8`}>
       <CardContent>
@@ -30,10 +37,26 @@ export const PublicLeaderboardSection: React.FC<Props> = ({ entries, borderColor
           プロフィールの「ランキング」タブで参加に同意した方のみが表示されます。表示名は設定したランキング用の名前、なければユーザー名が使われます。
         </Typography>
 
+        {showJoinRankingButton ? (
+          <div className="mb-4">
+            <Link
+              to={PROFILE_LEADERBOARD_HREF}
+              className={`
+                inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold
+                bg-brand-primary text-[var(--bg)] shadow-md transition-all duration-200
+                hover:bg-brand-primary-dark hover:shadow-lg
+                focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-[var(--bg)]
+              `}
+            >
+              今すぐランキングに参加する
+            </Link>
+          </div>
+        ) : null}
+
         {entries.length === 0 ? (
           <Typography variant="body" color="muted">
             まだ表示できる参加者がいません。参加は{' '}
-            <Link to="/profile?tab=leaderboard" className="text-brand-primary underline hover:no-underline">
+            <Link to={PROFILE_LEADERBOARD_HREF} className="text-brand-primary underline hover:no-underline">
               プロフィール設定
             </Link>
             からいつでもオプトインできます。

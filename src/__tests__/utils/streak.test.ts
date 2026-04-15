@@ -8,6 +8,7 @@ const mockEq = vi.fn(() => ({ single: mockSingle, select: mockSelect }));
 const mockUpdate = vi.fn(() => ({ eq: mockEq }));
 const mockInsert = vi.fn(() => ({ select: mockSelect }));
 const mockSelectChain = vi.fn(() => ({ eq: mockEq }));
+const mockUpsert = vi.fn();
 const mockFrom = vi.fn(() => ({
   select: mockSelectChain,
   insert: mockInsert,
@@ -26,6 +27,7 @@ import {
   getOrCreateStreakRecord,
   updateStreak,
   addStreakFreeze,
+  syncStreakToUserLearningProfile,
 } from '../../utils/streak';
 import type { StreakRecord } from '../../utils/streak';
 
@@ -426,6 +428,67 @@ describe('Streak Utils', () => {
       const result = await addStreakFreeze('user-1');
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe('syncStreakToUserLearningProfile', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      mockUpsert.mockResolvedValue({ error: null });
+      mockFrom.mockImplementation((table: string) => {
+        if (table === 'user_learning_profiles') {
+          return { upsert: mockUpsert };
+        }
+        return {
+          select: mockSelectChain,
+          insert: mockInsert,
+          update: mockUpdate,
+        };
+      });
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+      mockFrom.mockImplementation(() => ({
+        select: mockSelectChain,
+        insert: mockInsert,
+        update: mockUpdate,
+      }));
+    });
+
+    it('upserts user_learning_profiles after updateStreak returns a record', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-02-07T12:00:00Z'));
+      const todayRecord: StreakRecord = {
+        ...sampleRecord,
+        last_activity_date: '2026-02-07',
+        current_streak: 4,
+        longest_streak: 10,
+      };
+      mockSingle.mockResolvedValueOnce({ data: todayRecord, error: null });
+      mockEq.mockReturnValueOnce({ single: mockSingle });
+      mockSelectChain.mockReturnValueOnce({ eq: mockEq });
+
+      await syncStreakToUserLearningProfile('user-1');
+
+      expect(mockUpsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          user_id: 'user-1',
+          current_streak_days: 4,
+          longest_streak_days: 10,
+        }),
+        { onConflict: 'user_id' },
+      );
+    });
+
+    it('does not upsert when updateStreak returns null', async () => {
+      mockSingle.mockResolvedValueOnce({ data: null, error: { code: 'PGRST500', message: 'fail' } });
+      mockEq.mockReturnValueOnce({ single: mockSingle });
+      mockSelectChain.mockReturnValueOnce({ eq: mockEq });
+
+      await syncStreakToUserLearningProfile('user-1');
+
+      expect(mockUpsert).not.toHaveBeenCalled();
     });
   });
 });

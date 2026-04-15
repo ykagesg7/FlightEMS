@@ -179,6 +179,41 @@ export async function updateStreak(userId: string): Promise<StreakRecord | null>
 }
 
 /**
+ * `streak_records` を日次ロジックで更新し、学習ダッシュボードが参照する
+ * `user_learning_profiles.current_streak_days` / `longest_streak_days` に反映する。
+ * 同一日内の再呼び出しでも `updateStreak` の戻り値で upsert するため表示と整合する。
+ * 失敗時はログのみ（呼び出し側のベストエフォート用途）。
+ *
+ * 補足: 毎日「軽い閲覧のみ」で完了しない場合はストリークが伸びない設計。
+ * 呼び出しは高シグナル（記事・レッスン完了、クイズ提出など）に限定すること。
+ */
+export async function syncStreakToUserLearningProfile(userId: string): Promise<void> {
+  try {
+    const record = await updateStreak(userId);
+    if (!record) {
+      return;
+    }
+    const now = new Date().toISOString();
+    const { error } = await supabase
+      .from('user_learning_profiles')
+      .upsert(
+        {
+          user_id: userId,
+          current_streak_days: record.current_streak,
+          longest_streak_days: record.longest_streak,
+          updated_at: now,
+        },
+        { onConflict: 'user_id' },
+      );
+    if (error) {
+      console.warn('user_learning_profiles ストリーク同期スキップ:', error);
+    }
+  } catch (e) {
+    console.warn('syncStreakToUserLearningProfile エラー（無視）:', e);
+  }
+}
+
+/**
  * ストリークフリーズを追加
  * @param userId ユーザーID
  * @param count 追加するフリーズ回数

@@ -4,6 +4,7 @@ import { ArrowLeft, BookOpen } from 'lucide-react';
 import { useGamification } from '../../hooks/useGamification';
 import { QuestionType, QuizFetchParams, QuizQuestion, UserQuizAnswer } from '../../types/quiz';
 import supabase from '../../utils/supabase';
+import { syncStreakToUserLearningProfile } from '../../utils/streak';
 import { FilterListbox, type FilterListboxOption } from './components/FilterListbox';
 import { QuizComponent } from './components/QuizComponent';
 import { QuizResultsView } from './components/QuizResultsView';
@@ -11,7 +12,9 @@ import { buildOrderIndex, MAIN_SUBJECT_ORDER, SUB_SUBJECT_ORDER_BY_MAIN } from '
 import type { ExamLevelFilter } from './examLevelFilter';
 import { parseExamLevelParam } from './examLevelFilter';
 import { normalizeSubSubjectLabel } from './utils/normalizeSubSubject';
+import { LeaderboardOptInCta } from '../../components/learning/LeaderboardOptInCta';
 import { LEARNING_ARTICLES_HUB_LABEL } from '../../constants/learningArticleNav';
+import { useAuthStore } from '../../stores/authStore';
 
 type FilterOption = {
   value: string;
@@ -91,6 +94,7 @@ const mergeSelectedIntoMatches = <T extends FilterOption>(
 
 const TestPage: React.FC = () => {
   const { completeMissionByAction } = useGamification();
+  const profile = useAuthStore((s) => s.profile);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -722,6 +726,8 @@ const TestPage: React.FC = () => {
         throw resultError;
       }
 
+      await syncStreakToUserLearningProfile(user_id);
+
       // 学習時間・ヒートマップ用に learning_sessions へ記録（失敗しても致命的ではない）
       try {
         const totalResponseMs = answers.reduce(
@@ -1059,6 +1065,15 @@ const TestPage: React.FC = () => {
           contentId={contentId}
           selectedSubjectForFallback={subjectSelected ? selectedSubject : null}
         />
+        {profile && profile.leaderboard_opt_in !== true && !saveError && !saving ? (
+          <div className="mt-4 max-w-2xl mx-auto px-2">
+            <LeaderboardOptInCta
+              optedIn={profile.leaderboard_opt_in === true}
+              variant="inline"
+              dismissStorageKey="leaderboard_cta_dismiss_test_v1"
+            />
+          </div>
+        ) : null}
         </div>
       ) : questions.length === 0 ? (
         <div className="rounded-2xl border border-brand-primary/15 bg-[var(--panel)]/80 p-10 text-center shadow-lg">
