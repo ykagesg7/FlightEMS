@@ -1,6 +1,6 @@
 -- CPL 航空工学 3.2.1〜3.2.4: learning_contents の title / description を MDX meta と一致させる。
 -- learning_test_mapping.content_title も同タイトルへ揃える（ReviewContentLink 表示用）。
--- PrevNextNav の order_index 340〜343 は 20260330_learning_test_mapping_cpl_clusters_by_subject.sql と整合。
+-- PrevNextNav: 3.2.1〜4 は order_index 340〜343。3.2.5〜12 は 20260412_learning_contents_cpl_engineering_325_332_meta.sql（344〜351）。
 -- 冪等: learning_contents は ON CONFLICT (id) DO UPDATE。
 
 BEGIN;

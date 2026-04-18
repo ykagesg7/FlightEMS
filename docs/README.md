@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年4月14日（ブログ articles 精査・MCP 非公開 UPDATE・運用手順）
-**バージョン**: Documentation Index v4.22
+**最終更新**: 2026年4月18日（航空工学 3.2.x のドキュメント追記・GitHub へ同期）
+**バージョン**: Documentation Index v4.24
 
 ---
 
@@ -11,6 +11,9 @@
 
 ### 更新履歴（抜粋・2026-03-30）
 
+- **2026-04-18 航空工学記事ドキュメント**: [09](09_CPL_Learning_Stub.md) に **3.2.x 実装サマリー**（メタ・フッター・DB・比喩）を表形式で追加。[10](10_航空工学_学科試験攻略ブログ_ロードマップ.md) に CPL **3.2.1〜12** と [09] への導線を追加。[supabase-article-registration](../.cursor/rules/supabase-article-registration.mdc) に **325_332** SQL を明記。`npm run sync:public-docs`。
+- **2026-04-18 GitHub MCP / 航空工学 Supabase**: `.cursor/mcp.json` に **Fine-grained PAT** を設定したうえで、GitHub MCP の **`get_me`** により認証取得成功を確認。[13](13_Cursor_MCP_Setup.md) に動作確認手順を追記。航空工学 **3.2.1〜3.2.12** の `learning_contents`（`order_index` 340〜351）と `learning_test_mapping.content_title` の本番同期は、Supabase MCP **`execute_sql`** または [321_324 / 325_332 の冪等 SQL](scripts/database/) で行う（プロジェクト ID・手順は [supabase-article-registration](../.cursor/rules/supabase-article-registration.mdc)、運用メモは [09](09_CPL_Learning_Stub.md)）。
+- **2026-04-12 航空工学 3.2.5〜12**: MDX を `CPL-Aeronautical-Engineering`・フッター・静岡アナロジーで統一。`learning_contents` 用 [20260412_learning_contents_cpl_engineering_325_332_meta.sql](scripts/database/20260412_learning_contents_cpl_engineering_325_332_meta.sql)。[09](09_CPL_Learning_Stub.md) 追随。`public/docs/` は `npm run sync:public-docs`。
 - **2026-04-14 ブログ記事 28 本（articles）精査中**: アプリ [`withdrawnArticleIds`](../src/constants/withdrawnArticleIds.ts) ＋ `learning_contents.is_published`（非公開 SQL / 再公開 SQL）。本番 DB は Supabase MCP `execute_sql` で非公開 `UPDATE` 実行済み。手順は [04_運用保守ガイド.md](04_運用保守ガイド.md)「ブログ記事の精査・非公開・再公開」、[05](05_設計仕様書.md) 記事システム節。
 - **2026-04-14 Supabase セキュリティ linter**: DB 関数に `SET search_path = public`、`learning_content_likes` / `learning_content_views` の RLS を実利用に合わせて厳格化、公開バケット `fan-photos` / `post-images` の一覧用 `storage.objects` SELECT ポリシー削除（URL 直参照は維持）。冪等 SQL: [scripts/database/20260414_supabase_security_linter_fixes.sql](scripts/database/20260414_supabase_security_linter_fixes.sql)。**Auth** の漏洩パスワード検知・**Postgres マイナーアップグレード**はダッシュボード側。
 - **2026-04-13 Post-Phase-B**: Supabase MCP で PPL 3 本の `learning_contents` と `3.4.5`/`3.4.6`/`3.5.5` の `learning_test_mapping` を本番投入。[14](14_記事単元網羅とバックログ.md) §1 を実測同期（`learning_contents` **90**・マッピング **50**）。GA4 本番確認は [04](04_運用保守ガイド.md) のログ表（人手）。`useArticleProgress` は `calculateLearningStats` 抽出＋テスト、[03](03_計画改善ロードマップ.md) にカバレッジ実測を追記。

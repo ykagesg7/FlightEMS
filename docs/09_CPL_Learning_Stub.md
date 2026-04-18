@@ -11,7 +11,20 @@
 
 **航空法規 3.1.x**（`3.1.1_AviationLegal0` 〜 `3.1.8_AirportOperations`）は推奨読み順・ナビ用に **`meta.series: CPL-Aviation-Legal`**（`order` 1〜8）を別立てしている。工学科など他スタブの鎖とは独立する。
 
-**航空工学 3.2.1〜3.2.4**（`3.2.1_PropellerTheory` 〜 `3.2.4_HydraulicElectrical`）は、記事フッター・シリーズ表示のため **`meta.series: CPL-Aeronautical-Engineering`**（`order` 1〜4）を別立てしている。`3.2.5` 以降は当面 **`CPL-Learning-Stub`** のまま（将来、同シリーズへ拡張可能）。
+**航空工学 3.2.1〜3.2.12**（`3.2.1_PropellerTheory` 〜 `3.2.12_EngineSystems`）は、記事フッター・PrevNextNav・シリーズ表示のため **`meta.series: CPL-Aeronautical-Engineering`**（`order` 1〜12）で統一する。地理・食の比喩（空中待機パート）は **静浜・浜松・焼津・富士山麓・伊豆** など静岡県内に寄せ、他県ネタは極力避ける。
+
+- `learning_contents.order_index` は **340〜351**（3.2.1〜12）で連番。3.2.1〜4 の冪等 SQL: [20260412_learning_contents_cpl_engineering_321_324_meta.sql](../scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql)。3.2.5〜12: [20260412_learning_contents_cpl_engineering_325_332_meta.sql](../scripts/database/20260412_learning_contents_cpl_engineering_325_332_meta.sql)。**本番 DB** へは Supabase MCP の `execute_sql`（プロジェクト `fstynltdfdetpyvbrswr`）で上記を投入するか、Dashboard の SQL Editor で同一内容を実行する（`learning_test_mapping.content_title` も更新される）。
+
+### 航空工学 3.2.x（CPL）の実装サマリー
+
+| 項目 | 内容 |
+|------|------|
+| **対象ファイル** | `3.2.1_PropellerTheory` 〜 `3.2.12_EngineSystems`（`src/content/lessons/3.2.*.mdx`） |
+| **シリーズメタ** | `meta.series`: `CPL-Aeronautical-Engineering`、`meta.order`: **1〜12**（アプリ内の読み順・PrevNext と一致） |
+| **フッター** | 関連リンクは `/articles/{contentId}`・`/docs/09_...` 形式。必要に応じ [`engineering_basics`](../src/content/lessons/engineering_basics.mdx)（`/articles/engineering_basics`）へ誘導。まとめ直後に **次話**リンク。`export default` 直前に **フィクション注記** 1 行 |
+| **アフィ枠** | [mdx-article-guide.mdc](../.cursor/rules/mdx-article-guide.mdc) に従い **`not-prose` + CSS Grid**（縦一文字折り返し防止） |
+| **トーン** | 空中待機（Holding）などの比喩は **静岡県内**（静浜・浜松・焼津・富士山麓・伊豆等）に寄せ、シリーズ内でトーンを揃える |
+| **DB** | `category`: `CPL学科`、`sub_category`: `航空工学`、`is_published`: `true`。タイトル・説明は **MDX の `meta.title` / `excerpt`** と揃える |
 
 詳細な **シラバス・DB 契約・`learning_test_mapping` の書き方**は [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md) を正とします。
 
@@ -31,8 +44,7 @@
 | id | 科目イメージ |
 |----|----------------|
 | `3.1.1_AviationLegal0` 〜 `3.1.8_AirportOperations` | 航空法規シリーズ（MDX は `CPL-Aviation-Legal`。`learning_contents.order_index` は [20260411_learning_contents_cpl_aviation_legal_order.sql](../scripts/database/20260411_learning_contents_cpl_aviation_legal_order.sql) で 310〜317 に揃える） |
-| `3.2.1_PropellerTheory` 〜 `3.2.4_HydraulicElectrical` | 航空工学（本文化ブロック。MDX `CPL-Aeronautical-Engineering`、`order` 1〜4）。Supabase の title / `learning_test_mapping.content_title` を MDX `meta` と同期する場合は [20260412_learning_contents_cpl_engineering_321_324_meta.sql](../scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql) |
-| `3.2.5_EngineTheory` 〜 `3.2.6_InstrumentSystem` ほか 3.2.x | 航空工学（現状は多くが `CPL-Learning-Stub`。`meta` を照合） |
+| `3.2.1_PropellerTheory` 〜 `3.2.12_EngineSystems` | 航空工学シリーズ（MDX `CPL-Aeronautical-Engineering`、`order` 1〜12）。Supabase 同期は上記 321_324 と 325_332 の SQL を参照 |
 | `engineering_basics` | 工学・航空力学クラスタ入口 |
 | `CPL-Hub-Meteorology` / `Navigation` / `Communication` | 科目ハブ（広い束のマッピング） |
 

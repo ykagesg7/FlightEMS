@@ -5,14 +5,14 @@ export const meta = {
   type: 'lesson',
   title: '【航空工学】エアデータとピトー静圧：鳥と氷が塞ぐ「空の五感」',
   slug: '3-2-6-instrument-system',
-  date: '2026-03-29',
+  date: '2026-04-12',
   author: 'Michizane (Shadow)',
-  tags:['CPL', '学科試験', '航空工学', '計器', 'ピトー', 'エアデータ', 'アイシング'],
-  series: 'CPL-Learning-Stub',
+  tags: ['CPL', '学科試験', '航空工学', '計器', 'ピトー', 'エアデータ', 'アイシング'],
+  series: 'CPL-Aeronautical-Engineering',
   order: 6,
   readingTime: 12,
   excerpt: 'ヒーターでは溶けない「鳥の肉片」がピトー管を塞ぐ恐怖。電気系統の喪失が招く計器のフリーズ。空の五感を奪われたパイロットがいかにして生き残るかを伝授する。',
-  publishedAt: '2026-03-29'
+  publishedAt: '2026-04-12'
 };
 
 <Image
@@ -82,37 +82,36 @@ export const meta = {
 ---
 
 ### ☕ 空中待機（Holding）：道真の燃料補給
-**～山口の「山賊焼」と、ぶっ刺さる恐怖～**
+**～浜松・静浜の「骨付き鳥」と、ぶっ刺さる恐怖～**
 
 ちょっと息が詰まる話が続いて、喉が渇いたね。
-ここで、鳥がぶっ刺さる恐怖（？）を美味しく昇華させる、山口県の超名物で燃料補給するばい！
+航空工学シリーズの舞台・**静岡**。浜松や静浜（沼津方面）の繁華街で愛される**骨付き鶏の炭火焼**は、太い串に鶏肉を刺して豪快に焼くスタイルたい。
 
-**🍗 いろり山賊の「山賊焼（さんぞくやき）」**
+**🍗 串に刺さった肉＝ピトー管のイメトレ**
 
-山口県岩国市にある免許取り立ての若者の聖地「いろり山賊」。ここの名物が、巨大な鶏肉に太い竹串をガッツリぶっ刺して、炭火で豪快に焼き上げた「山賊焼」たい！
-甘辛いタレの香ばしさと、竹串にぶっ刺さった圧倒的なビジュアル……これを見たら、**「もしこの鶏肉がピトー管にぶっ刺さっとったら……」**って、パイロットなら思わず震え上がるはずたい（笑）。
+甘辛いタレの香ばしさと、串に刺さった圧倒的なビジュアル……見た瞬間に**「もしこの肉片がピトー管にベッタリついとったら……」**って、パイロットなら背筋が寒くなるはずたい（笑）。
 
 ばってん、ヒーターで溶けない肉片なら、自分の牙（歯）で食いちぎるしかない！
-ワイルドに山賊焼にかじりついて、喉（ピトー管）に肉を詰まらせんようにしっかり噛み砕きながら、エアデータシステムの脆弱性を腹に落とし込むんよ！
+骨付き肉にかじりついて、喉（ピトー管）に詰まらせんようにしっかり噛み砕きながら、エアデータシステムの脆弱性を腹に落とし込むんよ！
 
 {/*
 【Monetization Spot / アフィリエイト枠】
 */}
-<div className="bg-gray-800 p-6 rounded-lg my-8 border border-green-600/50 shadow-lg">
-  <div className="flex flex-col sm:flex-row gap-6 items-start">
-    <div className="flex-1 min-w-0">
+<div className="not-prose w-full max-w-full bg-gray-800 p-6 rounded-lg my-8 border border-green-600/50 shadow-lg">
+  <div className="grid w-full min-w-0 grid-cols-1 gap-6 break-normal [overflow-wrap:normal] sm:grid-cols-[minmax(0,1fr)_minmax(0,200px)] sm:items-start">
+    <div className="min-w-0 break-normal [overflow-wrap:normal]">
       <h3 className="text-xl font-bold text-green-500 mb-2">🍗 道真の「野生の勘」補給推奨</h3>
       <p className="text-gray-300 text-sm mb-4 leading-relaxed">
         計器（エアデータ）が狂った時にパイロットを救うのは、理屈ではなく「野生の勘（ピッチ＆パワー）」たい！<br/>
-        山口名物・山賊焼のように、豪快に骨付き肉にかじりついて、己の闘争心とタンパク質をチャージせんね。<br/>
+        静岡の骨付き鳥のように、豪快に肉にかじりついて、己の闘争心とタンパク質をチャージせんね。<br/>
         （※ピトー管の代わりに、自分の喉を詰まらせんように注意ばい！）
       </p>
       <div className="bg-black/50 p-3 text-center rounded border border-gray-700">
-        <span className="text-xs text-gray-400">👇 ここに『山口名物・山賊焼風 骨付き鶏もも肉（冷凍）』のリンクを貼るたい！ 👇</span>
+        <span className="text-xs text-gray-400">👇 ここに『静岡・骨付き鶏炭火焼風 冷凍セット』のリンクを貼るたい！ 👇</span>
       </div>
     </div>
-    <div className="flex-shrink-0 w-full sm:w-auto sm:max-w-[200px]">
-      <Image src="https://placehold.co/300x300/8b4513/FFF?text=Sanzoku-Yaki" alt="山賊焼" width={200} height={200} className="rounded-md w-full max-w-[200px] mx-auto sm:mx-0 object-cover aspect-square" />
+    <div className="w-full max-w-[200px] min-w-0 justify-self-center sm:justify-self-end [&_figure]:!my-0">
+      <Image src="https://placehold.co/300x300/8b4513/FFF?text=Bone-in+Chicken" alt="静岡・骨付き鳥" width={200} height={200} className="rounded-md w-full max-w-[200px] mx-auto sm:mx-0 object-cover aspect-square" />
     </div>
   </div>
 </div>
@@ -143,21 +142,25 @@ export const meta = {
 2.  ピトー管が完全に詰まって上昇すると、速度計は**「ウソの増速」**を示す。
 3.  計器が狂った時に命を救うのは、日頃から鍛えた**「ピッチ角とエンジン出力（パワー）」の感覚**たい。
 
-休日に山賊焼を喉に詰まらせて嫁にバンバン叩かれとるワシの飲み仲間。
+休日に浜松の骨付き鳥を喉に詰まらせて嫁にバンバン叩かれとるワシの飲み仲間。
 ばってん、彼が本物の空で「五感」を失っても絶対にパニックにならんかったのは、「計器はいつかウソをつく」という前提で、エンジンの音、風切り音、操縦桿の重さといった『自分自身の五感（エアデータ）』を研ぎ澄ましとったからたい。
 
 あんさんたちも、ガラスの中の針（計器）だけを妄信するようなパイロットには絶対なるな！
 
-次回は航空工学の最終回、「重量と重心・性能」についてハックしていくばい。気合い入れて待っとき！
+次回は、揚力と抗力の深掘りに切り込むばい。気合い入れて待っとき！（[次話: 揚力と抗力の詳細](/articles/3.2.7_LiftAndDrag)）
 
 ---
 
 ## 🔗 関連リンク
 
--[前の記事: 【航空工学】エンジン・推進](./3-2-5-engine-theory.mdx)
--[CPL Learning Stub](../../docs/09_CPL_Learning_Stub.md)
--[Syllabus管理ガイド](../../docs/08_Syllabus_Management_Guide.md)
+- [前の記事: 【航空工学】エンジンと推進：「BINGO（ガス欠）」の恐怖と高度のマネジメント](/articles/3.2.5_EngineTheory)
+- [次の記事: 【航空工学】揚力と抗力の詳細：2つの「空気の借金」とバックサイドの罠](/articles/3.2.7_LiftAndDrag)
+- [同科目の全体プール（工学ハブ）](/articles/engineering_basics)
+- [CPL Learning Stub](/docs/09_CPL_Learning_Stub.md)
+- [Syllabus管理ガイド](/docs/08_Syllabus_Management_Guide.md)
 
 ---
+
+> **注:** 本記事に登場する人物・会話・エピソードはフィクションです。
 
 export default ({ children }) => <>{children}</>

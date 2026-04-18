@@ -195,6 +195,21 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
 - `Authorization header is badly formatted`: プレースホルダのままの PAT、または改行・余分なスペースが入っていないか確認する。
 - 組織で Copilot Business/Enterprise の場合、[About MCP](https://docs.github.com/en/copilot/concepts/about-mcp) のポリシー制約あり。
 
+### GitHub MCP を接続する（最短チェックリスト）
+
+1. **PAT を発行する**  
+   [GitHub → Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens) で **Classic** または **Fine-grained** を作成する。用途に応じて `repo`（リポジトリ読み取り・操作）や `read:org` など**必要最小限のスコープ**にとどめる。
+2. **`.cursor/mcp.json` にブロックを書く**（正本はローカルのみ。[`.cursor/mcp.json.example`](../.cursor/mcp.json.example) の `github` をコピー）。**`YOUR_GITHUB_PAT` のプレースホルダを実トークンに差し替える**（`ghp_…` / `github_pat_…` など）。
+3. **`Authorization` ヘッダ**は次の形にする（**値は 1 行・前後の空白なし**）。  
+   `"Authorization": "Bearer ghp_xxxxxxxx"`（`Bearer` の後に**半角スペース 1 つ**＋トークン本体）
+4. **重複登録を避ける**  
+   [配置方針（Global とプロジェクト）](#配置方針global-とプロジェクト) のとおり、**Global の `%USERPROFILE%\.cursor\mcp.json` とプロジェクトの `.cursor/mcp.json` の両方に `github` を書かない**（片方だけ）。
+5. **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** で GitHub サーバーが緑／ツール一覧が表示されるか確認する。
+6. **動作確認（任意）**  
+   エージェントから GitHub MCP の **`get_me`** を実行し、**認証ユーザー**（`login` 等）が返ればトークンとゲートウェイは有効。**Fine-grained PAT** でも同様に動作する（2026-04 本リポジトリで確認済み）。
+
+**リモート URL 型**（例: `https://api.githubcopilot.com/mcp/`）は **GitHub Copilot の MCP ゲートウェイ**向け。組織ポリシーや Copilot 契約でブロックされる場合は、[GitHub MCP Server のローカルインストール（Cursor）](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) を検討する。
+
 ### GitHub MCP の代替（Docker）
 
 [Install GitHub MCP Server in Cursor（Local Server Setup）](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md)。非推奨の `@modelcontextprotocol/server-github` は使わない。

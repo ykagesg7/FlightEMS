@@ -38,7 +38,12 @@ Requires `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` (anon key has no write perm
 
 Run `scripts/database/insert_ppl_1_1_9.sql` via Supabase Dashboard SQL Editor.
 
-CPL 航空工学 3.2.1〜4 の **title / description / マッピング表示名** を MDX と揃える冪等スクリプト: `scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql`。
+CPL 航空工学の **title / description / order_index / マッピング表示名** を MDX と揃える冪等スクリプト:
+
+- `3.2.1`〜`3.2.4`: `scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql`（`order_index` 340〜343）
+- `3.2.5`〜`3.2.12`: `scripts/database/20260412_learning_contents_cpl_engineering_325_332_meta.sql`（`order_index` 344〜351）
+
+シリーズ全体の執筆・体裁は [docs/09_CPL_Learning_Stub.md](docs/09_CPL_Learning_Stub.md) の「航空工学 3.2.x の実装サマリー」を参照。
 
 ## learning_contents Schema
 
