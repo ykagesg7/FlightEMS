@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年4月18日（航空工学 3.2.x のドキュメント追記・GitHub へ同期）
-**バージョン**: Documentation Index v4.24
+**最終更新**: 2026年4月25日（航空気象 3.3.x のSupabase本番反映完了）
+**バージョン**: Documentation Index v4.26
 
 ---
 
@@ -11,6 +11,8 @@
 
 ### 更新履歴（抜粋・2026-03-30）
 
+- **2026-04-25 航空気象 3.3.x 本番登録完了**: Supabase MCP `execute_sql`（`fstynltdfdetpyvbrswr`）で [20260424_learning_contents_cpl_meteo_331_3312_meta.sql](scripts/database/20260424_learning_contents_cpl_meteo_331_3312_meta.sql) 相当を実行し、`learning_contents` の `3.3.1`〜`3.3.12`（`order_index` 360〜371、`is_published=true`）を確認。`learning_test_mapping.content_title` 同期も反映済み。
+- **2026-04-24 航空気象 3.3.x**: `src/content/lessons/3.3.1`〜`3.3.12` のシリーズメタを `CPL-Aviation-Meteorology`（`order` 1〜12）へ統一、関連リンクを `/articles/{contentId}` / `/docs/...` へ正規化、`3.3.1` の誤リンク（非存在スタブ）を修正。`learning_contents` / `learning_test_mapping.content_title` 同期用に [20260424_learning_contents_cpl_meteo_331_3312_meta.sql](scripts/database/20260424_learning_contents_cpl_meteo_331_3312_meta.sql) を追加し、[09](09_CPL_Learning_Stub.md) と [supabase-article-registration](../.cursor/rules/supabase-article-registration.mdc) を追随。
 - **2026-04-18 航空工学記事ドキュメント**: [09](09_CPL_Learning_Stub.md) に **3.2.x 実装サマリー**（メタ・フッター・DB・比喩）を表形式で追加。[10](10_航空工学_学科試験攻略ブログ_ロードマップ.md) に CPL **3.2.1〜12** と [09] への導線を追加。[supabase-article-registration](../.cursor/rules/supabase-article-registration.mdc) に **325_332** SQL を明記。`npm run sync:public-docs`。
 - **2026-04-18 GitHub MCP / 航空工学 Supabase**: `.cursor/mcp.json` に **Fine-grained PAT** を設定したうえで、GitHub MCP の **`get_me`** により認証取得成功を確認。[13](13_Cursor_MCP_Setup.md) に動作確認手順を追記。航空工学 **3.2.1〜3.2.12** の `learning_contents`（`order_index` 340〜351）と `learning_test_mapping.content_title` の本番同期は、Supabase MCP **`execute_sql`** または [321_324 / 325_332 の冪等 SQL](scripts/database/) で行う（プロジェクト ID・手順は [supabase-article-registration](../.cursor/rules/supabase-article-registration.mdc)、運用メモは [09](09_CPL_Learning_Stub.md)）。
 - **2026-04-12 航空工学 3.2.5〜12**: MDX を `CPL-Aeronautical-Engineering`・フッター・静岡アナロジーで統一。`learning_contents` 用 [20260412_learning_contents_cpl_engineering_325_332_meta.sql](scripts/database/20260412_learning_contents_cpl_engineering_325_332_meta.sql)。[09](09_CPL_Learning_Stub.md) 追随。`public/docs/` は `npm run sync:public-docs`。

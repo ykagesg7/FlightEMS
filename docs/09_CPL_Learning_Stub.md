@@ -15,6 +15,11 @@
 
 - `learning_contents.order_index` は **340〜351**（3.2.1〜12）で連番。3.2.1〜4 の冪等 SQL: [20260412_learning_contents_cpl_engineering_321_324_meta.sql](../scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql)。3.2.5〜12: [20260412_learning_contents_cpl_engineering_325_332_meta.sql](../scripts/database/20260412_learning_contents_cpl_engineering_325_332_meta.sql)。**本番 DB** へは Supabase MCP の `execute_sql`（プロジェクト `fstynltdfdetpyvbrswr`）で上記を投入するか、Dashboard の SQL Editor で同一内容を実行する（`learning_test_mapping.content_title` も更新される）。
 
+**航空気象 3.3.1〜3.3.12**（`3.3.1_StandardAtmosphere` 〜 `3.3.12_Turbulence`）は、記事フッター・シリーズ表示を **`meta.series: CPL-Aviation-Meteorology`**（`order` 1〜12）に統一する。関連リンクは `/articles/{contentId}` と `/docs/...` の絶対パスに揃え、3.3.1 の誤リンク（非存在スタブ）を解消する。
+
+- `learning_contents.order_index` は既存運用に合わせ **360〜371** を維持。冪等 SQL: [20260424_learning_contents_cpl_meteo_331_3312_meta.sql](../scripts/database/20260424_learning_contents_cpl_meteo_331_3312_meta.sql)。`learning_test_mapping.content_title` も同 SQL で同期する。
+- 2026-04-25 時点で、Supabase MCP `execute_sql`（`fstynltdfdetpyvbrswr`）により上記 SQL の本番反映を実施済み（`learning_contents` 12件の `title` / `order_index` / `is_published` を確認）。
+
 ### 航空工学 3.2.x（CPL）の実装サマリー
 
 | 項目 | 内容 |
@@ -25,6 +30,16 @@
 | **アフィ枠** | [mdx-article-guide.mdc](../.cursor/rules/mdx-article-guide.mdc) に従い **`not-prose` + CSS Grid**（縦一文字折り返し防止） |
 | **トーン** | 空中待機（Holding）などの比喩は **静岡県内**（静浜・浜松・焼津・富士山麓・伊豆等）に寄せ、シリーズ内でトーンを揃える |
 | **DB** | `category`: `CPL学科`、`sub_category`: `航空工学`、`is_published`: `true`。タイトル・説明は **MDX の `meta.title` / `excerpt`** と揃える |
+
+### 航空気象 3.3.x（CPL）の実装サマリー
+
+| 項目 | 内容 |
+|------|------|
+| **対象ファイル** | `3.3.1_StandardAtmosphere` 〜 `3.3.12_Turbulence`（`src/content/lessons/3.3.*.mdx`） |
+| **シリーズメタ** | `meta.series`: `CPL-Aviation-Meteorology`、`meta.order`: **1〜12**（シリーズ内の読み順） |
+| **フッター** | 関連リンクは `/articles/{contentId}`・`/docs/...` 形式。必要に応じ [`weather_basics`](../src/content/lessons/weather_basics.mdx)（`/articles/weather_basics`）へ誘導。まとめ直後に **次話**リンク。`export default` 直前に **フィクション注記** 1 行 |
+| **リンク修正** | `3.3.1_StandardAtmosphere` の誤リンク `3-3-2-altimetry-errors` を `3.3.2_CloudsAndPrecipitation` に修正 |
+| **DB** | `category`: `CPL学科`、`sub_category`: `航空気象`、`is_published`: `true`。`order_index` は **360〜371** 維持。タイトル・説明は **MDX の `meta.title` / `excerpt`** と揃える |
 
 詳細な **シラバス・DB 契約・`learning_test_mapping` の書き方**は [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md) を正とします。
 
@@ -45,7 +60,9 @@
 |----|----------------|
 | `3.1.1_AviationLegal0` 〜 `3.1.8_AirportOperations` | 航空法規シリーズ（MDX は `CPL-Aviation-Legal`。`learning_contents.order_index` は [20260411_learning_contents_cpl_aviation_legal_order.sql](../scripts/database/20260411_learning_contents_cpl_aviation_legal_order.sql) で 310〜317 に揃える） |
 | `3.2.1_PropellerTheory` 〜 `3.2.12_EngineSystems` | 航空工学シリーズ（MDX `CPL-Aeronautical-Engineering`、`order` 1〜12）。Supabase 同期は上記 321_324 と 325_332 の SQL を参照 |
+| `3.3.1_StandardAtmosphere` 〜 `3.3.12_Turbulence` | 航空気象シリーズ（MDX `CPL-Aviation-Meteorology`、`order` 1〜12）。Supabase 同期は [20260424_learning_contents_cpl_meteo_331_3312_meta.sql](../scripts/database/20260424_learning_contents_cpl_meteo_331_3312_meta.sql) を参照 |
 | `engineering_basics` | 工学・航空力学クラスタ入口 |
+| `weather_basics` | 気象クラスタ入口 |
 | `CPL-Hub-Meteorology` / `Navigation` / `Communication` | 科目ハブ（広い束のマッピング） |
 
 実際の公開タイトル・`learning_contents` 行は Supabase と MDX の `meta` を照合してください。
