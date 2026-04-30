@@ -17,11 +17,12 @@
 | 用途 | ドキュメント |
 |------|----------------|
 | **全体索引（AI・開発者向け）** | [docs/README.md](docs/README.md) |
-| **戦略・Phase / KPI** | [docs/00_Flight_Academy_Strategy.md](docs/00_Flight_Academy_Strategy.md)、[docs/03_計画改善ロードマップ.md](docs/03_計画改善ロードマップ.md) |
-| **現行仕様（DB・/test 等）** | [docs/05_設計仕様書.md](docs/05_設計仕様書.md) |
-| **`src/` 構成** | [docs/07_コンポーネント構造ガイド.md](docs/07_コンポーネント構造ガイド.md) |
+| **戦略・Phase / KPI** | [docs/00_Flight_Academy_Strategy.md](docs/00_Flight_Academy_Strategy.md)、[docs/01_Current_Status_and_Roadmap.md](docs/01_Current_Status_and_Roadmap.md) |
+| **現行仕様（DB・/test 等）** | [docs/02_System_Spec.md](docs/02_System_Spec.md) |
+| **`src/` 構成** | [docs/Component_Structure_Guide.md](docs/Component_Structure_Guide.md) |
 | **リポジトリフォルダ索引** | [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) |
-| **Cursor MCP** | [docs/13_Cursor_MCP_Setup.md](docs/13_Cursor_MCP_Setup.md) |
+| **Cursor MCP** | [docs/Cursor_MCP_Setup.md](docs/Cursor_MCP_Setup.md) |
+| **長期実行計画** | [docs/06_Long_Term_Execution.md](docs/06_Long_Term_Execution.md)（[docs/README.md](docs/README.md) からも導線あり） |
 
 過去のルート README にあったマップ操作・CPL 資料の詳細は、上記 `docs/` およびアプリ内ヘルプを参照してください。`cpl_exam_data/` の実データは `.gitignore` 対象の場合があります。
 

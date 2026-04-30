@@ -132,7 +132,7 @@ KaTeX 記法を使用:
 
 航空法・航空法施行規則など**法令に触れる記事**を新規執筆または改稿するときは、次を守る。
 
-- **現行条文の確認**: 可能なら Cursor の **hourei MCP**（`hourei-mcp-server`）で `search_law` → `get_law_data` / `get_law_revision` を用い、e-Gov 由来の内容と突合してから要約・引用を書く。セットアップは [docs/13_Cursor_MCP_Setup.md](../../docs/13_Cursor_MCP_Setup.md) の「法令検索 MCP」節。
+- **現行条文の確認**: 可能なら Cursor の **hourei MCP**（`hourei-mcp-server`）で `search_law` → `get_law_data` / `get_law_revision` を用い、e-Gov 由来の内容と突合してから要約・引用を書く。セットアップは [docs/Cursor_MCP_Setup.md](../../docs/Cursor_MCP_Setup.md) の「法令検索 MCP」節。
 - **根拠の明示**: 読者が追えるよう、**法令の正式名称**と**条（項・号）**を、該当箇所または脚注で明示できるときは明示する。
 - **全文貼り付けの抑制**: 条文全文を MDX にそのまま貼るより、必要最小限の**抜粋**と [e-Gov 法令検索](https://laws.e-gov.go.jp/) への誘導を検討する。抜粋と paraphrase（要約）は**要約である旨**を分かるように書く（e-Gov の文言と混同させない）。
 - **立場の明確化**: 本サイトの教材は**国の公式試験の解答保証や法律相談**ではない。試験対策・学習支援であることと整合する表現にする。
@@ -143,7 +143,7 @@ KaTeX 記法を使用:
 
 - **CPL 記事**では、PPL 範囲と重なる基礎は**短く要約**し、詳細は **`/articles/{PPL記事の learning_contents.id}`** へリンクする。
 - Callout 等で **「PPL 範囲の復習（任意）」** と明記し、CPL 本編の主読者を迷わせないようにする。
-- 法令・事実の**更新の正本**は原則 **PPL 側**とし、CPL 側は追随（[06_記事作成ロードマップ.md](../../docs/06_記事作成ロードマップ.md)）。
+- 法令・事実の**更新の正本**は原則 **PPL 側**とし、CPL 側は追随（[05_Content_Pipeline.md](../../docs/05_Content_Pipeline.md)）。
 
 ## DOMネスト回避（validateDOMNesting 対策）
 

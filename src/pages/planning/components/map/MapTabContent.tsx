@@ -7,7 +7,7 @@ import { fetchAirportWeather as fetchAirportWeatherLayer } from './layers/airpor
 import { bindNavaidPopup, navaidMarkerOptions } from './layers/navaids';
 import { bindWaypointPopup } from './layers/waypoints';
 import { bindACCSectorPopup, bindRAPCONPopup } from './popups/airspacePopup';
-import { simplifiedAirportInfoContent } from './popups/airportPopup';
+import { fullAirportInfoContent, simplifiedAirportInfoContent } from './popups/airportPopup';
 import { bindPlanningSwimNotamButton, swimNotamButtonSection } from './popups/swimNotamPopup';
 import { FlightPlanRouteLayer } from './FlightPlanRouteLayer';
 import { useLiveTrafficLayer } from './hooks/useLiveTrafficLayer';
@@ -15,17 +15,21 @@ import { useRainViewerRadarLayer } from './hooks/useRainViewerRadarLayer';
 import { usePlanningMapWindGrid } from './hooks/usePlanningMapWindGrid';
 import { useWindBarbLayer } from './hooks/useWindBarbLayer';
 import { useWindGridOverlaySetter } from './windGridOverlayContext';
+import { TrackLayer } from './TrackLayer';
 import type { LayerControlRef, PlanningMapRegion } from './planningMapTypes';
-import type { NavaidProps } from './types';
+import type { AirportProps, NavaidProps } from './types';
+import type { FlightTrack } from '../../tracks/types';
 
 export interface MapTabContentProps {
   flightPlan: FlightPlan;
   map: L.Map | null;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
   regions: PlanningMapRegion[];
+  tracks: FlightTrack[];
+  currentTrackTime: number | null;
 }
 
-export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions }) => {
+export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime }) => {
   const liveTrafficLayerRef = useRef<L.LayerGroup | null>(null);
   if (!liveTrafficLayerRef.current) {
     liveTrafficLayerRef.current = L.layerGroup();
@@ -369,16 +373,24 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
                   pid && String(pid).trim().length >= 3
                     ? swimNotamButtonSection(String(pid).trim())
                     : '';
+                const depButtonId = `airport-set-dep-${pid}`;
+                const arrButtonId = `airport-set-arr-${pid}`;
+                const routeButtonId = `airport-add-route-${pid}`;
+                const aipSearchUrl = pid
+                  ? `https://www.google.com/search?q=${encodeURIComponent(`${pid} AIP airport chart`)}`
+                  : '';
                 const popupContent = `<div class="airport-popup airport-weather-popup">
                   <div>
                   <h2 class="font-bold text-lg">${feature.properties.name1}</h2>
                   <p class="text-sm">ID: ${feature.properties.id}</p>
                   <p class="text-sm">Type: ${feature.properties.type}</p>
-                  <p class="text-sm">Elevation: ${feature.properties["Elev(ft)"]} ft</p>
-                  <p class="text-sm">Runway: ${feature.properties.RWY1}</p>
-                  ${feature.properties.RWY2 ? `<p class="text-sm">Runway2: ${feature.properties.RWY2}</p>` : ''}
-                  ${feature.properties.RWY3 ? `<p class="text-sm">Runway3: ${feature.properties.RWY3}</p>` : ''}
-                  ${feature.properties.RWY4 ? `<p class="text-sm">Runway4: ${feature.properties.RWY4}</p>` : ''}
+                  <div class="mt-2">${simplifiedAirportInfoContent(feature.properties as AirportProps)}${fullAirportInfoContent(feature.properties as AirportProps)}</div>
+                  <div class="mt-3 flex flex-wrap gap-2">
+                    <button id="${depButtonId}" type="button" class="rounded border border-yellow-500/40 px-2 py-1 text-xs">出発地に設定</button>
+                    <button id="${arrButtonId}" type="button" class="rounded border border-yellow-500/40 px-2 py-1 text-xs">到着地に設定</button>
+                    <button id="${routeButtonId}" type="button" class="rounded border border-yellow-500/40 px-2 py-1 text-xs">ルートへ追加</button>
+                    ${aipSearchUrl ? `<a href="${aipSearchUrl}" target="_blank" rel="noreferrer" class="rounded border border-yellow-500/40 px-2 py-1 text-xs">公式資料検索</a>` : ''}
+                  </div>
                   </div>
                   ${notam}
                 </div>`;
@@ -393,6 +405,44 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
                 if (pid && String(pid).trim().length >= 3) {
                   layer.on('popupopen', () => {
                     if (map) bindPlanningSwimNotamButton(map, popup, String(pid).trim(), 'location');
+                    const coordinates = feature.geometry?.coordinates as [number, number] | undefined;
+                    const airport = coordinates ? {
+                      value: String(feature.properties.id),
+                      label: `${feature.properties.name1} (${feature.properties.id})`,
+                      name: String(feature.properties.name1),
+                      type: (feature.properties.type || 'civilian') as 'civilian' | 'military' | 'joint',
+                      latitude: coordinates[1],
+                      longitude: coordinates[0],
+                      properties: { ...feature.properties },
+                    } : null;
+                    const popupElement = popup.getElement();
+                    const depButton = popupElement?.querySelector<HTMLButtonElement>(`#${depButtonId}`);
+                    const arrButton = popupElement?.querySelector<HTMLButtonElement>(`#${arrButtonId}`);
+                    const routeButton = popupElement?.querySelector<HTMLButtonElement>(`#${routeButtonId}`);
+                    if (depButton) depButton.onclick = () => {
+                      if (airport) setFlightPlan((prev) => ({ ...prev, departure: airport }));
+                    };
+                    if (arrButton) arrButton.onclick = () => {
+                      if (airport) setFlightPlan((prev) => ({ ...prev, arrival: airport }));
+                    };
+                    if (routeButton) routeButton.onclick = () => {
+                      if (!airport) return;
+                      setFlightPlan((prev) => ({
+                        ...prev,
+                        waypoints: [
+                          ...prev.waypoints,
+                          {
+                            id: `${airport.value}-${Date.now()}`,
+                            name: airport.name,
+                            type: 'airport',
+                            coordinates: [airport.longitude, airport.latitude],
+                            latitude: airport.latitude,
+                            longitude: airport.longitude,
+                            sourceId: airport.value,
+                          },
+                        ],
+                      }));
+                    };
                   });
                 }
 
@@ -564,7 +614,7 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
         // }
       })
       .catch(console.error);
-  }, [overlayLayers, map, weatherCache, setWeatherCache]);
+  }, [overlayLayers, map, weatherCache, setWeatherCache, setFlightPlan]);
 
   // RJFZ GeoJSON をローカルレイヤーに追加 (RJFZ用のgroupごとのポリラインも追加)
   useEffect(() => {
@@ -929,6 +979,9 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
   }, [map, baseLayers, overlayLayers, regions, loadRegionWaypointsData, loadAllWaypointsData, osmLayer, weatherCache, setWeatherCache]);
 
   return (
-    <FlightPlanRouteLayer flightPlan={flightPlan} setFlightPlan={setFlightPlan} map={map} />
+    <>
+      <FlightPlanRouteLayer flightPlan={flightPlan} setFlightPlan={setFlightPlan} map={map} />
+      <TrackLayer tracks={tracks} currentTime={currentTrackTime} />
+    </>
   );
 });

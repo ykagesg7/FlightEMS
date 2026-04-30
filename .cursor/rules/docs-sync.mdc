@@ -24,12 +24,13 @@ Before updating docs, decide which file(s) to change:
 | Role | File | Content |
 |------|------|---------|
 | **Entry & summary** | `docs/README.md` | Overview, recent changes, main tables, links to detailed docs |
-| **Specification** | `docs/05_設計仕様書.md` | Current specs for /test, Dashboard, DB, data flows |
-| **Structure** | `docs/07_コンポーネント構造ガイド.md` | `src/` layout, component placement, key modules |
+| **Specification** | `docs/02_System_Spec.md` | Current specs for /test, Dashboard, DB, data flows |
+| **Structure** | `docs/Component_Structure_Guide.md` | `src/` layout, component placement, key modules |
 | **Repo folders** | `docs/FOLDER_STRUCTURE.md` | Top-level directories (non-`src/`) |
-| **Cursor MCP** | `docs/13_Cursor_MCP_Setup.md` | MCP layout, Serena, Vercel/GitHub PAT notes |
+| **Scripts & tooling** | `docs/Scripts_Repository_Tooling.md` | CPL CSV import, `docs:watch` / validate, Git encoding notes |
+| **Cursor MCP** | `docs/Cursor_MCP_Setup.md` | MCP layout, Serena, Vercel/GitHub PAT notes |
 
 ## Before Finishing
 
 - Do not stop at implementation only. Before completing a task, verify there are no docs update gaps.
-- Avoid duplicating information. Keep README as summary, 05 as spec, 07 as structure.
+- Avoid duplicating information. Keep README as summary, `02_System_Spec` as spec, `Component_Structure_Guide` as structure.

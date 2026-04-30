@@ -14,11 +14,19 @@ import { AirspaceDataset, findAirspaceFrequency } from '../../../../utils/airspa
 import { calculateMagneticBearing } from '../../../../utils/bearing';
 import { parseFlightPlanTime } from '../../../../utils/flightTime';
 import { downloadPlanDocument, fromPlanDocument, toPlanDocument } from '../../../../utils/planDocument';
+import { downloadTextFile } from '../../export/download';
+import { exportFlightPlanToCsv } from '../../export/exportCsv';
+import { exportFlightPlanToGpx } from '../../export/exportGpx';
+import { exportFlightPlanToKml } from '../../export/exportKml';
+import type { FlightTrack } from '../../tracks/types';
 import {
   addMinutesUtc,
   fetchWindAtLocationTime,
   groundSpeedKtFromWind,
 } from '../../../../utils/routeOpenMeteoWind';
+import { DebriefPanel } from '../debrief/DebriefPanel';
+import { PreflightBriefingPanel } from '../briefing/PreflightBriefingPanel';
+import { RouteProfilePanel } from '../profile/RouteProfilePanel';
 import FlightParameters from './FlightParameters';
 import { FlightSummary } from './FlightSummary';
 import PlanPrintView from './PlanPrintView';
@@ -27,6 +35,10 @@ import RoutePlanning from './RoutePlanning';
 interface PlanningTabProps {
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
+  tracks: FlightTrack[];
+  setTracks: React.Dispatch<React.SetStateAction<FlightTrack[]>>;
+  currentTrackTime: number | null;
+  setCurrentTrackTime: React.Dispatch<React.SetStateAction<number | null>>;
   onClearLocalDraft: () => void;
   lastSavedAt?: Date | null;
 }
@@ -40,6 +52,10 @@ const DRAFT_NOTICE_DISMISS_KEY = 'fa-plan-draft-notice-dismissed-v1';
 const PlanningTab: React.FC<PlanningTabProps> = ({
   flightPlan,
   setFlightPlan,
+  tracks,
+  setTracks,
+  currentTrackTime,
+  setCurrentTrackTime,
   onClearLocalDraft,
   lastSavedAt = null,
 }) => {
@@ -101,6 +117,18 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
 
   const handleExport = () => {
     downloadPlanDocument(toPlanDocument(flightPlan));
+  };
+
+  const handleExportRouteGpx = () => {
+    downloadTextFile(exportFlightPlanToGpx(flightPlan), `flight-route-${Date.now()}.gpx`, 'application/gpx+xml');
+  };
+
+  const handleExportRouteKml = () => {
+    downloadTextFile(exportFlightPlanToKml(flightPlan), `flight-route-${Date.now()}.kml`, 'application/vnd.google-earth.kml+xml');
+  };
+
+  const handleExportRouteCsv = () => {
+    downloadTextFile(exportFlightPlanToCsv(flightPlan), `flight-route-${Date.now()}.csv`, 'text/csv');
   };
 
   const handleImportClick = () => {
@@ -531,6 +559,10 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
                   <DropdownMenuItem onSelect={() => handleExport()}>JSON を書き出す</DropdownMenuItem>
                   <DropdownMenuItem onSelect={() => handleImportClick()}>JSON を読み込む</DropdownMenuItem>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={() => handleExportRouteGpx()}>計画ルートを GPX 出力</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleExportRouteKml()}>計画ルートを KML 出力</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleExportRouteCsv()}>計画ルートを CSV 出力</DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onSelect={() => setClearDraftOpen(true)}
                     className="text-red-300 focus:text-red-200"
@@ -645,6 +677,33 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
       <div className="space-y-3 sm:space-y-4 md:space-y-6">
         {/* FlightSummary コンポーネントを配置 */}
         <FlightSummary flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
+      </div>
+
+      <div className="lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6">
+        <details className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-950/30 p-2" open>
+          <summary className="cursor-pointer px-2 py-1 text-sm font-semibold text-whiskyPapa-yellow">Preflight Briefing</summary>
+          <div className="mt-2">
+            <PreflightBriefingPanel flightPlan={flightPlan} />
+          </div>
+        </details>
+        <details className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-950/30 p-2">
+          <summary className="cursor-pointer px-2 py-1 text-sm font-semibold text-whiskyPapa-yellow">Route Profile</summary>
+          <div className="mt-2">
+            <RouteProfilePanel flightPlan={flightPlan} />
+          </div>
+        </details>
+        <details className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-950/30 p-2" open>
+          <summary className="cursor-pointer px-2 py-1 text-sm font-semibold text-whiskyPapa-yellow">Debrief / 航跡</summary>
+          <div className="mt-2">
+            <DebriefPanel
+              flightPlan={flightPlan}
+              tracks={tracks}
+              setTracks={setTracks}
+              currentTime={currentTrackTime}
+              setCurrentTime={setCurrentTrackTime}
+            />
+          </div>
+        </details>
       </div>
 
       {/* 印刷専用ビュー（画面では非表示、印刷時のみ表示） */}

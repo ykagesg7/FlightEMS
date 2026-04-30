@@ -32,6 +32,95 @@ export type Database = {
         }
         Relationships: []
       }
+      flight_debrief_sessions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          plan_document: Json | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          plan_document?: Json | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          plan_document?: Json | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      flight_tracks: {
+        Row: {
+          aircraft_label: string | null
+          color: string
+          created_at: string
+          ended_at: string | null
+          id: string
+          name: string
+          pilot_name: string | null
+          point_count: number
+          session_id: string
+          source_format: string
+          started_at: string | null
+          storage_path: string | null
+          summary: Json
+          user_id: string
+        }
+        Insert: {
+          aircraft_label?: string | null
+          color?: string
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          name: string
+          pilot_name?: string | null
+          point_count?: number
+          session_id: string
+          source_format: string
+          started_at?: string | null
+          storage_path?: string | null
+          summary?: Json
+          user_id: string
+        }
+        Update: {
+          aircraft_label?: string | null
+          color?: string
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          name?: string
+          pilot_name?: string | null
+          point_count?: number
+          session_id?: string
+          source_format?: string
+          started_at?: string | null
+          storage_path?: string | null
+          summary?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flight_tracks_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "flight_debrief_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_content_comments: {
         Row: {
           content: string

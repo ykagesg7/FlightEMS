@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Ta
 import { WeatherCacheProvider } from '../../contexts/WeatherCacheContext';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { FlightPlan } from '../../types/index';
+import type { FlightTrack } from './tracks/types';
 import PlanningTab from './components/flight/PlanningTab';
 import MapTab from './components/map/MapTab';
 import { createInitialFlightPlan } from './createInitialFlightPlan';
@@ -18,6 +19,10 @@ import {
 interface PlanningMapPageInnerProps {
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
+  tracks: FlightTrack[];
+  setTracks: React.Dispatch<React.SetStateAction<FlightTrack[]>>;
+  currentTrackTime: number | null;
+  setCurrentTrackTime: React.Dispatch<React.SetStateAction<number | null>>;
   onClearLocalDraft: () => void;
   lastSavedAt: Date | null;
 }
@@ -25,6 +30,10 @@ interface PlanningMapPageInnerProps {
 function PlanningMapPageInner({
   flightPlan,
   setFlightPlan,
+  tracks,
+  setTracks,
+  currentTrackTime,
+  setCurrentTrackTime,
   onClearLocalDraft,
   lastSavedAt,
 }: PlanningMapPageInnerProps) {
@@ -47,11 +56,20 @@ function PlanningMapPageInner({
             <PlanningTab
               flightPlan={flightPlan}
               setFlightPlan={setFlightPlan}
+              tracks={tracks}
+              setTracks={setTracks}
+              currentTrackTime={currentTrackTime}
+              setCurrentTrackTime={setCurrentTrackTime}
               onClearLocalDraft={onClearLocalDraft}
             />
           </div>
           <div className="h-full min-h-[calc(100vh-5rem)]">
-            <MapTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
+            <MapTab
+              flightPlan={flightPlan}
+              setFlightPlan={setFlightPlan}
+              tracks={tracks}
+              currentTrackTime={currentTrackTime}
+            />
           </div>
         </div>
       </div>
@@ -95,6 +113,10 @@ function PlanningMapPageInner({
               <PlanningTab
                 flightPlan={flightPlan}
                 setFlightPlan={setFlightPlan}
+                tracks={tracks}
+                setTracks={setTracks}
+                currentTrackTime={currentTrackTime}
+                setCurrentTrackTime={setCurrentTrackTime}
                 onClearLocalDraft={onClearLocalDraft}
                 lastSavedAt={lastSavedAt}
               />
@@ -102,7 +124,12 @@ function PlanningMapPageInner({
           </TabsContent>
           <TabsContent value="map" className="mt-0">
             <div className="h-full">
-              <MapTab flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
+              <MapTab
+                flightPlan={flightPlan}
+                setFlightPlan={setFlightPlan}
+                tracks={tracks}
+                currentTrackTime={currentTrackTime}
+              />
             </div>
           </TabsContent>
         </Tabs>
@@ -116,6 +143,8 @@ function PlanningMapPage() {
     const draft = loadFlightPlanDraft();
     return draft ?? createInitialFlightPlan();
   });
+  const [tracks, setTracks] = React.useState<FlightTrack[]>([]);
+  const [currentTrackTime, setCurrentTrackTime] = React.useState<number | null>(null);
   const [lastSavedAt, setLastSavedAt] = React.useState<Date | null>(null);
 
   const debouncedPersistDraft = useDebouncedCallback((plan: FlightPlan) => {
@@ -138,6 +167,10 @@ function PlanningMapPage() {
       <PlanningMapPageInner
         flightPlan={flightPlan}
         setFlightPlan={setFlightPlan}
+        tracks={tracks}
+        setTracks={setTracks}
+        currentTrackTime={currentTrackTime}
+        setCurrentTrackTime={setCurrentTrackTime}
         onClearLocalDraft={handleClearLocalDraft}
         lastSavedAt={lastSavedAt}
       />

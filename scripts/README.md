@@ -1,3 +1,3 @@
-# Scripts
+# `scripts/`
 
-実装の索引と仕様の**正本**は **[docs/scripts/README.md](../docs/scripts/README.md)** を参照してください。
+実装の索引と**仕様の正本**は **[../docs/Scripts_Repository_Tooling.md](../docs/Scripts_Repository_Tooling.md)** を参照してください。

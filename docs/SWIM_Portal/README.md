@@ -22,7 +22,7 @@
 
 - **エンドポイント:** アプリからは **`/api/swim-notam-search`** のみ（Vercel `api/swim-notam-search.ts`）。サーバがログイン API の `Set-Cookie` を保持し、検索に転送する **サーバ側プロキシ**（ブラウザに `SWIM_LOGIN_PASSWORD` を出さない）。
 - **UI:** 空港・NAVAID 等のポップアップから「有効 NOTAM」を表示（要約・折りたたみ詳細・原文 XML・地図オーバーレイは参考表示）。
-- **仕様の正:** 本フォルダの転記 Markdown と `docs/05_設計仕様書.md` の NOTAM 節。運航判断は公式ノータムで必ず確認すること。
+- **仕様の正:** 本フォルダの転記 Markdown と `docs/02_System_Spec.md` の NOTAM 節。運航判断は公式ノータムで必ず確認すること。
 
 補足（設計方針）:
 

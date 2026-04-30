@@ -6,6 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer } from 'react-leaflet';
 import { FlightPlan } from '../../../../types/index';
 import { DEFAULT_CENTER, DEFAULT_ZOOM, formatDMS } from '../../../../utils';
+import type { FlightTrack } from '../../tracks/types';
 import icon from '/images/marker-icon.png';
 import iconShadow from '/images/marker-shadow.png';
 import React, { Fragment, useCallback, useState } from 'react';
@@ -34,9 +35,11 @@ L.Marker.prototype.options.icon = DefaultIcon;
 interface MapTabProps {
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
+  tracks: FlightTrack[];
+  currentTrackTime: number | null;
 }
 
-const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
+const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan, tracks, currentTrackTime }) => {
   const [map, setMap] = useState<L.Map | null>(null);
   const [windGridLegend, setWindGridLegend] = useState<WindGridMapOverlayModel | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -175,6 +178,8 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan }) => {
               map={map}
               setFlightPlan={setFlightPlan}
               regions={regions}
+              tracks={tracks}
+              currentTrackTime={currentTrackTime}
             />
           </MapContainer>
           <div className="absolute bottom-2 left-2 z-[9999] flex max-w-[min(100%,22rem)] flex-col gap-2 pointer-events-none items-stretch">

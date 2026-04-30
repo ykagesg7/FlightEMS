@@ -10,9 +10,9 @@
 - ✅ **コンテンツ作成者**: 記事作成時の命名規則やデータベース登録方法を確認したい場合
 - ✅ **プロジェクトマネージャー**: システム統合の全体像を理解したい場合
 
-**推奨読み順**: [docs/README.md](README.md) → [06_記事作成ロードマップ.md](06_記事作成ロードマップ.md) → [07_PPL_Master_Syllabus.md](07_PPL_Master_Syllabus.md) → このドキュメント
+**推奨読み順**: [docs/README.md](README.md) → [05_Content_Pipeline.md](05_Content_Pipeline.md) → [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md) → このドキュメント
 
-**関連（記事パイプライン）**: [06_記事作成ロードマップ.md](06_記事作成ロードマップ.md)、[07_PPL_Master_Syllabus.md](07_PPL_Master_Syllabus.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)、[11_ドキュメント整合性検討.md](11_ドキュメント整合性検討.md)
+**関連（記事パイプライン）**: [05_Content_Pipeline.md](05_Content_Pipeline.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)、[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md)
 
 ---
 
@@ -154,7 +154,7 @@ type: "lesson"
 
 - PPL 記事（`category: PPL`）と紐づく CPL 形式の設問は、Supabase の **`unified_cpl_questions.applicable_exams`** に `PPL` を含める（例: `{PPL,CPL}` で CPL 出題も維持）。
 - タグだけでなく **DB 列**で `/test` の「PPL 基礎のみ」フィルタと整合させる。
-- 詳細・パイロット手順: [docs/db/APPLICABLE_EXAMS_PILOT.md](db/APPLICABLE_EXAMS_PILOT.md)
+- 詳細・パイロット手順: [docs/db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)
 
 ### 問題–記事連携契約（`learning_test_mapping`）
 
@@ -173,7 +173,7 @@ type: "lesson"
 #### 自然キー（問題クラスタの単位）
 
 - **主キー**: Supabase `unified_cpl_questions` の **`main_subject`**（5 科目固定）と **`sub_subject` 全文**（多くは「中分類/小分類」相当の 1 文字列）。
-- **記事スコープのデフォルト**: 原則 **1 記事が 1 つの `(main_subject, sub_subject)` クラスタ**（または意図的にまとめた複数 `sub_subject`）に対応する。1 問 1 記事は避ける（[06](06_記事作成ロードマップ.md) と同旨）。
+- **記事スコープのデフォルト**: 原則 **1 記事が 1 つの `(main_subject, sub_subject)` クラスタ**（または意図的にまとめた複数 `sub_subject`）に対応する。1 問 1 記事は避ける（[05](05_Content_Pipeline.md) と同旨）。
 - **中分類だけ**で束ねる場合は、執筆・マッピング両方でその範囲を明示する（ナビ用の任意グループ）。
 
 #### `learning_contents` との整合
@@ -191,7 +191,7 @@ type: "lesson"
 | `test_question_ids` | 同一 UUID の `text[]`  cast（`ReviewContentLink` が overlaps で参照） |
 | `mapping_source` | 投入元が分かる短い識別子（例: `incremental_20260329_ppl_engineering`） |
 
-PPL 基礎記事に紐づける設問は **原則 `applicable_exams` に `PPL` を含む行**に限定する（[APPLICABLE_EXAMS_PILOT.md](db/APPLICABLE_EXAMS_PILOT.md)）。
+PPL 基礎記事に紐づける設問は **原則 `applicable_exams` に `PPL` を含む行**に限定する（[CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)）。
 
 - **例外**: 当該 `sub_subject` に PPL 付き設問がまだ無いが、CPL のみ `verified` 行が存在する場合、`learning_test_mapping` には **verified のみ**で束ねてよい（CPL 試験・復習で `ReviewContentLink` を有効にする）。`mapping_source` に `_cpl_pool` 等で識別すると後から差し替えやすい。例: [20260329_learning_test_mapping_incremental_ppl_clusters.sql](../scripts/database/20260329_learning_test_mapping_incremental_ppl_clusters.sql)。
 
@@ -261,7 +261,7 @@ PPL 工学・計器まとめて追加する例: [scripts/database/20260329_learn
 
 #### 記事 ID の正本とエイリアス
 
-`3.x.x_*`（CPL シリーズ）、`PPL-*`（PPL シラバス）、[10](10_航空工学_学科試験攻略ブログ_ロードマップ.md) の `aero-*` / `inst-*` の関係は [11_ドキュメント整合性検討.md](11_ドキュメント整合性検討.md) **§2.4** を正とする。
+`3.x.x_*`（CPL シリーズ）、`PPL-*`（PPL シラバス）、[10](10_航空工学_学科試験攻略ブログ_ロードマップ.md) の `aero-*` / `inst-*` の関係は [Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) **§2.4** を正とする。
 
 ---
 
@@ -452,11 +452,11 @@ const pplSyllabus = await getArticles({
 ## 📚 参考資料
 
 ### 関連ドキュメント
-- `docs/07_PPL_Master_Syllabus.md` - PPL Master Syllabus
-- `docs/06_記事作成ロードマップ.md` - CPL記事作成ロードマップ
+- `docs/PPL_Master_Syllabus.md` - PPL Master Syllabus
+- `docs/05_Content_Pipeline.md` - CPL記事作成ロードマップ
 - `docs/10_航空工学_学科試験攻略ブログ_ロードマップ.md` - 航空工学の科目別ロードマップ（中・小分類マッピング、4ChoiceQuiz連携）
 - `docs/templates/PPL_Article_Template.mdx` - PPL記事テンプレート
-- `docs/05_設計仕様書.md` - データベース設計仕様
+- `docs/02_System_Spec.md` - データベース設計仕様
 
 ### 既存システム
 - `src/utils/articlesIndex.ts` - 記事インデックスシステム

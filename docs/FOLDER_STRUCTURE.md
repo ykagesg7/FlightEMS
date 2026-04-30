@@ -1,9 +1,9 @@
 # プロジェクトフォルダ構造ガイド
 
-**最終更新**: 2026年4月12日（sync:public-docs、docs/scripts 集約）
-**バージョン**: Folder Structure Guide v1.4
+**最終更新**: 2026年4月25日（長期計画を [06_Long_Term_Execution.md](06_Long_Term_Execution.md) に一本化。従来の sync:public-docs・`Scripts_Repository_Tooling` 集約の説明は継続）
+**バージョン**: Folder Structure Guide v1.5
 
-**責務**: repo 全体のフォルダ概要。プロジェクトのクイックリファレンスと AI 向け索引は [docs/README.md](README.md)。`src/` の詳細は [07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md) を参照。
+**責務**: repo 全体のフォルダ概要。プロジェクトのクイックリファレンスと AI 向け索引は [docs/README.md](README.md)。`src/` の詳細は [Component_Structure_Guide.md](Component_Structure_Guide.md) を参照。
 
 ---
 
@@ -68,15 +68,15 @@
 
 #### `src/`
 - **目的**: ソースコードのメインディレクトリ
-- **詳細**: [docs/07_コンポーネント構造ガイド.md](07_コンポーネント構造ガイド.md)を参照
+- **詳細**: [docs/Component_Structure_Guide.md](Component_Structure_Guide.md)を参照
 
 #### `docs/`
 - **目的**: プロジェクトドキュメントの**正本**（仕様・戦略・運用）
 - **詳細**: [docs/README.md](README.md)を参照
+- **番号付き `00`〜`06`**: AI 初動の**読み順**（[README「AI向けのドキュメント番号」](README.md#ai向けのドキュメント番号読み方)）。それ以外（旧 `08`–`14` や方針メモ等）は**参照**。
+- **長期バックログ**: [06_Long_Term_Execution.md](06_Long_Term_Execution.md)（リネーム後。旧 15＋旧 12 §5）。`public/docs/` 配信は [sync-public-docs.mjs](../scripts/sync-public-docs.mjs) ホワイトリストのみ
 
-##### `docs/scripts/`
-- **目的**: `scripts/` 配下のツールに対応する**人向けドキュメント**（CPL CSV 取込仕様、Git エンコーディング補足、docs-auto-update 索引）
-- **索引**: [docs/scripts/README.md](scripts/README.md)
+- **スクリプト系ドキュメント（統合）**: [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)（CPL CSV・Git 補足・`docs:watch/validate`）。**Phase 別テスト計画**: [Phase_Testing_Plan.md](Phase_Testing_Plan.md)。**GeoJSON 資産手順**: [GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)
 
 ##### `docs/SWIM_Portal/`
 - **目的**: 国土交通省航空局 **SWIM**・**デジタルノータムリクエストサービス**の仕様・手続きの参照用 Markdown（共通編、付録 04、サービス説明書、ユーザーズガイド、情報サービス概要）
@@ -84,16 +84,16 @@
 - **注意**: `PDF/` 配下の原本 PDF は `.gitignore`（`**/*.pdf`）によりコミット対象外。正本は公式資料に従うこと
 
 #### `scripts/`
-- **目的**: 開発・運用スクリプト（説明の正本は [docs/scripts/README.md](scripts/README.md)）
+- **目的**: 開発・運用スクリプト（説明の正本は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)）
 - **内容**:
-  - `database/`: マイグレーション（例: `20260309_bootstrap_user_learning_profiles.sql`）、記事登録、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`（気象・航法・通信の科目ハブ＋`learning_contents` オーファン修復）、`20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`（法規 `3.1.2` を `sub_subject` クラスタへ差し替え）、`20260410_cpl_stub_lessons_contents_and_mapping.sql`（docs/06 Phase1+2 スタブ記事の `learning_contents` + `learning_test_mapping`）
-  - `cpl_exam/`: CPL 問題 CSV 取込。仕様の正本は **[docs/scripts/CPL_CSV_IMPORT_SPEC.md](scripts/CPL_CSV_IMPORT_SPEC.md)**
-  - `docs-auto-update/`: ドキュメント自動更新（説明は [docs/scripts/Docs_Auto_Update.md](scripts/Docs_Auto_Update.md)）
+  - `database/`: マイグレーション（例: `20260309_bootstrap_user_learning_profiles.sql`）、記事登録、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`（気象・航法・通信の科目ハブ＋`learning_contents` オーファン修復）、`20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`（法規 `3.1.2` を `sub_subject` クラスタへ差し替え）、`20260410_cpl_stub_lessons_contents_and_mapping.sql`（[05_Content_Pipeline.md](05_Content_Pipeline.md) Phase1+2 スタブ記事の `learning_contents` + `learning_test_mapping`）
+  - `cpl_exam/`: CPL 問題 CSV 取込。仕様は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) の **CPL Master CSV 取込仕様** 節
+  - `docs-auto-update/`: ドキュメント自動更新（同ファイルの **ドキュメント自動更新** 節。Phase テスト計画は [docs/Phase_Testing_Plan.md](Phase_Testing_Plan.md)）
   - `sync-public-docs.mjs`: `docs/` から `public/docs/` へのホワイトリスト同期（`npm run sync:public-docs`。`prebuild` でも実行）
 
 #### `public/`
 - **目的**: 静的ファイル（画像、GeoJSONなど）
-- **`public/docs/`**: **`docs/` のコピー（手編集しない）**。`npm run sync:public-docs` で `06`・`08`・`09`・`10`・`14` 等を上書き。MDX から `/docs/*.md` で配信。
+- **`public/docs/`**: **`docs/` のコピー（手編集しない）**。`npm run sync:public-docs` で `05_Content_Pipeline`・`08`・`09`・`10`・`Article_Coverage_Backlog` 等（[sync-public-docs.mjs](../scripts/sync-public-docs.mjs) の `FILES`）を上書き。MDX から `/docs/*.md` で配信。旧ファイル名（`06_記事…` 等）の **URL 互換は保証しない**（必要ならリダイレクトやリンク更新で対応）。
 - **注意**: 一部の大きなファイルは`.gitignore`で除外されています
 
 ---

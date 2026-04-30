@@ -7,9 +7,9 @@
 | 手順 | 内容 |
 |------|------|
 | `list_migrations` | リモートのマイグレーション一覧を取得し、リポジトリの `scripts/database/` 正本・ローカル `supabase/migrations` と齟齬がないか確認する |
-| `execute_sql` | 下記メトリクスを記録し、前回比で意図しない減少がないか見る。別環境へデータを流す場合も **`project_id` をその環境に切り替え**て、[docs/db/APPLICABLE_EXAMS_PILOT.md](../db/APPLICABLE_EXAMS_PILOT.md) の「別環境への適用（Supabase MCP）」に従い `apply_migration` / `execute_sql` で `scripts/database/` 正本を実行できる |
+| `execute_sql` | 下記メトリクスを記録し、前回比で意図しない減少がないか見る。別環境へデータを流す場合も **`project_id` をその環境に切り替え**て、[docs/db/CPL_KPI_and_Database_Operations.md](../db/CPL_KPI_and_Database_Operations.md) の「別環境への適用（Supabase MCP）」に従い `apply_migration` / `execute_sql` で `scripts/database/` 正本を実行できる |
 
-**推奨メトリクス SQL**（[docs/db/APPLICABLE_EXAMS_PILOT.md](../db/APPLICABLE_EXAMS_PILOT.md) と同様）:
+**推奨メトリクス SQL**（[docs/db/CPL_KPI_and_Database_Operations.md](../db/CPL_KPI_and_Database_Operations.md) と同様）:
 
 ```sql
 SELECT

@@ -12,11 +12,11 @@ const root = join(__dirname, '..');
 
 /** Keep in sync with MDX links to /docs/*.md */
 const FILES = [
-  '06_記事作成ロードマップ.md',
+  '05_Content_Pipeline.md',
   '08_Syllabus_Management_Guide.md',
   '09_CPL_Learning_Stub.md',
   '10_航空工学_学科試験攻略ブログ_ロードマップ.md',
-  '14_記事単元網羅とバックログ.md',
+  'Article_Coverage_Backlog.md',
 ];
 
 const outDir = join(root, 'public', 'docs');
