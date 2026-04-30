@@ -14,7 +14,7 @@
 - **本文化**: `meta.series` が `CPL-Learning-Stub` **ではない**（専用シリーズで本文執筆済みとみなす）。スタブは同一条件で「スタブ」。
 - **マッピング**: [Article_Coverage_Backlog.md](../Article_Coverage_Backlog.md) のスナップショットに準拠。再集計は §5 SQL。
 
-**KPI 19 本の内訳（[06](../05_Content_Pipeline.md) と整合）**
+**KPI 19 本の内訳（[05_Content_Pipeline.md](../05_Content_Pipeline.md) と整合）**
 
 | # | `learning_contents.id` / MDX | 科目 | 深さ（2026-04-12 時点） | `learning_test_mapping` |
 |---|------------------------------|------|-------------------------|-------------------------|
@@ -44,17 +44,27 @@
 - **スタブ**: **0 / 19**（Phase 1 KPI 19 本の範囲）
 - **マッピングあり**: **19 / 19**（3.4.1〜3.4.3 は [20260412_learning_test_mapping_nav_341_343.sql](../../scripts/database/20260412_learning_test_mapping_nav_341_343.sql) を Supabase に適用後に成立。未適用の環境では §14 の再集計で要確認）
 
+**空中航法（KPI 19 本には含めないが同一シリーズ・MDX 本文化済み）**
+
+| `learning_contents.id` | 備考 |
+|------------------------|------|
+| `3.4.5_NDBNavigation` | `meta.series: CPL-Navigation`。マッピングは [20260413_learning_test_mapping_nav_345_355_stub.sql](../../scripts/database/20260413_learning_test_mapping_nav_345_355_stub.sql) 等（[14](../Article_Coverage_Backlog.md)） |
+| `3.4.6_DMENavigation` | 同上（旧スタブメタから **2026-04-30** に `CPL-Navigation` へ統一） |
+| `3.4.7_DeadReckoningAdvanced` | 同上 |
+
+`learning_contents` の **title / description / order_index（384〜386）** は MDX と一致させるため、[20260430_learning_contents_cpl_navigation_341_347_meta.sql](../../scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql) を本番に適用する（`3.4.1`〜`3.4.4` の 380〜383 も同ファイルで更新）。
+
 **03 の成功指標（5/19・10/19・19/19）** は、上表の **「本文化」行数**を数えて照合する（MDX ファイル総数やスタブ総数ではない）。
 
 ### Phase 1 以外（同一ロードマップ内の関連だが KPI 19 に含めない例）
 
-以下は [06](../05_Content_Pipeline.md) Phase 2 または [14](../Article_Coverage_Backlog.md) で並行管理する。
+以下は [05_Content_Pipeline.md](../05_Content_Pipeline.md) Phase 2 または [14](../Article_Coverage_Backlog.md) で並行管理する。
 
 - 航空工学: `3.2.7`〜`3.2.12` など
 - 航空気象: `3.3.1`〜`3.3.12`（スタブ配置・マッピングは [14](../Article_Coverage_Backlog.md)）
 - 航空法規: `3.1.7`〜`3.1.8`（Phase 2 リスト）
 
-**KPI 節 最終更新（本パート）**: 2026-04-12
+**KPI 節 最終更新（本パート）**: 2026-04-30（`3.4.5`〜`3.4.7` のシリーズ・DB メタを [09](../09_CPL_Learning_Stub.md)・`20260430_learning_contents_cpl_navigation_341_347_meta.sql` に追随）
 
 ---
 

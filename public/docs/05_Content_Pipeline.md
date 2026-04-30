@@ -66,7 +66,9 @@
 | 航空法規 | 6 | `3.1.1`〜`3.1.6` |
 | 航空工学 | 6 | `3.2.1`〜`3.2.6` |
 | 航空通信 | 3 | `3.5.1`〜`3.5.3` |
-| 空中航法 | 4 | `3.4.1`〜`3.4.4` |
+| 空中航法 | 4 | `3.4.1`〜`3.4.4`（**Phase 1 の KPI に数えるのはこの 4 本のみ**） |
+
+> **注（2026-04-30）**: **`3.4.5`〜`3.4.7`** は KPI 19 本には含めないが、**MDX は本文化済み**（`meta.series: CPL-Navigation`、`order` 5〜7）。`learning_contents` の title/description と `order_index`（380〜386）は [20260430_learning_contents_cpl_navigation_341_347_meta.sql](../scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql) で MDX と同期。執筆・リンク・アフィ枠の約束事は [09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)。
 
 **進捗表（本文化・マッピング・更新日）の単一ソース**: [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)
 
@@ -126,12 +128,14 @@
 2. 3.5.2_AeronauticalInformation - 航空情報業務
 3. 3.5.3_RadioCommunication - 無線通信の基本手順
 
-#### 空中航法（KPI 内 4 本・現状スタブ）
+#### 空中航法（KPI 内 4 本・本文化済み）
 
-1. 3.4.1_DeadReckoning - 推測航法の基礎
-2. 3.4.2_VORNavigation - VOR航法の原理と使用
-3. 3.4.3_GPSNavigation - GPS航法の基礎
-4. 3.4.4_FlightPlanning - 飛行計画と航法計算
+1. ✅ 3.4.1_DeadReckoning — 推測航法（DR）の基礎（公開タイトルは MDX `meta.title` を正とする）
+2. ✅ 3.4.2_VORNavigation — VOR 航法
+3. ✅ 3.4.3_GPSNavigation — GNSS／GPS 航法の基礎
+4. ✅ 3.4.4_FlightPlanning — 飛行計画と航法計算
+
+**シリーズ拡張（KPI 外・同一 `CPL-Navigation`）**: `3.4.5`〜`3.4.7` は [09](09_CPL_Learning_Stub.md)・上記 SQL を参照。
 
 ### Phase 1 実装計画
 
@@ -171,9 +175,12 @@
 - 3.5.5_ATCPhraseology - 管制用語の詳細
 
 #### 空中航法
-- 3.4.5_NDBNavigation - NDB航法
-- 3.4.6_DMENavigation - DME航法
-- 3.4.7_DeadReckoningAdvanced - 推測航法の応用
+
+> **注（2026-04-30）**: 以下 3 本は **MDX 本文化済み**（Phase 2 計画リスト上の単元だが実装先行。マッピング・精緻化は [14](Article_Coverage_Backlog.md)）。
+
+- ✅ 3.4.5_NDBNavigation — NDB航法
+- ✅ 3.4.6_DMENavigation — DME航法
+- ✅ 3.4.7_DeadReckoningAdvanced — 推測航法の応用
 
 ### Phase 2 実装計画
 
@@ -357,9 +364,9 @@
 ### Phase 1実装タスク（次のステップ）
 
 - [x] KPI 19 本の MDX 配置（`src/content/lessons` に全 ID あり — [トラッカー](db/CPL_KPI_and_Database_Operations.md)）
-- [ ] KPI 19 本の **本文化**（現在 **12/19** — トラッカー集計を更新しながら推進）
-- [ ] `learning_test_mapping` の欠損埋め（例: `3.4.1`〜`3.4.3` — [14](Article_Coverage_Backlog.md)）
-- [ ] 品質チェックとレビュー
+- [x] KPI 19 本の **本文化**（**19/19** — [トラッカー](db/CPL_KPI_and_Database_Operations.md)）
+- [x] `learning_test_mapping` の **初期欠損埋め**（`3.4.1`〜`3.4.3` および Post-Phase-B の追補は [14](Article_Coverage_Backlog.md)・2026-04-13 MCP 実測。**狭義化・追加クラスタは継続**）
+- [ ] 品質チェックとレビュー（記事間リンク、`mapping_source` 精緻化）
 
 ---
 
@@ -379,9 +386,10 @@
 
 | 日付 | 更新内容 | 更新者 |
 |------|----------|--------|
+| 2026-04-30 | 空中航法 `3.4.5`〜`3.4.7` の本文化を反映、KPI 表に注記、Phase 1 チェックリストを **19/19・マッピング初期投入済み** に更新 | — |
 | 2025-01-16 | 初版作成、Phase 1準備タスク完了 | System |
 
 ---
 
-**次のステップ**: [CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md) のスタブ 7 本を本文化し、Phase B の **5/19** を目指す
+**次のステップ**: Phase 1 KPI は完走済み（[トラッカー](db/CPL_KPI_and_Database_Operations.md)）。**Phase 2** の残単元・マッピング精緻化・品質レビューは [14](Article_Coverage_Backlog.md) と [00](00_Flight_Academy_Strategy.md) 柱 1 に従う。
 

@@ -2,6 +2,7 @@
 
 **作成日**: 2026-04-10  
 **スナップショット更新**: 2026-04-13（MCP `execute_sql` 再取得。`3.4.2`/`3.4.3` は `question_text` 条件。Post-Phase-B で PPL 3 本・`3.4.5`/`3.4.6`/`3.5.5` マッピング追補）  
+**注記更新**: 2026-04-30 — 空中航法 **3.4.1〜3.4.7** の MDX 体裁・`learning_contents` メタを [09](09_CPL_Learning_Stub.md)・`20260430_learning_contents_cpl_navigation_341_347_meta.sql` に追随。**§1 の件数は 04-13 スナップショットのまま**（DB を再取得したら §5 を実行して §1§2 を更新）。
 **想定読者**: コンテンツ執筆者、プロダクトオーナー、AI アシスタント  
 **関連**: [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)（分類の正本）、[05_Content_Pipeline.md](05_Content_Pipeline.md)（Phase 計画）、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)（PPL 進捗）
 
@@ -33,11 +34,12 @@
 → **`3.3.8`**: `高層気象/高層大気の構造と特徴`（2 問）を紐付け（[20260412_learning_test_mapping_meteo_338_3312.sql](../scripts/database/20260412_learning_test_mapping_meteo_338_3312.sql)）。  
 → **`3.3.12`**: `飛行に影響する気象障害/乱気流` + `高層気象/ジェット気流`（計 14 問）。旧スタブ SQL の `%乱流%` は **「乱気流」と表記不一致**でスキップされていた。
 
-**空中航法 3.4.x**（マッピングあり）: `3.4.1_DeadReckoning` 〜 `3.4.7_DeadReckoningAdvanced` のうちスタブ除く主要 id。  
+**空中航法 3.4.x**（マッピングあり）: `3.4.1_DeadReckoning` 〜 `3.4.7_DeadReckoningAdvanced`。**MDX は 7 本とも本文化**（`meta.series: CPL-Navigation`、`meta.order` 1〜7。2026-04-30、[09](09_CPL_Learning_Stub.md)）。設問束ねは id ごとに次のとおり。  
 → **3.4.1**: `unified_cpl_questions.sub_subject` の ILIKE（推測・偏流・針路等）。`mapping_source`: `phase_b_20260412_nav341_343`。  
 → **3.4.2**: `question_text` の `%VOR%` / `%DME%` / `%TACAN%` / `%RMI%`（`sub_subject` に VOR 語が無いため）。`mapping_source`: `phase_b_20260413_nav342_343_qtext`。意図的に広め（約 60 問）；狭める場合は §9 変更履歴の Post-Phase-B メモを参照。  
 → **3.4.3**: `question_text` の `%GPS%` / `%GNSS%` / `%衛星%`。`mapping_source`: `phase_b_20260413_nav342_343_qtext`。  
-→ **3.4.5 / 3.4.6**: [20260413_learning_test_mapping_nav_345_355_stub.sql](../scripts/database/20260413_learning_test_mapping_nav_345_355_stub.sql)（`question_text` 中心。3.4.6 は **VOR を含まない** DME 系で 3.4.2 と重複を減らす）。`mapping_source`: `post_phase_b_20260413_nav_345_355`。
+→ **3.4.5 / 3.4.6**: [20260413_learning_test_mapping_nav_345_355_stub.sql](../scripts/database/20260413_learning_test_mapping_nav_345_355_stub.sql)（`question_text` 中心。3.4.6 は **VOR を含まない** DME 系で 3.4.2 と重複を減らす）。`mapping_source`: `post_phase_b_20260413_nav_345_355`。  
+→ **3.4.7**: 上記スタブ SQL の対象に含まれる場合は同 `mapping_source`。**詳細は Supabase の `learning_test_mapping` 行を正とする**。
 
 **航空通信 3.5.x**（マッピングあり）: `3.5.1_AirTrafficServices` 〜 `3.5.5_ATCPhraseology`  
 → **3.5.5**: 上記 SQL で復唱・略号等に絞ったクラスタ＋キーワード（件数は少なめのスタブ向け）。
@@ -58,7 +60,7 @@
 
 **航空気象（CPL 3.3 スタブ）**: `3.3.1_StandardAtmosphere` 〜 `3.3.12_Turbulence`  
 
-**空中航法（CPL 3.4）**: `3.4.1_DeadReckoning` 〜 `3.4.7_DeadReckoningAdvanced`（Phase 1 の 3.4.1〜3.4.4 は本文化）  
+**空中航法（CPL 3.4）**: `3.4.1_DeadReckoning` 〜 `3.4.7_DeadReckoningAdvanced`（**7 本とも本文化**・`CPL-Navigation`。KPI「19本」に数えるのは `3.4.1`〜`3.4.4` のみ — [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)）  
 
 **航空通信（CPL 3.5）**: `3.5.1_AirTrafficServices` 〜 `3.5.5_ATCPhraseology`（Phase 1 の 3.5.1〜3.5.3 は本文化）  
 
@@ -75,7 +77,7 @@
 |------|------|
 | **`3.1.1_AviationLegal0`** | ~~MDX 無し~~ → **2026-04-10** にスタブ MDX を追加。DB 行は従来どおり `ON CONFLICT DO NOTHING` で整合。 |
 | **粒度のある気象記事 `3.3.*`** | **2026-04-10** に `3.3.1`〜`3.3.12` スタブ MDX を追加。ハブ `CPL-Hub-Meteorology` と併用。**2026-04-12** に `3.3.8` / `3.3.12` のマッピングを [20260412_learning_test_mapping_meteo_338_3312.sql](../scripts/database/20260412_learning_test_mapping_meteo_338_3312.sql) で追補し **12/12 本**に。 |
-| **航法・通信の一部 `3.4.*` / `3.5.5`** | ~~MDX のみ~~ → **2026-04-13** に `3.4.5` / `3.4.6` / `3.5.5` を [20260413_learning_test_mapping_nav_345_355_stub.sql](../scripts/database/20260413_learning_test_mapping_nav_345_355_stub.sql) で追補（スタブ記事向けの狭い束ね）。 |
+| **航法・通信の一部 `3.4.*` / `3.5.5`** | ~~MDX のみ~~ → **2026-04-13** に `3.4.5` / `3.4.6` / `3.5.5` を [20260413_learning_test_mapping_nav_345_355_stub.sql](../scripts/database/20260413_learning_test_mapping_nav_345_355_stub.sql) で追補（スタブ記事向けの狭い束ね）。**2026-04-30** に `3.4.5`〜`3.4.7` のメタを **`CPL-Navigation`** に統一し、`learning_contents` を [20260430_learning_contents_cpl_navigation_341_347_meta.sql](../scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql) で MDX と同期（[09](09_CPL_Learning_Stub.md)）。 |
 
 ---
 
@@ -203,6 +205,7 @@ ORDER BY unmapped_questions DESC;
 
 | 日付 | 内容 |
 |------|------|
+| 2026-04-30 | 空中航法 **3.4.1〜3.4.7** の MDX 統一（`CPL-Navigation`、`order` 1〜7、リンク・アフィ枠・フィクション注記）と `learning_contents` 冪等同期 SQL [20260430_learning_contents_cpl_navigation_341_347_meta.sql](../scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql)。§2§3§4 の文言を更新。**§1 の MCP 件数は未再取得**（スナップショットは 04-13 のまま）。 |
 | 2026-04-13 | Post-Phase-B: PPL 3 本を `learning_contents` に冪等投入（[20260413_learning_contents_ppl_phase_b_three.sql](../scripts/database/20260413_learning_contents_ppl_phase_b_three.sql)）— MCP `execute_sql` 本番適用済み。`learning_contents` **90** 行・PPL **13**。`3.4.5` / `3.4.6` / `3.5.5` の `learning_test_mapping` を [20260413_learning_test_mapping_nav_345_355_stub.sql](../scripts/database/20260413_learning_test_mapping_nav_345_355_stub.sql) で追補（`mapping_source`: `post_phase_b_20260413_nav_345_355`）— マッピング記事 **50**。§1§2 を実測に同期。**3.4.2 の狭義化**（`sub_subject` AND 等）は本日は未実施—記事スコープと未マッピング削減のトレードオフを見てから `UPDATE` または 行削除＋再 `INSERT` で実施する方針（§2 の広め束ねの注記を維持）。 |
 | 2026-04-13 | `3.4.2` / `3.4.3` のマッピング条件を修正：verified では `sub_subject` に VOR/GPS 語が無く、`question_text` の `%VOR%`・`%DME%`・`%TACAN%`・`%RMI%`（3.4.2）および `%GPS%`・`%GNSS%`・`%衛星%`（3.4.3）で抽出。`mapping_source`: `phase_b_20260413_nav342_343_qtext`。[20260412_learning_test_mapping_nav_341_343.sql](../scripts/database/20260412_learning_test_mapping_nav_341_343.sql) を正本更新し Supabase MCP `execute_sql` で本番投入済み（`3.4.1`: 97 問・`3.4.2`: 60 問・`3.4.3`: 6 問）。 |
 | 2026-04-12 | 空中航法 `3.4.1`〜`3.4.3` の `learning_test_mapping` 追補（[20260412_learning_test_mapping_nav_341_343.sql](../scripts/database/20260412_learning_test_mapping_nav_341_343.sql)）。メタ同期用 [20260412_learning_contents_nav_comm_phase_b_meta.sql](../scripts/database/20260412_learning_contents_nav_comm_phase_b_meta.sql)。§1§2§3§4 を更新（マッピング 47 件・MDX 69 本は SQL 適用・PPL 追加後の想定）。 |

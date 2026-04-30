@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年4月25日
-**バージョン**: Roadmap v4.0.8（Strategy v1.2・CPL 主軸・独立運営）
+**最終更新**: 2026年4月30日
+**バージョン**: Roadmap v4.0.9（Strategy v1.2・CPL 主軸・独立運営）
 
 ---
 
@@ -273,6 +273,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-30 | v4.0.9: 空中航法 **3.4.5〜3.4.7** を含むシリーズのドキュメント整合 — [09](09_CPL_Learning_Stub.md)、[05](05_Content_Pipeline.md)、[14](Article_Coverage_Backlog.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md) を `CPL-Navigation`・冪等 SQL（`20260430_learning_contents_cpl_navigation_341_347_meta.sql`）に追随。Phase 1 KPI「19本」の定義（空中航法は `3.4.1`〜`3.4.4` のみ）は変更なし。 |
 | 2026-04-25 | ドキュメント整理: 長期方針の [06](06_Long_Term_Execution.md) を旧 16–18 から**1 本**に再編。[docs/README](README.md) 冒頭の更新履歴を圧縮。 |
 | 2026-04-25 | v4.0.8: **Phase 1 完走**前提で Phase B KPI・成功指標サマリー・Phase C（C-6）・CPL 価値命題・リスク表を更新。[docs/README](README.md)・Node 18+・GA4 状態（実装済／本番確認は [04](04_Operations_Guide.md)）と整合。長期方針は [06_Long_Term_Execution.md](06_Long_Term_Execution.md) および [docs/README](README.md)「長期実行計画」 |
 | 2026-04-13 | Post-Phase-B 完了反映: [14](Article_Coverage_Backlog.md) を MCP 実測で同期（`learning_contents` **90**・PPL **13**・マッピング **50**）。PPL 3 本の `learning_contents` SQL と `3.4.5`/`3.4.6`/`3.5.5` の `learning_test_mapping` SQL を本番 `execute_sql` 適用済み。**3.4.2** の `question_text` 狭義化は未実施（方針は [14](Article_Coverage_Backlog.md) §9）。**テスト**: `useArticleProgress` の統計集計を `calculateLearningStats` として抽出し [useArticleProgress.test.ts](../src/__tests__/hooks/useArticleProgress.test.ts) を追加。`npm run test:coverage`（2026-04-13）All files **Statements/Lines 79.33%**・**Funcs 19.31%**；**src 全体 30%（Statements）KPI は未達**のまま、B-4 で段階的拡充を継続。 |
