@@ -205,6 +205,7 @@ ORDER BY unmapped_questions DESC;
 
 | 日付 | 内容 |
 |------|------|
+| 2026-05-07 | 航空通信 **3.5.1〜3.5.5** の `learning_contents` タイトル・説明文を MDX 本文化版に全集約。また `learning_test_mapping.content_title` を同タイトルに同期。[`20260507_learning_contents_comm_351_355_meta_sync.sql`](../scripts/database/20260507_learning_contents_comm_351_355_meta_sync.sql) を Supabase `execute_sql` で本番適用済み。§1 MCP サマリー数値は未再取得。|
 | 2026-05-06 | **3.5.5_ATCPhraseology** をスタブから本文化（`CPL-Communication`・`order` 5）。`learning_contents` 冪等同期: [`20260506_learning_contents_comm_355_meta_finalize.sql`](../scripts/database/20260506_learning_contents_comm_355_meta_finalize.sql)。§1 MCP サマリー数値は従来スナップショットのまま（再実行で更新）。|
 | 2026-05-05 | May 計画: **3.5.4** を本文化（`src/content/lessons/3.5.4_EmergencyProcedures.mdx`）、`scripts/database/20260505_learning_contents_comm_354_meta_finalize.sql`・未マッピング監査 `20260505_audit_unmapped_sub_subject_counts.sql`・緊急束ねの再試行 `20260505_learning_test_mapping_comm_354_emergency_stub_retry.sql` を追加。§1 MCP サマリー数値は従来スナップショットのまま（再実行で更新）。|
 | 2026-04-30 | 空中航法 **3.4.1〜3.4.7** の MDX 統一（`CPL-Navigation`、`order` 1〜7、リンク・アフィ枠・フィクション注記）と `learning_contents` 冪等同期 SQL [20260430_learning_contents_cpl_navigation_341_347_meta.sql](../scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql)。§2§3§4 の文言を更新。**§1 の MCP 件数は未再取得**（スナップショットは 04-13 のまま）。 |
