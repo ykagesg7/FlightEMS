@@ -1,0 +1,17 @@
+---
+description: Large binary and generated data — avoid heavy bulk edits
+globs:
+  - public/images/**
+  - public/geojson/**
+  - cpl_exam_data/**
+  - "**/*.pdf"
+  - "**/*.png"
+  - "**/*.jpg"
+  - "**/*.zip"
+alwaysApply: false
+---
+
+# Generated and binary assets
+
+- Avoid mass edits; operate on indices or metadata instead.
+- Never commit generated artifacts unless the project already treats them as source (check with maintainer).

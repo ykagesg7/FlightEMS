@@ -10,20 +10,55 @@ export const meta = {
   tags: ['CPL', '学科試験', '空中航法', 'ハブ'],
   series: 'CPL-Learning-Stub',
   order: 0,
-  readingTime: 3,
-  excerpt: 'テスト結果からの関連記事リンク用。本文は準備中です。',
+  readingTime: 4,
+  excerpt: 'ナビゲーター「道真」のフィクション設定と、空中航法シリーズ（3.4.x）への入口。テスト結果からの関連記事リンク用ハブ。',
   publishedAt: '2026-03-29'
 };
 
 <Image
-  src="https://placehold.co/1200x630/1a1a1a/FFF?text=CPL+Navigation+Hub"
-  alt="CPL 空中航法ハブ（プレースホルダ）"
+  src="/images/ContentImages/Michizane1.png"
+  alt="道真（フィクション）：滑走路と戦闘機をバックにバイクで駆ける、パロディ風のビジュアルイメージ"
   width={1200}
-  height={630}
+  height={960}
 />
 
-## 本文準備中
+## このハブの役割
 
-このページは**テスト結果からの学習記事リンク**用のハブ（スタブ）です。本文は順次整備します。
+このページは **テスト結果からの学習記事リンク**（`ReviewContentLink`）や、**空中航法シリーズ全体の入口**として使うハブです。個々の単元は下記の記事へ進んでください。
+
+---
+
+## 道真より（自己紹介）
+
+おっ、初めましてのあんさんも、おかえりのあんさんも、どうもたい。
+
+上の画像はワシの「空を愛するオッサンのフィクション人格・道真（みちざね）」のビジュアルイメージや。**歴史上の菅原道真とも、特定の実在人物とも無関係**たい。映画やミリタリーのノリを借りた **パロディ寄りの見た目**で、学科の「怖い話」を少しだけ楽に読むためのマスコットやと思ってくれればええ。
+
+ワシの仕事は単純や。**ナビを盲信したらロスポジ（迷子）で詰む**ってことを、笑いと比喩で腹に落としてもらうこと。計器もGPSも道具や。最後にブレーキ踏むのは、あんさん自身の判断力たい。
+
+---
+
+## 空中航法シリーズ（読み順）
+
+`meta.series: CPL-Navigation` でつながっとるばい。
+
+1. [推測航法（DR）の基礎](/articles/3.4.1_DeadReckoning)
+2. [VOR 航法](/articles/3.4.2_VORNavigation)
+3. [GNSS／GPS 航法の基礎](/articles/3.4.3_GPSNavigation)
+4. [飛行計画と航法計算](/articles/3.4.4_FlightPlanning)
+5. [NDB航法](/articles/3.4.5_NDBNavigation)
+6. [DME航法](/articles/3.4.6_DMENavigation)
+7. [推測航法の応用](/articles/3.4.7_DeadReckoningAdvanced)
+
+---
+
+## 関連ドキュメント
+
+- [CPL Learning Stub](/docs/09_CPL_Learning_Stub.md)（シリーズ索引・DB 同期メモ）
+- [Syllabus管理ガイド](/docs/08_Syllabus_Management_Guide.md)
+
+---
+
+> **注:** 画像・キャラクター・会話調は **フィクション用の演出**です。実運航・試験対策の正本は **最新の公布資料・教材・教官の指示**に従ってください。
 
 export default ({ children }) => <>{children}</>

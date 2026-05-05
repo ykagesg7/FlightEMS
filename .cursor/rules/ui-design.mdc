@@ -1,0 +1,11 @@
+---
+description: UI implementation must follow DESIGN.md and Tailwind tokens
+globs:
+  - "**/*.tsx"
+  - "**/*.css"
+alwaysApply: false
+---
+
+# UI and design
+
+Before changing UI styling or adding new visual patterns, read the repo root **`DESIGN.md`** and align with existing **Tailwind** tokens (`brand.*`, `hud.*`, `semantic.*` via CSS variables where applicable). Avoid introducing one-off hex colors when a token exists.

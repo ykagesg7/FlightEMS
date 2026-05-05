@@ -6,7 +6,7 @@
 - ✅ **フロントエンド開発者**: コンポーネント構造を理解したい場合
 - ✅ **コードレビュアー**: コンポーネント配置の妥当性を確認したい場合
 
-**推奨読み順**: [docs/README.md](README.md) → [03_Development_Guide.md](03_Development_Guide.md) → このドキュメント
+**推奨読み順**: [docs/README.md](README.md) → [03_Development_Guide.md](03_Development_Guide.md) → このドキュメント。UI トークンとエージェント前提の要約はルートの [**AGENTS.md**](../AGENTS.md)・[**DESIGN.md**](../DESIGN.md) を参照。
 
 ---
 
@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトのコンポーネント構造と配置方針について説明します。
 
-**最終更新**: 2026年4月（記事 MDX：`prose-invert`・アフィ枠 Grid）
-**バージョン**: Component Structure Guide v1.4
+**最終更新**: 2026年5月（ルート `AGENTS.md` / `DESIGN.md` への参照を明文化）
+**バージョン**: Component Structure Guide v1.5
 
 ---
 

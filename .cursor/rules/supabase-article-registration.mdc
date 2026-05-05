@@ -1,60 +1,14 @@
 ---
-description: Supabase MCP and article registration workflow for learning_contents
+description: Supabase learning_contents registration — trigger rule; full procedure in Skill
 globs:
+  - src/content/lessons/**/*.mdx
+  - src/content/articles/**/*.mdx
+  - scripts/database/**
 alwaysApply: false
 ---
 
-# Supabase Article Registration
+# Supabase article registration
 
-## When to Use
+When adding or updating lesson MDX that must appear in the app catalog, sync **`learning_contents`** via Skill **[`.cursor/skills/learning-contents-registration/SKILL.md`](../skills/learning-contents-registration/SKILL.md)** (MCP `execute_sql`, fallback scripts, CPL meta SQL list, schema table).
 
-- Registering new PPL/CPL lesson articles to `learning_contents` table for viewing in the app
-- After creating or updating MDX files in `src/content/lessons/`
-
-## Supabase MCP
-
-Use **Supabase MCP** when available (Cursor **Marketplace** では `plugin-supabase-supabase` 等、手動設定では `my_supabase_project` など。**Settings → MCP** の一覧で実際のサーバー名を確認すること):
-
-1. **execute_sql** tool:
-   - `project_id`: `fstynltdfdetpyvbrswr` (FlightAcademy project)
-   - `query`: SQL for INSERT/UPDATE
-
-2. **Example** (upsert article):
-```sql
-INSERT INTO learning_contents (id, title, category, sub_category, description, order_index, parent_id, content_type, is_published, updated_at)
-VALUES ('PPL-1-1-9_FlightPerformance', '【航空工学】余剰馬力の美学...', 'PPL', '航空工学', '...', 9, NULL, 'text', true, NOW())
-ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, sub_category = EXCLUDED.sub_category, description = EXCLUDED.description, order_index = EXCLUDED.order_index, content_type = EXCLUDED.content_type, is_published = EXCLUDED.is_published, updated_at = EXCLUDED.updated_at;
-```
-
-## Fallback: Node Script
-
-If Supabase MCP is unavailable, use:
-```bash
-node scripts/database/register_ppl_article.mjs PPL-1-1-9_FlightPerformance
-```
-Requires `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` (anon key has no write permission).
-
-## Fallback: SQL File
-
-Run `scripts/database/insert_ppl_1_1_9.sql` via Supabase Dashboard SQL Editor.
-
-CPL 航空工学の **title / description / order_index / マッピング表示名** を MDX と揃える冪等スクリプト:
-
-- `3.2.1`〜`3.2.4`: `scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql`（`order_index` 340〜343）
-- `3.2.5`〜`3.2.12`: `scripts/database/20260412_learning_contents_cpl_engineering_325_332_meta.sql`（`order_index` 344〜351）
-
-CPL 空中航法の **title / description / order_index / マッピング表示名** を MDX と揃える冪等スクリプト:
-
-- `3.4.1`〜`3.4.7`: `scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql`（`order_index` 380〜386）
-
-シリーズ全体の執筆・体裁は [docs/09_CPL_Learning_Stub.md](docs/09_CPL_Learning_Stub.md) の「航空工学 3.2.x」「航空気象 3.3.x」「空中航法 3.4.x」の実装サマリーを参照。
-
-## learning_contents Schema
-
-| Column | PPL | CPL |
-|--------|-----|-----|
-| id | filename (e.g. PPL-1-1-9_FlightPerformance) | filename |
-| category | PPL | **`CPL学科`**（`PrevNextNav` の記事カテゴリと一致させること） |
-| sub_category | 航空工学, 航空気象, etc. | subject name |
-| content_type | text | text |
-| is_published | true | true |
+Keep **CPL `category`** as **`CPL学科`** for `PrevNextNav` consistency.

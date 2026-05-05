@@ -1,7 +1,7 @@
 # プロジェクトフォルダ構造ガイド
 
-**最終更新**: 2026年4月25日（長期計画を [06_Long_Term_Execution.md](06_Long_Term_Execution.md) に一本化。従来の sync:public-docs・`Scripts_Repository_Tooling` 集約の説明は継続）
-**バージョン**: Folder Structure Guide v1.5
+**最終更新**: 2026年5月5日（ワークスペース一括同期: `.cursor` agents/skills/rules、ルート `AGENTS.md` / `DESIGN.md`、旧 `.cursorrules` 削除、`cpl_exam_data`、`public/geojson/waypoints`、`scripts`、`src` 周辺。多くは **LF 改行の統一** を含む）
+**バージョン**: Folder Structure Guide v1.7
 
 **責務**: repo 全体のフォルダ概要。プロジェクトのクイックリファレンスと AI 向け索引は [docs/README.md](README.md)。`src/` の詳細は [Component_Structure_Guide.md](Component_Structure_Guide.md) を参照。
 
@@ -12,11 +12,13 @@
 ### 🔧 設定・設定ファイル
 
 #### `.cursor/`
-- **目的**: Cursor IDEの設定ファイル
+- **目的**: Cursor IDE のルール・スキル・サブエージェント。**旧ルート `.cursorrules` は廃止**し、粒度の細かい **`.cursor/rules/*.mdc`** とルート [**AGENTS.md**](../AGENTS.md) に寄せる。
 - **内容**:
-  - `rules/deep-thinking.mdc`: AIアシスタント用の思考モード設定
-  - `mcp.json.backup`: MCP設定のバックアップ（.gitignoreで除外）
-- **注意**: `.cursor/mcp.json`は機密情報を含むため、.gitignoreで除外されています
+  - `rules/*.mdc`: パス別・常時適用ルール（例: `core-project.mdc`, `git-conventions.mdc`, `mdx-article-guide.mdc`）
+  - `skills/<name>/SKILL.md`: オンデマンド手順（記事登録・フライトプラン棚卸し等）
+  - `agents/*.md`: 委譲用サブエージェント
+- **ルート**: [AGENTS.md](../AGENTS.md)（エージェント要約）、[DESIGN.md](../DESIGN.md)（UI トークン）
+- **注意**: `.cursor/mcp.json` は機密情報を含むため .gitignore で除外。手動テンプレは [`mcp.json.example`](../.cursor/mcp.json.example)
 
 #### `.github/`
 - **目的**: GitHub Actionsワークフロー設定

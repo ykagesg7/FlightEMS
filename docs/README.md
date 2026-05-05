@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月5日（[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) に Windows / PowerShell・GitHub MCP（PAT・トラブルシュート）を追記）
-**バージョン**: Documentation Index v4.31
+**最終更新**: 2026年5月5日（ワークスペース一括同期: `AGENTS.md` / `DESIGN.md`・`.cursor`・CPL/waypoints/scripts/src 等。詳細は [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) 更新履歴相当の箇条および `git log`）
+**バージョン**: Documentation Index v4.32
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -23,6 +23,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-05-05（一括同期）**: ルート [**AGENTS.md**](../AGENTS.md) / [**DESIGN.md**](../DESIGN.md)。**`.cursor/agents`**・**`.cursor/skills`**・追加 **`.cursor/rules`**（`core-project`・`generated-and-binary-assets`・`ui-design` 等）。旧 **`.cursorrules` 削除**（内容は `.cursor/rules` と AGENTS に分散）。[**Serena**](../.serena/project.yml) 設定の更新。`cpl_exam_data/`（README・分析レポート・converted_md・structured_*）、`public/geojson/waypoints/`（インデックス・字句別・地方別）、`scripts/docs-auto-update/`・`scripts/utils/check-encoding.js` / `fix-encoding.js`・`scripts/database/reset-article-stats.js`・各種 **`src/`**（型・フック・MDX 部品・テスト・講義 MDX）、[**Michizane1.png**](../public/images/ContentImages/Michizane1.png)、`postcss.config.js`・`api/package.json` の整理。多くのファイルで **改行（LF）統一** を含む。**索引**: [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)、[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)、[Component_Structure_Guide.md](Component_Structure_Guide.md)。
 - **2026-05-05**: [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) を拡充（Windows: PowerShell 実行ポリシーと `npm.ps1`、Cursor の winget ID `Anysphere.Cursor`、GitHub MCP: OAuth「dynamic client registration」失敗時の PAT 手動設定、Fine-grained の `github_pat_` 二重貼り付け防止、パスキー不可時の回避、`get_me` での疎通確認）。`.cursor/mcp.json` は引き続き `.gitignore`（PAT はコミットしない）。
 - **2026-04-30**: 空中航法 **3.4.1〜3.4.7** の `meta.series`（`CPL-Navigation`）・リンク・アフィ枠・フィクション注記を統一。冪等 SQL [20260430_learning_contents_cpl_navigation_341_347_meta.sql](../scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql) を追加し、Supabase MCP `execute_sql`（`fstynltdfdetpyvbrswr`）で本番反映・検証済み。詳細は [09](09_CPL_Learning_Stub.md)。関連して [05](05_Content_Pipeline.md)、[14](Article_Coverage_Backlog.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[01](01_Current_Status_and_Roadmap.md) を整合。
 - **2026-04-25**: 長期方針を [06](06_Long_Term_Execution.md) に一本化。`12_Quiz_Analytics_Phase_Design` を **§5** に取り込み、ファイル削除（番号付き整理）。引き続き旧 16–18 は [06](06_Long_Term_Execution.md) 統合済み。[01](01_Current_Status_and_Roadmap.md) v4.0.8 整合。

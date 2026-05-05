@@ -73,6 +73,17 @@ node setup-git-hooks.js
 
 詳細なトラブルシューティング・設定一覧は、必要に応じて `scripts/docs-auto-update/` 内の各 `.js` を直接参照してください。
 
+### 文字エンコーディング・改行の補助（任意）
+
+リポジトリ全体のテキストを機械的に確認・修正する場合に、ルートから次を利用できる（**コミット前に差分を必ず確認**すること）。
+
+```bash
+node scripts/utils/check-encoding.js
+node scripts/utils/fix-encoding.js
+```
+
+用途・オプションは各スクリプト先頭のコメントを正とする。
+
 ---
 
 ## CPL Master CSV 取込仕様

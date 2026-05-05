@@ -1,0 +1,17 @@
+---
+description: Project-wide defaults for FlightAcademyTsx (replaces legacy .cursorrules)
+globs:
+alwaysApply: true
+---
+
+# Core project rules
+
+- Always respond in Japanese.
+- Do not change package versions without explicit approval.
+- Prefer type-safe code; avoid `any`.
+- No UI/UX changes without approval.
+- Keep secrets in `.env.local`; never inline keys.
+- Follow existing formatting and linter rules.
+- Use React 18 patterns and existing Suspense boundaries.
+- Prefer Supabase MCP for Supabase integration (use the server name shown under **Settings → MCP**).
+- Use stagewise toolbar only in development as configured in the project.

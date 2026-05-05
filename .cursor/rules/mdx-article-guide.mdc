@@ -9,6 +9,8 @@ alwaysApply: false
 
 # MDX 記事作成ガイドライン
 
+執筆時に**ペルソナ・構成を前面**に出したい場合は Subagent **`mdx-content`**（`.cursor/agents/mdx-content.md`）の委譲も可。技術制約（メタ形式・コンポーネント・法令手順）は本ファイルを正とする。
+
 ## メタデータ形式（必須）
 
 YAML frontmatter (`---` ブロック) は使用禁止。ESM export 形式のみ対応。
