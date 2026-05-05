@@ -171,7 +171,9 @@
 - 3.1.8_AirportOperations - 空港運用規則
 
 #### 航空通信
-- 3.5.4_EmergencyProcedures - 緊急時の通信手順
+
+- ✅ **3.5.4_EmergencyProcedures** — 緊急時の通信手順（**2026-05** 本文化・`CPL-Communication`）
+
 - 3.5.5_ATCPhraseology - 管制用語の詳細
 
 #### 空中航法

@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年4月30日
-**バージョン**: Roadmap v4.0.9（Strategy v1.2・CPL 主軸・独立運営）
+**最終更新**: 2026年5月5日
+**バージョン**: Roadmap v4.0.10（Strategy v1.2・CPL 主軸・独立運営）
 
 ---
 
@@ -11,6 +11,15 @@
 戦略の根拠は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) を参照。
 
 **推奨読み順**: [docs/README.md](README.md) → [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) → **このドキュメント**
+
+### 2026年5月期スプリント（May 実施計画の記録）
+
+- **Phase 2 寄り本文化**: 航空通信 [3.5.4_EmergencyProcedures](../src/content/lessons/3.5.4_EmergencyProcedures.mdx) を `CPL-Communication` シリーズ（order 4）として執筆完了。Supabase メタ同期は [`20260505_learning_contents_comm_354_meta_finalize.sql`](../scripts/database/20260505_learning_contents_comm_354_meta_finalize.sql)。
+- **`learning_test_mapping` サイクル（第1弾／第2弾相当）**: 未マッピング集計の監査のみ [`20260505_audit_unmapped_sub_subject_counts.sql`](../scripts/database/20260505_audit_unmapped_sub_subject_counts.sql)。新環境向けスタブ既定の再適用 [`20260505_learning_test_mapping_comm_354_emergency_stub_retry.sql`](../scripts/database/20260505_learning_test_mapping_comm_354_emergency_stub_retry.sql)。
+- **B-4**: [`useArticleProgress.test.ts`](../src/__tests__/hooks/useArticleProgress.test.ts) で `calculateLearningStats` に追加ケース。**カバレッジ数値**: 実行後に [`Phase_C_Quality_Preparation.md`](Phase_C_Quality_Preparation.md) に従い `npm run test:coverage` をスナップショット（月末運用）。
+- **B-5（GA4）**: **リポでは表テンプレを整備のみ**。[04_Operations_Guide.md](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」は運用入力で Phase B 完了とみなす。AI は Vercel/GA にアクセスしない。
+- **PPL（二次・リンク穴）**: [3.2.11_StallAndSpin](../src/content/lessons/3.2.11_StallAndSpin.mdx) から [`PPL-1-1-6_StallSpin`](/articles/PPL-1-1-6_StallSpin) への復習 Callout を追加。[3.3.11_VisibilityAndFog](../src/content/lessons/3.3.11_VisibilityAndFog.mdx) は学習目標リストの体裁を調整。
+- **Phase C 準備**: [Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)（Light house / A11y / カバレッジ運用のみ。UI の無承認改修なし）。
 
 ---
 
@@ -273,6 +282,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-05 | **v4.0.10 / May sprint**: 「2026年5月期スプリント」節追加。Phase 2 級の **3.5.4** 緊急通信レッスンの本文化与 DB メタ同期 SQL、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、監査／再試行用 `20260505_*.sql`、[04_Operations_Guide.md](04_Operations_Guide.md) GA4 ログ表の運用手順明示。`calculateLearningStats` テスト拡張。詳細は同節参照。 |
 | 2026-04-30 | v4.0.9: 空中航法 **3.4.5〜3.4.7** を含むシリーズのドキュメント整合 — [09](09_CPL_Learning_Stub.md)、[05](05_Content_Pipeline.md)、[14](Article_Coverage_Backlog.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md) を `CPL-Navigation`・冪等 SQL（`20260430_learning_contents_cpl_navigation_341_347_meta.sql`）に追随。Phase 1 KPI「19本」の定義（空中航法は `3.4.1`〜`3.4.4` のみ）は変更なし。 |
 | 2026-04-25 | ドキュメント整理: 長期方針の [06](06_Long_Term_Execution.md) を旧 16–18 から**1 本**に再編。[docs/README](README.md) 冒頭の更新履歴を圧縮。 |
 | 2026-04-25 | v4.0.8: **Phase 1 完走**前提で Phase B KPI・成功指標サマリー・Phase C（C-6）・CPL 価値命題・リスク表を更新。[docs/README](README.md)・Node 18+・GA4 状態（実装済／本番確認は [04](04_Operations_Guide.md)）と整合。長期方針は [06_Long_Term_Execution.md](06_Long_Term_Execution.md) および [docs/README](README.md)「長期実行計画」 |
@@ -297,6 +307,6 @@
 
 ---
 
-**最終更新**: 2026年4月25日
-**バージョン**: Roadmap v4.0.8
-**次回レビュー予定**: Phase B 末（**Phase 2 着手**・`learning_test_mapping` 欠損・GA4 本番確認）、KPI 実績に基づく数値の見直し
+**最終更新**: 2026年5月5日
+**バージョン**: Roadmap v4.0.10（Strategy v1.2・CPL 主軸・独立運営）
+**次回レビュー予定**: Phase B 終盤〜 Phase C（Phase 2 記事継続・`learning_test_mapping`・GA4 ログ・`npm run test:coverage` KPI）、数値の見直し

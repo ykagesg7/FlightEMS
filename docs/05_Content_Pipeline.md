@@ -1,7 +1,7 @@
 # CPL学科試験問題解説記事作成ロードマップ
 
 **作成日**: 2025年1月16日
-**最終更新**: 2026年4月12日（Phase 1 KPI 19 本の定義整理・[CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md) 新設）
+**最終更新**: 2026年5月5日（Phase 2 リストの **3.5.4** 本文化を反映。KPI 正本・網羅は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)）
 **バージョン**: v1.3.0
 
 ## 📖 このドキュメントを読むべき人
@@ -171,7 +171,9 @@
 - 3.1.8_AirportOperations - 空港運用規則
 
 #### 航空通信
-- 3.5.4_EmergencyProcedures - 緊急時の通信手順
+
+- ✅ **3.5.4_EmergencyProcedures** — 緊急時の通信手順（**2026-05** 本文化・`CPL-Communication`）
+
 - 3.5.5_ATCPhraseology - 管制用語の詳細
 
 #### 空中航法

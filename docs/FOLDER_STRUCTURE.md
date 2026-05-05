@@ -1,9 +1,26 @@
 # プロジェクトフォルダ構造ガイド
 
-**最終更新**: 2026年5月5日（`scripts/database/INDEX.md`・不要 SQL 削除方針・ウェイポイント `.vercelignore`・正本マップ README 節。**ワークスペース一括同期**関連は過去ログ参照）
-**バージョン**: Folder Structure Guide v1.8
+**最終更新**: 2026年5月5日（トップレベル7本柱・`vite/`・`e2e/` の索引追加。他は過去ログ参照）
+**バージョン**: Folder Structure Guide v1.9
 
 **責務**: repo 全体のフォルダ概要。プロジェクトのクイックリファレンスと AI 向け索引は [docs/README.md](README.md)。`src/` の詳細は [Component_Structure_Guide.md](Component_Structure_Guide.md) を参照。
+
+---
+
+## リポジトリの主なトップレベル（7本柱＋ルート設定）
+
+AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷いにくい。
+
+| パス | 役割 |
+|------|------|
+| [`src/`](#src) | React アプリ本体（ページ・フック・`content` MDX 等） |
+| [`api/`](#api) | Vercel Serverless（気象・NOTAM 等のプロキシ） |
+| [`public/`](#public) | 静的配信（画像、GeoJSON、**同期済み** `public/docs/*.md`） |
+| [`docs/`](#docs) | 仕様・運用ドキュメントの**正本**（`public/docs` は手編集しない） |
+| [`scripts/`](#scripts) | DB SQL、CPL 取込、ドキュメント同期、ウェイポイント補助など |
+| [`e2e/`](#e2e) | Playwright E2E スペック |
+| [`vite/`](#vite) | Vite 専用プラグイン（開発時 `/api/*` プロキシ、GA4 タグ等） |
+| **リポジトリルート** | `vite.config.ts`、`package.json`、`tsconfig*.json`、[AGENTS.md](../AGENTS.md)、[DESIGN.md](../DESIGN.md)、[README.md](../README.md) など |
 
 ---
 
@@ -85,6 +102,12 @@
 - **索引**: [docs/SWIM_Portal/README.md](SWIM_Portal/README.md)
 - **注意**: `PDF/` 配下の原本 PDF は `.gitignore`（`**/*.pdf`）によりコミット対象外。正本は公式資料に従うこと
 
+#### `public/`
+- **目的**: 静的ファイル（画像、GeoJSONなど）
+- **`public/docs/`**: **`docs/` のコピー（手編集しない）**。`npm run sync:public-docs` で `05_Content_Pipeline`・`08`・`09`・`10`・`Article_Coverage_Backlog` 等（[sync-public-docs.mjs](../scripts/sync-public-docs.mjs) の `FILES`）を上書き。MDX から `/docs/*.md` で配信。旧ファイル名（`06_記事…` 等）の **URL 互換は保証しない**（必要ならリダイレクトやリンク更新で対応）。
+- **注意**: 一部の大きなファイルは`.gitignore`で除外されています
+- **ウェイポイント（本番のみ）**: アルファベット別 `waypoints_<1文字>.json` と `waypoints/index.json` は [.vercelignore](../.vercelignore) で Vercel 転送のみ省略。**Git とローカルビルドは含まれる**。理由とデータ層は [GeoJSON doc](GeoJSON_Waypoints_And_Assets.md)
+
 #### `scripts/`
 - **目的**: 開発・運用スクリプト（説明の正本は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)）
 - **内容**:
@@ -93,11 +116,17 @@
   - `docs-auto-update/`: ドキュメント自動更新（同ファイルの **ドキュメント自動更新** 節。Phase テスト計画は [docs/Phase_Testing_Plan.md](Phase_Testing_Plan.md)）
   - `sync-public-docs.mjs`: `docs/` から `public/docs/` へのホワイトリスト同期（`npm run sync:public-docs`。`prebuild` でも実行）
 
-#### `public/`
-- **目的**: 静的ファイル（画像、GeoJSONなど）
-- **`public/docs/`**: **`docs/` のコピー（手編集しない）**。`npm run sync:public-docs` で `05_Content_Pipeline`・`08`・`09`・`10`・`Article_Coverage_Backlog` 等（[sync-public-docs.mjs](../scripts/sync-public-docs.mjs) の `FILES`）を上書き。MDX から `/docs/*.md` で配信。旧ファイル名（`06_記事…` 等）の **URL 互換は保証しない**（必要ならリダイレクトやリンク更新で対応）。
-- **注意**: 一部の大きなファイルは`.gitignore`で除外されています
-- **ウェイポイント（本番のみ）**: アルファベット別 `waypoints_<1文字>.json` と `waypoints/index.json` は [.vercelignore](../.vercelignore) で Vercel 転送のみ省略。**Git とローカルビルドは含まれる**。理由とデータ層は [GeoJSON doc](GeoJSON_Waypoints_And_Assets.md)
+#### `e2e/`
+- **目的**: **Playwright** によるエンドツーエンドテスト（`npm run test:e2e`）
+- **内容**: 機能別 `.spec.ts`（例: 計画・記事スタブなど）。設定はルート [`playwright.config.ts`](../playwright.config.ts) を正とする。
+
+#### `vite/`
+- **目的**: **Vite ビルド専用プラグイン**（アプリの React コードではない）。[`vite.config.ts`](../vite.config.ts) から import。
+- **内容（代表）**:
+  - `devWeatherApiPlugin.ts`: ローカル `npm run dev` で `/api/weather`・`/api/aviation-weather`・`/api/swim-notam-search` 等を処理（[`api/lib`](../api/lib) 共有）
+  - `devOpenskyApiPlugin.ts`: 開発時 OpenSky 系の同様の橋渡し
+  - `injectGoogleTagPlugin.ts`: 本番ビルド時 GA4 注入（詳細は `vite.config.ts`）
+- **境界**: 本番の HTTP API 実体は [`api/`](#api)。ここは開発サーバと Rollup ビルドへのフック。
 
 ---
 

@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトのコンポーネント構造と配置方針について説明します。
 
-**最終更新**: 2026年5月（ルート `AGENTS.md` / `DESIGN.md` への参照を明文化）
-**バージョン**: Component Structure Guide v1.5
+**最終更新**: 2026年5月（`planning` 機能マップ節、`AGENTS`/`FOLDER_STRUCTURE` と整合）
+**バージョン**: Component Structure Guide v1.6
 
 ---
 
@@ -268,6 +268,30 @@ src/pages/
 
 ---
 
+## `src/pages/planning`（計画ページ）機能マップ
+
+**エントリ**: [`PlanningMapPage.tsx`](../src/pages/planning/PlanningMapPage.tsx)。**ディレクトリ移動せず**、下表で責務を切る（外部 API・Vite の対応は直下ツリー内コメントおよび [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) の `api` / `vite` 節）。
+
+| パス | 責務 |
+|------|------|
+| **`PlanningMapPage.tsx`** | ルートページ・タブ（計画 / 地図 / 試験対策等）の統合 |
+| **`createInitialFlightPlan.ts`** | 初期フライトプラン状態の生成 |
+| **`flightPlanDraft.ts`** | `localStorage` 下書き（`PlanDocumentV1`）、永続化フラグ |
+| **`utils/`** | NAVAID からウェイポイント組み立て、磁気偏角まわりの検証など小粒ロジック |
+| **`briefing/`** | `briefingTypes`、`buildPreflightBriefing` — プリフライト・ブリーフ用データ組み立て |
+| **`components/briefing/`** | `PreflightBriefingPanel` 等、ブリーフ UI |
+| **`components/flight/`** | 「計画」タブ本体（経路、WP、空港・NAVAID/WP セレクタ、要約、印刷ビューなど） |
+| **`components/map/`** | 「地図」タブ：`MapTab` / `MapTabContent`、レイヤ（`layers/`）、フック（`hooks/`）、ポップアップ（`popups/`）、軌跡レイヤ |
+| **`components/debrief/`** | フライト後：トラック取込 UI、一覧、リプレイタイムライン、サマリー |
+| **`components/profile/`** | 経路断面・プロファイルパネル（`RouteProfilePanel` 等） |
+| **`tracks/`** | GPX/KML/CSV の取込、`parseTrackFile`、補間・間引き、`supabaseDebrief`、計画線からの偏差分析、型定義 |
+| **`export/`** | KML/GPX/CSV 書き出しとダウンロード補助 |
+| **`profile/`** | 地形プロバイダ、ルートサンプル生成（`terrainProvider.ts`、`buildRouteSamples.ts`） — ※ `components/profile` とは別レイヤ |
+
+新規で地図レイヤ・気象・NOTAM を触る場合は、同ディレクトリ内の既存 `services` / `utils` / `api` 連携パターンに合わせる。
+
+---
+
 ## 🔧 インポートパス規則
 
 ### 共通コンポーネントのインポート
@@ -402,9 +426,7 @@ ls src/pages/planning/components/
 
 ---
 
-**最終更新**: 2026年3月（/planning OpenSky・SWIM デジタルノータムポップアップ）
-**バージョン**: Component Structure Guide v1.3
-**管理者**: FlightAcademy開発チーム
+（メタ情報は冒頭の **最終更新** / **バージョン** を正とする。）
 
 ---
 

@@ -100,6 +100,68 @@ describe('calculateLearningStats', () => {
     expect(stats.favoriteCategories[0]).toBe('Cat2');
   });
 
+  it('orders recentActivity by readAt descending', () => {
+    const older = new Date('2026-04-01T10:00:00Z');
+    const newer = new Date('2026-04-12T14:00:00Z');
+
+    const progress: Record<string, ArticleProgress> = {
+      '/articles/a': {
+        articleSlug: '/articles/a',
+        readAt: older,
+        readingTime: 1,
+        scrollProgress: 100,
+        completed: true,
+        bookmarked: false,
+        lastPosition: 0,
+      },
+      '/articles/c': {
+        articleSlug: '/articles/c',
+        readAt: newer,
+        readingTime: 1,
+        scrollProgress: 100,
+        completed: true,
+        bookmarked: false,
+        lastPosition: 0,
+      },
+    };
+
+    const stats = calculateLearningStats(
+      progress,
+      articleIndex,
+      articleIndexByFilename,
+    );
+
+    expect(stats.recentActivity[0]?.articleSlug).toBe('/articles/c');
+    expect(stats.recentActivity[1]?.articleSlug).toBe('/articles/a');
+    expect(stats.recentActivity.length).toBeLessThanOrEqual(10);
+  });
+
+  it('treats uncompleted progress as not advancing category series read counts', () => {
+    vi.setSystemTime(new Date('2026-04-13T12:00:00Z'));
+
+    const progress: Record<string, ArticleProgress> = {
+      '/articles/a': {
+        articleSlug: '/articles/a',
+        readAt: new Date(),
+        readingTime: 60,
+        scrollProgress: 50,
+        completed: false,
+        bookmarked: false,
+        lastPosition: 0,
+      },
+    };
+
+    const stats = calculateLearningStats(
+      progress,
+      articleIndex,
+      articleIndexByFilename,
+    );
+
+    expect(stats.categoriesProgress.Cat1.read).toBe(0);
+    expect(stats.seriesProgress.S1.read).toBe(0);
+    expect(stats.completedArticles).toBe(0);
+  });
+
   it('marks reading goal not achieved when fewer than 2 completions today', () => {
     vi.setSystemTime(new Date('2026-04-13T10:00:00Z'));
     const today = new Date('2026-04-13T08:00:00Z');
