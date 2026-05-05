@@ -8,12 +8,13 @@
 | **Supabase / database SQL** | [Indexing](#supabase-database-sql-scripts) と [scripts/database/INDEX.md](../../scripts/database/INDEX.md) |
 | ドキュメント自動更新 | [下記](#ドキュメント自動更新システム) |
 | CPL Master CSV 取込 | [下記](#cpl-master-csv-取込仕様)（旧 `CPL_CSV_IMPORT_SPEC`） |
+| GA4 MCP・OAuth / ADC（ローカル例） | [下記](#ga4-mcp-oauth--adcローカル例) |
 | 規約ファイル | [.cursor/rules/git-conventions.mdc](../.cursor/rules/git-conventions.mdc) |
 | Phase 別テスト計画（参考） | [Phase_Testing_Plan.md](Phase_Testing_Plan.md) |
 
 ルートの npm: `npm run cpl:import`、`npm run docs:update`、`npm run sync:public-docs` 等。
 
-**ディレクトリ索引（実装）**: `scripts/README.md`（短いポインタ） → 本ドキュメント。
+**ディレクトリ索引（実装）**: `scripts/README.md`（短いポインタ） → 本ドキュメント。**補足**: `scripts/` 直下に単発ツールが混在する現状と、`scripts/repo/`／`scripts/dev/` 等へのグルーピング案は運用変更チャーンがあるため、[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)・[AGENTS.md](../AGENTS.md) と同趣旨で **任意の後付けリファクタ**として検討（未実施）。
 
 ---
 
@@ -101,6 +102,14 @@ node scripts/utils/fix-encoding.js
 
 - 手順の数値・依存順の正は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、および [04_Operations_Guide.md](04_Operations_Guide.md) を優先する。
 - `apply_migration` と `execute_sql` のどちらを使うかは **02_System_Spec** と各ファイル先頭コメントに従う。
+
+---
+
+## GA4 MCP・OAuth / ADC（ローカル例）
+
+- **目的**: Cursor の [Google 公式 Analytics MCP](https://developers.google.com/analytics/devguides/MCP?hl=ja)（`analytics-mcp`）向けに、**ユーザーの Application Default Credentials** を取り直すときの **PowerShell の命令列の雛形**。
+- **正本の手順・トラブルシュート**: [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) の「Google Analytics MCP」。
+- **雛形スクリプト**: リポジトリの [`scripts/ga4-mcp-oauth-adc-login.example.ps1`](../scripts/ga4-mcp-oauth-adc-login.example.ps1) をコピーし、**クライアント JSON のパス**と **GCP プロジェクト ID** だけローカルで埋めて実行する。**OAuth クライアント秘密・ADC ファイルはコミットしない**。
 
 ---
 

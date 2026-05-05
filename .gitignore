@@ -52,6 +52,7 @@ temp/
 # Exception: Git encoding setup scripts
 !scripts/setup-git-encoding.ps1
 !scripts/git-commit-utf8.ps1
+!scripts/ga4-mcp-oauth-adc-login.example.ps1
 *-original.tsx
 *.backup*
 .env.local.backup*

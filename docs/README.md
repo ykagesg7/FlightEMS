@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月5日（**正本クイックマップ**、[scripts/database/INDEX.md](../../scripts/database/INDEX.md)、ウェイポイント層／`.vercelignore` は [GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)。運用詳細は [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)、フォルダ索引は [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)。過去ログは `git log` で）
-**バージョン**: Documentation Index v4.33
+**最終更新**: 2026年5月5日（GA4 MCP 完了: OAuth デスクトップ + ADC の疎通確認を [Cursor_MCP_Setup](Cursor_MCP_Setup.md) に反映、例スクリプト `scripts/ga4-mcp-oauth-adc-login.example.ps1`）
+**バージョン**: Documentation Index v4.37
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -23,6 +23,10 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-05-05（GA4 MCP 完了）**: **OAuth デスクトップクライアント + ADC**（`analytics.readonly`）、**同意画面のテストユーザー**、`get_account_summaries` / `run_report` による疎通、[Cloud Resource Manager API](https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com) と `set-quota-project` の注意を [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) に反映。例: [`scripts/ga4-mcp-oauth-adc-login.example.ps1`](../scripts/ga4-mcp-oauth-adc-login.example.ps1)。索引: [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md#ga4-mcp-oauth--adcローカル例)。
+- **2026-05-05（GA4 MCP）**: [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) に公式 `analytics-mcp`（pipx・ルート A）と任意 `npx`（ルート B）の比較、プロパティ ID と測定 ID（`G-…`）の整理、ローカル `.cursor/mcp.json` のチェックリスト、BigQuery は別フェーズとして明記。[04_Operations_Guide.md](04_Operations_Guide.md) にタグ側と Data API / MCP 側の二段確認および BigQuery 任意の脚注。
+- **2026-05-05（May sprint）**: Phase 2 級 **3.5.4 緊急通信** の本文化与 `scripts/database/20260505_*.sql`、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、[04](04_Operations_Guide.md) の GA4 ログ表運用明示。[01](01_Current_Status_and_Roadmap.md) v4.0.10 にスプリント記録節。
+- **2026-05-05（フォルダ・AI読みやすさ）**: [AGENTS](../AGENTS.md) にトップレベル7本柱表。[FOLDER_STRUCTURE](FOLDER_STRUCTURE.md) に同表・`vite/`・`e2e` 節および「その他」内の並び順整理。[Component_Structure_Guide](Component_Structure_Guide.md) に `src/pages/planning` **機能マップ**節。[public/geojson README](../public/geojson/README.md) 等を 1 行スタブへ。
 - **2026-05-05（一括同期）**: ルート [**AGENTS.md**](../AGENTS.md) / [**DESIGN.md**](../DESIGN.md)。**`.cursor/agents`**・**`.cursor/skills`**・追加 **`.cursor/rules`**（`core-project`・`generated-and-binary-assets`・`ui-design` 等）。旧 **`.cursorrules` 削除**（内容は `.cursor/rules` と AGENTS に分散）。[**Serena**](../.serena/project.yml) 設定の更新。`cpl_exam_data/`（README・分析レポート・converted_md・structured_*）、`public/geojson/waypoints/`（インデックス・字句別・地方別）、`scripts/docs-auto-update/`・`scripts/utils/check-encoding.js` / `fix-encoding.js`・`scripts/database/reset-article-stats.js`・各種 **`src/`**（型・フック・MDX 部品・テスト・講義 MDX）、[**Michizane1.png**](../public/images/ContentImages/Michizane1.png)、`postcss.config.js`・`api/package.json` の整理。多くのファイルで **改行（LF）統一** を含む。**索引**: [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)、[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)、[Component_Structure_Guide.md](Component_Structure_Guide.md)。
 - **2026-05-05**: [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) を拡充（Windows: PowerShell 実行ポリシーと `npm.ps1`、Cursor の winget ID `Anysphere.Cursor`、GitHub MCP: OAuth「dynamic client registration」失敗時の PAT 手動設定、Fine-grained の `github_pat_` 二重貼り付け防止、パスキー不可時の回避、`get_me` での疎通確認）。`.cursor/mcp.json` は引き続き `.gitignore`（PAT はコミットしない）。
 - **2026-04-30**: 空中航法 **3.4.1〜3.4.7** の `meta.series`（`CPL-Navigation`）・リンク・アフィ枠・フィクション注記を統一。冪等 SQL [20260430_learning_contents_cpl_navigation_341_347_meta.sql](../scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql) を追加し、Supabase MCP `execute_sql`（`fstynltdfdetpyvbrswr`）で本番反映・検証済み。詳細は [09](09_CPL_Learning_Stub.md)。関連して [05](05_Content_Pipeline.md)、[14](Article_Coverage_Backlog.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[01](01_Current_Status_and_Roadmap.md) を整合。
@@ -82,7 +86,7 @@
 
 ### Cursor MCP
 
-開発者向けの MCP 設定（**Cursor Marketplace** の `plugin-*` と手動 `mcp.json` の使い分け、Chrome DevTools、法令検索（hourei）、任意の **Google Analytics MCP**（読み取り）、Serena、Vercel、GitHub、トラブルシューティング）は **[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)** に集約した。
+開発者向けの MCP 設定（**Cursor Marketplace** の `plugin-*` と手動 `mcp.json` の使い分け、Chrome DevTools、法令検索（hourei）、任意の **Google Analytics MCP**（公式 pipx と任意 `npx` の経路、`G-…` と数値プロパティ ID の違い）、Serena、Vercel、GitHub、トラブルシューティング）は **[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)** に集約した。**本番の GA4 タグ・Realtime と MCP の両面確認**は [04_Operations_Guide.md](04_Operations_Guide.md)「GA4」。
 
 ### SWIM / デジタルノータム（参考）
 
@@ -102,7 +106,8 @@
 | 関心事 | 正本 |
 |--------|------|
 | アプリ挙動・DB・`/test` 等 | **[02_System_Spec.md](02_System_Spec.md)** |
-| `src/` に置くべき粒度・配置 | **[Component_Structure_Guide.md](Component_Structure_Guide.md)** |
+| トップレベル 7 本柱・`vite/`・`e2e`/Playwright の位置付け | **[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)**、[AGENTS.md](../AGENTS.md) |
+| `src/` に置くべき粒度・配置・`pages/planning` の機能マップ | **[Component_Structure_Guide.md](Component_Structure_Guide.md)** |
 | 静的 GeoJSON・ウェイポイント運用／ランタイム vs 編集シャード | **[GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)** |
 | npm 経由スクリプト・CPL CSV・`scripts/database/` のレイヤとアーカイブ方針 | **[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)**、短く **[../scripts/database/INDEX.md](../scripts/database/INDEX.md)** |
 

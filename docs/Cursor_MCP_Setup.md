@@ -169,31 +169,153 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
 - **タグ（`gtag` / `VITE_GA_MEASUREMENT_ID`）の代替にはならない**。ブラウザから `g/collect` が届いていない状態では、Data API のレポートも空に近くなる。収集パイプラインの切り分けは [docs/04_Operations_Guide.md](04_Operations_Guide.md)「GA4」を先に参照する。
 - **用途の例**: プロパティ一覧の確認、過去期間の `screenPageViews` 等の有無確認、Cursor 上での自然言語による要約（データが蓄積されたあと）。
 
-### 前提
+### 経路の比較（このリポジトリの推奨）
+
+| 項目 | **ルート A（推奨・正）** | **ルート B（任意の代替）** |
+|------|-------------------------|---------------------------|
+| **実体** | 公式 [`google-analytics-mcp`](https://github.com/googleanalytics/google-analytics-mcp）（`pipx run analytics-mcp`） | コミュニティ製の **`npx` 系 MCP**（ npm に複数名前が並ぶ。**採用前に必ず実在・更新状況を確認**する） |
+| **認証** | ADC（`gcloud auth application-default login` 等）または **サービスアカウント JSON をファイルに置き**、`GOOGLE_APPLICATION_CREDENTIALS` に **ファイルパス**のみ渡す運用が推奨 | 環境ごとに `GOOGLE_CLIENT_EMAIL` / `GOOGLE_PRIVATE_KEY` / プロパティ ID などを渡す案がノートに載ることがある。**`PRIVATE_KEY` の改行エスケープ崩れで失敗しやすい**。チャットやログに鍵が残さないこと |
+| **設定の正本** | [`.cursor/mcp.json.example`](../.cursor/mcp.json.example) の `google-analytics-mcp` と本節 | リポジトリの example には **含めていない**（パッケージ名が固定できないため）。 `.cursor/mcp.json` に手で追加する場合は **ツール一覧に GA 関連が二重にならないよう、ルート A / B はどちらか一方だけ** にする |
+
+**プロパティ ID と測定 ID（混同しない）**
+
+- **`G-xxxx`（ウェブデータストリームの測定 ID）** — アプリの `VITE_GA_MEASUREMENT_ID` と一致させる単位。**タグ検証・Realtime はここが起点**。[04_Operations_Guide.md の GA4 節](04_Operations_Guide.md) のチェックリストと対応する。
+- **プロパティ ID（数値、例 `123456789`）** — GA 管理画面のプロパティ設定で確認。Data API は多くの場合 **`properties/{property_id}`** 単位。**MCP がプロパティを指定するときはこちら**。測定 ID（`G-…`）と **入れ替えない**。
+
+**ルート B のパッケージ名について**: 資料によって `npx -y @modelcontextprotocol/server-google-analytics` のように書かれた例があるが、このスコープ名のパッケージは **npm 登録なし（404）** であることを本リポジトリで確認済み（2026-05-05）。利用するなら **`npm search` / npm ページ / GitHub** で、採用するサーバー名を必ず確かめてから `mcp.json` に書く。
+
+### 前提（ルート A）
 
 1. **Python 3.10+** と [**pipx**](https://pipx.pypa.io/) をインストールする。
 2. Google Cloud で **Google Analytics Admin API** と **Google Analytics Data API** を有効化する（[有効化手順](https://support.google.com/googleapi/answer/6158841)）。
 3. [**Application Default Credentials (ADC)**](https://cloud.google.com/docs/authentication/provide-credentials-adc) を、`https://www.googleapis.com/auth/analytics.readonly` を含む形で設定する（OAuth デスクトップクライアント JSON ＋ `gcloud auth application-default login` 等）。手順の詳細は [公式 README（Setup instructions）](https://github.com/googleanalytics/google-analytics-mcp) と [セットアップ動画](https://www.youtube.com/watch?v=nS8HLdwmVlY)。
-4. 認証に使う Google アカウントが、対象 GA4 プロパティに **閲覧者**以上でアクセスできること。
+4. **サービスアカウント**を使う場合は JSON をファイルに保存し、**環境変数にはそのパスのみ**設定する（`private_key` 文字列を `mcp.json` の `env` にべた書きしない方が運用・ローテが楽であり、Windows の `\n` 問題も減る）。
+5. 認証に使う Google アカウント（またはサービスアカウント）が、対象 GA4 プロパティに **閲覧者**以上でアクセスできること。
 
-### Cursor への接続例（Windows）
+### ADC と Analytics スコープ（403 対策）
+
+`gcloud auth application-default login` **だけ**だと、`analytics.readonly` が付かず **MCP の `get_account_summaries` が 403 `ACCESS_TOKEN_SCOPE_INSUFFICIENT`** になることがある。読み取りスコープを明示してやり直す。
+
+```bash
+gcloud auth application-default login --scopes="https://www.googleapis.com/auth/analytics.readonly,https://www.googleapis.com/auth/cloud-platform"
+```
+
+gcloud がデフォルトのクライアント ID によるスコープ制限について **WARNING** を出すとき、[GCP のトラブルシュート（ADC とスコープ）](https://cloud.google.com/docs/authentication/troubleshoot-adc#access_blocked_when_using_scopes) に沿い **自プロジェクトの OAuth デスクトップクライアント JSON** で ADC を構成するか、**サービスアカウント鍵 JSON** と GA4 でのアクセス許可で代替する。
+
+#### **ブラウザで「このアプリはブロックされます」と出たとき**
+
+`--scopes` 付きで `gcloud auth application-default login` した際、OAuth 画面上で Google により **第三者アプリへのスコープ付与が拒否**されることがある（スクショの「Google アカウントのプライベートな情報へのアクセス」をブロックする画面）。個人・アカウント種別により挙動は異なる。**GA のアクセス管理 UI がサービスアカウントのメールを受け付ける場合**は、**サービスアカウント鍵 JSON**が手堅い。**UI が `…iam.gserviceaccount.com` を拒否する**場合は、この節末尾の **OAuth デスクトップ**で自分の Gmail に ADC を張る方法を検討する。
+
+手順の要約：
+
+1. [GCP Console → IAM と管理 → サービスアカウント](https://console.cloud.google.com/iam-admin/serviceaccounts)（対象プロジェクト `GOOGLE_PROJECT_ID` と同一）で **サービスアカウントを作成**（名前は任意、例 `ga-mcp-readonly`）。
+2. **鍵を追加**して **JSON をダウンロード**。ファイルは **Git に含めず**、`C:/Users/<自分>/.secrets/xxx.json` のようにユーザー配下のみに保存する。
+3. [Google Analytics の管理画面](https://analytics.google.com/) で、対象 **GA4 プロパティ** → **プロパティのアクセス設定** で、サービスアカウントの **メールアドレス**（`...@...iam.gserviceaccount.com`）を **閲覧者** として招待する。**測定 ID（`G-…`）ではなく、このプロパティに紐づくアクセス一覧に追加する必要がある**。
+4. `.cursor/mcp.json` の `google-analytics-mcp` で **`GOOGLE_APPLICATION_CREDENTIALS` をその JSON ファイルの絶対パス**に変更する（`/C:/.../` 形式可）。 **`GOOGLE_PROJECT_ID` は GCP のプロジェクト ID のまま**。
+5. Cursor を再起動し、MCP を再度試す。
+
+**GA の画面で「このメールアドレスは Google アカウントと一致しません」と出る場合**: プロパティのアクセス管理の入力欄が **人間用の Google アカウント（@gmail.com 等）だけ**を受け付け、**`…iam.gserviceaccount.com` を弾く**ことがある（Google 公式手順と矛盾する報告が 2024〜 以降もコミュニティにある）。次を試す。(1) **コピペの前後空白を削除**し、GCP の SA 詳細に表示されるメールと **一字一句一致**させる。(2) **アカウントのアクセス管理**（プロパティではなく **アカウント**側）から同じメールで **閲覧者**を付与する。(3) 別ブラウザ／シークレットで再試行。(4) いずれも不可なら、下記 **「ADC を自分用 OAuth クライアントで張る」**か、**Admin API で `accessBindings` を作成**する（管理者のユーザー OAuth が必要）など、**UI 以外の経路**を検討する。
+
+**Google Workspace の組織アカウント**の場合は、組織の「低リスクまたは検証済みのアプリのみ」等のポリシーでも同種のブロックが出る。管理者による許可、またはサービスアカウント経路になることが多い。
+
+#### **GA UI が SA を拒否するとき：ADC を「自分用 OAuth デスクトップ」で張る（推奨代替）**
+
+サービスアカウントを GA の UI に追加できない場合、**プロジェクト管理者の Gmail（例: GA のプロパティ管理者）でログインしたユーザー OAuth** を ADC に保存し、MCP がそのトークンで Data API / Admin API にアクセスする。この場合 **GA に `…iam.gserviceaccount.com` は不要**で、**自分の Google アカウントに付いている GA の権限がそのまま使われる**。
+
+**A. GCP（プロジェクトは `GOOGLE_PROJECT_ID` と同じ）**
+
+1. [**OAuth 同意画面**](https://console.cloud.google.com/apis/credentials/consent): ユーザータイプ **外部**（個人 Gmail の場合）または **内部**（Workspace）。アプリ名など必須項目を埋める。スコープで **「一覧にないスコープを追加」**から次を追加する。  
+   - `https://www.googleapis.com/auth/analytics.readonly`  
+   - （推奨）`https://www.googleapis.com/auth/cloud-platform`  
+   **公開ステータスが「テスト中」**なら、**テストユーザー**に **MCP で使う自分の Gmail アドレス**を必ず追加する。
+2. [**認証情報 → 認証情報を作成 → OAuth クライアント ID**](https://console.cloud.google.com/apis/credentials): アプリケーションの種類 **デスクトップアプリ**。作成後、JSON をダウンロードする。中身は **`installed` キー**付きのクライアントシークレット（`client_id` / `client_secret`）である。
+3. その JSON を **リポジトリ外**に置く（例: `C:\Users\<自分>\.secrets\ga-oauth-desktop-adc.json`）。**Git にコミットしない。**
+
+**B. 端末（ブラウザ／対話が開く）**
+
+PowerShell 例（パスは自分の場所に合わせる）。
+
+```powershell
+gcloud auth application-default login `
+  --client-id-file="C:\Users\yusuke\.secrets\ga-oauth-desktop-adc.json" `
+  --scopes="https://www.googleapis.com/auth/analytics.readonly,https://www.googleapis.com/auth/cloud-platform"
+```
+
+ブラウザで **同じ Gmail（GA 管理者）**にログインし、同意を完了する。その後、請求・クォータ用に（推奨）:
+
+```powershell
+gcloud auth application-default set-quota-project gen-lang-client-0986699229
+```
+
+実体の ADC ファイルは通常 **`%APPDATA%\gcloud\application_default_credentials.json`**（例: `C:/Users/yusuke/AppData/Roaming/gcloud/application_default_credentials.json`）に書かれる。
+
+**C. `.cursor/mcp.json`**
+
+- `GOOGLE_PROJECT_ID`: その GCP プロジェクト ID（例: `gen-lang-client-0986699229`）。  
+- `GOOGLE_APPLICATION_CREDENTIALS`: 上記 **ADC の JSON パス**にする（**サービスアカウント用の鍵 JSON は使わない**）。  
+保存後 **Cursor を再起動**する。
+
+補助として、同じコマンド列の例はリポジトリの [`scripts/ga4-mcp-oauth-adc-login.example.ps1`](../scripts/ga4-mcp-oauth-adc-login.example.ps1) をコピーしてローカルだけで編集して使ってよい。
+
+同意が通れば、**GA で既に管理者／閲覧者のあなた**の権限で、`get_account_summaries` などが空でなくなる想定である。
+
+##### **OAuth 同意で 403 `access_denied` のとき**
+
+公開前の **テスト** モードでは、**OAuth 同意画面のテストユーザー**に、ブラウザで同意する **Gmail と同じメール** を必ず追加する。未追加だと「Google の審査プロセスを完了していません」などと表示される。
+
+##### **クォータプロジェクト（任意だが推奨）**
+
+`gcloud auth application-default set-quota-project <GCP_PROJECT_ID>` は、当該 GCP プロジェクトで **Cloud Resource Manager API** が有効な必要がある。**`gcloud` の CLI 用アカウント**が未ログインだと `services enable` が失敗するので、先に `gcloud auth login` するか、[API ライブラリから有効化する](https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com)。
+
+##### **ローカル疎通（Data API が返れば認証〜権限が揃っている）**
+
+MCP ツール **`get_account_summaries`** が **空配列でない**こと、続けて **`run_report`**（例: 過去 7 日・`pagePath` × `screenPageViews`）がエラーなく行が返ることを確認する。トラフィックが極めて少ないプロパティでは行数が 0 に近くても、**API エラーでない**限りパイプラインは成立している。
+
+### ローカル `mcp.json` のチェックリスト（共通）
+
+実ファイル **`.cursor/mcp.json`** は `.gitignore` のためコミットされない。**[`.cursor/mcp.json.example`](../.cursor/mcp.json.example)** をワークスペースの `.cursor/mcp.json` に複製して編集する。
+
+1. **`google-analytics-mcp`**（ルート A）ブロックで `GOOGLE_APPLICATION_CREDENTIALS` と `GOOGLE_PROJECT_ID` を実値にする（パスは Windows でも `C:/...` のスラッシュ推奨）。
+2. **pipx / Python** が動く環境であることを確認する（ルート B のときは検証済み **`npx` パッケージ**のみ）。
+3. **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** でサーバーが接続済み（緑）、ツール一覧に GA / reporting 関連が出ることを確認する。
+4. **疎通の考え方**: チャットで「過去 7 日の `screenPageViews` の上位ページ」のように **Data API が返すクエリ**を依頼し、結果がレポート側と整合するか見る。**タグ未設置で 0 に近い**のは異常というより収集側の問題のことが多い（[04](04_Operations_Guide.md) の GA4 チェックリストどおり）。
+
+### Cursor への接続例（Windows・ルート A）
 
 [`.cursor/mcp.json.example`](../.cursor/mcp.json.example) の `google-analytics-mcp` ブロックを参考に、ローカルの `.cursor/mcp.json` に追加する。
 
-- `GOOGLE_APPLICATION_CREDENTIALS`: `gcloud auth application-default login` 完了時に表示された **JSON の絶対パス**（Windows では `C:/...` のスラッシュ推奨）。
+- `GOOGLE_APPLICATION_CREDENTIALS`: ADC の場合は `gcloud auth application-default login` 完了時に示される **JSON の絶対パス**、サービスアカウントの場合は **発行したキー JSON の絶対パス**。
 - `GOOGLE_PROJECT_ID`: GCP の [プロジェクト ID](https://support.google.com/googleapi/answer/7014113)（公式 README の `env` 名に合わせる）。
 
 **pipx** が PATH に無い場合は `where pipx` で確認する。`cmd` ラップは他のローカル MCP と同様。
+
+### ルート B を `npx` で足すとき（構成の形だけ・コミット例なし）
+
+採用するパッケージ名を自分で検証したうえで、例として次の **形**に近いブロックになることがある（環境変数名はサーバー README に従う）。**ルート A と同時には起動しない**こと。
+
+```json
+"your-verified-google-analytics-mcp": {
+  "command": "cmd",
+  "args": ["/c", "npx", "-y", "VERIFY_ON_NPM_BEFORE_USE"]
+}
+```
+
+環境によっては `GOOGLE_CLIENT_EMAIL`、`GOOGLE_PRIVATE_KEY`、`GA_PROPERTY_ID`（数値プロパティ ID）等を `env` で渡す。`GOOGLE_PRIVATE_KEY` は PEM の改行を **`\\n` で 1 行に並べる**形式が多く、**エスケープを誤ると認証失敗**する点に注意する。
 
 ### セキュリティ
 
 - **サービスアカウント JSON や ADC ファイルをリポジトリにコミットしない**。`.cursor/mcp.json` は `.gitignore` 済みのため、実パスはローカルのみに置く。
 - 権限は **読み取り**に留める（MCP サーバーは設定変更不可だが、認証スコープも readonly を守る）。
 
+### BigQuery エクスポート（別タスク）
+
+GA4 を [BigQuery にリンクする](https://support.google.com/analytics/answer/9358801?hl=ja)運用は、**GCP 請求・アクセス権設計・コスト**が絡むため **本 MCP セットアップの必須範囲外**。必要になったときに別計画とする。
+
 ### トラブルシューティング
 
 - **API not enabled**: Cloud Console で Admin API / Data API がその GCP プロジェクトで有効か確認する。
 - **Permission denied**: GA4 管理画面で当該メール／サービスアカウントにプロパティアクセスがあるか確認する。
+- **`get_account_summaries` が `[]`**: 認証は通っていても GA 側に権限が無い、または **ユーザー OAuth 未完了**のことがある。上記 **OAuth デスクトップ + ADC** または **プロパティへの SA 招待**を再確認する。
 - 詳細は [google-analytics-mcp の Issues](https://github.com/googleanalytics/google-analytics-mcp/issues) を参照。
 
 ---
@@ -203,7 +325,7 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
 1. **プロジェクト**: **Marketplace で Supabase / Vercel / Context7 / Sentry を入れた場合**は、`.cursor/mcp.json` に同系統の手動エントリが残っていないか確認する（重複は削除）。手動のみの場合は `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。例には **`chrome-devtools`**・**任意の `hourei`（法令検索）**・**任意の `google-analytics-mcp`（GA4 読み取り・pipx 要）**が含まれる（不要なら削除）。GitHub MCP を使う場合は [Personal Access Token](https://github.com/settings/personal-access-tokens/new) を `Authorization: Bearer …` に設定する（スコープは最小限）。**PAT はリポジトリにコミットしない。**
 2. **Global（任意）**: 全リポジトリ共通の MCP だけ `%USERPROFILE%\.cursor\mcp.json` に置く。GitHub を **プロジェクトの `.cursor/mcp.json` にだけ**書く場合は、Global に `github` を重複させない。
 3. Cursor を再起動する（GitHub リモート MCP は [Cursor v0.48.0+](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) 推奨）。
-4. **Settings → Tools & Integrations → MCP** で接続を確認。`chrome-devtools`・`hourei`（追加した場合）が利用可能か、Vercel は `Needs login` から OAuth で認可する。
+4. **Settings → Tools & Integrations → MCP** で接続を確認。`chrome-devtools`・`hourei`（追加した場合）・**`google-analytics-mcp`（pipx と認証済み GCP を追加した場合）**が利用可能か、Vercel は `Needs login` から OAuth で認可する。
 
 ### Vercel の URL
 

@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトの運用、保守、トラブルシューティングについて説明します。
 
-**最終更新**: 2026年4月25日（Node 18+ 表記、GA4/長期文書 [docs/README](README.md) との相互参照は従来どおり）
-**バージョン**: Operations & Maintenance Guide v2.5
+**最終更新**: 2026年5月5日（GA4 MCP: OAuth デスクトップ + ADC 経路の運用メモを補足）
+**バージョン**: Operations & Maintenance Guide v2.8
 
 ---
 
@@ -80,16 +80,28 @@
 
 | 確認日 | Vercel Production に `VITE_GA_MEASUREMENT_ID` あり | 再デプロイ後 | GA リアルタイム or DebugView でヒット | 備考 |
 |--------|------------------------------------------------------|-------------|----------------------------------------|------|
-| （未記入） |  |  |  | 未確認のままなら、設定・ブロッカー切り分けは上記 1〜7 を実施 |
+| （運用入力） |  |  |  | **2026-05 実施計画**: AI/エージェントは Vercel・GA に直接ログインしない。運用担当が上記 1〜7 を実施後、各列へ ☑ または確認日時を書き込む。**未入力のままなら Phase B-5 は未クローズ**。本行を差し替えてよい。 |
 
-> AI/エージェントは Vercel ダッシュボードにアクセスできないため **この表の記入は人手**。記入後、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) の Phase B 節に **1 行サマリー**を追記してもよい。
+> AI/エージェントは Vercel ダッシュボードにアクセスできないため **この表の実データ記入は人手**。記入後、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) の Phase B 節に **1 行サマリー**を追記してもよい。
 
 #### **Google Analytics Data API / 公式 MCP はタグの代替ではない**
 
 - **Data API**（および [Google 公式 Analytics MCP](https://developers.google.com/analytics/devguides/MCP?hl=ja) が内部で使う同系 API）は、**収集・集計済みのデータを読み取る**ためのものである。**`g/collect` がクライアントから届いていない**、別プロパティに入っている等の場合、API のレポートも **0 件に近く**なる。UI が空なのに「API だけ直す」ことはできない。
 - **切り分けに使う例**: 過去 7 日などで `screenPageViews` や `activeUsers` が **0 か非 0 か**を確認する。0 なら引き続きタグ・ブロッカー・ストリーム ID・プロパティの取り違えを疑う。非 0 なのに特定の UI だけ空なら、フィルタ・表示中のアカウント・サマリーの遅延を疑う。
 - **GA4 プロパティ ID**: 管理画面のプロパティ設定で **`properties/123456789` 形式の数値**（API では `properties/{property_id}`）を確認する。測定 ID（`G-…`）とは別。
-- **Cursor での MCP 設定**: [docs/Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)「Google Analytics MCP（任意・実験的）」。認証情報は **リポジトリに含めない**。
+- **Cursor での MCP 設定**: [docs/Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)「Google Analytics MCP（任意・実験的）」。認証情報は **リポジトリに含めない**。**MCP 疎通は Data API での読取確認であり**、この節や上の **Post-Phase-B のログ表**で追う **`g/collect` / Realtime のタグ側経路チェックとは別物**。**両方そろって初めて**「送信→蓄積→参照」の一連が説明できる。
+- **ローカル MCP の認証**: GA の管理 UI でサービスアカウントをプロパティに招待できない（「Google アカウントではない」等）場合は、**OAuth 2.0 デスクトップクライアント + `gcloud auth application-default login`**（`analytics.readonly` など）で **ユーザー ADC** を使う。**OAuth アプリがテストモード**なら、同意する **Gmail をテストユーザーに追加**する。コマンド例: [`scripts/ga4-mcp-oauth-adc-login.example.ps1`](../scripts/ga4-mcp-oauth-adc-login.example.ps1)。手順の正本は [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) および [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md#ga4-mcp-oauth--adcローカル例)。
+
+#### **収集経路の確認（タグ側と MCP / Data API 側）**
+
+両面を順に確認する（どちらか一方だけ見ても足りないことが多い）。
+
+1. **タグ側（一次）**: この節の **dataLayer〜`g/collect`〜Realtime / DebugView** の 1〜7 と、運用入力の **Post-Phase-B 本番確認ログ**表。**測定 ID（`G-…`）** と Vercel の `VITE_GA_MEASUREMENT_ID` が一致しているかまで含める。
+2. **読み取り側（二次）**: Cursor の GA MCP が接続済みなら、[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) の「Google Analytics MCP」の **ローカル `mcp.json` のチェックリスト** と疎通の考え方に沿い、`run_report` 相当で **過去期間にヒットがあるか**を確認する。ここでのプロパティ指定は **`properties/{数値プロパティID}`**。**BigQuery** へのエクスポートは別タスクであり、これが無くても上記の Data API と Realtime で多くは足りる。
+
+#### **BigQuery を使う場合（任意・フォローアップ）**
+
+サイトを BigQuery とリンクさせる運用は **GCP 請求・アクセス権・コスト**が絡むため、**運用 MVP（タグ確認＋MCP / Data API）とは別フェーズ**として計画することが多い。[Google ヘルプ: BigQuery とリンクする](https://support.google.com/analytics/answer/9358801?hl=ja) を参照し、必要性が決まってから環境設計する。
 
 ### **テーマシステム統一（2025年12月21日）**
 
