@@ -1,7 +1,7 @@
 # CPL学科試験問題解説記事作成ロードマップ
 
 **作成日**: 2025年1月16日
-**最終更新**: 2026年5月5日（Phase 2 リストの **3.5.4** 本文化を反映。KPI 正本・網羅は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)）
+**最終更新**: 2026年5月6日（Phase 2 リストの **3.5.5** 本文化を反映。KPI 正本・網羅は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)）
 **バージョン**: v1.3.0
 
 ## 📖 このドキュメントを読むべき人
@@ -122,11 +122,13 @@
 5. ✅ 3.1.5_AirspaceClassification - 空域分類とクラスC空域
 6. ✅ 3.1.6_IFRMinimumAltitude - 計器飛行方式の最低高度
 
-#### 航空通信（KPI 内 3 本・現状スタブ）
+#### 航空通信（KPI 内 3 本・本文化済み）
 
 1. 3.5.1_AirTrafficServices - 航空交通業務の基礎
 2. 3.5.2_AeronauticalInformation - 航空情報業務
 3. 3.5.3_RadioCommunication - 無線通信の基本手順
+
+**シリーズ拡張（KPI 外・同一 `CPL-Communication`）**: **3.5.4** / **3.5.5** は Phase 2 で本文化（下記 Phase 2「航空通信」リスト参照）。
 
 #### 空中航法（KPI 内 4 本・本文化済み）
 
@@ -174,7 +176,7 @@
 
 - ✅ **3.5.4_EmergencyProcedures** — 緊急時の通信手順（**2026-05** 本文化・`CPL-Communication`）
 
-- 3.5.5_ATCPhraseology - 管制用語の詳細
+- ✅ **3.5.5_ATCPhraseology** — 管制用語とフレーズロジー（**2026-05** 本文化・`CPL-Communication`）
 
 #### 空中航法
 

@@ -1,6 +1,6 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年5月5日
+**最終更新**: 2026年5月6日
 **バージョン**: Roadmap v4.0.10（Strategy v1.2・CPL 主軸・独立運営）
 
 ---
@@ -14,7 +14,7 @@
 
 ### 2026年5月期スプリント（May 実施計画の記録）
 
-- **Phase 2 寄り本文化**: 航空通信 [3.5.4_EmergencyProcedures](../src/content/lessons/3.5.4_EmergencyProcedures.mdx) を `CPL-Communication` シリーズ（order 4）として執筆完了。Supabase メタ同期は [`20260505_learning_contents_comm_354_meta_finalize.sql`](../scripts/database/20260505_learning_contents_comm_354_meta_finalize.sql)。
+- **Phase 2 寄り本文化（通信）**: [3.5.4_EmergencyProcedures](../src/content/lessons/3.5.4_EmergencyProcedures.mdx) は `CPL-Communication`（order 4）、[3.5.5_ATCPhraseology](../src/content/lessons/3.5.5_ATCPhraseology.mdx) は同シリーズ **order 5** として本文化（**2026-05-06**）。`learning_contents` 冪等は [`20260505_learning_contents_comm_354_meta_finalize.sql`](../scripts/database/20260505_learning_contents_comm_354_meta_finalize.sql) / [`20260506_learning_contents_comm_355_meta_finalize.sql`](../scripts/database/20260506_learning_contents_comm_355_meta_finalize.sql)。
 - **`learning_test_mapping` サイクル（第1弾／第2弾相当）**: 未マッピング集計の監査のみ [`20260505_audit_unmapped_sub_subject_counts.sql`](../scripts/database/20260505_audit_unmapped_sub_subject_counts.sql)。新環境向けスタブ既定の再適用 [`20260505_learning_test_mapping_comm_354_emergency_stub_retry.sql`](../scripts/database/20260505_learning_test_mapping_comm_354_emergency_stub_retry.sql)。
 - **B-4**: [`useArticleProgress.test.ts`](../src/__tests__/hooks/useArticleProgress.test.ts) で `calculateLearningStats` に追加ケース。**カバレッジ数値**: 実行後に [`Phase_C_Quality_Preparation.md`](Phase_C_Quality_Preparation.md) に従い `npm run test:coverage` をスナップショット（月末運用）。
 - **B-5（GA4）**: **リポでは表テンプレを整備のみ**。[04_Operations_Guide.md](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」は運用入力で Phase B 完了とみなす。AI は Vercel/GA にアクセスしない。

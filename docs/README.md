@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月5日（GA4 MCP 完了: OAuth デスクトップ + ADC の疎通確認を [Cursor_MCP_Setup](Cursor_MCP_Setup.md) に反映、例スクリプト `scripts/ga4-mcp-oauth-adc-login.example.ps1`）
-**バージョン**: Documentation Index v4.37
+**最終更新**: 2026年5月6日（3.5.x: **3.5.5** 本文化・`CPL-Communication`、[05](05_Content_Pipeline.md) / [14](Article_Coverage_Backlog.md) 反映）
+**バージョン**: Documentation Index v4.38
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -23,6 +23,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-05-06（CPL 通信 3.5.5）**: [3.5.5_ATCPhraseology.mdx](../src/content/lessons/3.5.5_ATCPhraseology.mdx) をスタブから本文化（`CPL-Communication`）。`learning_contents` 冪等 `scripts/database/20260506_learning_contents_comm_355_meta_finalize.sql`。[05_Content_Pipeline.md](05_Content_Pipeline.md)・[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) 更新。
 - **2026-05-05（GA4 MCP 完了）**: **OAuth デスクトップクライアント + ADC**（`analytics.readonly`）、**同意画面のテストユーザー**、`get_account_summaries` / `run_report` による疎通、[Cloud Resource Manager API](https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com) と `set-quota-project` の注意を [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) に反映。例: [`scripts/ga4-mcp-oauth-adc-login.example.ps1`](../scripts/ga4-mcp-oauth-adc-login.example.ps1)。索引: [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md#ga4-mcp-oauth--adcローカル例)。
 - **2026-05-05（GA4 MCP）**: [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) に公式 `analytics-mcp`（pipx・ルート A）と任意 `npx`（ルート B）の比較、プロパティ ID と測定 ID（`G-…`）の整理、ローカル `.cursor/mcp.json` のチェックリスト、BigQuery は別フェーズとして明記。[04_Operations_Guide.md](04_Operations_Guide.md) にタグ側と Data API / MCP 側の二段確認および BigQuery 任意の脚注。
 - **2026-05-05（May sprint）**: Phase 2 級 **3.5.4 緊急通信** の本文化与 `scripts/database/20260505_*.sql`、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、[04](04_Operations_Guide.md) の GA4 ログ表運用明示。[01](01_Current_Status_and_Roadmap.md) v4.0.10 にスプリント記録節。
