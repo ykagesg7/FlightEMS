@@ -38,6 +38,31 @@ Cursor が `child_process.spawn` で `npx` を起動すると、Windows では *
 
 変更後は **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** で各サーバーを確認する。
 
+### PowerShell と `npm.ps1`（実行ポリシー）
+
+PowerShell が **`npm.ps1` の読み込みがセキュリティ上ブロックされています`** と表示する場合、Node は入っていても `npm run dev` が失敗することがある。
+
+**対処（いずれか）**
+
+1. **現在のユーザーだけ**実行ポリシーを緩める（よくある設定）:
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+   ```
+   組織のグループポリシーで制限されている環境では失敗することがある。その場合は 2 に進む。
+2. **`npm.cmd` を明示する**: `npm.cmd run dev`
+3. **コマンドプロンプト (`cmd.exe`)** で npm を実行する。
+
+### Cursor のインストール（Windows）
+
+CLI の `curl … | bash` は **Linux / macOS 向け**で、PowerShell に `bash` が無い環境では使えない。Windows では次のどちらかが現実的である。
+
+1. **[cursor.com](https://cursor.com/) の Windows インストーラを利用する。**
+2. **winget**（パッケージ ID は **`Anysphere.Cursor`**。`Cursor.Cursor` は検索に出ない）。
+
+```powershell
+winget install --id Anysphere.Cursor -e
+```
+
 ---
 
 ## 配置方針（Global とプロジェクト）
@@ -192,7 +217,10 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
 
 ### トラブルシューティング（GitHub）
 
-- `Authorization header is badly formatted`: プレースホルダのままの PAT、または改行・余分なスペースが入っていないか確認する。
+- `Authorization header is badly formatted`: プレースホルダのままの PAT、または改行・余分なスペースが入っていないか確認する。**Fine-grained PAT** は先頭が `github_pat_` で **1 回だけ**である。コピペの誤りで `Bearer github_pat_github_pat_…` と **語頭が二重になると認証失敗する**ので、トークン先頭が **一度だけ `github_pat_`** になるよう直す。**PAT をチャットやスクリーンショットに載せず**、流出時は GitHub で即 **revoke** して再発行する。
+- **ログに「`Incompatible auth server: does not support dynamic client registration`」がある**: Cursor が **OAuth の動的クライアント登録**で接続しようとして失敗していることがある。このリポジトリでは **`https://api.githubcopilot.com/mcp/` ＋ `streamableHttp` ＋ `headers.Authorization: Bearer <PAT>`** の手動 `mcp.json` 方式を正とする（下記「GitHub MCP を接続する（最短チェックリスト）」）。
+- **Fine-grained PAT 作成時に「パスキーがありません」**: GitHub の本人確認がパスキーに寄っているだけで、ブラウザで **パスワードや「別の方法」** があればそちらに切り替える。または [Password and authentication](https://github.com/settings/security) で **パスキーをこのデバイスに登録**してからやり直す。
+- **Settings → MCP が緑でもエージェントにツールが出ない場合**: Cursor を再起動したうえで、GitHub MCP サーバー識別子（例: `project-…-github`）を **Cursor が表示している名前**で呼ぶ。**動作確認**はエージェントから MCP ツール **`get_me`** を実行し、`login` が返るか見る。
 - 組織で Copilot Business/Enterprise の場合、[About MCP](https://docs.github.com/en/copilot/concepts/about-mcp) のポリシー制約あり。
 
 ### GitHub MCP を接続する（最短チェックリスト）
@@ -201,7 +229,7 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
    [GitHub → Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens) で **Classic** または **Fine-grained** を作成する。用途に応じて `repo`（リポジトリ読み取り・操作）や `read:org` など**必要最小限のスコープ**にとどめる。
 2. **`.cursor/mcp.json` にブロックを書く**（正本はローカルのみ。[`.cursor/mcp.json.example`](../.cursor/mcp.json.example) の `github` をコピー）。**`YOUR_GITHUB_PAT` のプレースホルダを実トークンに差し替える**（`ghp_…` / `github_pat_…` など）。
 3. **`Authorization` ヘッダ**は次の形にする（**値は 1 行・前後の空白なし**）。  
-   `"Authorization": "Bearer ghp_xxxxxxxx"`（`Bearer` の後に**半角スペース 1 つ**＋トークン本体）
+   `"Authorization": "Bearer ghp_xxxxxxxx"` または Fine-grained の `"Authorization": "Bearer github_pat_xxxxxxxx"`（**`github_pat_` はトークン先頭につく 1 回だけ**。`Bearer` の後は**半角スペース 1 つ**＋トークン本体）
 4. **重複登録を避ける**  
    [配置方針（Global とプロジェクト）](#配置方針global-とプロジェクト) のとおり、**Global の `%USERPROFILE%\.cursor\mcp.json` とプロジェクトの `.cursor/mcp.json` の両方に `github` を書かない**（片方だけ）。
 5. **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** で GitHub サーバーが緑／ツール一覧が表示されるか確認する。
