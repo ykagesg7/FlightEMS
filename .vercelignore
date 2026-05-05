@@ -1,0 +1,3 @@
+# Runtime does not fetch alphabet waypoint shards — see docs/GeoJSON_Waypoints_And_Assets.md
+public/geojson/waypoints/waypoints_?.json
+public/geojson/waypoints/index.json

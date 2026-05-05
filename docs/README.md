@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月5日（ワークスペース一括同期: `AGENTS.md` / `DESIGN.md`・`.cursor`・CPL/waypoints/scripts/src 等。詳細は [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) 更新履歴相当の箇条および `git log`）
-**バージョン**: Documentation Index v4.32
+**最終更新**: 2026年5月5日（**正本クイックマップ**、[scripts/database/INDEX.md](../../scripts/database/INDEX.md)、ウェイポイント層／`.vercelignore` は [GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)。運用詳細は [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)、フォルダ索引は [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)。過去ログは `git log` で）
+**バージョン**: Documentation Index v4.33
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -96,6 +96,15 @@
 ## 🏗️ プロジェクト構造（重要）
 
 リポジトリ全体のフォルダ索引は **[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)**。`src/` 以下の配置ルールとモジュールの正本は **[Component_Structure_Guide.md](Component_Structure_Guide.md)**。
+
+### 「どこが正本か」クイックマップ（コード・データ・SQL）
+
+| 関心事 | 正本 |
+|--------|------|
+| アプリ挙動・DB・`/test` 等 | **[02_System_Spec.md](02_System_Spec.md)** |
+| `src/` に置くべき粒度・配置 | **[Component_Structure_Guide.md](Component_Structure_Guide.md)** |
+| 静的 GeoJSON・ウェイポイント運用／ランタイム vs 編集シャード | **[GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)** |
+| npm 経由スクリプト・CPL CSV・`scripts/database/` のレイヤとアーカイブ方針 | **[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)**、短く **[../scripts/database/INDEX.md](../scripts/database/INDEX.md)** |
 
 ---
 

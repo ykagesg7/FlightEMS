@@ -1,7 +1,7 @@
 # プロジェクトフォルダ構造ガイド
 
-**最終更新**: 2026年5月5日（ワークスペース一括同期: `.cursor` agents/skills/rules、ルート `AGENTS.md` / `DESIGN.md`、旧 `.cursorrules` 削除、`cpl_exam_data`、`public/geojson/waypoints`、`scripts`、`src` 周辺。多くは **LF 改行の統一** を含む）
-**バージョン**: Folder Structure Guide v1.7
+**最終更新**: 2026年5月5日（`scripts/database/INDEX.md`・不要 SQL 削除方針・ウェイポイント `.vercelignore`・正本マップ README 節。**ワークスペース一括同期**関連は過去ログ参照）
+**バージョン**: Folder Structure Guide v1.8
 
 **責務**: repo 全体のフォルダ概要。プロジェクトのクイックリファレンスと AI 向け索引は [docs/README.md](README.md)。`src/` の詳細は [Component_Structure_Guide.md](Component_Structure_Guide.md) を参照。
 
@@ -88,7 +88,7 @@
 #### `scripts/`
 - **目的**: 開発・運用スクリプト（説明の正本は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)）
 - **内容**:
-  - `database/`: マイグレーション（例: `20260309_bootstrap_user_learning_profiles.sql`）、記事登録、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`（気象・航法・通信の科目ハブ＋`learning_contents` オーファン修復）、`20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`（法規 `3.1.2` を `sub_subject` クラスタへ差し替え）、`20260410_cpl_stub_lessons_contents_and_mapping.sql`（[05_Content_Pipeline.md](05_Content_Pipeline.md) Phase1+2 スタブ記事の `learning_contents` + `learning_test_mapping`）
+  - `database/`: **総索引は [INDEX.md](../../scripts/database/INDEX.md)**。マイグレーション類（例: `20260309_bootstrap_user_learning_profiles.sql`、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`、`20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`、`20260410_cpl_stub_lessons_contents_and_mapping.sql`、[05_Content_Pipeline.md](05_Content_Pipeline.md)）は直下に置く。**`docs/` 等から参照されない旧 SQL はリポジトリに残さない**（復元は Git 履歴）。ルート **`archive/`** と [.gitignore](../.gitignore) の `archive/*` はローカル用。詳細は [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)。
   - `cpl_exam/`: CPL 問題 CSV 取込。仕様は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) の **CPL Master CSV 取込仕様** 節
   - `docs-auto-update/`: ドキュメント自動更新（同ファイルの **ドキュメント自動更新** 節。Phase テスト計画は [docs/Phase_Testing_Plan.md](Phase_Testing_Plan.md)）
   - `sync-public-docs.mjs`: `docs/` から `public/docs/` へのホワイトリスト同期（`npm run sync:public-docs`。`prebuild` でも実行）
@@ -97,6 +97,7 @@
 - **目的**: 静的ファイル（画像、GeoJSONなど）
 - **`public/docs/`**: **`docs/` のコピー（手編集しない）**。`npm run sync:public-docs` で `05_Content_Pipeline`・`08`・`09`・`10`・`Article_Coverage_Backlog` 等（[sync-public-docs.mjs](../scripts/sync-public-docs.mjs) の `FILES`）を上書き。MDX から `/docs/*.md` で配信。旧ファイル名（`06_記事…` 等）の **URL 互換は保証しない**（必要ならリダイレクトやリンク更新で対応）。
 - **注意**: 一部の大きなファイルは`.gitignore`で除外されています
+- **ウェイポイント（本番のみ）**: アルファベット別 `waypoints_<1文字>.json` と `waypoints/index.json` は [.vercelignore](../.vercelignore) で Vercel 転送のみ省略。**Git とローカルビルドは含まれる**。理由とデータ層は [GeoJSON doc](GeoJSON_Waypoints_And_Assets.md)
 
 ---
 

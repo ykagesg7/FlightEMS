@@ -23,6 +23,7 @@
 | **リポジトリフォルダ索引** | [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) |
 | **Cursor MCP** | [docs/Cursor_MCP_Setup.md](docs/Cursor_MCP_Setup.md) |
 | **長期実行計画** | [docs/06_Long_Term_Execution.md](docs/06_Long_Term_Execution.md)（[docs/README.md](docs/README.md) からも導線あり） |
+| **Supabase SQL 索引（短）** | [scripts/database/INDEX.md](scripts/database/INDEX.md)（詳細運用・CPL は [docs/Scripts_Repository_Tooling.md](docs/Scripts_Repository_Tooling.md)） |
 
 過去のルート README にあったマップ操作・CPL 資料の詳細は、上記 `docs/` およびアプリ内ヘルプを参照してください。`cpl_exam_data/` の実データは `.gitignore` 対象の場合があります。
 

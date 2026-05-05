@@ -5,6 +5,7 @@
 | トピック | 節 |
 |----------|-----|
 | Git コミット（英語・Windows 文字化け補足） | [下記](#git-コミットメッセージの文字化け対策windows-補足) |
+| **Supabase / database SQL** | [Indexing](#supabase-database-sql-scripts) と [scripts/database/INDEX.md](../../scripts/database/INDEX.md) |
 | ドキュメント自動更新 | [下記](#ドキュメント自動更新システム) |
 | CPL Master CSV 取込 | [下記](#cpl-master-csv-取込仕様)（旧 `CPL_CSV_IMPORT_SPEC`） |
 | 規約ファイル | [.cursor/rules/git-conventions.mdc](../.cursor/rules/git-conventions.mdc) |
@@ -83,6 +84,23 @@ node scripts/utils/fix-encoding.js
 ```
 
 用途・オプションは各スクリプト先頭のコメントを正とする。
+
+---
+
+## Supabase database SQL scripts
+
+### インデックスとレイヤ分担
+
+| ソース | 内容 |
+|--------|------|
+| **[scripts/database/INDEX.md](../../scripts/database/INDEX.md)** | ディレクトリの役割、よく使うファイルへのショートカット、**不要な旧 SQL はコミットしない**方針。**AI・初動調査からここを開く**。 |
+| `scripts/database/` 直下 (`*.sql`) | ドキュメント・Skill から **相対リンクされている**運用／冪正 SQL が主。名前は **`YYYYMMDD_*`** または明確な `*_migration.sql` 等で揃える。 |
+| **参照ゼロの過去 SQL** | **リポジトリに保持しない**。`scripts/database/` 直下にアーカイブ用サブフォルダは置かない。復元は Git 履歴。ルート `.gitignore` の **`archive/*`** はローカル用スタジングのみ。 |
+
+### MCP / Dashboard での適用メモ
+
+- 手順の数値・依存順の正は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、および [04_Operations_Guide.md](04_Operations_Guide.md) を優先する。
+- `apply_migration` と `execute_sql` のどちらを使うかは **02_System_Spec** と各ファイル先頭コメントに従う。
 
 ---
 
