@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年5月6日
-**バージョン**: Roadmap v4.0.16（Strategy v1.2・CPL 主軸・独立運営）
+**最終更新**: 2026年5月7日  
+**バージョン**: Roadmap v4.0.17（Strategy v1.2・CPL 主軸・独立運営）
 
 ---
 
@@ -24,9 +24,12 @@
 - **CPL 週次パイプライン**: [05_Content_Pipeline.md](05_Content_Pipeline.md) に Phase 2 **週次着手記録**（**2026-W18〜W22**）と暫定 KPI（着手単位レンジ）。
 - **型チェック**: `tsc -b` 全件クリーンは別 initiative — 方針を [06](06_Long_Term_Execution.md) §1.4 に記載。
 
----
+### 2026年6月期スプリント
 
-## 現状評価（2026年4月12日時点）
+- **正本**: [**June_2026_Implementation_Plan.md**](June_2026_Implementation_Plan.md)（DONE 条件・W23〜W26・CPL/PPL/B-4／Phase C 準備の境界）。
+- **週次記録**: [05_Content_Pipeline.md](05_Content_Pipeline.md) の Phase 2 **週次着手記録表**へ毎週追記。
+
+---## 現状評価（2026年4月12日時点）
 
 ### 完了済み機能
 
@@ -286,6 +289,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-07 | **v4.0.17 / 6月期計画書**: [June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md) を追加。**2026-W23〜W26** の週次ゴール・マッピング 1 サイクル・Phase C 準備と C-1〜5 の境界を定義。本書に **「2026年6月期スプリント」** 参照を追加。[docs/README](README.md) に索引。**[Phase_C §4](Phase_C_Quality_Preparation.md)** に **「2026-06 末」行**を 6月末に追記する前提。 |
 | 2026-05-06 | **v4.0.16 / 5月期残タスク一括（計画）**: CPL→PPL 復習 Callout を **[3.2.10](../src/content/lessons/3.2.10_WeightAndBalance.mdx) / [3.2.12](../src/content/lessons/3.2.12_EngineSystems.mdx) / [3.4.4](../src/content/lessons/3.4.4_FlightPlanning.mdx)** に追加（案 A：最低本数達成）。**[05](05_Content_Pipeline.md)**: Phase 2 週次 **W19〜W22** と暫定 KPI 段落。**[14](Article_Coverage_Backlog.md)**: MCP `execute_sql` で §1 指標を再検証し前回値と一致（新規 SQL なし）。**B-4**: [`aviationWeatherApiCore.test.ts`](../src/__tests__/api/aviationWeatherApiCore.test.ts)、[`openskyStatesCore.test.ts`](../src/__tests__/api/openskyStatesCore.test.ts)、[`weatherApiCore.test.ts`](../src/__tests__/api/weatherApiCore.test.ts)。**B-6**: `createBrowserClient` シングルトンを静的確認。**B-7**: [Sustainability_API_Memo.md](Sustainability_API_Memo.md)。**Phase C 準備**: [`artifacts/accessibility_audit_memo_2026-05-06.md`](../artifacts/accessibility_audit_memo_2026-05-06.md)。`npm run test:coverage` の **`src` 実効 Statements 約 13.99%**（`api/` は集計外のため増分なし）。[Phase_C](Phase_C_Quality_Preparation.md) 月末表を記入済み。 |
 | 2026-05-06 | **v4.0.15 / B-4 残タスク一括**: [`useArticleProgress.hook.test.tsx`](../src/__tests__/hooks/useArticleProgress.hook.test.tsx)、[`mdxContentParsing.ts`](../src/utils/mdxContentParsing.ts)+[`mdxContentParsing.test.ts`](../src/__tests__/utils/mdxContentParsing.test.ts)、[`structuredData.test.ts`](../src/__tests__/utils/structuredData.test.ts)、[`swimNotamGeometry.test.ts`](../src/__tests__/api/swimNotamGeometry.test.ts)、[`planDocument.test.ts`](../src/__tests__/utils/planDocument.test.ts) を追加。技術的負債表の **`src` 実効 Statements を約 13.99%** に更新。[Phase_C](Phase_C_Quality_Preparation.md) 月末メモ、[docs/README](README.md) カバレッジ行と整合。`vitest.config.ts` 閾値は据え置き。 |
 | 2026-05-06 | **v4.0.14 / カバレッジ KPI 再定義・再計測・Wave A**: `src` 実効 Statements の**主目標を Phase B 一発 30% から Phase C 15%**（ストレッチ 18%）へ変更。成功指標サマリー・Phase C KPI・Phase D の注記・リスク表を追随。**2026-05-06** `npm run test:coverage` で **約 11.89%**（`FlightAcademyTsx/src/` のみ集計）を技術的負債表・[Phase_C](Phase_C_Quality_Preparation.md)・[docs/README](README.md)・[06](06_Long_Term_Execution.md) §1.1 に反映。[00](00_Flight_Academy_Strategy.md) 弱みの記述を整合。`vitest.config.ts` の閾値は据え置き。[`taskGenerator.test.ts`](../src/__tests__/utils/taskGenerator.test.ts) を追加。 |
@@ -318,6 +322,6 @@
 
 ---
 
-**最終更新**: 2026年5月6日
-**バージョン**: Roadmap v4.0.16（Strategy v1.2・CPL 主軸・独立運営）
+**最終更新**: 2026年5月7日  
+**バージョン**: Roadmap v4.0.17（Strategy v1.2・CPL 主軸・独立運営）
 **次回レビュー予定**: Phase B 終盤〜 Phase C（Phase 2 記事継続・`learning_test_mapping`・`npm run test:coverage` KPI）、数値の見直し

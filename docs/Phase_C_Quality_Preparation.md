@@ -1,6 +1,6 @@
 # Phase C 品質準備メモ（Lighthouse・A11y）
 
-**最終更新**: 2026-05-06（§4 月末ゲート・A11y メモパス）
+**最終更新**: 2026-05-07（§4 に 2026-06 末プレースホルダ）
 
 **目的**: [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) Phase C（C-4〜C-5）に向け、“着手可能な準備のみ” を集約。**UI の大規模変更はしない**（レイアウト・トークン変更は DESIGN.md と承認を要する）。
 
@@ -41,6 +41,7 @@ Chrome DevTools の **Issues / Accessibility** パネル、または axe DevTool
 |------|------------------------------|---------------------|
 | **2026-05 月中** | **約 13.99%** | B-4 残タスク一括実施後。`npm run test:coverage` → v8 `coverage-final.json`・パス **`FlightAcademyTsx/src/`** のみ集計 |
 | **2026-05 末** | **約 13.99%** | **2026-05-06** ゲート。`coverage-final.json` で再集計。`src/__tests__/api/*` で `openskyStatesCore` / `aviationWeatherApiCore` / `weatherApiCore` の検証分岐のみ追加 — **`api/` は `src` 外のため Statements 実効 % は変化なし**。UI 変更なし |
+| **2026-06 末** | （6月末に記入） | [June 2026 計画](June_2026_Implementation_Plan.md) に従い月次ゲート。`npm run test:coverage` 後に `coverage-final.json` で **`FlightAcademyTsx/src/`** のみ集計。**日付・%・メモ**を本行に転記、[01 の更新履歴](01_Current_Status_and_Roadmap.md) と整合させる |
 
 ### Lighthouse / A11y（任意・監査のみ）
 

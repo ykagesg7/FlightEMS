@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月6日（Roadmap **v4.0.15**・B-4 ユニット拡張・`src` 実効 **約 13.99%**・14 マッピング tier2・Phase C 月末表）
-**バージョン**: Documentation Index v4.44
+**最終更新**: 2026年5月7日（**[June 2026 実装計画](June_2026_Implementation_Plan.md)** 追加、[01](01_Current_Status_and_Roadmap.md) 6月参照）
+**バージョン**: Documentation Index v4.45
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -19,11 +19,15 @@
 
 - **[06_Long_Term_Execution.md](06_Long_Term_Execution.md)** — 品質（テスト・Sentry/GA4/Lighthouse/A11y）・MDX/DB 整合・**クイズ分析（旧 12、§5）**・成長/コスト/プライバシーを**1 本**に集約。詳細 KPI は [01](01_Current_Status_and_Roadmap.md) を正とする（旧 12・16–18 を統合済み）。
 
+### 月次実行計画
+
+- **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — **2026年6月期**の DONE 条件、[05](05_Content_Pipeline.md) 週次（W23〜W26）・CPL/PPL 拡充の優先、マッピング監査／B-4／Phase C 準備（UI は承認制）を定義する。
+
 ### 更新履歴（抜粋）
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
-- **2026-05-06（記事マッピング §5.2 次段）**: [`20260506_learning_test_mapping_unmapped_tier2.sql`](../scripts/database/20260506_learning_test_mapping_unmapped_tier2.sql) を Supabase `execute_sql` 本番適用。verified 未マッピング **69 件**・`learning_test_mapping` **58 行**（[14](Article_Coverage_Backlog.md)）。併せて [05](05_Content_Pipeline.md) に Phase 2 **週次着手記録**、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md) に月末カバレッジ記録表、[06](06_Long_Term_Execution.md) §1.4 に `tsc -b` バックログ方針。
+- **2026-05-07（6月期計画書）**: [June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md) を追加。[01](01_Current_Status_and_Roadmap.md) に **2026年6月期スプリント** の参照、[05](05_Content_Pipeline.md) で追う **2026-W23〜W26** の目安を明示。
 - **2026-05-06（B-4 実装拡張・カバレッジ再計測）**: `useArticleProgress` フック、[`structuredData.ts`](../src/utils/structuredData.ts)、[`mdxContentParsing.ts`](../src/utils/mdxContentParsing.ts)／[`mdxToSupabase.ts`](../src/utils/mdxToSupabase.ts)、[`swimNotamGeometry`](../api/lib/swimNotamGeometry.ts)、[`planDocument.ts`](../src/utils/planDocument.ts) にユニットテスト追加。`src` 実効 Statements **約 13.99%**（[01](01_Current_Status_and_Roadmap.md) 技術的負債表、`FlightAcademyTsx/src/` のみ）。Roadmap **v4.0.15**。
 - **2026-05-06（カバレッジ KPI 再定義）**: [01](01_Current_Status_and_Roadmap.md) で `src` 実効 Statements の**主目標を Phase C で 15%**（ストレッチ 18%・任意）へ変更。Phase D の **50%** は北極星のまま注記で整合。**2026-05-06** `npm run test:coverage` 再集計で **約 11.89%**（パス **`FlightAcademyTsx/src/`** のみ）。[06](06_Long_Term_Execution.md) §1.1、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、[00](00_Flight_Academy_Strategy.md) を追随。`vitest.config.ts` の閾値は据え置き。
 - **2026-05-06（GA4 B-5）**: GA4 リアルタイム（FlightAcademy）で本番トラフィック受信を確認。[04_Operations_Guide.md](04_Operations_Guide.md) Post-Phase-B 表、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) v4.0.11・下記「クイックリファレンス」の GA4 行を整合。
