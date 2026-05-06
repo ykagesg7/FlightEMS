@@ -28,8 +28,9 @@ Flight Academy は、独立した航空学習プラットフォームです。Re
 | ルーティング・ブログリダイレクト・DB | [02_System_Spec.md](02_System_Spec.md) |
 | 記事パイプライン・ID 正本 | [Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md)・[05](05_Content_Pipeline.md) |
 | 長期品質・分析（旧 12 含む） | [06_Long_Term_Execution.md](06_Long_Term_Execution.md) |
+| 外部 API・運用コスト（持続可能性のたたき台） | [Sustainability_API_Memo.md](Sustainability_API_Memo.md)・[00 §3](00_Flight_Academy_Strategy.md) |
 
 ---
 
-**最終更新**: 2026-04-25（薄型化: 重複本文を [docs/README.md](README.md) へ集約）  
+**最終更新**: 2026-05-06（持続可能性メモへの索引 1 行）  
 **バージョン**: Project Overview Guide v4.0（入口専用）

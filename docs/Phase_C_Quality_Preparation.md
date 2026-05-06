@@ -1,6 +1,6 @@
 # Phase C 品質準備メモ（Lighthouse・A11y）
 
-**最終更新**: 2026-05-06（§4 カバレッジ 13.99% スナップショット）
+**最終更新**: 2026-05-06（§4 月末ゲート・A11y メモパス）
 
 **目的**: [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) Phase C（C-4〜C-5）に向け、“着手可能な準備のみ” を集約。**UI の大規模変更はしない**（レイアウト・トークン変更は DESIGN.md と承認を要する）。
 
@@ -40,11 +40,11 @@ Chrome DevTools の **Issues / Accessibility** パネル、または axe DevTool
 | 締め | `src` Statements 実効（概算） | 実行コマンド・メモ |
 |------|------------------------------|---------------------|
 | **2026-05 月中** | **約 13.99%** | B-4 残タスク一括実施後。`npm run test:coverage` → v8 `coverage-final.json`・パス **`FlightAcademyTsx/src/`** のみ集計 |
-| **2026-05 末** | （記入） | 月末に同手順で再確認。UI 変更なし |
+| **2026-05 末** | **約 13.99%** | **2026-05-06** ゲート。`coverage-final.json` で再集計。`src/__tests__/api/*` で `openskyStatesCore` / `aviationWeatherApiCore` / `weatherApiCore` の検証分岐のみ追加 — **`api/` は `src` 外のため Statements 実効 % は変化なし**。UI 変更なし |
 
 ### Lighthouse / A11y（任意・監査のみ）
 
-**2026-05-06**: 本ファイル §2・§3 の手順に従い、**自動検出のみ**を週次〜月次で溜める。修正コミットは [01](01_Current_Status_and_Roadmap.md) Phase C と DESIGN 承認に紐づける。
+**2026-05-06**: 本ファイル §2・§3 の手順に従い、**自動検出のみ**を週次〜月次で溜める。修正コミットは [01](01_Current_Status_and_Roadmap.md) Phase C と DESIGN 承認に紐づける。**本ターンのメモのみ**: [`artifacts/accessibility_audit_memo_2026-05-06.md`](../artifacts/accessibility_audit_memo_2026-05-06.md)（対象パス一覧・未取得時の運用）。
 
 ---
 

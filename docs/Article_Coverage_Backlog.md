@@ -1,7 +1,8 @@
 # 記事単元の網羅状況とバックログ
 
 **作成日**: 2026-04-10  
-**スナップショット更新**: 2026-04-13（MCP `execute_sql` 再取得。`3.4.2`/`3.4.3` は `question_text` 条件。Post-Phase-B で PPL 3 本・`3.4.5`/`3.4.6`/`3.5.5` マッピング追補）  
+**スナップショット更新**: 2026-04-13（MCP `execute_sql` 再取得。`3.4.2`/`3.4.3` は `question_text` 条件。Post-Phase-B で PPL 3 本・`3.4.5`/`3.4.6`/`3.5.5` マッピング追補）
+**計画監査ターン**: **2026-05-06** — MCP `execute_sql` で §1 と同種の集計を再実行。**値は 2026-05-06 §5.2 メモ記録時と一致**: verified クラスタ **224**・`learning_contents` **90**・`learning_test_mapping` DISTINCT **50** / 総行 **58**・verified 未マッピング設問 **69**。同日に **追加 SQL は適用しておらず**、[14 §5](Article_Coverage_Backlog.md) の正本のみ整合確認。  
 **§5.2 メモ更新**: **2026-05-06** — 次段クラスタ（荷重と強度・機体の構造・燃料供給系統・総則/定義・雑音と空電）を `engineering_basics` / `3.1.1` に束ね、[20260506_learning_test_mapping_unmapped_tier2.sql](../scripts/database/20260506_learning_test_mapping_unmapped_tier2.sql) を本番適用（MCP `execute_sql`）。verified で **§5.2 経路に載らない設問は 69 件**、`learning_test_mapping` **行数 58**（**DISTINCT `learning_content_id` は 50 のまま**・同一記事に複数 `topic_category`）。  
 **§5.2 メモ（前回）**: **2026-05-05** — 未マッピング上位クラスタを `engineering_basics`・`3.1.1` に束ね、[20260505_learning_test_mapping_unmapped_top_clusters.sql](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql) を本番適用（当時 verified 未マッピング **123 件**・マッピング行 **53**）。
 
