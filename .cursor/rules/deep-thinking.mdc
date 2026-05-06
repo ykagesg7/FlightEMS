@@ -1,11 +1,13 @@
 ---
-description: Optional pointer — use deep-analysis subagent instead of bloating every chat
+description: >-
+  Deprecated pointer — structured deep-analysis persona is always on via deep-analysis.mdc;
+  optional Cursor agent deep-analysis adds extra audit depth when selected
 globs:
 alwaysApply: false
 ---
 
-# Deep thinking (legacy)
+# Deep thinking
 
-The long “ultra deep” system prompt is **not** applied globally anymore.
+**常時コンテキスト**: 構造化した平易説明などのディープ指向は **`.cursor/rules/deep-analysis.mdc`**（`alwaysApply: true`）が読み込みます。
 
-- For exhaustive analysis, use Subagent **`deep-analysis`** (`.cursor/agents/deep-analysis.md`) or ask the user to request that mode explicitly.
+**追加で厚くしたいとき**: Composer／エージェントで **`deep-analysis`**（`.cursor/agents/deep-analysis.md`）を選ぶと、そのスレッドで監査・不確実性の明示などをさらに強められます。

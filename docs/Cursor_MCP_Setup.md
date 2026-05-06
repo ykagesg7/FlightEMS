@@ -5,6 +5,22 @@
 
 ---
 
+## ワークスペースの Cursor ルールとカスタムエージェント（2026-05-06）
+
+この節は MCP ではなく、**Cursor が会話に読み込むワークスペース指示**のメモである。
+
+| 種別 | パス | `alwaysApply` / 使い方 |
+|------|------|-------------------------|
+| **構造化・平易説明ペルソナ（常時）** | [`.cursor/rules/deep-analysis.mdc`](../.cursor/rules/deep-analysis.mdc) | `true` — 通常の Composer / Chat にも注入される |
+| **deep-analysis エージェント（追補）** | [`.cursor/agents/deep-analysis.md`](../.cursor/agents/deep-analysis.md) | エージェント **`deep-analysis`** を選んだスレッドでのみ、監査・前提の反証可能性・航空/学習 QA 向けの追加指示 |
+| **インデックスのみ** | [`.cursor/rules/deep-thinking.mdc`](../.cursor/rules/deep-thinking.mdc) | `false` — 上記 2 つの案内に差し替え済み |
+
+**背景（履歴）**: 以前は [.cursor/rules/deep-thinking.mdc](../.cursor/rules/deep-thinking.mdc) で「長大プロンプトを毎チャットに載せない」方針とし、監査級の内容は **`deep-analysis` エージェントのみ**としていた。**2026-05-06**、ユーザー意図に合わせ **平易な構成・出力形式の基底ペルソナ**を [.cursor/rules/deep-analysis.mdc](../.cursor/rules/deep-analysis.mdc) に切り出し **`alwaysApply: true`** とした。エージェント側は YAML 無効状態の是正と、選択時のみの「追記レイヤ」に縮約した。
+
+**関連**: [AGENTS.md](../AGENTS.md) のサブエージェント記載。
+
+---
+
 ## Cursor Marketplace と手動 `mcp.json` の関係（2026-04）
 
 **Cursor → Settings → MCP → Marketplace** から追加した統合は、Cursor が **`plugin-*` 形式のサーバー**として別途登録することが多く、**`.cursor/mcp.json` に同じ名前のエントリを書かなくても**ツール一覧に出ます（このワークスペースで検出された例: `plugin-supabase-supabase`、`plugin-vercel-vercel`、`plugin-context7-plugin-context7`、`plugin-sentry-sentry` など）。
