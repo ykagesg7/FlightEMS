@@ -2,7 +2,9 @@
 
 **作成日**: 2026-04-10  
 **スナップショット更新**: 2026-04-13（MCP `execute_sql` 再取得。`3.4.2`/`3.4.3` は `question_text` 条件。Post-Phase-B で PPL 3 本・`3.4.5`/`3.4.6`/`3.5.5` マッピング追補）  
-**注記更新**: 2026-04-30 — 空中航法 **3.4.1〜3.4.7** の MDX 体裁・`learning_contents` メタを [09](09_CPL_Learning_Stub.md)・`20260430_learning_contents_cpl_navigation_341_347_meta.sql` に追随。**§1 の件数は 04-13 スナップショットのまま**（DB を再取得したら §5 を実行して §1§2 を更新）。
+**§5.2 メモ更新**: **2026-05-05** — 未マッピング上位クラスタを `engineering_basics`・`3.1.1` に束ね、[20260505_learning_test_mapping_unmapped_top_clusters.sql](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql) を本番適用。verified で **§5.2 経路に載らない設問は 123 件**、`learning_test_mapping` **行数 53**（記事 50 のまま・同一記事に複数 `topic_category`）。
+
+**注記更新**: 2026-04-30 — 空中航法 **3.4.1〜3.4.7** の MDX 体裁・`learning_contents` メタを [09](09_CPL_Learning_Stub.md)・`20260430_learning_contents_cpl_navigation_341_347_meta.sql` に追随。**§1 の `learning_contents` 件数等は 04-13 スナップショットのまま**（行数・未マッピングは上記 2026-05-05 メモを参照。DB を全面的に再取得する場合は §5 を実行）。
 **想定読者**: コンテンツ執筆者、プロダクトオーナー、AI アシスタント  
 **関連**: [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)（分類の正本）、[05_Content_Pipeline.md](05_Content_Pipeline.md)（Phase 計画）、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)（PPL 進捗）
 
@@ -15,7 +17,8 @@
 | **verified 設問クラスタ数** | **224** | `DISTINCT (main_subject, sub_subject)`（再取得していない場合は据え置き） |
 | **`learning_contents` 総行数** | **90** | 2026-04-13 MCP 再取得（[20260413_learning_contents_ppl_phase_b_three.sql](../scripts/database/20260413_learning_contents_ppl_phase_b_three.sql) 適用済み） |
 | **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **13** / メンタリティー **15** / 思考法 **13** | `GROUP BY category`・2026-04-13 MCP |
-| **`learning_test_mapping` がある記事** | **50** | `COUNT(DISTINCT learning_content_id)`・2026-04-13 MCP（[20260413_learning_test_mapping_nav_345_355_stub.sql](../scripts/database/20260413_learning_test_mapping_nav_345_355_stub.sql) 適用済み） |
+| **`learning_test_mapping` がある記事** | **50** | `COUNT(DISTINCT learning_content_id)`・2026-04-13 時点（2026-05-05 も **50** のまま） |
+| **`learning_test_mapping` 行数** | **53** | 2026-05-05 MCP（同一記事に複数 `topic_category` の補助行 +3） |
 | **リポジトリ `src/content/lessons/*.mdx`** | **69** | 2026-04-13（Glob 集計） |
 
 **正本**: 単元の木は **`unified_cpl_questions` の `(main_subject, sub_subject 全文)`**（[08](08_Syllabus_Management_Guide.md)）。本書の数値は FlightAcademy プロジェクトに対する **MCP `execute_sql`** で取得したスナップショットである。再取得する場合は §5 の SQL を使用する。
@@ -30,7 +33,7 @@
 
 **航空工学 3.2.x**: `3.2.1_PropellerTheory` 〜 `3.2.12_EngineSystems`、`engineering_basics`
 
-**航空気象 3.3.x**（マッピングあり・**12/12 本**）: `3.3.1_StandardAtmosphere` 〜 `3.3.12_Turbulence` すべて。  
+**航空気象 3.3.x**（マッピングあり・**12/12 本**）: `3.3.1_StandardAtmosphere` 〜 `3.3.12_Turbulence` すべて。    
 → **`3.3.8`**: `高層気象/高層大気の構造と特徴`（2 問）を紐付け（[20260412_learning_test_mapping_meteo_338_3312.sql](../scripts/database/20260412_learning_test_mapping_meteo_338_3312.sql)）。  
 → **`3.3.12`**: `飛行に影響する気象障害/乱気流` + `高層気象/ジェット気流`（計 14 問）。旧スタブ SQL の `%乱流%` は **「乱気流」と表記不一致**でスキップされていた。
 
@@ -58,7 +61,7 @@
 
 **航空工学（CPL 3.2）**: `3.2.1_PropellerTheory` 〜 `3.2.6_InstrumentSystem`, `3.2.7_LiftAndDrag` 〜 `3.2.12_EngineSystems`, `engineering_basics`  
 
-**航空気象（CPL 3.3 スタブ）**: `3.3.1_StandardAtmosphere` 〜 `3.3.12_Turbulence`  
+**航空気象（CPL 3.3 本文化）**: `3.3.1_StandardAtmosphere` 〜 `3.3.12_Turbulence`  
 
 **空中航法（CPL 3.4）**: `3.4.1_DeadReckoning` 〜 `3.4.7_DeadReckoningAdvanced`（**7 本とも本文化**・`CPL-Navigation`。KPI「19本」に数えるのは `3.4.1`〜`3.4.4` のみ — [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)）  
 
@@ -76,7 +79,7 @@
 | 事象 | 内容 |
 |------|------|
 | **`3.1.1_AviationLegal0`** | ~~MDX 無し~~ → **2026-04-10** にスタブ MDX を追加。DB 行は従来どおり `ON CONFLICT DO NOTHING` で整合。 |
-| **粒度のある気象記事 `3.3.*`** | **2026-04-10** に `3.3.1`〜`3.3.12` スタブ MDX を追加。ハブ `CPL-Hub-Meteorology` と併用。**2026-04-12** に `3.3.8` / `3.3.12` のマッピングを [20260412_learning_test_mapping_meteo_338_3312.sql](../scripts/database/20260412_learning_test_mapping_meteo_338_3312.sql) で追補し **12/12 本**に。 |
+| **粒度のある気象記事 `3.3.*`** | **`3.3.1`〜`3.3.12`** は **MDX 長文で揃っている**（ハブ `CPL-Hub-Meteorology` と併用）。`learning_test_mapping` は **12/12 本**（[20260412 SQL](../scripts/database/20260412_learning_test_mapping_meteo_338_3312.sql)）。Phase B で `3.3.10`〜`3.3.12` の `learning_contents` を [20260505_learning_contents_phase2_eight_meta.sql](../scripts/database/20260505_learning_contents_phase2_eight_meta.sql) で MDX に同期。 |
 | **航法・通信の一部 `3.4.*` / `3.5.5`** | ~~MDX のみ~~ → **2026-04-13** に `3.4.5` / `3.4.6` / `3.5.5` を [20260413_learning_test_mapping_nav_345_355_stub.sql](../scripts/database/20260413_learning_test_mapping_nav_345_355_stub.sql) で追補（スタブ記事向けの狭い束ね）。**2026-04-30** に `3.4.5`〜`3.4.7` のメタを **`CPL-Navigation`** に統一し、`learning_contents` を [20260430_learning_contents_cpl_navigation_341_347_meta.sql](../scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql) で MDX と同期（[09](09_CPL_Learning_Stub.md)）。 |
 
 ---
@@ -124,21 +127,25 @@ ORDER BY unmapped_questions DESC;
 
 ## 6. 未マッピング設問が多いクラスタ（スナップショット上位）
 
-**注意**: 下表は **2026-04-10 時点**のスナップショットである。最新の優先度は **§5.2 の SQL を MCP で再実行**した結果を正とする。
+**注意**: 下表の **件数**は **2026-05-05** に §5.2 と同じ MCP クエリで再取得した値。履歴比較には 04-10 行も参照。
 
-2026-04-10 時点で、**未マッピング設問数が多い** `sub_subject` の例（執筆・マッピング優先の参考）:
+2026-05-05 時点で、**未マッピング設問数が多い** `sub_subject` の例:
 
-| main_subject | sub_subject（抜粋） | unmapped_questions（例） |
-|--------------|---------------------|---------------------------|
-| 航空工学 | 航空機装備 | 34 |
-| 航空工学 | 航空機構造 | 33 |
-| 航空工学 | 性能と耐空性/飛行性能 | 22 |
+| main_subject | sub_subject（抜粋） | unmapped_questions |
+|--------------|---------------------|-------------------:|
 | 航空工学 | 航空機の構造/荷重と強度 | 16 |
-| 航空法規 | 航空法及び航空法施行規則 | 10 |
+| 航空工学 | 航空機の構造/機体の構造 | 12 |
+| 航空工学 | 燃料供給系統/燃料供給系統 | 11 |
 | 航空法規 | 総則/定義 | 8 |
-| … | （以下、§5.2 の結果を都度参照） | … |
+| 航空工学 | 無線通信/雑音と空電 | 7 |
+| 航空法規 | 総則/目的 | 6 |
+| 航空工学 | 航法計器/無線航法計器 | 5 |
+| 航空工学 | 航法計器/磁方位計器 | 5 |
+| 航空工学 | 空力の基礎理論/力学の基礎 | 5 |
 
-**解釈**: CPL 工学の「装備・構造・性能」は **Hub + 既存 3.2.x** では吸収しきれておらず、**クラスタ単位の記事追加**と **マッピング行の細分化**が有効。
+**2026-04-10 の参考行**（当時上位だったが 2026-05-05 には束ね済み）: 航空機装備 **34**、航空機構造 **33**、航空法及び航空法施行規則 **10** — [20260505_learning_test_mapping_unmapped_top_clusters.sql](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql)。
+
+**解釈**: CPL 工学の「装備・構造・燃料」はまだ **`engineering_basics`** だけでは弱い。**クラスタ単位の記事追加**と **マッピング行の細分化**が有効。
 
 ---
 
@@ -205,6 +212,7 @@ ORDER BY unmapped_questions DESC;
 
 | 日付 | 内容 |
 |------|------|
+| 2026-05-05 | **Phase B**: 気象 3.3.10〜12・工学 3.2.10〜12・法規 3.1.7〜8 の `learning_contents` / `learning_test_mapping.content_title` を MDX `meta` に同期（[`20260505_learning_contents_phase2_eight_meta.sql`](../scripts/database/20260505_learning_contents_phase2_eight_meta.sql)）。§5.2 上位 3 クラスタ（航空機装備・航空機構造・施行規則）を `engineering_basics` / `3.1.1` に束ね（[`20260505_learning_test_mapping_unmapped_top_clusters.sql`](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql））。verified 未マッピング設問 **123 件**・マッピング行 **53**（§1・§6 更新）。 |
 | 2026-05-07 | 航空通信 **3.5.1〜3.5.5** の `learning_contents` タイトル・説明文を MDX 本文化版に全集約。また `learning_test_mapping.content_title` を同タイトルに同期。[`20260507_learning_contents_comm_351_355_meta_sync.sql`](../scripts/database/20260507_learning_contents_comm_351_355_meta_sync.sql) を Supabase `execute_sql` で本番適用済み。§1 MCP サマリー数値は未再取得。|
 | 2026-05-06 | **3.5.5_ATCPhraseology** をスタブから本文化（`CPL-Communication`・`order` 5）。`learning_contents` 冪等同期: [`20260506_learning_contents_comm_355_meta_finalize.sql`](../scripts/database/20260506_learning_contents_comm_355_meta_finalize.sql)。§1 MCP サマリー数値は従来スナップショットのまま（再実行で更新）。|
 | 2026-05-05 | May 計画: **3.5.4** を本文化（`src/content/lessons/3.5.4_EmergencyProcedures.mdx`）、`scripts/database/20260505_learning_contents_comm_354_meta_finalize.sql`・未マッピング監査 `20260505_audit_unmapped_sub_subject_counts.sql`・緊急束ねの再試行 `20260505_learning_test_mapping_comm_354_emergency_stub_retry.sql` を追加。§1 MCP サマリー数値は従来スナップショットのまま（再実行で更新）。|

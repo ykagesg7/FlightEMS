@@ -1,7 +1,7 @@
 # CPL学科試験問題解説記事作成ロードマップ
 
 **作成日**: 2025年1月16日
-**最終更新**: 2026年5月6日（Phase 2 リストの **3.5.5** 本文化を反映。KPI 正本・網羅は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)）
+**最終更新**: 2026年5月5日（Phase 2 対象 8 単元のクローズ・気象注記の現状化。KPI 正本・網羅は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)）
 **バージョン**: v1.3.0
 
 ## 📖 このドキュメントを読むべき人
@@ -76,19 +76,19 @@
 
 以下は **KPI 19 本に加えて** [14](Article_Coverage_Backlog.md)・Phase 2 と並行して追う単元である（スタブ配置や本文化の進捗は 14 と MDX を正とする）。
 
-#### 航空気象（ハブ＋`3.3.*` スタブ配置済み・本文化は継続）
+#### 航空気象（ハブ＋`3.3.*` 本文化済み）
 
-> **整合（2026-04-12）**: `3.3.1`〜`3.3.12` の **スタブ MDX は `src/content/lessons` に配置済み**。`learning_test_mapping` は **12/12 本**（`3.3.8` / `3.3.12` は [20260412 SQL](../scripts/database/20260412_learning_test_mapping_meteo_338_3312.sql) で追補）。入口は引き続き `weather_basics` と `CPL-Hub-Meteorology`。数値の正本は [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)。
+> **整合（2026-05-05）**: `3.3.1`〜`3.3.12` は **`src/content/lessons` に長文化 MDX が揃っている**（旧「スタブのみ」記述は廃止）。`learning_test_mapping` は **12/12 本**（初回クラスタは [20260412 SQL](../scripts/database/20260412_learning_test_mapping_meteo_338_3312.sql)）。**Phase B**: `3.3.10`〜`3.3.12` の `learning_contents` / `mapping.content_title` は [20260505_learning_contents_phase2_eight_meta.sql](../scripts/database/20260505_learning_contents_phase2_eight_meta.sql) で MDX `meta` に同期済み。入口は `weather_basics` と `CPL-Hub-Meteorology`。数値の正本は [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)。
 
-1. 3.3.1_StandardAtmosphere - 標準大気と大気構造（**スタブ配置済み**・本文化 TODO）
-2. 3.3.2_CloudsAndPrecipitation - 雲と降水のメカニズム（同上）
-3. 3.3.3_FrontsAndWeatherSystems - 前線と気象システム（同上）
-4. 3.3.4_LowPressureSystems - 低気圧システムと発達過程（同上）
-5. 3.3.5_AtmosphericStability - 大気の安定性とショワルター指数（同上）
-6. 3.3.6_AtmosphericComposition - 大気組成と水蒸気の物理（同上）
-7. 3.3.7_WesterliesAndWind - 偏西風と大気循環（同上）
-8. 3.3.8_ICAOStandardAtmosphere - ICAO標準大気の詳細（同上）
-9. 3.3.9_WeatherHazards - 航空気象の危険現象（同上）
+1. ✅ 3.3.1_StandardAtmosphere - 標準大気と大気構造
+2. ✅ 3.3.2_CloudsAndPrecipitation - 雲と降水のメカニズム
+3. ✅ 3.3.3_FrontsAndWeatherSystems - 前線と気象システム
+4. ✅ 3.3.4_LowPressureSystems - 低気圧システムと発達過程
+5. ✅ 3.3.5_AtmosphericStability - 大気の安定性とショワルター指数
+6. ✅ 3.3.6_AtmosphericComposition - 大気組成と水蒸気の物理
+7. ✅ 3.3.7_WesterliesAndWind - 偏西風と大気循環
+8. ✅ 3.3.8_ICAOStandardAtmosphere - ICAO標準大気の詳細
+9. ✅ 3.3.9_WeatherHazards - 航空気象の危険現象
 
 #### 航空工学（KPI 内 6 本＋拡張）
 
@@ -158,19 +158,21 @@
 ### 記事リスト（予定15記事）
 
 #### 航空気象
-> **注（2026-04-12）**: 以下 3 本は **スタブ MDX 済み**（本文化は Phase 2 で継続）。`3.3.12` は `learning_test_mapping` 追補済み（[14](Article_Coverage_Backlog.md)）。
-- 3.3.10_CloudTypes - 雲の種類と特徴
-- 3.3.11_VisibilityAndFog - 視程と霧
-- 3.3.12_Turbulence - 乱気流の種類と対策
+> **注（2026-05-05）**: 以下 3 本は **本文化・体裁監査済み**（Phase 2 リスト上の単元）。`learning_contents` 同期は [20260505_learning_contents_phase2_eight_meta.sql](../scripts/database/20260505_learning_contents_phase2_eight_meta.sql)。
+- ✅ 3.3.10_CloudTypes - 雲の種類と特徴
+- ✅ 3.3.11_VisibilityAndFog - 視程と霧
+- ✅ 3.3.12_Turbulence - 乱気流の種類と対策
 
 #### 航空工学
-- 3.2.10_WeightAndBalance - 重量と重心
-- 3.2.11_StallAndSpin - 失速とスピン
-- 3.2.12_EngineSystems - エンジン系統の詳細
+> **注（2026-05-05）**: 以下 3 本は **本文化・体裁監査済み**。`learning_contents` 同期は上記 Phase B SQL。
+- ✅ 3.2.10_WeightAndBalance - 重量と重心
+- ✅ 3.2.11_StallAndSpin - 失速とスピン
+- ✅ 3.2.12_EngineSystems - エンジン系統の詳細
 
 #### 航空法規
-- 3.1.7_FlightRules - 運航規則の詳細
-- 3.1.8_AirportOperations - 空港運用規則
+> **注（2026-05-05）**: 以下 2 本は **本文化・体裁監査済み**。`description` は MDX `meta.excerpt` に合わせて同期（同上 SQL）。
+- ✅ 3.1.7_FlightRules - 運航規則の詳細
+- ✅ 3.1.8_AirportOperations - 空港運用規則
 
 #### 航空通信
 

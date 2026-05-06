@@ -60,7 +60,7 @@
 
 | 項目                | 現状                                                                                                            | 目標                            |
 | ----------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| テストカバレッジ          | **2026-04-13 実測**: `npm run test:coverage` は thresholds を満たす。レポート **All files** は依然として依存ライブラリ等を含み **`src/` 実効 Statements の単一指標にならない**（先頭表示 **Statements 約 79.33%**・**Funcs 約 19.31%**）。`calculateLearningStats` のユニットテスト追加に伴い **global `functions` 閾値を 20→19%** に調整（フック本体の大量コールバックが分母に残るため）。Phase B KPI の **30%（src 全体・Statements）** は**未達**（更新履歴 2026-04-13 行参照） | 50% — Phase D 末（目標値）          |
+| テストカバレッジ          | **2026-05-05 実測**: `npm run test:coverage` 後の v8 `coverage/coverage-final.json` から **`…/FlightAcademyTsx/src/` のみ**を集計すると **Statements 約 9.40%**（243 ファイル・語句レベル statement 分母は v8 準拠）。レポート先頭の **All files** は **約 78.1%** と出るが依存・`.vercel` 等が混ざるため **単一指標にしない**（[06](06_Long_Term_Execution.md)）。**2026-04-13** の **Funcs 約 19.31%**・**global `functions` 閾値 19%** の整理は従来どおり。**Phase B KPI の 30%（src・Statements）は未達**（差分は B-4 で段階拡充、`vitest.config.ts` の低い thresholds は据え置き） | 50% — Phase D 末（目標値）          |
 | エラー監視             | Sentry 導入済み（DSN設定で有効化）                                                                                        | ✅ Phase A で導入済み               |
 | アクセス解析            | **GA4 オプション実装済**（`VITE_GA_MEASUREMENT_ID` 未設定時は送信なし）。**本番確認ログ**: [04](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」表に運用担当が記入（未記入＝未確認） | 本番で測定 ID を設定し計測確認 — Phase B-5 |
 | パフォーマンス監視         | なし                                                                                                            | Lighthouse CI — Phase C       |
@@ -118,7 +118,7 @@
 
 - **CPL 記事 Phase 1**: **本文化 19/19 達成済**（2026-04-12。計画当初の中間目安 **5/19 以上**は上回って完走。正本 [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)）
 - PPL 記事: **20/150 以上**（2026-04-12 時点で二次 KPI を満たし継続。未達の場合は CPL 優先の理由を記録）
-- テストカバレッジ **30% 以上**（`src` 実効・Statements 等。2026-04-13 時点 **未達** — 技術的負債表と「更新履歴」を参照。Phase B 後半は B-4 で段階的拡充）
+- テストカバレッジ **30% 以上**（`src` 実効・Statements。2026-05-05 実測 **約 9.4%** — 技術的負債表・更新履歴参照。Phase B 後半は B-4 で段階的拡充）
 - **GA4**: クライアント・ビルド注入は**実装済**。**稼働の定義**＝本番 Vercel に `VITE_GA_MEASUREMENT_ID` を入れ再デプロイし、[04](04_Operations_Guide.md) の確認ログ or リアルタイムで**受信を確認**すること（未確認なら Phase B-5 は未完了扱い）
 - **執筆ペース**: Phase 1 完走に伴い、**Phase 2 / マッピング**の週次本数に KPI を再定義する（次回レビュー）
 
@@ -282,6 +282,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-05 | **Phase B 並行（Phase 2 記事クローズ／マッピング／カバレッジ）**: 気象 `3.3.10`〜`3.3.12`・工学 `3.2.10`〜`3.2.12`・法規 `3.1.7`〜`3.1.8` の MDX 体裁（科目ハブ・`/articles` ナビ、`/docs/` サイト外リンク削除）。[`20260505_learning_contents_phase2_eight_meta.sql`](../scripts/database/20260505_learning_contents_phase2_eight_meta.sql) を MCP 本番適用。§5.2 上位クラスタ（航空機装備・航空機構造・施行規則）を [`20260505_learning_test_mapping_unmapped_top_clusters.sql`](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql) で追補 — [05](05_Content_Pipeline.md)、[14](Article_Coverage_Backlog.md)、`scripts/database/INDEX.md` 更新。**テストカバレッジ**: src の **Statements 実効 約 9.40%**（同上日 `npm run test:coverage`・v8 JSON から `FlightAcademyTsx/src` のみ集計）。**GA4**: [04](04_Operations_Guide.md) の Post-Phase-B 表は人手入力が正本（本記録では Data API 数値確認なし）。 |
 | 2026-05-05 | **v4.0.10 / May sprint**: 「2026年5月期スプリント」節追加。Phase 2 級の **3.5.4** 緊急通信レッスンの本文化与 DB メタ同期 SQL、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、監査／再試行用 `20260505_*.sql`、[04_Operations_Guide.md](04_Operations_Guide.md) GA4 ログ表の運用手順明示。`calculateLearningStats` テスト拡張。詳細は同節参照。 |
 | 2026-04-30 | v4.0.9: 空中航法 **3.4.5〜3.4.7** を含むシリーズのドキュメント整合 — [09](09_CPL_Learning_Stub.md)、[05](05_Content_Pipeline.md)、[14](Article_Coverage_Backlog.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md) を `CPL-Navigation`・冪等 SQL（`20260430_learning_contents_cpl_navigation_341_347_meta.sql`）に追随。Phase 1 KPI「19本」の定義（空中航法は `3.4.1`〜`3.4.4` のみ）は変更なし。 |
 | 2026-04-25 | ドキュメント整理: 長期方針の [06](06_Long_Term_Execution.md) を旧 16–18 から**1 本**に再編。[docs/README](README.md) 冒頭の更新履歴を圧縮。 |

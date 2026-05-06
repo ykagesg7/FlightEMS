@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月6日（3.5.x: **3.5.5** 本文化・`CPL-Communication`、[05](05_Content_Pipeline.md) / [14](Article_Coverage_Backlog.md) 反映）
-**バージョン**: Documentation Index v4.38
+**最終更新**: 2026年5月5日（Phase 2 対象 8 単元の MDX / DB / バックログ整合。`05` / `14` / `01` / `04` 追随）
+**バージョン**: Documentation Index v4.39
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -23,6 +23,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-05-05（Phase B 並行）**: Phase 2 リスト 8 単元の MDX 体裁（科目ハブ・`/articles`）と [`20260505_learning_contents_phase2_eight_meta.sql`](../scripts/database/20260505_learning_contents_phase2_eight_meta.sql)。§5.2 上位クラスタ追補 [`20260505_learning_test_mapping_unmapped_top_clusters.sql`](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql)。[05](05_Content_Pipeline.md)・[14](Article_Coverage_Backlog.md)・[01](01_Current_Status_and_Roadmap.md)・[04](04_Operations_Guide.md)（GA4 補助メモ）。`npm run test:coverage` の **src Statements 実効 約 9.4%** は [01](01_Current_Status_and_Roadmap.md) 技術的負債表。
 - **2026-05-06（CPL 通信 3.5.5）**: [3.5.5_ATCPhraseology.mdx](../src/content/lessons/3.5.5_ATCPhraseology.mdx) をスタブから本文化（`CPL-Communication`）。`learning_contents` 冪等 `scripts/database/20260506_learning_contents_comm_355_meta_finalize.sql`。[05_Content_Pipeline.md](05_Content_Pipeline.md)・[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) 更新。
 - **2026-05-05（GA4 MCP 完了）**: **OAuth デスクトップクライアント + ADC**（`analytics.readonly`）、**同意画面のテストユーザー**、`get_account_summaries` / `run_report` による疎通、[Cloud Resource Manager API](https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com) と `set-quota-project` の注意を [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) に反映。例: [`scripts/ga4-mcp-oauth-adc-login.example.ps1`](../scripts/ga4-mcp-oauth-adc-login.example.ps1)。索引: [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md#ga4-mcp-oauth--adcローカル例)。
 - **2026-05-05（GA4 MCP）**: [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) に公式 `analytics-mcp`（pipx・ルート A）と任意 `npx`（ルート B）の比較、プロパティ ID と測定 ID（`G-…`）の整理、ローカル `.cursor/mcp.json` のチェックリスト、BigQuery は別フェーズとして明記。[04_Operations_Guide.md](04_Operations_Guide.md) にタグ側と Data API / MCP 側の二段確認および BigQuery 任意の脚注。

@@ -88,6 +88,7 @@
 
 - **Data API**（および [Google 公式 Analytics MCP](https://developers.google.com/analytics/devguides/MCP?hl=ja) が内部で使う同系 API）は、**収集・集計済みのデータを読み取る**ためのものである。**`g/collect` がクライアントから届いていない**、別プロパティに入っている等の場合、API のレポートも **0 件に近く**なる。UI が空なのに「API だけ直す」ことはできない。
 - **切り分けに使う例**: 過去 7 日などで `screenPageViews` や `activeUsers` が **0 か非 0 か**を確認する。0 なら引き続きタグ・ブロッカー・ストリーム ID・プロパティの取り違えを疑う。非 0 なのに特定の UI だけ空なら、フィルタ・表示中のアカウント・サマリーの遅延を疑う。
+- **2026-05-05（本リポジトリ上のエージェント実行）**: **Data API / GA MCP のレポート数値は取得しておらず**、Post-Phase-B 表の人手記入とタグ側確認が引き続き正本（[01](01_Current_Status_and_Roadmap.md) 更新履歴に同趣旨を記録）。
 - **GA4 プロパティ ID**: 管理画面のプロパティ設定で **`properties/123456789` 形式の数値**（API では `properties/{property_id}`）を確認する。測定 ID（`G-…`）とは別。
 - **Cursor での MCP 設定**: [docs/Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)「Google Analytics MCP（任意・実験的）」。認証情報は **リポジトリに含めない**。**MCP 疎通は Data API での読取確認であり**、この節や上の **Post-Phase-B のログ表**で追う **`g/collect` / Realtime のタグ側経路チェックとは別物**。**両方そろって初めて**「送信→蓄積→参照」の一連が説明できる。
 - **ローカル MCP の認証**: GA の管理 UI でサービスアカウントをプロパティに招待できない（「Google アカウントではない」等）場合は、**OAuth 2.0 デスクトップクライアント + `gcloud auth application-default login`**（`analytics.readonly` など）で **ユーザー ADC** を使う。**OAuth アプリがテストモード**なら、同意する **Gmail をテストユーザーに追加**する。コマンド例: [`scripts/ga4-mcp-oauth-adc-login.example.ps1`](../scripts/ga4-mcp-oauth-adc-login.example.ps1)。手順の正本は [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) および [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md#ga4-mcp-oauth--adcローカル例)。
