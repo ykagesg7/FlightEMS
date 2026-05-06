@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトの運用、保守、トラブルシューティングについて説明します。
 
-**最終更新**: 2026年5月5日（GA4 MCP: OAuth デスクトップ + ADC 経路の運用メモを補足）
-**バージョン**: Operations & Maintenance Guide v2.8
+**最終更新**: 2026年5月6日（Post-Phase-B：GA4 リアルタイムで本番受信を確認しログ表に反映）
+**バージョン**: Operations & Maintenance Guide v2.9
 
 ---
 
@@ -74,13 +74,13 @@
 #### **Phase B 検証記録（2026-04-12・リポジトリ側）**
 
 - **コード**: `vite.config.ts` の `define` 経由で `VITE_GA_MEASUREMENT_ID` が `import.meta.env` に渡り、本番ビルドで `injectGoogleTagPlugin` が `gtag` を `index.html` に挿入し、`GoogleAnalyticsTracker.tsx` が **本番かつ ID ありのときだけ** `page_view` を送る実装であることを静的確認した。
-- **本番**: Vercel **Production** に `VITE_GA_MEASUREMENT_ID`（`G-` 形式）が入っているか、変更後に **Redeploy** したかは、プロジェクト設定へのアクセスが必要なため **この環境では未確認**。運用担当は上記 1〜7 の順で **リアルタイム / DebugView** を確認し、結果を社内メモまたは次回 `03` 更新時に 1 行追記するとよい。
+- **本番**: **2026-05-06** — GA4 **リアルタイム**で本番トラフィック受信を確認（プロパティ **FlightAcademy**、下記 Post-Phase-B 表）。Vercel の変数変更のたびに **再デプロイ**とログ追記を推奨。
 
 #### **Post-Phase-B 本番確認ログ（運用担当が記入）**
 
 | 確認日 | Vercel Production に `VITE_GA_MEASUREMENT_ID` あり | 再デプロイ後 | GA リアルタイム or DebugView でヒット | 備考 |
 |--------|------------------------------------------------------|-------------|----------------------------------------|------|
-| （運用入力） |  |  |  | **2026-05 実施計画**: AI/エージェントは Vercel・GA に直接ログインしない。運用担当が上記 1〜7 を実施後、各列へ ☑ または確認日時を書き込む。**未入力のままなら Phase B-5 は未クローズ**。本行を差し替えてよい。 |
+| 2026-05-06 | ☑ `G-22VFYSM69J`（Production / Preview に設定済） | —（本確認時点で変数変更なし） | ☑ **リアルタイム**でアクティブユーザー・表示回数を確認（プロパティ **FlightAcademy**） | 運用入力。**Phase B-5（本番受信）を満たす**。DebugView は未実施でも可。タグ経路の補助確認に Playwright MCP 等可（別セッション）。次回 Vercel 側で `VITE_GA_MEASUREMENT_ID` を変えたら **Redeploy** 後に本表を1行追加する。 |
 
 > AI/エージェントは Vercel ダッシュボードにアクセスできないため **この表の実データ記入は人手**。記入後、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) の Phase B 節に **1 行サマリー**を追記してもよい。
 

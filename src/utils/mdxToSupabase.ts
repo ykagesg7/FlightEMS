@@ -10,87 +10,12 @@
 import supabase from './supabase';
 import path from 'path';
 import fs from 'fs';
-
-// カテゴリーマッピング（ファイル名の接頭辞からカテゴリを推測）
-const CATEGORY_MAPPING: Record<string, string> = {
-  '0': '基礎',
-  '0.2': 'メンタリティー',
-  '0.3': 'メンタリティー',
-  '0.4': 'メンタリティー',
-  '1': '計器飛行原理',
-  '2': '離着陸',
-  '3': '基本操作',
-  '4': '計器飛行',
-  '5': 'タカン',
-};
-
-// MDXファイルからタイトルを抽出
-function extractTitleFromMDX(content: string): string | null {
-  // 最初の行が # で始まるタイトルと仮定
-  const titleMatch = content.match(/^#\s+(.+)$/m);
-  if (titleMatch && titleMatch[1]) {
-    return titleMatch[1].trim();
-  }
-  
-  // h1タグがある場合
-  const h1Match = content.match(/<h1[^>]*>(.+?)<\/h1>/i);
-  if (h1Match && h1Match[1]) {
-    return h1Match[1].trim();
-  }
-  
-  return null;
-}
-
-// MDXファイルから説明を抽出
-function extractDescriptionFromMDX(content: string): string | null {
-  // タイトルの次の段落をdescriptionと仮定
-  const paragraphs = content.split(/\n\s*\n/);
-  
-  if (paragraphs.length > 1) {
-    // 最初の段落がタイトルならスキップして次の段落を使用
-    const firstPara = paragraphs[0].trim();
-    if (firstPara.startsWith('#') || firstPara.startsWith('<h1')) {
-      const secondPara = paragraphs[1].trim();
-      // マークダウン記法や HTMLタグを除去
-      return secondPara
-        .replace(/#{1,6}\s+/g, '') // #見出しを除去
-        .replace(/<[^>]+>/g, '')   // HTMLタグを除去
-        .substring(0, 150);        // 最大150文字まで
-    }
-  }
-  
-  return null;
-}
-
-// ファイル名からカテゴリを推測
-function guessCategoryFromFilename(filename: string): string {
-  // 数字で始まるプレフィックスを抽出（0.2や0.3などの小数点を含むケースにも対応）
-  const prefixMatch = filename.match(/^(\d+(\.\d+)?)/);
-  
-  if (prefixMatch && prefixMatch[1]) {
-    const prefix = prefixMatch[1];
-    return CATEGORY_MAPPING[prefix] || '一般';
-  }
-  
-  // 従来の方法（フォールバック）
-  const fallbackPrefix = filename.split('-')[0].split('_')[0].split('.')[0];
-  return CATEGORY_MAPPING[fallbackPrefix] || '一般';
-}
-
-// ファイル名から順序インデックスを推測
-function guessOrderIndexFromFilename(filename: string): number {
-  const parts = filename.split(/[-_.]/);
-  
-  for (const part of parts) {
-    // 数値のみの部分を見つける
-    const numMatch = part.match(/^(\d+)$/);
-    if (numMatch) {
-      return parseInt(numMatch[1], 10);
-    }
-  }
-  
-  return 0; // デフォルト値
-}
+import {
+  extractTitleFromMDX,
+  extractDescriptionFromMDX,
+  guessCategoryFromFilename,
+  guessOrderIndexFromFilename,
+} from './mdxContentParsing';
 
 // MDXファイルをSupabaseに登録
 export async function syncMDXToSupabase(directory: string): Promise<{success: boolean, message: string, count: number}> {

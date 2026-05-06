@@ -1,6 +1,6 @@
 # 長期実行計画（品質・コンテンツ・分析・成長）
 
-**最終更新**: 2026-04-25（§5 に旧 12 統合）
+**最終更新**: 2026-05-06（§1.4 `tsc -b` バックログ）
 
 **位置づけ**: [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)・[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) の補助。執筆方針と記事 ID の**原則**は [Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) を正とし、本書は実装・運用の**長期バックログ**に絞る。
 
@@ -13,8 +13,8 @@
 ### 1.1 テストカバレッジ
 
 - **正本**: [vitest.config.ts](../vitest.config.ts) の `coverage.thresholds` と `npm run test:coverage`。
-- **解釈**: レポート先頭の **All files** は `node_modules` 等を含みうる。ロードマップ上の 30% / 50% は `src` の **Statements 実効**を判断材料にする（[01](01_Current_Status_and_Roadmap.md) 技術的負債表・更新履歴）。
-- **方針**: 閾値は CI 安定用の下限。未達分は B-4（フック・ユーティリティ拡充）で段階的に。Phase B 末 30%・Phase D 末 50% は [01](01_Current_Status_and_Roadmap.md) に従う。
+- **解釈**: レポート先頭の **All files** は `node_modules` 等を含みうる。ロードマップ上の指標は `src` の **Statements 実効**（パスに **`FlightAcademyTsx/src/`** を含むファイルのみ集計）を判断材料にする（[01](01_Current_Status_and_Roadmap.md) 技術的負債表・更新履歴）。
+- **方針**: 閾値は CI 安定用の下限。未達分は B-4（フック・ユーティリティ拡充）で段階的に。**Phase C 末**の主目標は **`src` 実効 15%**（ストレッチ 18%・任意）、**Phase D 末**は **50%**（北極星。中間再定義は [01](01_Current_Status_and_Roadmap.md)・[00](00_Flight_Academy_Strategy.md) と整合）。`vitest.config.ts` の coverage thresholds は実測が安定するまで無理に引き上げない。
 
 ### 1.2 優先テスト層
 
@@ -36,6 +36,16 @@
 | A11y | 未 | Phase C（C-4）WCAG 2.1 A |
 
 **製品側の学習指標の詳細**: [本書 §5](#5-クイズ分析ランキング詳細)（旧 `12_Quiz_Analytics_Phase_Design.md` を統合）
+
+### 1.4 TypeScript プロジェクト全体の型チェック（`tsc -b`）
+
+**現状**: `npm exec -- tsc -b`（または同等）は、リポジトリ全体で **既存の型エラーが多数**（Supabase 生成型とアプリ側の整合、テストの Vitest `globals` 等）のため、**単発ですべてを直すのは不向き**。
+
+**推奨（別 initiative でチケット化し、スコープ分割）**:
+
+1. **テスト用 `tsconfig`** で `vitest/globals` や `setupFiles` 由来の参照を明示し、テストファイルのエラーをアプリ本体から分離する。
+2. **DB 型**は Supabase CLI / 生成フローとセットで見直し、`never` や古い列参照を段階修正する。
+3. **CI ゲート**は当面 Vitest・ESLint を維持し、`tsc -b` のゼロ化はマイルストーン（例: ディレクトリ単位）で追う。
 
 ---
 

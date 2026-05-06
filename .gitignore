@@ -93,8 +93,9 @@ scripts/bulk_*.sql
 scripts/batch_*.sql
 scripts/unified_*.sql
 
-# Temporary processing files
+# Temporary processing files — do not match docs/Phase_C_Quality_Preparation.md
 phase*.md
+!docs/Phase_C_Quality_Preparation.md
 *_completion_report_*.md
 batch_processing_*.json
 batch_processing_*.md
@@ -126,6 +127,10 @@ playwright-report/
 test-results/
 blob-report/
 playwright/.cache/
+.playwright-mcp/
+
+# TypeScript incremental build caches (keep out of commits)
+*.tsbuildinfo
 
 # Local scratch / API debug dumps (do not commit)
 _os_body*.json

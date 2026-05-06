@@ -89,4 +89,17 @@ describe('planDocument', () => {
     expect(fromPlanDocument({})).toBeNull();
     expect(fromPlanDocument({ schemaVersion: 2, planInput: {} })).toBeNull();
   });
+
+  it('fromPlanDocument accepts schema 1 with partial planInput and fills defaults', () => {
+    const restored = fromPlanDocument({
+      schemaVersion: 1,
+      planInput: { altitude: 5000, speed: 180 },
+    });
+    expect(restored).not.toBeNull();
+    expect(restored!.altitude).toBe(5000);
+    expect(restored!.speed).toBe(180);
+    expect(restored!.waypoints).toEqual([]);
+    expect(restored!.routeSegments).toEqual([]);
+    expect(restored!.departure).toBeUndefined();
+  });
 });

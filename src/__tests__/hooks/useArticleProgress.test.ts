@@ -185,4 +185,63 @@ describe('calculateLearningStats', () => {
 
     expect(stats.readingGoals.achieved).toBe(false);
   });
+
+  it('classifies empty tags as その他 and still counts completed orphans toward totals', () => {
+    vi.setSystemTime(new Date('2026-05-06T12:00:00Z'));
+    const metaUntagged: ArticleMeta = {
+      title: 'D',
+      slug: '/articles/d',
+      tags: [],
+    };
+    const index: Record<string, ArticleMeta> = {
+      ...articleIndex,
+      '/articles/d': metaUntagged,
+    };
+
+    const progress: Record<string, ArticleProgress> = {
+      '/articles/d': {
+        articleSlug: '/articles/d',
+        readAt: new Date('2026-05-06T11:00:00Z'),
+        readingTime: 1,
+        scrollProgress: 100,
+        completed: true,
+        bookmarked: false,
+        lastPosition: 0,
+      },
+      '/articles/not-in-index': {
+        articleSlug: '/articles/not-in-index',
+        readAt: new Date('2026-05-06T11:00:00Z'),
+        readingTime: 1,
+        scrollProgress: 100,
+        completed: true,
+        bookmarked: false,
+        lastPosition: 0,
+      },
+    };
+
+    const stats = calculateLearningStats(progress, index, articleIndexByFilename);
+
+    expect(stats.categoriesProgress['その他']).toMatchObject({
+      read: 1,
+      total: 1,
+      percentage: 100,
+    });
+    expect(stats.completedArticles).toBe(2);
+    expect(stats.totalArticles).toBe(4);
+  });
+
+  it('defaults gamification-derived stats when profile is null or rank progress omitted', () => {
+    const stats = calculateLearningStats(
+      {},
+      articleIndex,
+      articleIndexByFilename,
+      undefined,
+      null,
+      undefined
+    );
+    expect(stats.completedMissions).toBe(0);
+    expect(stats.currentRank).toBeNull();
+    expect(stats.rankProgress).toBe(0);
+    expect(stats.streakDays).toBe(0);
+  });
 });

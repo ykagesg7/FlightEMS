@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { UserRank } from '../../types/gamification';
@@ -21,12 +21,7 @@ function createMockChain(tableName: string) {
   const response = () =>
     tableResponses[tableName] || { data: null, error: null };
 
-  const _terminator = {
-    single: () => Promise.resolve(response()),
-    then: (resolve: (v: MockResponse) => void) => resolve(response()),
-  };
-
-  const chain: Record<string, (...args: unknown[]) => typeof chain & typeof terminator> = {};
+  const chain: Record<string, (...args: unknown[]) => unknown> = {};
 
   // 全てのチェーンメソッドが自身を返し、末端で response を返す
   const methods = ['select', 'insert', 'update', 'delete', 'eq', 'order', 'limit', 'single'] as const;
@@ -365,6 +360,183 @@ describe('useGamification', () => {
     it('should have legend as the terminal rank (no nextRank)', () => {
       expect(RANK_INFO.legend.nextRank).toBeUndefined();
       expect(RANK_INFO.legend.nextRankXpRequired).toBeUndefined();
+    });
+  });
+
+  describe('completeMissionByAction', () => {
+    const baseMission = {
+      title: 'T',
+      description: null,
+      xp_reward: 20,
+      min_rank_required: 'fan' as const,
+      is_active: true,
+      created_at: '2026-01-01T00:00:00Z',
+      updated_at: '2026-01-01T00:00:00Z',
+    };
+
+    beforeEach(() => {
+      mockRpc.mockReset();
+      mockRpc.mockResolvedValue({
+        success: true,
+        xp_earned: 10,
+      });
+    });
+
+    it('calls complete_mission RPC for matching one_time mission', async () => {
+      setupAuthStore(mockUser);
+      setupProfileQuery({ id: 'user-123', rank: 'wingman', xp_points: 1300 }, [], []);
+      tableResponses.missions = {
+        data: [
+          {
+            ...baseMission,
+            id: 'm-one',
+            required_action: 'article_read',
+            mission_type: 'one_time',
+          },
+        ],
+        error: null,
+      };
+
+      const { result } = renderHook(() => useGamification(), {
+        wrapper: createTestWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.profile).toBeDefined();
+      });
+
+      await act(async () => {
+        await result.current.completeMissionByAction('article_read');
+      });
+
+      expect(mockRpc).toHaveBeenCalledWith('complete_mission', {
+        p_mission_id: 'm-one',
+        p_user_id: 'user-123',
+      });
+    });
+
+    it('skips daily mission when last completion was within 1 day', async () => {
+      const now = new Date();
+      const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+
+      setupAuthStore(mockUser);
+      setupProfileQuery({ id: 'user-123', rank: 'wingman', xp_points: 1300 }, [], []);
+      tableResponses.user_missions = {
+        data: [
+          {
+            user_id: 'user-123',
+            mission_id: 'm-daily',
+            completed_at: twoHoursAgo.toISOString(),
+            xp_earned: 5,
+          },
+        ],
+        error: null,
+      };
+      tableResponses.missions = {
+        data: [
+          {
+            ...baseMission,
+            id: 'm-daily',
+            required_action: 'quiz_pass',
+            mission_type: 'daily',
+          },
+        ],
+        error: null,
+      };
+
+      const { result } = renderHook(() => useGamification(), {
+        wrapper: createTestWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.profile).toBeDefined();
+      });
+
+      mockRpc.mockClear();
+      await act(async () => {
+        await result.current.completeMissionByAction('quiz_pass');
+      });
+
+      expect(mockRpc).not.toHaveBeenCalled();
+    });
+
+    it('runs RPC for daily when no prior completion rows', async () => {
+      setupAuthStore(mockUser);
+      setupProfileQuery({ id: 'user-123', rank: 'wingman', xp_points: 1300 }, [], []);
+      tableResponses.user_missions = { data: [], error: null };
+      tableResponses.missions = {
+        data: [
+          {
+            ...baseMission,
+            id: 'm-daily2',
+            required_action: 'article_read',
+            mission_type: 'daily',
+          },
+        ],
+        error: null,
+      };
+
+      const { result } = renderHook(() => useGamification(), {
+        wrapper: createTestWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.profile).toBeDefined();
+      });
+
+      await act(async () => {
+        await result.current.completeMissionByAction('article_read');
+      });
+
+      expect(mockRpc).toHaveBeenCalledWith('complete_mission', {
+        p_mission_id: 'm-daily2',
+        p_user_id: 'user-123',
+      });
+    });
+
+    it('skips weekly mission when last completion was within 7 days', async () => {
+      const now = new Date();
+      const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+
+      setupAuthStore(mockUser);
+      setupProfileQuery({ id: 'user-123', rank: 'wingman', xp_points: 1300 }, [], []);
+      tableResponses.user_missions = {
+        data: [
+          {
+            user_id: 'user-123',
+            mission_id: 'm-weekly',
+            completed_at: threeDaysAgo.toISOString(),
+            xp_earned: 5,
+          },
+        ],
+        error: null,
+      };
+      tableResponses.missions = {
+        data: [
+          {
+            ...baseMission,
+            id: 'm-weekly',
+            required_action: 'plan_create',
+            mission_type: 'weekly',
+          },
+        ],
+        error: null,
+      };
+
+      const { result } = renderHook(() => useGamification(), {
+        wrapper: createTestWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.profile).toBeDefined();
+      });
+
+      mockRpc.mockClear();
+      await act(async () => {
+        await result.current.completeMissionByAction('plan_create');
+      });
+
+      expect(mockRpc).not.toHaveBeenCalled();
     });
   });
 });

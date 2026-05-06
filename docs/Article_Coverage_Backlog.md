@@ -2,7 +2,8 @@
 
 **作成日**: 2026-04-10  
 **スナップショット更新**: 2026-04-13（MCP `execute_sql` 再取得。`3.4.2`/`3.4.3` は `question_text` 条件。Post-Phase-B で PPL 3 本・`3.4.5`/`3.4.6`/`3.5.5` マッピング追補）  
-**§5.2 メモ更新**: **2026-05-05** — 未マッピング上位クラスタを `engineering_basics`・`3.1.1` に束ね、[20260505_learning_test_mapping_unmapped_top_clusters.sql](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql) を本番適用。verified で **§5.2 経路に載らない設問は 123 件**、`learning_test_mapping` **行数 53**（記事 50 のまま・同一記事に複数 `topic_category`）。
+**§5.2 メモ更新**: **2026-05-06** — 次段クラスタ（荷重と強度・機体の構造・燃料供給系統・総則/定義・雑音と空電）を `engineering_basics` / `3.1.1` に束ね、[20260506_learning_test_mapping_unmapped_tier2.sql](../scripts/database/20260506_learning_test_mapping_unmapped_tier2.sql) を本番適用（MCP `execute_sql`）。verified で **§5.2 経路に載らない設問は 69 件**、`learning_test_mapping` **行数 58**（**DISTINCT `learning_content_id` は 50 のまま**・同一記事に複数 `topic_category`）。  
+**§5.2 メモ（前回）**: **2026-05-05** — 未マッピング上位クラスタを `engineering_basics`・`3.1.1` に束ね、[20260505_learning_test_mapping_unmapped_top_clusters.sql](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql) を本番適用（当時 verified 未マッピング **123 件**・マッピング行 **53**）。
 
 **注記更新**: 2026-04-30 — 空中航法 **3.4.1〜3.4.7** の MDX 体裁・`learning_contents` メタを [09](09_CPL_Learning_Stub.md)・`20260430_learning_contents_cpl_navigation_341_347_meta.sql` に追随。**§1 の `learning_contents` 件数等は 04-13 スナップショットのまま**（行数・未マッピングは上記 2026-05-05 メモを参照。DB を全面的に再取得する場合は §5 を実行）。
 **想定読者**: コンテンツ執筆者、プロダクトオーナー、AI アシスタント  
@@ -18,7 +19,7 @@
 | **`learning_contents` 総行数** | **90** | 2026-04-13 MCP 再取得（[20260413_learning_contents_ppl_phase_b_three.sql](../scripts/database/20260413_learning_contents_ppl_phase_b_three.sql) 適用済み） |
 | **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **13** / メンタリティー **15** / 思考法 **13** | `GROUP BY category`・2026-04-13 MCP |
 | **`learning_test_mapping` がある記事** | **50** | `COUNT(DISTINCT learning_content_id)`・2026-04-13 時点（2026-05-05 も **50** のまま） |
-| **`learning_test_mapping` 行数** | **53** | 2026-05-05 MCP（同一記事に複数 `topic_category` の補助行 +3） |
+| **`learning_test_mapping` 行数** | **58** | 2026-05-06 MCP（[tier2 SQL](../scripts/database/20260506_learning_test_mapping_unmapped_tier2.sql) 適用後。2026-05-05 時点は **53**） |
 | **リポジトリ `src/content/lessons/*.mdx`** | **69** | 2026-04-13（Glob 集計） |
 
 **正本**: 単元の木は **`unified_cpl_questions` の `(main_subject, sub_subject 全文)`**（[08](08_Syllabus_Management_Guide.md)）。本書の数値は FlightAcademy プロジェクトに対する **MCP `execute_sql`** で取得したスナップショットである。再取得する場合は §5 の SQL を使用する。
@@ -127,25 +128,28 @@ ORDER BY unmapped_questions DESC;
 
 ## 6. 未マッピング設問が多いクラスタ（スナップショット上位）
 
-**注意**: 下表の **件数**は **2026-05-05** に §5.2 と同じ MCP クエリで再取得した値。履歴比較には 04-10 行も参照。
+**注意**: 下表の **件数**は **2026-05-06** に §5.2 と同じ MCP クエリで再取得した値（tier2 追補適用後）。履歴比較には 05-05 行も参照。
 
-2026-05-05 時点で、**未マッピング設問数が多い** `sub_subject` の例:
+2026-05-06 時点で、**未マッピング設問数が多い** `sub_subject` の例:
 
 | main_subject | sub_subject（抜粋） | unmapped_questions |
 |--------------|---------------------|-------------------:|
-| 航空工学 | 航空機の構造/荷重と強度 | 16 |
-| 航空工学 | 航空機の構造/機体の構造 | 12 |
-| 航空工学 | 燃料供給系統/燃料供給系統 | 11 |
-| 航空法規 | 総則/定義 | 8 |
-| 航空工学 | 無線通信/雑音と空電 | 7 |
 | 航空法規 | 総則/目的 | 6 |
 | 航空工学 | 航法計器/無線航法計器 | 5 |
 | 航空工学 | 航法計器/磁方位計器 | 5 |
 | 航空工学 | 空力の基礎理論/力学の基礎 | 5 |
+| 航空法規 | 登録/変更登録 | 4 |
+| 航空工学 | 着氷/着氷の防止の概要 | 4 |
+| 航空法規 | 航空従事者/業務範囲 | 4 |
+| 航空工学 | 空力の基礎理論/対気速度 | 3 |
+| 航空法規 | 航空従事者/航空身体検査証明 | 3 |
+| 航空工学 | 空力の基礎理論/操縦性 | 3 |
 
-**2026-04-10 の参考行**（当時上位だったが 2026-05-05 には束ね済み）: 航空機装備 **34**、航空機構造 **33**、航空法及び航空法施行規則 **10** — [20260505_learning_test_mapping_unmapped_top_clusters.sql](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql)。
+**2026-05-05 以前に上位だったが 2026-05-06 に束ね済み**（再取得で上位表から消滅）: 航空機の構造/荷重と強度、航空機の構造/機体の構造、燃料供給系統/燃料供給系統、総則/定義、無線通信/雑音と空電（[`20260506_learning_test_mapping_unmapped_tier2.sql`](../scripts/database/20260506_learning_test_mapping_unmapped_tier2.sql)）。
 
-**解釈**: CPL 工学の「装備・構造・燃料」はまだ **`engineering_basics`** だけでは弱い。**クラスタ単位の記事追加**と **マッピング行の細分化**が有効。
+**2026-04-10 の参考行**（当時上位だったが 2026-05-05 に束ね済み）: 航空機装備 **34**、航空機構造 **33**、航空法及び航空法施行規則 **10** — [20260505_learning_test_mapping_unmapped_top_clusters.sql](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql)。
+
+**解釈**: CPL 工学の「装備・構造・燃料」はまだ **`engineering_basics`** だけでは弱い。**クラスタ単位の記事追加**と **マッピング行の細分化**が有効（**tier2 で 5 クラスタ分を追加束ね済み**—残 69 件は新たな **Tier 3** で継続）。
 
 ---
 
@@ -212,6 +216,7 @@ ORDER BY unmapped_questions DESC;
 
 | 日付 | 内容 |
 |------|------|
+| 2026-05-06 | **§5.2 次段**: 荷重と強度・機体の構造・燃料供給・総則/定義・雑音と空電を `engineering_basics` / `3.1.1` に束ね（[`20260506_learning_test_mapping_unmapped_tier2.sql`](../scripts/database/20260506_learning_test_mapping_unmapped_tier2.sql)）— MCP `execute_sql` 本番適用済み。verified 未マッピング **69 件**・マッピング行 **58**（§1・§6・ヘッダ §5.2 メモ）。 |
 | 2026-05-05 | **Phase B**: 気象 3.3.10〜12・工学 3.2.10〜12・法規 3.1.7〜8 の `learning_contents` / `learning_test_mapping.content_title` を MDX `meta` に同期（[`20260505_learning_contents_phase2_eight_meta.sql`](../scripts/database/20260505_learning_contents_phase2_eight_meta.sql)）。§5.2 上位 3 クラスタ（航空機装備・航空機構造・施行規則）を `engineering_basics` / `3.1.1` に束ね（[`20260505_learning_test_mapping_unmapped_top_clusters.sql`](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql））。verified 未マッピング設問 **123 件**・マッピング行 **53**（§1・§6 更新）。 |
 | 2026-05-07 | 航空通信 **3.5.1〜3.5.5** の `learning_contents` タイトル・説明文を MDX 本文化版に全集約。また `learning_test_mapping.content_title` を同タイトルに同期。[`20260507_learning_contents_comm_351_355_meta_sync.sql`](../scripts/database/20260507_learning_contents_comm_351_355_meta_sync.sql) を Supabase `execute_sql` で本番適用済み。§1 MCP サマリー数値は未再取得。|
 | 2026-05-06 | **3.5.5_ATCPhraseology** をスタブから本文化（`CPL-Communication`・`order` 5）。`learning_contents` 冪等同期: [`20260506_learning_contents_comm_355_meta_finalize.sql`](../scripts/database/20260506_learning_contents_comm_355_meta_finalize.sql)。§1 MCP サマリー数値は従来スナップショットのまま（再実行で更新）。|

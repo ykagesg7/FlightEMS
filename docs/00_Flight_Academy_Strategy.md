@@ -268,7 +268,7 @@ Flight Academy
 
 ### 弱み
 
-- **テストカバレッジ**: 目標 50% に対し、拡充が継続課題（実測・閾値は [vitest.config.ts](../vitest.config.ts) および `npm run test:coverage` を正とする）
+- **テストカバレッジ**: **Phase C** で **`src` 実効 Statements 約 15%**（詳細・実測は [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)）、長期では **Phase D で 50%** の北極星（進捗に応じ中間調整時は [01](01_Current_Status_and_Roadmap.md) と本書で整合）。`vitest.config.ts` の閾値は CI 下限
 - **CPL 記事**: Phase 1 **本文化 19/19 完了**（2026-04-12）。**Phase 2**・マッピング精緻化が次の価値拡張（[01](01_Current_Status_and_Roadmap.md)）
 - **PPL 記事**: 150 本シラバスに対し進捗は二次 KPI。CPL からのリンク整備と [07](PPL_Master_Syllabus.md) 進捗が継続課題
 - **運用監視**: **Sentry** は DSN 設定で有効化。**GA4** はクライアント実装済。本番プロパティでの受信確認は [04](04_Operations_Guide.md)

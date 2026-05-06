@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
 **最終更新**: 2026年5月6日
-**バージョン**: Roadmap v4.0.10（Strategy v1.2・CPL 主軸・独立運営）
+**バージョン**: Roadmap v4.0.15（Strategy v1.2・CPL 主軸・独立運営）
 
 ---
 
@@ -16,10 +16,13 @@
 
 - **Phase 2 寄り本文化（通信）**: [3.5.4_EmergencyProcedures](../src/content/lessons/3.5.4_EmergencyProcedures.mdx) は `CPL-Communication`（order 4）、[3.5.5_ATCPhraseology](../src/content/lessons/3.5.5_ATCPhraseology.mdx) は同シリーズ **order 5** として本文化（**2026-05-06**）。`learning_contents` 冪等は [`20260505_learning_contents_comm_354_meta_finalize.sql`](../scripts/database/20260505_learning_contents_comm_354_meta_finalize.sql) / [`20260506_learning_contents_comm_355_meta_finalize.sql`](../scripts/database/20260506_learning_contents_comm_355_meta_finalize.sql)。
 - **`learning_test_mapping` サイクル（第1弾／第2弾相当）**: 未マッピング集計の監査のみ [`20260505_audit_unmapped_sub_subject_counts.sql`](../scripts/database/20260505_audit_unmapped_sub_subject_counts.sql)。新環境向けスタブ既定の再適用 [`20260505_learning_test_mapping_comm_354_emergency_stub_retry.sql`](../scripts/database/20260505_learning_test_mapping_comm_354_emergency_stub_retry.sql)。
-- **B-4**: [`useArticleProgress.test.ts`](../src/__tests__/hooks/useArticleProgress.test.ts) で `calculateLearningStats` に追加ケース。**カバレッジ数値**: 実行後に [`Phase_C_Quality_Preparation.md`](Phase_C_Quality_Preparation.md) に従い `npm run test:coverage` をスナップショット（月末運用）。
-- **B-5（GA4）**: **リポでは表テンプレを整備のみ**。[04_Operations_Guide.md](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」は運用入力で Phase B 完了とみなす。AI は Vercel/GA にアクセスしない。
+- **B-4（カバレッジ）**: KPI は Phase C **15%** 主目標（詳細は技術的負債表・更新履歴）。**追補**: [`useArticleProgress.hook.test.tsx`](../src/__tests__/hooks/useArticleProgress.hook.test.tsx)（ログイン進捗・`refreshProgress`）、[`mdxContentParsing.ts`](../src/utils/mdxContentParsing.ts) は [`mdxToSupabase.ts`](../src/utils/mdxToSupabase.ts) から読み込み共有、[`mdxContentParsing.test.ts`](../src/__tests__/utils/mdxContentParsing.test.ts)、[`structuredData.test.ts`](../src/__tests__/utils/structuredData.test.ts)、[`swimNotamGeometry.test.ts`](../src/__tests__/api/swimNotamGeometry.test.ts)（[`api/lib/swimNotamGeometry.ts`](../api/lib/swimNotamGeometry.ts)）、[`planDocument.test.ts`](../src/__tests__/utils/planDocument.test.ts)、既存 [`taskGenerator.test.ts`](../src/__tests__/utils/taskGenerator.test.ts）。**実測**（`coverage-final.json`・パス **`FlightAcademyTsx/src/`** のみ）は **約 13.99%**（詳細は技術的負債表）。
+- **B-5（GA4）**: **2026-05-06** — GA4 リアルタイム（**FlightAcademy**）でアクティブユーザーを確認。[04_Operations_Guide.md](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」に記入済み。**Phase B-5（本番での計測受信）は満たす**。
 - **PPL（二次・リンク穴）**: [3.2.11_StallAndSpin](../src/content/lessons/3.2.11_StallAndSpin.mdx) から [`PPL-1-1-6_StallSpin`](/articles/PPL-1-1-6_StallSpin) への復習 Callout を追加。[3.3.11_VisibilityAndFog](../src/content/lessons/3.3.11_VisibilityAndFog.mdx) は学習目標リストの体裁を調整。
-- **Phase C 準備**: [Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)（Light house / A11y / カバレッジ運用のみ。UI の無承認改修なし）。
+- **Phase C 準備**: [Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)（Light house / A11y / カバレッジ運用のみ。UI の無承認改修なし）。月末カバレッジ記録表・月中スナップショット（**約 13.99%**、`FlightAcademyTsx/src/` のみ集計。**B-4 残タスク一括追補後**の `npm run test:coverage` と同集計手順）。**KPI**: `src` 実効 Statements の主目標を **Phase C で 15%**（ストレッチ 18%）に再定義。
+- **§5.2 マッピング追補（tier2）**: **2026-05-06** — 荷重と強度・機体の構造・燃料供給・総則/定義・雑音と空電を `engineering_basics` / `3.1.1` に束ね（[`20260506_learning_test_mapping_unmapped_tier2.sql`](../scripts/database/20260506_learning_test_mapping_unmapped_tier2.sql) 本番 `execute_sql` 済み）。verified 未マッピング **69 件**・マッピング行 **58**（[14](Article_Coverage_Backlog.md)）。
+- **CPL 週次パイプライン**: [05_Content_Pipeline.md](05_Content_Pipeline.md) に Phase 2 **週次着手記録**（2026-W18）と次の深化候補（14・[10](10_航空工学_学科試験攻略ブログ_ロードマップ.md)・品質レビュー）。
+- **型チェック**: `tsc -b` 全件クリーンは別 initiative — 方針を [06](06_Long_Term_Execution.md) §1.4 に記載。
 
 ---
 
@@ -60,9 +63,9 @@
 
 | 項目                | 現状                                                                                                            | 目標                            |
 | ----------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| テストカバレッジ          | **2026-05-05 実測**: `npm run test:coverage` 後の v8 `coverage/coverage-final.json` から **`…/FlightAcademyTsx/src/` のみ**を集計すると **Statements 約 9.40%**（243 ファイル・語句レベル statement 分母は v8 準拠）。レポート先頭の **All files** は **約 78.1%** と出るが依存・`.vercel` 等が混ざるため **単一指標にしない**（[06](06_Long_Term_Execution.md)）。**2026-04-13** の **Funcs 約 19.31%**・**global `functions` 閾値 19%** の整理は従来どおり。**Phase B KPI の 30%（src・Statements）は未達**（差分は B-4 で段階拡充、`vitest.config.ts` の低い thresholds は据え置き） | 50% — Phase D 末（目標値）          |
+| テストカバレッジ          | **最新実測**（`npm run test:coverage` 直後、v8 `coverage-final.json`）: パスに **`FlightAcademyTsx/src/`** を含むファイルのみ（**`.vercel` は自動的に除外**）を集計すると **Statements 約 13.99%**。前回ロードマップ記載 **約 11.89%（2026-05-06）** からの上昇。**B-4** で `useArticleProgress` フック、[`mdxContentParsing`](../src/utils/mdxContentParsing.ts)、構造化データ、[`planDocument`](../src/utils/planDocument.ts)、[`swimNotamGeometry`](../api/lib/swimNotamGeometry.ts) 等へテスト拡張。レポート先頭の **All files** は依存混入のため **単一指標にしない**（[06](06_Long_Term_Execution.md)）。**Functions** の **Funcs 約 19.31%（2026-04-13）**・**global `functions` 閾値 19%** は従来どおり。**ロードマップ上の主目標**: **Phase C で `src` 実効 15%**（ストレッチ 18%・任意）。Phase B での **一発 30% は不採用**。`vitest.config.ts` の **statements 等の低い thresholds は CI 安定用として据え置き**（数値が安定するまで引き上げない） | **Phase C 末 15%**（主目標）・**Phase D 末 50%**（北極星。[00](00_Flight_Academy_Strategy.md) と整合）          |
 | エラー監視             | Sentry 導入済み（DSN設定で有効化）                                                                                        | ✅ Phase A で導入済み               |
-| アクセス解析            | **GA4 オプション実装済**（`VITE_GA_MEASUREMENT_ID` 未設定時は送信なし）。**本番確認ログ**: [04](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」表に運用担当が記入（未記入＝未確認） | 本番で測定 ID を設定し計測確認 — Phase B-5 |
+| アクセス解析            | **GA4 本番受信確認済**（2026-05-06）：リアルタイムで計測 ID `G-22VFYSM69J`・プロパティ FlightAcademy を確認。[04](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」表が正 | 継続監視・変数変更時は Redeploy＋ログ追記 |
 | パフォーマンス監視         | なし                                                                                                            | Lighthouse CI — Phase C       |
 | Supabase クライアント管理 | **`@supabase/supabase-js` の 2 本目クライアントを廃止**しブラウザは `createBrowserClient` 単一シングルトンに寄せた（2026-04-12）                                                                  | ✅ Phase B で対応（継続監視）                 |
 | アクセシビリティ          | 未対応                                                                                                           | WCAG 2.1 Level A — Phase C    |
@@ -108,8 +111,8 @@
 | B-1     | **CPL 記事**制作パイプライン確立 | [05](05_Content_Pipeline.md)・[08](08_Syllabus_Management_Guide.md) に沿う。テンプレート・AI アシスト。**月5本の主軸は CPL**                         | 最高  |
 | B-2     | **CPL Phase 1** 推進   | 高頻出 19 本のうち、**可能な限り多く**を執筆。PPL へのリンク方針は [00](00_Flight_Academy_Strategy.md) §4                                          | 最高  |
 | B-3     | PPL 記事（二次）           | Master Syllabus に沿い、**CPL 記事からリンクする前提**で不足トピックを優先                                                                       | 中   |
-| B-4     | フック・ユーティリティのテスト拡充    | `useGamification`, `supabase.ts` 等                                                                                      | 高   |
-| B-5     | **GA4（アクセス解析）**     | **クライアント実装済** — `VITE_GA_MEASUREMENT_ID`（`G-` 形式）・`vite/injectGoogleTagPlugin.ts`・`src/lib/googleAnalytics.ts`・`GoogleAnalyticsTracker`。本番プロパティでの受信確認は [04](04_Operations_Guide.md)「GA4」／ログ表      | 中   |
+| B-4     | フック・ユーティリティのテスト拡充    | **継続** — [`useLearningProgress`](../src/hooks/useLearningProgress.ts)・[`useGamification`](../src/hooks/useGamification.ts) の `completeMissionByAction`・[`dashboard`](../src/utils/dashboard.ts) のユニットテストを追加（2026-05-06）。`supabase.ts` はモック境界で優先      | 高   |
+| B-5     | **GA4（アクセス解析）**     | **✅ 本番受信確認済**（2026-05-06・リアルタイム）— 実装は `VITE_GA_MEASUREMENT_ID`・`injectGoogleTagPlugin`・`GoogleAnalyticsTracker`。[04](04_Operations_Guide.md) Post-Phase-B 表に記録      | 中   |
 | B-6     | Supabase クライアント一元化   | 複数インスタンス警告の解消                                                                                                           | 中   |
 | B-7（任意） | 持続可能性メモ              | 外部 API の従量見積り、ログイン後のみの呼び出し、キャッシュ方針を `docs/` または Notion に1ページまとめる（[00 §3.1](00_Flight_Academy_Strategy.md) 参照）           | 低   |
 
@@ -118,8 +121,8 @@
 
 - **CPL 記事 Phase 1**: **本文化 19/19 達成済**（2026-04-12。計画当初の中間目安 **5/19 以上**は上回って完走。正本 [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)）
 - PPL 記事: **20/150 以上**（2026-04-12 時点で二次 KPI を満たし継続。未達の場合は CPL 優先の理由を記録）
-- テストカバレッジ **30% 以上**（`src` 実効・Statements。2026-05-05 実測 **約 9.4%** — 技術的負債表・更新履歴参照。Phase B 後半は B-4 で段階的拡充）
-- **GA4**: クライアント・ビルド注入は**実装済**。**稼働の定義**＝本番 Vercel に `VITE_GA_MEASUREMENT_ID` を入れ再デプロイし、[04](04_Operations_Guide.md) の確認ログ or リアルタイムで**受信を確認**すること（未確認なら Phase B-5 は未完了扱い）
+- テストカバレッジ: **`src` 実効 Statements** の主目標は **Phase C（2026-06〜07）で 15% 以上**（ストレッチ **18%**・任意）。Phase B 終盤は B-4 で段階拡充。**最新実測** **`約 13.99%`**（`coverage-final.json`・パス **`FlightAcademyTsx/src/`** のみ。技術的負債表・[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md) 参照）
+- **GA4**: クライアント・ビルド注入は**実装済**。**本番受信は 2026-05-06 に GA4 リアルタイムで確認**（[04](04_Operations_Guide.md) Post-Phase-B 表）。今後 `VITE_GA_MEASUREMENT_ID` を変えた場合は再デプロイ後にログを追記する
 - **執筆ペース**: Phase 1 完走に伴い、**Phase 2 / マッピング**の週次本数に KPI を再定義する（次回レビュー）
 
 ---
@@ -127,13 +130,13 @@
 ## 2026年4月末チェックポイント（実行メモ）
 
 - **Sentry**: Vercel 本番に `VITE_SENTRY_DSN` を設定し、イベント受信を確認済み（2026-04-12）
-- **GA4**: 本番 URL は **https://flight-lms.vercel.app/**。Vercel に `VITE_GA_MEASUREMENT_ID`（`G-XXXXXXXXXX`）を **Production** 対象で入れ **再デプロイ**後、[リアルタイム](https://support.google.com/analytics/answer/9271392)で確認。MCP／Playwright で `gtag/js` と `dataLayer` の `page_view` が取れても **GA の UI が空のとき**の典型原因（広告ブロッカー・別プロパティ・内部トラフィック除外など）は [04_Operations_Guide.md](04_Operations_Guide.md)「GA4」を参照
+- **GA4**: 本番 URL は **https://flight-lms.vercel.app/**。**2026-05-06** — [リアルタイム](https://support.google.com/analytics/answer/9271392)で受信を確認済み（詳細は [04](04_Operations_Guide.md) Post-Phase-B 表）。以降、環境変数を変えたら **再デプロイ**＋同表へ追記。MCP／Playwright で `gtag/js` が取れても **GA の UI が空のとき**は [04_Operations_Guide.md](04_Operations_Guide.md)「GA4」のトラブルシュートを参照
 - **learning_test_mapping**: スナップショット正本は [14](Article_Coverage_Backlog.md)。MCP `execute_sql` で再集計し、§5 SQL に基づき未マッピングが多いクラスタから拡張
 - **CPL 深文化**: [05](05_Content_Pipeline.md) Phase 1 のうち、週次で**着手本数**を記録（リポジトリの MDX 本数だけでは Phase 1 進捗を表さない）
 
 ### 5月〜7月の橋渡し（Phase B 後半〜 Phase C）
 
-- Phase B の **テストカバレッジ 30%** は [vitest.config.ts](../vitest.config.ts) の閾値・`npm run test:coverage` の実測と照合する。未達の場合は **CPL 深文化・マッピング・運用計測**を優先した理由を本書の更新履歴に残す
+- **テストカバレッジ**の数値目標は **Phase C で 15%**（ストレッチ 18%）へ再定義済み（KPI 節・更新履歴）。`npm run test:coverage` の **src 実効**は技術的負債表で月次確認し、[vitest.config.ts](../vitest.config.ts) の閾値は当面据え置き（CI 下限）
 - Phase C のブランド・SEO は [00](00_Flight_Academy_Strategy.md) の公開判断と連動させる
 
 ### 将来保留バックログ（Phase タスク外・着手時に再評価）
@@ -173,6 +176,7 @@
 - **CPL**: Phase 1 は完了。**Phase 2 執筆**または **`learning_test_mapping` 拡充**のいずれかを前向きに進捗（数値正本は [05](05_Content_Pipeline.md)・[14](Article_Coverage_Backlog.md)・次回レビューで定量化）
 - PPL 記事: **25/150 以上**（二次）
 - PWA としてインストール可能
+- テストカバレッジ: **`src` 実効 Statements 15% 以上**（ストレッチ 18%・任意。集計手順は技術的負債表）
 
 ---
 
@@ -207,7 +211,7 @@
 
 - **CPL 記事: Phase 1（19/19）完了**
 - PPL 記事: **50%（75/150）** 到達を目標（二次）
-- テストカバレッジ 50%
+- テストカバレッジ **50%**（北極星。中間で **40%** 等に言い換える場合は本書・[00](00_Flight_Academy_Strategy.md) で整合）
 - ランキング機能が稼働
 - 月間アクティブユーザー数を計測可能な状態
 
@@ -236,8 +240,8 @@
 | Phase | 期間         | **CPL 記事（Phase 1）** | PPL 記事（二次）   | テストカバレッジ | その他                       |
 | ----- | ---------- | ------------------- | ------------ | -------- | ------------------------- |
 | **A** | 2026年3月    | 着手 1〜3/19           | 17/150 維持・微増 | 閾値達成     | エラー監視稼働                   |
-| **B** | 2026年4-5月  | **Phase 1: 19/19 完了**（2026-04-12） | 20/150 以上    | 30% 目標（未達時は理由を更新履歴に記載）   | GA4 実装済・本番確認は [04](04_Operations_Guide.md) |
-| **C** | 2026年6-7月  | **Phase 2 / マッピング**前進（数値は [05](05_Content_Pipeline.md)・[14](Article_Coverage_Backlog.md)） | 25/150 以上    | 30%+ 目標     | ブランド移行、PWA、Lighthouse 90+ |
+| **B** | 2026年4-5月  | **Phase 1: 19/19 完了**（2026-04-12） | 20/150 以上    | **15% は Phase C 目標**。B-4 で実測記録・段階拡充   | GA4 本番受信確認済（2026-05-06・[04](04_Operations_Guide.md)） |
+| **C** | 2026年6-7月  | **Phase 2 / マッピング**前進（数値は [05](05_Content_Pipeline.md)・[14](Article_Coverage_Backlog.md)） | 25/150 以上    | **`src` 実効 15%+**（ストレッチ 18%）     | ブランド移行、PWA、Lighthouse 90+ |
 | **D** | 2026年8-12月 | **Phase 2 拡充・品質**（Phase 1 完了後） | 75/150 目標    | 50%      | ランキング                     |
 | **E** | 2027年〜     | 拡張継続                | 150 本目標      | 50%+     | LMS 弱点分析等                 |
 
@@ -270,7 +274,7 @@
 | コンテンツ制作ペースが上がらない | CPL Phase 2 やマッピングが停滞  | AI アシスト、品質基準の段階化（基本版 → 後で品質向上）。Phase 1 は完走済みのため週次レビューで次の数値目標を固定 |
 | ソロ開発の限界          | 全方位で進捗が遅い       | 優先順位を厳格に守る（**CPL 記事** > PPL 二次 > テスト > 安定化 > 新機能）                        |
 | ユーザーが集まらない       | フィードバックループが回らない | SEO、SNS 発信、フライトシムコミュニティへの露出                                              |
-| 技術的負債の累積         | リグレッション、開発速度低下  | Phase A でテスト基盤を確立、Phase D で 50% 目標                                       |
+| 技術的負債の累積         | リグレッション、開発速度低下  | Phase A でテスト基盤を確立、**Phase C で 15%**、長期では Phase D で 50% 目標（[06](06_Long_Term_Execution.md)）                                       |
 | Supabase 無料枠の超過  | サービス停止リスク       | ユーザー増加時にプラン変更を検討                                                         |
 | 外部 API 従量・商用条件   | 個人運営の採算悪化       | B-7 メモ、ログイン後限定・キャッシュ・上限設計（[00 §9](00_Flight_Academy_Strategy.md) 判断基準 4） |
 
@@ -282,6 +286,11 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-06 | **v4.0.15 / B-4 残タスク一括**: [`useArticleProgress.hook.test.tsx`](../src/__tests__/hooks/useArticleProgress.hook.test.tsx)、[`mdxContentParsing.ts`](../src/utils/mdxContentParsing.ts)+[`mdxContentParsing.test.ts`](../src/__tests__/utils/mdxContentParsing.test.ts)、[`structuredData.test.ts`](../src/__tests__/utils/structuredData.test.ts)、[`swimNotamGeometry.test.ts`](../src/__tests__/api/swimNotamGeometry.test.ts)、[`planDocument.test.ts`](../src/__tests__/utils/planDocument.test.ts) を追加。技術的負債表の **`src` 実効 Statements を約 13.99%** に更新。[Phase_C](Phase_C_Quality_Preparation.md) 月末メモ、[docs/README](README.md) カバレッジ行と整合。`vitest.config.ts` 閾値は据え置き。 |
+| 2026-05-06 | **v4.0.14 / カバレッジ KPI 再定義・再計測・Wave A**: `src` 実効 Statements の**主目標を Phase B 一発 30% から Phase C 15%**（ストレッチ 18%）へ変更。成功指標サマリー・Phase C KPI・Phase D の注記・リスク表を追随。**2026-05-06** `npm run test:coverage` で **約 11.89%**（`FlightAcademyTsx/src/` のみ集計）を技術的負債表・[Phase_C](Phase_C_Quality_Preparation.md)・[docs/README](README.md)・[06](06_Long_Term_Execution.md) §1.1 に反映。[00](00_Flight_Academy_Strategy.md) 弱みの記述を整合。`vitest.config.ts` の閾値は据え置き。[`taskGenerator.test.ts`](../src/__tests__/utils/taskGenerator.test.ts) を追加。 |
+| 2026-05-06 | **v4.0.13 / パイプライン・マッピング tier2・品質メモ**: [05](05_Content_Pipeline.md) Phase 2 週次着手記録。[14](Article_Coverage_Backlog.md) に [`20260506_learning_test_mapping_unmapped_tier2.sql`](../scripts/database/20260506_learning_test_mapping_unmapped_tier2.sql)（verified 未マッピング **69**・行 **58**）。[`useArticleProgress.test.ts`](../src/__tests__/hooks/useArticleProgress.test.ts) 拡張。[Phase_C](Phase_C_Quality_Preparation.md) 月末表、[06](06_Long_Term_Execution.md) §1.4（`tsc -b`）。 |
+| 2026-05-06 | **v4.0.12 / B-4 カバレッジ**: [`useLearningProgress.test.ts`](../src/__tests__/hooks/useLearningProgress.test.ts)、[`useGamification.test.ts`](../src/__tests__/hooks/useGamification.test.ts)（`completeMissionByAction`）、[`dashboard.test.ts`](../src/__tests__/utils/dashboard.test.ts)。`coverage-final.json` から **`.vercel` を除く** `FlightAcademyTsx/src/` のみ集計し **Statements 約 10.78%**（同日 `npm run test:coverage`）。Phase B の **30% KPI は未達**、B-4 を継続。 |
+| 2026-05-06 | **v4.0.11 / GA4 B-5**: GA4 **リアルタイム**で本番受信を確認（プロパティ **FlightAcademy**、測定 ID `G-22VFYSM69J`）。[04_Operations_Guide.md](04_Operations_Guide.md) Post-Phase-B 表・Phase B 検証記録を更新。技術的負債表・KPI・Tasks B-5・成功指標サマリー行を整合。 |
 | 2026-05-05 | **Phase B 並行（Phase 2 記事クローズ／マッピング／カバレッジ）**: 気象 `3.3.10`〜`3.3.12`・工学 `3.2.10`〜`3.2.12`・法規 `3.1.7`〜`3.1.8` の MDX 体裁（科目ハブ・`/articles` ナビ、`/docs/` サイト外リンク削除）。[`20260505_learning_contents_phase2_eight_meta.sql`](../scripts/database/20260505_learning_contents_phase2_eight_meta.sql) を MCP 本番適用。§5.2 上位クラスタ（航空機装備・航空機構造・施行規則）を [`20260505_learning_test_mapping_unmapped_top_clusters.sql`](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql) で追補 — [05](05_Content_Pipeline.md)、[14](Article_Coverage_Backlog.md)、`scripts/database/INDEX.md` 更新。**テストカバレッジ**: src の **Statements 実効 約 9.40%**（同上日 `npm run test:coverage`・v8 JSON から `FlightAcademyTsx/src` のみ集計）。**GA4**: [04](04_Operations_Guide.md) の Post-Phase-B 表は人手入力が正本（本記録では Data API 数値確認なし）。 |
 | 2026-05-05 | **v4.0.10 / May sprint**: 「2026年5月期スプリント」節追加。Phase 2 級の **3.5.4** 緊急通信レッスンの本文化与 DB メタ同期 SQL、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、監査／再試行用 `20260505_*.sql`、[04_Operations_Guide.md](04_Operations_Guide.md) GA4 ログ表の運用手順明示。`calculateLearningStats` テスト拡張。詳細は同節参照。 |
 | 2026-04-30 | v4.0.9: 空中航法 **3.4.5〜3.4.7** を含むシリーズのドキュメント整合 — [09](09_CPL_Learning_Stub.md)、[05](05_Content_Pipeline.md)、[14](Article_Coverage_Backlog.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md) を `CPL-Navigation`・冪等 SQL（`20260430_learning_contents_cpl_navigation_341_347_meta.sql`）に追随。Phase 1 KPI「19本」の定義（空中航法は `3.4.1`〜`3.4.4` のみ）は変更なし。 |
@@ -308,6 +317,6 @@
 
 ---
 
-**最終更新**: 2026年5月5日
-**バージョン**: Roadmap v4.0.10（Strategy v1.2・CPL 主軸・独立運営）
-**次回レビュー予定**: Phase B 終盤〜 Phase C（Phase 2 記事継続・`learning_test_mapping`・GA4 ログ・`npm run test:coverage` KPI）、数値の見直し
+**最終更新**: 2026年5月6日
+**バージョン**: Roadmap v4.0.15（Strategy v1.2・CPL 主軸・独立運営）
+**次回レビュー予定**: Phase B 終盤〜 Phase C（Phase 2 記事継続・`learning_test_mapping`・`npm run test:coverage` KPI）、数値の見直し
