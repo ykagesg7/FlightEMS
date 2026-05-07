@@ -5,3 +5,4 @@
 | ファイル | 内容 |
 |----------|------|
 | [May_2026_Late_PPL_CPL_Outlines.md](May_2026_Late_PPL_CPL_Outlines.md) | 2026年5月後半スプリント用 CPL/PPL ペアの概略 |
+| [W20_2026/README.md](W20_2026/README.md) | **2026-W20（5月第2週）** — Gemini 向け素案（3.2.7・PPL-1-1-3/4）の索引 |

@@ -35,7 +35,7 @@ ISO 週のつながりは既存表に合わせ、**実作業ブロック**は次
 | 2 代替 | [`3.2.9_PitotStaticSystem`](../src/content/lessons/3.2.9_PitotStaticSystem.mdx) | 既存 [`PPL-1-2-2_PitotStatic`](../src/content/lessons/PPL-1-2-2_PitotStatic.mdx) を中心に追記。 |
 | 3（任意） | 法規スタブ〜本文化寄りの整理 `3.1.1`〜`3.1.3` | PPL 法規は Master 未整備が多い。**5月内は CPL 側の見出し・用語整理のみ**でも可。 |
 
-詳細な **箇条書きブリーフ**（Gemini 投入用）は [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md) を正とする。
+詳細な **箇条書きブリーフ**（Gemini 投入用）は [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md) を正とする。**週別の詳細素案**（W20 など）は [content_outlines/W20_2026/README.md](content_outlines/W20_2026/README.md)。
 
 ---
 
@@ -71,4 +71,5 @@ ISO 週のつながりは既存表に合わせ、**実作業ブロック**は次
 
 | 日付 | 内容 |
 |------|------|
+| 2026-05-07 | **W20 素案**: [content_outlines/W20_2026/](content_outlines/W20_2026/README.md) に 3.2.7 / PPL-1-1-3 / PPL-1-1-4 の Gemini 用ブリーフを追加。§3 見出し下に週別素案への導線。 |
 | 2026-05-07 | 初版。5月後半3ブロック・CPL/PPL 対応・Gemini 連携方針。 |
