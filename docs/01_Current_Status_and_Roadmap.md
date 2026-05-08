@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年5月7日  
-**バージョン**: Roadmap v4.0.18（Strategy v1.2・CPL 主軸・独立運営）
+**最終更新**: 2026年5月8日  
+**バージョン**: Roadmap v4.0.19（Strategy v1.2・CPL 主軸・独立運営）
 
 ---
 
@@ -22,7 +22,7 @@
 - **Phase C 準備**: [Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)（Light house / A11y / カバレッジ運用のみ。**アーティファクト**: [`artifacts/accessibility_audit_memo_2026-05-06.md`](../artifacts/accessibility_audit_memo_2026-05-06.md)）。月末カバレッジ記録表（**約 13.99%**、`FlightAcademyTsx/src/` のみ）。**KPI**: `src` 実効 Statements の主目標を **Phase C で 15%**（ストレッチ 18%）に再定義。
 - **§5.2 マッピング追補（tier2）**: **2026-05-06** — 荷重と強度・機体の構造・燃料供給・総則/定義・雑音と空電を `engineering_basics` / `3.1.1` に束ね（[`20260506_learning_test_mapping_unmapped_tier2.sql`](../scripts/database/20260506_learning_test_mapping_unmapped_tier2.sql) 本番 `execute_sql` 済み）。verified 未マッピング **69 件**・マッピング行 **58**（[14](Article_Coverage_Backlog.md)）。**同日**: MCP で §1 指標を再検証し数値は一致（新規 SQL なし）。
 - **CPL 週次パイプライン**: [05_Content_Pipeline.md](05_Content_Pipeline.md) に Phase 2 **週次着手記録**（**2026-W18〜W22**）と暫定 KPI（着手単位レンジ）。
-- **5月後半（W20〜W22）拡充の実行メモ**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)。執筆前ブリーフ（箇条書き）は [content_outlines/May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)。Gemini 等への委譲時の下限は [templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。
+- **5月後半（W20〜W22）拡充の実行メモ**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)。**W20（ブロック A）は実装済**（[`3.2.7`](../src/content/lessons/3.2.7_LiftAndDrag.mdx)、[`PPL-1-1-3`](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx)、[`PPL-1-1-4`](../src/content/lessons/PPL-1-1-4_DragBasics.mdx)）。**W21 実行素案**: [content_outlines/W21_2026/README.md](content_outlines/W21_2026/README.md)。執筆前ブリーフの概要は [content_outlines/May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)。Gemini の下限ルールは [templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。
 - **型チェック**: `tsc -b` 全件クリーンは別 initiative — 方針を [06](06_Long_Term_Execution.md) §1.4 に記載。
 
 ### 2026年6月期スプリント
@@ -292,6 +292,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-08 | **v4.0.19 / May 後半 W20→W21 ドキュメント整備**: W20 で実装済みの **コンテンツ**（[`3.2.7`](../src/content/lessons/3.2.7_LiftAndDrag.mdx)、[`PPL-1-1-3`/`4`](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx)）と [May](May_2026_Late_Content_Sprint.md) §6 完了ログ、[05](05_Content_Pipeline.md) W20/W21 行、[May 後半アウトライン](content_outlines/May_2026_Late_PPL_CPL_Outlines.md) を整合。**W21 実行素案** [content_outlines/W21_2026/README.md](content_outlines/W21_2026/README.md) 追加、W20 用 Gemini 素案ファイル削除。 |
 | 2026-05-07 | **v4.0.18 / 5月後半コンテンツ拡充メモ**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)（W20〜W22・CPL/PPL 対応）、[content_outlines/May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。`---## 現状評価` の改行欠落を修正。[docs/README](README.md) に索引。 |
 | 2026-05-07 | **v4.0.17 / 6月期計画書**: [June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md) を追加。**2026-W23〜W26** の週次ゴール・マッピング 1 サイクル・Phase C 準備と C-1〜5 の境界を定義。本書に **「2026年6月期スプリント」** 参照を追加。[docs/README](README.md) に索引。**[Phase_C §4](Phase_C_Quality_Preparation.md)** に **「2026-06 末」行**を 6月末に追記する前提。 |
 | 2026-05-06 | **v4.0.16 / 5月期残タスク一括（計画）**: CPL→PPL 復習 Callout を **[3.2.10](../src/content/lessons/3.2.10_WeightAndBalance.mdx) / [3.2.12](../src/content/lessons/3.2.12_EngineSystems.mdx) / [3.4.4](../src/content/lessons/3.4.4_FlightPlanning.mdx)** に追加（案 A：最低本数達成）。**[05](05_Content_Pipeline.md)**: Phase 2 週次 **W19〜W22** と暫定 KPI 段落。**[14](Article_Coverage_Backlog.md)**: MCP `execute_sql` で §1 指標を再検証し前回値と一致（新規 SQL なし）。**B-4**: [`aviationWeatherApiCore.test.ts`](../src/__tests__/api/aviationWeatherApiCore.test.ts)、[`openskyStatesCore.test.ts`](../src/__tests__/api/openskyStatesCore.test.ts)、[`weatherApiCore.test.ts`](../src/__tests__/api/weatherApiCore.test.ts)。**B-6**: `createBrowserClient` シングルトンを静的確認。**B-7**: [Sustainability_API_Memo.md](Sustainability_API_Memo.md)。**Phase C 準備**: [`artifacts/accessibility_audit_memo_2026-05-06.md`](../artifacts/accessibility_audit_memo_2026-05-06.md)。`npm run test:coverage` の **`src` 実効 Statements 約 13.99%**（`api/` は集計外のため増分なし）。[Phase_C](Phase_C_Quality_Preparation.md) 月末表を記入済み。 |
@@ -326,6 +327,6 @@
 
 ---
 
-**最終更新**: 2026年5月7日  
-**バージョン**: Roadmap v4.0.18（Strategy v1.2・CPL 主軸・独立運営）
+**最終更新**: 2026年5月8日  
+**バージョン**: Roadmap v4.0.19（Strategy v1.2・CPL 主軸・独立運営）
 **次回レビュー予定**: Phase B 終盤〜 Phase C（Phase 2 記事継続・`learning_test_mapping`・`npm run test:coverage` KPI）、数値の見直し

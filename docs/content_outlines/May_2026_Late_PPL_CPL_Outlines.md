@@ -2,9 +2,15 @@
 
 **用途**: 本文執筆前のブリーフ、または **Gemini 等への入力**。完成 MDX のフォーマットは [PPL_Article_Template.mdx](../templates/PPL_Article_Template.mdx) および既存 CPL の `export const meta` に合わせること。
 
+**進行ウィークの実行素案**: [W21_2026/README.md](W21_2026/README.md)（現在 **W21**）。
+
 ---
 
-## CPL `3.2.7_LiftAndDrag`（揚力・抗力）
+## CPL `3.2.7_LiftAndDrag`（揚力・抗力）— ✅ W20 実装済
+
+実装済み MDX: [`3.2.7_LiftAndDrag`](../src/content/lessons/3.2.7_LiftAndDrag.mdx)、[`PPL-1-1-3`](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx)、[`PPL-1-1-4`](../src/content/lessons/PPL-1-1-4_DragBasics.mdx)。
+
+以下は当初の設計メモのみ（削除しない）。
 
 - **クラスタ意識**: `unified_cpl_questions` の航空工学・空力の基礎（力学／対気速度／操縦性）と接続しうる語を本文かメモに明記（正本は [14 §5.2 SQL](Article_Coverage_Backlog.md)）。
 - **学習目標（3 行程度）**: 揚力係数と迎角、誘導抗力とアスペクト比、CPL で問われやすい「言い換え」を区別する。
@@ -39,7 +45,7 @@
 
 ---
 
-## CPL `3.2.8_PowerAndPerformance`（馬力・性能）
+## CPL `3.2.8_PowerAndPerformance`（馬力・性能）— **W21 主軸**
 
 - **学習目標**: 必要馬力・利用馬力・余剰馬力、Vx/Vy の使い分けの **試験用の言い方**。
 - **必須セクション案**: 水平飛行・上昇・滑空のどこでどの曲線を読むか。
@@ -52,7 +58,7 @@
 
 ## CPL `3.2.9_PitotStaticSystem`（ピトー静圧）
 
-※ **W21** は `3.2.8` と **どちらか一方**を主軸にするとよい（両方は厳しければ分割）。
+※ **`3.2.8`** を優先。**W21** で未完なら **W22** へ。
 
 - **学習目標**: 閉塞・誤指示のパターン、高度・速度・VSI の依存関係。
 - **必須セクション案**: ピトー・静圧の役割、閉塞時の典型的な針の挙動（試験の語彙で）。
@@ -89,4 +95,5 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-05-08 | W20 完了注記。**W21 実行用**への導線（[W21_2026/README.md](W21_2026/README.md)）、3.2.8 に W21 主軸マーク、3.2.9 を W22 繰り越し許容で更新。 |
 | 2026-05-07 | 初版。3.2.7/8/9・対応 PPL 追記の箇条書き。 |

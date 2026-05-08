@@ -1,8 +1,8 @@
 # CPL学科試験問題解説記事作成ロードマップ
 
 **作成日**: 2025年1月16日
-**最終更新**: 2026年5月5日（Phase 2 対象 8 単元のクローズ・気象注記の現状化。KPI 正本・網羅は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)）
-**バージョン**: v1.3.0
+**最終更新**: 2026年5月6日（Phase 2 週次着手記録の開始・次の深化候補の明文化）
+**バージョン**: v1.4.0
 
 ## 📖 このドキュメントを読むべき人
 
@@ -193,6 +193,20 @@
 - **期間**: 2025年4月-6月（3ヶ月）
 - **目標記事数**: 15記事
 - **優先順位**: 重要度7.0-7.9 + 中頻出トピック
+
+### Phase 2 運用: 週次着手記録（[00](00_Flight_Academy_Strategy.md) 柱1と整合）
+
+Phase 2 計画リスト上の **新規本文化** が一段落したフェーズでは、**深文化（体裁・出典・リンク）**、**`learning_test_mapping` 追補**、**`learning_contents` メタ同期**を 1 週あたりの「着手単位」として数える。毎週（日曜〆または金曜〆で統一）、下表に 1 行追記する。
+
+**Phase 2 暫定 KPI（試行レンジ）**: 平常週は **着手単位 2〜4** を目安にする。**例**: 「深文化 or PPL復習リンク」**2 記事まで** と「**マッピング追補 1 クラスタ**（または `learning_contents` メタ同期 **1〜2 ID**）」のどちらかに偏らないよう、[14](Article_Coverage_Backlog.md) の上位未マッピングと [01](01_Current_Status_and_Roadmap.md) の B / Phase C を見て調整。**遅れた週**は **0 でよいが行は空白にしない**。週次「着手単位」の正本は本表。ロードマップの KPI は [01](01_Current_Status_and_Roadmap.md)（週次詳細は **[05](05_Content_Pipeline.md) を参照**）。
+
+| 週（ISO） | 着手本数（目安） | メモ（何を着手したか） |
+|-----------|------------------|------------------------|
+| **2026-W18**（〜2026-05-06） | **0**（新規 MDX 本文化なし） | Phase 2 リスト上の単元は上記「記事リスト（予定15記事）」節どおり済。**次の深化候補（優先順）**: (1) [14](Article_Coverage_Backlog.md) に沿った **未マッピング影響大クラスタ** の追補 SQL、(2) **拡張単元** `3.2.7`〜`3.2.9`（揚力・抗力／馬力／ピトー静圧）の体裁・出典監査（詳細は [10](10_航空工学_学科試験攻略ブログ_ロードマップ.md)）、(3) Phase 1 チェックリストの「品質チェックとレビュー（記事間リンク、`mapping_source`）」。 |
+| **2026-W19**（〜2026-05-13） | **3** | CPL→PPL 復習 **Callout 3 記事**（`3.2.10` 重量・重心、`3.2.12` エンジン系統、`3.4.4` 飛行計画）。§5 監査 MCP 先行のため **新規 SQL 適用なし**。 |
+| **2026-W20**（〜2026-05-20） | **4** | ① **[May 後半ブロック A](May_2026_Late_Content_Sprint.md) 完了** — [`3.2.7_LiftAndDrag`](../src/content/lessons/3.2.7_LiftAndDrag.mdx) 深文化、[PPL `1-1-3`/`1-1-4`](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx) 「CPLへの扉」、[14 §1](Article_Coverage_Backlog.md) MCP 備考・未マッピング表確認。② **W20 用 Gemini 素案**は実装済みにつき削除（本文はコミット履歴参照）。|
+| **2026-W21**（〜2026-05-27） | **4**（目安・重複カウント可） | ① **[May ブロック B](May_2026_Late_Content_Sprint.md)** — **`3.2.8_PowerAndPerformance` 深文化**＋**`PPL-1-1-9`** 橋渡し。**素案**: [content_outlines/W21_2026/README.md](content_outlines/W21_2026/README.md)。※遅れ時は **`3.2.9`** を **W22** へ。**② [06 §1.2](06_Long_Term_Execution.md)** に沿ったユニットテスト追補（`api/lib`・`openskyStatesCore` 等）。GoTrue / B-6 は実装・確認のみ。 |
+| **2026-W22**（〜2026-06-03） | **2** | **月末ゲート**: `npm run test:coverage` → `FlightAcademyTsx/src/` の Statements 実効 を [Phase_C §4](Phase_C_Quality_Preparation.md)・[01 更新履歴](01_Current_Status_and_Roadmap.md) に転記。**Lighthouse/A11y** は自動検出のメモのみ（UI 変更なし）。 |
 
 ---
 
@@ -392,6 +406,8 @@
 
 | 日付 | 更新内容 | 更新者 |
 |------|----------|--------|
+| 2026-05-08 | Phase 2 **週次着手記録**を更新：**W20** は May [ブロック A](May_2026_Late_Content_Sprint.md)（`3.2.7`＋PPL 橋渡し）実装済みと整合。**W21** は **ブロック B**（`3.2.8`＋`PPL-1-1-9`）と [06 §1.2](06_Long_Term_Execution.md) テスト追補の併記。W20 Gemini 素案ファイルは削除済み。**W21 素案**は [content_outlines/W21_2026/README.md](content_outlines/W21_2026/README.md)。 | — |
+| 2026-05-06 | Phase 2 **週次着手記録**を追加（2026-W18）、次の深化候補（14・10・品質レビュー）を明記。バージョン v1.4.0 | — |
 | 2026-04-30 | 空中航法 `3.4.5`〜`3.4.7` の本文化を反映、KPI 表に注記、Phase 1 チェックリストを **19/19・マッピング初期投入済み** に更新 | — |
 | 2025-01-16 | 初版作成、Phase 1準備タスク完了 | System |
 
