@@ -2,7 +2,7 @@
 
 **用途**: 本文執筆前のブリーフ、または **Gemini 等への入力**。完成 MDX のフォーマットは [PPL_Article_Template.mdx](../templates/PPL_Article_Template.mdx) および既存 CPL の `export const meta` に合わせること。
 
-**進行ウィークの実行素案**: [W21_2026/README.md](W21_2026/README.md)（現在 **W21**）。
+**進行ウィークの実行素案**: [W22_2026/README.md](W22_2026/README.md)（現在 **W22**）。
 
 ---
 
@@ -45,27 +45,26 @@
 
 ---
 
-## CPL `3.2.8_PowerAndPerformance`（馬力・性能）— **W21 主軸**
+## CPL `3.2.8_PowerAndPerformance`（馬力・性能）— ✅ W21 実装済
+
+実装済み MDX: [`3.2.8_PowerAndPerformance`](../src/content/lessons/3.2.8_PowerAndPerformance.mdx)、[`PPL-1-1-9_FlightPerformance`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx)（CPL への扉）。
+
+以下は設計メモ（削除しない）。
 
 - **学習目標**: 必要馬力・利用馬力・余剰馬力、Vx/Vy の使い分けの **試験用の言い方**。
 - **必須セクション案**: 水平飛行・上昇・滑空のどこでどの曲線を読むか。
-- **PPL 対応**: [`PPL-1-1-9_FlightPerformance`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx) に **「CPL で深掘りする点」**を短い Callout で追加。
-- **箇条書き（PPL 追記用）**:
-  - PPL で押さえた Vx/Vy を、CPL では **どの概念が追加されるか**（余剰馬力など）を 3 行。
-  - 内部リンク: `/articles/3.2.8_PowerAndPerformance`（実際の slug に合わせる）。
+- **PPL 対応**: [`PPL-1-1-9_FlightPerformance`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx) に **「CPL で深掘りする点」**を短い Callout で追加。→ **実装済**。
 
 ---
 
-## CPL `3.2.9_PitotStaticSystem`（ピトー静圧）
-
-※ **`3.2.8`** を優先。**W21** で未完なら **W22** へ。
+## CPL `3.2.9_PitotStaticSystem`（ピトー静圧）— **W22 主軸**
 
 - **学習目標**: 閉塞・誤指示のパターン、高度・速度・VSI の依存関係。
 - **必須セクション案**: ピトー・静圧の役割、閉塞時の典型的な針の挙動（試験の語彙で）。
 - **PPL 対応**: [`PPL-1-2-2_PitotStatic`](../src/content/lessons/PPL-1-2-2_PitotStatic.mdx) に追記パラグラフ。
 - **箇条書き（PPL 追記用）**:
   - PPL で述べた 3 計器の関係に、CPL で増える **「計装系のトラブル論点」**だけ足す。
-  - リンク: `/articles/3.2.9_PitotStaticSystem`。
+  - リンク: **`/articles/3.2.9_PitotStaticSystem`**（記事 URL 正本はファイル ID）。
 
 ---
 
@@ -95,5 +94,6 @@
 
 | 日付 | 内容 |
 |------|------|
-| 2026-05-08 | W20 完了注記。**W21 実行用**への導線（[W21_2026/README.md](W21_2026/README.md)）、3.2.8 に W21 主軸マーク、3.2.9 を W22 繰り越し許容で更新。 |
+| 2026-05-09 | **W21 完了・W22 開始**: 3.2.8／PPL-1-1-9 を実装済み注記。**W21_2026 の Gemini ファイル削除**。実行索引を [W22_2026/README.md](W22_2026/README.md) に。3.2.9 を **W22 主軸**に固定。 |
+| 2026-05-08 | W20 完了注記。**W21 実行**向け索引を `content_outlines/W21_2026/` に配置（実装後 **2026-05-09 削除**。履歴は git）。3.2.8 を W21 主軸、3.2.9 を **W22 繰り越し可** で記載。 |
 | 2026-05-07 | 初版。3.2.7/8/9・対応 PPL 追記の箇条書き。 |

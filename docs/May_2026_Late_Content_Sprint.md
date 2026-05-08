@@ -1,7 +1,7 @@
 # 2026年5月後半（第2〜第4週相当）コンテンツ拡充プラン
 
 **作成日**: 2026-05-07  
-**前回更新**: 2026-05-08 — W20 完了ログ・W21 素案・関連 doc 整合
+**前回更新**: 2026-05-09 — W21 完了ログ・W22 素案・W21 Gemini ファイル削除
 **正本の位置づけ**: [01](01_Current_Status_and_Roadmap.md)「2026年5月期スプリント」と並ぶ **5月後半だけの実行メモ**。週次の数え方・KPI の正本は [05_Content_Pipeline.md](05_Content_Pipeline.md)。
 
 ---
@@ -20,8 +20,8 @@ ISO 週のつながりは既存表に合わせ、**実作業ブロック**は次
 | ブロック | ISO 週（目安締め） | 主目的 |
 |----------|-------------------|--------|
 | **A（5月第2週）** | **2026-W20**（〜2026-05-20） | ✅ **`3.2.7_LiftAndDrag`** 深文化＋**`PPL-1-1-3`/`PPL-1-1-4`** CPL 扉追記。**完了**（2026-05）。 |
-| **B（5月第3週）** | **2026-W21**（〜2026-05-27） | **`3.2.8_PowerAndPerformance`** を **主軸**に深文化（代替は **`3.2.9_PitotStaticSystem`** → 遅れなら **W22**）。PPL は **`PPL-1-1-9_FlightPerformance`**。素案は [content_outlines/W21_2026/README.md](content_outlines/W21_2026/README.md)。 |
-| **C（5月第4週）** | **2026-W22**（〜2026-06-03） | **法規**（`3.1.1`〜`3.1.3` の総則・用語の芯）**または** **新規 PPL 1 テーマ**に振る。忙しければ **CPL 1 本 + PPL 追記のみ**でよい。 |
+| **B（5月第3週）** | **2026-W21**（〜2026-05-27） | ✅ **`3.2.8_PowerAndPerformance`** 深文化＋**`PPL-1-1-9_FlightPerformance`** CPL 扉追記。**完了**（2026-05）。W21 Gemini 素案は実装済みにつき削除（履歴は `git log`）。 |
+| **C（5月第4週）** | **2026-W22**（〜2026-06-03） | **主軸**: **`3.2.9_PitotStaticSystem`** 深文化＋**`PPL-1-2-2_PitotStatic`** 橋渡し。素案 [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。**任意**: 法規 `3.1.1`〜`3.1.3` 体裁。**併記**: [05](05_Content_Pipeline.md) の **月末ゲート**（`test:coverage`・A11y メモ）。 |
 
 各週終わりに [05](05_Content_Pipeline.md) の週次行へ **着手単位**（2〜4 目安）を正直に記録する。
 
@@ -36,7 +36,7 @@ ISO 週のつながりは既存表に合わせ、**実作業ブロック**は次
 | 2 代替 | [`3.2.9_PitotStaticSystem`](../src/content/lessons/3.2.9_PitotStaticSystem.mdx) | 既存 [`PPL-1-2-2_PitotStatic`](../src/content/lessons/PPL-1-2-2_PitotStatic.mdx) を中心に追記。 |
 | 3（任意） | 法規スタブ〜本文化寄りの整理 `3.1.1`〜`3.1.3` | PPL 法規は Master 未整備が多い。**5月内は CPL 側の見出し・用語整理のみ**でも可。 |
 
-詳細な **箇条書きブリーフ**（Gemini 投入用）は [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md) を正とする。**現在の実行週の素案**は **[content_outlines/W21_2026/README.md](content_outlines/W21_2026/README.md)**。**W20 用の一時ファイル**（Gemini 素案）は実装済みにつき削除済み。履歴は `git log`。
+詳細な **箇条書きブリーフ**（Gemini 投入用）は [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md) を正とする。**現在の実行週の素案**は **[content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)**。**W20 / W21 用の一時ファイル**（Gemini 素案）は実装済みにつき削除済み。履歴は `git log`。
 
 ---
 
@@ -73,7 +73,8 @@ ISO 週のつながりは既存表に合わせ、**実作業ブロック**は次
 | ブロック | 状態 | MDX／メモ |
 |---------|------|-----------|
 | **A / W20** | **完了** | [`3.2.7_LiftAndDrag`](../src/content/lessons/3.2.7_LiftAndDrag.mdx)、[`PPL-1-1-3`](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx)、[`PPL-1-1-4`](../src/content/lessons/PPL-1-1-4_DragBasics.mdx)。|
-| **B / W21** | **進行中** | 主軸 [`3.2.8_PowerAndPerformance`](../src/content/lessons/3.2.8_PowerAndPerformance.mdx)、[`PPL-1-1-9_FlightPerformance`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx)。|
+| **B / W21** | **完了** | [`3.2.8_PowerAndPerformance`](../src/content/lessons/3.2.8_PowerAndPerformance.mdx)（$HP_R$/$HP_A$・Vx/Vy ハック等）、[`PPL-1-1-9_FlightPerformance`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx)（CPL 3.2.8 への扉）。 |
+| **C / W22** | **進行中** | 主軸 [`3.2.9_PitotStaticSystem`](../src/content/lessons/3.2.9_PitotStaticSystem.mdx)、[`PPL-1-2-2_PitotStatic`](../src/content/lessons/PPL-1-2-2_PitotStatic.mdx)。素案 [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。 |
 
 ---
 
@@ -81,6 +82,7 @@ ISO 週のつながりは既存表に合わせ、**実作業ブロック**は次
 
 | 日付 | 内容 |
 |------|------|
-| 2026-05-08 | **W21 計画**: [content_outlines/W21_2026/](content_outlines/W21_2026/README.md) 新設。**W20 素案ファイル削除**。[05](05_Content_Pipeline.md) W20/W21 メモ、[May 後半アウトライン](content_outlines/May_2026_Late_PPL_CPL_Outlines.md) に W20 完了注記。§6 完了ログ追加。§2 ブロック A を完了チェック済みで更新、B に W21 素案リンク。 |
+| 2026-05-09 | **W22 計画**: [content_outlines/W22_2026/](content_outlines/W22_2026/README.md) 新設。**W21 Gemini 素案削除**（3.2.8・PPL-1-1-9・W21 README）。§2 ブロック B 完了／C に W22 主軸とゲート。**§6** に W21 完了・W22 進行を追記。[05](05_Content_Pipeline.md)・[May 後半アウトライン](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)・[01](01_Current_Status_and_Roadmap.md)・[docs/README](README.md) を整合。 |
+| 2026-05-08 | **W21 計画**: `content_outlines/W21_2026/` に素案索引・Gemini ブリーフを新設（**2026-05-09 に実装完了につき削除**）。**W20 素案ファイル削除**。[05](05_Content_Pipeline.md) W20/W21 メモ、[May 後半アウトライン](content_outlines/May_2026_Late_PPL_CPL_Outlines.md) に W20 完了注記。§6 完了ログ追加。§2 ブロック A を完了チェック済みで更新、B に W21 方針。 |
 | 2026-05-07 | **W20 素案**: `content_outlines/W20_2026/` に 3.2.7 / PPL-1-1-3 / PPL-1-1-4 の Gemini 用ブリーフを追加（**2026-05-08 に削除**。実装済みため）。§3 見出し下に週別素案への導線。 |
 | 2026-05-07 | 初版。5月後半3ブロック・CPL/PPL 対応・Gemini 連携方針。 |

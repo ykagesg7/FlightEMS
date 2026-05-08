@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月8日（**[May 後半 §6/W21](May_2026_Late_Content_Sprint.md)**・[content_outlines/W21_2026/README.md](content_outlines/W21_2026/README.md)、June 計画、[01](01_Current_Status_and_Roadmap.md)）
-**バージョン**: Documentation Index v4.47
+**最終更新**: 2026年5月9日（**May 後半 §6・W21 完了／W22**、[content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)、[01](01_Current_Status_and_Roadmap.md) v4.0.20、June 計画、[05_Content_Pipeline.md](05_Content_Pipeline.md)）
+**バージョン**: Documentation Index v4.48
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -21,14 +21,15 @@
 
 ### 月次実行計画
 
-- **[May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)** — **2026年5月後半**（W20〜W22）。**§6 完了ログ**。**現在週素案**: [content_outlines/W21_2026/README.md](content_outlines/W21_2026/README.md)。一覧: [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。
+- **[May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)** — **2026年5月後半**（W20〜W22）。**§6 完了ログ**。**現在週素案**: [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。一覧: [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。
 - **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — **2026年6月期**の DONE 条件、[05](05_Content_Pipeline.md) 週次（W23〜W26）・CPL/PPL 拡充の優先、マッピング監査／B-4／Phase C 準備（UI は承認制）を定義する。
 
 ### 更新履歴（抜粋）
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
-- **2026-05-08（May 後半 W20 完了・W21 計画）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §6、[05](05_Content_Pipeline.md) W20/W21、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、新規 [content_outlines/W21_2026/](content_outlines/W21_2026/README.md)。W20 用 Gemini 素案ファイル削除。[01](01_Current_Status_and_Roadmap.md) v4.0.19。
+- **2026-05-09（May 後半 W21 完了・W22 素案）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §2・§6、[05_Content_Pipeline.md](05_Content_Pipeline.md) W21/W22、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、新規 [content_outlines/W22_2026/](content_outlines/W22_2026/README.md)。**W21** `content_outlines/W21_2026/` 撤去。**[01](01_Current_Status_and_Roadmap.md) v4.0.20**。[content_outlines/README.md](content_outlines/README.md) 現在週行を更新。
+- **2026-05-08（May 後半 W20 完了・W21 計画）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §6、[05](05_Content_Pipeline.md) W20/W21、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、一時ワーク `content_outlines/W21_2026/`（**2026-05-09 に実装完了後削除**）。W20 用 Gemini 素案ファイル削除。[01](01_Current_Status_and_Roadmap.md) v4.0.19。
 - **2026-05-07（5月後半スプリント・アウトライン）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)、[content_outlines/May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。[01](01_Current_Status_and_Roadmap.md) v4.0.18、`---##` 改行修正。
 - **2026-05-07（6月期計画書）**: [June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md) を追加。[01](01_Current_Status_and_Roadmap.md) に **2026年6月期スプリント** の参照、[05](05_Content_Pipeline.md) で追う **2026-W23〜W26** の目安を明示。
 - **2026-05-06（B-4 実装拡張・カバレッジ再計測）**: `useArticleProgress` フック、[`structuredData.ts`](../src/utils/structuredData.ts)、[`mdxContentParsing.ts`](../src/utils/mdxContentParsing.ts)／[`mdxToSupabase.ts`](../src/utils/mdxToSupabase.ts)、[`swimNotamGeometry`](../api/lib/swimNotamGeometry.ts)、[`planDocument.ts`](../src/utils/planDocument.ts) にユニットテスト追加。`src` 実効 Statements **約 13.99%**（[01](01_Current_Status_and_Roadmap.md) 技術的負債表、`FlightAcademyTsx/src/` のみ）。Roadmap **v4.0.15**。
