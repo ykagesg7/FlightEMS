@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
+import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
@@ -107,7 +108,7 @@ export default defineConfig(({ mode }) => {
       mdx({
         // MDX設定
         providerImportSource: '@mdx-js/react',
-        remarkPlugins: [remarkMath],
+        remarkPlugins: [remarkGfm, remarkMath],
         rehypePlugins: [rehypeKatex]
       }),
       injectGoogleTagPlugin(gaMeasurementId, mode === 'production'),

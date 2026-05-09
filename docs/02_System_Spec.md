@@ -79,6 +79,7 @@ export type ArticleMeta = {
 #### **MDX 表示・学習者向け文言（2026年4月）**
 
 - **`MDXContent.tsx`**: 本文ラッパーに Tailwind Typography の **`prose prose-invert`** を指定し、ダーク背景でもインライン `code` 等が読めるようにする。親 flex から幅が伝わるよう **`min-w-0 w-full`**（内側 `max-w-3xl` にも `min-w-0`）、縦方向のクリップ問題を避けるため **`overflow-x-auto`**（従来の `overflow-hidden` は撤廃）。
+- **MDX の GFM**: `vite.config.ts` で **`remark-gfm`** を有効化。記事 MDX で **Markdown 表**（`|` 構文）等の GitHub Flavored Markdown がレンダリングされる。数式は従来どおり **`remark-math`** + **`rehype-katex`**。
 - **`CalloutComponents.tsx`**: Callout 本文に **`prose-invert`** を付与し、注記内の `code` も同様に可読にする。
 - **「データ連携」ブロック**: 記事内の説明は **学科クイズとの対応**で統一。DB テーブル名（`unified_cpl_questions` 等）は学習者向け本文に書かない。運用・SQL はリポジトリの `scripts/database` および [templates/CPL_Lesson_Stub_Template.mdx](templates/CPL_Lesson_Stub_Template.mdx) を正とする。
 - **アフィリエイト枠（Monetization Spot）**: 各レッスン MDX のカードは **`not-prose w-full max-w-full`** をルートに付与。内側は **CSS Grid**（例: `sm:grid-cols-[minmax(0,1fr)_minmax(0,200px)]`）でテキスト列と画像列を分割し、**`break-normal`** で日本語の異常な一字改行を防ぐ。画像側は **`[&_figure]:!my-0`** で `ImageWithOptimization` の `figure` 余白を打ち消す。

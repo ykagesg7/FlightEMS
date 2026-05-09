@@ -19,7 +19,7 @@ PPL/CPL 向け学習コンテンツとフライトプランニング機能を持
 - ルーティング: **react-router-dom**
 - データ・認証: **Supabase**
 - テスト: **Vitest** + **Playwright**
-- コンテンツ: **MDX**（`src/content/lessons` 等）
+- コンテンツ: **MDX**（`remark-gfm` で GFM 表等、`remark-math` + KaTeX 数式）（`src/content/lessons` 等）
 
 ## よく使うコマンド
 

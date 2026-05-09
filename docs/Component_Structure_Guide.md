@@ -115,6 +115,7 @@ src/components/
 - **`MDXContentWithTheme`**: 記事本文を **`prose prose-invert`** で包み、ダークテーマと Typography の `code` スタイルを整合。ラッパーと内側 `max-w-3xl` に **`min-w-0 w-full`**、横長ブロックは **`overflow-x-auto`**。
 - **`MDXContent`（外枠）**: 目次横並び時の記事列は **`min-w-0 w-full flex-1`** で flex 子の幅潰れを防ぐ。
 - **`Callout`**: 内部の `prose` に **`prose-invert`** を付与。
+- **GFM Markdown（表など）**: Vite の `@mdx-js/rollup` に **`remark-gfm`** を適用済み（`vite.config.ts`）。レッスン MDX では **GitHub Flavored Markdown の表記法**（`|` テーブル、取り消し線等）が使える。体裁は **`MDXContentWithTheme`** の `table` / `th` / `td` / `tr` と整合。
 - **レッスン MDX のアフィリエイト用 raw `div`**: ルートに **`not-prose`**、レイアウトは **CSS Grid**（`src/content/lessons/*.mdx` の Monetization Spot）。新規追加時は [02_System_Spec.md](02_System_Spec.md)「MDX 表示・学習者向け文言」を参照。
 
 ### レイアウトとルート付近フック

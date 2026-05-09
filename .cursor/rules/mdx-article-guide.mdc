@@ -53,7 +53,9 @@ export const meta = {
 - `remark-frontmatter` プラグインは未導入のため、YAML は通常テキストとして表示されてしまう
 - メタデータは `articlesIndex.ts` が `module.meta` として読み取る ESM export のみ対応
 
-## ファイル命名規則
+### Markdown 表（GFM）
+
+- Vite の MDX で **`remark-gfm`** を有効化済み。**パイプ表記法の表**、`~~取り消し~~` 等の GitHub Flavored Markdown がレンダリングされる。複雑な表はこれでよいが、レイアウト特殊枠は従来どおり JSX / `not-prose` で対応すること。
 
 PPL記事: `PPL-{Subject}-{Section}-{Topic}_{TitleInPascalCase}.mdx`
 
