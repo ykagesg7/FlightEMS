@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年5月9日  
-**バージョン**: Roadmap v4.0.20（Strategy v1.2・CPL 主軸・独立運営）
+**最終更新**: 2026年5月10日  
+**バージョン**: Roadmap v4.0.21（Strategy v1.2・CPL 主軸・独立運営）
 
 ---
 
@@ -10,7 +10,12 @@
 本書は Flight Academy の **実行計画** を定義する。
 戦略の根拠は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) を参照。
 
-**推奨読み順**: [docs/README.md](README.md) → [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) → **このドキュメント**
+**推奨読み順**: [docs/README.md](README.md) → [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) → [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) → **このドキュメント**
+
+### プロダクト指標（ALPM）とエンジニアリング KPI
+
+- **プロダクト北極星**: **ALPM**（Active Learning Path Milestone）— 週次の学習パス上マイルストーン達成。定義・計測契約（要決定）の**正本**は [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) §1。
+- **エンジニアリング KPI**: Phase・カバレッジ・コンテンツ本数・マッピング等の**数値表と実行状態**は**引き続き本書（01）を正**とする。ALPM のダッシュボード化や GA4 イベント名は [02_System_Spec.md](02_System_Spec.md) に実装段階で追記する。
 
 ### 2026年5月期スプリント（May 実施計画の記録）
 
@@ -292,6 +297,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-10 | **v4.0.21 / プロダクト指標と docs 連携**: [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) を参照する **「プロダクト指標（ALPM）とエンジニアリング KPI」** 節を追加。推奨読み順に同文書を挿入。[00](00_Flight_Academy_Strategy.md)・[docs/README](README.md) v4.49 と整合。 |
 | 2026-05-09 | **v4.0.20 / May 後半 W21→W22 ドキュメント整備**: **W21 完了** — [`3.2.8`](../src/content/lessons/3.2.8_PowerAndPerformance.mdx)、[`PPL-1-1-9`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx)。[May](May_2026_Late_Content_Sprint.md) §6・§2、[05](05_Content_Pipeline.md) W21/W22、[May 後半アウトライン](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[content_outlines/README.md](content_outlines/README.md) を整合。**W22 実行素案** [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md) 追加、**W21** `content_outlines/W21_2026/` 撤去。**[docs/README](README.md)** 索引 v4.48。 |
 | 2026-05-08 | **v4.0.19 / May 後半 W20→W21 ドキュメント整備**: W20 で実装済みの **コンテンツ**（[`3.2.7`](../src/content/lessons/3.2.7_LiftAndDrag.mdx)、[`PPL-1-1-3`/`4`](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx)）と [May](May_2026_Late_Content_Sprint.md) §6 完了ログ、[05](05_Content_Pipeline.md) W20/W21 行、[May 後半アウトライン](content_outlines/May_2026_Late_PPL_CPL_Outlines.md) を整合。**W21 実行用ワーク**は `content_outlines/W21_2026/`（**2026-05-09 実装後に削除**）。W20 用 Gemini 素案ファイル削除。 |
 | 2026-05-07 | **v4.0.18 / 5月後半コンテンツ拡充メモ**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)（W20〜W22・CPL/PPL 対応）、[content_outlines/May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。`---## 現状評価` の改行欠落を修正。[docs/README](README.md) に索引。 |
@@ -328,6 +334,6 @@
 
 ---
 
-**最終更新**: 2026年5月9日  
-**バージョン**: Roadmap v4.0.20（Strategy v1.2・CPL 主軸・独立運営）
+**最終更新**: 2026年5月10日  
+**バージョン**: Roadmap v4.0.21（Strategy v1.2・CPL 主軸・独立運営）
 **次回レビュー予定**: Phase B 終盤〜 Phase C（Phase 2 記事継続・`learning_test_mapping`・`npm run test:coverage` KPI）、数値の見直し

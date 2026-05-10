@@ -1,13 +1,23 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月9日（**May 後半 §6・W21 完了／W22**、[content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)、[01](01_Current_Status_and_Roadmap.md) v4.0.20、June 計画、[05_Content_Pipeline.md](05_Content_Pipeline.md)）
-**バージョン**: Documentation Index v4.48
+**最終更新**: 2026年5月10日（**プロダクト成長正本** [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)、README テーマ別ハブ再編、00/01/02/06 連携。直前: May 後半 W22 素案・[01](01_Current_Status_and_Roadmap.md)）
+**バージョン**: Documentation Index v4.49
 
 ## AI向けのドキュメント番号（読み方）
 
-- **番号付き `00`〜`06`（`01_Current_Status` … 形式）**は **初動の読み順**を表す。数値正本・詳細手順の一部は、番号外の **Reference**（`08`〜`14` や `PPL_Master` 等、ファイル名に旧番号が残るもの含む）に分かれている。
-- **詳細資料・方針メモ**は、英名ファイル（例: `Project_Overview.md`、`Docs_Consistency_Decisions.md`）や **旧番号付き**の `08`/`10`/`14`（Web 向け `public/docs` 同期用）に置く。
-- 迷ったら本 README の **推奨読み順**だけで現在地を掴み、必要に応じて本文内リンクで深掘りする。
+- **番号付き `00`〜`06`（`01_Current_Status` … 形式）**は **初動の読み順**を表す。数値正本・詳細手順の一部は、番号外の **Reference**（`08`〜`14` や `PPL_Master`、**`Product_North_Star_and_GTM`** 等、ファイル名に旧番号が残るもの含む）に分かれている。
+- **詳細資料・方針メモ**は、英名ファイル（例: `Project_Overview.md`、`Product_North_Star_and_GTM.md`、`Docs_Consistency_Decisions.md`）や **旧番号付き**の `08`/`10`/`14`（Web 向け `public/docs` 同期用）に置く。
+- 迷ったら本 README の **テーマ別ハブ**または **推奨読み順**だけで現在地を掴み、必要に応じて本文内リンクで深掘りする。
+
+## テーマ別ハブ（迷わない導線）
+
+| ハブ | 主なドキュメント |
+|------|------------------|
+| **Strategy & Product（戦略・プロダクト成長）** | [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)、**[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)**（NSM・ALPM・オンボーディング・PMF スライス・AI コンシェルジュ・データ・法務 UX）、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) |
+| **Content & Curriculum（コンテンツ・シラバス）** | [05_Content_Pipeline.md](05_Content_Pipeline.md)、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)、[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) |
+| **Engineering & Spec（実装・仕様）** | [02_System_Spec.md](02_System_Spec.md)、[03_Development_Guide.md](03_Development_Guide.md)、[Component_Structure_Guide.md](Component_Structure_Guide.md)、[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)、[GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md) |
+| **Operations & Quality（運用・品質）** | [04_Operations_Guide.md](04_Operations_Guide.md)、[06_Long_Term_Execution.md](06_Long_Term_Execution.md)、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、[ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md)、[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) |
+| **Reference & Portal（参考・外部仕様転記）** | [Project_Overview.md](Project_Overview.md)、[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)、[SWIM_Portal/README.md](SWIM_Portal/README.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[content_outlines/README.md](content_outlines/README.md)、[templates/README.md](templates/README.md) |
 
 ---
 
@@ -28,6 +38,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-05-10（戦略方針の docs 再編）**: 新規 **[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)**（ALPM・二重オンボーディング・気象/通信 PMF・AI ナビ・データ・法務 UX・アクション一覧）。本 README **テーマ別ハブ**、[00](00_Flight_Academy_Strategy.md) §3.4 ほか、[01](01_Current_Status_and_Roadmap.md)、[02](02_System_Spec.md)、[06](06_Long_Term_Execution.md)、[Project_Overview.md](Project_Overview.md)、[AGENTS.md](../AGENTS.md) を連携。
 - **2026-05-09（May 後半 W21 完了・W22 素案）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §2・§6、[05_Content_Pipeline.md](05_Content_Pipeline.md) W21/W22、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、新規 [content_outlines/W22_2026/](content_outlines/W22_2026/README.md)。**W21** `content_outlines/W21_2026/` 撤去。**[01](01_Current_Status_and_Roadmap.md) v4.0.20**。[content_outlines/README.md](content_outlines/README.md) 現在週行を更新。
 - **2026-05-08（May 後半 W20 完了・W21 計画）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §6、[05](05_Content_Pipeline.md) W20/W21、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、一時ワーク `content_outlines/W21_2026/`（**2026-05-09 に実装完了後削除**）。W20 用 Gemini 素案ファイル削除。[01](01_Current_Status_and_Roadmap.md) v4.0.19。
 - **2026-05-07（5月後半スプリント・アウトライン）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)、[content_outlines/May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。[01](01_Current_Status_and_Roadmap.md) v4.0.18、`---##` 改行修正。
@@ -63,7 +74,7 @@
 - **タイプ**: フルスタックWebアプリケーション（React + TypeScript + Supabase）
 - **目的**: 独立した航空学習プラットフォーム — 学習コンテンツ、実用ツール、コミュニティを提供
 - **コンセプト**: "Learn, Plan, Fly" — 航空知識を学び、フライトプランを作り、仲間として飛び立つ
-- **戦略**: **完全独立運営** — 外部パートナー承認に依存しない。詳細は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)（**3本柱**: Content / Tools / Community）
+- **戦略**: **完全独立運営** — 外部パートナー承認に依存しない。詳細は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)（**3本柱**: Content / Tools / Community）。**プロダクト成長・NSM・PMF スライス**は [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) を正とする。
 - **価値・運営（要約）**: **CPL 学科**受験者をコンテンツの主軸とし、**CPL 記事（Phase 1 完走後は Phase 2・マッピング）を最優先**で拡充。**PPL 記事**は別記事として継続し、CPL 記事から**リンクで基礎復習**可能にする。クイズは **PPL のみ / CPL 範囲**の選択を維持。個人開発の持続可能性・表現上の境界は [00](00_Flight_Academy_Strategy.md) **§2・§3**。**Phase・KPI の数値正本**は [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) v4.0.8（コンテンツ進捗の補助指標は [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)）。
 
 ### コア機能
@@ -239,20 +250,22 @@ npm run lint         # Lintチェック
 
 ## 📚 ドキュメント構成と読み方
 
-### 🎯 AIアシスタント向け推奨読み順（コア 7 本＋本 README）
+### 🎯 AIアシスタント向け推奨読み順（コア＋プロダクト成長）
 
-初動は **下記の番号順**（`00`→`01`→…）で足りることが多い。補助入口に **[Project_Overview.md](Project_Overview.md)**。品質・分析の長期枠は **[06_Long_Term_Execution.md](06_Long_Term_Execution.md)**。
+初動は **下記の順**で足りることが多い。補助入口に **[Project_Overview.md](Project_Overview.md)**。品質・分析の長期枠は **[06_Long_Term_Execution.md](06_Long_Term_Execution.md)**。
 
-1. **この README.md** — 全体像
-2. **[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)** — 戦略・3 本柱
-3. **[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)** — Phase / KPI
-4. **[02_System_Spec.md](02_System_Spec.md)** — 現行仕様の正本
-5. **[03_Development_Guide.md](03_Development_Guide.md)** — 開発・実装ルール
-6. **[04_Operations_Guide.md](04_Operations_Guide.md)** — 本番確認・Sentry/GA4 等
-7. **[05_Content_Pipeline.md](05_Content_Pipeline.md)** — 記事パイプラインの入口
+1. **この README.md** — 全体像・テーマ別ハブ
+2. **[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)** — 戦略・3 本柱・ターゲット
+3. **[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)** — NSM（ALPM）・オンボーディング・気象/通信 PMF・AI・データ・法務 UX
+4. **[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)** — Phase / エンジニアリング KPI
+5. **[02_System_Spec.md](02_System_Spec.md)** — 現行仕様の正本
+6. **[03_Development_Guide.md](03_Development_Guide.md)** — 開発・実装ルール
+7. **[04_Operations_Guide.md](04_Operations_Guide.md)** — 本番確認・Sentry/GA4 等
+8. **[05_Content_Pipeline.md](05_Content_Pipeline.md)** — 記事パイプラインの入口
 
 ### 📖 詳細ドキュメント（必要に応じて参照）
 
+- **[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)** — NSM（ALPM）・二重オンボーディング・気象/通信 PMF スライス・AI コンシェルジュ・学習データ方針・法務 UX 論点
 - **[02_System_Spec.md](02_System_Spec.md)** - 現行仕様の正本（DB、API、/test、Dashboard）
 - **[Component_Structure_Guide.md](Component_Structure_Guide.md)** - `src/` 構造の正本（新規コンポーネント追加時）
 - **[04_Operations_Guide.md](04_Operations_Guide.md)** - 運用時の手順、トラブルシューティング

@@ -24,6 +24,7 @@ Before updating docs, decide which file(s) to change:
 | Role | File | Content |
 |------|------|---------|
 | **Entry & summary** | `docs/README.md` | Overview, recent changes, main tables, links to detailed docs |
+| **Product growth & NSM** | `docs/Product_North_Star_and_GTM.md` | ALPM, onboarding, PMF slice (weather/comm), AI concierge role, data/logging intent, legal UX checklist |
 | **Specification** | `docs/02_System_Spec.md` | Current specs for /test, Dashboard, DB, data flows |
 | **Structure** | `docs/Component_Structure_Guide.md` | `src/` layout, component placement, key modules |
 | **Repo folders** | `docs/FOLDER_STRUCTURE.md` | Top-level directories (non-`src/`) |

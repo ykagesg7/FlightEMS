@@ -16,8 +16,9 @@
 
 | 用途 | ドキュメント |
 |------|----------------|
-| **全体索引（AI・開発者向け）** | [docs/README.md](docs/README.md) |
+| **全体索引（AI・開発者向け）** | [docs/README.md](docs/README.md)（テーマ別ハブ） |
 | **戦略・Phase / KPI** | [docs/00_Flight_Academy_Strategy.md](docs/00_Flight_Academy_Strategy.md)、[docs/01_Current_Status_and_Roadmap.md](docs/01_Current_Status_and_Roadmap.md) |
+| **プロダクト成長・NSM（ALPM）・PMF** | [docs/Product_North_Star_and_GTM.md](docs/Product_North_Star_and_GTM.md) |
 | **現行仕様（DB・/test 等）** | [docs/02_System_Spec.md](docs/02_System_Spec.md) |
 | **`src/` 構成** | [docs/Component_Structure_Guide.md](docs/Component_Structure_Guide.md) |
 | **リポジトリフォルダ索引** | [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) |
@@ -33,4 +34,4 @@
 
 ---
 
-**最終更新**: 2026年4月
+**最終更新**: 2026年5月（`docs/` 索引に Product 正本を追記）

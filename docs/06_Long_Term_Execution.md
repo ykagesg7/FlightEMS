@@ -1,6 +1,6 @@
 # 長期実行計画（品質・コンテンツ・分析・成長）
 
-**最終更新**: 2026-05-06（§1.4 `tsc -b` バックログ）
+**最終更新**: 2026年5月10日（§3 適応学習・教師データと Product 正本の接続）
 
 **位置づけ**: [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)・[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) の補助。執筆方針と記事 ID の**原則**は [Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) を正とし、本書は実装・運用の**長期バックログ**に絞る。
 
@@ -97,6 +97,8 @@
 6. ランキング（オプトイン・期間・モード別。公開ボードは最後）
 
 **GA4 週次 / Data API / MCP** は本番 `g/collect` 安定後（[04](04_Operations_Guide.md)）。Phase B-5 完了判断にもログ表を使う。
+
+**適応学習への布石**: [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) §5 のとおり、**興味・学習ログ**を将来の推奨モデル用に蓄積する方針とする。本書 §3 の個人分析・§5 のクイズクラスタ分析と**重複定義しない**（イベント名・スキーマ確定後は [02_System_Spec.md](02_System_Spec.md) を正とする）。
 
 **参照コード**: [src/utils/dashboard.ts](../src/utils/dashboard.ts), [src/pages/dashboard/HomePage.tsx](../src/pages/dashboard/HomePage.tsx)
 

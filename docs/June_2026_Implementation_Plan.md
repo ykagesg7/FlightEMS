@@ -1,7 +1,7 @@
 # 2026年6月期 実装・コンテンツ計画
 
 **作成日**: 2026-05-07  
-**位置づけ**: [Phase C](01_Current_Status_and_Roadmap.md)（2026年6–7月）の **前半**にあたる、**コンテンツ拡充と品質基盤**に焦点を絞った実行計画。戦略・柱の正本は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)、ロードマップ・フェーズ KPI は [01](01_Current_Status_and_Roadmap.md)、長期バックログは [06_Long_Term_Execution.md](06_Long_Term_Execution.md)。
+**位置づけ**: [Phase C](01_Current_Status_and_Roadmap.md)（2026年6–7月）の **前半**にあたる、**コンテンツ拡充と品質基盤**に焦点を絞った実行計画。戦略・柱の正本は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)、**プロダクト成長・NSM・気象/通信 PMF スライス**は [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)、ロードマップ・フェーズ KPI は [01](01_Current_Status_and_Roadmap.md)、長期バックログは [06_Long_Term_Execution.md](06_Long_Term_Execution.md)。
 
 **週次の正本**: [05_Content_Pipeline.md](05_Content_Pipeline.md) Phase 2 の **週次着手記録表**と **Phase 2 暫定 KPI**。本ファイルはその **6月ぶんのゴール設定と優先順位** をまとめる。
 

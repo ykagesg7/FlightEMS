@@ -6,7 +6,7 @@
 - ✅ **バックエンド開発者**: データベース設計やAPI実装を行う場合
 - ✅ **フロントエンド開発者**: API仕様やデータ構造を理解したい場合
 
-**推奨読み順**: [docs/README.md](README.md) → [03_Development_Guide.md](03_Development_Guide.md) → このドキュメント
+**推奨読み順**: [docs/README.md](README.md) → [03_Development_Guide.md](03_Development_Guide.md) → このドキュメント（プロダクト成長の意図は [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) → 本書「プロダクト方針連携」）
 
 ---
 
@@ -14,8 +14,16 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトの詳細な設計仕様、API仕様、データベース設計、UI/UX仕様について包括的に説明します。
 
-**最終更新**: 2026年4月25日（開発環境 Node 18+ 表記。ブログ 28 本ゲート・DB 手順の各節は 2026-04-14 版から継続）
-**バージョン**: Design Specification v4.0.2
+**最終更新**: 2026年5月10日（プロダクト方針連携の将来節を追加）
+**バージョン**: Design Specification v4.0.3
+
+### プロダクト方針連携（将来実装・仕様の置き場）
+
+経営・プロダクト方針の**正本**は [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)。アプリ側では未実装でも、次の**意図**を本仕様に将来的に反映する。
+
+1. **オンボーディングのセグメント分け**: 訓練生パス（短い実力診断→ギャップ）と潜在層パス（ライト診断→最初の一歩）の分岐。
+2. **イベント・ログ**: 「興味」「診断結果」「ロードマップ・マイルストーン達成」など、将来の推奨モデル用に **プライバシー方針のもと**で記録するフィールド／テーブル設計（既存の `learning_progress`・`learning_sessions`・`user_learning_profiles` 等との関係は別途設計）。
+3. **ALPM 計測**: [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) §1.2 の計測契約が確定したら、本書のダッシュボード／DB 節に**イベント名・集計ルール**を追記する。
 
 ---
 
