@@ -48,6 +48,7 @@ Dashboard の SQL Editor で `scripts/database/*.sql` を実行。
 - **航空工学 3.2.1–3.2.4**: `scripts/database/20260412_learning_contents_cpl_engineering_321_324_meta.sql`（`order_index` 340–343）
 - **航空工学 3.2.5–3.2.12**: `scripts/database/20260412_learning_contents_cpl_engineering_325_332_meta.sql`（`order_index` 344–351）
 - **空中航法 3.4.1–3.4.7**: `scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql`（`order_index` 380–386）
+- **PPL Master Subject 5（航空法規）先行 4 本**: `scripts/database/20260512_learning_contents_ppl_aviation_law_four.sql`（`sub_category`: 航空法規、`order_index` 501〜504、本番 MCP `execute_sql` 済みを想定。個別 upsert は `register_ppl_article.mjs PPL-5-1-1_AviationLawDefinitions` など）
 
 執筆・体裁の全体像: [`docs/09_CPL_Learning_Stub.md`](../../../docs/09_CPL_Learning_Stub.md)
 
@@ -57,6 +58,6 @@ Dashboard の SQL Editor で `scripts/database/*.sql` を実行。
 |--------|-----|-----|
 | id | ファイル名（例: `PPL-1-1-9_FlightPerformance`） | ファイル名 |
 | category | `PPL` | **`CPL学科`**（`PrevNextNav` と一致させる） |
-| sub_category | 航空工学 等 | 科目名 |
+| sub_category | 航空工学 **`、航空法規`**（`PPL-5-*`）等 | 科目名 |
 | content_type | `text` | `text` |
 | is_published | `true` | `true` |

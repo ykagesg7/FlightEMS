@@ -59,11 +59,13 @@ async function registerArticle(articleId) {
     process.exit(1);
   }
 
+  const sub_category = /^PPL-5-/.test(articleId) ? '航空法規' : '航空工学';
+
   const record = {
     id: articleId,
     title: meta.title,
     category: 'PPL',
-    sub_category: '航空工学',
+    sub_category,
     description: meta.excerpt || null,
     order_index: meta.order,
     parent_id: null,

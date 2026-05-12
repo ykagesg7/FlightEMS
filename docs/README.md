@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月10日（**プロダクト成長正本** [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)、README テーマ別ハブ再編、00/01/02/06 連携。直前: May 後半 W22 素案・[01](01_Current_Status_and_Roadmap.md)）
-**バージョン**: Documentation Index v4.49
+**最終更新**: 2026年5月12日（**六月スプリント実行メモ** [June_2026_Content_Sprint.md](June_2026_Content_Sprint.md)、[05](05_Content_Pipeline.md) W23〜W26 行。直前: 2026-05-10 README テーマ別ハブ）
+**バージョン**: Documentation Index v4.50
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -32,12 +32,14 @@
 ### 月次実行計画
 
 - **[May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)** — **2026年5月後半**（W20〜W22）。**§6 完了ログ**。**現在週素案**: [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。一覧: [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。
-- **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — **2026年6月期**の DONE 条件、[05](05_Content_Pipeline.md) 週次（W23〜W26）・CPL/PPL 拡充の優先、マッピング監査／B-4／Phase C 準備（UI は承認制）を定義する。
+- **[June_2026_Content_Sprint.md](June_2026_Content_Sprint.md)** — **2026年6月**（**W23〜W26**）の**週次実行メモ**（ブロック D〜G、六月末ゲート **§7**）。週次表の正本は [05](05_Content_Pipeline.md)。
+- **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — **2026年6月期**の DONE 条件、[05](05_Content_Pipeline.md) 週次（W23〜W26）・CPL/PPL 拡充の優先、マッピング監査／B-4／Phase C 準備（UI は承認制）を定義する。**週別一覧**は §2.1。
 
 ### 更新履歴（抜粋）
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の本文化済み **4 記事**（`PPL-5-1-1`〜`PPL-5-2-2`）を Supabase **`learning_contents`** に冪等登録 [`20260512_learning_contents_ppl_aviation_law_four.sql`](../scripts/database/20260512_learning_contents_ppl_aviation_law_four.sql)。構造・変更履歴: [content_outlines/PPL_Subject5_Aviation_Law_Structure.md](content_outlines/PPL_Subject5_Aviation_Law_Structure.md)。統計サマリー表は [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) 冒頭ログのみ更新（§1 MCP 未再実行）。
 - **2026-05-10（戦略方針の docs 再編）**: 新規 **[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)**（ALPM・二重オンボーディング・気象/通信 PMF・AI ナビ・データ・法務 UX・アクション一覧）。本 README **テーマ別ハブ**、[00](00_Flight_Academy_Strategy.md) §3.4 ほか、[01](01_Current_Status_and_Roadmap.md)、[02](02_System_Spec.md)、[06](06_Long_Term_Execution.md)、[Project_Overview.md](Project_Overview.md)、[AGENTS.md](../AGENTS.md) を連携。
 - **2026-05-09（May 後半 W21 完了・W22 素案）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §2・§6、[05_Content_Pipeline.md](05_Content_Pipeline.md) W21/W22、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、新規 [content_outlines/W22_2026/](content_outlines/W22_2026/README.md)。**W21** `content_outlines/W21_2026/` 撤去。**[01](01_Current_Status_and_Roadmap.md) v4.0.20**。[content_outlines/README.md](content_outlines/README.md) 現在週行を更新。
 - **2026-05-08（May 後半 W20 完了・W21 計画）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §6、[05](05_Content_Pipeline.md) W20/W21、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、一時ワーク `content_outlines/W21_2026/`（**2026-05-09 に実装完了後削除**）。W20 用 Gemini 素案ファイル削除。[01](01_Current_Status_and_Roadmap.md) v4.0.19。
