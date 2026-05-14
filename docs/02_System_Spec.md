@@ -167,7 +167,7 @@ CREATE TABLE learning_content_comments (
 
 - **別記事**: PPL 用 MDX と CPL 用 MDX は分離する（`learning_contents` / ルーティング上も別 ID）。
 - **主経路**: PPL 受験者は PPL 記事、CPL 受験者は CPL 記事を主に読む。
-- **Master Subject 5（航空法規）**: MDX は `src/content/lessons/PPL-5-*.mdx`。`learning_contents` には `category='PPL'`、`sub_category='航空法規'` で登録（Phase 前半 4 本は [`20260512_learning_contents_ppl_aviation_law_four.sql`](../scripts/database/20260512_learning_contents_ppl_aviation_law_four.sql)）。一覧・構成は [`content_outlines/PPL_Subject5_Aviation_Law_Structure.md`](content_outlines/PPL_Subject5_Aviation_Law_Structure.md)。
+- **Master Subject 5（航空法規）**: MDX は `src/content/lessons/PPL-5-*.mdx`。`learning_contents` には `category='PPL'`、`sub_category='航空法規'` で登録。冪等 SQL: [**4 本**（501〜504）](../scripts/database/20260512_learning_contents_ppl_aviation_law_four.sql)、[**追加 3 本**（505〜507：`PPL-5-3-1`〜`PPL-5-3-3`）](../scripts/database/20260512_learning_contents_ppl_subject5_505_507.sql)。一覧・構成は [`content_outlines/PPL_Subject5_Aviation_Law_Structure.md`](content_outlines/PPL_Subject5_Aviation_Law_Structure.md)。
 - **CPL → PPL**: CPL 記事内で基礎が不足するとき、**PPL 記事へのリンク**で任意復習できるようにする（詳細は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) §4、[05_Content_Pipeline.md](05_Content_Pipeline.md)）。
 - **クイズ**: `/test` で **試験範囲（PPL のみ等）**を選べる既存動作を維持する（`applicable_exams`）。
 

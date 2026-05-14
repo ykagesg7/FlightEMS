@@ -18,7 +18,7 @@
 |------|----------|
 | PPL／CPL 出題区分・バッチ適用の起点 | `20260324_add_unified_cpl_applicable_exams.sql`、[db/CPL_KPI_and_Database_Operations.md](../../docs/db/CPL_KPI_and_Database_Operations.md) の手順表 |
 | CPL 工学・気象・航法 `learning_contents` メタ同期 | `20260412_learning_contents_cpl_engineering_*_meta.sql`、`20260424_learning_contents_cpl_meteo_331_3312_meta.sql`、`20260430_learning_contents_cpl_navigation_341_347_meta.sql` |
-| **PPL Master Subject 5（航空法規）先行 4 本** MDX メタ同期 | `20260512_learning_contents_ppl_aviation_law_four.sql`（[`PPL_Subject5_Aviation_Law_Structure.md`](../../docs/content_outlines/PPL_Subject5_Aviation_Law_Structure.md)） |
+| **PPL Master Subject 5（航空法規）** MDX メタ同期（4本＋3本） | `20260512_learning_contents_ppl_aviation_law_four.sql`（501〜504）、`20260512_learning_contents_ppl_subject5_505_507.sql`（505〜507）（[`PPL_Subject5_Aviation_Law_Structure.md`](../../docs/content_outlines/PPL_Subject5_Aviation_Law_Structure.md)） |
 | Phase B・Phase 2 対象 8 単元（気象 3.3.10〜12・工学 3.2.10〜12・法規 3.1.7〜8）`learning_contents` / `content_title` | `20260505_learning_contents_phase2_eight_meta.sql` |
 | 通信 3.5.4 メタ本文化（May） | `20260505_learning_contents_comm_354_meta_finalize.sql` |
 | 通信 3.5.x メタ全集約（本文化後） | `20260507_learning_contents_comm_351_355_meta_sync.sql` |

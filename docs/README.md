@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月12日（**六月スプリント実行メモ** [June_2026_Content_Sprint.md](June_2026_Content_Sprint.md)、[05](05_Content_Pipeline.md) W23〜W26 行。直前: 2026-05-10 README テーマ別ハブ）
-**バージョン**: Documentation Index v4.50
+**最終更新**: 2026年5月12日（PPL‑5‑3‑1〜5‑3‑3 を `learning_contents` 505〜507 登録。直前: 六月スプリント実行メモ [June_2026_Content_Sprint.md](June_2026_Content_Sprint.md)）
+**バージョン**: Documentation Index v4.51
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -39,6 +39,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の **`PPL-5-3-1`〜`PPL-5-3-3`** を **`learning_contents`** の **505〜507** に追加 [`20260512_learning_contents_ppl_subject5_505_507.sql`](../scripts/database/20260512_learning_contents_ppl_subject5_505_507.sql)（同日 MCP `execute_sql`）。
 - **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の本文化済み **4 記事**（`PPL-5-1-1`〜`PPL-5-2-2`）を Supabase **`learning_contents`** に冪等登録 [`20260512_learning_contents_ppl_aviation_law_four.sql`](../scripts/database/20260512_learning_contents_ppl_aviation_law_four.sql)。構造・変更履歴: [content_outlines/PPL_Subject5_Aviation_Law_Structure.md](content_outlines/PPL_Subject5_Aviation_Law_Structure.md)。統計サマリー表は [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) 冒頭ログのみ更新（§1 MCP 未再実行）。
 - **2026-05-10（戦略方針の docs 再編）**: 新規 **[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)**（ALPM・二重オンボーディング・気象/通信 PMF・AI ナビ・データ・法務 UX・アクション一覧）。本 README **テーマ別ハブ**、[00](00_Flight_Academy_Strategy.md) §3.4 ほか、[01](01_Current_Status_and_Roadmap.md)、[02](02_System_Spec.md)、[06](06_Long_Term_Execution.md)、[Project_Overview.md](Project_Overview.md)、[AGENTS.md](../AGENTS.md) を連携。
 - **2026-05-09（May 後半 W21 完了・W22 素案）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §2・§6、[05_Content_Pipeline.md](05_Content_Pipeline.md) W21/W22、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、新規 [content_outlines/W22_2026/](content_outlines/W22_2026/README.md)。**W21** `content_outlines/W21_2026/` 撤去。**[01](01_Current_Status_and_Roadmap.md) v4.0.20**。[content_outlines/README.md](content_outlines/README.md) 現在週行を更新。
