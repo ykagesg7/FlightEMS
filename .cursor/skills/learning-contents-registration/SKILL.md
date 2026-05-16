@@ -50,6 +50,7 @@ Dashboard の SQL Editor で `scripts/database/*.sql` を実行。
 - **空中航法 3.4.1–3.4.7**: `scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql`（`order_index` 380–386）
 - **PPL Master Subject 5（航空法規）先行 4 本**: `scripts/database/20260512_learning_contents_ppl_aviation_law_four.sql`（`sub_category`: 航空法規、`order_index` 501〜504）。
 - **PPL Master Subject 5（続）技能証・身体・英語 3 本**: `scripts/database/20260512_learning_contents_ppl_subject5_505_507.sql`（`order_index` 505〜507。本番 MCP `execute_sql` 可。個別 upsert は `register_ppl_article.mjs PPL-5-3-1_PilotCertificateBasics` 等）
+- **PPL Master Subject 5（続）運航・地上・報告ほか 7 本**: `scripts/database/20260512_learning_contents_ppl_subject5_508_514.sql`（`order_index` 508〜514。本番 MCP `execute_sql` 可）
 
 執筆・体裁の全体像: [`docs/09_CPL_Learning_Stub.md`](../../../docs/09_CPL_Learning_Stub.md)
 
