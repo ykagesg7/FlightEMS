@@ -641,21 +641,9 @@
   box-shadow: 0 0 0 2px var(--hud-primary);
 }
 
-.leaflet-control-layers {
-  background: rgba(0, 0, 0, 0.7);
-  color: var(--text-primary);
-  border: 1px solid var(--hud-primary);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-}
-
-.leaflet-control-layers-list label,
-.leaflet-control-layers-overlays label,
-.leaflet-control-layers-base label {
-  color: var(--text-primary);
-}
-
-.leaflet-control-layers-expanded {
-  background: rgba(0, 0, 0, 0.85);
+.map-layers-panel-scroll {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* 空港の管制圏円のスタイル */

@@ -41,8 +41,7 @@
       "leaflet",
       "geojson",
       "estree",
-      "ws",
-      "leaflet-groupedlayercontrol"
+      "ws"
     ]
   },
   "include": [

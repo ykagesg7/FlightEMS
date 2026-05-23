@@ -11,12 +11,15 @@ import { fullAirportInfoContent, simplifiedAirportInfoContent } from './popups/a
 import { bindPlanningSwimNotamButton, swimNotamButtonSection } from './popups/swimNotamPopup';
 import { FlightPlanRouteLayer } from './FlightPlanRouteLayer';
 import { useLiveTrafficLayer } from './hooks/useLiveTrafficLayer';
+import { usePlanningMapLayerController } from './hooks/usePlanningMapLayerController';
+import type { PlanningMapLayerController } from './hooks/usePlanningMapLayerController';
 import { useRainViewerRadarLayer } from './hooks/useRainViewerRadarLayer';
 import { usePlanningMapWindGrid } from './hooks/usePlanningMapWindGrid';
 import { useWindBarbLayer } from './hooks/useWindBarbLayer';
 import { useWindGridOverlaySetter } from './windGridOverlayContext';
 import { TrackLayer } from './TrackLayer';
-import type { LayerControlRef, PlanningMapRegion } from './planningMapTypes';
+import type { PlanningMapRegion } from './planningMapTypes';
+import type { PlanningMapOverlayGroups } from './mapLayerUtils';
 import type { AirportProps, NavaidProps } from './types';
 import type { FlightTrack } from '../../tracks/types';
 
@@ -27,9 +30,10 @@ export interface MapTabContentProps {
   regions: PlanningMapRegion[];
   tracks: FlightTrack[];
   currentTrackTime: number | null;
+  onLayerControllerChange?: (controller: PlanningMapLayerController | null) => void;
 }
 
-export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime }) => {
+export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange }) => {
   const liveTrafficLayerRef = useRef<L.LayerGroup | null>(null);
   if (!liveTrafficLayerRef.current) {
     liveTrafficLayerRef.current = L.layerGroup();
@@ -53,7 +57,6 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
     return () => setWindGridOverlay?.(null);
   }, [windGridOverlay, setWindGridOverlay]);
 
-  const layerControlRef = useRef<L.Control.Layers | null>(null) as LayerControlRef;
   // 各地域のWaypointレイヤーを保持する参照
   const regionLayersRef = useRef<{ [key: string]: L.GeoJSON }>({});
   // すべてのWaypointレイヤーを保持する参照
@@ -187,7 +190,7 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
         "RJFA": L.layerGroup(),
         "RJFZ": L.layerGroup()
       }
-    };
+    } satisfies PlanningMapOverlayGroups;
   }, [regions, map, setFlightPlan, onEachFeaturePopup, waypointStyle]);
 
   // 地域ごとのウェイポイントデータを読み込む関数
@@ -776,207 +779,31 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
     }
   ), []);
 
-  const baseLayers = useMemo(() => {
-    return {
-      "地図": osmLayer,
-      "衛星写真": esriLayer,
-    };
-  }, [osmLayer, esriLayer]);
+  const layerController = usePlanningMapLayerController({
+    map,
+    overlayLayers,
+    osmLayer,
+    esriLayer,
+    regions,
+    loadRegionWaypointsData,
+    loadAllWaypointsData,
+    referenceLayerSetters: {
+      setLiveTrafficEnabled,
+      setRainViewerEnabled,
+      setWindBarbsEnabled,
+    },
+  });
 
   useEffect(() => {
-    if (!map || !liveTrafficLayerRef.current) return;
-    const layer = liveTrafficLayerRef.current;
-    const onAdd = (e: L.LayersControlEvent) => {
-      if (e.layer === layer) setLiveTrafficEnabled(true);
-    };
-    const onRemove = (e: L.LayersControlEvent) => {
-      if (e.layer === layer) setLiveTrafficEnabled(false);
-    };
-    map.on('overlayadd', onAdd);
-    map.on('overlayremove', onRemove);
-    if (map.hasLayer(layer)) setLiveTrafficEnabled(true);
-    return () => {
-      map.off('overlayadd', onAdd);
-      map.off('overlayremove', onRemove);
-    };
-  }, [map]);
+    onLayerControllerChange?.(layerController);
+    return () => onLayerControllerChange?.(null);
+  }, [layerController, onLayerControllerChange]);
 
   useLiveTrafficLayer(map, liveTrafficLayerRef.current, liveTrafficEnabled);
 
-  useEffect(() => {
-    if (!map || !rainViewerLayerRef.current) return;
-    const layer = rainViewerLayerRef.current;
-    const onAdd = (e: L.LayersControlEvent) => {
-      if (e.layer === layer) setRainViewerEnabled(true);
-    };
-    const onRemove = (e: L.LayersControlEvent) => {
-      if (e.layer === layer) setRainViewerEnabled(false);
-    };
-    map.on('overlayadd', onAdd);
-    map.on('overlayremove', onRemove);
-    if (map.hasLayer(layer)) setRainViewerEnabled(true);
-    return () => {
-      map.off('overlayadd', onAdd);
-      map.off('overlayremove', onRemove);
-    };
-  }, [map]);
-
   useRainViewerRadarLayer(map, rainViewerLayerRef.current, rainViewerEnabled);
 
-  useEffect(() => {
-    if (!map) return;
-    const barbs = windBarbsLayerRef.current;
-    const onAdd = (e: L.LayersControlEvent) => {
-      if (e.layer === barbs) setWindBarbsEnabled(true);
-    };
-    const onRemove = (e: L.LayersControlEvent) => {
-      if (e.layer === barbs) setWindBarbsEnabled(false);
-    };
-    map.on('overlayadd', onAdd);
-    map.on('overlayremove', onRemove);
-    if (barbs && map.hasLayer(barbs)) setWindBarbsEnabled(true);
-    return () => {
-      map.off('overlayadd', onAdd);
-      map.off('overlayremove', onRemove);
-    };
-  }, [map]);
-
   useWindBarbLayer(map, windBarbsLayerRef.current, windBarbsEnabled, gridPoints);
-
-  // レイヤーコントロールの更新
-  useEffect(() => {
-    if (!map) {
-      return;
-    }
-
-    try {
-      // レイヤーコントロールがまだ追加されていない場合、新規作成して追加
-      if (!layerControlRef.current) {
-        const control = L.control.groupedLayers(baseLayers, overlayLayers as any, {
-          collapsed: true, // デフォルトで格納状態に変更
-          position: 'topright'
-        }) as any;
-
-        control.addTo(map);
-        layerControlRef.current = control;
-
-        // 初期のベースレイヤーとして "地図" のタイルレイヤー (osmLayer) を追加する
-        if (!map.hasLayer(osmLayer)) {
-          osmLayer.addTo(map);
-        }
-
-        // --- 初期状態ではオーバーレイを追加しない ---
-        // ユーザーがレイヤーコントロールで選択した際にのみ表示されるようにする。
-
-        // Waypointsの地域レイヤー名を取得（「すべて」を除く）
-        const waypointRegions = Object.keys((overlayLayers["Waypoints"] as Record<string, L.Layer>))
-          .filter(name => name !== 'すべて');
-
-        // 「すべて」レイヤーが追加されたとき、他のすべてのWaypointレイヤーも追加
-        map.on('overlayadd', (e: L.LayersControlEvent) => {
-          const layerName = e.name;
-
-          // 「すべて」レイヤーが追加された場合
-          if (layerName === 'すべて' && e.layer === (overlayLayers["Waypoints"] as Record<string, L.Layer>)['すべて']) {
-            // すべてのウェイポイントデータを読み込む
-            loadAllWaypointsData();
-
-            // 他のすべての地域レイヤーを追加（イベントの無限ループを防ぐためにデバウンスを使用）
-            setTimeout(() => {
-              waypointRegions.forEach(regionName => {
-                const regionLayer = (overlayLayers["Waypoints"] as Record<string, L.Layer>)[regionName];
-                if (regionLayer && !map.hasLayer(regionLayer)) {
-                  regionLayer.addTo(map);
-
-                  // 対応する地域のデータを読み込む
-                  const region = regions.find(r => r.name === regionName);
-                  if (region) {
-                    loadRegionWaypointsData(region.id);
-                  }
-                }
-              });
-            }, 10);
-          }
-          // 通常のWaypointレイヤーが追加された場合
-          else if (Object.keys((overlayLayers["Waypoints"] as Record<string, L.Layer>)).includes(layerName)) {
-            if (layerName === 'すべて') {
-              loadAllWaypointsData();
-            } else {
-              // 地域名から地域IDを取得
-              const region = regions.find(r => r.name === layerName);
-              if (region) {
-                // 地域ウェイポイントデータを読み込む
-                loadRegionWaypointsData(region.id);
-              }
-            }
-          }
-
-          // Waypointレイヤーが追加された場合、最前面に表示する
-          setTimeout(() => {
-            const layerObj = e.layer;
-            if (layerObj instanceof L.GeoJSON) {
-              layerObj.eachLayer(layer => {
-                if (layer instanceof L.Path) {
-                  layer.bringToFront();
-                }
-              });
-            }
-          }, 100);
-        });
-
-        // 「すべて」レイヤーが削除されたとき、他のすべてのWaypointレイヤーも削除
-        map.on('overlayremove', (e: L.LayersControlEvent) => {
-          const layerName = e.name;
-
-          // 「すべて」レイヤーが削除された場合
-          if (layerName === 'すべて' && e.layer === (overlayLayers["Waypoints"] as Record<string, L.Layer>)['すべて']) {
-            // 他のすべての地域レイヤーを削除（イベントの無限ループを防ぐためにデバウンスを使用）
-            setTimeout(() => {
-              waypointRegions.forEach(regionName => {
-                const regionLayer = (overlayLayers["Waypoints"] as Record<string, L.Layer>)[regionName];
-                if (regionLayer && map.hasLayer(regionLayer)) {
-                  map.removeLayer(regionLayer);
-                }
-              });
-            }, 10);
-          }
-
-          // ローカルレイヤーが削除された場合、レイヤーグループを完全にクリアする
-          if (layerName === 'RJFA' || layerName === 'RJFZ') {
-            const localLayer = (overlayLayers["Local Layers"] as Record<string, L.Layer>)[layerName] as L.LayerGroup;
-            if (localLayer) {
-              localLayer.clearLayers();
-            }
-          }
-        });
-      } else {
-        // 既存のレイヤーコントロールがある場合は更新する
-        console.log("レイヤーコントロールを更新します");
-
-        // いったんコントロールを削除して再作成
-        map.removeControl(layerControlRef.current);
-
-        // 新しいコントロールを作成して追加
-        const control = L.control.groupedLayers(baseLayers, overlayLayers as any, {
-          collapsed: true, // デフォルトで格納状態に変更
-          position: 'topright'
-        }) as any;
-
-        control.addTo(map);
-        layerControlRef.current = control;
-      }
-    } catch (error) {
-      console.error("レイヤーコントロールの初期化/更新エラー:", error);
-    }
-
-    return () => {
-      // layerControlRef.current が null でないことを確認してから removeControl を呼び出す
-      if (map && layerControlRef.current) {
-        map.removeControl(layerControlRef.current);
-        layerControlRef.current = null;
-      }
-    };
-  }, [map, baseLayers, overlayLayers, regions, loadRegionWaypointsData, loadAllWaypointsData, osmLayer, weatherCache, setWeatherCache]);
 
   return (
     <>

@@ -1,9 +1,4 @@
-import type * as L from 'leaflet';
 import type { LatLng } from 'leaflet';
-
-export interface LayerControlRef {
-  current: L.Control.Layers | null;
-}
 
 /** regions_index.json の 1 エントリ */
 export interface PlanningMapRegion {

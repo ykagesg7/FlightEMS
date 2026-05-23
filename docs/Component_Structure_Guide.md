@@ -203,16 +203,29 @@ src/pages/
 │       └── map/
 │           ├── MapTab.tsx
 │           ├── MapTabContent.tsx
+│           ├── MapToolbar.tsx              # アクティブレイヤーチップ・レイヤーボタン（lg+ で readout）
+│           ├── MapCursorFooter.tsx         # モバイル: 地図下座標フッター
+│           ├── MapLayersPanel.tsx          # 右ドロワー / モバイルボトムシート
+│           ├── MapLayersPanelSection.tsx
+│           ├── MapLayersCollapsibleBlock.tsx
+│           ├── MapCursorReadout.tsx
+│           ├── mapLayerCatalog.ts
+│           ├── mapLayerPresets.ts
+│           ├── planningMapLayerPreferences.ts
+│           ├── planningMapLayerControllerContext.tsx
 │           ├── FlightPlanRouteLayer.tsx
 │           ├── planningMapTypes.ts
+│           ├── WindGridLegendPanel.tsx    # 上層風要約（FL・代表風・UTC/JST）レイヤーパネル内
+│           ├── windGridOverlayContext.tsx # 凡例用オーバーレイ状態（MapTab へ）
 │           ├── hooks/
+│           │   ├── usePlanningMapLayerController.ts
+│           │   ├── useCloseLayersOnMapClick.ts
+│           │   ├── useMapLayersOpenMapLock.ts
 │           │   ├── useCursorNearestNavaids.ts
 │           │   ├── useLiveTrafficLayer.ts   # OpenSky 航空機（airplane.png 上視・HUD 系ポップアップ）
 │           │   ├── useRainViewerRadarLayer.ts  # RainViewer 降水レーダータイル（マニフェスト取得・rainViewerPane）
 │           │   ├── usePlanningMapWindGrid.ts  # 上層風バーブ用格子取得
 │           │   ├── useWindBarbLayer.ts        # 格子からバーブ描画
-│           │   ├── WindGridLegendPanel.tsx    # 上層風要約（FL・代表風・UTC/JST）MapTab 左下で位置 HUD 上に縦積み
-│           │   ├── windGridOverlayContext.tsx # 凡例用オーバーレイ状態（MapTab へ）
 │           │   ├── useMapCursorPosition.ts
 │           │   ├── useMapDoubleClickWaypoint.ts
 │           │   ├── useNavaidGeojson.ts

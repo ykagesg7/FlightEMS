@@ -297,8 +297,9 @@ AI から **実ブラウザ**（コンソール・ネットワーク・スナッ
 - **WaypointAddPanel**: NAVAID／公開 Waypoint／座標の単一追加 UI
 - **NavaidSelector** / **WaypointSelector**: ファイル残置（UI はパネルに集約）
 - **PlanPrintView**: 印刷専用ビュー
-- **MapTab**: インタラクティブ地図タブ（2026年1月6日改善）
+- **MapTab**: インタラクティブ地図タブ（2026年1月6日改善、2026年5月 React レイヤーパネル化）
   - `worldCopyJump={true}`設定により、地球を一周してもレイヤーが正しく表示される
+  - ツールバーに座標 readout・レイヤーパネル（右ドロワー／モバイルボトムシート）。選択状態は `planning-map-layer-preferences-v1` に永続化
 
 #### **主要ユーティリティ**
 - **calculateOffsetPoint**: 測地線計算（磁方位と距離でオフセット）
