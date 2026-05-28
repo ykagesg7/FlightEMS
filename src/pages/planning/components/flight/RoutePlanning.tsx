@@ -5,12 +5,14 @@ import { MAGNETIC_DECLINATION } from '../../../../utils/bearing';
 import { planningRouteSelectStyles } from '../../../../utils/reactSelectStyles';
 import WaypointAddPanel from './WaypointAddPanel';
 import WaypointList from './WaypointList';
+import type { PlanningPanelLayout } from '../../planningPanelLayout';
 
 /**
  * Route Planning コンポーネント
  * 出発/到着空港の選択、ウェイポイント追加パネル、リスト表示を行う
  */
 interface RoutePlanningProps {
+  layout?: PlanningPanelLayout;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
   airportOptions: AirportGroupOption[];
@@ -19,12 +21,14 @@ interface RoutePlanningProps {
 }
 
 const RoutePlanning: React.FC<RoutePlanningProps> = ({
+  layout = 'full',
   flightPlan,
   setFlightPlan,
   airportOptions,
   navaidOptions,
   waypointOptions,
 }) => {
+  const isSplitLayout = layout === 'split';
   return (
     <div className="bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-lg p-3 sm:p-4 md:p-6">
       <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 text-white">経路計画</h2>
@@ -34,8 +38,14 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
       </p>
 
       {/* 空港選択部 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-        <div>
+      <div
+        className={
+          isSplitLayout
+            ? 'grid grid-cols-1 gap-2 sm:gap-4 min-w-0'
+            : 'grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4'
+        }
+      >
+        <div className="min-w-0">
           <label htmlFor="departure" className="block text-xs sm:text-sm font-medium text-white mb-1">
             出発地
           </label>
@@ -47,10 +57,10 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
             onChange={(option) => setFlightPlan({ ...flightPlan, departure: option || undefined })}
             styles={planningRouteSelectStyles}
             classNamePrefix="react-select"
-            className="text-xs sm:text-sm"
+            className="text-xs sm:text-sm min-w-0"
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <label htmlFor="arrival" className="block text-xs sm:text-sm font-medium text-white mb-1">
             目的地
           </label>
@@ -62,13 +72,19 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
             onChange={(option) => setFlightPlan({ ...flightPlan, arrival: option || undefined })}
             styles={planningRouteSelectStyles}
             classNamePrefix="react-select"
-            className="text-xs sm:text-sm"
+            className="text-xs sm:text-sm min-w-0"
           />
         </div>
       </div>
 
-      <div className="mt-4 sm:mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <div>
+      <div
+        className={
+          isSplitLayout
+            ? 'mt-4 sm:mt-6 grid grid-cols-1 gap-4 sm:gap-6'
+            : 'mt-4 sm:mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'
+        }
+      >
+        <div className="min-w-0">
           <WaypointAddPanel
             flightPlan={flightPlan}
             setFlightPlan={setFlightPlan}
@@ -77,10 +93,10 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
           />
         </div>
 
-        <div>
+        <div className="min-w-0">
           <div className="p-3 sm:p-4 rounded-lg border border-whiskyPapa-yellow/20">
             <h3 className="text-sm sm:text-md font-medium text-white mb-2 sm:mb-3">ウェイポイントリスト</h3>
-            <WaypointList flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
+            <WaypointList layout={layout} flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
           </div>
         </div>
       </div>

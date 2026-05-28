@@ -64,7 +64,8 @@ ISO 週のつながりは既存表に合わせ、**実作業ブロック**は次
 
 - [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) §6–§7  
 - [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)  
-- [June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)（6月への接続）
+- [June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)（6月 DONE・優先）  
+- [June_2026_Content_Sprint.md](June_2026_Content_Sprint.md)（**W23〜W26** 実行メモ・ゲート §7）
 
 ---
 
@@ -74,7 +75,7 @@ ISO 週のつながりは既存表に合わせ、**実作業ブロック**は次
 |---------|------|-----------|
 | **A / W20** | **完了** | [`3.2.7_LiftAndDrag`](../src/content/lessons/3.2.7_LiftAndDrag.mdx)、[`PPL-1-1-3`](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx)、[`PPL-1-1-4`](../src/content/lessons/PPL-1-1-4_DragBasics.mdx)。|
 | **B / W21** | **完了** | [`3.2.8_PowerAndPerformance`](../src/content/lessons/3.2.8_PowerAndPerformance.mdx)（$HP_R$/$HP_A$・Vx/Vy ハック等）、[`PPL-1-1-9_FlightPerformance`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx)（CPL 3.2.8 への扉）。 |
-| **C / W22** | **進行中** | 主軸 [`3.2.9_PitotStaticSystem`](../src/content/lessons/3.2.9_PitotStaticSystem.mdx)、[`PPL-1-2-2_PitotStatic`](../src/content/lessons/PPL-1-2-2_PitotStatic.mdx)。素案 [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。 |
+| **C / W22** | **完了**（本文化・体裁） | 主軸 [`3.2.9_PitotStaticSystem`](../src/content/lessons/3.2.9_PitotStaticSystem.mdx)、[`PPL-1-2-2_PitotStatic`](../src/content/lessons/PPL-1-2-2_PitotStatic.mdx)。素案 [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。**(W23)**: `3.2.9` に `3.2.7`／`3.2.8` の関連リンク追記。任意の法規 `3.1.1`〜`3.1.3` は [June ブロック D](June_2026_Content_Sprint.md) で着手。 |
 
 ---
 

@@ -15,8 +15,11 @@ import {
 } from '../planningMapLayerPreferences';
 import type { PlanningMapRegion } from '../planningMapTypes';
 import {
+  applyEnabledCatalogLayersToMap,
   bringWaypointLayerToFront,
   getWaypointRegionOverlayIds,
+  mergeCatalogEntries,
+  removeCatalogLayersFromMap,
   resolveOverlayLayer,
   type PlanningMapOverlayGroups,
 } from '../mapLayerUtils';
@@ -91,6 +94,10 @@ export function usePlanningMapLayerController({
   );
 
   const initializedRef = useRef(false);
+  const prevOverlayLayersRef = useRef<PlanningMapOverlayGroups | null>(null);
+  const prevCatalogRef = useRef<MapLayerCatalogEntry[]>([]);
+  const enabledOverlayIdsRef = useRef(enabledOverlayIds);
+  enabledOverlayIdsRef.current = enabledOverlayIds;
 
   const persistPreferences = useDebouncedCallback(
     (base: MapBaseLayerId, enabled: Set<string>, preset: MapLayerPresetId | null) => {
@@ -163,7 +170,11 @@ export function usePlanningMapLayerController({
 
   const removeOverlayFromMap = useCallback(
     (entry: MapLayerCatalogEntry, layer: L.Layer) => {
-      if (!map || !map.hasLayer(layer)) return;
+      if (!map) return;
+      if (!map.hasLayer(layer)) {
+        syncReferenceLayerState(entry.id, false, referenceLayerSetters);
+        return;
+      }
 
       map.removeLayer(layer);
       syncReferenceLayerState(entry.id, false, referenceLayerSetters);
@@ -296,15 +307,11 @@ export function usePlanningMapLayerController({
     applyBaseLayerToMap(baseLayerId);
 
     const ids = new Set(initialPrefs.enabledOverlayIds);
-    for (const overlayId of ids) {
-      const entry = getCatalogEntryById(catalog, overlayId);
-      if (!entry) continue;
-      const layer = resolveOverlayLayer(overlayLayers, entry);
-      if (layer) {
-        addOverlayToMap(entry, layer);
-      }
-    }
+    applyEnabledCatalogLayersToMap(map, catalog, overlayLayers, ids, addOverlayToMap);
     setEnabledOverlayIds(ids);
+
+    prevOverlayLayersRef.current = overlayLayers;
+    prevCatalogRef.current = catalog;
   }, [
     map,
     baseLayerId,
@@ -313,6 +320,60 @@ export function usePlanningMapLayerController({
     overlayLayers,
     applyBaseLayerToMap,
     addOverlayToMap,
+  ]);
+
+  // overlayLayers / catalog 世代差し替え時: 旧インスタンスを除去し enabled を再適用
+  useEffect(() => {
+    if (!map || !initializedRef.current) return;
+
+    const prevLayers = prevOverlayLayersRef.current;
+    const prevCatalog = prevCatalogRef.current;
+    const layersUnchanged = prevLayers === overlayLayers;
+    const catalogUnchanged = prevCatalog === catalog;
+    if (layersUnchanged && catalogUnchanged) return;
+
+    if (prevLayers) {
+      const mergedCatalog = mergeCatalogEntries(prevCatalog, catalog);
+      removeCatalogLayersFromMap(map, mergedCatalog, prevLayers, removeOverlayFromMap);
+    }
+
+    let idsToApply = enabledOverlayIdsRef.current;
+    if (!catalogUnchanged) {
+      const mergedIds = new Set(idsToApply);
+      let changed = false;
+      for (const overlayId of initialPrefs.enabledOverlayIds) {
+        if (knownIds.has(overlayId) && !mergedIds.has(overlayId)) {
+          mergedIds.add(overlayId);
+          changed = true;
+        }
+      }
+      if (changed) {
+        idsToApply = mergedIds;
+        setEnabledOverlayIds(mergedIds);
+      }
+    }
+
+    for (const entry of catalog) {
+      syncReferenceLayerState(
+        entry.id,
+        idsToApply.has(entry.id),
+        referenceLayerSetters,
+      );
+    }
+
+    applyEnabledCatalogLayersToMap(map, catalog, overlayLayers, idsToApply, addOverlayToMap);
+
+    prevOverlayLayersRef.current = overlayLayers;
+    prevCatalogRef.current = catalog;
+  }, [
+    map,
+    overlayLayers,
+    catalog,
+    initialPrefs.enabledOverlayIds,
+    knownIds,
+    addOverlayToMap,
+    removeOverlayFromMap,
+    referenceLayerSetters,
   ]);
 
   const activeLayerLabels = useMemo(() => {

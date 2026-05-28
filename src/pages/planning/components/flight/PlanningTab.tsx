@@ -31,8 +31,14 @@ import FlightParameters from './FlightParameters';
 import { FlightSummary } from './FlightSummary';
 import PlanPrintView from './PlanPrintView';
 import RoutePlanning from './RoutePlanning';
+import {
+  planningTabPrintWrapperClass,
+  planningTabRootGridClass,
+  type PlanningPanelLayout,
+} from '../../planningPanelLayout';
 
 interface PlanningTabProps {
+  layout?: PlanningPanelLayout;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
   tracks: FlightTrack[];
@@ -50,6 +56,7 @@ interface PlanningTabProps {
 const DRAFT_NOTICE_DISMISS_KEY = 'fa-plan-draft-notice-dismissed-v1';
 
 const PlanningTab: React.FC<PlanningTabProps> = ({
+  layout = 'full',
   flightPlan,
   setFlightPlan,
   tracks,
@@ -59,6 +66,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   onClearLocalDraft,
   lastSavedAt = null,
 }) => {
+  const isSplitLayout = layout === 'split';
   const [airportOptions, setAirportOptions] = React.useState<AirportGroupOption[]>([]);
   const [navaidOptions, setNavaidOptions] = React.useState<NavaidOption[]>([]);
   const [waypointOptions, setWaypointOptions] = React.useState<WaypointOption[]>([]);
@@ -496,8 +504,8 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   }, [printRequested, flightPlan.routeSegments]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-      <div className="lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6">
+    <div className={planningTabRootGridClass(layout)}>
+      <div className={isSplitLayout ? 'space-y-3 sm:space-y-4 md:space-y-6' : 'lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6'}>
         <div className="bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-lg p-3 sm:p-4 md:p-5 flex flex-col gap-3 print-hide">
           {draftNoticeVisible && (
             <div
@@ -516,8 +524,14 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
               </button>
             </div>
           )}
-          <div className="flex flex-col lg:flex-row lg:items-end gap-3">
-            <div className="flex-1 min-w-[180px]">
+          <div
+            className={
+              isSplitLayout
+                ? 'flex flex-col gap-3'
+                : 'flex flex-col lg:flex-row lg:items-end gap-3'
+            }
+          >
+            <div className="flex-1 min-w-0 sm:min-w-[180px]">
               <label className="block text-xs sm:text-sm font-medium text-white mb-1">機体プリセット</label>
               <select
                 value={selectedPreset?.id ?? ''}
@@ -533,7 +547,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
                 巡航FF: {selectedPreset?.cruiseFuelFlowLbPerHr ?? '--'} lb/hr / 予備: {selectedPreset?.reserveFuelLb ?? '--'} lb / タキシー: {selectedPreset?.taxiFuelLb ?? '--'} lb
               </div>
             </div>
-            <div className="w-full lg:w-48">
+            <div className={isSplitLayout ? 'w-full' : 'w-full lg:w-48'}>
               <label className="block text-xs sm:text-sm font-medium text-white mb-1">初期燃料 (lb)</label>
               <input
                 type="number"
@@ -542,7 +556,13 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
                 className="w-full min-h-[44px] bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/30 rounded px-2 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow"
               />
             </div>
-            <div className="flex flex-wrap items-center gap-2 w-full lg:flex-1 lg:justify-end">
+            <div
+              className={
+                isSplitLayout
+                  ? 'flex flex-wrap items-center gap-2 w-full'
+                  : 'flex flex-wrap items-center gap-2 w-full lg:flex-1 lg:justify-end'
+              }
+            >
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
@@ -657,33 +677,44 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         </Transition>
       </div>
 
-      <div className="lg:col-span-2 space-y-3 sm:space-y-4 md:space-y-6">
-        {/* FlightParameters コンポーネントを配置 */}
+      <div
+        className={
+          isSplitLayout
+            ? 'space-y-3 sm:space-y-4 md:space-y-6 min-w-0'
+            : 'lg:col-span-2 space-y-3 sm:space-y-4 md:space-y-6'
+        }
+      >
         <FlightParameters
+          layout={layout}
           flightPlan={flightPlan}
           setFlightPlan={setFlightPlan}
         />
 
-        {/* RoutePlanning コンポーネントを配置 */}
         <RoutePlanning
+          layout={layout}
           flightPlan={flightPlan}
           setFlightPlan={setFlightPlan}
           airportOptions={airportOptions}
           navaidOptions={navaidOptions}
           waypointOptions={waypointOptions}
         />
+
+        {isSplitLayout && (
+          <FlightSummary layout={layout} flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
+        )}
       </div>
 
-      <div className="space-y-3 sm:space-y-4 md:space-y-6">
-        {/* FlightSummary コンポーネントを配置 */}
-        <FlightSummary flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
-      </div>
+      {!isSplitLayout && (
+        <div className="space-y-3 sm:space-y-4 md:space-y-6">
+          <FlightSummary layout={layout} flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
+        </div>
+      )}
 
-      <div className="lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6">
+      <div className={isSplitLayout ? 'space-y-3 sm:space-y-4 md:space-y-6' : 'lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6'}>
         <details className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-950/30 p-2" open>
           <summary className="cursor-pointer px-2 py-1 text-sm font-semibold text-whiskyPapa-yellow">Preflight Briefing</summary>
           <div className="mt-2">
-            <PreflightBriefingPanel flightPlan={flightPlan} />
+            <PreflightBriefingPanel flightPlan={flightPlan} layout={layout} />
           </div>
         </details>
         <details className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-950/30 p-2">
@@ -707,7 +738,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
       </div>
 
       {/* 印刷専用ビュー（画面では非表示、印刷時のみ表示） */}
-      <div className="lg:col-span-3">
+      <div className={planningTabPrintWrapperClass(layout)}>
         <PlanPrintView flightPlan={flightPlan} />
       </div>
     </div>

@@ -15,6 +15,8 @@ type Props = {
   open: boolean;
   onClose: () => void;
   windGridLegend: WindGridMapOverlayModel | null;
+  /** false のとき lg でもボトムシート（split 左列が狭いときの地図圧迫回避） */
+  useInlineSidebar?: boolean;
 };
 
 function PanelHeader({ onClose }: { onClose: () => void }) {
@@ -36,9 +38,15 @@ function PanelHeader({ onClose }: { onClose: () => void }) {
   );
 }
 
-export const MapLayersPanel: React.FC<Props> = ({ open, onClose, windGridLegend }) => {
+export const MapLayersPanel: React.FC<Props> = ({
+  open,
+  onClose,
+  windGridLegend,
+  useInlineSidebar = true,
+}) => {
   const controller = usePlanningMapLayerControllerContext();
   const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const showInlineSidebar = isDesktop && useInlineSidebar;
   const [searchQuery, setSearchQuery] = useState('');
 
   const groupedEntries = useMemo(() => {
@@ -55,8 +63,8 @@ export const MapLayersPanel: React.FC<Props> = ({ open, onClose, windGridLegend 
 
   if (!open || !controller) return null;
 
-  const presetDefaultOpen = isDesktop;
-  const baseLayerDefaultOpen = isDesktop;
+  const presetDefaultOpen = showInlineSidebar;
+  const baseLayerDefaultOpen = showInlineSidebar;
 
   const scrollContent = (
     <>
@@ -71,7 +79,7 @@ export const MapLayersPanel: React.FC<Props> = ({ open, onClose, windGridLegend 
         />
       </div>
 
-      {isDesktop ? (
+      {showInlineSidebar ? (
         <>
           <div className="border-b border-whiskyPapa-yellow/20 px-3 py-2">
             <p className="mb-1.5 text-2xs font-semibold uppercase tracking-wide text-gray-400">プリセット</p>
@@ -189,7 +197,7 @@ export const MapLayersPanel: React.FC<Props> = ({ open, onClose, windGridLegend 
     </div>
   );
 
-  if (isDesktop) {
+  if (showInlineSidebar) {
     return (
       <aside
         className="flex h-full min-h-0 w-[17.5rem] shrink-0 flex-col border-l border-whiskyPapa-yellow/30 bg-whiskyPapa-black-dark/98"

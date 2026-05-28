@@ -5,8 +5,10 @@ import { calculateAirspeeds, calculateTAS } from '../../../../utils';
 import { parseFlightPlanTime } from '../../../../utils/flightTime';
 import { formatBearing } from '../../../../utils/format';
 import { tailwindComponentKt } from '../../../../utils/windComponents';
+import type { PlanningPanelLayout } from '../../planningPanelLayout';
 
 interface FlightSummaryProps {
+  layout?: PlanningPanelLayout;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
 }
@@ -15,7 +17,8 @@ interface FlightSummaryProps {
  * Flight Summary コンポーネント
  * 総距離、ETE、ETAの表示を行う
  */
-export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFlightPlan }) => {
+export const FlightSummary: React.FC<FlightSummaryProps> = ({ layout = 'full', flightPlan, setFlightPlan }) => {
+  const isSplitLayout = layout === 'split';
   // 時間を「hh:mm:ss」形式でフォーマットする関数
   const formatTime = useCallback((date: Date): string => {
     if (isNaN(date.getTime())) {
@@ -239,7 +242,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ flightPlan, setFli
     <div className="bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-lg p-4 md:p-6">
       <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-white">フライトサマリー</h2>
       <div className="space-y-3 md:space-y-4">
-        <div className="grid grid-cols-2 gap-3">
+        <div className={isSplitLayout ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : 'grid grid-cols-2 gap-3'}>
           <div className="p-2 md:p-3 rounded-md border border-whiskyPapa-yellow/20">
             <div className="text-xs text-gray-300">合計距離</div>
             <div className="text-sm md:text-base font-medium text-white">

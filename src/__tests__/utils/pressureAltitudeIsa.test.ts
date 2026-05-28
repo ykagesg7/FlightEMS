@@ -8,6 +8,17 @@ describe('pressureAltitudeIsa', () => {
     expect(ft).toBeLessThan(32_000);
   });
 
+  it('returns 0 when pressure at or above sea-level standard (no climb envelope)', () => {
+    expect(approxGeopotentialFeetIsaFromPressureHpa(1013.25)).toBe(0);
+    expect(approxGeopotentialFeetIsaFromPressureHpa(1020)).toBe(0);
+  });
+
+  it('returns ~1770 ft for 950 hPa (ISA approx, sanity below MSL standard)', () => {
+    const ft = approxGeopotentialFeetIsaFromPressureHpa(950);
+    expect(ft).toBeGreaterThan(1700);
+    expect(ft).toBeLessThan(1850);
+  });
+
   it('returns 0 for invalid pressure', () => {
     expect(approxGeopotentialFeetIsaFromPressureHpa(0)).toBe(0);
     expect(approxGeopotentialFeetIsaFromPressureHpa(2000)).toBe(0);

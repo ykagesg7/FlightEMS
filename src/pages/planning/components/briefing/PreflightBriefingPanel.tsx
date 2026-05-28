@@ -3,8 +3,11 @@ import type { FlightPlan } from '../../../../types';
 import { buildPreflightBriefing } from '../../briefing/buildPreflightBriefing';
 import type { BriefingItem } from '../../briefing/briefingTypes';
 
+import type { PlanningPanelLayout } from '../../planningPanelLayout';
+
 interface PreflightBriefingPanelProps {
   flightPlan: FlightPlan;
+  layout?: PlanningPanelLayout;
 }
 
 function ItemList({ items }: { items: BriefingItem[] }) {
@@ -20,15 +23,25 @@ function ItemList({ items }: { items: BriefingItem[] }) {
   );
 }
 
-export const PreflightBriefingPanel: React.FC<PreflightBriefingPanelProps> = ({ flightPlan }) => {
+export const PreflightBriefingPanel: React.FC<PreflightBriefingPanelProps> = ({
+  flightPlan,
+  layout = 'full',
+}) => {
+  const isSplitLayout = layout === 'split';
   const briefing = useMemo(() => buildPreflightBriefing(flightPlan), [flightPlan]);
 
   return (
-    <section className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-900/70 p-4">
+    <section className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-900/70 p-4 min-w-0">
       <h3 className="text-lg font-semibold text-whiskyPapa-yellow">Preflight Briefing</h3>
       <p className="mt-1 text-xs text-gray-400">計画・NavLog・燃料・気象/NOTAM確認導線を一箇所に集約します。</p>
 
-      <div className="mt-4 grid gap-4 xl:grid-cols-2">
+      <div
+        className={
+          isSplitLayout
+            ? 'mt-4 grid grid-cols-1 gap-4'
+            : 'mt-4 grid grid-cols-1 gap-4 xl:grid-cols-2'
+        }
+      >
         <div>
           <h4 className="text-sm font-semibold text-gray-200">Route Summary</h4>
           <ItemList items={briefing.routeSummary} />

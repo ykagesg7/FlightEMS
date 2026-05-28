@@ -275,7 +275,8 @@
 ---
 
 ## 📜 Subject 5: 航空法規 (Aviation Law)
-> **空のルールを遵守し、法的な責任を果たす。**
+> **空のルールを遵守し、法的な責任を果たす。**  
+> **記事ツリーの構成案（CPL `3.1.x` との対応・推奨 stem）**: [content_outlines/PPL_Subject5_Aviation_Law_Structure.md](content_outlines/PPL_Subject5_Aviation_Law_Structure.md)
 
 ### 5-1. 航空法の体系
 - [ ] **Phase 2** 国際条約: シカゴ条約の概要
@@ -470,8 +471,7 @@ src/content/lessons/
 | 2026-01-30 | Phase 1記事1件追加（PPL-1-2-6_IgnitionMagneto: マグネトー） | System |
 | 2026-02-01 | Phase 2記事1件追加（PPL-1-2-7_LubricationCooling: オイルと冷却） | System |
 | 2026-03-01 | Phase 1記事1件追加（PPL-1-1-9_FlightPerformance: 飛行性能） | System |
-
----
+| 2026-05-13 | Subject 5 に **法規記事構成案**へのリンクを追加（`content_outlines/PPL_Subject5_Aviation_Law_Structure.md`） | — |
 
 ## 📚 参考資料
 

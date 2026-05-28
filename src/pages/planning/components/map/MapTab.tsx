@@ -25,6 +25,8 @@ import { MapLayersPanel } from './MapLayersPanel';
 import { MapTabContent } from './MapTabContent';
 import { MapToolbar } from './MapToolbar';
 import './mapStyles.css';
+import type { PlanningPanelLayout } from '../../planningPanelLayout';
+import { mapLayersUseInlineSidebar } from '../../planningPanelLayout';
 
 const MAP_DBLCLICK_HINT_DISMISSED_KEY = 'planning-map-dblclick-hint-dismissed';
 
@@ -38,19 +40,28 @@ const DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 interface MapTabProps {
+  layout?: PlanningPanelLayout;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
   tracks: FlightTrack[];
   currentTrackTime: number | null;
 }
 
-const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan, tracks, currentTrackTime }) => {
+const MapTab: React.FC<MapTabProps> = ({
+  layout = 'full',
+  flightPlan,
+  setFlightPlan,
+  tracks,
+  currentTrackTime,
+}) => {
   const [map, setMap] = useState<L.Map | null>(null);
   const [windGridLegend, setWindGridLegend] = useState<WindGridMapOverlayModel | null>(null);
   const [layerController, setLayerController] = useState<PlanningMapLayerController | null>(null);
   const [layersOpen, setLayersOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const isXl = useMediaQuery('(min-width: 1280px)');
+  const useInlineLayersSidebar = mapLayersUseInlineSidebar(layout, isXl);
   const [hintVisible, setHintVisible] = useState(() => {
     try {
       return localStorage.getItem(MAP_DBLCLICK_HINT_DISMISSED_KEY) !== '1';
@@ -77,7 +88,7 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan, tracks, curr
   const navaidData = useNavaidGeojson();
   useMapDoubleClickWaypoint(map, setFlightPlan);
   useCloseLayersOnMapClick(map, layersOpen, closeLayers);
-  useMapLayersOpenMapLock(map, layersOpen, isDesktop);
+  useMapLayersOpenMapLock(map, layersOpen, useInlineLayersSidebar);
   const cursorPosition = useMapCursorPosition(map);
   const navaidInfos = useCursorNearestNavaids(cursorPosition, navaidData);
 
@@ -196,6 +207,7 @@ const MapTab: React.FC<MapTabProps> = ({ flightPlan, setFlightPlan, tracks, curr
               open={layersOpen}
               onClose={closeLayers}
               windGridLegend={windGridLegend}
+              useInlineSidebar={useInlineLayersSidebar}
             />
           </div>
         </WindGridOverlaySetterContext.Provider>

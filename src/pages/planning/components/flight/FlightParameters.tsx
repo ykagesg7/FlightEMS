@@ -11,8 +11,11 @@ import {
   parseTimeString,
   SPEED_INCREMENT
 } from '../../../../utils';
+import type { PlanningPanelLayout } from '../../planningPanelLayout';
+import { flightParametersGridClass } from '../../planningPanelLayout';
 
 interface FlightParametersProps {
+  layout?: PlanningPanelLayout;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
 }
@@ -23,9 +26,11 @@ interface FlightParametersProps {
  * 高精度計算モデルのみを使用
  */
 const FlightParameters: React.FC<FlightParametersProps> = ({
+  layout = 'full',
   flightPlan,
   setFlightPlan,
 }) => {
+  const isSplitLayout = layout === 'split';
   const { weatherCache, setWeatherCache } = useWeatherCache(); // Contextから取得
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -212,7 +217,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   return (
     <div className="bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-lg p-3 sm:p-4 md:p-6">
       <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 text-white">フライトパラメータ</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
+      <div className={flightParametersGridClass(layout)}>
         {/* 左側: 速度計関連のパラメータ */}
         <div className="space-y-2 sm:space-y-3">
           <div className="mb-1">
@@ -374,15 +379,15 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
           </div>
         </div>
 
-        <div className="sm:col-span-2 lg:col-span-3 mt-1 pt-3 border-t border-whiskyPapa-yellow/20">
+        <div className={isSplitLayout ? 'sm:col-span-2 mt-1 pt-3 border-t border-whiskyPapa-yellow/20' : 'sm:col-span-2 lg:col-span-3 mt-1 pt-3 border-t border-whiskyPapa-yellow/20'}>
           <label className="flex items-start gap-2 text-xs sm:text-sm text-gray-200 cursor-pointer select-none">
             <input
               type="checkbox"
-              className="mt-0.5 rounded border-whiskyPapa-yellow/40 text-whiskyPapa-yellow focus:ring-whiskyPapa-yellow"
+              className="mt-0.5 shrink-0 rounded border-whiskyPapa-yellow/40 text-whiskyPapa-yellow focus:ring-whiskyPapa-yellow"
               checked={flightPlan.useOpenMeteoWind === true}
               onChange={handleOpenMeteoWindToggle}
             />
-            <span>
+            <span className="break-words">
               Open-Meteo の上層風をセグメント ETE・燃料に反映する（参考・非商用 API）
             </span>
           </label>

@@ -3,7 +3,7 @@
 **作成日**: 2026-05-07  
 **位置づけ**: [Phase C](01_Current_Status_and_Roadmap.md)（2026年6–7月）の **前半**にあたる、**コンテンツ拡充と品質基盤**に焦点を絞った実行計画。戦略・柱の正本は [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)、**プロダクト成長・NSM・気象/通信 PMF スライス**は [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)、ロードマップ・フェーズ KPI は [01](01_Current_Status_and_Roadmap.md)、長期バックログは [06_Long_Term_Execution.md](06_Long_Term_Execution.md)。
 
-**週次の正本**: [05_Content_Pipeline.md](05_Content_Pipeline.md) Phase 2 の **週次着手記録表**と **Phase 2 暫定 KPI**。本ファイルはその **6月ぶんのゴール設定と優先順位** をまとめる。
+**週次の正本**: [05_Content_Pipeline.md](05_Content_Pipeline.md) Phase 2 の **週次着手記録表**と **Phase 2 暫定 KPI**。**実行メモ（ブロック D〜G・ゲート §7）**: [June_2026_Content_Sprint.md](June_2026_Content_Sprint.md)。本ファイルは **6月ぶんのゴール設定と優先順位** をまとめる。
 
 ---
 
@@ -38,6 +38,17 @@
 
 - **W26** が月境界をまたぐ。**6月末ゲートの数値・メモ**は **[Phase_C の 2026-06 末行](Phase_C_Quality_Preparation.md)** と [01 の更新履歴](01_Current_Status_and_Roadmap.md) に集約してよい。
 - 各週の「着手本数」は [05 の暫定 KPI](05_Content_Pipeline.md)（**着手単位 2〜4**）をそのまま目安とする。
+
+### 2.1 W23〜W26 週別サマリー（実行メモ）
+
+**実績の記録場所**は [05 の週次表](05_Content_Pipeline.md)。ここでは **[June コンテンツスプリント](June_2026_Content_Sprint.md)** と同じ優先を **一覧**だけ示す。**六月末の手順一覧**は同スプリント **§7**。
+
+| 週 | 目安締め | フォーカス（要約） |
+|----|-----------|-------------------|
+| **2026-W23** | （〜2026-06-10） | **[May §2 ブロック C](May_2026_Late_Content_Sprint.md) の未完を最優先**。**法規 `3.1.1`〜`3.1.3`** 体裁。工学 **`3.2.7`〜`3.2.9`** の相互リンク・体裁。[14 §6](Article_Coverage_Backlog.md) 上位クラスタ 1 つへ **`learning_test_mapping` 追補**。**[06 §1.2](06_Long_Term_Execution.md) B-4** を週単位で分割。 |
+| **2026-W24** | （〜2026-06-17） | [14 §7 Tier A](Article_Coverage_Backlog.md)（例: **総則/目的・航法計器系**）の記事側拡張＋マッピング。**Tier B** から 1 本のマッピング精緻化。**PPL**: CPL の **復習 Callout** を累計目標へ積増し。 |
+| **2026-W25** | （〜2026-06-24） | **マッピング 1 サイクル**: [14 §5](Article_Coverage_Backlog.md) 手順で MCP スナップショットを取り、[14](Article_Coverage_Backlog.md) に日付・数値。**Tier A/B** の残枠、性能と耐空性 ↔ **PPL-1-1-9** の役割整理。**B-4** の続き。 |
+| **2026-W26** | （〜2026-07-01） | **六月末ゲート**: `npm run test:coverage` → **`FlightAcademyTsx/src/` Statements 実効** を [Phase_C §4](Phase_C_Quality_Preparation.md)、[01 更新履歴](01_Current_Status_and_Roadmap.md) に反映。[Phase_C §2–§3](Phase_C_Quality_Preparation.md) に従う **Lighthouse/A11y 監査メモ**。**注意**: `.gitignore` 衝突回避のため **アーティファクト名は `phase` で始めない**（§5）。六月 PPL／CPL 未達時は **[01](01_Current_Status_and_Roadmap.md)** に延期理由 1 行。 |
 
 ---
 
@@ -104,6 +115,7 @@
 | マッピング・スナップショット | [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)、[scripts/database/INDEX.md](scripts/database/INDEX.md) |
 | 品質・カバレッジ・Lighthouse メモ | [Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md) |
 | PPL の木 | [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md) |
+| 六月週次ブロック・ゲート手順 | [June_2026_Content_Sprint.md](June_2026_Content_Sprint.md) |
 
 ---
 
@@ -111,4 +123,5 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-05-12 | **§2.1 W23〜W26 週別サマリー**と [June_2026_Content_Sprint.md](June_2026_Content_Sprint.md) を参照一覧に追加。 |
 | 2026-05-07 | 初版。6月のみの DONE 条件・W23–W26・CPL/PPL の優先と B-4・Phase C 準備の境界を定義。 |

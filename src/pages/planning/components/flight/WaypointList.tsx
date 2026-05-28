@@ -4,8 +4,10 @@ import { FlightPlan, Waypoint } from '../../../../types/index';
 import { decimalToDMS, dmsToDecimal, formatDMS } from '../../../../utils';
 import { formatBearing, formatDistance } from '../../../../utils/format';
 import { calculateOffsetPoint as offsetCalculateOffsetPoint } from '../../../../utils/offset';
+import type { PlanningPanelLayout } from '../../planningPanelLayout';
 
 interface WaypointListProps {
+  layout?: PlanningPanelLayout;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
 }
@@ -14,7 +16,8 @@ interface WaypointListProps {
  * Waypoint List コンポーネント
  * ウェイポイントのリスト表示と操作（移動、削除、各種編集モード）を行う
  */
-const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }) => {
+const WaypointList: React.FC<WaypointListProps> = ({ layout = 'full', flightPlan, setFlightPlan }) => {
+  const isSplitLayout = layout === 'split';
   interface EditingState {
     index: number | null;
     mode: 'name' | 'id' | 'position' | null;
@@ -209,14 +212,22 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
   };
 
   return (
-    <div className="shadow-sm rounded-lg p-6 bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 text-white">
-      <legend className="text-lg font-semibold mb-4 text-gray-50">Waypoint List</legend>
-      <ul>
+    <div
+      className={
+        isSplitLayout
+          ? 'rounded-lg p-0 bg-transparent border-0 text-white min-w-0'
+          : 'shadow-sm rounded-lg p-6 bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 text-white min-w-0'
+      }
+    >
+      {!isSplitLayout && (
+        <legend className="text-lg font-semibold mb-4 text-gray-50">Waypoint List</legend>
+      )}
+      <ul className="min-w-0">
         {flightPlan.waypoints.map((waypoint: Waypoint, index: number) => (
-          <li key={index} className="mb-4 p-4 border rounded-lg border-gray-700 bg-gray-700">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <MapPin className="w-4 h-4 text-blue-500" />
+          <li key={index} className="mb-4 p-3 sm:p-4 border rounded-lg border-gray-700 bg-gray-700 min-w-0">
+            <div className="flex justify-between items-start gap-2 min-w-0">
+              <div className="flex items-center space-x-2 min-w-0 flex-1">
+                <MapPin className="w-4 h-4 shrink-0 text-blue-500" />
                 {/* ウェイポイント名 (1行目) */}
                 {editingWaypointIndex === index ? (
                   <input
@@ -237,7 +248,7 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
                 ) : (
                   <button
                     onClick={() => handleStartEdit(index, 'name')}
-                    className="text-left hover:underline font-semibold text-gray-50"
+                    className="text-left hover:underline font-semibold text-gray-50 truncate min-w-0 max-w-full"
                   >
                     {waypoint.name}
                   </button>
@@ -253,7 +264,7 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
               )}
 
               {/* ウェイポイントの移動と削除ボタン */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 shrink-0">
                 <button onClick={() => handleMoveWaypointUp(index)} className="p-1 rounded-full hover:bg-gray-700 text-gray-50" aria-label="Move Waypoint Up"><ChevronUp className="w-4 h-4" /></button>
                 <button onClick={() => handleMoveWaypointDown(index)} className="p-1 rounded-full hover:bg-gray-700 text-gray-50" aria-label="Move Waypoint Down"><ChevronDown className="w-4 h-4" /></button>
                 <button onClick={() => handleRemoveWaypoint(index)} className="p-1 rounded-full hover:bg-red-700 text-red-500" aria-label="Remove Waypoint">
@@ -263,7 +274,7 @@ const WaypointList: React.FC<WaypointListProps> = ({ flightPlan, setFlightPlan }
             </div>
 
             {/* 詳細情報の表示 (ID, 位置) */}
-            <div className="text-sm text-gray-400 mt-1">
+            <div className="text-sm text-gray-400 mt-1 min-w-0 break-all">
               {/* ID (2行目) - 編集モード */}
               {editingMode === 'id' && editingIndex === index ? (
                 <div className="space-y-2">

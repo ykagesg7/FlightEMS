@@ -37,9 +37,9 @@ function PlanningMapPageInner({
   onClearLocalDraft,
   lastSavedAt,
 }: PlanningMapPageInnerProps) {
-  const isLg = useMediaQuery('(min-width: 1024px)');
+  const isXl = useMediaQuery('(min-width: 1280px)');
 
-  if (isLg) {
+  if (isXl) {
     return (
       <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
         <div className="px-4 pt-4 pb-2 shrink-0">
@@ -51,9 +51,10 @@ function PlanningMapPageInner({
             Mission Dashboardへ戻る
           </Link>
         </div>
-        <div className="mb-2 flex-1 grid grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] gap-0 items-stretch min-h-[calc(100vh-5rem)]">
-          <div className="overflow-y-auto border-r border-whiskyPapa-yellow/20 p-2 sm:p-4 md:p-6 min-h-0">
+        <div className="mb-2 flex-1 grid grid-cols-[minmax(28rem,1.05fr)_minmax(0,1fr)] gap-0 items-stretch min-h-[calc(100vh-5rem)] min-w-0">
+          <div className="overflow-y-auto overflow-x-hidden border-r border-whiskyPapa-yellow/20 p-2 sm:p-4 md:p-6 min-h-0 min-w-0">
             <PlanningTab
+              layout="split"
               flightPlan={flightPlan}
               setFlightPlan={setFlightPlan}
               tracks={tracks}
@@ -63,8 +64,9 @@ function PlanningMapPageInner({
               onClearLocalDraft={onClearLocalDraft}
             />
           </div>
-          <div className="h-full min-h-[calc(100vh-5rem)]">
+          <div className="h-full min-h-[calc(100vh-5rem)] min-w-0">
             <MapTab
+              layout="split"
               flightPlan={flightPlan}
               setFlightPlan={setFlightPlan}
               tracks={tracks}

@@ -1,8 +1,8 @@
 # CPL学科試験問題解説記事作成ロードマップ
 
 **作成日**: 2025年1月16日
-**最終更新**: 2026年5月9日（May 後半 **W21 完了／W22 素案**・週次表整合）
-**バージョン**: v1.4.1
+**最終更新**: 2026年5月12日（**W23 実行分**：[法規 3.1.1〜3.1.3 導線](June_2026_Content_Sprint.md)、`3.2.9` リンク、マッピング SQL 草案、B-4 追補）
+**バージョン**: v1.4.3
 
 ## 📖 このドキュメントを読むべき人
 
@@ -207,6 +207,10 @@ Phase 2 計画リスト上の **新規本文化** が一段落したフェーズ
 | **2026-W20**（〜2026-05-20） | **4** | ① **[May 後半ブロック A](May_2026_Late_Content_Sprint.md) 完了** — [`3.2.7_LiftAndDrag`](../src/content/lessons/3.2.7_LiftAndDrag.mdx) 深文化、[PPL `1-1-3`/`1-1-4`](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx) 「CPLへの扉」、[14 §1](Article_Coverage_Backlog.md) MCP 備考・未マッピング表確認。② **W20 用 Gemini 素案**は実装済みにつき削除（本文はコミット履歴参照）。|
 | **2026-W21**（〜2026-05-27） | **4** | ① **[May ブロック B — 完了](May_2026_Late_Content_Sprint.md)** — [`3.2.8_PowerAndPerformance`](../src/content/lessons/3.2.8_PowerAndPerformance.mdx) 深文化（$HP_R$/$HP_A$・Vx/Vy 等）、[`PPL-1-1-9`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx) 「CPL への扉」。**W21 Gemini 素案**は実装済みにつき削除（本文はコミット履歴参照）。② **[06 §1.2](06_Long_Term_Execution.md)** に沿ったユニットテスト追補など（方針どおり継続）。 |
 | **2026-W22**（〜2026-06-03） | **3**（目安） | ① **[May ブロック C](May_2026_Late_Content_Sprint.md)** — **`3.2.9_PitotStaticSystem` 深文化**＋**`PPL-1-2-2_PitotStatic`** 橋渡し。**素案**: [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。※余力で法規 `3.1.1`〜`3.1.3`。**② 月末ゲート**: `npm run test:coverage` → `FlightAcademyTsx/src/` の Statements 実効 を [Phase_C §4](Phase_C_Quality_Preparation.md)・[01 更新履歴](01_Current_Status_and_Roadmap.md) に転記。**Lighthouse/A11y** は自動検出のメモのみ（UI 変更なし）。 |
+| **2026-W23**（〜2026-06-10） | **4** | ① 法規 **`3.1.1_AviationLegal0`〜`3.1.3`** — シリーズ **Callout** ・`3.1.1` の tags から「スタブ」除去。② 工学 **`3.2.9`** に **`3.2.7`**／**`3.2.8`** の関連リンク追記。③ **マッピング**: **[`20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql`](../scripts/database/20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql)** — 航空法規 **`総則/目的`**（verified **14** 問）→`3.1.1`。**MCP 本番適用済み**（[14 §9](Article_Coverage_Backlog.md) 記録）。④ **B-4**: **`pressureAltitudeIsa.test.ts`** 拡張。 |
+| **2026-W24**（〜2026-06-17） | **2〜4**（目安） | **Tier A**: 例）総則/目的または航法計器系の **記事拡張＋マッピング**。**[14 §7 Tier B](Article_Coverage_Backlog.md)** から 1 本 **マッピング精緻化**。**PPL**: CPL 側 **復習 Callout** を 1〜2 単位追加（六月累計への寄与）。[June コンテンツスプリント](June_2026_Content_Sprint.md) を参照。 |
+| **2026-W25**（〜2026-06-24） | **2〜4**（目安） | **マッピング 1 サイクル**: [14 §5](Article_Coverage_Backlog.md) 手順どおり MCP 再集計 → [14](Article_Coverage_Backlog.md) ヘダ／§9 等へ **日付・主要数値**。**Tier A/B** の残枠、[14 §7](Article_Coverage_Backlog.md) **性能と耐空性／PPL-1-1-9 の役割**整理。**B-4** をここまでに段階的に積増。詳細・チェックリスト: [June スプリント §7](June_2026_Content_Sprint.md)。 |
+| **2026-W26**（〜2026-07-01） | **2〜4**（目安） | **六月末ゲート**: `npm run test:coverage` → **`FlightAcademyTsx/src/` Statements 実効** を [Phase_C §4](Phase_C_Quality_Preparation.md) **2026-06 末**行・[01 更新履歴](01_Current_Status_and_Roadmap.md) に記入。**[Phase_C §2–§3](Phase_C_Quality_Preparation.md)**: Lighthouse／A11y **自動検出メモのみ**（`artifacts/` に日付入りファイル名。ファイル名は **`phase` で始めない**）。六月 PPL／CPL 未達なら **[01](01_Current_Status_and_Roadmap.md)** に延期理由 1 行。 |
 
 ---
 
@@ -406,6 +410,8 @@ Phase 2 計画リスト上の **新規本文化** が一段落したフェーズ
 
 | 日付 | 更新内容 | 更新者 |
 |------|----------|--------|
+| 2026-05-12 | **W23 実績**を週次行に反映（法規 3.1.1〜3.1.3 導線、`3.2.9` クロスリンク、[`20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql`](../scripts/database/20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql)、`pressureAltitudeIsa` テスト）。W26 セルの文言整理。バージョン v1.4.3。 | — |
+| 2026-05-12 | Phase 2 **週次着手記録**: **2026-W23〜W26** を追加（六月の実行メモ・目安着手は [June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)／[June_2026_Content_Sprint.md](June_2026_Content_Sprint.md) と整合。**週末に実績で着手本数・メモを上書き**）。バージョン v1.4.2。 | — |
 | 2026-05-09 | Phase 2 **週次着手記録**を更新：**W21** を May [ブロック B](May_2026_Late_Content_Sprint.md) 実装済みと整合（`3.2.8`＋`PPL-1-1-9`）。**W21 Gemini フォルダ撤去**。**W22** はブロック **C**（`3.2.9`＋`PPL-1-2-2`）＋月末ゲート。素案 [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。バージョン v1.4.1。 | — |
 | 2026-05-08 | Phase 2 **週次着手記録**を更新：**W20** は May [ブロック A](May_2026_Late_Content_Sprint.md)（`3.2.7`＋PPL 橋渡し）実装済みと整合。**W21** は **ブロック B**（`3.2.8`＋`PPL-1-1-9`）と [06 §1.2](06_Long_Term_Execution.md) テスト追補の併記。W20 Gemini 素案ファイルは削除済み。**W21 素案**は content_outlines/W21_2026（**2026-05-09 削除**）。 | — |
 | 2026-05-06 | Phase 2 **週次着手記録**を追加（2026-W18）、次の深化候補（14・10・品質レビュー）を明記。バージョン v1.4.0 | — |
