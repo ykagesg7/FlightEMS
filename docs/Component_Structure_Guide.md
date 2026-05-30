@@ -204,7 +204,14 @@ src/pages/
 │           ├── MapTab.tsx
 │           ├── MapTabContent.tsx
 │           ├── MapToolbar.tsx              # アクティブレイヤーチップ・レイヤーボタン（lg+ で readout）
-│           ├── MapCursorFooter.tsx         # モバイル: 地図下座標フッター
+│           ├── MapMapOverlays.tsx          # 地図上 HUD + 空域スナップシートのオーケストレータ
+│           ├── MapCursorHudOverlay.tsx     # モバイル上端座標 HUD
+│           ├── MapAirspaceSheet.tsx        # 空域 peek/half/full スナップシート
+│           ├── AirspaceSheetBody.tsx       # 空域シート本文（アコーディオン）
+│           ├── snapSheetUtils.ts           # スナップ高さ・最近傍 snap 純関数
+│           ├── mapSelectionPanUtils.ts     # panBy 量計算
+│           ├── AirspaceDetailRows.tsx      # ACC/RAPCON 詳細行
+│           ├── airspaceDisplayUtils.ts     # 空域表示フォーマット（peek サマリー含む）
 │           ├── MapLayersPanel.tsx          # 右ドロワー / モバイルボトムシート
 │           ├── MapLayersPanelSection.tsx
 │           ├── MapLayersCollapsibleBlock.tsx
@@ -228,6 +235,10 @@ src/pages/
 │           │   ├── useWindBarbLayer.ts        # 格子からバーブ描画
 │           │   ├── useMapCursorPosition.ts
 │           │   ├── useMapDoubleClickWaypoint.ts
+│           │   ├── useAirspaceLayerClick.ts
+│           │   ├── useClearAirspaceOnMapClick.ts
+│           │   ├── useSnapSheet.ts
+│           │   ├── useMapSelectionPan.ts
 │           │   ├── useNavaidGeojson.ts
 │           │   └── useRegionsIndex.ts
 │           ├── layers/

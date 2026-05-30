@@ -6,7 +6,13 @@ import { FlightPlan } from '../../../../types/index';
 import { fetchAirportWeather as fetchAirportWeatherLayer } from './layers/airports';
 import { bindNavaidPopup, navaidMarkerOptions } from './layers/navaids';
 import { bindWaypointPopup } from './layers/waypoints';
-import { bindACCSectorPopup, bindRAPCONPopup } from './popups/airspacePopup';
+import {
+  sanitizeAirspaceDataset,
+  type AirspaceDataset,
+  type AirspaceSourceId,
+} from '../../../../utils/airspace';
+import { useAirspaceLayerClick } from './hooks/useAirspaceLayerClick';
+import type { AirspaceSelection } from './planningAirspaceTypes';
 import { fullAirportInfoContent, simplifiedAirportInfoContent } from './popups/airportPopup';
 import { bindPlanningSwimNotamButton, swimNotamButtonSection } from './popups/swimNotamPopup';
 import { FlightPlanRouteLayer } from './FlightPlanRouteLayer';
@@ -33,9 +39,10 @@ export interface MapTabContentProps {
   tracks: FlightTrack[];
   currentTrackTime: number | null;
   onLayerControllerChange?: (controller: PlanningMapLayerController | null) => void;
+  onAirspaceSelection?: (selection: AirspaceSelection) => void;
 }
 
-export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange }) => {
+export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange, onAirspaceSelection }) => {
   const liveTrafficLayerRef = useRef<L.LayerGroup | null>(null);
   if (!liveTrafficLayerRef.current) {
     liveTrafficLayerRef.current = L.layerGroup();
@@ -74,6 +81,12 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
   useEffect(() => {
     weatherCacheRef.current = weatherCache;
   }, [weatherCache]);
+
+  const airspaceDataRef = useRef<Record<AirspaceSourceId, AirspaceDataset | null>>({
+    ACC_Sector_High: null,
+    ACC_Sector_Low: null,
+    RAPCON: null,
+  });
 
   // 各フィーチャーをクリック時に詳細情報をポップアップ表示するための関数
   const onEachFeaturePopup = useCallback((feature: GeoJSON.Feature, layer: L.Layer) => {
@@ -151,21 +164,27 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
       }),
       "RAPCON": L.geoJSON(null, {
         style: { color: 'orange', weight: 2, opacity: 0.7 },
-        onEachFeature: (feature, layer) => bindRAPCONPopup(feature, layer)
       }),
       "ACC-Sector High": L.geoJSON(null, {
         style: { color: 'blue', weight: 2, opacity: 0.7 },
-        onEachFeature: (feature, layer) => bindACCSectorPopup(feature, layer)
       }),
       "ACC-Sector Low": L.geoJSON(null, {
         style: { color: 'green', weight: 2, opacity: 0.7 },
-        onEachFeature: (feature, layer) => bindACCSectorPopup(feature, layer)
       }),
       "航空機（参考・OpenSky）": liveTrafficLayerRef.current,
       "降水レーダー（参考・RainViewer）": rainViewerLayerRef.current,
       "上層風バーブ（参考・Open-Meteo）": windBarbsLayerRef.current,
     };
   }
+
+  const handleAirspaceSelection = useCallback(
+    (selection: AirspaceSelection) => {
+      onAirspaceSelection?.(selection);
+    },
+    [onAirspaceSelection],
+  );
+
+  useAirspaceLayerClick(map, commonLayersRef, airspaceDataRef, handleAirspaceSelection);
 
   const localLayersRef = useRef<{ RJFA: L.LayerGroup; RJFZ: L.LayerGroup } | null>(null);
   if (!localLayersRef.current) {
@@ -290,9 +309,26 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
         .catch(console.error);
     };
 
-    loadGeoJsonLayer('/geojson/ACC_Sector_High.geojson', 'ACC-Sector High');
-    loadGeoJsonLayer('/geojson/ACC_Sector_Low.geojson', 'ACC-Sector Low');
-    loadGeoJsonLayer('/geojson/RAPCON.geojson', 'RAPCON');
+    const loadAirspaceGeoJsonLayer = (
+      url: string,
+      layerKey: string,
+      sourceId: AirspaceSourceId,
+    ) => {
+      fetch(url)
+        .then(res => res.json())
+        .then((raw: AirspaceDataset) => {
+          const data = sanitizeAirspaceDataset(raw);
+          airspaceDataRef.current[sourceId] = data;
+          const layer = common[layerKey] as L.GeoJSON;
+          layer.clearLayers();
+          layer.addData(data);
+        })
+        .catch(console.error);
+    };
+
+    loadAirspaceGeoJsonLayer('/geojson/ACC_Sector_High.geojson', 'ACC-Sector High', 'ACC_Sector_High');
+    loadAirspaceGeoJsonLayer('/geojson/ACC_Sector_Low.geojson', 'ACC-Sector Low', 'ACC_Sector_Low');
+    loadAirspaceGeoJsonLayer('/geojson/RAPCON.geojson', 'RAPCON', 'RAPCON');
     loadGeoJsonLayer('/geojson/RestrictedAirspace.geojson', '制限空域');
     loadGeoJsonLayer('/geojson/TrainingAreaCivil.geojson', '民間訓練空域');
     loadGeoJsonLayer('/geojson/TrainingAreaHigh.geojson', '高高度訓練空域');

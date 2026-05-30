@@ -14,7 +14,7 @@
         "Callsign": "東京",
         "Freq_VHF": "HF Only",
         "Freq_UHF": "HF Only",
-        "Floor": "FL335",
+        "Floor": "SFC",
         "Ceiling": "UNL"
       },
       "geometry": {
@@ -43,7 +43,7 @@
         "Callsign": "東京",
         "Freq_VHF": "HF Only",
         "Freq_UHF": "HF Only",
-        "Floor": "FL335",
+        "Floor": "SFC",
         "Ceiling": "UNL"
       },
       "geometry": {
@@ -68,7 +68,7 @@
         "Callsign": "東京",
         "Freq_VHF": "HF Only",
         "Freq_UHF": "HF Only",
-        "Floor": "FL335",
+        "Floor": "SFC",
         "Ceiling": "UNL"
       },
       "geometry": {
@@ -97,14 +97,13 @@
         "Callsign": "東京",
         "Freq_VHF": "HF Only",
         "Freq_UHF": "HF Only",
-        "Floor": "FL335",
+        "Floor": "SFC",
         "Ceiling": "UNL"
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
-            [141.6700, 34.3083],
             [141.7533, 33.6164],
             [141.8717, 32.6181],
             [141.0967, 32.6181],
@@ -126,7 +125,7 @@
             [146.8178, 32.4639],
             [146.3056, 32.4503],
             [144.2822, 33.2872],
-            [142.3075, 34.0664]
+            [142.4667, 33.2794]
           ]
         ]
       }
@@ -138,7 +137,7 @@
         "Callsign": "東京",
         "Freq_VHF": "HF Only",
         "Freq_UHF": "HF Only",
-        "Floor": "FL335",
+        "Floor": "SFC",
         "Ceiling": "UNL"
       },
       "geometry": {
@@ -189,6 +188,8 @@
             [138.5253, 40.3700],
             [138.6444, 41.2667],
             [138.8436, 42.7161],
+            [139.0631, 44.2978],
+            [139.6425, 45.0042],
             [140.1322, 45.5861],
             [141.9433, 45.5856],
             [145.1292, 44.0981],
@@ -221,6 +222,10 @@
         "coordinates": [
           [
             [140.1322, 45.5861],
+
+            [139.6425, 45.0042],
+            [139.0631, 44.2978],
+
             [138.8436, 42.7161],
             [138.6444, 41.2667],
             [138.5253, 40.3700],

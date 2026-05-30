@@ -311,13 +311,16 @@ AI から **実ブラウザ**（コンソール・ネットワーク・スナッ
 - **GeoJSONレイヤー**: 地球を一周してもレイヤーが正しく表示されるように改善
 - **表示範囲**: 経度が-180/180をまたいでもレイヤーが非表示にならないように修正
 
-#### **ACC Sector / RAPCON ポップアップ（2026年2月追加）**
-- **空域クリック時の詳細表示**: ACC Sector High/Low、RAPCONレイヤーをクリックすると、周波数・高度範囲をポップアップで表示
+#### **ACC Sector / RAPCON 地図オーバーレイ（2026年2月追加、2026年5月 multi-hit + HUD/スナップシート）**
+- **空域クリック時の詳細表示**: ACC Sector High/Low、RAPCON レイヤーをクリックすると、クリック座標に重なる **全 feature** を point-in-polygon で検索し、地図上の **MapAirspaceSheet**（非モーダル・スナップ可能ボトムシート）に表示（Leaflet ポップアップは使用しない）
+- **レイアウト**: 地図 canvas 高さは固定（flex 下部ドック廃止）。モバイル座標は **MapCursorHudOverlay**（上端 HUD）、デスクトップ座標は **MapToolbar** 維持
+- **スナップシート**: peek（1行サマリー）/ half / full。初期表示は常に **peek**（件数に関わらず）。モバイルはドラッグ、**デスクトップ（lg+）は「展開」「格納」ボタン**で snap 切替。シート展開時は `useMapSelectionPan` でクリック地点の視認性を panBy 確保
+- **表示 UI**: 単一ヒットはコンパクト詳細。複数ヒットはアコーディオン一覧。巡航高度（`flightPlan.altitude`）に一致するセクターに「巡航高度」バッジ、初期展開
 - **GeoJSONプロパティ構造**（`public/geojson/` の ACC_Sector_*.geojson、RAPCON.geojson）:
   - **ACC Sector**: `ID`、`Callsign`、`Freq_VHF`、`Freq_UHF`、`Floor`、`Ceiling`
   - **RAPCON**: `Area_ID`、`Callsign`、`Freq_VHF`、`Freq_UHF`、`Floor`、`Ceiling`
 - **後方互換**: `Freq(VHF)`、`Freq(UHF)` 形式にも対応。プロパティ未設定時は「N/A」表示
-- **関連コンポーネント**: `popups/airspacePopup.ts`、`map/types.ts`（ACCSectorProps、RAPCONProps）
+- **関連コンポーネント**: `MapMapOverlays.tsx`、`MapAirspaceSheet.tsx`、`AirspaceSheetBody.tsx`、`AirspaceDetailRows.tsx`、`airspaceDisplayUtils.ts`、`hooks/useAirspaceLayerClick.ts`、`hooks/useSnapSheet.ts`、`hooks/useMapSelectionPan.ts`、`utils/airspace.ts`（`findAirspaceHitsAtPoint`）、`map/types.ts`
 
 ---
 

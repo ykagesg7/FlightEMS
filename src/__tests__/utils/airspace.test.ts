@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { findAirspaceFrequency } from '../../utils/airspace';
+import {
+  altitudeRangeContains,
+  findAirspaceFrequency,
+  findAirspaceHitsAtPoint,
+  isValidAirspaceFeature,
+  parseAltitudeToken,
+  sanitizeAirspaceDataset,
+} from '../../utils/airspace';
 import type { AirspaceDataset } from '../../utils/airspace';
 
 // テスト用の正方形ポリゴン（経度130-140, 緯度30-40）
@@ -215,6 +222,205 @@ describe('Airspace Utils', () => {
 
       const result = findAirspaceFrequency([135, 35], [{ id: 'test', data: dataset }]);
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe('parseAltitudeToken', () => {
+    it('parses FL tokens to feet', () => {
+      expect(parseAltitudeToken('FL245')).toBe(24500);
+      expect(parseAltitudeToken('fl335')).toBe(33500);
+    });
+
+    it('treats empty and SFC as surface', () => {
+      expect(parseAltitudeToken('')).toBe(0);
+      expect(parseAltitudeToken('SFC')).toBe(0);
+      expect(parseAltitudeToken('GND')).toBe(0);
+    });
+
+    it('treats UNL as infinity', () => {
+      expect(parseAltitudeToken('UNL')).toBe(Number.POSITIVE_INFINITY);
+    });
+
+    it('parses plain feet values', () => {
+      expect(parseAltitudeToken('1500')).toBe(1500);
+      expect(parseAltitudeToken('1500FT')).toBe(1500);
+    });
+  });
+
+  describe('altitudeRangeContains', () => {
+    it('returns true when altitude is within floor and ceiling', () => {
+      expect(altitudeRangeContains('', 'FL245', 20000)).toBe(true);
+      expect(altitudeRangeContains('FL245', 'FL335', 28000)).toBe(true);
+    });
+
+    it('returns false when altitude is above ceiling', () => {
+      expect(altitudeRangeContains('', 'FL245', 26000)).toBe(false);
+    });
+
+    it('returns false when altitude is below floor', () => {
+      expect(altitudeRangeContains('FL245', 'FL335', 20000)).toBe(false);
+    });
+  });
+
+  describe('findAirspaceHitsAtPoint', () => {
+    const overlappingDataset: AirspaceDataset = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          properties: { ID: 'T32-2', Floor: '', Ceiling: 'FL245' },
+          geometry: {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [138, 40],
+                [141, 40],
+                [141, 41],
+                [138, 41],
+                [138, 40],
+              ],
+            ],
+          },
+        },
+        {
+          type: 'Feature',
+          properties: { ID: 'T32-1', Floor: '', Ceiling: 'FL335' },
+          geometry: {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [137, 39],
+                [142, 39],
+                [142, 42],
+                [137, 42],
+                [137, 39],
+              ],
+            ],
+          },
+        },
+      ],
+    };
+
+    it('returns multiple hits for overlapping polygons', () => {
+      const hits = findAirspaceHitsAtPoint([139.5, 40.5], [
+        { id: 'ACC_Sector_Low', data: overlappingDataset },
+      ]);
+
+      expect(hits).toHaveLength(2);
+      expect(hits[0].feature.properties?.ID).toBe('T32-1');
+      expect(hits[1].feature.properties?.ID).toBe('T32-2');
+    });
+
+    it('returns empty array for point outside polygons', () => {
+      const hits = findAirspaceHitsAtPoint([150, 50], [
+        { id: 'ACC_Sector_Low', data: overlappingDataset },
+      ]);
+
+      expect(hits).toHaveLength(0);
+    });
+
+    it('sorts hits by ceiling descending (highest first)', () => {
+      const reversedDataset: AirspaceDataset = {
+        type: 'FeatureCollection',
+        features: [...overlappingDataset.features].reverse(),
+      };
+
+      const hits = findAirspaceHitsAtPoint([139.5, 40.5], [
+        { id: 'ACC_Sector_Low', data: reversedDataset },
+      ]);
+
+      expect(hits[0].feature.properties?.ID).toBe('T32-1');
+      expect(hits[1].feature.properties?.ID).toBe('T32-2');
+    });
+
+    it('sorts by source tier when altitudes tie (High, Low, RAPCON)', () => {
+      const geom = overlappingDataset.features[0].geometry;
+      const sharedAlt = { Floor: 'FL245', Ceiling: 'FL335' };
+
+      const hits = findAirspaceHitsAtPoint([139.5, 40.5], [
+        {
+          id: 'RAPCON',
+          data: {
+            type: 'FeatureCollection',
+            features: [
+              { type: 'Feature', properties: { Area_ID: 'RAP-A', ...sharedAlt }, geometry: geom },
+            ],
+          },
+        },
+        {
+          id: 'ACC_Sector_Low',
+          data: {
+            type: 'FeatureCollection',
+            features: [
+              { type: 'Feature', properties: { ID: 'L-1', ...sharedAlt }, geometry: geom },
+            ],
+          },
+        },
+        {
+          id: 'ACC_Sector_High',
+          data: {
+            type: 'FeatureCollection',
+            features: [
+              { type: 'Feature', properties: { ID: 'H-1', ...sharedAlt }, geometry: geom },
+            ],
+          },
+        },
+      ]);
+
+      expect(hits.map((h) => h.sourceId)).toEqual([
+        'ACC_Sector_High',
+        'ACC_Sector_Low',
+        'RAPCON',
+      ]);
+    });
+
+    it('assigns kind based on source id', () => {
+      const hits = findAirspaceHitsAtPoint([139.5, 40.5], [
+        { id: 'RAPCON', data: overlappingDataset },
+      ]);
+
+      expect(hits[0].kind).toBe('rapcon');
+      expect(hits[0].sourceId).toBe('RAPCON');
+    });
+  });
+
+  describe('sanitizeAirspaceDataset', () => {
+    it('removes features with empty polygon rings', () => {
+      const dataset: AirspaceDataset = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: { ID: 'T33' },
+            geometry: {
+              type: 'Polygon',
+              coordinates: [[[]]],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: { ID: 'T32-2' },
+            geometry: {
+              type: 'Polygon',
+              coordinates: [
+                [
+                  [138, 40],
+                  [141, 40],
+                  [141, 41],
+                  [138, 41],
+                  [138, 40],
+                ],
+              ],
+            },
+          },
+        ],
+      };
+
+      const sanitized = sanitizeAirspaceDataset(dataset);
+      expect(sanitized.features).toHaveLength(1);
+      expect(sanitized.features[0].properties?.ID).toBe('T32-2');
+      expect(isValidAirspaceFeature(dataset.features[0])).toBe(false);
+      expect(isValidAirspaceFeature(dataset.features[1])).toBe(true);
     });
   });
 });

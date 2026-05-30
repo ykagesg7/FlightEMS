@@ -646,6 +646,33 @@
   -webkit-overflow-scrolling: touch;
 }
 
+/* 地図 HUD オーバーレイ（座標 readout） */
+.map-cursor-hud-panel {
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+}
+
+/* 空域スナップシート（非モーダル・地図上オーバーレイ） */
+.map-airspace-sheet {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(0, 0, 0, 0.88) 72%,
+    rgba(0, 0, 0, 0.82) 100%
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.map-airspace-sheet::before {
+  content: '';
+  position: absolute;
+  inset: -24px 0 auto 0;
+  height: 24px;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.35), transparent);
+}
+
 /* 空港の管制圏円のスタイル */
 .leaflet-control-zone-circle {
   stroke-dasharray: 5, 5;

@@ -1,7 +1,8 @@
-import { ChevronDown, ChevronUp, MapPin } from 'lucide-react';
-import React, { useReducer } from 'react';
+import { ChevronDown, ChevronUp, Copy, MapPin } from 'lucide-react';
+import React, { useReducer, useState } from 'react';
 import { FlightPlan, Waypoint } from '../../../../types/index';
 import { decimalToDMS, dmsToDecimal, formatDMS } from '../../../../utils';
+import { formatWaypointDegreeCoords, formatWaypointsGeoJsonCoordinates } from '../../../../utils/waypointCoords';
 import { formatBearing, formatDistance } from '../../../../utils/format';
 import { calculateOffsetPoint as offsetCalculateOffsetPoint } from '../../../../utils/offset';
 import type { PlanningPanelLayout } from '../../planningPanelLayout';
@@ -75,6 +76,31 @@ const WaypointList: React.FC<WaypointListProps> = ({ layout = 'full', flightPlan
   }
 
   const [editingState, dispatch] = useReducer(editingReducer, initialEditingState);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [bulkCopied, setBulkCopied] = useState(false);
+
+  const handleCopyDegreeCoords = async (index: number, waypoint: Waypoint) => {
+    const text = formatWaypointDegreeCoords(waypoint);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      window.setTimeout(() => setCopiedIndex((current) => (current === index ? null : current)), 2000);
+    } catch {
+      /* clipboard unavailable */
+    }
+  };
+
+  const handleCopyAllDegreeCoords = async () => {
+    if (flightPlan.waypoints.length === 0) return;
+    const text = formatWaypointsGeoJsonCoordinates(flightPlan.waypoints);
+    try {
+      await navigator.clipboard.writeText(text);
+      setBulkCopied(true);
+      window.setTimeout(() => setBulkCopied(false), 2000);
+    } catch {
+      /* clipboard unavailable */
+    }
+  };
 
   const { index: editingIndex, mode: editingMode, waypoint: editingWaypoint, bearing: editingBearing, distance: editingDistance, dmsLatitude, dmsLongitude, editingWaypointIndex, editingWaypointName } = editingState;
 
@@ -222,6 +248,20 @@ const WaypointList: React.FC<WaypointListProps> = ({ layout = 'full', flightPlan
       {!isSplitLayout && (
         <legend className="text-lg font-semibold mb-4 text-gray-50">Waypoint List</legend>
       )}
+      {flightPlan.waypoints.length > 0 ? (
+        <div className="mb-3 flex flex-wrap items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={handleCopyAllDegreeCoords}
+            className="inline-flex min-h-[36px] items-center gap-1.5 rounded border border-whiskyPapa-yellow/30 px-3 py-1 text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10"
+            aria-label="ウェイポイント座標を GeoJSON 形式で一括コピー"
+            title="[lon, lat] 配列を GeoJSON 座標形式でコピー"
+          >
+            <Copy className="h-3.5 w-3.5" />
+            {bulkCopied ? '一括コピー済' : '座標一括コピー'}
+          </button>
+        </div>
+      ) : null}
       <ul className="min-w-0">
         {flightPlan.waypoints.map((waypoint: Waypoint, index: number) => (
           <li key={index} className="mb-4 p-3 sm:p-4 border rounded-lg border-gray-700 bg-gray-700 min-w-0">
@@ -344,7 +384,20 @@ const WaypointList: React.FC<WaypointListProps> = ({ layout = 'full', flightPlan
                   <div onClick={() => handleStartEdit(index, 'position')} className="cursor-pointer hover:underline inline-block">
                     {formatDMS(waypoint.latitude, waypoint.longitude)}
                   </div>
-                  <div>位置(Degree): {waypoint.longitude.toFixed(4)}, {waypoint.latitude.toFixed(4)}</div>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span>
+                      位置(Degree): {formatWaypointDegreeCoords(waypoint)}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyDegreeCoords(index, waypoint)}
+                      className="inline-flex min-h-[32px] items-center gap-1 rounded border border-gray-600 px-2 py-0.5 text-xs text-gray-300 hover:border-whiskyPapa-yellow/40 hover:text-whiskyPapa-yellow"
+                      aria-label={`度数座標 ${formatWaypointDegreeCoords(waypoint)} をコピー`}
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                      {copiedIndex === index ? 'コピー済' : 'コピー'}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

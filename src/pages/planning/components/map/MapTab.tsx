@@ -20,10 +20,12 @@ import { useMapCursorPosition } from './hooks/useMapCursorPosition';
 import { useMapDoubleClickWaypoint } from './hooks/useMapDoubleClickWaypoint';
 import { useNavaidGeojson } from './hooks/useNavaidGeojson';
 import { useRegionsIndex } from './hooks/useRegionsIndex';
-import { MapCursorFooter } from './MapCursorFooter';
+import { MapMapOverlays } from './MapMapOverlays';
 import { MapLayersPanel } from './MapLayersPanel';
 import { MapTabContent } from './MapTabContent';
 import { MapToolbar } from './MapToolbar';
+import { useClearAirspaceOnMapClick } from './hooks/useClearAirspaceOnMapClick';
+import type { AirspaceSelection } from './planningAirspaceTypes';
 import './mapStyles.css';
 import type { PlanningPanelLayout } from '../../planningPanelLayout';
 import { mapLayersUseInlineSidebar } from '../../planningPanelLayout';
@@ -59,7 +61,7 @@ const MapTab: React.FC<MapTabProps> = ({
   const [layerController, setLayerController] = useState<PlanningMapLayerController | null>(null);
   const [layersOpen, setLayersOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const [airspaceSelection, setAirspaceSelection] = useState<AirspaceSelection | null>(null);
   const isXl = useMediaQuery('(min-width: 1280px)');
   const useInlineLayersSidebar = mapLayersUseInlineSidebar(layout, isXl);
   const [hintVisible, setHintVisible] = useState(() => {
@@ -80,6 +82,15 @@ const MapTab: React.FC<MapTabProps> = ({
 
   const closeLayers = useCallback(() => setLayersOpen(false), []);
 
+  const handleAirspaceSelection = useCallback((selection: AirspaceSelection) => {
+    setAirspaceSelection(selection);
+    setLayersOpen(false);
+  }, []);
+
+  const clearAirspaceSelection = useCallback(() => {
+    setAirspaceSelection(null);
+  }, []);
+
   const handleLayerControllerChange = useCallback((controller: PlanningMapLayerController | null) => {
     setLayerController(controller);
   }, []);
@@ -88,6 +99,7 @@ const MapTab: React.FC<MapTabProps> = ({
   const navaidData = useNavaidGeojson();
   useMapDoubleClickWaypoint(map, setFlightPlan);
   useCloseLayersOnMapClick(map, layersOpen, closeLayers);
+  useClearAirspaceOnMapClick(map, airspaceSelection, clearAirspaceSelection);
   useMapLayersOpenMapLock(map, layersOpen, useInlineLayersSidebar);
   const cursorPosition = useMapCursorPosition(map);
   const navaidInfos = useCursorNearestNavaids(cursorPosition, navaidData);
@@ -152,8 +164,10 @@ const MapTab: React.FC<MapTabProps> = ({
                       </li>
                       <li>
                         モバイルではカーソル位置（DMS・十進度）は
-                        <strong className="text-gray-200">地図の下</strong>
-                        に表示されます。NAVAID 距離は「NAVAID▼」で展開できます。
+                        <strong className="text-gray-200">地図上端の HUD</strong>
+                        に表示されます。NAVAID 距離は「NAVAID▼」で展開できます。ACC Sector / RAPCON をタップすると、重なり空域は
+                        <strong className="text-gray-200">地図上のドラッグ可能なシート</strong>
+                        に一覧表示されます（初期は peek の1行サマリー、モバイルは上フリックまたはドラッグ、デスクトップは「展開」「格納」ボタンで half/full、複数件はアコーディオン）。地図のシート外エリアはパン・ズーム可能です。
                       </li>
                       <li>NAVAID 等のポップアップからルートへの追加ができる場合があります（表示される操作に従ってください）。</li>
                       <li>地図上をダブルクリックすると、その位置にウェイポイントを追加できます。</li>
@@ -186,7 +200,7 @@ const MapTab: React.FC<MapTabProps> = ({
                 <MapContainer
                   center={[DEFAULT_CENTER.lat, DEFAULT_CENTER.lng]}
                   zoom={DEFAULT_ZOOM}
-                  className="h-full w-full"
+                  className="absolute inset-0 h-full w-full"
                   ref={setMap}
                   worldCopyJump={true}
                 >
@@ -198,10 +212,18 @@ const MapTab: React.FC<MapTabProps> = ({
                     tracks={tracks}
                     currentTrackTime={currentTrackTime}
                     onLayerControllerChange={handleLayerControllerChange}
+                    onAirspaceSelection={handleAirspaceSelection}
                   />
                 </MapContainer>
+                <MapMapOverlays
+                  map={map}
+                  cursorPosition={cursorPosition}
+                  navaidInfos={navaidInfos}
+                  selection={airspaceSelection}
+                  cruiseAltitudeFt={flightPlan.altitude}
+                  onClearSelection={clearAirspaceSelection}
+                />
               </div>
-              <MapCursorFooter cursorPosition={cursorPosition} navaidInfos={navaidInfos} />
             </div>
             <MapLayersPanel
               open={layersOpen}
