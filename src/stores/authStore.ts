@@ -1,6 +1,8 @@
 import { AuthError, Session, User } from '@supabase/supabase-js'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { getAuthRedirectUrl, getPasswordRecoveryRedirectUrl } from '../auth/authRedirectUrl'
+import { deriveOAuthUsername } from '../auth/deriveOAuthUsername'
 import { Database } from '../types/database.types'
 import supabase from '../utils/supabase'
 
@@ -13,19 +15,26 @@ export interface AuthState {
   session: Session | null
   loading: boolean
   initialized: boolean
+  passwordRecoveryPending: boolean
 
   // アクション
   setUser: (user: User | null) => void
   setProfile: (profile: Profile | null) => void
   setSession: (session: Session | null) => void
   setLoading: (loading: boolean) => void
+  setInitialized: (initialized: boolean) => void
+  setPasswordRecoveryPending: (pending: boolean) => void
 
   // 認証アクション
   signIn: (email: string, password: string) => Promise<{ error: AuthErrorResult }>
-  signUp: (email: string, password: string, username: string) => Promise<{ error: AuthErrorResult, user: User | null, emailConfirmRequired: boolean }>
+  signUp: (email: string, password: string, username: string, captchaToken?: string) => Promise<{ error: AuthErrorResult, user: User | null, emailConfirmRequired: boolean }>
+  signInWithGoogle: () => Promise<{ error: AuthErrorResult }>
+  signInWithOtp: (email: string, captchaToken?: string) => Promise<{ error: AuthErrorResult }>
   signOut: () => Promise<void>
-  resetPassword: (email: string) => Promise<{ error: AuthErrorResult }>
+  resetPassword: (email: string, captchaToken?: string) => Promise<{ error: AuthErrorResult }>
+  updatePasswordFromRecovery: (password: string) => Promise<{ error: AuthErrorResult }>
   refreshSession: () => Promise<void>
+  ensureProfileAfterOAuth: (user: User) => Promise<void>
 
   // プロフィールアクション
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: AuthErrorResult }>
@@ -40,12 +49,15 @@ export const useAuthStore = create<AuthState>()(
       profile: null,
       session: null,
       loading: false,
-      initialized: true,
+      initialized: false,
+      passwordRecoveryPending: false,
 
       setUser: (user) => set({ user }),
       setProfile: (profile) => set({ profile }),
       setSession: (session) => set({ session }),
       setLoading: (loading) => set({ loading }),
+      setInitialized: (initialized) => set({ initialized }),
+      setPasswordRecoveryPending: (pending) => set({ passwordRecoveryPending: pending }),
 
       signIn: async (email, password) => {
         try {
@@ -73,7 +85,7 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      signUp: async (email, password, username) => {
+      signUp: async (email, password, username, captchaToken) => {
         try {
           set({ loading: true });
 
@@ -81,6 +93,10 @@ export const useAuthStore = create<AuthState>()(
           const { data: authData, error: authError } = await supabase.auth.signUp({
             email,
             password,
+            options: {
+              data: { username },
+              ...(captchaToken ? { captchaToken } : {}),
+            },
           });
 
           if (authError) {
@@ -127,6 +143,60 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      signInWithGoogle: async () => {
+        try {
+          set({ loading: true });
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: getAuthRedirectUrl(),
+              queryParams: {
+                access_type: 'offline',
+                prompt: 'consent',
+              },
+            },
+          });
+          set({ loading: false });
+          return { error };
+        } catch (err) {
+          set({ loading: false });
+          return { error: err instanceof Error ? err : new Error('Googleログイン処理中に不明なエラーが発生しました') };
+        }
+      },
+
+      signInWithOtp: async (email, captchaToken) => {
+        try {
+          set({ loading: true });
+          const { error } = await supabase.auth.signInWithOtp({
+            email,
+            options: {
+              emailRedirectTo: getAuthRedirectUrl(),
+              shouldCreateUser: true,
+              ...(captchaToken ? { captchaToken } : {}),
+            },
+          });
+          set({ loading: false });
+          return { error };
+        } catch (err) {
+          set({ loading: false });
+          return { error: err instanceof Error ? err : new Error('メールリンク送信処理中に不明なエラーが発生しました') };
+        }
+      },
+
+      ensureProfileAfterOAuth: async (user) => {
+        await get().fetchProfile(user.id);
+        if (get().profile) {
+          return;
+        }
+
+        const username = deriveOAuthUsername(user);
+        const email = user.email ?? '';
+        const { error } = await get().createProfile(user.id, username, email);
+        if (!error) {
+          await get().fetchProfile(user.id);
+        }
+      },
+
       signOut: async () => {
         try {
           set({ loading: true });
@@ -142,10 +212,13 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      resetPassword: async (email) => {
+      resetPassword: async (email, captchaToken) => {
         try {
           set({ loading: true });
-          const { error } = await supabase.auth.resetPasswordForEmail(email);
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: getPasswordRecoveryRedirectUrl(),
+            ...(captchaToken ? { captchaToken } : {}),
+          });
           set({ loading: false });
           return { error };
         } catch (err) {
@@ -154,12 +227,31 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      updatePasswordFromRecovery: async (password) => {
+        try {
+          set({ loading: true });
+          const { error } = await supabase.auth.updateUser({ password });
+          if (!error) {
+            set({ passwordRecoveryPending: false, loading: false });
+            if (get().user) {
+              await get().fetchProfile(get().user!.id);
+            }
+          } else {
+            set({ loading: false });
+          }
+          return { error };
+        } catch (err) {
+          set({ loading: false });
+          return { error: err instanceof Error ? err : new Error('パスワード更新処理中に不明なエラーが発生しました') };
+        }
+      },
+
       refreshSession: async () => {
         try {
           set({ loading: true });
           const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
           if (sessionError) {
-            set({ loading: false });
+            set({ loading: false, initialized: true });
             return;
           }
           // sessionData.userがnullの場合、session.userから取得を試みる
@@ -168,9 +260,9 @@ export const useAuthStore = create<AuthState>()(
           if (user) {
             await get().fetchProfile(user.id);
           }
-          set({ loading: false });
+          set({ loading: false, initialized: true });
         } catch (err) {
-          set({ loading: false });
+          set({ loading: false, initialized: true });
           console.error('セッション更新処理中に不明なエラーが発生しました:', err);
         }
       },

@@ -1,6 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../stores/authStore';
+import React, { useCallback, useState } from 'react';
 import articleXpRewardsConfig from '../../config/articleXpRewards.json';
 import type { ArticleXpConfig } from '../../types/articles';
 
@@ -8,22 +6,10 @@ import type { ArticleXpConfig } from '../../types/articles';
  * 管理者用経験値設定ページ
  */
 export const XpConfigPage: React.FC = () => {
-  const { profile } = useAuthStore();
-  const navigate = useNavigate();
   const [config, setConfig] = useState<ArticleXpConfig>(articleXpRewardsConfig as ArticleXpConfig);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
-  // 管理者チェック
-  const isAdmin = profile?.roll?.toLowerCase() === 'admin';
-
-  useEffect(() => {
-    if (!isAdmin) {
-      navigate('/');
-      return;
-    }
-  }, [isAdmin, navigate]);
 
   // 設定を保存（将来、データベースまたはAPIに保存する実装に変更可能）
   const saveConfig = useCallback(async () => {
@@ -46,17 +32,6 @@ export const XpConfigPage: React.FC = () => {
       setIsLoading(false);
     }
   }, [config]);
-
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-500 mb-4">アクセス拒否</h1>
-          <p className="text-gray-400">このページは管理者のみアクセスできます。</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-8" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>

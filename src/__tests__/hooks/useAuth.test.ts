@@ -19,6 +19,8 @@ describe('useAuth', () => {
     initialized: true,
     signIn: vi.fn(),
     signUp: vi.fn(),
+    signInWithGoogle: vi.fn(),
+    signInWithOtp: vi.fn(),
     signOut: vi.fn(),
     refreshSession: vi.fn(),
   };
@@ -40,6 +42,8 @@ describe('useAuth', () => {
       isLoading: false,
       signIn: expect.any(Function),
       signUp: expect.any(Function),
+      signInWithGoogle: expect.any(Function),
+      signInWithOtp: expect.any(Function),
       signOut: expect.any(Function),
       refreshSession: expect.any(Function),
     });

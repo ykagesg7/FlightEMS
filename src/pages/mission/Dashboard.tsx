@@ -23,13 +23,6 @@ const MissionDashboard: React.FC = () => {
   });
   const { profile, rankInfo, xpToNextRank, rankProgress, isLoadingProfile } = useGamification();
 
-  // 認証ガード: 未ログイン時は/authへリダイレクト
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth', { replace: true });
-    }
-  }, [user, navigate]);
-
   // 旧リンク互換: ?tab=blog は学習記事一覧へ
   useEffect(() => {
     if (searchParams.get('tab') === 'blog') {
@@ -68,18 +61,6 @@ const MissionDashboard: React.FC = () => {
     }
     navigate('/planning');
   };
-
-  // ユーザーがログインしていない場合はローディング表示（リダイレクト中）
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-whiskyPapa-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-whiskyPapa-yellow mx-auto mb-4"></div>
-          <p className="text-gray-400">リダイレクト中...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (isLoadingProfile) {
     return (

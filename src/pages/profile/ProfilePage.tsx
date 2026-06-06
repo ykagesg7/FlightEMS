@@ -88,13 +88,6 @@ const ProfilePage: React.FC = () => {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // 未ログインならリダイレクト
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [loading, user, navigate]);
-
   // プロフィール情報の初期化
   useEffect(() => {
     if (profile && !isEditing) {
@@ -269,10 +262,6 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
     );
-  }
-
-  if (!user) {
-    return null;
   }
 
   const tabs = [

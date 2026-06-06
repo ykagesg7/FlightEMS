@@ -484,8 +484,13 @@ export interface TAFData {
 ### **認証（Supabase Auth）**
 
 - メールアドレスとパスワードによるサインアップ/サインイン
+- **Google OAuth**（`signInWithOAuth` → `/auth` コールバック）
+- **Magic Link（メールリンク）ログイン**（`signInWithOtp`、Brevo SMTP 経由）
 - パスワードリセット（Magic Link経由）
-- セッション管理（JWTベース）
+- セッション管理（JWTベース、`onAuthStateChange` で Zustand と同期）
+- **ProtectedRoute**（`/mission`・`/profile` は要ログイン、`/admin/*` は `profiles.roll = admin`）
+- **Cloudflare Turnstile**（任意・`VITE_TURNSTILE_SITE_KEY` + Supabase Dashboard secret）
+- 確認メール送信: **Brevo Custom SMTP**（Supabase Dashboard 設定、詳細は [04_Operations_Guide.md](04_Operations_Guide.md)）
 
 ### **RPC（Remote Procedure Call）関数**
 

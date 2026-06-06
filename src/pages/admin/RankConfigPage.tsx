@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../stores/authStore';
 import { supabase } from '../../utils/supabase';
 import type { UserRank } from '../../types/gamification';
 import { RANK_INFO } from '../../types/gamification';
@@ -26,23 +24,9 @@ interface RankRequirement {
  * 管理者用ランク設定ページ
  */
 export const RankConfigPage: React.FC = () => {
-  const { profile } = useAuthStore();
-  const navigate = useNavigate();
   const [requirements, setRequirements] = useState<RankRequirement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // 管理者チェック
-  const isAdmin = profile?.roll?.toLowerCase() === 'admin';
-
-  useEffect(() => {
-    if (!isAdmin) {
-      navigate('/');
-      return;
-    }
-
-    loadRequirements();
-  }, [isAdmin, navigate]);
 
   // ランク条件を読み込み
   const loadRequirements = useCallback(async () => {
@@ -62,6 +46,10 @@ export const RankConfigPage: React.FC = () => {
       setIsLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    void loadRequirements();
+  }, [loadRequirements]);
 
   // ランク条件を保存
   const _saveRequirement = useCallback(async (requirement: RankRequirement) => {

@@ -54,6 +54,21 @@
   - または `NEXT_PUBLIC_SENTRY_DSN` = 同じ DSN（Vercel テンプレに合わせる場合）
   - ソースマップまで欲しい場合は [Sentry Auth Token](https://docs.sentry.io/product/accounts/auth-tokens/) を発行し、`SENTRY_AUTH_TOKEN` に加え `SENTRY_ORG`・`SENTRY_PROJECT`（スラッグ）をプロジェクトの Environment Variables に追加（`vite.config.ts` の `@sentry/vite-plugin` 用）。
 
+### **Supabase Auth（メール・OAuth・CAPTCHA）**
+
+- **確認メール / Magic Link / パスワードリセット**: **Brevo** を Supabase **Authentication → SMTP Settings**（Custom SMTP）に設定。アプリの `.env` には SMTP 秘密情報を置かない。
+- **Google OAuth**:
+  1. Google Cloud Console で OAuth 2.0 Web クライアントを作成。
+  2. Authorized redirect URI: `https://fstynltdfdetpyvbrswr.supabase.co/auth/v1/callback`
+  3. Supabase **Authentication → Providers → Google** に Client ID / Secret を設定。
+  4. **Authentication → URL Configuration**: Site URL（本番 Vercel URL）、Redirect URLs に `https://<production>/auth` と `http://localhost:5173/auth`。
+- **Cloudflare Turnstile（任意）**:
+  1. [Turnstile](https://developers.cloudflare.com/turnstile/) で Site Key / Secret Key を取得。
+  2. Vercel **Production** に `VITE_TURNSTILE_SITE_KEY` を設定（再デプロイ必須）。
+  3. Supabase **Authentication → Bot and Abuse Protection** に Secret を設定。
+  4. ローカル検証: `.env.local` に `VITE_TURNSTILE_SITE_KEY=` を追加。
+- **DB マイグレーション（OAuth username）**: [`scripts/database/20260606_handle_new_user_oauth_fallback.sql`](../scripts/database/20260606_handle_new_user_oauth_fallback.sql) — MCP `apply_migration` 名 `handle_new_user_oauth_fallback_20260606`。
+
 ### **GA4（Google Analytics 4）**
 
 - **本番 URL**: **https://flight-lms.vercel.app/**（このオリジンで計測する。GA の Web データストリームの「ウェブサイトの URL」もこれに合わせる）

@@ -10,6 +10,7 @@ import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
 
 // Enhanced Error Boundary and Layout
 import { GoogleAnalyticsTracker } from './components/GoogleAnalyticsTracker';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import ScrollManager from './components/ScrollManager';
 import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 import { MarketingLayout } from './layouts/MarketingLayout';
@@ -96,11 +97,11 @@ const App: React.FC = () => {
             <Route element={<MarketingLayout />}>
               <Route path="/" element={<HomePage />} />
               <Route path="about" element={<About />} />
-              <Route path="mission" element={<MissionDashboard />} />
+              <Route path="mission" element={<ProtectedRoute><MissionDashboard /></ProtectedRoute>} />
               <Route path="schedule" element={<Schedule />} />
               <Route path="links" element={<Links />} />
               <Route path="auth" element={<AuthPage />} />
-              <Route path="profile" element={<ProfilePage />} />
+              <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               {/* Legacy /blog URLs: always drop path slug and send users to the article hub */}
               <Route path="blog" element={<Navigate to="/articles" replace />} />
               <Route path="blog/:slug" element={<Navigate to="/articles" replace />} />
@@ -116,8 +117,8 @@ const App: React.FC = () => {
               {/* Rank Benefits */}
               <Route path="ranks" element={<RankBenefitsPage />} />
               {/* Admin Pages */}
-              <Route path="admin/ranks" element={<RankConfigPage />} />
-              <Route path="admin/xp" element={<XpConfigPage />} />
+              <Route path="admin/ranks" element={<ProtectedRoute requireAdmin><RankConfigPage /></ProtectedRoute>} />
+              <Route path="admin/xp" element={<ProtectedRoute requireAdmin><XpConfigPage /></ProtectedRoute>} />
             </Route>
 
             {/* Fallback */}
