@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { LeaderboardOptInCta } from '../../components/learning/LeaderboardOptInCta';
+import { ProfileCompletionNudge } from '../../components/profile/ProfileCompletionNudge';
 import { useGamification } from '../../hooks/useGamification';
 import { useAuthStore } from '../../stores/authStore';
 import MissionCard from '../../components/marketing/MissionCard';
@@ -186,6 +187,13 @@ const MissionDashboard: React.FC = () => {
             />
           </div>
         ) : null}
+
+        <ProfileCompletionNudge
+          dismissStorageKey="profile_completion_nudge_mission_avatar_v1"
+          onlyWhenMissingAvatar
+          showBelowPercent={100}
+          className="max-w-3xl mx-auto mb-10 px-2"
+        />
 
         {/* Missions Section - Always visible */}
         <div className="space-y-8 mb-12">

@@ -107,6 +107,10 @@ src/components/
 │   └── index.ts
 ├── common/                         # 共通ユーティリティコンポーネント
 │   └── ProgressRing.tsx
+├── profile/                        # プロフィール完成度 nudge（Dashboard / Mission）
+│   └── ProfileCompletionNudge.tsx
+├── learning/
+│   └── LeaderboardOptInCta.tsx
 └── ScrollManager.tsx               # ルートレベル共通コンポーネント
 ```
 
@@ -269,10 +273,19 @@ src/pages/
 │           ├── CPLExamSelector.tsx
 │           └── CPLExamSession.tsx
 ├── profile/
-│   ├── ProfilePage.tsx
+│   ├── ProfilePage.tsx              # Profile Hub（完成度バー + セクションナビ）
+│   ├── hooks/
+│   │   └── useNotificationSettings.ts
 │   └── components/
 │       ├── AvatarUploader.tsx
+│       ├── LeaderboardSettings.tsx
 │       ├── NotificationPreferences.tsx
+│       ├── ProfileAccountSection.tsx
+│       ├── ProfileCompletionCard.tsx
+│       ├── ProfileIdentityHeader.tsx
+│       ├── ProfilePublicSection.tsx
+│       ├── ProfileSectionNav.tsx
+│       ├── ProfileSecuritySection.tsx
 │       └── SocialLinksForm.tsx
 ├── lessons/
 │   ├── LessonDetailPage.tsx

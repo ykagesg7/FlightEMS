@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { getAuthCallbackType } from '../../../auth/authRedirectUrl';
+import { markPasswordRecoveryPending } from '../../../auth/passwordRecovery';
 import supabase from '../../../utils/supabase';
 import { useAuthStore } from '../../../stores/authStore';
 
@@ -44,7 +45,7 @@ export function useAuthCallback({ onError, onSessionReady }: UseAuthCallbackOpti
       const isPasswordRecovery = getAuthCallbackType() === 'recovery';
       const store = useAuthStore.getState();
       if (isPasswordRecovery) {
-        store.setPasswordRecoveryPending(true);
+        markPasswordRecoveryPending();
       }
 
       const { data, error } = await supabase.auth.getSession();
@@ -64,6 +65,7 @@ export function useAuthCallback({ onError, onSessionReady }: UseAuthCallbackOpti
 
       if (user && !isPasswordRecovery) {
         await store.ensureProfileAfterOAuth(user);
+        await store.fetchProfile(user.id);
         onSessionReady?.();
       } else if (user && isPasswordRecovery) {
         await store.fetchProfile(user.id);

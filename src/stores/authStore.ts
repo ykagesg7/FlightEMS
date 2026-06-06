@@ -2,7 +2,9 @@ import { AuthError, Session, User } from '@supabase/supabase-js'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { getAuthRedirectUrl, getPasswordRecoveryRedirectUrl } from '../auth/authRedirectUrl'
+import { clearPasswordRecoveryPending } from '../auth/passwordRecovery'
 import { deriveOAuthUsername } from '../auth/deriveOAuthUsername'
+import { importOAuthAvatarIfAvailable } from '../utils/importOAuthAvatar'
 import { Database } from '../types/database.types'
 import supabase from '../utils/supabase'
 
@@ -185,14 +187,20 @@ export const useAuthStore = create<AuthState>()(
 
       ensureProfileAfterOAuth: async (user) => {
         await get().fetchProfile(user.id);
-        if (get().profile) {
-          return;
+
+        if (!get().profile) {
+          const username = deriveOAuthUsername(user);
+          const email = user.email ?? '';
+          const { error } = await get().createProfile(user.id, username, email);
+          if (error) {
+            return;
+          }
+          await get().fetchProfile(user.id);
         }
 
-        const username = deriveOAuthUsername(user);
-        const email = user.email ?? '';
-        const { error } = await get().createProfile(user.id, username, email);
-        if (!error) {
+        const profile = get().profile;
+        if (profile && !profile.avatar_url) {
+          await importOAuthAvatarIfAvailable(user, profile.avatar_url);
           await get().fetchProfile(user.id);
         }
       },
@@ -201,6 +209,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           set({ loading: true });
           await supabase.auth.signOut();
+          clearPasswordRecoveryPending();
           set({
             user: null,
             profile: null,
@@ -232,7 +241,8 @@ export const useAuthStore = create<AuthState>()(
           set({ loading: true });
           const { error } = await supabase.auth.updateUser({ password });
           if (!error) {
-            set({ passwordRecoveryPending: false, loading: false });
+            clearPasswordRecoveryPending();
+            set({ loading: false });
             if (get().user) {
               await get().fetchProfile(get().user!.id);
             }
@@ -382,6 +392,7 @@ export const useAuthStore = create<AuthState>()(
                   password_updated_at: null,
                   leaderboard_opt_in: false,
                   leaderboard_display_name: null,
+                  onboarding_completed_at: null,
                 };
 
                 console.log('フォールバックプロフィール作成を試みます:', defaultProfile);

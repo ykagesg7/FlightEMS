@@ -1,22 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button } from '../../../components/ui';
 import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
 import { useAuthStore } from '../../../stores/authStore';
-import supabase from '../../../utils/supabase';
-
-interface NotificationSettings {
-  id: string;
-  user_id: string;
-  learning_reminder_enabled: boolean;
-  new_content_enabled: boolean;
-  announcement_enabled: boolean;
-  mission_update_enabled: boolean;
-  email_notifications_enabled: boolean;
-  notification_time: string | null;
-  created_at: string | null;
-  updated_at: string | null;
-}
+import { useNotificationSettings } from '../hooks/useNotificationSettings';
 
 interface NotificationPreferencesProps {
   onError?: (error: string) => void;
@@ -24,96 +11,28 @@ interface NotificationPreferencesProps {
 
 export const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ onError }) => {
   const user = useAuthStore((state) => state.user);
-  const [settings, setSettings] = useState<Partial<NotificationSettings>>({
-    learning_reminder_enabled: true,
-    new_content_enabled: true,
-    announcement_enabled: true,
-    mission_update_enabled: true,
-    email_notifications_enabled: false,
-    notification_time: '09:00:00',
-  });
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const {
+    settings,
+    isLoading,
+    isSaving,
+    saveSettings,
+    toggleSetting,
+    updateSetting,
+  } = useNotificationSettings(user?.id);
 
-  // 通知設定を取得
-  useEffect(() => {
-    const fetchSettings = async () => {
-      if (!user) return;
-
-      try {
-        setIsLoading(true);
-        const { data, error } = await supabase
-          .from('user_notification_settings')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-
-        if (error && error.code !== 'PGRST116') {
-          // PGRST116は「行が見つからない」エラー（初回ユーザーなど）
-          console.error('Failed to fetch notification settings:', error);
-          // デフォルト設定を使用
-        } else if (data) {
-          setSettings(data);
-        }
-      } catch (err) {
-        console.error('Error fetching notification settings:', err);
-        onError?.('通知設定の取得に失敗しました');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSettings();
-  }, [user, onError]);
-
-  // 設定を保存
   const handleSave = async () => {
-    if (!user) return;
-
-    setIsSaving(true);
-    try {
-      const { error } = await supabase
-        .from('user_notification_settings')
-        .upsert(
-          {
-            user_id: user.id,
-            ...settings,
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: 'user_id',
-          }
-        );
-
-      if (error) {
-        throw error;
-      }
-
-      // 成功メッセージ（必要に応じて）
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '保存に失敗しました';
-      onError?.(errorMessage);
-    } finally {
-      setIsSaving(false);
+    const { error } = await saveSettings();
+    if (error) {
+      onError?.(error.message || '保存に失敗しました');
     }
   };
 
-  const handleToggle = (key: keyof NotificationSettings) => {
-    if (key === 'id' || key === 'user_id' || key === 'created_at' || key === 'updated_at') {
-      return;
-    }
-
-    setSettings((prev: Partial<NotificationSettings>) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  const handleToggle = (key: 'learning_reminder_enabled' | 'new_content_enabled' | 'announcement_enabled' | 'mission_update_enabled' | 'email_notifications_enabled') => {
+    toggleSetting(key);
   };
 
   const handleTimeChange = (time: string) => {
-    setSettings((prev: Partial<NotificationSettings>) => ({
-      ...prev,
-      notification_time: time,
-    }));
+    updateSetting('notification_time', time);
   };
 
   if (isLoading) {
@@ -141,7 +60,6 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {/* 通知タイプ */}
           <div className="space-y-4">
             <NotificationToggle
               label="学習リマインダー"
@@ -179,7 +97,6 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
             />
           </div>
 
-          {/* 通知時間 */}
           <div>
             <label className="block mb-2">
               <Typography variant="body-sm" className="font-medium">
@@ -197,9 +114,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
             </Typography>
           </div>
 
-          {/* 保存ボタン */}
           <div className="flex justify-end gap-3 pt-4 border-t border-brand-primary/20">
-            <Button variant="brand" onClick={handleSave} disabled={isSaving}>
+            <Button variant="brand" onClick={() => void handleSave()} disabled={isSaving}>
               {isSaving ? '保存中...' : '設定を保存'}
             </Button>
           </div>

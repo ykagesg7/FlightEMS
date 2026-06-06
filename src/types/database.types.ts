@@ -616,6 +616,7 @@ export type Database = {
           id: string
           leaderboard_display_name: string | null
           leaderboard_opt_in: boolean
+          onboarding_completed_at: string | null
           password_updated_at: string | null
           rank: Database["public"]["Enums"]["user_rank_type"] | null
           roll: string | null
@@ -634,6 +635,7 @@ export type Database = {
           id: string
           leaderboard_display_name?: string | null
           leaderboard_opt_in?: boolean
+          onboarding_completed_at?: string | null
           password_updated_at?: string | null
           rank?: Database["public"]["Enums"]["user_rank_type"] | null
           roll?: string | null
@@ -652,6 +654,7 @@ export type Database = {
           id?: string
           leaderboard_display_name?: string | null
           leaderboard_opt_in?: boolean
+          onboarding_completed_at?: string | null
           password_updated_at?: string | null
           rank?: Database["public"]["Enums"]["user_rank_type"] | null
           roll?: string | null

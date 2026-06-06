@@ -3,13 +3,15 @@ import { Button } from '../../../components/ui';
 import { mapAuthErrorToMessage } from '../../../auth/authErrorMessages';
 import { TurnstileWidget } from '../../../components/auth/TurnstileWidget';
 import { useAuthStore } from '../../../stores/authStore';
+import { AuthInput } from './AuthInput';
 
 interface MagicLinkFormProps {
   onSent: (email: string) => void;
   onError?: (message: string) => void;
+  onCancel?: () => void;
 }
 
-export const MagicLinkForm: React.FC<MagicLinkFormProps> = ({ onSent, onError }) => {
+export const MagicLinkForm: React.FC<MagicLinkFormProps> = ({ onSent, onError, onCancel }) => {
   const loading = useAuthStore((state) => state.loading);
   const signInWithOtp = useAuthStore((state) => state.signInWithOtp);
   const [email, setEmail] = useState('');
@@ -32,19 +34,14 @@ export const MagicLinkForm: React.FC<MagicLinkFormProps> = ({ onSent, onError })
 
   return (
     <form onSubmit={(e) => void handleSubmit(e)}>
-      <div className="mb-4">
-        <label htmlFor="magic-link-email" className="block mb-2 text-sm font-medium text-white">
-          メールアドレス
-        </label>
-        <input
-          type="email"
-          id="magic-link-email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-3 py-2 rounded-md bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/30 text-white focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow/50 focus:border-whiskyPapa-yellow transition-colors"
-          autoComplete="email"
-        />
-      </div>
+      <AuthInput
+        label="メールアドレス"
+        type="email"
+        id="magic-link-email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        autoComplete="email"
+      />
 
       <TurnstileWidget
         className="mb-4 flex justify-center"
@@ -56,9 +53,21 @@ export const MagicLinkForm: React.FC<MagicLinkFormProps> = ({ onSent, onError })
         {loading ? '送信中...' : 'ログインリンクを送信'}
       </Button>
 
-      <p className="mt-3 text-xs text-center text-gray-400">
+      <p className="mt-3 text-xs text-center text-[var(--text-muted)]">
         メールに届くリンクからパスワードなしでログインできます。
       </p>
+
+      {onCancel && (
+        <p className="mt-3 text-sm text-center">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-brand-primary hover:text-brand-primary-light hover:underline focus:outline-none"
+          >
+            パスワードでログインに戻る
+          </button>
+        </p>
+      )}
     </form>
   );
 };

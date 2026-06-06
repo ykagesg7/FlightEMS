@@ -1,5 +1,10 @@
 import supabase from '../utils/supabase';
 import { useAuthStore } from '../stores/authStore';
+import {
+  clearPasswordRecoveryPending,
+  isPasswordRecoveryActive,
+  markPasswordRecoveryPending,
+} from './passwordRecovery';
 
 let listenerRegistered = false;
 
@@ -17,16 +22,22 @@ export function initAuthListener(): void {
 
     if (event === 'SIGNED_OUT') {
       store.setProfile(null);
-      store.setPasswordRecoveryPending(false);
+      clearPasswordRecoveryPending();
       return;
     }
 
     if (event === 'PASSWORD_RECOVERY') {
-      store.setPasswordRecoveryPending(true);
+      markPasswordRecoveryPending();
+    }
+
+    if (event === 'SIGNED_IN' && isPasswordRecoveryActive()) {
+      markPasswordRecoveryPending();
     }
 
     if (session?.user) {
-      if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+      if (isPasswordRecoveryActive()) {
+        void store.fetchProfile(session.user.id);
+      } else if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
         void store.ensureProfileAfterOAuth(session.user);
       } else {
         void store.fetchProfile(session.user.id);

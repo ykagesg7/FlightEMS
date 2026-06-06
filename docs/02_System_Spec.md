@@ -484,13 +484,28 @@ export interface TAFData {
 ### **認証（Supabase Auth）**
 
 - メールアドレスとパスワードによるサインアップ/サインイン
-- **Google OAuth**（`signInWithOAuth` → `/auth` コールバック）
-- **Magic Link（メールリンク）ログイン**（`signInWithOtp`、Brevo SMTP 経由）
-- パスワードリセット（Magic Link経由）
+- **Google OAuth**（`signInWithOAuth` → `/auth` コールバック、ダーク調 OAuth 専用ボタン）。初回ログイン時 `ensureProfileAfterOAuth` で **username**（`deriveOAuthUsername`）と **avatar**（`importOAuthAvatarIfAvailable` → `avatars` Storage）を取り込み
+- **Magic Link（メールリンク）ログイン**（`signInWithOtp`、Brevo SMTP 経由。Auth ページではリンク展開式）
+- パスワードリセット（`/auth/recovery` 専用ページ、`passwordRecovery.ts` で sessionStorage 同期）
 - セッション管理（JWTベース、`onAuthStateChange` で Zustand と同期）
-- **ProtectedRoute**（`/mission`・`/profile` は要ログイン、`/admin/*` は `profiles.roll = admin`）
+- **ProtectedRoute**（`/mission`・`/profile`・`/welcome` は要ログイン、`/admin/*` は `profiles.roll = admin`）
 - **Cloudflare Turnstile**（任意・`VITE_TURNSTILE_SITE_KEY` + Supabase Dashboard secret）
 - 確認メール送信: **Brevo Custom SMTP**（Supabase Dashboard 設定、詳細は [04_Operations_Guide.md](04_Operations_Guide.md)）
+
+#### **認証 UI（`/auth`）**
+
+- 共通コンポーネント: `AuthLayout` / `AuthInput` / `AuthDivider` / `AuthAlert` / `GoogleSignInButton`（`brand.*` トークン）
+- レイアウト: **Google で続ける** → 区切り → メール+パスワード（タブ廃止、Magic Link は補助リンクで展開）
+- レガシー `whiskyPapa-*` クラスは認証ページ群では使用しない
+
+#### **新規ユーザーセットアップ（`/welcome`）**
+
+- `profiles.onboarding_completed_at` が **NULL** のユーザーに、ログイン直後 **1 回だけ** 誘導（`AuthPage` / OAuth コールバック完了時）
+- 3 ステップ（ユーザー名・アバター / ランキング / 通知）— **各ステップおよび全体がスキップ可能**
+- **ランキング**: `/welcome` Step 2 で **デフォルト ON**（同意 pre-checked）。プロフィールから **いつでもオフ** 可能。Step 2 スキップ時は DB を変更しない
+- スキップ / 「あとで設定する」 / 完了時に `onboarding_completed_at = now()` を設定し、以降 `/welcome` は非表示
+- 既存ユーザーは migration `20260606_profiles_onboarding_completed.sql` でバックフィル（再表示しない）
+- 全ルートをブロックするガードは **設けない**（`LeaderboardOptInCta` 等の継続リマインドは維持）
 
 ### **RPC（Remote Procedure Call）関数**
 
@@ -609,16 +624,17 @@ export interface TAFData {
 - **クイックアクション**: PLANNING、ARTICLE、LEARNING、TEST
 - **Phase 1機能**: 今日の学習タスク、科目別レーダーチャート、学習履歴ヒートマップ
 - **学習 XP の相対位置（参考）**: `get_learning_xp_benchmark` は **public 上 `SECURITY INVOKER`** の RPC（`authenticated` のみ `EXECUTE`）。集計本体は **private** の `get_learning_xp_benchmark_impl`（`SECURITY DEFINER`、PostgREST の Exposed schemas に `private` を含めないこと）。返却は呼び出しユーザーの XP・集計メタのみ（他者の id・メール等なし）。**母集団 `population_n`**: `profiles` のうち `coalesce(xp_points,0) > 0` の行数。`**percentile**`: その母集団のうち、呼び出しユーザーより XP が**厳密に小さい**行の割合（0–100）。`**cohort_n` / `cohort_percentile`**: 同一 `rank`（`IS NOT DISTINCT FROM`）かつ XP>0 のサブセット内で同様に算出；コホートが極小の場合は SQL 側で NULL になり得る。フロントは `**population_n` < 20** のとき数値を出さず文言のみ（`MIN_POPULATION_FOR_XP_BENCHMARK`）。取得は `fetchDashboardMetrics` 内の `safeGet`、失敗時はカード非表示。集計ロジックの歴史的説明は `scripts/database/20260324_learning_xp_benchmark.sql`。**Security Advisor 対応の現行正本**: `scripts/database/20260511_security_definer_rpc_hardening.sql`（MCP: `security_definer_rpc_hardening_20260511`）
-- **学習者ランキング（任意参加）**: `profiles.leaderboard_opt_in` が true のユーザーのみ `get_public_leaderboard(p_limit)`（public は **INVOKER**、集計は `private.get_public_leaderboard_impl`）で一覧化（上限 `least(p_limit, 50)`）。返却列は **表示名**（`trim(leaderboard_display_name)` が空なら `trim(username)`、両方空なら `Learner`）、**xp_points**、**rank**、**leaderboard_position**（`position` は予約語のため列名回避）。メール・`full_name` は SELECT しない。ダッシュボードに表形式で表示。列・オプトインの歴史的説明: `scripts/database/20260324_leaderboard_opt_in.sql`。**INVOKER/DEFINER 分離の現行正本**: 上記 `20260511_security_definer_rpc_hardening.sql`
-- **ランキング任意参加の誘導 UI**: 学習ダッシュボードの `PublicLeaderboardSection` 内に未オプトイン時のみ「今すぐランキングに参加する」ボタン（`/profile?tab=leaderboard`）を表示。ミッションダッシュボード・テスト結果画面では `LeaderboardOptInCta`（`src/components/learning/LeaderboardOptInCta.tsx`）から同 URL へ誘導する（閉じる操作は画面別の `localStorage` キーで非表示にできる）。
+- **学習者ランキング（デフォルト参加・オプトアウト可）**: `profiles.leaderboard_opt_in` が true のユーザーのみ `get_public_leaderboard(p_limit)`（public は **INVOKER**、集計は `private.get_public_leaderboard_impl`）で一覧化（上限 `least(p_limit, 50)`）。返却列は **表示名**（`trim(leaderboard_display_name)` が空なら `trim(username)`、両方空なら `Learner`）、**xp_points**、**rank**、**leaderboard_position**（`position` は予約語のため列名回避）。メール・`full_name` は SELECT しない。ダッシュボードに表形式で表示。**新規ユーザー**は `/welcome` Step 2 で **デフォルト ON**（プロフィールからいつでもオフ）。列・オプトインの歴史的説明: `scripts/database/20260324_leaderboard_opt_in.sql`。**INVOKER/DEFINER 分離の現行正本**: 上記 `20260511_security_definer_rpc_hardening.sql`
+- **ランキング誘導 UI**: 学習ダッシュボードの `PublicLeaderboardSection` 内に未オプトイン時のみ「今すぐランキングに参加する」ボタン（`/profile?tab=leaderboard`）を表示。ミッションダッシュボード・テスト結果画面では `LeaderboardOptInCta` から同 URL へ誘導。**プロフィール完成度**は `ProfileCompletionNudge`（Home: 完成度 &lt; 60%、Mission: アバター未設定）で別途促進。
 
-#### **プロフィール設定画面**
+#### **プロフィール設定画面（Profile Hub）**
 
-- **タブナビゲーション**: プロフィール、セキュリティ、ソーシャル、通知、**ランキング**（任意参加の公開設定）、PPLランク。`?tab=leaderboard` でランキング設定タブを直接開ける。
-- **URL 同期**: `?tab=profile|security|social|notifications|leaderboard|ppl-ranks` で初期タブを指定可能。タブクリックで `replace` によりクエリを更新（ディープリンク・UserMenu からの遷移に利用）
-- **ランキングタブ**: 参加トグル、ランキング用表示名（任意）、**初回オン時のみ**同意チェック。オフ時は `leaderboard_display_name` をクリアして更新
-- **プロフィールタブ**: アバターアップローダー、基本情報フォーム
-- **セキュリティタブ**: パスワード変更フォーム、パスワード情報表示
+- **レイアウト**: `ProfileIdentityHeader` + `ProfileCompletionCard`（完成度バー）+ `ProfileSectionNav` + セクション本体。`brand.*` / CSS 変数（`whiskyPapa-*` 不使用）
+- **完成度**: [`src/auth/profileCompletion.ts`](../src/auth/profileCompletion.ts) — username 20 / avatar 25 / bio 20 / social 15 / website 10 / 通知設定 10（`leaderboard_opt_in` は含めない）
+- **セクション**: `public`（公開プロフィール・常時編集保存）、`account`、`social`、`notifications`、`leaderboard`、`security`
+- **URL 同期・後方互換**: `?tab=` で深リンク。レガシー `profile` → `public`、`ppl-ranks` → `public`（PPL ランク閲覧は `/mission` へリンク）
+- **ランキング**: 参加トグル・表示名・初回同意。`/welcome` ではデフォルト ON
+- **OAuth 取り込み**: `ensureProfileAfterOAuth` + `importOAuthAvatarIfAvailable`（Google 画像 → `avatars` Storage）
 
 ### **レスポンシブデザイン対応**
 

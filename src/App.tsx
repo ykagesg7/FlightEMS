@@ -10,6 +10,7 @@ import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
 
 // Enhanced Error Boundary and Layout
 import { GoogleAnalyticsTracker } from './components/GoogleAnalyticsTracker';
+import { PasswordRecoveryGuard } from './components/auth/PasswordRecoveryGuard';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import ScrollManager from './components/ScrollManager';
 import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
@@ -32,6 +33,8 @@ const ArticlesPage = lazy(() => import('./pages/articles/ArticlesPage'));
 const ArticleDetailPage = lazy(() => import('./pages/articles/ArticleDetailPage'));
 const ProfilePage = lazy(() => import('./pages/profile/ProfilePage'));
 const AuthPage = lazy(() => import('./pages/auth/AuthPage')); // AuthPageを追加
+const PasswordRecoveryPage = lazy(() => import('./pages/auth/PasswordRecoveryPage'));
+const WelcomeSetupPage = lazy(() => import('./pages/welcome/WelcomeSetupPage'));
 const TestPage = lazy(() => import('./pages/test/TestPage')); // Testページを追加
 // Admin Pages
 const RankConfigPage = lazy(() => import('./pages/admin/RankConfigPage'));
@@ -91,6 +94,7 @@ const App: React.FC = () => {
           <GoogleAnalyticsTracker />
         ) : null}
         <ScrollManager />
+        <PasswordRecoveryGuard />
         <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
           <Routes>
             {/* Flight Academy (primary) + Whisky Papa routes kept for restoration */}
@@ -100,7 +104,9 @@ const App: React.FC = () => {
               <Route path="mission" element={<ProtectedRoute><MissionDashboard /></ProtectedRoute>} />
               <Route path="schedule" element={<Schedule />} />
               <Route path="links" element={<Links />} />
+              <Route path="auth/recovery" element={<PasswordRecoveryPage />} />
               <Route path="auth" element={<AuthPage />} />
+              <Route path="welcome" element={<ProtectedRoute><WelcomeSetupPage /></ProtectedRoute>} />
               <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               {/* Legacy /blog URLs: always drop path slug and send users to the article hub */}
               <Route path="blog" element={<Navigate to="/articles" replace />} />

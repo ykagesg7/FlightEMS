@@ -10,6 +10,7 @@ import { DailyTasks } from './components/DailyTasks';
 import { LearningHeatmap } from './components/LearningHeatmap';
 import { LearningBenchmarkCard } from './components/LearningBenchmarkCard';
 import { PublicLeaderboardSection } from './components/PublicLeaderboardSection';
+import { ProfileCompletionNudge } from '../../components/profile/ProfileCompletionNudge';
 import { SubjectRadarChart } from './components/SubjectRadarChart';
 
 const useReveal = (deps?: React.DependencyList) => {
@@ -240,6 +241,11 @@ const DashboardContent: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+
+        <ProfileCompletionNudge
+          dismissStorageKey="profile_completion_nudge_home_v1"
+          className="mb-8 max-w-3xl"
+        />
 
         {metrics.xpBenchmark ? (
           <div className="mb-8 max-w-3xl">

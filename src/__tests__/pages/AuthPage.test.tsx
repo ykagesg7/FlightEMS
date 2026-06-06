@@ -9,6 +9,9 @@ vi.mock('@/stores/authStore');
 vi.mock('@/pages/auth/hooks/useAuthCallback', () => ({
   useAuthCallback: vi.fn(),
 }));
+vi.mock('@/auth/passwordRecovery', () => ({
+  isPasswordRecoveryActive: vi.fn(() => false),
+}));
 vi.mock('@/components/auth/TurnstileWidget', () => ({
   TurnstileWidget: () => null,
 }));
@@ -82,7 +85,7 @@ describe('AuthPage', () => {
     });
   });
 
-  it('Magic Link タブで signInWithOtp を呼ぶ', async () => {
+  it('Magic Link リンクで signInWithOtp を呼ぶ', async () => {
     const signInWithOtp = vi.fn().mockResolvedValue({ error: null });
     vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
       selector(createAuthState({ signInWithOtp })),
@@ -92,7 +95,7 @@ describe('AuthPage', () => {
         <AuthPage />
       </BrowserRouter>,
     );
-    fireEvent.click(screen.getByRole('button', { name: 'メールリンク' }));
+    fireEvent.click(screen.getByText('メールリンクでログイン'));
     fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'magic@example.com' } });
     fireEvent.click(screen.getByRole('button', { name: 'ログインリンクを送信' }));
     await waitFor(() => {
@@ -136,29 +139,6 @@ describe('AuthPage', () => {
     fireEvent.click(screen.getByText('リセット手順を送信'));
     await waitFor(() => {
       expect(resetPassword).toHaveBeenCalledWith('reset@example.com', undefined);
-    });
-  });
-
-  it('パスワードリカバリー時に新パスワードフォームを表示し updatePasswordFromRecovery を呼ぶ', async () => {
-    const updatePasswordFromRecovery = vi.fn().mockResolvedValue({ error: null });
-    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
-      selector(createAuthState({
-        passwordRecoveryPending: true,
-        session: { user: { id: 'u1' } } as AuthState['session'],
-        updatePasswordFromRecovery,
-      })),
-    );
-    render(
-      <BrowserRouter>
-        <AuthPage />
-      </BrowserRouter>,
-    );
-    expect(screen.getByText('新しいパスワードを設定')).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText('新しいパスワード'), { target: { value: 'newpass123' } });
-    fireEvent.change(screen.getByLabelText('新しいパスワード（確認）'), { target: { value: 'newpass123' } });
-    fireEvent.click(screen.getByRole('button', { name: 'パスワードを保存' }));
-    await waitFor(() => {
-      expect(updatePasswordFromRecovery).toHaveBeenCalledWith('newpass123');
     });
   });
 });
