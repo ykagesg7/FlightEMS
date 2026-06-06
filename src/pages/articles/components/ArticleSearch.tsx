@@ -51,7 +51,7 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
   }, [availableTags]);
 
   return (
-    <div className="p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20">
+    <div className="p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-brand-secondary-dark border-brand-primary/20 shadow-brand-primary/20">
       {/* ヘッダー */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-medium text-white">
@@ -84,7 +84,7 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
                     key={category}
                     onClick={() => handleCategoryClick(category)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${isActive
-                        ? 'bg-whiskyPapa-yellow text-black shadow-whiskyPapa-yellow/50 shadow-lg'
+                        ? 'bg-brand-primary text-[var(--bg)] shadow-brand-primary/50 shadow-lg'
                         : 'bg-gray-800 text-gray-300 border-2 border-gray-600 hover:bg-gray-700 hover:border-gray-500'
                       }`}
                   >
@@ -120,7 +120,7 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
                     key={tag}
                     onClick={() => handleTagToggle(tag)}
                     className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 ${isSelected
-                        ? 'bg-whiskyPapa-yellow text-black shadow-whiskyPapa-yellow/50 shadow-lg'
+                        ? 'bg-brand-primary text-[var(--bg)] shadow-brand-primary/50 shadow-lg'
                         : 'bg-gray-800 text-gray-300 border-2 border-gray-600 hover:bg-gray-700 hover:border-gray-500'
                       }`}
                   >

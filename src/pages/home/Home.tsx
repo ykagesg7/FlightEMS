@@ -3,6 +3,7 @@ import { BookOpen, ChevronRight, Lock, PlayCircle, Target, Trophy, Users } from 
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Card, CardContent, Typography } from '../../components/ui';
+import { HomeContinueReading } from './components/HomeContinueReading';
 import { useAuthStore } from '../../stores/authStore';
 
 /**
@@ -287,6 +288,7 @@ const Home: React.FC = () => {
             <br />
             会員の方は学習記事から単元を深めましょう。
           </p>
+          <HomeContinueReading />
           <Link to="/articles">
             <Button variant="brand" size="lg" className="px-8 py-4 text-lg">
               JOIN our Formation

@@ -36,7 +36,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
 
   if (isLoading) {
     return (
-      <div className="p-6 rounded-lg border border-whiskyPapa-yellow/20 bg-whiskyPapa-black-dark transition-colors duration-200">
+      <div className="p-6 rounded-lg border border-brand-primary/20 bg-brand-secondary-dark transition-colors duration-200">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-300 rounded mb-4 w-32"></div>
           <div className="space-y-4">
@@ -71,12 +71,12 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
   };
 
   return (
-    <section className="p-6 rounded-lg border border-whiskyPapa-yellow/20 bg-whiskyPapa-black-dark transition-colors duration-200">
+    <section className="p-6 rounded-lg border border-brand-primary/20 bg-brand-secondary-dark transition-colors duration-200">
       <div className="flex items-center gap-2 mb-6">
-        <svg className="w-5 h-5 text-whiskyPapa-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
         </svg>
-        <h3 className="text-lg font-semibold text-whiskyPapa-yellow transition-colors duration-200">
+        <h3 className="text-lg font-semibold text-brand-primary transition-colors duration-200">
           関連記事
         </h3>
       </div>
@@ -85,14 +85,14 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
         {relatedArticles.map((article) => (
           <article
             key={article.meta.slug}
-            className="p-4 rounded-lg border border-whiskyPapa-yellow/30 bg-whiskyPapa-black-light hover:bg-whiskyPapa-black-dark hover:border-whiskyPapa-yellow/50 transition-all duration-200 hover:shadow-md"
+            className="p-4 rounded-lg border border-brand-primary/30 bg-brand-secondary-light hover:bg-brand-secondary-dark hover:border-brand-primary/50 transition-all duration-200 hover:shadow-md"
           >
             <Link
               to={`/articles/${article.filename}`}
               className="block space-y-2 no-underline"
             >
               {/* タイトル */}
-              <h4 className="font-medium text-white hover:text-whiskyPapa-yellow transition-colors duration-200 line-clamp-2">
+              <h4 className="font-medium text-white hover:text-brand-primary transition-colors duration-200 line-clamp-2">
                 {article.meta.title}
               </h4>
 

@@ -23,7 +23,7 @@ const ArticleSortControls: React.FC<ArticleSortControlsProps> = ({
   ];
 
   return (
-    <div className="p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20">
+    <div className="p-5 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-brand-secondary-dark border-brand-primary/20 shadow-brand-primary/20">
       {/* ヘッダー */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-medium text-white">
@@ -44,7 +44,7 @@ const ArticleSortControls: React.FC<ArticleSortControlsProps> = ({
           <select
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value)}
-            className="px-3 py-1 rounded-md text-sm border-2 transition-colors border-whiskyPapa-yellow/60 text-white bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-whiskyPapa-yellow"
+            className="px-3 py-1 rounded-md text-sm border-2 transition-colors border-brand-primary/60 focus:ring-brand-primary"
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -57,7 +57,7 @@ const ArticleSortControls: React.FC<ArticleSortControlsProps> = ({
         {/* ソート順の切り替え */}
         <button
           onClick={onSortOrderChange}
-          className="flex items-center space-x-1 px-3 py-1 rounded-md text-sm border-2 transition-all duration-200 hover:scale-105 border-whiskyPapa-yellow/60 text-white bg-gray-800/50 hover:bg-white/10"
+          className="flex items-center space-x-1 px-3 py-1 rounded-md text-sm border-2 transition-all duration-200 hover:scale-105 border-brand-primary/60 text-white bg-gray-800/50 hover:bg-white/10"
           title={`${sortOrder === 'asc' ? '昇順' : '降順'}で並び替え`}
         >
           <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>

@@ -136,6 +136,12 @@ src/pages/
 │   ├── ArticleDetailPage.tsx
 │   └── components/
 │       ├── ArticleDashboard.tsx
+│       ├── articleHubFilters.ts      # タブ・検索・フィルタロジック
+│       ├── ArticleHubToolbar.tsx
+│       ├── ArticleFilterDrawer.tsx
+│       ├── ArticleActiveFilterChips.tsx
+│       ├── ContinueReadingHero.tsx
+│       ├── SeriesNextChapterCta.tsx
 │       ├── ArticleCard.tsx
 │       ├── ArticleHeader.tsx
 │       ├── ArticleSearch.tsx

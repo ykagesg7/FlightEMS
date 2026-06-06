@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import MDXLoader from '../../components/mdx/MDXLoader';
 import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
@@ -6,12 +6,14 @@ import { useArticleStats } from '../../hooks/useArticleStats';
 import { useAuth } from '../../hooks/useAuth';
 import { ArticleMeta } from '../../types/articles';
 import { buildArticleIndex } from '../../utils/articlesIndex';
+import { getMetaForArticle } from './articleHubFilters';
 import { CommentSection } from './components/CommentSection';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 import { PrevNextNav } from './components/PrevNextNav';
 import { ReadingProgressBar } from './components/ReadingProgressBar';
 import { RelatedTestsBlock } from './components/RelatedTestsBlock';
 import { ScrollToButtons } from './components/ScrollToButtons';
+import { SeriesNextChapterCta } from './components/SeriesNextChapterCta';
 import { usePrevNext } from './components/usePrevNext';
 
 const ArticleDetailPage: React.FC = () => {
@@ -24,10 +26,10 @@ const ArticleDetailPage: React.FC = () => {
     loadComments,
     createComment,
     updateComment,
-    deleteComment
+    deleteComment,
   } = useArticleStats();
 
-  const [, setArticleMetas] = useState<Record<string, ArticleMeta>>({});
+  const [articleMetas, setArticleMetas] = useState<Record<string, ArticleMeta>>({});
   const [isLoadingMetas, setIsLoadingMetas] = useState(true);
 
   useEffect(() => {
@@ -35,7 +37,7 @@ const ArticleDetailPage: React.FC = () => {
       try {
         const index = await buildArticleIndex();
         const metaMap: Record<string, ArticleMeta> = {};
-        index.forEach(entry => {
+        index.forEach((entry) => {
           metaMap[entry.filename] = entry.meta;
         });
         setArticleMetas(metaMap);
@@ -51,6 +53,13 @@ const ArticleDetailPage: React.FC = () => {
 
   const { prev, next } = usePrevNext(contentId ?? '');
 
+  const resolvedCurrentMeta = contentId ? articleMetas[contentId] : undefined;
+
+  const nextMeta = useMemo(
+    () => (next ? getMetaForArticle(next, articleMetas) : undefined),
+    [next, articleMetas]
+  );
+
   useEffect(() => {
     if (!contentId || isWithdrawnArticle(contentId)) return;
     loadArticleStats([contentId]);
@@ -62,26 +71,37 @@ const ArticleDetailPage: React.FC = () => {
     await loadComments(contentId);
   }, [loadComments, contentId]);
 
-  const handleAddComment = useCallback(async (content: string) => {
-    if (!contentId) return;
-    await createComment({ article_id: contentId, content });
-  }, [createComment, contentId]);
+  const handleAddComment = useCallback(
+    async (content: string) => {
+      if (!contentId) return;
+      await createComment({ article_id: contentId, content });
+    },
+    [createComment, contentId]
+  );
 
-  const handleEditComment = useCallback(async (commentId: string, content: string) => {
-    if (!contentId) return;
-    await updateComment({ comment_id: commentId, article_id: contentId, content });
-  }, [updateComment, contentId]);
+  const handleEditComment = useCallback(
+    async (commentId: string, content: string) => {
+      if (!contentId) return;
+      await updateComment({ comment_id: commentId, article_id: contentId, content });
+    },
+    [updateComment, contentId]
+  );
 
-  const handleDeleteComment = useCallback(async (commentId: string) => {
-    if (!contentId) return;
-    await deleteComment({ comment_id: commentId, article_id: contentId });
-  }, [deleteComment, contentId]);
+  const handleDeleteComment = useCallback(
+    async (commentId: string) => {
+      if (!contentId) return;
+      await deleteComment({ comment_id: commentId, article_id: contentId });
+    },
+    [deleteComment, contentId]
+  );
 
   if (!contentId) {
     return (
-      <div className="text-center py-12">
+      <div className="py-12 text-center">
         <p className="text-red-500">コンテンツIDが指定されていません。</p>
-        <Link to="/articles" className="underline">記事一覧へ戻る</Link>
+        <Link to="/articles" className="underline">
+          記事一覧へ戻る
+        </Link>
       </div>
     );
   }
@@ -93,18 +113,20 @@ const ArticleDetailPage: React.FC = () => {
     <div className="min-h-screen" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
       <div className="container mx-auto px-4 py-6">
         <div className="mb-4">
-          <Link to="/articles" className="text-sm text-[color:var(--hud-primary)] underline">← 記事一覧へ</Link>
+          <Link to="/articles" className="text-sm text-brand-primary underline">
+            ← 記事一覧へ
+          </Link>
         </div>
         {withdrawn ? (
           <div
-            className="rounded-lg border border-amber-500/40 bg-amber-950/30 px-4 py-6 text-[color:var(--text-primary)]"
+            className="rounded-lg border border-brand-primary/30 bg-brand-secondary-dark px-4 py-6 text-[color:var(--text-primary)]"
             role="status"
           >
             <p className="text-base leading-relaxed">{WITHDRAWN_ARTICLE_MESSAGE}</p>
           </div>
         ) : isLoadingMetas ? (
-          <div className="flex justify-center items-center h-40">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+          <div className="flex h-40 items-center justify-center">
+            <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-brand-primary" />
           </div>
         ) : (
           <>
@@ -124,6 +146,14 @@ const ArticleDetailPage: React.FC = () => {
             onEditComment={handleEditComment}
             onDeleteComment={handleDeleteComment}
             onLoadComments={handleLoadComments}
+          />
+        )}
+
+        {!withdrawn && (
+          <SeriesNextChapterCta
+            next={next}
+            nextMeta={nextMeta}
+            currentMeta={resolvedCurrentMeta}
           />
         )}
 

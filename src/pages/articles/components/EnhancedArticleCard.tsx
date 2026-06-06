@@ -65,15 +65,15 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
     <div className={`
       group relative transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1
       ${isHighlighted ? 'highlight-article' : ''}
-      ${isNextToRead && articleStatus === 'in-progress' ? 'ring-2 ring-whiskyPapa-yellow ring-offset-2 ring-offset-whiskyPapa-black shadow-lg shadow-whiskyPapa-yellow/50' : ''}
+      ${isNextToRead && articleStatus === 'in-progress' ? 'ring-2 ring-brand-primary ring-offset-2 ring-offset-[var(--bg)] shadow-lg shadow-brand-primary/50' : ''}
     `}>
       {articleStatus === 'completed' && (
-        <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded-full bg-[#39FF14]/20 text-[#39FF14] border border-[#39FF14]/30 text-xs font-bold">
+        <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded-full bg-hud-green/20 text-hud-green border border-hud-green/30 text-xs font-bold">
           完了
         </div>
       )}
       {articleStatus === 'in-progress' && !isCompleted && (
-        <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded-full bg-whiskyPapa-yellow/20 text-whiskyPapa-yellow border border-whiskyPapa-yellow/30 text-xs font-bold">
+        <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded-full bg-brand-primary/20 text-brand-primary border border-brand-primary/30 text-xs font-bold">
           進行中
         </div>
       )}
@@ -95,7 +95,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
         </div>
       )}
 
-      <div className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-xl bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20 hover:bg-white/10 ${shouldBlur ? 'blur-[1px]' : ''}`}>
+      <div className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-xl bg-brand-secondary-dark border-brand-primary/20 shadow-brand-primary/20 hover:bg-brand-primary/5 ${shouldBlur ? 'blur-[1px]' : ''}`}>
         {progress && progressPercentage > 0 && (
           <div className="absolute top-0 left-0 right-0 h-1 z-10 bg-gray-800">
             <div

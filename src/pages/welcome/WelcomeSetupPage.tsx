@@ -97,7 +97,9 @@ const WelcomeSetupPage: React.FC = () => {
       setError(completeError.message || 'セットアップ完了に失敗しました');
       return;
     }
-    navigate(redirectTarget, { replace: true });
+    const destination =
+      redirectTarget === '/' ? '/articles?tab=continue' : redirectTarget;
+    navigate(destination, { replace: true });
   }, [navigate, redirectTarget, user]);
 
   const handleImportOAuthAvatar = useCallback(async () => {

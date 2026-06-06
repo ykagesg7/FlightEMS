@@ -17,7 +17,7 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
     : 0;
 
   return (
-    <div className="relative overflow-hidden rounded-xl border-2 p-6 mb-8 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20">
+    <div className="relative mb-8 overflow-hidden rounded-xl border-2 border-brand-primary/20 bg-brand-secondary-dark p-6 shadow-lg shadow-brand-primary/20 backdrop-blur-sm">
       {/* デモ用オーバーレイ */}
       {isDemo && (
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-blue-500/10 pointer-events-none" />
@@ -51,7 +51,7 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
         {/* メイン統計 */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
           {/* 読了記事数 */}
-          <div className="p-3 sm:p-4 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20">
+          <div className="rounded-xl border-2 border-brand-primary/20 bg-brand-secondary-dark p-3 shadow-lg shadow-brand-primary/20 backdrop-blur-sm sm:p-4">
             <div className="text-center">
               <div className="text-2xl font-bold mb-1 text-blue-400">
                 {stats.completedArticles}
@@ -63,7 +63,7 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
           </div>
 
           {/* 完了ミッション数 */}
-          <div className="p-3 sm:p-4 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20">
+          <div className="rounded-xl border-2 border-brand-primary/20 bg-brand-secondary-dark p-3 shadow-lg shadow-brand-primary/20 backdrop-blur-sm sm:p-4">
             <div className="text-center">
               <div className="text-2xl font-bold mb-1 text-green-400">
                 {stats.completedMissions}
@@ -75,7 +75,7 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
           </div>
 
           {/* ランクアップ進捗 */}
-          <div className="p-3 sm:p-4 rounded-xl border-2 backdrop-blur-sm shadow-lg bg-whiskyPapa-black-dark border-whiskyPapa-yellow/20 shadow-whiskyPapa-yellow/20">
+          <div className="rounded-xl border-2 border-brand-primary/20 bg-brand-secondary-dark p-3 shadow-lg shadow-brand-primary/20 backdrop-blur-sm sm:p-4">
             <div className="text-center">
               <div className="text-2xl font-bold mb-1 text-yellow-400">
                 {Math.round(stats.rankProgress)}%
@@ -113,7 +113,7 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
         </div>
 
         {/* 今日の目標 */}
-        <div className="flex items-center justify-between p-3 rounded-xl bg-whiskyPapa-black-dark">
+        <div className="flex items-center justify-between rounded-xl bg-[var(--bg)] p-3">
           <div className="flex items-center space-x-3">
             <div className={`text-lg ${stats.readingGoals.achieved ? '🎯' : '📖'}`}>
             </div>
@@ -128,7 +128,7 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
           </div>
 
           {stats.readingGoals.achieved && (
-            <div className="px-3 py-1 rounded-full text-xs font-medium bg-whiskyPapa-black-dark text-whiskyPapa-yellow">
+            <div className="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-medium text-brand-primary">
               達成済み ✨
             </div>
           )}

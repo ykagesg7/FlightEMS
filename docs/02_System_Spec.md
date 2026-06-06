@@ -131,11 +131,20 @@ CREATE TABLE learning_progress (
 - **content_idベースの進捗取得**: `article.id`（content_id）を使用してSupabaseから進捗を取得
 - **ステータス表示**: 「完了」「進行中」の2種類（シリーズ順次ロックは廃止）
   - `completed`: 読了済み記事（HUD Greenバッジ）
-  - `in-progress`: 未読または読了途中（whiskyPapa-yellowバッジ。同一 `meta.series` 内では **order が最小の未完了記事 1 件**に「次に読む」リングを付与）
+  - `in-progress`: 未読または読了途中（brand-primary バッジ。同一 `meta.series` 内では **order が最小の未完了記事 1 件**に「次に読む」リングを付与）
 - **ページ遷移後の自動更新**: `ArticleDashboard`に戻った際、`refreshProgress`により最新データを取得
 - **Supabaseとの同期**: ローカル状態だけでなく、Supabaseの最新データを反映
 
-### **記事コメント機能（2025年10月13日実装）**
+#### **記事ハブ UI（`/articles`・2026年6月更新）**
+
+- **IA**: タブ `続きから`（デフォルト）/ `CPL 学科` / `PPL 基礎` / `メンタリティ`（公開記事があるときのみ表示）。旧 `mainFilter` / `category` URL は `tab` へ後方互換マップ。
+- **検索**: `?q=` でタイトル・説明・`meta.tags`・`meta.series` を部分一致（[`structuredData.ts`](../src/utils/structuredData.ts) の SearchAction と整合）。
+- **詳細フィルタ**: ドロワー内のタグ（上位表示 + 検索）と進捗（すべて / 未読 / 完了）。一覧上部のタグウォールは廃止。
+- **非公開ブログ**: [`withdrawnArticleIds.ts`](../src/constants/withdrawnArticleIds.ts) + [`filterPublishedArticleContents`](../src/constants/articleHubCategories.ts) で一覧・進捗・PrevNext から二重除外。
+- **ロジック**: [`articleHubFilters.ts`](../src/pages/articles/articleHubFilters.ts)（パース・フィルタ・次に読む選定）。UI: `ArticleHubToolbar`, `ArticleFilterDrawer`, `ArticleActiveFilterChips`, `ContinueReadingHero`。
+- **Home / Welcome**: ログイン Home に [`HomeContinueReading`](../src/pages/home/components/HomeContinueReading.tsx)。Welcome 完了で `next=/` のとき `/articles?tab=continue` へ。
+- **記事詳細**: [`SeriesNextChapterCta`](../src/pages/articles/components/SeriesNextChapterCta.tsx) でシリーズ次章 CTA（`PrevNextNav` の上）。
+
 
 #### **データベース設計**
 

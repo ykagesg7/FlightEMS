@@ -23,9 +23,9 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
   const readingTimeText = meta.readingTime ? `約${meta.readingTime}分` : null;
 
   return (
-    <header className="mb-8 pb-6 border-b border-whiskyPapa-yellow/30 transition-colors duration-200">
+    <header className="mb-8 pb-6 border-b border-brand-primary/30 transition-colors duration-200">
       {/* タイトル */}
-      <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight text-whiskyPapa-yellow transition-colors duration-200">
+      <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight text-brand-primary transition-colors duration-200">
         {meta.title}
       </h1>
 
@@ -85,8 +85,8 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ meta }) => {
 
       {/* シリーズ情報 */}
       {meta.series && (
-        <div className="mt-4 p-3 rounded-lg border border-whiskyPapa-yellow/20 bg-whiskyPapa-black-dark transition-all duration-200">
-          <div className="flex items-center gap-2 text-sm text-whiskyPapa-yellow transition-colors duration-200">
+        <div className="mt-4 p-3 rounded-lg border border-brand-primary/20 bg-brand-secondary-dark transition-all duration-200">
+          <div className="flex items-center gap-2 text-sm text-brand-primary transition-colors duration-200">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14-7l2 2m0 0l2 2m-2-2v6m-2 5.5V16a2 2 0 00-2-2h-4m-2 2.5V20a2 2 0 01-2-2v-2a2 2 0 012-2h4a2 2 0 012 2z" />
             </svg>
