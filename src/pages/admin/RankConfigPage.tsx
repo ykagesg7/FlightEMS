@@ -1,37 +1,34 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../utils/supabase';
 import type { UserRank } from '../../types/gamification';
 import { RANK_INFO } from '../../types/gamification';
+import type { Json } from '../../types/database.types';
+import { ADMIN_CARD_CLASS, AdminPageShell } from './components/AdminPageShell';
 
-/**
- * ランク条件の型定義
- */
-interface RankRequirement {
-  id?: string;
+type RankRequirement = {
+  id: string;
   rank: UserRank;
   requirement_type: string;
   requirement_value: number;
-  requirement_config: Record<string, any> | null;
-  is_required: boolean;
+  requirement_config: Json | null;
+  is_required: boolean | null;
   alternative_group: string | null;
-  priority: number;
+  priority: number | null;
   display_name: string | null;
   description: string | null;
   icon: string | null;
-}
+};
 
-/**
- * 管理者用ランク設定ページ
- */
 export const RankConfigPage: React.FC = () => {
   const [requirements, setRequirements] = useState<RankRequirement[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // ランク条件を読み込み
   const loadRequirements = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
+      setError(null);
       const { data, error: fetchError } = await supabase
         .from('rank_requirements')
         .select('*')
@@ -39,11 +36,11 @@ export const RankConfigPage: React.FC = () => {
         .order('priority', { ascending: true });
 
       if (fetchError) throw fetchError;
-      setRequirements(data || []);
+      setRequirements((data ?? []) as RankRequirement[]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'ランク条件の読み込みに失敗しました');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   }, []);
 
@@ -51,36 +48,10 @@ export const RankConfigPage: React.FC = () => {
     void loadRequirements();
   }, [loadRequirements]);
 
-  // ランク条件を保存
-  const _saveRequirement = useCallback(async (requirement: RankRequirement) => {
-    try {
-      if (requirement.id) {
-        // 更新
-        const { error: updateError } = await supabase
-          .from('rank_requirements')
-          .update(requirement)
-          .eq('id', requirement.id);
+  const deleteRequirement = useCallback(async (id: string, label: string) => {
+    if (!window.confirm(`「${label}」の条件を削除しますか？`)) return;
 
-        if (updateError) throw updateError;
-      } else {
-        // 新規作成
-        const { error: insertError } = await supabase
-          .from('rank_requirements')
-          .insert([requirement]);
-
-        if (insertError) throw insertError;
-      }
-
-      await loadRequirements();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'ランク条件の保存に失敗しました');
-    }
-  }, [loadRequirements]);
-
-  // ランク条件を削除
-  const deleteRequirement = useCallback(async (id: string) => {
-    if (!confirm('このランク条件を削除しますか？')) return;
-
+    setDeletingId(id);
     try {
       const { error: deleteError } = await supabase
         .from('rank_requirements')
@@ -91,63 +62,70 @@ export const RankConfigPage: React.FC = () => {
       await loadRequirements();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'ランク条件の削除に失敗しました');
+    } finally {
+      setDeletingId(null);
     }
   }, [loadRequirements]);
 
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-500 mb-4">アクセス拒否</h1>
-          <p className="text-gray-400">このページは管理者のみアクセスできます。</p>
-        </div>
-      </div>
-    );
-  }
+  const requirementsByRank = useMemo(() => {
+    return requirements.reduce<Partial<Record<UserRank, RankRequirement[]>>>((acc, req) => {
+      if (!acc[req.rank]) acc[req.rank] = [];
+      acc[req.rank]!.push(req);
+      return acc;
+    }, {});
+  }, [requirements]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mx-auto"></div>
-          <p className="mt-4 text-gray-400">読み込み中...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // ランク別にグループ化
-  const requirementsByRank = requirements.reduce((acc, req) => {
-    if (!acc[req.rank]) acc[req.rank] = [];
-    acc[req.rank].push(req);
-    return acc;
-  }, {} as Record<UserRank, RankRequirement[]>);
+  const ranksWithRequirements = useMemo(
+    () => (Object.keys(requirementsByRank) as UserRank[]).length,
+    [requirementsByRank],
+  );
 
   return (
-    <div className="min-h-screen p-8" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">ランク条件設定</h1>
-          <p className="text-gray-400">各ランクの達成条件を設定・編集できます</p>
+    <AdminPageShell
+      title="ランク設定"
+      description="各ランクの昇格条件（rank_requirements）を確認・削除できます。"
+      headerAction={
+        <button
+          type="button"
+          onClick={() => void loadRequirements()}
+          className="rounded-lg border border-brand-primary/30 px-3 py-2 text-sm font-semibold text-brand-primary hover:bg-brand-primary/10"
+        >
+          再読み込み
+        </button>
+      }
+    >
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className={`${ADMIN_CARD_CLASS} px-4 py-3`}>
+          <p className="text-xs font-semibold text-[var(--text-muted)]">登録条件数</p>
+          <p className="mt-1 text-xl font-bold text-brand-primary">{requirements.length}</p>
         </div>
+        <div className={`${ADMIN_CARD_CLASS} px-4 py-3`}>
+          <p className="text-xs font-semibold text-[var(--text-muted)]">条件のあるランク</p>
+          <p className="mt-1 text-xl font-bold text-brand-primary">{ranksWithRequirements}</p>
+        </div>
+        <div className={`${ADMIN_CARD_CLASS} col-span-2 px-4 py-3 sm:col-span-1`}>
+          <p className="text-xs font-semibold text-[var(--text-muted)]">定義済みランク</p>
+          <p className="mt-1 text-xl font-bold text-brand-primary">{Object.keys(RANK_INFO).length}</p>
+        </div>
+      </div>
 
-        {error && (
-          <div className="mb-4 p-4 bg-red-900/20 border border-red-500 rounded-lg text-red-400">
-            {error}
-          </div>
-        )}
+      {error ? (
+        <div className="mb-4 rounded-lg border border-hud-red/40 bg-hud-red/10 p-3 text-sm text-hud-red">{error}</div>
+      ) : null}
 
-        {/* ランク別の条件一覧 */}
-        <div className="space-y-8">
+      {loading ? (
+        <p className="text-center text-[var(--text-muted)]">読み込み中…</p>
+      ) : (
+        <div className="space-y-6">
           {(Object.keys(RANK_INFO) as UserRank[]).map((rank) => {
             const rankInfo = RANK_INFO[rank];
-            const rankRequirements = requirementsByRank[rank] || [];
+            const rankRequirements = requirementsByRank[rank] ?? [];
 
             return (
-              <div key={rank} className="border border-gray-700 rounded-lg p-6">
-                <div className="flex items-center gap-4 mb-4">
+              <section key={rank} className={ADMIN_CARD_CLASS}>
+                <div className="mb-4 flex items-center gap-4 border-b border-brand-primary/15 pb-4">
                   <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
+                    className="flex h-12 w-12 items-center justify-center rounded-full text-2xl"
                     style={{
                       backgroundColor: `${rankInfo.color}20`,
                       borderColor: rankInfo.color,
@@ -157,80 +135,85 @@ export const RankConfigPage: React.FC = () => {
                     {rankInfo.icon}
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold" style={{ color: rankInfo.color }}>
+                    <h2 className="text-lg font-bold" style={{ color: rankInfo.color }}>
                       {rankInfo.displayName}
                     </h2>
-                    <p className="text-sm text-gray-400">
-                      必要XP: {rankInfo.xpRequired}
+                    <p className="text-sm text-[var(--text-muted)]">
+                      必要 XP: {rankInfo.xpRequired.toLocaleString('ja-JP')}
+                      {rankInfo.nextRank ? ` · 次: ${RANK_INFO[rankInfo.nextRank].displayName}` : ''}
                     </p>
                   </div>
+                  <span className="ml-auto rounded-full border border-brand-primary/25 px-3 py-1 text-xs font-semibold text-brand-primary">
+                    {rankRequirements.length} 条件
+                  </span>
                 </div>
 
-                {/* 条件一覧 */}
-                <div className="space-y-4">
-                  {rankRequirements.map((req) => (
-                    <div
-                      key={req.id}
-                      className="p-4 bg-gray-800/50 rounded-lg border border-gray-700"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            {req.icon && <span>{req.icon}</span>}
-                            <span className="font-semibold">
-                              {req.display_name || req.requirement_type}
-                            </span>
-                            {req.alternative_group && (
-                              <span className="text-xs px-2 py-1 bg-blue-900/50 text-blue-400 rounded">
-                                OR条件: {req.alternative_group}
-                              </span>
-                            )}
+                <div className="space-y-3">
+                  {rankRequirements.map((req) => {
+                    const label = req.display_name || req.requirement_type;
+                    return (
+                      <article
+                        key={req.id}
+                        className="rounded-lg border border-brand-primary/15 bg-brand-primary/5 p-4"
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-2 flex flex-wrap items-center gap-2">
+                              {req.icon ? <span aria-hidden>{req.icon}</span> : null}
+                              <span className="font-semibold text-[var(--text-primary)]">{label}</span>
+                              {req.alternative_group ? (
+                                <span className="rounded-full border border-brand-primary/30 bg-brand-primary/10 px-2 py-0.5 text-xs text-brand-primary">
+                                  OR: {req.alternative_group}
+                                </span>
+                              ) : null}
+                              {req.is_required ? (
+                                <span className="rounded-full border border-brand-primary/20 px-2 py-0.5 text-xs text-[var(--text-muted)]">
+                                  必須
+                                </span>
+                              ) : null}
+                            </div>
+                            {req.description ? (
+                              <p className="mb-2 text-sm text-[var(--text-muted)]">{req.description}</p>
+                            ) : null}
+                            <dl className="grid gap-1 text-xs text-[var(--text-muted)] sm:grid-cols-2">
+                              <div>
+                                <dt className="inline font-semibold text-[var(--text-primary)]">タイプ: </dt>
+                                <dd className="inline">{req.requirement_type}</dd>
+                              </div>
+                              <div>
+                                <dt className="inline font-semibold text-[var(--text-primary)]">値: </dt>
+                                <dd className="inline">{req.requirement_value}</dd>
+                              </div>
+                              <div>
+                                <dt className="inline font-semibold text-[var(--text-primary)]">優先度: </dt>
+                                <dd className="inline">{req.priority ?? '—'}</dd>
+                              </div>
+                            </dl>
                           </div>
-                          {req.description && (
-                            <p className="text-sm text-gray-400 mb-2">{req.description}</p>
-                          )}
-                          <div className="flex items-center gap-4 text-sm">
-                            <span>タイプ: {req.requirement_type}</span>
-                            <span>値: {req.requirement_value}</span>
-                            <span>必須: {req.is_required ? 'はい' : 'いいえ'}</span>
-                            <span>優先度: {req.priority}</span>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
                           <button
-                            onClick={() => deleteRequirement(req.id!)}
-                            className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 rounded text-white"
+                            type="button"
+                            onClick={() => void deleteRequirement(req.id, label)}
+                            disabled={deletingId === req.id}
+                            className="rounded-lg border border-hud-red/35 bg-hud-red/10 px-3 py-1.5 text-xs font-semibold text-hud-red hover:bg-hud-red/15 disabled:opacity-50"
                           >
                             削除
                           </button>
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      </article>
+                    );
+                  })}
 
-                  {rankRequirements.length === 0 && (
-                    <p className="text-gray-500 text-sm">条件が設定されていません</p>
-                  )}
+                  {rankRequirements.length === 0 ? (
+                    <p className="text-sm text-[var(--text-muted)]">このランクに条件は設定されていません。</p>
+                  ) : null}
                 </div>
-
-                {/* 新規条件追加ボタン（将来の拡張用） */}
-                <div className="mt-4 pt-4 border-t border-gray-700">
-                  <button
-                    className="px-4 py-2 text-sm bg-yellow-600 hover:bg-yellow-500 rounded text-white"
-                    disabled
-                    title="将来実装予定"
-                  >
-                    + 条件を追加
-                  </button>
-                </div>
-              </div>
+              </section>
             );
           })}
         </div>
-      </div>
-    </div>
+      )}
+    </AdminPageShell>
   );
 };
 
 export default RankConfigPage;
-

@@ -23,7 +23,7 @@
 | 通信 3.5.4 メタ本文化（May） | `20260505_learning_contents_comm_354_meta_finalize.sql` |
 | 通信 3.5.x メタ全集約（本文化後） | `20260507_learning_contents_comm_351_355_meta_sync.sql` |
 | 通信 3.5.5 メタ本文化 | `20260506_learning_contents_comm_355_meta_finalize.sql` |
-| `learning_test_mapping` 追加・修正 | `20260412_learning_test_mapping_*.sql`、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`、§5.2 上位クラスタ追補 `20260505_learning_test_mapping_unmapped_top_clusters.sql`、`20260506_learning_test_mapping_unmapped_tier2.sql`、**W23 法規** `20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql`（`総則/目的`→`3.1.1`）等（08・14 が索引）。**2026-05**: 緊急通信の再適用・監査のみは `20260505_*.sql` |
+| `learning_test_mapping` 追加・修正 | `20260412_learning_test_mapping_*.sql`、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`、§5.2 上位クラスタ追補 `20260505_learning_test_mapping_unmapped_top_clusters.sql`、`20260506_learning_test_mapping_unmapped_tier2.sql`、**W23 法規** `20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql`（`総則/目的`→`3.1.1`）、**W24 空力** `20260606_learning_test_mapping_aero_lift_drag_clusters.sql`（空力基礎 3 クラスタ→`3.2.7`）等（08・14 が索引）。**2026-05**: 緊急通信の再適用・監査のみは `20260505_*.sql` |
 | レガシーテーブル削除（2026-04） | `20260411_drop_*.sql`（[02_System_Spec.md](../../docs/02_System_Spec.md) DB スリム化と対応） |
 | ランク・ゲーミフィケーション（再構築時） | `ppl_rank_*.sql`、`rank_integration*.sql`、`gamification_migration.sql`（[04_Operations_Guide.md](../../docs/04_Operations_Guide.md)） |
 

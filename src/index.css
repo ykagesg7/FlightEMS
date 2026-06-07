@@ -91,6 +91,20 @@
     color-scheme: dark;
   }
 
+  .quiz-text-field {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: color-mix(in srgb, var(--panel) 88%, transparent);
+    color: var(--text-primary);
+    caret-color: var(--brand-primary);
+    color-scheme: dark;
+  }
+
+  .quiz-text-field::placeholder {
+    color: var(--text-muted);
+    opacity: 0.85;
+  }
+
   .quiz-filter-button {
     color-scheme: dark;
   }

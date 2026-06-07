@@ -39,6 +39,8 @@ const TestPage = lazy(() => import('./pages/test/TestPage')); // Testページ�
 // Admin Pages
 const RankConfigPage = lazy(() => import('./pages/admin/RankConfigPage'));
 const XpConfigPage = lazy(() => import('./pages/admin/XpConfigPage'));
+const QuestionReportsPage = lazy(() => import('./pages/admin/QuestionReportsPage'));
+const AdminHubPage = lazy(() => import('./pages/admin/AdminHubPage'));
 // Rank Benefits Page
 const RankBenefitsPage = lazy(() => import('./pages/mission/components/RankBenefitsPage'));
 // 必要に応じて他のページも追加
@@ -123,8 +125,10 @@ const App: React.FC = () => {
               {/* Rank Benefits */}
               <Route path="ranks" element={<RankBenefitsPage />} />
               {/* Admin Pages */}
+              <Route path="admin" element={<ProtectedRoute requireAdmin><AdminHubPage /></ProtectedRoute>} />
               <Route path="admin/ranks" element={<ProtectedRoute requireAdmin><RankConfigPage /></ProtectedRoute>} />
               <Route path="admin/xp" element={<ProtectedRoute requireAdmin><XpConfigPage /></ProtectedRoute>} />
+              <Route path="admin/question-reports" element={<ProtectedRoute requireAdmin><QuestionReportsPage /></ProtectedRoute>} />
             </Route>
 
             {/* Fallback */}

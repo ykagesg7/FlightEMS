@@ -5,6 +5,8 @@ import { UserMenu } from '../components/marketing/UserMenu';
 import { Typography } from '../components/ui';
 import { HUDTimeDisplay } from '../components/ui/HUDDashboard';
 import { useMobileNavFocusTrap } from '../hooks/useMobileNavFocusTrap';
+import { useAuthStore } from '../stores/authStore';
+import { isAdminUser } from '../utils/isAdminUser';
 
 const navLinkDesktop = ({ isActive }: { isActive: boolean }) =>
   [
@@ -31,6 +33,8 @@ export const MarketingLayout: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const mobileNavPanelRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const profile = useAuthStore((state) => state.profile);
+  const showAdminNav = isAdminUser(profile);
 
   useMobileNavFocusTrap({
     open: isMobileMenuOpen,
@@ -116,6 +120,11 @@ export const MarketingLayout: React.FC = () => {
               <NavLink to="/test" className={navLinkDesktop}>
                 QUIZ
               </NavLink>
+              {showAdminNav ? (
+                <NavLink to="/admin" className={navLinkDesktop}>
+                  ADMIN
+                </NavLink>
+              ) : null}
             </nav>
 
             {/* User Menu / Login Button */}
@@ -223,6 +232,21 @@ export const MarketingLayout: React.FC = () => {
                       QUIZ
                     </NavLink>
                   </motion.div>
+                  {showAdminNav ? (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <NavLink
+                        to="/admin"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={navLinkMobile}
+                      >
+                        ADMIN
+                      </NavLink>
+                    </motion.div>
+                  ) : null}
                 </nav>
               </div>
             </motion.div>

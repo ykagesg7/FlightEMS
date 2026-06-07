@@ -14,6 +14,22 @@ declare global {
   }
 }
 
+export type Ga4EventParams = Record<string, string | number | boolean | undefined>;
+
+/** 本番ビルドで設定される測定 ID（未設定なら空文字） */
+export function getGa4MeasurementId(): string {
+  return import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ?? '';
+}
+
+function canSendGa4(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    import.meta.env.PROD &&
+    typeof window.gtag === 'function' &&
+    getGa4MeasurementId().length > 0
+  );
+}
+
 /** ルート変更後に呼ぶ（本番・gtag 読み込み後のみ送信） */
 export function sendGa4PageView(measurementId: string, pagePath: string): void {
   if (typeof window === 'undefined' || !import.meta.env.PROD) return;
@@ -26,4 +42,18 @@ export function sendGa4PageView(measurementId: string, pagePath: string): void {
     page_title: title,
     page_location: locationHref,
   });
+}
+
+/** カスタムイベント（Quiz Hub 計測等）。本番・gtag 読み込み後のみ送信。 */
+export function sendGa4Event(eventName: string, params?: Ga4EventParams): void {
+  if (!canSendGa4()) return;
+  const id = getGa4MeasurementId();
+  const payload: Record<string, string | number | boolean> = {};
+  if (params) {
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined) payload[key] = value;
+    }
+  }
+  window.gtag!('event', eventName, payload);
+  void id;
 }

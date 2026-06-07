@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトのコンポーネント構造と配置方針について説明します。
 
-**最終更新**: 2026年5月（`planning` 機能マップ節、`AGENTS`/`FOLDER_STRUCTURE` と整合）
-**バージョン**: Component Structure Guide v1.6
+**最終更新**: 2026年6月（Quiz Hub `src/pages/test/` 分割、`AGENTS`/`FOLDER_STRUCTURE` と整合）
+**バージョン**: Component Structure Guide v1.7
 
 ---
 
@@ -264,20 +264,42 @@ src/pages/
 │           ├── mapStyles.css
 │           └── types.ts
 ├── test/
-│   ├── TestPage.tsx
+│   ├── TestPage.tsx                 # Quiz Hub オーケストレータ（URL 同期・出題・結果）
+│   ├── testHubFilters.ts            # TestHubState・URL parse/build・legacy 互換
+│   ├── testFilterOptionUtils.ts     # 科目 Listbox ソート・検索ヘルパ
+│   ├── testQuizFetch.ts             # Supabase 出題 fetch（診断・科目・Review・記事連動）
+│   ├── quizQuestionUtils.ts         # parseUnifiedCplQuestion・shuffleAndSlice
 │   ├── cplSyllabusOrder.ts          # シラバス順の科目・サブ科目順序
+│   ├── hooks/
+│   │   ├── useTestSubjectFilters.ts # 科目・サブ科目・問題数オプション
+│   │   └── useQuestionReport.ts     # 問題報告 insert
 │   ├── utils/
-│   │   └── normalizeSubSubject.ts   # サブ科目ラベル正規化
+│   │   ├── normalizeSubSubject.ts   # サブ科目ラベル正規化
+│   │   ├── formatQuizQuestionText.ts # (a)/(ア) 形式の問題文分割
+│   │   ├── buildQuizLearningSession.ts # learning_sessions insert payload
+│   │   └── questionReportTypes.ts   # 報告種別・エラー整形
 │   └── components/
+│       ├── QuizHubToolbar.tsx       # タブ・診断開始・フィルタ入口
+│       ├── QuizFilterDrawer.tsx     # モバイル Bottom Sheet フィルタ
+│       ├── QuizActiveFilterChips.tsx
+│       ├── WeakAreasHero.tsx        # user_weak_areas 要約 CTA
+│       ├── TestSubjectFilterSection.tsx
 │       ├── QuizComponent.tsx
 │       ├── QuestionComponent.tsx
-│       ├── QuizResultsView.tsx      # 結果画面・再挑戦導線
-│       ├── FilterListbox.tsx        # 科目・サブ科目・問題数選択UI
+│       ├── QuizQuestionText.tsx
+│       ├── QuestionReportDialog.tsx
+│       ├── QuestionReportTrigger.tsx
+│       ├── QuizResultsView.tsx      # 結果 Hero・再挑戦・ReviewContentLink
+│       ├── FilterListbox.tsx
 │       ├── SectionComponent.tsx
 │       └── quiz/
 │           ├── CPLExamResults.tsx
 │           ├── CPLExamSelector.tsx
 │           └── CPLExamSession.tsx
+├── admin/
+│   ├── RankConfigPage.tsx
+│   ├── XpConfigPage.tsx
+│   └── QuestionReportsPage.tsx      # 問題報告トリアージ（requireAdmin）
 ├── profile/
 │   ├── ProfilePage.tsx              # Profile Hub（完成度バー + セクションナビ）
 │   ├── hooks/

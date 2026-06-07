@@ -28,6 +28,7 @@
 ### 長期実行計画
 
 - **[06_Long_Term_Execution.md](06_Long_Term_Execution.md)** — 品質（テスト・Sentry/GA4/Lighthouse/A11y）・MDX/DB 整合・**クイズ分析（旧 12、§5）**・成長/コスト/プライバシーを**1 本**に集約。詳細 KPI は [01](01_Current_Status_and_Roadmap.md) を正とする（旧 12・16–18 を統合済み）。
+- **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — 2026年6月（W23〜W26）の **Quiz Hub UX + コンテンツ・品質** 実行計画（2026-06-06 Lane A 完了・`src` 18.07%）。
 
 ### 月次実行計画
 
@@ -235,6 +236,7 @@ npm run lint         # Lintチェック
 - **learning_test_mapping**: 記事と統一設問の対応（`unified_cpl_question_ids`）
 - **quiz_sessions**: クイズセッション（解答・スコア）
 - **user_test_results**: テスト結果（科目・サブ科目・正誤）
+- **question_issue_reports**: ユーザーによる問題・解説の報告（`/admin/question-reports` でトリアージ）
 - **user_weak_areas**, **user_unified_srs_status**: 苦手分野・SRS 状態
 - **missions**, **user_missions**: ゲーミフィケーション
 - **ppl_rank_definitions**, **user_ppl_ranks**: PPL ランク定義と付与

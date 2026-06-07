@@ -666,6 +666,53 @@ export type Database = {
         }
         Relationships: []
       }
+      question_issue_reports: {
+        Row: {
+          admin_note: string | null
+          comment: string | null
+          context: Json
+          created_at: string
+          id: string
+          question_id: string
+          report_type: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          comment?: string | null
+          context?: Json
+          created_at?: string
+          id?: string
+          question_id: string
+          report_type: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          comment?: string | null
+          context?: Json
+          created_at?: string
+          id?: string
+          question_id?: string
+          report_type?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_issue_reports_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "unified_cpl_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_sessions: {
         Row: {
           answers: Json | null

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
+import { isAdminUser } from '../../utils/isAdminUser';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -36,7 +37,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={redirectTo} replace state={{ from: location }} />;
   }
 
-  if (requireAdmin && profile?.roll?.toLowerCase() !== 'admin') {
+  if (requireAdmin && !isAdminUser(profile)) {
     return <Navigate to="/" replace />;
   }
 

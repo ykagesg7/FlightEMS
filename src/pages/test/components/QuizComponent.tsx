@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { QuestionType, QuizQuestion, UserQuizAnswer } from '../../../types/quiz';
 import { QuestionComponent } from './QuestionComponent'; // Reusing for individual question rendering
+import { scrollToQuizAnchorDeferred } from '../utils/scrollToQuizAnchor';
+
+/** モバイル固定パレット + sticky ヘッダー分の scroll-margin（md 以上はパレット inline） */
+const QUIZ_SCROLL_QUESTION_CLASS = 'scroll-mt-20 scroll-mb-4 md:scroll-mt-24';
+const QUIZ_SCROLL_ACTION_CLASS = 'scroll-mt-4 scroll-mb-[min(40vh,11rem)] md:scroll-mb-6';
 
 interface QuizComponentProps {
   quizTitle: string;
@@ -23,9 +28,13 @@ interface QuizComponentProps {
   showImmediateFeedback?: boolean;
   showQuestionPalette?: boolean;
   examDurationSec?: number; // Examモード時の制限時間（秒）
+  reportMeta?: {
+    tab: string;
+    contentId?: string | null;
+  };
 }
 
-export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questions, onSubmitQuiz, onBackToContents: _onBackToContents, generalMessages, mode = 'practice', showImmediateFeedback = true, showQuestionPalette = true, examDurationSec }) => {
+export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questions, onSubmitQuiz, onBackToContents: _onBackToContents, generalMessages, mode = 'practice', showImmediateFeedback = true, showQuestionPalette = true, examDurationSec, reportMeta }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserQuizAnswer[]>([]);
   const [feedback, setFeedback] = useState<{ [key: string]: { isCorrect: boolean; explanation: string | null; userAnswer?: string | number } }>({});
@@ -39,44 +48,21 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   const lastTimerThresholdAnnouncedRef = useRef<number | null>(null);
   const examTimeExpiredSubmittedRef = useRef(false);
   const quizProgressAnchorRef = useRef<HTMLDivElement>(null);
+  const questionBlockRef = useRef<HTMLDivElement>(null);
+  const feedbackRegionRef = useRef<HTMLDivElement>(null);
+  const nextActionRef = useRef<HTMLDivElement>(null);
   const questionsIdentityRef = useRef<string>('');
-  /** null = この問題セットではまだ「基準インデックス」を確定していない（初回はスクロールしない） */
-  const prevQuestionIndexForScrollRef = useRef<number | null>(null);
+  const prevQuestionIndexRef = useRef(-1);
+  const prevFeedbackKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     const key = questions.map((q) => String(q.id)).join('|');
     if (key !== questionsIdentityRef.current) {
       questionsIdentityRef.current = key;
-      prevQuestionIndexForScrollRef.current = null;
+      prevQuestionIndexRef.current = -1;
+      prevFeedbackKeyRef.current = null;
     }
   }, [questions]);
-
-  useEffect(() => {
-    if (questions.length === 0) return;
-    const prev = prevQuestionIndexForScrollRef.current;
-    const cur = currentQuestionIndex;
-
-    if (prev === null) {
-      prevQuestionIndexForScrollRef.current = cur;
-      return;
-    }
-    if (prev === cur) {
-      return;
-    }
-
-    prevQuestionIndexForScrollRef.current = cur;
-
-    const el = quizProgressAnchorRef.current;
-    if (!el) return;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const behavior: ScrollBehavior = reducedMotion ? 'auto' : 'smooth';
-    const raf = window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        el.scrollIntoView({ behavior, block: 'start' });
-      });
-    });
-    return () => window.cancelAnimationFrame(raf);
-  }, [currentQuestionIndex, questions.length]);
 
   useEffect(() => {
     questionStartedAtRef.current = Date.now();
@@ -152,6 +138,37 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   const currentFeedback = feedback[currentQuestion.id];
   const hasAnsweredCurrent = userAnswers.some(a => a.questionId === currentQuestion.id);
   const currentUserAnswer = userAnswers.find(a => a.questionId === currentQuestion.id)?.answer;
+
+  /** 問題切替・パレット移動・「次の問題」→ 問題文先頭へ */
+  useEffect(() => {
+    if (questions.length === 0 || !currentQuestion) return;
+    if (prevQuestionIndexRef.current === currentQuestionIndex) return;
+    prevQuestionIndexRef.current = currentQuestionIndex;
+    prevFeedbackKeyRef.current = null;
+
+    return scrollToQuizAnchorDeferred(
+      questionBlockRef.current ?? quizProgressAnchorRef.current,
+      { block: 'start' },
+      60,
+    );
+  }, [currentQuestionIndex, questions.length, currentQuestion]);
+
+  /** 解答送信後 → 正誤・解説ブロックへ（Practice / Review） */
+  useEffect(() => {
+    if (!currentQuestion || mode === 'exam' || !showImmediateFeedback) return;
+    const fb = feedback[currentQuestion.id];
+    if (!fb) return;
+
+    const feedbackKey = `${currentQuestion.id}:${fb.isCorrect ? '1' : '0'}`;
+    if (prevFeedbackKeyRef.current === feedbackKey) return;
+    prevFeedbackKeyRef.current = feedbackKey;
+
+    return scrollToQuizAnchorDeferred(
+      feedbackRegionRef.current,
+      { block: 'start' },
+      120,
+    );
+  }, [feedback, currentQuestion, mode, showImmediateFeedback]);
 
   // Examモードのタイマー設定（秒）
   React.useEffect(() => {
@@ -231,7 +248,11 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   const examTimerCritical = mode === 'exam' && timeLeft !== null && timeLeft > 0 && timeLeft <= 30;
 
   return (
-    <div className="p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn bg-[var(--panel)] border border-brand-primary/20">
+    <div
+      className={`p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn bg-[var(--panel)] border border-brand-primary/20 ${
+        showQuestionPalette ? 'pb-[min(42vh,12rem)] md:pb-8' : ''
+      }`}
+    >
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {timerLiveMessage}
       </div>
@@ -274,7 +295,12 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
         </div>
 
         {showQuestionPalette && (
-          <div role="navigation" aria-label="問題一覧" className="flex flex-wrap gap-2 justify-center mb-4">
+          <div
+            role="navigation"
+            aria-label="問題一覧"
+            className="fixed bottom-0 left-0 right-0 z-20 max-h-[40vh] overflow-y-auto border-t border-brand-primary/20 bg-[var(--panel)]/95 p-3 backdrop-blur-md md:static md:max-h-none md:overflow-visible md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none"
+          >
+            <div className="flex flex-wrap gap-2 justify-center mb-4 md:mb-4">
             {questions.map((q, idx) => {
               const answered = userAnswers.some(a => a.questionId === q.id);
               const isCurrent = idx === currentQuestionIndex;
@@ -288,8 +314,10 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
                 <button
                   key={q.id}
                   type="button"
-                  onClick={() => setCurrentQuestionIndex(idx)}
-                  className={`relative flex h-9 min-w-[2.25rem] items-center justify-center rounded-lg border-2 px-1 text-sm font-semibold transition-colors
+                  onClick={() => {
+                    setCurrentQuestionIndex(idx);
+                  }}
+                  className={`relative flex h-11 min-w-[2.75rem] items-center justify-center rounded-lg border-2 px-1 text-sm font-semibold transition-colors
                     ${isCurrent
                       ? 'bg-brand-primary text-[var(--bg)] border-brand-primary ring-2 ring-brand-primary/50'
                       : status === 'correct'
@@ -320,11 +348,16 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
                 </button>
               );
             })}
+            </div>
           </div>
         )}
       </div>
 
-      <div key={`${currentQuestion.id}-${currentQuestionIndex}`} className="animate-fadeIn">
+      <div
+        key={`${currentQuestion.id}-${currentQuestionIndex}`}
+        ref={questionBlockRef}
+        className={`animate-fadeIn ${QUIZ_SCROLL_QUESTION_CLASS}`}
+      >
       <QuestionComponent
         question={currentQuestion}
         onSubmit={(answer) => handleAnswerSubmit(currentQuestion.id, answer)}
@@ -335,6 +368,13 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
         } : undefined}
         showAnswer={showTextAnswers[currentQuestion.id] || false}
         toggleShowAnswer={() => toggleShowTextAnswer(currentQuestion.id)}
+        feedbackRegionRef={feedbackRegionRef}
+        reportContext={{
+          mode,
+          tab: reportMeta?.tab,
+          content_id: reportMeta?.contentId ?? null,
+        }}
+        mainSubject={currentQuestion.main_subject}
         generalMessages={generalMessages}
       />
       </div>
@@ -361,6 +401,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
       </div>
 
       {(showImmediateFeedback ? !!currentFeedback : hasAnsweredCurrent) && mode !== 'exam' && (
+        <div ref={nextActionRef} className={QUIZ_SCROLL_ACTION_CLASS}>
         <button
           onClick={handleNextQuestion}
           className="mt-6 w-full bg-brand-primary hover:bg-brand-primary-dark text-[var(--bg)] font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-[var(--bg)]"
@@ -369,6 +410,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
             ? generalMessages.nextQuestion
             : generalMessages.finishQuiz}
         </button>
+        </div>
       )}
     </div>
   );

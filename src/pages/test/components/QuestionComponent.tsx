@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Option, Question, QuestionType } from '../../../types/quiz';
+import { QuizQuestionText } from './QuizQuestionText';
+import { QuestionReportTrigger } from './QuestionReportTrigger';
+import type { QuestionReportContext } from '../utils/questionReportTypes';
 
 const CHOICE_LABELS = ['A', 'B', 'C', 'D'] as const;
 const RESPONSE_FIELD_CLASS =
@@ -20,6 +23,9 @@ interface QuestionComponentProps {
   feedback?: { isCorrect: boolean; explanation: string; userAnswer?: string | number };
   showAnswer: boolean;
   toggleShowAnswer: () => void;
+  feedbackRegionRef?: React.RefObject<HTMLDivElement | null>;
+  reportContext?: QuestionReportContext;
+  mainSubject?: string;
   generalMessages: {
     submitAnswer: string;
     correct: string;
@@ -36,6 +42,9 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
   feedback,
   showAnswer,
   toggleShowAnswer,
+  feedbackRegionRef,
+  reportContext,
+  mainSubject,
   generalMessages
 }) => {
   const [currentAnswer, setCurrentAnswer] = useState<number | string>('');
@@ -214,7 +223,7 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <p id={questionTextId} className={`whitespace-pre-line leading-relaxed mb-3 hud-text`}>{question.text}</p>
+      <QuizQuestionText id={questionTextId} text={question.text} />
       {question.imagePlaceholder && (
         <div className={`my-3 rounded border border-dashed border-brand-primary/25 bg-[var(--panel)]/50 p-4 text-center hud-surface`}>
           <p className={`text-xs font-medium uppercase tracking-wide text-[color:var(--text-muted)]`}>図プレースホルダー</p>
@@ -225,10 +234,11 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
 
       {feedback && (
         <div
+          ref={feedbackRegionRef}
           role="status"
           aria-live="polite"
           aria-atomic="true"
-          className={`p-4 rounded-xl mt-4 border ${feedback.isCorrect
+          className={`scroll-mt-4 scroll-mb-[min(40vh,11rem)] md:scroll-mb-4 p-4 rounded-xl mt-4 border ${feedback.isCorrect
             ? 'bg-green-500/10 border-green-400'
             : 'bg-red-500/10 border-red-400'
             }`}
@@ -240,6 +250,17 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
             <p className={`text-sm mt-1 text-[color:var(--text-muted)]`}>あなたの回答: 「{feedback.userAnswer.toString()}」</p>
           )}
           <p className={`mt-2 whitespace-pre-line leading-relaxed text-[color:var(--text-primary)]`}>{feedback.explanation}</p>
+          <div className="mt-3 pt-3 border-t border-brand-primary/10">
+            <QuestionReportTrigger
+              questionId={String(question.id)}
+              mainSubject={mainSubject}
+              reportSource="quiz_active"
+              context={{
+                ...reportContext,
+                user_answer: feedback.userAnswer ?? currentAnswer,
+              }}
+            />
+          </div>
         </div>
       )}
 

@@ -6,6 +6,8 @@ import { QuizQuestion } from '../../../types/quiz';
 import { normalizeSubSubjectLabel } from '../utils/normalizeSubSubject';
 import { LEARNING_ARTICLE_CTA_LABEL, LEARNING_ARTICLES_HUB_LABEL } from '../../../constants/learningArticleNav';
 import ReviewContentLink from '../../articles/components/learning/ReviewContentLink';
+import { QuestionReportTrigger } from './QuestionReportTrigger';
+import type { QuestionReportContext } from '../utils/questionReportTypes';
 
 const CHOICE_LABELS = ['A', 'B', 'C', 'D'] as const;
 
@@ -24,6 +26,7 @@ interface QuizResultsViewProps {
   contentId?: string | null;
   /** 全問正解時のフォールバック（main_subject）。未選択科目のときは null */
   selectedSubjectForFallback?: string | null;
+  reportMeta?: Pick<QuestionReportContext, 'mode' | 'tab' | 'content_id'>;
 }
 
 export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
@@ -40,6 +43,7 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
   flaggedAndIncorrectCount = 0,
   contentId,
   selectedSubjectForFallback = null,
+  reportMeta,
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const correctCount = userAnswers.filter(a => a.isCorrect).length;
@@ -170,9 +174,40 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
 
       {(subjectArticleBlocks.withIncorrect.length > 0 || subjectArticleBlocks.allCorrect) && (
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-brand-primary mb-3">関連する学習記事</h3>
-          {subjectArticleBlocks.withIncorrect.length > 0
-            ? subjectArticleBlocks.withIncorrect.map((s) => (
+          <div className="mb-4 rounded-xl border-2 border-brand-primary/40 bg-brand-secondary-dark p-5 shadow-lg ring-1 ring-brand-primary/20">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-primary">
+              次に読む記事
+            </p>
+            <h3 className="mb-3 text-lg font-bold text-[var(--text-primary)]">
+              {subjectArticleBlocks.withIncorrect.length > 0
+                ? '不正解の単元から復習を始めましょう'
+                : '関連記事で理解を深めましょう'}
+            </h3>
+            {subjectArticleBlocks.withIncorrect.length > 0
+              ? subjectArticleBlocks.withIncorrect.slice(0, 1).map((s) => (
+                  <ReviewContentLink
+                    key={s.mainSubject}
+                    subjectCategory={s.mainSubject}
+                    accuracy={s.percentage}
+                    questionIds={s.incorrectQuestionIds}
+                    excludeContentId={contentId}
+                    variant="panel"
+                  />
+                ))
+              : (
+                  <ReviewContentLink
+                    subjectCategory={selectedSubjectForFallback ?? subjectArticleBlocks.firstSubject}
+                    accuracy={100}
+                    questionIds={subjectArticleBlocks.allSessionIds}
+                    excludeContentId={contentId}
+                    variant="panel"
+                  />
+                )}
+          </div>
+          {subjectArticleBlocks.withIncorrect.length > 1 && (
+            <>
+              <h3 className="text-sm font-semibold text-brand-primary mb-3">その他の弱点科目</h3>
+              {subjectArticleBlocks.withIncorrect.slice(1).map((s) => (
                 <ReviewContentLink
                   key={s.mainSubject}
                   subjectCategory={s.mainSubject}
@@ -181,16 +216,9 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
                   excludeContentId={contentId}
                   variant="panel"
                 />
-              ))
-            : (
-                <ReviewContentLink
-                  subjectCategory={selectedSubjectForFallback ?? subjectArticleBlocks.firstSubject}
-                  accuracy={100}
-                  questionIds={subjectArticleBlocks.allSessionIds}
-                  excludeContentId={contentId}
-                  variant="panel"
-                />
-              )}
+              ))}
+            </>
+          )}
         </div>
       )}
 
@@ -248,6 +276,18 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
                     {q.explanation && (
                       <p className="text-sm text-[var(--text-muted)] whitespace-pre-line mt-2">{q.explanation}</p>
                     )}
+                    <div className="mt-3">
+                      <QuestionReportTrigger
+                        questionId={String(q.id)}
+                        mainSubject={(q as QuizQuestion & { main_subject?: string }).main_subject}
+                        reportSource="quiz_results"
+                        context={{
+                          ...reportMeta,
+                          user_answer: ans?.answer,
+                        }}
+                        variant="button"
+                      />
+                    </div>
                   </div>
                 )}
               </div>

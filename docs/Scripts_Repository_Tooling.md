@@ -103,6 +103,17 @@ node scripts/utils/fix-encoding.js
 - 手順の数値・依存順の正は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、および [04_Operations_Guide.md](04_Operations_Guide.md) を優先する。
 - `apply_migration` と `execute_sql` のどちらを使うかは **02_System_Spec** と各ファイル先頭コメントに従う。
 
+### クイズ品質監査（verified 問題の機械チェック）
+
+- **SQL 正本**: [`scripts/database/20260607_audit_unified_cpl_questions.sql`](../scripts/database/20260607_audit_unified_cpl_questions.sql)
+- **報告テーブル migration**: [`scripts/database/20260607_question_issue_reports.sql`](../scripts/database/20260607_question_issue_reports.sql)
+- **手順**:
+  1. Supabase MCP `execute_sql` で audit SQL を実行（チェック A1〜A6）
+  2. 結果を `artifacts/quiz_quality_audit_YYYY-MM-DD.md` に保存
+  3. A6（open 報告）は [`/admin/question-reports`](../src/pages/admin/QuestionReportsPage.tsx) と併用
+  4. **法規クラスタ**（`main_subject = 航空法規`）の条文突合は hourei MCP + 人間レビュー（全問自動ファクトチェックは対象外）
+- **検討（未実装）**: 週次 GitHub Action で audit → 閾値超えで issue 作成、`quality_score` 再計算バッチ
+
 ---
 
 ## GA4 MCP・OAuth / ADC（ローカル例）

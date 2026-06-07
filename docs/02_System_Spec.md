@@ -295,8 +295,21 @@ CREATE TABLE profiles (
 
 - **主要カラム**: `user_id`, `session_type` (reading/testing/review/practice), `content_id`, `content_type`, `session_duration` (秒), `created_at`
 - **duration_minutes**: 生成列（`session_duration` から算出）
-- **session_metadata**: `questions_attempted`, `correct_count`, `mode`, `wall_clock_seconds` などを格納
+- **session_metadata**: `questions_attempted`, `correct_count`, `mode`, `tab`, `quiz_session_id`, `wall_clock_seconds` などを格納
+- **クイズ insert（TestPage）**: `buildQuizLearningSessionInsert`（[`src/pages/test/utils/buildQuizLearningSession.ts`](../src/pages/test/utils/buildQuizLearningSession.ts)）経由。`content_id` は記事連動時は `learning_contents.id`、それ以外は `test-hub:{tab}`。`session_duration` は `responseTimeMs` 合計秒（**最低60秒**）。`metadata` / `started_at` 列は**使用しない**。
 - **用途**: 今週の学習時間、ヒートマップの元データ
+
+#### **question_issue_reports テーブル（問題報告）**
+
+- **migration**: `scripts/database/20260607_question_issue_reports.sql`
+- **主要カラム**: `user_id`, `question_id`, `report_type`, `comment`, `context` (jsonb), `status`, `admin_note`
+- **report_type**: `wrong_answer`, `wrong_explanation`, `typo`, `outdated`, `unclear`, `other`
+- **status**: `open` → `triaged` → `resolved` / `dismissed`
+- **RLS**: ユーザーは自分の報告のみ insert/select。`profiles.roll = 'admin'` は全件 select/update
+- **トリガー**: open 報告 insert 時、`unified_cpl_questions.verification_status = 'verified'` の行を `needs_review` に（自動正答変更なし）
+- **集約ビュー**: `v_question_report_summary`（open_count 等）
+- **UI**: 解答後 [`QuestionReportTrigger`](../src/pages/test/components/QuestionReportTrigger.tsx)、管理 [`/admin/question-reports`](../src/pages/admin/QuestionReportsPage.tsx)
+- **GA4**: `quiz_question_report`
 
 #### **user_learning_profiles テーブル（学習プロファイル）**
 
@@ -609,20 +622,61 @@ export interface TAFData {
 - **学習記事タブ**: ラベルは「学習記事」。クリックで `/articles` へ遷移。
 - **互換**: クエリ `?tab=blog` は `**/articles` へ `replace` リダイレクト**（旧リンクのため）。
 
-#### **/test クイズシステム（2026年3月現行仕様）**
+#### **/test クイズ Hub（2026年6月現行仕様）**
 
-- **モード**: Practice / Exam / Review
-  - **Practice**: 即時フィードバック、解説表示後に次へ
-  - **Exam**: 解説非表示、解答する押下で即次問へ、最終問で結果画面へ
-  - **Review**: ログイン必須、SRS 期限到来問題のみ出題（`user_unified_srs_status.next_review_date <= 現在`）
-- **科目選択必須**: 全科目一括出題は廃止。科目 → サブ科目 → 問題数の順で絞る
-- **フィルタ**: verified ベース、サブ科目正規化、優先度順/シラバス順切替、カスタム Listbox（ダークテーマ）
-- **出題レベル PPL**: `?exam=ppl` または「PPL 基礎のみ」選択時、verified かつ `applicable_exams` に `PPL` を含む行のみ。主科目リストは **PPL 付き問題が存在する `main_subject` のみ**（データは `scripts/database/20260326_batch_ppl_law_navigation_comm_weather.sql` 等で拡張）。画面上部に **PPL 対象プール件数**および **選択可能な主科目数**（`data-testid`: `ppl-pool-count`, `ppl-main-subject-count`）を表示。Exam タブの CPL 試験 UI（`CPLExamSelector`）でも PPL 時のプール合計・空一覧メッセージを表示
-- **回帰テスト**: `npm run test:e2e`（Playwright、`/test?exam=ppl` の件数表示、および `vite preview` で CPL スタブ記事 `/articles/CPL-Hub-Meteorology` 等の表示）
-- **結果画面**: 不正解だけ復習、フラグだけ復習、フラグ+不正解、弱点科目・弱点サブ科目表示。記事連動出題で `contentId` がある場合は `**/articles/{contentId}`** へ戻るボタン（ラベルは `LEARNING_ARTICLE_CTA_LABEL`＝「単元記事を読む」）。**全モード共通**で [ReviewContentLink](src/pages/articles/components/learning/ReviewContentLink.tsx) により `learning_test_mapping` ベースの推奨記事（見出し「単元記事」、セクション見出し「関連する学習記事」）。Planning 内の CPL 試験 UI（未配線の `ExamTab` / [CPLExamResults](src/pages/test/components/quiz/CPLExamResults.tsx)）でも同コンポーネントを利用。
-- **フラグ**: セッション内のみ。DB保存・Review 連携は未実装。設問画面の説明で結果画面から「フラグのみ再挑戦」へ誘導
-- **出題 UI（4択）**: 進捗バー（`progressbar`）、問題パレットは問番号＋フラグバッジ＋正誤の○/×記号。問題切替時（次へ・パレット・試験の自動次問）は進捗ブロック先頭へ `scrollIntoView`（同一セットの初回マウント時のみ除外し、以降は前問インデックスが変われば必ずスクロール。問題 ID セット変更でリセット、`scroll-margin-top` で sticky ヘッダー回避）。`quizFinished` 時は結果カード先頭へスクロール（`TestPage`）。試験モードは残り1分/30秒/10秒/終了を `aria-live` で通知し、残り少で表示を強調。キーボード 1–4 は入力フォーカス時は無効、解答確定は ref で数字直後の Enter も整合。フィードバック領域は `role="status"`。図プレースホルダーは外部ダミー画像を使わず枠＋文言のみ
-- **学習時間記録**: 各回答に `answeredAt` / `responseTimeMs` を付与。`learning_sessions.session_duration` は `responseTimeMs` 合計（秒、最低60秒）
+Articles Hub と同型の **URL 双方向同期 + タブ IA + GA4 カスタムイベント**。
+
+**タブ（`tab` クエリ）**
+
+| タブ | 用途 | デフォルト |
+|------|------|------------|
+| `diagnostic` | 全科目・重要度上位 N 問の実力診断（Practice） | **初回デフォルト** |
+| `review` | 弱点復習（SRS 期限 → なければ `user_weak_areas` fallback） | ログイン必須 |
+| `subject` | 科目 → サブ科目 → 問題数（Listbox + 検索） | — |
+| `content` | 記事連動（`contentId` あり時・フィルタロック） | 暗黙 |
+
+**URL 正本**（[`testHubFilters.ts`](../src/pages/test/testHubFilters.ts)）: `tab`, `sort`（`priority` \| `syllabus`）、既存 `subject`, `sub`, `count`, `mode`, `contentId`, `exam`。レガシー（`tab` なし + `mode`/`subject` 等）はマウント時に canonical へ `replace`。
+
+**モード**: Practice / Exam / Review（上記タブと組み合わせ。Review タブは `mode=review` 固定）
+
+- **Practice**: 即時フィードバック
+- **Exam**: 解説非表示、最終問で結果画面
+- **Review**: ログイン必須。SRS 0 件時は弱点科目から出題
+
+**UI 構成**: [`QuizHubToolbar`](../src/pages/test/components/QuizHubToolbar.tsx)、[`QuizFilterDrawer`](../src/pages/test/components/QuizFilterDrawer.tsx)（モバイル Bottom Sheet）、[`QuizActiveFilterChips`](../src/pages/test/components/QuizActiveFilterChips.tsx)、[`WeakAreasHero`](../src/pages/test/components/WeakAreasHero.tsx)（ログイン時弱点要約）、[`TestSubjectFilterSection`](../src/pages/test/components/TestSubjectFilterSection.tsx)。[`TestPage.tsx`](../src/pages/test/TestPage.tsx) はオーケストレータ（fetch は [`testQuizFetch.ts`](../src/pages/test/testQuizFetch.ts)、科目フィルタは [`useTestSubjectFilters`](../src/pages/test/hooks/useTestSubjectFilters.ts)）。
+
+**出題レベル PPL**: `?exam=ppl` またはドロワー内「PPL 基礎のみ」。`data-testid`: `ppl-pool-count`, `ppl-main-subject-count`
+
+**GA4 カスタムイベント**（[`quizAnalytics.ts`](../src/lib/quizAnalytics.ts) / [`sendGa4Event`](../src/lib/googleAnalytics.ts)）:
+
+| イベント | タイミング |
+|----------|------------|
+| `quiz_filter_open` | フィルタドロワー開 |
+| `quiz_session_start` | 問題取得成功・セッション開始 |
+| `quiz_session_complete` | 提出完了 |
+| `article_to_quiz_click` | RelatedTestsBlock クリック |
+| `review_article_click` | ReviewContentLink クリック（`from=results` 等） |
+
+**学習ループ**: Welcome 完了（`next=/`）→ `/test?tab=diagnostic`。Home [`HomeQuizDiagnostic`](../src/pages/home/components/HomeQuizDiagnostic.tsx) CTA。
+
+**回帰テスト**: `npm run test:e2e` — PPL 件数、`/test` diagnostic タブ・URL 同期・レガシー `mode=review` リダイレクト（[`e2e/test-exam-ppl.spec.ts`](../e2e/test-exam-ppl.spec.ts)）
+
+**結果画面**: 先頭 Hero で不正解科目の推奨記事 1 件を強調（[`QuizResultsView`](../src/pages/test/components/QuizResultsView.tsx)）。不正解/フラグ再挑戦、[`ReviewContentLink`](../src/pages/articles/components/learning/ReviewContentLink.tsx) による `learning_test_mapping` 推薦。
+
+**モバイル**: 問題パレットは画面下部固定 Bottom Sheet（`md:` 以上は従来インライン）。パレットボタン **44px** 相当（`h-11`）。
+
+**フラグ**: セッション内のみ（DB 未連携）。**問題報告**は別途 `question_issue_reports`（解説確認後・結果画面から送信可）
+
+**問題文表示**: [`formatQuizQuestionText`](../src/pages/test/utils/formatQuizQuestionText.ts) が `(a)〜(d)` および `(ア)〜(エ)` 形式の本文内候補を stem + リストに分割（[`QuizQuestionText`](../src/pages/test/components/QuizQuestionText.tsx)）
+
+**学習時間記録**: 各回答に `answeredAt` / `responseTimeMs`。`learning_sessions.session_duration` は合計秒（最低60秒）。payload は `session_metadata` / `content_id` / `content_type: quiz` を使用
+
+#### **/test クイズシステム（2026年3月以前・参照用）**
+
+以下は 6 月刷新前の要点。現行は上記「クイズ Hub」節を正とする。
+
+- **科目選択必須**（`subject` タブ）— 診断タブでは全科目から重要度上位を出題
+- **フィルタ**: verified、サブ科目正規化、優先度/シラバス順、Listbox
 
 #### **ダッシュボード画面**
 
