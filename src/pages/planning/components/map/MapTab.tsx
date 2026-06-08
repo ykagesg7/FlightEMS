@@ -8,7 +8,7 @@ import { DEFAULT_CENTER, DEFAULT_ZOOM } from '../../../../utils';
 import type { FlightTrack } from '../../tracks/types';
 import icon from '/images/marker-icon.png';
 import iconShadow from '/images/marker-shadow.png';
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import type { WindGridMapOverlayModel } from './hooks/usePlanningMapWindGrid';
 import type { PlanningMapLayerController } from './hooks/usePlanningMapLayerController';
 import { useCloseLayersOnMapClick } from './hooks/useCloseLayersOnMapClick';
@@ -26,6 +26,7 @@ import { MapTabContent } from './MapTabContent';
 import { MapToolbar } from './MapToolbar';
 import { useClearAirspaceOnMapClick } from './hooks/useClearAirspaceOnMapClick';
 import type { AirspaceSelection } from './planningAirspaceTypes';
+import { usePlanningNotamSheetOptional } from './planningNotamSheetContext';
 import './mapStyles.css';
 import type { PlanningPanelLayout } from '../../planningPanelLayout';
 import { mapLayersUseInlineSidebar } from '../../planningPanelLayout';
@@ -62,6 +63,7 @@ const MapTab: React.FC<MapTabProps> = ({
   const [layersOpen, setLayersOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [airspaceSelection, setAirspaceSelection] = useState<AirspaceSelection | null>(null);
+  const notamSheet = usePlanningNotamSheetOptional();
   const isXl = useMediaQuery('(min-width: 1280px)');
   const useInlineLayersSidebar = mapLayersUseInlineSidebar(layout, isXl);
   const [hintVisible, setHintVisible] = useState(() => {
@@ -83,9 +85,22 @@ const MapTab: React.FC<MapTabProps> = ({
   const closeLayers = useCallback(() => setLayersOpen(false), []);
 
   const handleAirspaceSelection = useCallback((selection: AirspaceSelection) => {
+    notamSheet?.closeNotamSheet();
     setAirspaceSelection(selection);
     setLayersOpen(false);
-  }, []);
+  }, [notamSheet]);
+
+  useEffect(() => {
+    if (notamSheet?.request) {
+      setAirspaceSelection(null);
+      setLayersOpen(false);
+    }
+  }, [notamSheet?.request]);
+
+  useEffect(() => {
+    notamSheet?.setMapInstance(map);
+    return () => notamSheet?.setMapInstance(null);
+  }, [map, notamSheet]);
 
   const clearAirspaceSelection = useCallback(() => {
     setAirspaceSelection(null);
@@ -168,6 +183,11 @@ const MapTab: React.FC<MapTabProps> = ({
                         に表示されます。NAVAID 距離は「NAVAID▼」で展開できます。ACC Sector / RAPCON をタップすると、重なり空域は
                         <strong className="text-gray-200">地図上のドラッグ可能なシート</strong>
                         に一覧表示されます（初期は peek の1行サマリー、モバイルは上フリックまたはドラッグ、デスクトップは「展開」「格納」ボタンで half/full、複数件はアコーディオン）。地図のシート外エリアはパン・ズーム可能です。
+                      </li>
+                      <li>
+                        空港・NAVAID 等のポップアップから
+                        <strong className="text-gray-200">「NOTAM を確認」</strong>
+                        を選ぶと、地図下のボトムシートにデジタル NOTAM（SWIM）を表示します。現在有效／将来有效を分け、地図で形状を強調できます。参考表示であり、航行判断は SWIM ポータル等の公式ノータムで必ず確認してください。
                       </li>
                       <li>NAVAID 等のポップアップからルートへの追加ができる場合があります（表示される操作に従ってください）。</li>
                       <li>地図上をダブルクリックすると、その位置にウェイポイントを追加できます。</li>

@@ -3,7 +3,8 @@ import React from 'react';
 import { FlightPlan, Waypoint } from '@/types';
 import { getNavaidColor } from '@/utils';
 import { escapeHtml, kvItem, sectionHeader } from '../popups/common';
-import { bindPlanningSwimNotamButton, swimNotamButtonSection } from '../popups/swimNotamPopup';
+import { resolveNotamSearchKind } from '../notamDisplayUtils';
+import { bindPlanningSwimNotamChip, swimNotamOpenChip } from '../popups/swimNotamPopup';
 import { NavaidProps } from '../types';
 
 export const navaidMarkerOptions = (type?: string) => ({
@@ -25,7 +26,8 @@ export const bindNavaidPopup = (
   const props = feature.properties as NavaidProps;
   const header = sectionHeader('Navaid');
   const navId = (props.id || '').trim();
-  const notamBlock = navId ? swimNotamButtonSection(navId) : '';
+  const searchKind = resolveNotamSearchKind(navId);
+  const notamBlock = navId ? swimNotamOpenChip(navId, searchKind === 'keyword') : '';
   const body = `
     <div class="ml-2 weather-info-grid">
       ${kvItem('weather', 'ID：', escapeHtml(props.id || ''))}
@@ -72,7 +74,7 @@ export const bindNavaidPopup = (
         });
       }
       if (navId && map) {
-        bindPlanningSwimNotamButton(map, popup, navId, 'keyword');
+        bindPlanningSwimNotamChip(map, popup, navId, searchKind);
       }
     }, 100);
   });

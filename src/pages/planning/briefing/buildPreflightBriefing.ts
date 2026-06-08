@@ -32,7 +32,6 @@ export function buildPreflightBriefing(plan: FlightPlan): PreflightBriefing {
 
   const weatherAndNotam = [
     { label: 'METAR/TAF', value: '地図の空港ポップアップで出発地・到着地を確認', status: 'info' as const },
-    { label: 'SWIM NOTAM', value: '地図の空港/NAVAIDポップアップから有効NOTAMを確認', status: 'info' as const },
     { label: '上層風', value: plan.useOpenMeteoWind ? 'Open-Meteo風を計画計算に反映' : '未反映（必要に応じて計画タブで有効化）', status: 'info' as const },
   ];
 

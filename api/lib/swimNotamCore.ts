@@ -38,11 +38,27 @@ const xmlParser = new XMLParser({
   trimValues: true,
 });
 
+export type NotamCategory =
+  | 'runway'
+  | 'taxiway'
+  | 'apron'
+  | 'airspace'
+  | 'facility'
+  | 'other';
+
 export type SwimNotamSummary = {
   /** 一覧用の安定キー */
   key: string;
   /** 一覧・互換用の一行要約（概要＋本文断片） */
   summary: string;
+  /** パイロット向け本文（interpretation / note 優先の 1 本） */
+  primaryText?: string;
+  /** 短い影響ラベル（例: RJFF 滑走路16L 閉鎖） */
+  impactLabel?: string;
+  /** カテゴリ（表示・ソート用） */
+  category?: NotamCategory;
+  /** ソート優先度（大きいほど上） */
+  sortPriority?: number;
   /** イベント設計子等から組み立てた短い概要 */
   headline?: string;
   /** note / CDATA 等から取れた本文断片 */
@@ -526,8 +542,142 @@ function buildLocationText(eventCode: string | undefined, xml: string): string |
   return parts.length ? [...new Set(parts)].join(' · ') : undefined;
 }
 
-/** AIXM 断片から有効期間と要約を抽出 */
-function summarizeDigitalNotamXml(
+function extractDesignatorFromXml(xml: string): string | undefined {
+  const des = xml.match(
+    /<(?:[\w.-]+:)?designator[^>]*>([A-Z0-9]{1,5})<\/(?:[\w.-]+:)?designator>/i,
+  );
+  const t = des?.[1]?.trim();
+  return t && t.length > 0 ? t : undefined;
+}
+
+function extractRunwayDesignatorFromText(text: string): string | undefined {
+  const m = text.match(/\b(?:RWY|滑走路)\s*(\d{1,2}[LRC]?)\b/i);
+  if (m?.[1]) return m[1].toUpperCase();
+  const m2 = text.match(/\b(\d{1,2}[LRC])\b/);
+  return m2?.[1]?.toUpperCase();
+}
+
+function detectClosureOrLimit(text: string, eventCode?: string): 'closure' | 'limit' | 'caution' | undefined {
+  const combined = `${text} ${eventCode ?? ''}`;
+  if (/閉鎖|CLOS|CLSD|CLOSED|UNAVAIL|使用不可|通行止/i.test(combined)) return 'closure';
+  if (/制限|LIM|RESTRICT|LIMIT/i.test(combined)) return 'limit';
+  if (/注意|UNS|CAUTION/i.test(combined)) return 'caution';
+  return undefined;
+}
+
+function inferNotamCategory(
+  featureRaw: string | undefined,
+  primaryText: string | undefined,
+  eventCode: string | undefined,
+): NotamCategory {
+  const raw = featureRaw ?? '';
+  if (/^Runway/i.test(raw)) return 'runway';
+  if (/^Taxiway/i.test(raw)) return 'taxiway';
+  if (/^Apron|^DeicingArea|^PassengerLoadingBridge/i.test(raw)) return 'apron';
+  if (/^Airspace|^VerticalStructure/i.test(raw)) return 'airspace';
+  if (/^AirportHeliport|^Helipad|^MarkingElement/i.test(raw)) return 'facility';
+
+  const text = `${primaryText ?? ''} ${eventCode ?? ''}`;
+  if (/RWY|滑走路|RUNWAY/i.test(text)) return 'runway';
+  if (/TWY|誘導|TAXIWAY/i.test(text)) return 'taxiway';
+  if (/APRON|エプロン/i.test(text)) return 'apron';
+  if (/空域|AIRSPACE|RESTRICTED|PROHIBITED/i.test(text)) return 'airspace';
+  if (/GPS|ILS|VOR|NDB|施設|UNAVAIL/i.test(text)) return 'facility';
+  return 'other';
+}
+
+function computeSortPriority(
+  category: NotamCategory,
+  restriction: ReturnType<typeof detectClosureOrLimit>,
+): number {
+  const base: Record<NotamCategory, number> = {
+    runway: 90,
+    taxiway: 70,
+    apron: 60,
+    airspace: 50,
+    facility: 40,
+    other: 10,
+  };
+  let score = base[category];
+  if (restriction === 'closure') score += 15;
+  else if (restriction === 'limit') score += 8;
+  else if (restriction === 'caution') score += 3;
+  return score;
+}
+
+function pickPrimaryText(
+  interpretationTexts: string[],
+  noteTexts: string[],
+  otherCandidates: string[],
+): string | undefined {
+  const fromInterp = pickBestNotamText(interpretationTexts);
+  if (fromInterp) return fromInterp.slice(0, 900);
+  const fromNote = pickBestNotamText(noteTexts);
+  if (fromNote) return fromNote.slice(0, 900);
+  const fromOther = pickBestNotamText(otherCandidates);
+  return fromOther ? fromOther.slice(0, 900) : undefined;
+}
+
+function buildImpactLabel(
+  eventCode: string | undefined,
+  xml: string,
+  primaryText: string | undefined,
+  category: NotamCategory,
+): string | undefined {
+  const icao = eventCode?.match(/^(R[A-Z]{3})/)?.[1];
+  const designator = extractDesignatorFromXml(xml);
+  const text = primaryText ?? '';
+  const rwy = extractRunwayDesignatorFromText(`${text} ${designator ?? ''} ${eventCode ?? ''}`);
+  const restriction = detectClosureOrLimit(text, eventCode);
+
+  const categoryJa: Record<NotamCategory, string> = {
+    runway: '滑走路',
+    taxiway: '誘導路',
+    apron: 'エプロン',
+    airspace: '空域',
+    facility: '施設',
+    other: 'その他',
+  };
+
+  const restrictionJa =
+    restriction === 'closure'
+      ? '閉鎖'
+      : restriction === 'limit'
+        ? '制限'
+        : restriction === 'caution'
+          ? '注意'
+          : undefined;
+
+  const parts: string[] = [];
+  if (icao) parts.push(icao);
+
+  if (category === 'runway' && rwy) {
+    parts.push(`滑走路${rwy}`);
+  } else if (designator && category !== 'other') {
+    parts.push(`${categoryJa[category]} ${designator}`);
+  } else if (category !== 'other') {
+    parts.push(categoryJa[category]);
+  } else if (headlineFromEventDesignator(eventCode)) {
+    parts.push(headlineFromEventDesignator(eventCode)!);
+  }
+
+  if (restrictionJa) parts.push(restrictionJa);
+
+  const label = parts.filter(Boolean).join(' ');
+  return label.length > 0 ? label.slice(0, 120) : undefined;
+}
+
+function sortNotamSummaries(items: SwimNotamSummary[]): SwimNotamSummary[] {
+  return [...items].sort((a, b) => {
+    const pa = a.sortPriority ?? 0;
+    const pb = b.sortPriority ?? 0;
+    if (pb !== pa) return pb - pa;
+    return a.key.localeCompare(b.key);
+  });
+}
+
+/** AIXM 断片から有効期間と要約を抽出（テスト・デバッグ用に export） */
+export function summarizeDigitalNotamXml(
   xml: string,
   index: number,
   opts: { includeRawXml: boolean },
@@ -541,10 +691,14 @@ function summarizeDigitalNotamXml(
   const headline = headlineFromEventDesignator(eventCode);
   const featureLabel = extractAixmFeatureLabel(xml);
 
-  const noteCandidates: string[] = [];
-  noteCandidates.push(...extractNoteTagContents(xml));
-  noteCandidates.push(...extractInterpretationTagContents(xml));
-  noteCandidates.push(...extractCdataNotamText(xml));
+  const interpretationTexts = extractInterpretationTagContents(xml);
+  const noteTagTexts = extractNoteTagContents(xml);
+  const cdataTexts = extractCdataNotamText(xml);
+  const noteCandidates: string[] = [
+    ...interpretationTexts,
+    ...noteTagTexts,
+    ...cdataTexts,
+  ];
   try {
     const obj = xmlParser.parse(xml) as Record<string, unknown>;
     collectDeepNoteStrings(obj, 0, noteCandidates);
@@ -552,10 +706,20 @@ function summarizeDigitalNotamXml(
   } catch {
     /* ignore */
   }
-  const noteSnippet = pickBestNotamText(noteCandidates);
+  const primaryText = pickPrimaryText(interpretationTexts, noteTagTexts, [
+    ...cdataTexts,
+    ...noteCandidates,
+  ]);
+  const noteSnippet = primaryText ?? pickBestNotamText(noteCandidates);
   const detailNotes = pickDetailNotes(noteCandidates);
   const verticalText = extractVerticalSummary(xml);
   const locationText = buildLocationText(eventCode, xml);
+
+  const featureRaw = xml.match(/<(?:[\w.-]+:)?hasMember[^>]*>\s*<(?:[\w.-]+:)?(\w+)/i)?.[1];
+  const category = inferNotamCategory(featureRaw, primaryText ?? noteSnippet, eventCode);
+  const restriction = detectClosureOrLimit(primaryText ?? noteSnippet ?? '', eventCode);
+  const sortPriority = computeSortPriority(category, restriction);
+  const impactLabel = buildImpactLabel(eventCode, xml, primaryText ?? noteSnippet, category);
 
   let geometry: Geometry | undefined;
   try {
@@ -575,12 +739,12 @@ function summarizeDigitalNotamXml(
     }
   }
 
-  const summaryParts = [headline, noteSnippet].filter(
+  const summaryParts = [impactLabel, primaryText ?? noteSnippet].filter(
     (x): x is string => typeof x === 'string' && x.length > 0,
   );
   let summary = summaryParts.join(' — ').trim();
   if (!summary) {
-    summary = headline ?? eventCode ?? `デジタルノータム（${index + 1}）`;
+    summary = impactLabel ?? headline ?? eventCode ?? `デジタルノータム（${index + 1}）`;
   }
   summary = summary.slice(0, 500);
 
@@ -590,6 +754,10 @@ function summarizeDigitalNotamXml(
   return {
     key,
     summary,
+    primaryText,
+    impactLabel,
+    category,
+    sortPriority,
     headline,
     noteSnippet,
     detailNotes: detailNotes.length > 0 ? detailNotes : undefined,
@@ -841,8 +1009,8 @@ export async function searchSwimDigitalNotam(query: SwimNotamQuery): Promise<Swi
 
   return {
     ok: true,
-    current,
-    future,
+    current: sortNotamSummaries(current),
+    future: sortNotamSummaries(future),
     swimErrorCode: swimCode || '0',
     totalCount,
   };

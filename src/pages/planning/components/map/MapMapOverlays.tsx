@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import type L from 'leaflet';
 import { MapAirspaceSheet } from './MapAirspaceSheet';
 import { MapCursorHudOverlay } from './MapCursorHudOverlay';

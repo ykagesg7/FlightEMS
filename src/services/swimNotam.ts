@@ -1,9 +1,21 @@
 import type { Geometry } from 'geojson';
 import { getDevApiBase } from '@/utils/devApiBase';
 
+export type NotamCategory =
+  | 'runway'
+  | 'taxiway'
+  | 'apron'
+  | 'airspace'
+  | 'facility'
+  | 'other';
+
 export type SwimNotamItem = {
   key: string;
   summary: string;
+  primaryText?: string;
+  impactLabel?: string;
+  category?: NotamCategory;
+  sortPriority?: number;
   headline?: string;
   noteSnippet?: string;
   detailNotes?: string[];
@@ -62,7 +74,11 @@ export async function fetchSwimNotams(params: {
     qs.set('keyword', params.keyword.trim());
     qs.set('andOrCondition', params.andOrCondition ?? '0');
   }
-  if (params.includeRawXml === false) qs.set('includeRawXml', '0');
+  if (params.includeRawXml === true) {
+    qs.set('includeRawXml', '1');
+  } else {
+    qs.set('includeRawXml', '0');
+  }
   const url = buildNotamSearchUrl(qs);
 
   try {

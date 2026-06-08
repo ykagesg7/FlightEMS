@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useDebouncedCallback } from 'use-debounce';
@@ -9,6 +9,7 @@ import { FlightPlan } from '../../types/index';
 import type { FlightTrack } from './tracks/types';
 import PlanningTab from './components/flight/PlanningTab';
 import MapTab from './components/map/MapTab';
+import { PlanningNotamSheetProvider } from './components/map/PlanningNotamSheetProvider';
 import { createInitialFlightPlan } from './createInitialFlightPlan';
 import {
   clearFlightPlanDraft,
@@ -38,11 +39,56 @@ function PlanningMapPageInner({
   lastSavedAt,
 }: PlanningMapPageInnerProps) {
   const isXl = useMediaQuery('(min-width: 1280px)');
+  const [mobileTab, setMobileTab] = useState<'planning' | 'map'>('planning');
+  const focusMapTab = useCallback(() => {
+    if (!isXl) setMobileTab('map');
+  }, [isXl]);
 
   if (isXl) {
     return (
+      <PlanningNotamSheetProvider>
+        <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
+          <div className="px-4 pt-4 pb-2 shrink-0">
+            <Link
+              to="/mission"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Mission Dashboardへ戻る
+            </Link>
+          </div>
+          <div className="mb-2 flex-1 grid grid-cols-[minmax(28rem,1.05fr)_minmax(0,1fr)] gap-0 items-stretch min-h-[calc(100vh-5rem)] min-w-0">
+            <div className="overflow-y-auto overflow-x-hidden border-r border-whiskyPapa-yellow/20 p-2 sm:p-4 md:p-6 min-h-0 min-w-0">
+              <PlanningTab
+                layout="split"
+                flightPlan={flightPlan}
+                setFlightPlan={setFlightPlan}
+                tracks={tracks}
+                setTracks={setTracks}
+                currentTrackTime={currentTrackTime}
+                setCurrentTrackTime={setCurrentTrackTime}
+                onClearLocalDraft={onClearLocalDraft}
+              />
+            </div>
+            <div className="h-full min-h-[calc(100vh-5rem)] min-w-0">
+              <MapTab
+                layout="split"
+                flightPlan={flightPlan}
+                setFlightPlan={setFlightPlan}
+                tracks={tracks}
+                currentTrackTime={currentTrackTime}
+              />
+            </div>
+          </div>
+        </div>
+      </PlanningNotamSheetProvider>
+    );
+  }
+
+  return (
+    <PlanningNotamSheetProvider onFocusMapTab={focusMapTab}>
       <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
-        <div className="px-4 pt-4 pb-2 shrink-0">
+        <div className="px-4 pt-4 pb-2">
           <Link
             to="/mission"
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
@@ -51,92 +97,55 @@ function PlanningMapPageInner({
             Mission Dashboardへ戻る
           </Link>
         </div>
-        <div className="mb-2 flex-1 grid grid-cols-[minmax(28rem,1.05fr)_minmax(0,1fr)] gap-0 items-stretch min-h-[calc(100vh-5rem)] min-w-0">
-          <div className="overflow-y-auto overflow-x-hidden border-r border-whiskyPapa-yellow/20 p-2 sm:p-4 md:p-6 min-h-0 min-w-0">
-            <PlanningTab
-              layout="split"
-              flightPlan={flightPlan}
-              setFlightPlan={setFlightPlan}
-              tracks={tracks}
-              setTracks={setTracks}
-              currentTrackTime={currentTrackTime}
-              setCurrentTrackTime={setCurrentTrackTime}
-              onClearLocalDraft={onClearLocalDraft}
-            />
-          </div>
-          <div className="h-full min-h-[calc(100vh-5rem)] min-w-0">
-            <MapTab
-              layout="split"
-              flightPlan={flightPlan}
-              setFlightPlan={setFlightPlan}
-              tracks={tracks}
-              currentTrackTime={currentTrackTime}
-            />
-          </div>
+
+        <div className="mb-2">
+          <Tabs value={mobileTab} onValueChange={(v) => setMobileTab(v as 'planning' | 'map')}>
+            <TabsList className="bg-transparent border-b border-whiskyPapa-yellow/20 w-full flex">
+              <TabsTrigger value="planning" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
+                <span className="flex items-center justify-center">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  計画
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value="map" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
+                <span className="flex items-center justify-center">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  地図
+                </span>
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="planning" className="mt-0">
+              <div className="p-2 sm:p-4 md:p-6 container mx-auto">
+                <PlanningTab
+                  flightPlan={flightPlan}
+                  setFlightPlan={setFlightPlan}
+                  tracks={tracks}
+                  setTracks={setTracks}
+                  currentTrackTime={currentTrackTime}
+                  setCurrentTrackTime={setCurrentTrackTime}
+                  onClearLocalDraft={onClearLocalDraft}
+                  lastSavedAt={lastSavedAt}
+                />
+              </div>
+            </TabsContent>
+            <TabsContent value="map" className="mt-0">
+              <div className="h-full">
+                <MapTab
+                  flightPlan={flightPlan}
+                  setFlightPlan={setFlightPlan}
+                  tracks={tracks}
+                  currentTrackTime={currentTrackTime}
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
-      <div className="px-4 pt-4 pb-2">
-        <Link
-          to="/mission"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Mission Dashboardへ戻る
-        </Link>
-      </div>
-
-      <div className="mb-2">
-        <Tabs defaultValue="planning">
-          <TabsList className="bg-transparent border-b border-whiskyPapa-yellow/20 w-full flex">
-            <TabsTrigger value="planning" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
-              <span className="flex items-center justify-center">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-                計画
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="map" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
-              <span className="flex items-center justify-center">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                </svg>
-                地図
-              </span>
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="planning" className="mt-0">
-            <div className="p-2 sm:p-4 md:p-6 container mx-auto">
-              <PlanningTab
-                flightPlan={flightPlan}
-                setFlightPlan={setFlightPlan}
-                tracks={tracks}
-                setTracks={setTracks}
-                currentTrackTime={currentTrackTime}
-                setCurrentTrackTime={setCurrentTrackTime}
-                onClearLocalDraft={onClearLocalDraft}
-                lastSavedAt={lastSavedAt}
-              />
-            </div>
-          </TabsContent>
-          <TabsContent value="map" className="mt-0">
-            <div className="h-full">
-              <MapTab
-                flightPlan={flightPlan}
-                setFlightPlan={setFlightPlan}
-                tracks={tracks}
-                currentTrackTime={currentTrackTime}
-              />
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+    </PlanningNotamSheetProvider>
   );
 }
 

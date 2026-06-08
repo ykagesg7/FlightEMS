@@ -2,7 +2,7 @@ import type { FilteredWeatherData } from '@/services/weather';
 import type { AviationWeatherData } from '@/types/aviation';
 import { formatMETAR, formatTAF, translateFlightCategory } from '@/services/aviationWeather';
 import { escapeHtml, kvItem } from './common';
-import { swimNotamButtonSection } from './swimNotamPopup';
+import { swimNotamOpenChip } from './swimNotamPopup';
 
 /** ISO 等の長い文字列でポップアップ幅が膨らまないよう表示用に短縮 */
 function formatLastUpdatedLabel(raw: string): string {
@@ -32,7 +32,7 @@ export const createWeatherPopupContent = (
       typeof airportProps.id === 'string' && airportProps.id.trim().length >= 3
         ? airportProps.id.trim()
         : '';
-    const notam = icao ? swimNotamButtonSection(icao) : '';
+    const notam = icao ? swimNotamOpenChip(icao) : '';
     return `
       <div class="airport-popup airport-weather-popup">
         <div class="airport-popup-header">
@@ -162,7 +162,7 @@ export const createWeatherPopupContent = (
 
   const notamBlock =
     typeof airportProps.id === 'string' && airportProps.id.trim().length >= 3
-      ? swimNotamButtonSection(airportProps.id.trim())
+      ? swimNotamOpenChip(airportProps.id.trim())
       : '';
 
   // 気象情報カードセクション

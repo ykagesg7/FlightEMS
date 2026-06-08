@@ -14,7 +14,16 @@ import {
 import { useAirspaceLayerClick } from './hooks/useAirspaceLayerClick';
 import type { AirspaceSelection } from './planningAirspaceTypes';
 import { fullAirportInfoContent, simplifiedAirportInfoContent } from './popups/airportPopup';
-import { bindPlanningSwimNotamButton, swimNotamButtonSection } from './popups/swimNotamPopup';
+import {
+  bindAirspaceFeatureSheetSelect,
+  type AirspaceInteractionApi,
+} from './airspaceLayerInteraction';
+import {
+  ACC_SECTOR_HIGH_STYLE,
+  ACC_SECTOR_LOW_STYLE,
+  RAPCON_LAYER_STYLE,
+} from './mapAirspaceLayerStyle';
+import { bindPlanningSwimNotamChip, swimNotamOpenChip } from './popups/swimNotamPopup';
 import { FlightPlanRouteLayer } from './FlightPlanRouteLayer';
 import { useLiveTrafficLayer } from './hooks/useLiveTrafficLayer';
 import { usePlanningMapLayerController } from './hooks/usePlanningMapLayerController';
@@ -86,6 +95,11 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
     ACC_Sector_High: null,
     ACC_Sector_Low: null,
     RAPCON: null,
+  });
+
+  const airspaceInteractionRef = useRef<AirspaceInteractionApi>({
+    getActiveDatasets: () => [],
+    onSelect: () => {},
   });
 
   // 各フィーチャーをクリック時に詳細情報をポップアップ表示するための関数
@@ -163,13 +177,19 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
         onEachFeature: onEachFeaturePopup
       }),
       "RAPCON": L.geoJSON(null, {
-        style: { color: 'orange', weight: 2, opacity: 0.7 },
+        style: RAPCON_LAYER_STYLE,
+        onEachFeature: (feature, layer) =>
+          bindAirspaceFeatureSheetSelect(feature, layer, 'RAPCON', airspaceInteractionRef),
       }),
       "ACC-Sector High": L.geoJSON(null, {
-        style: { color: 'blue', weight: 2, opacity: 0.7 },
+        style: ACC_SECTOR_HIGH_STYLE,
+        onEachFeature: (feature, layer) =>
+          bindAirspaceFeatureSheetSelect(feature, layer, 'ACC_Sector_High', airspaceInteractionRef),
       }),
       "ACC-Sector Low": L.geoJSON(null, {
-        style: { color: 'green', weight: 2, opacity: 0.7 },
+        style: ACC_SECTOR_LOW_STYLE,
+        onEachFeature: (feature, layer) =>
+          bindAirspaceFeatureSheetSelect(feature, layer, 'ACC_Sector_Low', airspaceInteractionRef),
       }),
       "航空機（参考・OpenSky）": liveTrafficLayerRef.current,
       "降水レーダー（参考・RainViewer）": rainViewerLayerRef.current,
@@ -184,7 +204,7 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
     [onAirspaceSelection],
   );
 
-  useAirspaceLayerClick(map, commonLayersRef, airspaceDataRef, handleAirspaceSelection);
+  useAirspaceLayerClick(map, commonLayersRef, airspaceDataRef, handleAirspaceSelection, airspaceInteractionRef);
 
   const localLayersRef = useRef<{ RJFA: L.LayerGroup; RJFZ: L.LayerGroup } | null>(null);
   if (!localLayersRef.current) {
@@ -400,7 +420,7 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
               const pid = feature.properties?.id as string | undefined;
               const notam =
                 pid && String(pid).trim().length >= 3
-                  ? swimNotamButtonSection(String(pid).trim())
+                  ? swimNotamOpenChip(String(pid).trim())
                   : '';
               const depButtonId = `airport-set-dep-${pid}`;
               const arrButtonId = `airport-set-arr-${pid}`;
@@ -433,7 +453,7 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
               if (pid && String(pid).trim().length >= 3) {
                 layer.on('popupopen', () => {
                   const currentMap = mapRef.current;
-                  if (currentMap) bindPlanningSwimNotamButton(currentMap, popup, String(pid).trim(), 'location');
+                  if (currentMap) bindPlanningSwimNotamChip(currentMap, popup, String(pid).trim(), 'location');
                   const coordinates =
                     feature.geometry?.type === 'Point'
                       ? (feature.geometry as GeoJSON.Point).coordinates as [number, number]

@@ -258,8 +258,14 @@ src/pages/
 │           ├── popups/
 │           │   ├── airportPopup.ts
 │           │   ├── common.ts           # escapeHtml、kvItem、collapsibleHtmlSection 等
-│           │   ├── swimNotamPopup.ts # SWIM デジタルノータム（カード・折りたたみ・原文・地図ボタン）
-│           │   ├── swimNotamMapOverlay.ts  # NOTAM 幾何の Leaflet FeatureGroup
+│           │   ├── swimNotamPopup.ts       # NOTAM 1行チップ → シート起動（bindPlanningSwimNotamChip）
+│           │   ├── swimNotamMapOverlay.ts  # NOTAM 幾何の複数 FeatureGroup（current/future スタイル）
+│           │   ├── MapNotamSheet.tsx       # NOTAM ボトムシート（空域シート同型）
+│           │   ├── NotamSheetBody.tsx      # NOTAM カード一覧・地図強調トグル
+│           │   ├── notamDisplayUtils.ts    # JST 期間・peek サマリ・カード表示
+│           │   ├── planningNotamSheetContext.tsx  # シート open/close・Leaflet からの imperative 起動
+│           │   ├── PlanningNotamSheetProvider.tsx # ページレベル NOTAM シート（Preflight Briefing 連動）
+│           │   ├── hooks/usePlanningNotamFetch.ts
 │           │   └── weatherPopup.ts   # 空港気象ポップアップ HTML。METAR/TAF は <details> 折りたたみ
 │           ├── mapStyles.css
 │           └── types.ts
@@ -344,7 +350,7 @@ src/pages/
 | **`createInitialFlightPlan.ts`** | 初期フライトプラン状態の生成 |
 | **`flightPlanDraft.ts`** | `localStorage` 下書き（`PlanDocumentV1`）、永続化フラグ |
 | **`utils/`** | NAVAID からウェイポイント組み立て、磁気偏角まわりの検証など小粒ロジック |
-| **`briefing/`** | `briefingTypes`、`buildPreflightBriefing` — プリフライト・ブリーフ用データ組み立て |
+| **`briefing/`** | `briefingTypes`、`buildPreflightBriefing`、`preflightNotamBriefing`、`usePreflightNotamBriefing` — プリフライト・ブリーフ（出発/到着 NOTAM 自動取得・3分 TTL キャッシュ） |
 | **`components/briefing/`** | `PreflightBriefingPanel` 等、ブリーフ UI |
 | **`components/flight/`** | 「計画」タブ本体（経路、WP、空港・NAVAID/WP セレクタ、要約、印刷ビューなど） |
 | **`components/map/`** | 「地図」タブ：`MapTab` / `MapTabContent`、レイヤ（`layers/`）、フック（`hooks/`）、ポップアップ（`popups/`）、軌跡レイヤ |
