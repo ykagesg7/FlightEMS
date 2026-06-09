@@ -208,6 +208,19 @@ describe('Airspace Utils', () => {
       expect(result?.sourceId).toBe('valid');
     });
 
+    it('should use Freq_VHF from ACC/RAPCON GeoJSON properties', () => {
+      const dataset = createSquarePolygonDataset({
+        Freq_VHF: '126.0MHz',
+        Area_ID: '鹿児島-2',
+      });
+
+      const result = findAirspaceFrequency([135, 35], [{ id: 'RAPCON', data: dataset }]);
+
+      expect(result?.frequency).toBe('126.0MHz');
+      expect(result?.name).toBe('鹿児島-2');
+      expect(result?.sourceId).toBe('RAPCON');
+    });
+
     it('should handle feature with null geometry', () => {
       const dataset: AirspaceDataset = {
         type: 'FeatureCollection',
@@ -244,6 +257,10 @@ describe('Airspace Utils', () => {
     it('parses plain feet values', () => {
       expect(parseAltitudeToken('1500')).toBe(1500);
       expect(parseAltitudeToken('1500FT')).toBe(1500);
+    });
+
+    it('parses feet values with thousands separators', () => {
+      expect(parseAltitudeToken('6,000ft')).toBe(6000);
     });
   });
 

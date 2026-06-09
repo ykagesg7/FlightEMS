@@ -13,8 +13,9 @@ export function computeSnapHeights(viewportHeight: number, isDesktop: boolean): 
   };
 }
 
-export function getInitialSnap(_hitCount: number): SnapPoint {
-  return 'peek';
+export function getInitialSnap(hitCount: number): SnapPoint {
+  // 単一空域タップ時は ACC / RAPCON とも詳細を下部シートで見せる
+  return hitCount === 1 ? 'half' : 'peek';
 }
 
 export function resolveNearestSnap(draggedHeightPx: number, heights: SnapHeights): SnapPoint {

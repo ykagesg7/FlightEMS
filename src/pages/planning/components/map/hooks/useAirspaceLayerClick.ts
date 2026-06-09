@@ -1,13 +1,15 @@
 import L from 'leaflet';
-import type { Position } from 'geojson';
 import { useEffect, useRef, type MutableRefObject } from 'react';
 import {
-  findAirspaceHitsAtPoint,
   sanitizeAirspaceDataset,
   type AirspaceDataset,
   type AirspaceSourceId,
 } from '../../../../../utils/airspace';
 import type { AirspaceSelection } from '../planningAirspaceTypes';
+import {
+  resolveAirspaceSelectionAtPoint,
+  type AirspaceInteractionApi,
+} from '../airspaceLayerInteraction';
 import { usePlanningMapLayerControllerContext } from '../planningMapLayerControllerContext';
 
 const AIRSPACE_LAYER_CONFIG: { layerKey: string; sourceId: AirspaceSourceId; overlayId: string }[] = [
@@ -42,6 +44,7 @@ export function useAirspaceLayerClick(
   commonLayersRef: MutableRefObject<Record<string, L.Layer> | null>,
   airspaceDataRef: MutableRefObject<Record<AirspaceSourceId, AirspaceDataset | null>>,
   onAirspaceSelection: (selection: AirspaceSelection) => void,
+  interactionRef: MutableRefObject<AirspaceInteractionApi>,
 ): void {
   const controller = usePlanningMapLayerControllerContext();
   const enabledOverlayIds = controller?.enabledOverlayIds;
@@ -52,8 +55,6 @@ export function useAirspaceLayerClick(
   }, [onAirspaceSelection]);
 
   useEffect(() => {
-    if (!map) return;
-
     const getActiveDatasets = (): { id: AirspaceSourceId; data: AirspaceDataset | null }[] => {
       return AIRSPACE_LAYER_CONFIG.filter(({ overlayId }) => enabledOverlayIds?.has(overlayId)).flatMap(
         ({ sourceId, layerKey }) => {
@@ -63,26 +64,32 @@ export function useAirspaceLayerClick(
       );
     };
 
+    interactionRef.current.getActiveDatasets = getActiveDatasets;
+    interactionRef.current.onSelect = (selection) => onSelectRef.current(selection);
+  }, [commonLayersRef, airspaceDataRef, enabledOverlayIds, interactionRef]);
+
+  useEffect(() => {
+    if (!map) return;
+
     const handler = (e: L.LeafletMouseEvent) => {
       const target = e.originalEvent.target;
       if (!(target instanceof Element) || !target.closest('.leaflet-interactive')) {
         return;
       }
 
-      const datasets = getActiveDatasets();
+      const datasets = interactionRef.current.getActiveDatasets();
       if (datasets.length === 0) return;
 
-      const point: Position = [e.latlng.lng, e.latlng.lat];
-      const hits = findAirspaceHitsAtPoint(point, datasets);
-      if (hits.length === 0) return;
+      const selection = resolveAirspaceSelectionAtPoint(e.latlng, datasets);
+      if (!selection) return;
 
       L.DomEvent.stopPropagation(e);
-      onSelectRef.current({ latlng: e.latlng, hits });
+      onSelectRef.current(selection);
     };
 
     map.on('click', handler);
     return () => {
       map.off('click', handler);
     };
-  }, [map, commonLayersRef, airspaceDataRef, enabledOverlayIds]);
+  }, [map, interactionRef]);
 }

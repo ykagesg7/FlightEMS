@@ -91,7 +91,7 @@ export const isPointInFeature = (point: Position, feature: Feature): boolean => 
 /** Parse altitude token to feet (FL245 -> 24500, SFC/"" -> 0, UNL -> Infinity). */
 export const parseAltitudeToken = (raw: string | undefined): number | null => {
   if (raw == null) return null;
-  const trimmed = raw.trim();
+  const trimmed = raw.trim().replace(/,/g, '');
   if (!trimmed) return 0;
 
   const upper = trimmed.toUpperCase();
@@ -173,8 +173,18 @@ export const findAirspaceFrequency = (
     for (const feature of data.features) {
       if (isPointInFeature(point, feature)) {
         const props = feature.properties || {};
-        const freq = (props.frequency as string) || (props.freq as string);
-        const name = (props.name as string) || (props.id as string);
+        const vhf = String(props.Freq_VHF ?? props['Freq(VHF)'] ?? '').trim();
+        const uhf = String(props.Freq_UHF ?? props['Freq(UHF)'] ?? '').trim();
+        const freq =
+          (props.frequency as string) ||
+          (props.freq as string) ||
+          vhf ||
+          uhf;
+        const name =
+          (props.name as string) ||
+          (props.id as string) ||
+          (props.ID as string) ||
+          (props.Area_ID as string);
         if (freq) {
           return {
             frequency: freq,

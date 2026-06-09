@@ -9,7 +9,7 @@ import {
 describe('snapSheetUtils', () => {
   describe('getInitialSnap', () => {
     it('returns peek for single hit', () => {
-      expect(getInitialSnap(1)).toBe('peek');
+      expect(getInitialSnap(1)).toBe('half');
     });
 
     it('returns peek for multiple hits', () => {

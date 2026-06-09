@@ -59,6 +59,25 @@ describe('buildAirspacePeekSummary', () => {
     );
   });
 
+  it('includes RAPCON frequencies in single-hit summary', () => {
+    const selection: AirspaceSelection = {
+      latlng,
+      hits: [
+        makeHit('RAPCON', 'rapcon', {
+          Area_ID: '鹿児島-2',
+          Freq_VHF: 'APP:126.0MHz, DEP:119.4MHz',
+          Freq_UHF: '362.3MHz',
+          Floor: '6,000ft',
+          Ceiling: 'FL150',
+        }),
+      ],
+    };
+
+    expect(buildAirspacePeekSummary(selection)).toBe(
+      'RAPCON: 鹿児島-2 · 6,000ft - FL150 · VHF APP:126.0MHz, DEP:119.4MHz · UHF 362.3MHz',
+    );
+  });
+
   it('returns fallback for empty hits', () => {
     const selection: AirspaceSelection = {
       latlng,

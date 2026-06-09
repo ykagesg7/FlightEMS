@@ -52,7 +52,16 @@ export const AirspaceSheetBody: React.FC<Props> = ({ selection, cruiseAltitudeFt
     setExpandedIndex(initialExpanded);
   }, [initialExpanded, selection.latlng.lat, selection.latlng.lng]);
 
-  if (snap === 'peek') return null;
+  if (snap === 'peek') {
+    if (selection.hits.length === 1) {
+      return (
+        <div className="px-3 pb-2 pt-0.5">
+          <AirspaceDetailRows hit={selection.hits[0]} compact />
+        </div>
+      );
+    }
+    return null;
+  }
 
   if (selection.hits.length === 1) {
     return (
