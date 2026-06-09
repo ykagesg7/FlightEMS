@@ -94,7 +94,7 @@ function compareArticles(
   b: LearningContent,
   sort: ArticleHubSort,
   metas: Record<string, ArticleMeta>,
-  socialStats: Record<string, { likes_count?: number }>
+  _socialStats: Record<string, { likes_count?: number }>
 ): number {
   const metaA = resolveMeta(a, metas);
   const metaB = resolveMeta(b, metas);

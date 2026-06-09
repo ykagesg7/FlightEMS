@@ -14,7 +14,7 @@ import { MissionTabs } from './components/MissionTabs';
  * ランク・バッジ確認とミッション一覧。学習記事は /articles へ誘導。
  */
 const MissionDashboard: React.FC = () => {
-  const { user, profile: authProfile } = useAuthStore();
+  const { profile: authProfile } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<'blog' | 'test' | 'planning'>(() => {

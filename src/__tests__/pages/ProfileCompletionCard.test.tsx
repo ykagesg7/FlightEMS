@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { vi } from 'vitest';
 import { ProfileCompletionCard } from '@/pages/profile/components/ProfileCompletionCard';
 
 describe('ProfileCompletionCard', () => {

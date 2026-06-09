@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, afterEach } from 'vitest';
 import type { User } from '@supabase/supabase-js';
 import { deriveOAuthUsername } from '@/auth/deriveOAuthUsername';
 import { deriveOAuthAvatarUrl, deriveOAuthDisplayName } from '@/auth/deriveOAuthProfile';
