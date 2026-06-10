@@ -38,7 +38,9 @@ CREATE INDEX IF NOT EXISTS idx_question_issue_reports_status_created
 CREATE INDEX IF NOT EXISTS idx_question_issue_reports_user_id
   ON public.question_issue_reports (user_id);
 
-CREATE OR REPLACE VIEW public.v_question_report_summary AS
+CREATE VIEW public.v_question_report_summary
+WITH (security_invoker = true)
+AS
 SELECT
   question_id,
   count(*) FILTER (WHERE status = 'open') AS open_count,
@@ -48,17 +50,23 @@ FROM public.question_issue_reports
 GROUP BY question_id;
 
 COMMENT ON VIEW public.v_question_report_summary IS
-  'Aggregated open/total report counts per question for admin triage';
+  'Aggregated open/total report counts per question for admin triage (security_invoker)';
 
 CREATE OR REPLACE FUNCTION public.set_question_issue_reports_updated_at()
 RETURNS trigger
 LANGUAGE plpgsql
+SET search_path = public
 AS $$
 BEGIN
   NEW.updated_at = now();
   RETURN NEW;
 END;
 $$;
+
+REVOKE ALL ON FUNCTION public.set_question_issue_reports_updated_at() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.set_question_issue_reports_updated_at() FROM anon;
+REVOKE ALL ON FUNCTION public.set_question_issue_reports_updated_at() FROM authenticated;
+GRANT EXECUTE ON FUNCTION public.set_question_issue_reports_updated_at() TO postgres;
 
 DROP TRIGGER IF EXISTS trg_question_issue_reports_updated_at ON public.question_issue_reports;
 CREATE TRIGGER trg_question_issue_reports_updated_at
@@ -84,6 +92,11 @@ BEGIN
 END;
 $$;
 
+REVOKE ALL ON FUNCTION public.mark_question_needs_review_on_report() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.mark_question_needs_review_on_report() FROM anon;
+REVOKE ALL ON FUNCTION public.mark_question_needs_review_on_report() FROM authenticated;
+GRANT EXECUTE ON FUNCTION public.mark_question_needs_review_on_report() TO postgres;
+
 DROP TRIGGER IF EXISTS trg_question_issue_report_needs_review ON public.question_issue_reports;
 CREATE TRIGGER trg_question_issue_report_needs_review
   AFTER INSERT ON public.question_issue_reports
@@ -94,7 +107,7 @@ CREATE OR REPLACE FUNCTION public.is_admin_user()
 RETURNS boolean
 LANGUAGE sql
 STABLE
-SECURITY DEFINER
+SECURITY INVOKER
 SET search_path = public
 AS $$
   SELECT EXISTS (
@@ -104,6 +117,11 @@ AS $$
       AND lower(coalesce(roll, '')) = 'admin'
   );
 $$;
+
+REVOKE ALL ON FUNCTION public.is_admin_user() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_admin_user() FROM anon;
+GRANT EXECUTE ON FUNCTION public.is_admin_user() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_admin_user() TO postgres;
 
 ALTER TABLE public.question_issue_reports ENABLE ROW LEVEL SECURITY;
 
