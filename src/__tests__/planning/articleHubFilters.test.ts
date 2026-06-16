@@ -108,4 +108,32 @@ describe('articleHubFilters', () => {
     expect(visible).toContain('cpl');
     expect(visible).toContain('ppl');
   });
+
+  it('shows usaf tab when flight-ops articles exist', () => {
+    const withUsaf = [
+      ...contents,
+      mockContent('fmt', '操縦', 'Wingman VFR'),
+    ];
+    const visible = getVisibleTabs(withUsaf);
+    expect(visible).toContain('usaf');
+  });
+
+  it('filters by tab usaf', () => {
+    const withUsaf = [
+      mockContent('fmt', '操縦', 'Wingman VFR'),
+      mockContent('a', 'CPL学科', 'Alpha VOR'),
+    ];
+    const filtered = filterArticleHubContents({
+      contents: withUsaf,
+      metas,
+      state: { ...defaultState, tab: 'usaf' },
+      getProgress: () => null,
+    });
+    expect(filtered.map((c) => c.id)).toEqual(['fmt']);
+  });
+
+  it('maps legacy category=操縦 to tab usaf', () => {
+    const legacy = parseLegacyArticleHubParams(new URLSearchParams('category=操縦'));
+    expect(legacy.tab).toBe('usaf');
+  });
 });

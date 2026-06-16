@@ -2,6 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 
 const mockCompleteMissionByAction = vi.fn().mockResolvedValue(undefined);
+const mockInvalidateQueries = vi.fn().mockResolvedValue(undefined);
+
+vi.mock('@tanstack/react-query', () => ({
+  useQueryClient: vi.fn(() => ({
+    invalidateQueries: mockInvalidateQueries,
+  })),
+}));
 
 vi.mock('../../hooks/useAuth', () => ({
   useAuth: vi.fn(),
@@ -57,6 +64,8 @@ function baseAuth(overrides: Partial<UseAuthReturn> = {}): UseAuthReturn {
     initialized: overrides.initialized ?? true,
     signIn: overrides.signIn ?? vi.fn(),
     signUp: overrides.signUp ?? vi.fn(),
+    signInWithGoogle: overrides.signInWithGoogle ?? vi.fn(),
+    signInWithOtp: overrides.signInWithOtp ?? vi.fn(),
     signOut: overrides.signOut ?? vi.fn(),
     refreshSession: overrides.refreshSession ?? vi.fn(),
     isAuthenticated: overrides.isAuthenticated ?? !!user,

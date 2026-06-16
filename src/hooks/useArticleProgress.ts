@@ -1,5 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import type { ArticleMeta } from '../types/articles';
+import {
+  awardArticleReadXp,
+  isSeriesCompleteForMembers,
+  resolveArticleMeta,
+} from '../utils/awardArticleReadXp';
 import { buildArticleIndex } from '../utils/articlesIndex';
 import { syncStreakToUserLearningProfile } from '../utils/streak';
 import { supabase } from '../utils/supabase';
@@ -230,6 +236,7 @@ export function calculateLearningStats(
 
 export const useArticleProgress = () => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const { completeMissionByAction, profile, rankProgress: gamificationRankProgress } = useGamification();
   const { checkRanksForContent, refreshRanks } = usePPLRanks();
   const [userProgress, setUserProgress] = useState<Record<string, ArticleProgress>>({});
@@ -440,8 +447,46 @@ export const useArticleProgress = () => {
 
       const reachedStudyMilestone =
         (newProgress.completed || newProgress.scrollProgress >= 95) && !wasAlreadyCompleted;
+
       if (reachedStudyMilestone) {
         await syncStreakToUserLearningProfile(user.id);
+
+        const articleMeta = resolveArticleMeta(
+          articleSlug,
+          articleIndexByFilename,
+          articleIndex
+        );
+        const seriesMemberIds = articleMeta?.series
+          ? Object.entries(articleIndexByFilename)
+              .filter(([, m]) => m.series === articleMeta.series)
+              .map(([filename]) => filename)
+          : [];
+        const seriesComplete = isSeriesCompleteForMembers(
+          articleSlug,
+          seriesMemberIds,
+          userProgress
+        );
+
+        try {
+          const xpResult = await awardArticleReadXp(
+            user.id,
+            articleSlug,
+            articleMeta,
+            seriesComplete
+          );
+          if (xpResult.success) {
+            await queryClient.invalidateQueries({
+              queryKey: ['gamification', 'profile', user.id],
+            });
+          } else if (
+            xpResult.error &&
+            xpResult.error !== 'XP already awarded for this article'
+          ) {
+            console.warn('Article XP award skipped:', xpResult.error);
+          }
+        } catch (xpError) {
+          console.warn('Article XP award failed:', xpError);
+        }
       }
 
       // ローカル状態を更新
@@ -516,7 +561,7 @@ export const useArticleProgress = () => {
       console.warn('進捗更新エラー（無視して続行）:', err);
       // setErrorは呼ばない（ネットワークエラーは正常）
     }
-  }, [user, userProgress, calculateStats, completeMissionByAction, articleIndex, articleIndexByFilename, checkRanksForContent, refreshRanks, profile, gamificationRankProgress]);
+  }, [user, userProgress, calculateStats, completeMissionByAction, articleIndex, articleIndexByFilename, checkRanksForContent, refreshRanks, profile, gamificationRankProgress, queryClient]);
 
   // 記事をブックマーク
   const toggleBookmark = useCallback(async (articleSlug: string) => {

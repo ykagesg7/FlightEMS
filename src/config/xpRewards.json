@@ -1,0 +1,37 @@
+{
+  "registration": 100,
+  "quizSession": {
+    "base": 10,
+    "perCorrect": 2,
+    "perfectScoreBonus": 15,
+    "examModeMultiplier": 1.25,
+    "minQuestions": 1
+  },
+  "articles": {
+    "default": 15,
+    "categories": {
+      "基礎": 12,
+      "中級": 18,
+      "上級": 25,
+      "プレミアム": 40,
+      "PPL": 5,
+      "CPL": 5,
+      "操縦": 20,
+      "USAF": 20
+    },
+    "series_completion_bonus": {
+      "enabled": true,
+      "multiplier": 1.5,
+      "ppl_completion_bonus": 200,
+      "cpl_completion_bonus": 400
+    },
+    "first_read_bonus": {
+      "enabled": true,
+      "amount": 5
+    },
+    "articles": {
+      "millionaire-teaching-1": 25,
+      "logical-presentation-1": 20
+    }
+  }
+}

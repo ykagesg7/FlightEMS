@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import {
   CPL_CATEGORY,
   filterPublishedArticleContents,
+  FLIGHT_OPS_CATEGORY,
   PPL_CATEGORY,
 } from '../../../constants/articleHubCategories';
 import { useArticleProgress } from '../../../hooks/useArticleProgress';
@@ -47,6 +48,8 @@ function countForTab(contents: LearningContent[], tab: ArticleHubTab): number {
       return contents.filter((c) => c.category === CPL_CATEGORY).length;
     case 'ppl':
       return contents.filter((c) => c.category === PPL_CATEGORY).length;
+    case 'usaf':
+      return contents.filter((c) => c.category === FLIGHT_OPS_CATEGORY).length;
     case 'mindset':
       return contents.filter((c) => c.category === 'メンタリティー' || c.category === '思考法').length;
     default:

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import {
   countMindsetArticles,
   CPL_CATEGORY,
+  FLIGHT_OPS_CATEGORY,
   isMindsetCategory,
   PPL_CATEGORY,
 } from '../../../constants/articleHubCategories';
@@ -62,6 +63,16 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
         label: 'PPL 基礎',
         total: pplContents.length,
         read: computeReadCount(pplContents, isDemo, getArticleProgress),
+      });
+    }
+
+    const usafContents = articleContents.filter((c) => c.category === FLIGHT_OPS_CATEGORY);
+    if (usafContents.length > 0) {
+      rows.push({
+        key: 'usaf',
+        label: 'USAF教程',
+        total: usafContents.length,
+        read: computeReadCount(usafContents, isDemo, getArticleProgress),
       });
     }
 

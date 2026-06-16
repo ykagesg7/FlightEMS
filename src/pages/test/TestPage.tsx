@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, BookOpen } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useGamification } from '../../hooks/useGamification';
 import { QuizQuestion, UserQuizAnswer } from '../../types/quiz';
 import supabase from '../../utils/supabase';
+import { awardQuizSessionXp } from '../../utils/awardQuizSessionXp';
 import { syncStreakToUserLearningProfile } from '../../utils/streak';
 import { QuizActiveFilterChips } from './components/QuizActiveFilterChips';
 import { QuizComponent } from './components/QuizComponent';
@@ -55,6 +57,7 @@ function formatQuizSaveError(err: unknown): string {
 }
 
 const TestPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const { completeMissionByAction } = useGamification();
   const profile = useAuthStore((s) => s.profile);
   const user = useAuthStore((s) => s.user);
@@ -351,6 +354,21 @@ const TestPage: React.FC = () => {
         await completeMissionByAction('quiz_pass');
       } catch (missionError) {
         console.warn('Mission completion check failed:', missionError);
+      }
+
+      if (sessionId) {
+        try {
+          await awardQuizSessionXp({
+            userId: user_id,
+            sessionId,
+            correctCount: answers.filter((a) => a.isCorrect).length,
+            totalQuestions: answers.length,
+            mode: mode as 'practice' | 'exam' | 'review',
+            queryClient,
+          });
+        } catch (xpErr) {
+          console.warn('quiz session XP award skipped:', xpErr);
+        }
       }
 
       trackQuizSessionComplete({

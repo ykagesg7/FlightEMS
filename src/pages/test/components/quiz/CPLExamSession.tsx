@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../../../stores/authStore';
 import supabase from '../../../../utils/supabase';
 import { useGamification } from '../../../../hooks/useGamification';
+import { awardQuizSessionXp } from '../../../../utils/awardQuizSessionXp';
 import type { ExamLevelFilter } from '../../examLevelFilter';
 
 interface CPLQuestion {
@@ -39,6 +41,7 @@ interface UserAnswer {
 }
 
 const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, onBack }) => {
+  const queryClient = useQueryClient();
   const { user } = useAuthStore();
   const { completeMissionByAction } = useGamification();
 
@@ -238,13 +241,28 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
         console.warn('Mission completion check failed:', missionError);
       }
 
+      if (data?.id) {
+        try {
+          await awardQuizSessionXp({
+            userId: user.id,
+            sessionId: data.id,
+            correctCount: correctAnswers,
+            totalQuestions: userAnswers.length,
+            mode: 'cpl_exam',
+            queryClient,
+          });
+        } catch (xpErr) {
+          console.warn('CPL exam XP award skipped:', xpErr);
+        }
+      }
+
       onComplete(data.id);
     } catch (err) {
       console.error('Failed to save exam results:', err);
       // エラーでも結果画面に進む
       onComplete('temp-session-id');
     }
-  }, [user, userAnswers, examStartTime, settings, onComplete, completeMissionByAction]);
+  }, [user, userAnswers, examStartTime, settings, onComplete, completeMissionByAction, queryClient]);
 
   if (loading) {
     return (

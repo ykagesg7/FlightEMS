@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { deriveOAuthAvatarUrl, deriveOAuthDisplayName } from '../../auth/deriveOAuthProfile';
 import { deriveOAuthUsername } from '../../auth/deriveOAuthUsername';
 import { completeWelcomeSetup, getWelcomeRedirectTarget, needsWelcomeSetup } from '../../auth/profileSetup';
 import { Button } from '../../components/ui';
 import { useAuthStore } from '../../stores/authStore';
 import { importOAuthAvatarIfAvailable } from '../../utils/importOAuthAvatar';
+import { awardRegistrationXp } from '../../utils/awardQuizSessionXp';
 import { AuthAlert } from '../auth/components/AuthAlert';
 import { AuthInput } from '../auth/components/AuthInput';
 import { AuthLayout } from '../auth/components/AuthLayout';
@@ -15,6 +17,7 @@ import { useNotificationSettings } from '../profile/hooks/useNotificationSetting
 const TOTAL_STEPS = 3;
 
 const WelcomeSetupPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const profile = useAuthStore((state) => state.profile);
   const updateProfile = useAuthStore((state) => state.updateProfile);
@@ -97,10 +100,15 @@ const WelcomeSetupPage: React.FC = () => {
       setError(completeError.message || 'セットアップ完了に失敗しました');
       return;
     }
+    try {
+      await awardRegistrationXp(user.id, queryClient);
+    } catch (xpErr) {
+      console.warn('registration XP award skipped:', xpErr);
+    }
     const destination =
-      redirectTarget === '/' ? '/articles?tab=continue' : redirectTarget;
+      redirectTarget === '/' ? '/test?tab=diagnostic' : redirectTarget;
     navigate(destination, { replace: true });
-  }, [navigate, redirectTarget, user]);
+  }, [navigate, queryClient, redirectTarget, user]);
 
   const handleImportOAuthAvatar = useCallback(async () => {
     if (!user) return;

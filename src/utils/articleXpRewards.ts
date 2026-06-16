@@ -1,11 +1,11 @@
-import articleXpRewardsConfig from '../config/articleXpRewards.json';
+import xpRewardsConfig from '../config/xpRewards.json';
 import type { ArticleXpConfig, ArticleMeta } from '../types/articles';
 
 /**
  * 記事経験値設定を取得
  */
 export function getArticleXpConfig(): ArticleXpConfig {
-  return articleXpRewardsConfig as ArticleXpConfig;
+  return (xpRewardsConfig as { articles: ArticleXpConfig }).articles;
 }
 
 /**

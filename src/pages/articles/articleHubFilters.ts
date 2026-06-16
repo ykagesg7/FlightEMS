@@ -1,14 +1,16 @@
 import {
+  countFlightOpsArticles,
   countMindsetArticles,
   CPL_CATEGORY,
   filterPublishedArticleContents,
+  FLIGHT_OPS_CATEGORY,
   isMindsetCategory,
   PPL_CATEGORY,
 } from '../../constants/articleHubCategories';
 import type { LearningContent } from '../../types';
 import type { ArticleMeta } from '../../types/articles';
 
-export type ArticleHubTab = 'continue' | 'cpl' | 'ppl' | 'mindset';
+export type ArticleHubTab = 'continue' | 'cpl' | 'ppl' | 'usaf' | 'mindset';
 export type ArticleHubSort = 'date' | 'title' | 'readingTime' | 'series';
 export type ArticleHubStatus = 'all' | 'in-progress' | 'completed';
 
@@ -45,12 +47,14 @@ export const ARTICLE_HUB_TAB_LABELS: Record<ArticleHubTab, string> = {
   continue: '続きから',
   cpl: 'CPL 学科',
   ppl: 'PPL 基礎',
+  usaf: 'USAF教程',
   mindset: 'メンタリティ',
 };
 
 const TAB_CATEGORIES: Record<Exclude<ArticleHubTab, 'continue'>, readonly string[]> = {
   cpl: [CPL_CATEGORY],
   ppl: [PPL_CATEGORY],
+  usaf: [FLIGHT_OPS_CATEGORY],
   mindset: ['メンタリティー', '思考法'],
 };
 
@@ -122,6 +126,7 @@ export function getVisibleTabs(contents: LearningContent[]): ArticleHubTab[] {
   const tabs: ArticleHubTab[] = ['continue'];
   if (contents.some((c) => c.category === CPL_CATEGORY)) tabs.push('cpl');
   if (contents.some((c) => c.category === PPL_CATEGORY)) tabs.push('ppl');
+  if (countFlightOpsArticles(contents) > 0) tabs.push('usaf');
   if (countMindsetArticles(contents) > 0) tabs.push('mindset');
   return tabs;
 }
@@ -148,6 +153,8 @@ export function parseLegacyArticleHubParams(params: URLSearchParams): Partial<Ar
     partial.tab = 'cpl';
   } else if (category === PPL_CATEGORY) {
     partial.tab = 'ppl';
+  } else if (mainFilter === 'USAF' || category === FLIGHT_OPS_CATEGORY) {
+    partial.tab = 'usaf';
   } else if (mainFilter === 'マインド' || category === 'メンタリティー' || category === '思考法') {
     partial.tab = 'mindset';
   }

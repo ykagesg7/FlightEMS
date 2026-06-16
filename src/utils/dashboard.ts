@@ -8,7 +8,7 @@ import type { DashboardMetrics, LearningXpBenchmark, PublicLeaderboardEntry } fr
 import type { UserRank } from '../types/gamification';
 
 /** この人数未満はベンチマーク数値を出さない（プライバシー・統計的無意味の緩和） */
-export const MIN_POPULATION_FOR_XP_BENCHMARK = 20;
+export const MIN_POPULATION_FOR_XP_BENCHMARK = 5;
 
 /**
  * ダッシュボード用の統合メトリクスを取得
@@ -16,6 +16,15 @@ export const MIN_POPULATION_FOR_XP_BENCHMARK = 20;
  * 一部指標の取得に失敗しても、他はフォールバックで返し全体を落とさない
  */
 export async function fetchDashboardMetrics(userId: string): Promise<DashboardMetrics> {
+  const emptyXpBenchmark: LearningXpBenchmark = {
+    xpPoints: 0,
+    populationN: 0,
+    percentile: null,
+    rankTier: null,
+    cohortN: null,
+    cohortPercentile: null,
+  };
+
   const defaults: DashboardMetrics = {
     overallProgressPct: 0,
     testAccuracyPct: 0,
@@ -23,6 +32,7 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
     streakDays: 0,
     weakTopics: [],
     publicLeaderboard: [],
+    xpBenchmark: emptyXpBenchmark,
   };
 
   const safeGet = async <T>(
@@ -46,7 +56,7 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
       safeGet(() => getStreakDays(userId), 0, '継続日数'),
       safeGet(() => getNextRecommendedLesson(userId), undefined, '推奨レッスン'),
       safeGet(() => getWeakTopics(userId), [], '弱点トピック'),
-      safeGet(() => getLearningXpBenchmark(), undefined, 'XPベンチマーク'),
+      safeGet(() => getLearningXpBenchmark(), emptyXpBenchmark, 'XPベンチマーク'),
       safeGet(() => getPublicLeaderboard(), undefined, '公開ランキング'),
     ]);
 
@@ -58,7 +68,7 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
     streakDays: streakDays ?? 0,
     nextLesson,
     weakTopics: weakTopics ?? [],
-    ...(xpBenchmark ? { xpBenchmark } : {}),
+    xpBenchmark: xpBenchmark ?? emptyXpBenchmark,
     publicLeaderboard: publicLeaderboard ?? [],
   };
 }
@@ -66,15 +76,24 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
 /**
  * 認証ユーザーの XP 相対位置（SECURITY DEFINER RPC）。未ログイン・プロフィールなしでは undefined。
  */
-async function getLearningXpBenchmark(): Promise<LearningXpBenchmark | undefined> {
+async function getLearningXpBenchmark(): Promise<LearningXpBenchmark> {
+  const empty: LearningXpBenchmark = {
+    xpPoints: 0,
+    populationN: 0,
+    percentile: null,
+    rankTier: null,
+    cohortN: null,
+    cohortPercentile: null,
+  };
+
   const { data, error } = await supabase.rpc('get_learning_xp_benchmark');
   if (error) {
     console.error('XPベンチマーク取得エラー:', error);
-    return undefined;
+    return empty;
   }
   const row = data?.[0];
   if (!row) {
-    return undefined;
+    return empty;
   }
   return {
     xpPoints: row.xp_points ?? 0,

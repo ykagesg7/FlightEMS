@@ -16,6 +16,8 @@ export const MINDSET_CATEGORIES = ['メンタリティー', '思考法'] as cons
 
 export const CPL_CATEGORY = 'CPL学科' as const;
 export const PPL_CATEGORY = 'PPL' as const;
+/** DB `learning_contents.category` for USAF formation / flight-ops articles */
+export const FLIGHT_OPS_CATEGORY = '操縦' as const;
 
 export function isMindsetCategory(category: string): boolean {
   return (MINDSET_CATEGORIES as readonly string[]).includes(category);
@@ -46,4 +48,8 @@ export function countByCategory(
 
 export function countMindsetArticles(contents: LearningContent[]): number {
   return contents.filter((c) => isMindsetCategory(c.category)).length;
+}
+
+export function countFlightOpsArticles(contents: LearningContent[]): number {
+  return contents.filter((c) => c.category === FLIGHT_OPS_CATEGORY).length;
 }

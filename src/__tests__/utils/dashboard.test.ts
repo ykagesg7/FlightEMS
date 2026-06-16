@@ -23,7 +23,7 @@ describe('dashboard utils', () => {
   });
 
   it('exports minimum population threshold for XP benchmark', () => {
-    expect(MIN_POPULATION_FOR_XP_BENCHMARK).toBe(20);
+    expect(MIN_POPULATION_FOR_XP_BENCHMARK).toBe(5);
   });
 
   it('fetchDashboardMetrics falls back when all safeGet sources throw or RPC fail', async () => {

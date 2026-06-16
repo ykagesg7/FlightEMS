@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import articleXpRewardsConfig from '../../config/articleXpRewards.json';
+import xpRewardsConfig from '../../config/xpRewards.json';
 import type { ArticleXpConfig } from '../../types/articles';
 import { ADMIN_CARD_CLASS, ADMIN_INPUT_CLASS, AdminPageShell } from './components/AdminPageShell';
 
 const XP_CONFIG_STORAGE_KEY = 'articleXpConfig';
+
+const defaultArticleConfig = (xpRewardsConfig as { articles: ArticleXpConfig }).articles;
 
 type ExtendedSeriesBonus = ArticleXpConfig['series_completion_bonus'] & {
   ppl_completion_bonus?: number;
@@ -17,10 +19,10 @@ type StoredXpConfig = ArticleXpConfig & {
 function loadStoredConfig(): StoredXpConfig {
   try {
     const raw = localStorage.getItem(XP_CONFIG_STORAGE_KEY);
-    if (!raw) return articleXpRewardsConfig as StoredXpConfig;
-    return { ...(articleXpRewardsConfig as StoredXpConfig), ...JSON.parse(raw) };
+    if (!raw) return defaultArticleConfig as StoredXpConfig;
+    return { ...defaultArticleConfig, ...JSON.parse(raw) } as StoredXpConfig;
   } catch {
-    return articleXpRewardsConfig as StoredXpConfig;
+    return defaultArticleConfig as StoredXpConfig;
   }
 }
 
