@@ -22,6 +22,7 @@
 | **USAF 編隊飛行（操縦）** ep.1 | `20260616_learning_contents_fmt_wingman_vfr.sql`（`FMT-1-1_WingmanVFR`、`order_index` 601） |
 | **記事 XP 付与修正** | `20260616_award_article_xp_fix.sql`（`learning_progress.xp_awarded_at`、`award_article_xp` RPC） |
 | **汎用 XP イベント** | `20260616_xp_award_events.sql`（`xp_award_events`、`award_xp_event` RPC） |
+| **登録 XP バックフィル** | `20260616_backfill_registration_xp.sql`（オンボーディング完了済み・未付与ユーザーへ 100 XP） |
 | Phase B・Phase 2 対象 8 単元（気象 3.3.10〜12・工学 3.2.10〜12・法規 3.1.7〜8）`learning_contents` / `content_title` | `20260505_learning_contents_phase2_eight_meta.sql` |
 | 通信 3.5.4 メタ本文化（May） | `20260505_learning_contents_comm_354_meta_finalize.sql` |
 | 通信 3.5.x メタ全集約（本文化後） | `20260507_learning_contents_comm_351_355_meta_sync.sql` |

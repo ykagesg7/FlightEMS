@@ -1,4 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query';
+import type { AwardXpEventResult } from './awardXpEvent';
 import { awardXpEvent, invalidateGamificationProfile } from './awardXpEvent';
 import { calculateQuizSessionXp, getRegistrationXp } from './xpRewards';
 
@@ -45,14 +46,15 @@ export async function awardQuizSessionXp({
 export async function awardRegistrationXp(
   userId: string,
   queryClient?: QueryClient
-): Promise<void> {
+): Promise<AwardXpEventResult> {
   const xpAmount = getRegistrationXp();
   if (xpAmount <= 0) {
-    return;
+    return { success: false, error: 'zero_xp' };
   }
 
   const result = await awardXpEvent(userId, 'registration', 'welcome_setup', xpAmount);
   if (result.success && queryClient) {
     await invalidateGamificationProfile(queryClient, userId);
   }
+  return result;
 }

@@ -5,6 +5,7 @@ import { getAuthRedirectUrl, getPasswordRecoveryRedirectUrl } from '../auth/auth
 import { clearPasswordRecoveryPending } from '../auth/passwordRecovery'
 import { deriveOAuthUsername } from '../auth/deriveOAuthUsername'
 import { importOAuthAvatarIfAvailable } from '../utils/importOAuthAvatar'
+import { awardRegistrationXp } from '../utils/awardQuizSessionXp'
 import { Database } from '../types/database.types'
 import supabase from '../utils/supabase'
 
@@ -362,6 +363,19 @@ export const useAuthStore = create<AuthState>()(
 
             if (!error && data) {
               set({ profile: data });
+              if (data.onboarding_completed_at) {
+                void awardRegistrationXp(userId).then(async (result) => {
+                  if (!result.success) return;
+                  const { data: refreshed, error: refreshError } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', userId)
+                    .single();
+                  if (!refreshError && refreshed) {
+                    set({ profile: refreshed });
+                  }
+                });
+              }
               return;
             }
 
