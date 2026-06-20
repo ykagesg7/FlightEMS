@@ -1,4 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import * as profileSetup from '@/auth/profileSetup';
@@ -80,6 +82,22 @@ function createAuthState(overrides: Partial<AuthState> = {}): AuthState {
   };
 }
 
+function renderWelcomeSetupPage() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false, gcTime: 0 },
+    },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter initialEntries={['/welcome?next=/']}>
+        <WelcomeSetupPage />
+      </MemoryRouter>
+    </QueryClientProvider>,
+  );
+}
+
 describe('WelcomeSetupPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -90,11 +108,7 @@ describe('WelcomeSetupPage', () => {
       selector(createAuthState()),
     );
 
-    render(
-      <MemoryRouter initialEntries={['/welcome?next=/']}>
-        <WelcomeSetupPage />
-      </MemoryRouter>,
-    );
+    renderWelcomeSetupPage();
 
     fireEvent.click(screen.getByRole('button', { name: 'スキップ' }));
     expect(screen.getByRole('checkbox', { name: 'ランキングに参加する' })).toBeChecked();
@@ -105,11 +119,7 @@ describe('WelcomeSetupPage', () => {
       selector(createAuthState()),
     );
 
-    render(
-      <MemoryRouter initialEntries={['/welcome?next=/']}>
-        <WelcomeSetupPage />
-      </MemoryRouter>,
-    );
+    renderWelcomeSetupPage();
 
     fireEvent.click(screen.getByRole('button', { name: 'スキップ' }));
 

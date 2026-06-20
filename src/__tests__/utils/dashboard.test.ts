@@ -40,6 +40,13 @@ describe('dashboard utils', () => {
       publicLeaderboard: [],
     });
     expect(metrics.nextLesson).toBeUndefined();
-    expect(metrics.xpBenchmark).toBeUndefined();
+    expect(metrics.xpBenchmark).toEqual({
+      xpPoints: 0,
+      populationN: 0,
+      percentile: null,
+      rankTier: null,
+      cohortN: null,
+      cohortPercentile: null,
+    });
   });
 });
