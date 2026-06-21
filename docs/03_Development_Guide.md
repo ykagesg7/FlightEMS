@@ -122,6 +122,8 @@ npm run dev
 
 ※ 以前の無効な `projectId`（例: `prj_hMP1QDGSy8OriMOVsQI5apwOYV53`）が残っていると *Project was deleted…* になりやすい。
 
+**Serverless Functions 上限（Hobby / 無料枠）**: `api/` 直下の各 `.ts`（`_lib/` 除く）は **1 ファイル = 1 関数**として数えられる。**デプロイあたり最大 12 本**。超えると Vite ビルドは成功しても **`Deploying outputs...` 以降で Error** になる（2026-06: MFA リカバリーコード 4 本追加で 13 本 → 失敗）。対策: 関連 API を **`api/.../[action].ts` の動的ルート 1 本**にまとめる（例: `mfa-recovery-codes/[action].ts` が `generate` / `consume` / `status` / `clear` を処理。クライアント URL は `/api/account/mfa-recovery-codes/{action}` のまま）。
+
 **一般気象 `/api/weather`** と **METAR/TAF `/api/aviation-weather`** は **`npm run dev` のみ**でも Vite プラグイン（`vite/devWeatherApiPlugin.ts`）で応答する。`/api/weather` は `.env` の **`WEATHER_API_KEY`** で WeatherAPI.com の実データ、未設定なら開発用モック。`/api/aviation-weather` は NOAA 直（キー不要）。**OpenSky 航空機レイヤー**も `vite/devOpenskyApiPlugin.ts` で `npm run dev` のみ可。RainViewer マニフェストプロキシ等、ほかの `/api/*` が必要なときは **`npm run dev:weather` + `npm run dev`**。
 
 **OpenSky（航空機レイヤー）**: フロント用の API キー設定は**不要**です。OpenSky Network の公開 API を**サーバ側プロキシ**（`api/opensky-states`）経由で呼びます。匿名利用でレート制限あり。**任意**で `OPENSKY_USERNAME` / `OPENSKY_PASSWORD`（OpenSky アカウント）をサーバ環境に置くと制限が緩みます（`.env.example` 参照）。本番では上流 `fetch` を **約 12 秒**で打ち切り（`api/lib/openskyStatesCore.ts` の定数）。**`vercel.json` のトップレベル `regions: ["fra1"]`** でサーバレスを Frankfurt に寄せ、OpenSky（欧州）への往復を短くする（CLI の制約で関数単位 `regions` が使えない構成のためプロジェクト全体で指定）。米東既定のままだと ~10s 付近で `fetch failed` → **502** になりやすい。接続失敗時は **502**（`Bad Gateway`）。`maxDuration` は **`api/**/*.ts` で 15s** と整合。米国リージョンから OpenSky まで遅延が大きいと 8s 前後では足りないことがある。Hobby プランは関数 10 秒上限のため、この場合は `maxDuration` が効かず打ち切りに注意。**任意**の `OPENSKY_USERNAME` / `OPENSKY_PASSWORD` でレートが緩み応答が安定しやすい。
