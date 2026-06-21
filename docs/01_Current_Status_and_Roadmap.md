@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
 **最終更新**: 2026年6月21日  
-**バージョン**: Roadmap v4.0.23（Strategy v1.2・CPL 主軸・Phase D cohort pilot 本番）
+**バージョン**: Roadmap v4.0.25（Strategy v1.2・CPL 主軸・Phase D cohort pilot 本番・MFA リカバリーコード本番確認）
 
 ---
 
@@ -297,7 +297,8 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-06-21 | **v4.0.24 / Profile Hub + MFA 本番**: Profile Hub 4 セクション・TOTP ログインゲート・リカバリーコード・アカウント削除を **本番デプロイ済**（`54b2a27`〜`99401d3`）。Vercel: API `[action].ts` 統合で 12 Serverless 上限内。verify-build: 通知 auto-save lint 修正。DB: [`20260622`](../scripts/database/20260622_profiles_mfa_required_at_login.sql) / [`20260623`](../scripts/database/20260623_mfa_recovery_codes.sql)。[02](02_System_Spec.md) · [04](04_Operations_Guide.md) MFA 運用。 |
+| 2026-06-21 | **v4.0.25 / MFA リカバリーコード 本番確認**: Profile で **10 件のリカバリーコード再発行成功**。Vercel: ネスト `[action].ts` 非デプロイ → **`api/mfa-recovery-codes.ts` + `?action=`**（`6edfdc5`）。サーバー AAL2: JWT `aal` クレーム（`3648940`）。ログイン MFA デフォルト OFF（[`20260624`](../scripts/database/20260624_profiles_mfa_required_at_login_default_off.sql)）。CI: `WelcomeSetupPage` 非同期 teardown（`b58facd`）。コミット: `d1c6ec9`〜`3648940`。[02](02_System_Spec.md) · [04](04_Operations_Guide.md) MFA 運用。 |
+| 2026-06-21 | **v4.0.24 / Profile Hub + MFA 本番**: Profile Hub 4 セクション・TOTP ログインゲート・リカバリーコード・アカウント削除を **本番デプロイ済**（`54b2a27`〜`99401d3`）。Vercel: API 統合で 12 Serverless 上限内。verify-build: 通知 auto-save lint 修正。DB: [`20260622`](../scripts/database/20260622_profiles_mfa_required_at_login.sql) / [`20260623`](../scripts/database/20260623_mfa_recovery_codes.sql)。[02](02_System_Spec.md) · [04](04_Operations_Guide.md) MFA 運用。 |
 | 2026-06-21 | **v4.0.23 / Phase D cohort pilot 本番**: D-3 **pilot 稼働** — cohort 週次 cron（日曜 09:00 JST）、in-app + Brevo メール、Welcome cohort 必須、RPC hardening（[`20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql)）。Supabase **Pause/Restore** 実施・Security Advisor 7 WARN は許容/監視（[04](04_Operations_Guide.md)）。コミット: `a268c3b`（feature）、`7d6cb8c`（CI/auth）、`61c6626`（RPC hardening）。 |
 | 2026-06-06 | **v4.0.22 / 6月期ゲート・Quiz Hub**: Lane A **PR-Q0〜Q5** — `/test` Quiz Hub（`testHubFilters`・UI 分割・GA4 5 イベント・学習ループ）。`npm run test:coverage` → **`src` Statements 18.07%**（5302/29341）。[Phase_C §4](Phase_C_Quality_Preparation.md)、[02 §/test](02_System_Spec.md)。Lane B: W24 マッピング（空力基礎→`3.2.7`、未マッピング **47→36**）、PPL Callout、`testHubFilters.test.ts`（14）。A11y: [`accessibility_audit_memo_2026-06-06.md`](../artifacts/accessibility_audit_memo_2026-06-06.md)。 |
 | 2026-05-10 | **v4.0.21 / プロダクト指標と docs 連携**: [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) を参照する **「プロダクト指標（ALPM）とエンジニアリング KPI」** 節を追加。推奨読み順に同文書を挿入。[00](00_Flight_Academy_Strategy.md)・[docs/README](README.md) v4.49 と整合。 |

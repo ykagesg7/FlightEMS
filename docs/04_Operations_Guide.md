@@ -221,7 +221,7 @@
 ### **プロフィール — MFA / アカウント削除（運用）**
 
 - **MFA（TOTP）**: Supabase Dashboard で Auth MFA を有効化したうえで Profile → アカウントから enroll / 解除。解除時は認証アプリの 6 桁コードで本人確認後 `mfa.unenroll` を実行。iPhone は「パスワード」App、Android は Authenticator 等（**メール非送付**）
-- **リカバリーコード**: 2FA 有効化時に 10 件を一度だけ表示（`POST /api/account/mfa-recovery-codes/generate`、AAL2 必須）。Profile から再発行可（旧コードは無効化）。ログイン MFA 画面の「認証アプリにアクセスできない」から 1 件消費 → 2FA 解除してログイン（`POST .../consume`）。**既存 2FA ユーザー**は Profile で「新しいリカバリーコードを発行」を実行してバックアップを作成すること。実装は **`api/mfa-recovery-codes.ts`**（`/api/mfa-recovery-codes?action={action}`；旧パスは rewrite 互換）
+- **リカバリーコード**: 2FA 有効化時または Profile「新しいリカバリーコードを発行」で **10 件を一度だけ表示**（`POST /api/mfa-recovery-codes?action=generate`、AAL2 必須）。再発行は認証アプリ 6 桁 → 旧 10 件は無効化。ログイン MFA 画面の「認証アプリにアクセスできない」から 1 件消費 → 2FA 解除してログイン（`?action=consume`）。**本番確認済**（2026-06-21）。実装: **`api/mfa-recovery-codes.ts`**。AAL2 判定は JWT `aal` クレーム（`3648940`）。旧 `/api/account/mfa-recovery-codes/{action}` は `vercel.json` rewrite のみ（互換）
 - **ログイン時 MFA トグル**: `profiles.mfa_required_at_login`（デフォルト **false**・opt-in）。2FA 有効ユーザーは Profile でログイン時コード要求を ON にできる（OFF でもパスワード変更・削除は MFA 必須）
 - **ログイン MFA フロー**: verified 因子あり + トグル ON + セッション AAL1 の場合、`/auth` で 6 桁コード入力後にリダイレクト。保護ルート直アクセス時は `/auth?mfa=required` へ誘導
 - **セッション**: Supabase `persistSession` + `autoRefreshToken`（localStorage）。リフレッシュ有効期間中は再ログイン不要（個人端末向け。共有 PC は明示ログアウト推奨）
@@ -232,10 +232,14 @@
 | 項目 | 内容 |
 |------|------|
 | **本番 URL** | [https://flight-lms.vercel.app/](https://flight-lms.vercel.app/) |
-| **主要コミット** | `54b2a27` feat · `651990f` API tsc · `3e6442c` `[action].ts` 統合 · `99401d3` lint |
-| **Vercel** | MFA 追加で API **13 本** → Hobby **12 本**上限超過。`[action].ts` で **10 本**に圧縮して解消（[03_Development_Guide.md](03_Development_Guide.md)） |
-| **verify-build** | `NotificationPreferences` の未使用 `onSuccess` を削除（通知 auto-save 後） |
+| **リカバリーコード** | Profile 再発行 → **10 件表示 OK**（2026-06-21 手動確認） |
+| **主要コミット（初期）** | `54b2a27` feat · `651990f` API tsc · `3e6442c` 統合 · `99401d3` lint |
+| **主要コミット（修正）** | `d1c6ec9` login MFA default off · `6edfdc5` flat API · `3648940` AAL2 JWT |
+| **Vercel API** | **`api/mfa-recovery-codes.ts`** + `?action=`（ネスト `[action].ts` はデプロイされない） |
+| **AAL2（サーバー）** | access token JWT の `aal === 'aal2'`。`getAuthenticatorAssuranceLevel()` は不可 |
+| **verify-build** | `WelcomeSetupPage` 非同期 teardown（`b58facd`） |
 | **本番 env** | `SUPABASE_SERVICE_ROLE_KEY`（リカバリーコード・削除 API）。任意: `MFA_RECOVERY_CODE_PEPPER` |
+| **DB** | [`20260622`](../scripts/database/20260622_profiles_mfa_required_at_login.sql) · [`20260623`](../scripts/database/20260623_mfa_recovery_codes.sql) · [`20260624`](../scripts/database/20260624_profiles_mfa_required_at_login_default_off.sql) |
 
 ### **プロフィールページUI改善（2025年12月21日）**
 

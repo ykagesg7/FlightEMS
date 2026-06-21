@@ -122,7 +122,7 @@ npm run dev
 
 ※ 以前の無効な `projectId`（例: `prj_hMP1QDGSy8OriMOVsQI5apwOYV53`）が残っていると *Project was deleted…* になりやすい。
 
-**Serverless Functions 上限（Hobby / 無料枠）**: `api/` 直下の各 `.ts`（`_lib/` 除く）は **1 ファイル = 1 関数**として数えられる。**デプロイあたり最大 12 本**。超えると Vite ビルドは成功しても **`Deploying outputs...` 以降で Error** になる（2026-06: MFA リカバリーコード 4 本追加で 13 本 → 失敗）。対策: 関連 API を **`api/.../[action].ts` の動的ルート 1 本**にまとめる（例: `mfa-recovery-codes/[action].ts` が `generate` / `consume` / `status` / `clear` を処理。クライアント URL は `/api/account/mfa-recovery-codes/{action}` のまま）。
+**Serverless Functions 上限（Hobby / 無料枠）**: `api/` 直下の各 `.ts`（`_lib/` 除く）は **1 ファイル = 1 関数**として数えられる。**デプロイあたり最大 12 本**。超えると Vite ビルドは成功しても **`Deploying outputs...` 以降で Error** になる（2026-06: MFA リカバリーコード 4 本追加で 13 本 → 失敗）。対策: 関連 API を **1 本のフラット `.ts`** にまとめ、**`?action=` クエリ**で分岐する（例: `api/mfa-recovery-codes.ts` が `generate` / `consume` / `status` / `clear` を処理）。**注意**: ネストした `api/.../[action].ts` は Vercel 上で **デプロイされない**ことがある（2026-06 本番で確認）。クライアント URL は `/api/mfa-recovery-codes?action=generate` 等。
 
 **一般気象 `/api/weather`** と **METAR/TAF `/api/aviation-weather`** は **`npm run dev` のみ**でも Vite プラグイン（`vite/devWeatherApiPlugin.ts`）で応答する。`/api/weather` は `.env` の **`WEATHER_API_KEY`** で WeatherAPI.com の実データ、未設定なら開発用モック。`/api/aviation-weather` は NOAA 直（キー不要）。**OpenSky 航空機レイヤー**も `vite/devOpenskyApiPlugin.ts` で `npm run dev` のみ可。RainViewer マニフェストプロキシ等、ほかの `/api/*` が必要なときは **`npm run dev:weather` + `npm run dev`**。
 
