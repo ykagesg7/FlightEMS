@@ -19,7 +19,7 @@
 
 ## Recovery codes
 - Table: `mfa_recovery_codes` (hashed); SQL `20260623_mfa_recovery_codes.sql`
-- **Single serverless handler**: `api/account/mfa-recovery-codes/[action].ts` (Vercel 12-fn limit; was 4 separate files)
+- **Single serverless handler**: `api/mfa-recovery-codes/[action].ts` + `vercel.json` rewrite to `/api/account/mfa-recovery-codes/{action}`
 - Client URLs unchanged:
   - `POST /api/account/mfa-recovery-codes/generate` (AAL2)
   - `POST .../consume` (login lockout)

@@ -8,8 +8,8 @@ import {
   removeAllVerifiedMfaFactors,
   storeRecoveryCodesForUser,
   userHasVerifiedTotpFactor,
-} from '../../_lib/mfaRecoveryCodesCore';
-import { getServiceSupabase } from '../../_lib/supabaseService';
+} from '../_lib/mfaRecoveryCodesCore';
+import { getServiceSupabase } from '../_lib/supabaseService';
 
 type RecoveryAction = 'generate' | 'consume' | 'status' | 'clear';
 
@@ -39,6 +39,13 @@ function getAction(req: VercelRequest): RecoveryAction | null {
   ) {
     return value;
   }
+
+  const path = (req.url ?? '').split('?')[0];
+  const match = path.match(/\/mfa-recovery-codes\/(generate|consume|status|clear)$/);
+  if (match) {
+    return match[1] as RecoveryAction;
+  }
+
   return null;
 }
 

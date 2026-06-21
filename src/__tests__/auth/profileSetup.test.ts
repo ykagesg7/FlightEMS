@@ -24,6 +24,7 @@ function createProfile(overrides: Partial<Profile> = {}): Profile {
     password_updated_at: null,
     leaderboard_opt_in: false,
     leaderboard_display_name: null,
+    mfa_required_at_login: false,
     onboarding_completed_at: null,
     ...overrides,
   };

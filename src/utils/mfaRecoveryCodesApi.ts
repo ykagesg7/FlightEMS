@@ -26,19 +26,50 @@ async function authFetch(path: string, init?: RequestInit): Promise<Response> {
   });
 }
 
+async function readJsonPayload<T>(response: Response): Promise<T | null> {
+  const text = await response.text();
+  if (!text.trim()) {
+    return null;
+  }
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+
+function recoveryApiFailureMessage(
+  response: Response,
+  payload: { error?: string } | null,
+  fallback: string,
+): string {
+  if (payload?.error) {
+    return translateRecoveryApiError(payload.error, fallback);
+  }
+  if (response.status === 405) {
+    return 'リカバリーコード API に接続できません。しばらく待ってから再試行してください。';
+  }
+  return fallback;
+}
+
 export async function generateMfaRecoveryCodes(): Promise<{ codes: string[]; error: string | null }> {
   const response = await authFetch('/api/account/mfa-recovery-codes/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    body: '{}',
   });
-  const payload = (await response.json()) as { codes?: string[]; error?: string };
+  const payload = await readJsonPayload<{ codes?: string[]; error?: string }>(response);
   if (!response.ok) {
     return {
       codes: [],
-      error: translateRecoveryApiError(payload.error, 'リカバリーコードの発行に失敗しました'),
+      error: recoveryApiFailureMessage(
+        response,
+        payload,
+        'リカバリーコードの発行に失敗しました',
+      ),
     };
   }
-  return { codes: payload.codes ?? [], error: null };
+  return { codes: payload?.codes ?? [], error: null };
 }
 
 export async function consumeMfaRecoveryCode(
@@ -49,9 +80,15 @@ export async function consumeMfaRecoveryCode(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code }),
   });
-  const payload = (await response.json()) as { error?: string };
+  const payload = await readJsonPayload<{ error?: string }>(response);
   if (!response.ok) {
-    return { error: payload.error || 'リカバリーコードの確認に失敗しました' };
+    return {
+      error: recoveryApiFailureMessage(
+        response,
+        payload,
+        'リカバリーコードの確認に失敗しました',
+      ),
+    };
   }
   return { error: null };
 }
@@ -62,17 +99,21 @@ export async function fetchMfaRecoveryCodeStatus(): Promise<{
   error: string | null;
 }> {
   const response = await authFetch('/api/account/mfa-recovery-codes/status');
-  const payload = (await response.json()) as {
+  const payload = await readJsonPayload<{
     remaining?: number;
     hasMfa?: boolean;
     error?: string;
-  };
+  }>(response);
   if (!response.ok) {
-    return { remaining: 0, hasMfa: false, error: payload.error || '状態の取得に失敗しました' };
+    return {
+      remaining: 0,
+      hasMfa: false,
+      error: recoveryApiFailureMessage(response, payload, '状態の取得に失敗しました'),
+    };
   }
   return {
-    remaining: payload.remaining ?? 0,
-    hasMfa: payload.hasMfa ?? false,
+    remaining: payload?.remaining ?? 0,
+    hasMfa: payload?.hasMfa ?? false,
     error: null,
   };
 }
@@ -81,10 +122,13 @@ export async function clearMfaRecoveryCodes(): Promise<{ error: string | null }>
   const response = await authFetch('/api/account/mfa-recovery-codes/clear', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    body: '{}',
   });
-  const payload = (await response.json()) as { error?: string };
+  const payload = await readJsonPayload<{ error?: string }>(response);
   if (!response.ok) {
-    return { error: payload.error || 'リカバリーコードの削除に失敗しました' };
+    return {
+      error: recoveryApiFailureMessage(response, payload, 'リカバリーコードの削除に失敗しました'),
+    };
   }
   return { error: null };
 }

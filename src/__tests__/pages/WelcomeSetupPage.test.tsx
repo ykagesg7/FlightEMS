@@ -9,6 +9,15 @@ import type { AuthState } from '@/stores/authStore';
 import * as authStore from '@/stores/authStore';
 import * as cohortApi from '@/utils/cohortApi';
 
+const navigateMock = vi.fn();
+
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return {
+    ...actual,
+    useNavigate: () => navigateMock,
+  };
+});
 vi.mock('@/stores/authStore');
 vi.mock('@/auth/profileSetup', async (importOriginal) => {
   const actual = await importOriginal<typeof profileSetup>();
@@ -44,6 +53,9 @@ vi.mock('@/pages/profile/hooks/useNotificationSettings', () => ({
 vi.mock('@/utils/importOAuthAvatar', () => ({
   importOAuthAvatarIfAvailable: vi.fn().mockResolvedValue({ avatarUrl: null, error: null }),
 }));
+vi.mock('@/utils/awardQuizSessionXp', () => ({
+  awardRegistrationXp: vi.fn().mockResolvedValue(undefined),
+}));
 
 function createAuthState(overrides: Partial<AuthState> = {}): AuthState {
   return {
@@ -66,6 +78,7 @@ function createAuthState(overrides: Partial<AuthState> = {}): AuthState {
       social_links: null,
       bio: null,
       password_updated_at: null,
+      mfa_required_at_login: false,
     },
     session: null,
     loading: false,
@@ -112,6 +125,7 @@ function renderWelcomeSetupPage() {
 describe('WelcomeSetupPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    navigateMock.mockReset();
   });
 
   it('ランキング参加はデフォルトで ON', async () => {
@@ -205,6 +219,9 @@ describe('WelcomeSetupPage', () => {
 
     await waitFor(() => {
       expect(profileSetup.completeWelcomeSetup).toHaveBeenCalledWith('user-1');
+    });
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalled();
     });
   });
 });
