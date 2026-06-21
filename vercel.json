@@ -25,7 +25,7 @@
   "routes": [
     {
       "src": "/api/account/mfa-recovery-codes/(generate|consume|status|clear)",
-      "dest": "/api/mfa-recovery-codes/$1"
+      "dest": "/api/mfa-recovery-codes?action=$1"
     },
     {
       "src": "/api/(.*)",

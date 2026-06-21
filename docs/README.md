@@ -322,7 +322,7 @@ npm run lint         # Lintチェック
 - ✅ **Profile Hub**: 4 セクション IA（`profile`/`learning`/`privacy`/`account`）、通知 debounce auto-save、完成度ストリップ
 - ✅ **MFA**: Supabase TOTP、ログインゲート、`mfa_required_at_login`、リカバリーコード 10 件、ログイン時デバイス紛失フロー
 - ✅ **アカウント削除**: `POST /api/account/delete`（確認フレーズ + 再認証）
-- ✅ **デプロイ**: Vercel 本番（`api/mfa-recovery-codes/[action].ts` + rewrite、Serverless 10 本）
+- ✅ **デプロイ**: Vercel 本番（`api/mfa-recovery-codes.ts` + `?action=`、Serverless 10 本）
 - 仕様: [02_System_Spec.md](02_System_Spec.md) · 運用: [04_Operations_Guide.md](04_Operations_Guide.md) · Vercel 上限: [03_Development_Guide.md](03_Development_Guide.md)
 
 ### /test・Dashboard・学習時間・プロフィール整備（2026年3月）

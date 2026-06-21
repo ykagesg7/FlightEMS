@@ -53,7 +53,7 @@ function recoveryApiFailureMessage(
 }
 
 export async function generateMfaRecoveryCodes(): Promise<{ codes: string[]; error: string | null }> {
-  const response = await authFetch('/api/account/mfa-recovery-codes/generate', {
+  const response = await authFetch('/api/mfa-recovery-codes?action=generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{}',
@@ -75,7 +75,7 @@ export async function generateMfaRecoveryCodes(): Promise<{ codes: string[]; err
 export async function consumeMfaRecoveryCode(
   code: string,
 ): Promise<{ error: string | null }> {
-  const response = await authFetch('/api/account/mfa-recovery-codes/consume', {
+  const response = await authFetch('/api/mfa-recovery-codes?action=consume', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code }),
@@ -98,7 +98,7 @@ export async function fetchMfaRecoveryCodeStatus(): Promise<{
   hasMfa: boolean;
   error: string | null;
 }> {
-  const response = await authFetch('/api/account/mfa-recovery-codes/status');
+  const response = await authFetch('/api/mfa-recovery-codes?action=status');
   const payload = await readJsonPayload<{
     remaining?: number;
     hasMfa?: boolean;
@@ -119,7 +119,7 @@ export async function fetchMfaRecoveryCodeStatus(): Promise<{
 }
 
 export async function clearMfaRecoveryCodes(): Promise<{ error: string | null }> {
-  const response = await authFetch('/api/account/mfa-recovery-codes/clear', {
+  const response = await authFetch('/api/mfa-recovery-codes?action=clear', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{}',

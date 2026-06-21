@@ -8,8 +8,8 @@ import {
   removeAllVerifiedMfaFactors,
   storeRecoveryCodesForUser,
   userHasVerifiedTotpFactor,
-} from '../_lib/mfaRecoveryCodesCore';
-import { getServiceSupabase } from '../_lib/supabaseService';
+} from './_lib/mfaRecoveryCodesCore';
+import { getServiceSupabase } from './_lib/supabaseService';
 
 type RecoveryAction = 'generate' | 'consume' | 'status' | 'clear';
 

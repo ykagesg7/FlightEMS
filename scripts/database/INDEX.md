@@ -24,7 +24,7 @@
 | **cohort 週次ミッション・TOP3 バッジ** | `20260620_cohort_weekly_missions.sql`（`user_learning_profiles` cohort 列、週次 RPC、通知テーブル） |
 | **cohort RPC 権限 hardening** | `20260621_cohort_rpc_hardening.sql`（cron RPC を service_role のみ、anon EXECUTE revoke、`notification_deliveries` SELECT-own RLS）— Security Advisor 許容 WARN は [04_Operations_Guide.md](../../docs/04_Operations_Guide.md) |
 | **profiles ログイン時 MFA 設定** | `20260622_profiles_mfa_required_at_login.sql`（`mfa_required_at_login` 列） / `20260624_profiles_mfa_required_at_login_default_off.sql`（デフォルト **false**・opt-in） |
-| **MFA リカバリーコード** | `20260623_mfa_recovery_codes.sql`（`mfa_recovery_codes` ハッシュ保存、API 経由のみ）。ハンドラ: `api/mfa-recovery-codes/[action].ts`（`vercel.json` rewrite） |
+| **MFA リカバリーコード** | `20260623_mfa_recovery_codes.sql`（`mfa_recovery_codes` ハッシュ保存、API 経由のみ）。ハンドラ: `api/mfa-recovery-codes.ts` |
 | **記事 XP 付与修正** | `20260616_award_article_xp_fix.sql`（`learning_progress.xp_awarded_at`、`award_article_xp` RPC） |
 | **汎用 XP イベント** | `20260616_xp_award_events.sql`（`xp_award_events`、`award_xp_event` RPC） |
 | **登録 XP バックフィル** | `20260616_backfill_registration_xp.sql`（オンボーディング完了済み・未付与ユーザーへ 100 XP） |

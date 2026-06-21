@@ -221,7 +221,7 @@
 ### **プロフィール — MFA / アカウント削除（運用）**
 
 - **MFA（TOTP）**: Supabase Dashboard で Auth MFA を有効化したうえで Profile → アカウントから enroll / 解除。解除時は認証アプリの 6 桁コードで本人確認後 `mfa.unenroll` を実行。iPhone は「パスワード」App、Android は Authenticator 等（**メール非送付**）
-- **リカバリーコード**: 2FA 有効化時に 10 件を一度だけ表示（`POST /api/account/mfa-recovery-codes/generate`、AAL2 必須）。Profile から再発行可（旧コードは無効化）。ログイン MFA 画面の「認証アプリにアクセスできない」から 1 件消費 → 2FA 解除してログイン（`POST .../consume`）。**既存 2FA ユーザー**は Profile で「新しいリカバリーコードを発行」を実行してバックアップを作成すること。実装は **`api/mfa-recovery-codes/[action].ts`**（`vercel.json` rewrite でクライアント URL `/api/account/mfa-recovery-codes/{action}` 維持）
+- **リカバリーコード**: 2FA 有効化時に 10 件を一度だけ表示（`POST /api/account/mfa-recovery-codes/generate`、AAL2 必須）。Profile から再発行可（旧コードは無効化）。ログイン MFA 画面の「認証アプリにアクセスできない」から 1 件消費 → 2FA 解除してログイン（`POST .../consume`）。**既存 2FA ユーザー**は Profile で「新しいリカバリーコードを発行」を実行してバックアップを作成すること。実装は **`api/mfa-recovery-codes.ts`**（`/api/mfa-recovery-codes?action={action}`；旧パスは rewrite 互換）
 - **ログイン時 MFA トグル**: `profiles.mfa_required_at_login`（デフォルト **false**・opt-in）。2FA 有効ユーザーは Profile でログイン時コード要求を ON にできる（OFF でもパスワード変更・削除は MFA 必須）
 - **ログイン MFA フロー**: verified 因子あり + トグル ON + セッション AAL1 の場合、`/auth` で 6 桁コード入力後にリダイレクト。保護ルート直アクセス時は `/auth?mfa=required` へ誘導
 - **セッション**: Supabase `persistSession` + `autoRefreshToken`（localStorage）。リフレッシュ有効期間中は再ログイン不要（個人端末向け。共有 PC は明示ログアウト推奨）
