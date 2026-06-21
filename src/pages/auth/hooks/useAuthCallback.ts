@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getAuthCallbackType } from '../../../auth/authRedirectUrl';
 import { markPasswordRecoveryPending } from '../../../auth/passwordRecovery';
 import supabase from '../../../utils/supabase';
@@ -19,59 +20,84 @@ function hasAuthCallbackParams(): boolean {
 
 function cleanAuthCallbackUrl(): void {
   const url = new URL(window.location.href);
+  const hadHash = url.hash.length > 0;
   url.hash = '';
   ['code', 'error', 'error_description', 'state', 'mode'].forEach((key) => url.searchParams.delete(key));
-  window.history.replaceState({}, document.title, `${url.pathname}${url.search}`);
+  const next = `${url.pathname}${url.search}`;
+  const current = `${window.location.pathname}${window.location.search}`;
+  if (!hadHash && next === current) {
+    return;
+  }
+  window.history.replaceState({}, document.title, next);
 }
 
 /** OAuth / Magic Link リダイレクト後のセッション確立 */
 export function useAuthCallback({ onError, onSessionReady }: UseAuthCallbackOptions = {}): void {
+  const location = useLocation();
+  const onErrorRef = useRef(onError);
+  const onSessionReadyRef = useRef(onSessionReady);
+  const inFlightRef = useRef(false);
+
+  onErrorRef.current = onError;
+  onSessionReadyRef.current = onSessionReady;
+
   useEffect(() => {
     if (!hasAuthCallbackParams()) {
+      inFlightRef.current = false;
       return;
     }
+    if (inFlightRef.current) {
+      return;
+    }
+    inFlightRef.current = true;
 
     let cancelled = false;
 
     const completeCallback = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const errorDescription = params.get('error_description') ?? params.get('error');
-      if (errorDescription) {
-        onError?.(decodeURIComponent(errorDescription.replace(/\+/g, ' ')));
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const errorDescription = params.get('error_description') ?? params.get('error');
+        if (errorDescription) {
+          onErrorRef.current?.(decodeURIComponent(errorDescription.replace(/\+/g, ' ')));
+          cleanAuthCallbackUrl();
+          return;
+        }
+
+        const isPasswordRecovery = getAuthCallbackType() === 'recovery';
+        const store = useAuthStore.getState();
+        if (isPasswordRecovery) {
+          markPasswordRecoveryPending();
+        }
+
+        const { data, error } = await supabase.auth.getSession();
+        if (cancelled) return;
+
+        if (error) {
+          onErrorRef.current?.(error.message);
+          cleanAuthCallbackUrl();
+          return;
+        }
+
+        const session = data.session;
+        const user = session?.user ?? null;
+
+        store.setSession(session);
+        store.setUser(user);
+
+        if (user && !isPasswordRecovery) {
+          await store.ensureProfileAfterOAuth(user);
+          await store.fetchProfile(user.id);
+          onSessionReadyRef.current?.();
+        } else if (user && isPasswordRecovery) {
+          await store.fetchProfile(user.id);
+        }
+
         cleanAuthCallbackUrl();
-        return;
+      } finally {
+        if (!cancelled) {
+          inFlightRef.current = false;
+        }
       }
-
-      const isPasswordRecovery = getAuthCallbackType() === 'recovery';
-      const store = useAuthStore.getState();
-      if (isPasswordRecovery) {
-        markPasswordRecoveryPending();
-      }
-
-      const { data, error } = await supabase.auth.getSession();
-      if (cancelled) return;
-
-      if (error) {
-        onError?.(error.message);
-        cleanAuthCallbackUrl();
-        return;
-      }
-
-      const session = data.session;
-      const user = session?.user ?? null;
-
-      store.setSession(session);
-      store.setUser(user);
-
-      if (user && !isPasswordRecovery) {
-        await store.ensureProfileAfterOAuth(user);
-        await store.fetchProfile(user.id);
-        onSessionReady?.();
-      } else if (user && isPasswordRecovery) {
-        await store.fetchProfile(user.id);
-      }
-
-      cleanAuthCallbackUrl();
     };
 
     void completeCallback();
@@ -79,5 +105,5 @@ export function useAuthCallback({ onError, onSessionReady }: UseAuthCallbackOpti
     return () => {
       cancelled = true;
     };
-  }, [onError, onSessionReady]);
+  }, [location.pathname, location.search, location.hash]);
 }

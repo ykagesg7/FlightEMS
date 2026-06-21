@@ -69,7 +69,8 @@ const AuthPage: React.FC = () => {
   useEffect(() => {
     const p = new URLSearchParams(location.search);
     const m = p.get('mode');
-    if (m === 'recovery' || isPasswordRecoveryActive()) {
+    const onRecoveryPath = location.pathname.endsWith('/auth/recovery');
+    if ((m === 'recovery' || isPasswordRecoveryActive()) && !onRecoveryPath) {
       navigate(`/auth/recovery${location.search}${location.hash}`, { replace: true });
       return;
     }
@@ -80,7 +81,7 @@ const AuthPage: React.FC = () => {
     } else if (m === 'reset') {
       setIsForgotPassword(true);
     }
-  }, [location.search, location.hash, navigate]);
+  }, [location.pathname, location.search, location.hash, navigate]);
 
   useEffect(() => {
     if (!user || !session || isPasswordRecoveryActive() || !initialized) {

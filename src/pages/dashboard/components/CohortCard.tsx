@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, Typography } from '../../../components/ui';
+import { Card, Typography } from '../../../components/ui';
 import { useCohortProfile } from '../../../hooks/useCohortProfile';
 import { MIN_COHORT_FOR_TOP3, formatCohortKeyLabel, formatCohortPhaseLabel } from '../../../utils/cohort';
 
