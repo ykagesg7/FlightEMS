@@ -23,7 +23,6 @@ export const ProfileCombinedPrivacySection: React.FC<ProfileCombinedPrivacySecti
   <div className="space-y-8" data-testid="profile-section-privacy">
     <NotificationPreferences
       onError={onError}
-      onSuccess={onSuccess}
       onSettingsSaved={onNotificationSettingsSaved}
     />
     {profile ? (

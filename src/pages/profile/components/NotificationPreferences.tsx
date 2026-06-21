@@ -6,13 +6,11 @@ import { useNotificationSettings, notificationTimeForInput } from '../hooks/useN
 
 interface NotificationPreferencesProps {
   onError?: (error: string) => void;
-  onSuccess?: (message: string) => void;
   onSettingsSaved?: () => void;
 }
 
 export const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({
   onError,
-  onSuccess,
   onSettingsSaved,
 }) => {
   const user = useAuthStore((state) => state.user);
