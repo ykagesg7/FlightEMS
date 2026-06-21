@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトの運用、保守、トラブルシューティングについて説明します。
 
-**最終更新**: 2026年5月6日（Post-Phase-B：GA4 リアルタイムで本番受信を確認しログ表に反映）
-**バージョン**: Operations & Maintenance Guide v2.9
+**最終更新**: 2026年6月21日（Phase D cohort pilot 本番・Supabase Security Advisor 許容 WARN・Postgres Pause/Restore 実施）
+**バージョン**: Operations & Maintenance Guide v3.0
 
 ---
 
@@ -80,6 +80,11 @@
   2. Vercel **Production** に `VITE_TURNSTILE_SITE_KEY` を設定（再デプロイ必須）。
   3. Supabase **Authentication → Bot and Abuse Protection** に Secret を設定。
   4. ローカル検証: `.env.local` に `VITE_TURNSTILE_SITE_KEY=` を追加。
+- **Auth 推奨設定（2026-06 本番反映済み）**:
+  - **Sign In / Providers**: Email **Enabled**、Google **Enabled**、Confirm email **ON**
+  - **Email プロバイダ**: Secure email change / Secure password change / Require current password when updating — **ON** 推奨
+  - **Minimum password length**: 8 以上推奨（現状 6 でも可。Pro 移行時に Leaked Password と合わせて見直し）
+  - **Leaked Password Protection**: **Pro プラン以上のみ** — Free では OFF のまま（Advisor WARN は許容。下記「Security Advisor」）
 - **DB マイグレーション（OAuth username）**: [`scripts/database/20260606_handle_new_user_oauth_fallback.sql`](../scripts/database/20260606_handle_new_user_oauth_fallback.sql) — MCP `apply_migration` 名 `handle_new_user_oauth_fallback_20260606`。
 
 ### **Cohort 週次 cron・通知（Phase D pilot）**
@@ -104,6 +109,45 @@
 - **メール opt-in**: プロフィール → 通知・公開 → 「メール通知」ON かつ「ミッション更新」ON
 - **Web Push**: 購読保存のみ。`VAPID_*` 未設定時は [`api/notifications/push.ts`](../api/notifications/push.ts) が 503 でスキップ
 - **DB 正本**: [`scripts/database/20260620_cohort_weekly_missions.sql`](../scripts/database/20260620_cohort_weekly_missions.sql)
+- **RPC 権限 hardening（本番適用済）**: [`scripts/database/20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql) — cron 系 RPC は **service_role のみ**、ユーザー RPC は **authenticated のみ**（`anon` EXECUTE 不可）
+
+### **Supabase Security Advisor（本番運用）**
+
+**プロジェクト**: `fstynltdfdetpyvbrswr`（FlightAcademy / ap-northeast-1 / **Free**）
+
+#### 定期確認（MCP または Dashboard）
+
+| 手段 | 手順 |
+|------|------|
+| **MCP** | `plugin-supabase-supabase` → `get_advisors`（`project_id`: `fstynltdfdetpyvbrswr`、`type`: `security`） |
+| **Dashboard** | **Advisor Center** / **Database → Security Advisor** |
+
+リリース前・月次メンテでは [ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md) §1 と併用する。
+
+#### 2026-06-21 時点の WARN 7 件（対応方針）
+
+| WARN | 件数 | 対応 |
+|------|------|------|
+| `authenticated_security_definer_function_executable` | 5 | **許容（意図的）** — cohort ユーザー RPC。`SECURITY DEFINER` + 関数内 `auth.uid()` / opt-in チェック + `SET search_path = public`。`anon` EXECUTE は revoke 済み。**INVOKER 化や REVOKE はアプリ破壊のため行わない** |
+| `auth_leaked_password_protection` | 1 | **許容（Free 制限）** — Pro でのみ ON。他 Auth 強化は Dashboard で ON 済み |
+| `vulnerable_postgres_version` | 1 | **監視** — `supabase-postgres-15.8.1.085`。Free の **Pause → Restore** 実施後も同一（プラットフォーム配信待ち）。Pro の **Infrastructure → Upgrade project** は将来オプション |
+
+**意図的 SECURITY DEFINER（authenticated 可）**: `upsert_user_cohort`, `get_user_cohort_profile`, `get_cohort_anonymous_stats`, `mark_written_exam_complete`, `get_public_user_badges`
+
+**service_role のみ（cron / Vercel）**: `compute_cohort_weekly_scores`, `award_cohort_weekly_top3`, `enqueue_cohort_notifications`
+
+#### Postgres バージョンアップ（Free プラン）
+
+**MCP では Postgres エンジンのアップグレードは不可**（`execute_sql` / `apply_migration` は DB 内操作のみ）。
+
+| 方法 | 対象 | 手順 |
+|------|------|------|
+| **Pause and Restore** | **Free のみ** | **Project Settings → General** → **Pause project** → **Restore project**（ダウンタイムあり。復元後に最新マイナーへ） |
+| **In-place upgrade** | Pro 以上 | **Project Settings → Infrastructure** → **Upgrade project** |
+
+公式: [Upgrading](https://supabase.com/docs/guides/platform/upgrading)。**2026-06-21** に Pause/Restore 実施済み（`ACTIVE_HEALTHY`、バージョン表記は `.085` のまま — Advisor WARN 残存は上表どおり許容）。
+
+**Restore 後チェック**: ログイン・cohort 登録・`/api/cron/cohort-weekly` 手動 curl・Advisor 再確認。
 
 ### **GA4（Google Analytics 4）**
 
@@ -165,6 +209,7 @@
 
 - `public.v_mapped_questions` を SECURITY INVOKER 化
 - 公開スキーマ上のバックアップテーブルを削除またはRLS有効化
+- **cohort RPC（2026-06）**: [`20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql) — cron RPC の anon 実行 WARN を解消。ユーザー向け SECURITY DEFINER RPC の linter 0029 WARN は **設計上許容**（上記「Supabase Security Advisor」）
 
 ### **管理者機能（ユーザーロール管理）**
 

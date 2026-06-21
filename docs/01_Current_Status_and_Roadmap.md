@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年5月10日  
-**バージョン**: Roadmap v4.0.21（Strategy v1.2・CPL 主軸・独立運営）
+**最終更新**: 2026年6月21日  
+**バージョン**: Roadmap v4.0.23（Strategy v1.2・CPL 主軸・Phase D cohort pilot 本番）
 
 ---
 
@@ -212,7 +212,7 @@
 | --- | ----------------------- | ---------------------------------------- | --- |
 | D-1 | **CPL Phase 1 完了 + 拡張** | 19 本完走後は Phase 2 または科目別拡張に着手             | 最高  |
 | D-2 | テストカバレッジ 50% 達成         | コンポーネントテスト、統合テストの追加                      | 高   |
-| D-3 | **cohort 週次バッジ**（非公開榜） | 試験月 cohort・週次ミッション・TOP3 バッジ・通知（自衛隊 pilot） | 高   |
+| D-3 | **cohort 週次バッジ**（非公開榜） | **pilot 本番稼働**（2026-06-21）— 試験月 cohort・週次ミッション・TOP3・in-app/Brevo 通知。SQL: [`20260620`](../scripts/database/20260620_cohort_weekly_missions.sql) / [`20260621`](../scripts/database/20260621_cohort_rpc_hardening.sql) | 高   |
 | D-4 | PPL 記事 50% 目標（二次）       | 75/150。CPL 進捗とトレードオフになる場合は 03 を次回レビューで更新 | 高   |
 | D-5 | ユーザーフィードバック収集           | フィードバックフォーム、使用状況分析                       | 中   |
 | D-6 | LMS 目標設定機能              | GoalSetting.tsx の実装                      | 低   |
@@ -223,7 +223,7 @@
 - **CPL 記事: Phase 1（19/19）完了**
 - PPL 記事: **50%（75/150）** 到達を目標（二次）
 - テストカバレッジ **50%**（北極星。中間で **40%** 等に言い換える場合は本書・[00](00_Flight_Academy_Strategy.md) で整合）
-- cohort 週次ミッション・TOP3 バッジが pilot cohort で稼働
+- cohort 週次ミッション・TOP3 バッジが pilot cohort で稼働 — **2026-06-21 本番確認済**（cron HTTP 200・Auth SMTP・週次メール pilot）
 - 月間アクティブユーザー数を計測可能な状態
 
 ---
@@ -253,7 +253,7 @@
 | **A** | 2026年3月    | 着手 1〜3/19           | 17/150 維持・微増 | 閾値達成     | エラー監視稼働                   |
 | **B** | 2026年4-5月  | **Phase 1: 19/19 完了**（2026-04-12） | 20/150 以上    | **15% は Phase C 目標**。B-4 で実測記録・段階拡充   | GA4 本番受信確認済（2026-05-06・[04](04_Operations_Guide.md)） |
 | **C** | 2026年6-7月  | **Phase 2 / マッピング**前進（数値は [05](05_Content_Pipeline.md)・[14](Article_Coverage_Backlog.md)） | 25/150 以上    | **`src` 実効 15%+**（ストレッチ 18%）     | ブランド移行、PWA、Lighthouse 90+ |
-| **D** | 2026年8-12月 | **Phase 2 拡充・品質**（Phase 1 完了後） | 75/150 目標    | 50%      | ランキング                     |
+| **D** | 2026年8-12月 | **Phase 2 拡充・品質**（Phase 1 完了後） | 75/150 目標    | 50%      | cohort pilot 本番（D-3）・ランキング                     |
 | **E** | 2027年〜     | 拡張継続                | 150 本目標      | 50%+     | LMS 弱点分析等                 |
 
 
@@ -297,6 +297,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-21 | **v4.0.23 / Phase D cohort pilot 本番**: D-3 **pilot 稼働** — cohort 週次 cron（日曜 09:00 JST）、in-app + Brevo メール、Welcome cohort 必須、RPC hardening（[`20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql)）。Supabase **Pause/Restore** 実施・Security Advisor 7 WARN は許容/監視（[04](04_Operations_Guide.md)）。コミット: `a268c3b`（feature）、`7d6cb8c`（CI/auth）、`61c6626`（RPC hardening）。 |
 | 2026-06-06 | **v4.0.22 / 6月期ゲート・Quiz Hub**: Lane A **PR-Q0〜Q5** — `/test` Quiz Hub（`testHubFilters`・UI 分割・GA4 5 イベント・学習ループ）。`npm run test:coverage` → **`src` Statements 18.07%**（5302/29341）。[Phase_C §4](Phase_C_Quality_Preparation.md)、[02 §/test](02_System_Spec.md)。Lane B: W24 マッピング（空力基礎→`3.2.7`、未マッピング **47→36**）、PPL Callout、`testHubFilters.test.ts`（14）。A11y: [`accessibility_audit_memo_2026-06-06.md`](../artifacts/accessibility_audit_memo_2026-06-06.md)。 |
 | 2026-05-10 | **v4.0.21 / プロダクト指標と docs 連携**: [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) を参照する **「プロダクト指標（ALPM）とエンジニアリング KPI」** 節を追加。推奨読み順に同文書を挿入。[00](00_Flight_Academy_Strategy.md)・[docs/README](README.md) v4.49 と整合。 |
 | 2026-05-09 | **v4.0.20 / May 後半 W21→W22 ドキュメント整備**: **W21 完了** — [`3.2.8`](../src/content/lessons/3.2.8_PowerAndPerformance.mdx)、[`PPL-1-1-9`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx)。[May](May_2026_Late_Content_Sprint.md) §6・§2、[05](05_Content_Pipeline.md) W21/W22、[May 後半アウトライン](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[content_outlines/README.md](content_outlines/README.md) を整合。**W22 実行素案** [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md) 追加、**W21** `content_outlines/W21_2026/` 撤去。**[docs/README](README.md)** 索引 v4.48。 |

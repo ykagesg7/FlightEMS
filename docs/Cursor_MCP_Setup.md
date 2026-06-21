@@ -214,6 +214,38 @@ winget install --id Anysphere.Cursor -e
 
 ---
 
+## Supabase MCP（`plugin-supabase-supabase`）
+
+**プロジェクト ID（本番）**: `fstynltdfdetpyvbrswr`（FlightAcademy / ap-northeast-1）
+
+### できること
+
+| ツール | 用途 |
+|--------|------|
+| `execute_sql` | 読み取り・検証用 SQL（本番変更は慎重に） |
+| `apply_migration` | `scripts/database/` 正本の DDL/DML をマイグレーションとして適用 |
+| `list_migrations` | リモートマイグレーション一覧 |
+| `get_advisors` | Security / Performance Advisor（`type`: `security` 等） |
+| `get_logs` | Auth / Postgres / API ログ |
+| `get_project` | プロジェクト状態・Postgres バージョン |
+| `generate_typescript_types` | `database.types.ts` 更新 |
+
+### できないこと（Dashboard 手動）
+
+| 項目 | 理由 |
+|------|------|
+| **Auth Email Templates**（日本語件名等） | MCP にテンプレート編集 API なし |
+| **Auth UI トグル**（Leaked Password、Confirm email 等） | Dashboard / Management API 外 |
+| **Postgres エンジンのアップグレード** | インフラ操作 — Free は **Pause/Restore**、Pro は **Infrastructure → Upgrade project**（[04_Operations_Guide.md](04_Operations_Guide.md)） |
+
+### 定期監査（推奨）
+
+リリース前または月次: `get_advisors`（security）→ [04_Operations_Guide.md](04_Operations_Guide.md)「Supabase Security Advisor」の許容 WARN 表と照合。[ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md) §1 参照。
+
+Serena メモ: `mem:ops/supabase_security_advisor`（cohort RPC・Free 制限・Postgres 監視の要約）。
+
+---
+
 ## Google Analytics MCP（任意・実験的）
 
 Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics/google-analytics-mcp)（PyPI: `analytics-mcp`）は、**Google Analytics Admin API** と **Data API** 経由で **読み取り専用**のツール（`run_report`、`run_realtime_report`、`get_account_summaries` 等）をエージェントに公開する。概要は [Google Developers: Try the Google Analytics MCP server](https://developers.google.com/analytics/devguides/MCP?hl=ja) を参照。

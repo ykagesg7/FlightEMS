@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年5月12日（PPL‑5‑4‑1〜5‑4‑7 を `learning_contents` 508〜514 登録。直前: PPL‑5‑3‑1〜5‑3‑3 505〜507）
-**バージョン**: Documentation Index v4.52
+**最終更新**: 2026年6月21日（Phase D cohort pilot 本番・Supabase Security Advisor 運用）
+**バージョン**: Documentation Index v4.53
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -40,6 +40,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-06-21（Phase D cohort pilot・Supabase 運用）**: D-3 **pilot 本番** — cohort 週次 cron（日曜 09:00 JST）、Welcome cohort 必須、in-app + Brevo メール、RPC hardening（[`20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql)）。Supabase Free: Leaked Password OFF（Pro 制限）、Postgres **Pause/Restore** 実施、Security Advisor 7 WARN は許容/監視（[04_Operations_Guide.md](04_Operations_Guide.md)）。[01](01_Current_Status_and_Roadmap.md) v4.0.23。
 - **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の **`PPL-5-4-1`〜`PPL-5-4-7`** を **`learning_contents`** の **508〜514** に追加 [`20260512_learning_contents_ppl_subject5_508_514.sql`](../scripts/database/20260512_learning_contents_ppl_subject5_508_514.sql)（同日 MCP `execute_sql`）。
 - **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の **`PPL-5-3-1`〜`PPL-5-3-3`** を **`learning_contents`** の **505〜507** に追加 [`20260512_learning_contents_ppl_subject5_505_507.sql`](../scripts/database/20260512_learning_contents_ppl_subject5_505_507.sql)（同日 MCP `execute_sql`）。
 - **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の本文化済み **4 記事**（`PPL-5-1-1`〜`PPL-5-2-2`）を Supabase **`learning_contents`** に冪等登録 [`20260512_learning_contents_ppl_aviation_law_four.sql`](../scripts/database/20260512_learning_contents_ppl_aviation_law_four.sql)。構造・変更履歴: [content_outlines/PPL_Subject5_Aviation_Law_Structure.md](content_outlines/PPL_Subject5_Aviation_Law_Structure.md)。統計サマリー表は [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) 冒頭ログのみ更新（§1 MCP 未再実行）。
@@ -144,7 +145,7 @@
 
 ---
 
-## 📊 現在の実装状況（2026年4月）
+## 📊 現在の実装状況（2026年6月）
 
 **KPI・Phase 表の単一ソース**: 優先度・未完了項目の詳細は **[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)** を正とする。CPL Phase 1 の **本文化 x/19** の正本は **[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)**。
 
@@ -172,6 +173,7 @@
 - ⏳ テストカバレッジ: **Phase C** で **`src` 実効 約 15%**（長期では Phase D **50%**）。**最新実測**（`coverage-final.json`・パス **`FlightAcademyTsx/src/`** のみ）は **約 13.99%** — 詳細は [01](01_Current_Status_and_Roadmap.md)。実測は `npm run test:coverage` と [vitest.config.ts](../vitest.config.ts) を正とする
 - ✅ エラー監視: Sentry 導入済み（DSN設定で有効化）
 - ✅ **GA4（アクセス解析）**: **本番受信確認済**（2026-05-06・GA4 リアルタイム）— [04_Operations_Guide.md](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」表・`G-22VFYSM69J`
+- ✅ **Phase D cohort pilot（D-3）**: 週次ミッション・TOP3 バッジ・in-app/Brevo 通知 — **本番稼働**（2026-06-21）。運用: [04_Operations_Guide.md](04_Operations_Guide.md)「Cohort 週次 cron・通知」
 - ⏳ Flight Academy ブランド移行（Phase C: 2026年6月〜）
 - ⏸️ ランキング機能（Phase D）
 - ⏸️ LMS 目標設定・弱点分析（Phase D / E）

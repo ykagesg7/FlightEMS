@@ -514,6 +514,7 @@ export interface TAFData {
 - **Cloudflare Turnstile**（任意・`VITE_TURNSTILE_SITE_KEY` + Supabase Dashboard secret）
 - 確認メール送信: **Brevo Custom SMTP**（Supabase Dashboard 設定、詳細は [04_Operations_Guide.md](04_Operations_Guide.md)）
 - メール送信後 UI: サインアップ / Magic Link / パスワードリセット完了画面で **迷惑メールフォルダ確認**を案内（`EmailDeliveryHint`）
+- **Leaked Password Protection**: Supabase Dashboard で **Pro プラン以上のみ** ON 可。Free プランでは OFF（Security Advisor WARN は許容。[04](04_Operations_Guide.md)）
 
 #### **認証 UI（`/auth`）**
 
@@ -543,7 +544,27 @@ export interface TAFData {
 | **PostWritten** | ユーザー「学科試験完了」ボタンのみ（`cohort_phase = post_written`）。試験月ベース CTA は **exam_date_status = set** のみ |
 | **正本 SQL** | [`scripts/database/20260620_cohort_weekly_missions.sql`](../scripts/database/20260620_cohort_weekly_missions.sql) |
 
-**RPC（cohort）**: `upsert_user_cohort`, `get_cohort_anonymous_stats`, `compute_cohort_weekly_scores`, `award_cohort_weekly_top3`, `mark_written_exam_complete`, `get_public_user_badges`, `enqueue_cohort_notifications`
+**RPC（cohort）**: `upsert_user_cohort`, `get_cohort_anonymous_stats`, `compute_cohort_weekly_scores`, `award_cohort_weekly_top3`, `mark_written_exam_complete`, `get_public_user_badges`, `enqueue_cohort_notifications`, `get_user_cohort_profile`
+
+**EXECUTE 権限（正本: [`20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql)）**:
+
+| RPC | 呼び出し元 | 備考 |
+|-----|------------|------|
+| `upsert_user_cohort` | `authenticated` | `auth.uid()` の行のみ更新 |
+| `get_user_cohort_profile` | `authenticated` | 自分の cohort プロフィール |
+| `get_cohort_anonymous_stats` | `authenticated` | cohort 匿名集計（個人特定なし） |
+| `mark_written_exam_complete` | `authenticated` | 自分の `cohort_phase` 遷移 |
+| `get_public_user_badges` | `authenticated` | `leaderboard_opt_in = true` のユーザーのみ |
+| `compute_cohort_weekly_scores` | **service_role** | Vercel cron のみ |
+| `award_cohort_weekly_top3` | **service_role** | 同上 |
+| `enqueue_cohort_notifications` | **service_role** | 同上 |
+
+上記ユーザー RPC は **`SECURITY DEFINER`**（`SET search_path = public`）。Supabase Security Advisor の linter **0029** WARN は **意図的**（`anon` EXECUTE 不可・関数内ガードあり）。運用: [04_Operations_Guide.md](04_Operations_Guide.md)「Supabase Security Advisor」。
+
+**通知テーブル**:
+
+- `in_app_notifications` — ユーザー別。既読で UI 非表示（`read_at`）
+- `notification_deliveries` — メール等の配信 dedupe。**INSERT は service/cron**。**SELECT** は RLS `notification_deliveries_select_own`（`user_id = auth.uid()`）。適用: `20260621_cohort_rpc_hardening.sql`
 
 ### **RPC（Remote Procedure Call）関数**
 

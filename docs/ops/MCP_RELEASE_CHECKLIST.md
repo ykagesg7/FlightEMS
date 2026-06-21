@@ -7,6 +7,7 @@
 | 手順 | 内容 |
 |------|------|
 | `list_migrations` | リモートのマイグレーション一覧を取得し、リポジトリの `scripts/database/` 正本・ローカル `supabase/migrations` と齟齬がないか確認する |
+| `get_advisors` | `type`: `security` — [04_Operations_Guide.md](../04_Operations_Guide.md)「Supabase Security Advisor」の許容 WARN と照合（cohort SECURITY DEFINER 5 件・Leaked Password・Postgres バージョン） |
 | `execute_sql` | 下記メトリクスを記録し、前回比で意図しない減少がないか見る。別環境へデータを流す場合も **`project_id` をその環境に切り替え**て、[docs/db/CPL_KPI_and_Database_Operations.md](../db/CPL_KPI_and_Database_Operations.md) の「別環境への適用（Supabase MCP）」に従い `apply_migration` / `execute_sql` で `scripts/database/` 正本を実行できる |
 
 **推奨メトリクス SQL**（[docs/db/CPL_KPI_and_Database_Operations.md](../db/CPL_KPI_and_Database_Operations.md) と同様）:
