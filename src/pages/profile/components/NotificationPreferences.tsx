@@ -1,37 +1,38 @@
 import React from 'react';
-import { Button } from '../../../components/ui';
 import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
 import { useAuthStore } from '../../../stores/authStore';
-import { useNotificationSettings } from '../hooks/useNotificationSettings';
+import { useNotificationSettings, notificationTimeForInput } from '../hooks/useNotificationSettings';
 
 interface NotificationPreferencesProps {
   onError?: (error: string) => void;
   onSuccess?: (message: string) => void;
+  onSettingsSaved?: () => void;
 }
 
 export const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({
   onError,
   onSuccess,
+  onSettingsSaved,
 }) => {
   const user = useAuthStore((state) => state.user);
   const {
     settings,
     isLoading,
-    isSaving,
-    saveSettings,
+    persistStatus,
     toggleSetting,
     updateSetting,
-  } = useNotificationSettings(user?.id);
+  } = useNotificationSettings(user?.id, {
+    onPersisted: () => {
+      onSettingsSaved?.();
+    },
+  });
 
-  const handleSave = async () => {
-    const { error } = await saveSettings();
-    if (error) {
-      onError?.(error.message || '保存に失敗しました');
-      return;
+  React.useEffect(() => {
+    if (persistStatus === 'error') {
+      onError?.('通知設定の保存に失敗しました');
     }
-    onSuccess?.('通知設定を保存しました');
-  };
+  }, [onError, persistStatus]);
 
   const handleToggle = (key: 'learning_reminder_enabled' | 'new_content_enabled' | 'announcement_enabled' | 'mission_update_enabled' | 'email_notifications_enabled') => {
     toggleSetting(key);
@@ -40,6 +41,15 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
   const handleTimeChange = (time: string) => {
     updateSetting('notification_time', time);
   };
+
+  const statusMessage =
+    persistStatus === 'saving'
+      ? '保存中...'
+      : persistStatus === 'saved'
+        ? '保存しました'
+        : persistStatus === 'error'
+          ? '保存に失敗しました'
+          : '';
 
   if (isLoading) {
     return (
@@ -61,11 +71,18 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           通知設定
         </Typography>
         <Typography variant="body-sm" color="muted">
-          受け取りたい通知の種類を選択してください
+          変更は自動的に保存されます
         </Typography>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
+          <p
+            className="min-h-[1.25rem] text-xs text-[var(--text-muted)]"
+            aria-live="polite"
+            data-testid="notification-persist-status"
+          >
+            {statusMessage}
+          </p>
           <div className="space-y-4">
             <NotificationToggle
               label="学習リマインダー"
@@ -116,19 +133,13 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
             </label>
             <input
               type="time"
-              value={settings.notification_time || '09:00:00'}
+              value={notificationTimeForInput(settings.notification_time)}
               onChange={(e) => handleTimeChange(e.target.value)}
               className="w-full px-4 py-3 rounded-lg border-2 border-brand-primary/30 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-brand-secondary-light text-white focus:outline-none"
             />
             <Typography variant="caption" color="muted" className="mt-1 block">
               毎日の通知を受け取る時間を設定できます
             </Typography>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-brand-primary/20">
-            <Button variant="brand" onClick={() => void handleSave()} disabled={isSaving}>
-              {isSaving ? '保存中...' : '設定を保存'}
-            </Button>
           </div>
         </div>
       </CardContent>

@@ -211,11 +211,20 @@
 - 公開スキーマ上のバックアップテーブルを削除またはRLS有効化
 - **cohort RPC（2026-06）**: [`20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql) — cron RPC の anon 実行 WARN を解消。ユーザー向け SECURITY DEFINER RPC の linter 0029 WARN は **設計上許容**（上記「Supabase Security Advisor」）
 
-### **管理者機能（ユーザーロール管理）**
+### **管理者機能**
 
-- **画面**: `プロフィール > 管理者機能 > ユーザーロール管理`
-- **機能**: `username/email`に対する部分一致検索、ロール変更
-- **注意事項**: RLS（Row Level Security）が有効であること、Admin以外には表示されない
+- **画面**: ヘッダー **ADMIN** リンク → [`/admin` Hub](../src/pages/admin/)（`ProtectedRoute requireAdmin`）
+- **UserMenu**: 管理者には「管理 Hub」1 リンクのみ（子メニュー重複は Admin Hub 内に集約）
+- **将来**: ユーザーロール管理は `/admin/users` を想定（Profile には置かない）
+- **注意**: RLS が有効であること、`profiles.roll = admin` のユーザーのみアクセス可
+
+### **プロフィール — MFA / アカウント削除（運用）**
+
+- **MFA（TOTP）**: Supabase Dashboard で Auth MFA を有効化したうえで Profile → アカウントから enroll / 解除。解除時は認証アプリの 6 桁コードで本人確認後 `mfa.unenroll` を実行。iPhone は「パスワード」App、Android は Authenticator 等（**メール非送付**）
+- **リカバリーコード**: 2FA 有効化時に 10 件を一度だけ表示（`POST /api/account/mfa-recovery-codes/generate`、AAL2 必須）。Profile から再発行可（旧コードは無効化）。ログイン MFA 画面の「認証アプリにアクセスできない」から 1 件消費 → 2FA 解除してログイン（`POST .../consume`）。**既存 2FA ユーザー**は Profile で「新しいリカバリーコードを発行」を実行してバックアップを作成すること
+- **ログイン時 MFA トグル**: `profiles.mfa_required_at_login`（デフォルト true）。2FA 有効ユーザーは Profile でログイン時コード要求の ON/OFF を切替可能（OFF でもパスワード変更・削除は MFA 必須）
+- **ログイン MFA フロー**: verified 因子あり + トグル ON + セッション AAL1 の場合、`/auth` で 6 桁コード入力後にリダイレクト。保護ルート直アクセス時は `/auth?mfa=required` へ誘導
+- **アカウント削除**: Profile → アカウント → Danger zone。`POST /api/account/delete` は `SUPABASE_SERVICE_ROLE_KEY` 必須。2FA 有効時は削除前に TOTP コード必須。関連行は `profiles` 等の ON DELETE CASCADE を前提（削除前に `scripts/database/` で監査推奨）
 
 ### **プロフィールページUI改善（2025年12月21日）**
 

@@ -1,10 +1,13 @@
 import React, { useCallback, useState } from 'react';
+import { verifyMfaForSensitiveAction } from '../../../auth/mfaAuth';
+import { MfaCodeField } from '../../../components/auth/MfaCodeField';
 import { Button } from '../../../components/ui';
 import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
 import type { Profile } from '../../../stores/authStore';
 import { toAppError } from '../../../types/error';
 import supabase from '../../../utils/supabase';
+import { useSensitiveMfaGate } from '../hooks/useSensitiveMfaGate';
 
 interface ProfileSecuritySectionProps {
   userEmail: string | null | undefined;
@@ -27,6 +30,8 @@ export const ProfileSecuritySection: React.FC<ProfileSecuritySectionProps> = ({
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [mfaCode, setMfaCode] = useState('');
+  const { loading: mfaGateLoading, mfaRequired, factorId } = useSensitiveMfaGate();
 
   const handlePasswordChange = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +52,14 @@ export const ProfileSecuritySection: React.FC<ProfileSecuritySectionProps> = ({
       onError('新しいパスワードと確認用パスワードが一致しません');
       return;
     }
+    if (mfaRequired && !factorId) {
+      onError('二要素認証の確認に失敗しました。ページを再読み込みしてください');
+      return;
+    }
+    if (mfaRequired && !mfaCode.trim()) {
+      onError('認証アプリの 6 桁コードを入力してください');
+      return;
+    }
 
     setPasswordLoading(true);
     try {
@@ -57,6 +70,14 @@ export const ProfileSecuritySection: React.FC<ProfileSecuritySectionProps> = ({
       if (signInError) {
         onError('現在のパスワードが正しくありません');
         return;
+      }
+
+      if (mfaRequired && factorId) {
+        const { error: mfaError } = await verifyMfaForSensitiveAction(factorId, mfaCode);
+        if (mfaError) {
+          onError(mfaError.message || '認証コードの確認に失敗しました');
+          return;
+        }
       }
 
       const { error } = await supabase.auth.updateUser({ password: newPassword });
@@ -70,13 +91,14 @@ export const ProfileSecuritySection: React.FC<ProfileSecuritySectionProps> = ({
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      setMfaCode('');
       setShowPasswordForm(false);
     } catch (err: unknown) {
       onError(toAppError(err).message || 'パスワード更新中にエラーが発生しました');
     } finally {
       setPasswordLoading(false);
     }
-  }, [confirmPassword, currentPassword, newPassword, onError, onSuccess, updateProfile, userEmail]);
+  }, [confirmPassword, currentPassword, factorId, mfaCode, mfaRequired, newPassword, onError, onSuccess, updateProfile, userEmail]);
 
   return (
     <Card variant="brand" padding="lg">
@@ -133,6 +155,17 @@ export const ProfileSecuritySection: React.FC<ProfileSecuritySectionProps> = ({
                 className={inputClass}
               />
             </PasswordField>
+            {mfaGateLoading ? (
+              <Typography variant="caption" color="muted">二要素認証の確認...</Typography>
+            ) : mfaRequired ? (
+              <MfaCodeField
+                id="sec-mfa-code"
+                value={mfaCode}
+                onChange={setMfaCode}
+                disabled={passwordLoading}
+                helperText="パスワード変更には、二要素認証の確認が必要です。"
+              />
+            ) : null}
             <div className="flex justify-end">
               <Button type="submit" variant="brand" disabled={passwordLoading}>
                 {passwordLoading ? '更新中...' : 'パスワードを更新'}

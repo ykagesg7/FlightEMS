@@ -616,6 +616,7 @@ export type Database = {
           id: string
           leaderboard_display_name: string | null
           leaderboard_opt_in: boolean
+          mfa_required_at_login: boolean
           onboarding_completed_at: string | null
           password_updated_at: string | null
           rank: Database["public"]["Enums"]["user_rank_type"] | null
@@ -635,6 +636,7 @@ export type Database = {
           id: string
           leaderboard_display_name?: string | null
           leaderboard_opt_in?: boolean
+          mfa_required_at_login?: boolean
           onboarding_completed_at?: string | null
           password_updated_at?: string | null
           rank?: Database["public"]["Enums"]["user_rank_type"] | null
@@ -654,6 +656,7 @@ export type Database = {
           id?: string
           leaderboard_display_name?: string | null
           leaderboard_opt_in?: boolean
+          mfa_required_at_login?: boolean
           onboarding_completed_at?: string | null
           password_updated_at?: string | null
           rank?: Database["public"]["Enums"]["user_rank_type"] | null
@@ -663,6 +666,30 @@ export type Database = {
           username?: string | null
           website?: string | null
           xp_points?: number | null
+        }
+        Relationships: []
+      }
+      mfa_recovery_codes: {
+        Row: {
+          id: string
+          user_id: string
+          code_hash: string
+          used_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          code_hash: string
+          used_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          code_hash?: string
+          used_at?: string | null
+          created_at?: string
         }
         Relationships: []
       }

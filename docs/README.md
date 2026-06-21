@@ -174,6 +174,7 @@
 - ✅ エラー監視: Sentry 導入済み（DSN設定で有効化）
 - ✅ **GA4（アクセス解析）**: **本番受信確認済**（2026-05-06・GA4 リアルタイム）— [04_Operations_Guide.md](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」表・`G-22VFYSM69J`
 - ✅ **Phase D cohort pilot（D-3）**: 週次ミッション・TOP3 バッジ・in-app/Brevo 通知 — **本番稼働**（2026-06-21）。運用: [04_Operations_Guide.md](04_Operations_Guide.md)「Cohort 週次 cron・通知」
+- ✅ **Profile Hub + MFA（2026-06）**: 4 セクション IA（`profile`/`learning`/`privacy`/`account`）、通知 auto-save、TOTP ログインゲート・`mfa_required_at_login`、リカバリーコード API、アカウント削除 — [02](02_System_Spec.md) Profile Hub 節・[04](04_Operations_Guide.md) MFA 運用
 - ⏳ Flight Academy ブランド移行（Phase C: 2026年6月〜）
 - ⏸️ ランキング機能（Phase D）
 - ⏸️ LMS 目標設定・弱点分析（Phase D / E）

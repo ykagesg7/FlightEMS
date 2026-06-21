@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button } from '../../../components/ui';
 import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
@@ -9,18 +9,18 @@ type Profile = Database['public']['Tables']['profiles']['Row'];
 
 interface ProfilePublicSectionProps {
   profile: Profile | null;
-  userEmail: string | null | undefined;
   onSave: (payload: Partial<Profile>) => Promise<{ error: { message: string } | null }>;
   onError: (message: string) => void;
   onSuccess: (message: string) => void;
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
 export const ProfilePublicSection: React.FC<ProfilePublicSectionProps> = ({
   profile,
-  userEmail,
   onSave,
   onError,
   onSuccess,
+  onDirtyChange,
 }) => {
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
@@ -35,6 +35,20 @@ export const ProfilePublicSection: React.FC<ProfilePublicSectionProps> = ({
     setBio(profile.bio || '');
     setWebsite(profile.website || '');
   }, [profile]);
+
+  const isDirty = useMemo(() => {
+    if (!profile) return false;
+    return (
+      username !== (profile.username || '')
+      || fullName !== (profile.full_name || '')
+      || bio !== (profile.bio || '')
+      || website !== (profile.website || '')
+    );
+  }, [bio, fullName, profile, username, website]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,20 +136,8 @@ export const ProfilePublicSection: React.FC<ProfilePublicSectionProps> = ({
                   placeholder="https://example.com"
                 />
               </ProfileField>
-              <ProfileField label="メールアドレス" id="profile-email">
-                <input
-                  id="profile-email"
-                  type="email"
-                  value={userEmail || ''}
-                  disabled
-                  className={`${inputClass} cursor-not-allowed opacity-70`}
-                />
-                <Typography variant="caption" color="muted" className="mt-1 block">
-                  メールアドレスは変更できません
-                </Typography>
-              </ProfileField>
               <div className="flex justify-end pt-2">
-                <Button type="submit" variant="brand" disabled={saving}>
+                <Button type="submit" variant="brand" disabled={saving || !isDirty}>
                   {saving ? '保存中...' : '保存'}
                 </Button>
               </div>

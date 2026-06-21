@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { vi } from 'vitest';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -6,6 +6,9 @@ import type { AuthState } from '@/stores/authStore';
 import * as authStore from '@/stores/authStore';
 
 vi.mock('@/stores/authStore');
+vi.mock('@/auth/mfaAuth', () => ({
+  shouldPromptLoginMfa: vi.fn(async () => ({ required: false, factorId: null, error: null })),
+}));
 
 function createAuthState(overrides: Partial<AuthState> = {}): AuthState {
   return {
@@ -69,7 +72,7 @@ describe('ProtectedRoute', () => {
     expect(screen.getByText('auth-page')).toBeInTheDocument();
   });
 
-  it('renders children for authenticated users', () => {
+  it('renders children for authenticated users', async () => {
     vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
       selector(
         createAuthState({
@@ -79,10 +82,12 @@ describe('ProtectedRoute', () => {
       ),
     );
     renderProtected('/mission');
-    expect(screen.getByText('protected-content')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('protected-content')).toBeInTheDocument();
+    });
   });
 
-  it('redirects non-admin users when requireAdmin is true', () => {
+  it('redirects non-admin users when requireAdmin is true', async () => {
     vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
       selector(
         createAuthState({
@@ -92,6 +97,8 @@ describe('ProtectedRoute', () => {
       ),
     );
     renderProtected('/mission', true);
-    expect(screen.getByText('home-page')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('home-page')).toBeInTheDocument();
+    });
   });
 });

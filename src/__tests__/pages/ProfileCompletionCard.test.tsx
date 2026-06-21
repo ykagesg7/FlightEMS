@@ -13,7 +13,7 @@ describe('ProfileCompletionCard', () => {
             nextAction: {
               id: 'avatar_url',
               label: 'プロフィール画像を追加',
-              href: '/profile?tab=public',
+              href: '/profile?tab=profile',
               benefit: 'メニューがパーソナルになります',
             },
           }}
@@ -23,7 +23,7 @@ describe('ProfileCompletionCard', () => {
 
     expect(screen.getByText(/コックピット準備 45%/)).toBeInTheDocument();
     expect(screen.getByText(/プロフィール画像を追加/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '設定する' })).toHaveAttribute('href', '/profile?tab=public');
+    expect(screen.getByRole('link', { name: '設定する' })).toHaveAttribute('href', '/profile?tab=profile');
   });
 
   it('renders nothing at 100%', () => {

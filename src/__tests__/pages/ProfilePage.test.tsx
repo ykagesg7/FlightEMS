@@ -6,16 +6,30 @@ import type { AuthState } from '@/stores/authStore';
 import * as authStore from '@/stores/authStore';
 
 vi.mock('@/stores/authStore');
+vi.mock('@/hooks/useCohortProfile', () => ({
+  useCohortProfile: () => ({
+    profile: null,
+    invalidate: vi.fn(),
+    isLoading: false,
+    fetchError: null,
+  }),
+}));
 vi.mock('@/utils/supabase', () => ({
   default: {
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn(() => ({
         maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
-        then: (resolve: (value: { data: unknown[]; error: null }) => void) =>
-          Promise.resolve({ data: [], error: null }).then(resolve),
+        single: vi.fn().mockResolvedValue({ data: null, error: { code: 'PGRST116' } }),
       })),
     })),
+    auth: {
+      getUser: vi.fn().mockResolvedValue({ data: { user: { identities: [] } }, error: null }),
+      getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
+      mfa: {
+        listFactors: vi.fn().mockResolvedValue({ data: { totp: [], all: [] }, error: null }),
+      },
+    },
   },
 }));
 
@@ -68,7 +82,23 @@ function createAuthState(overrides: Partial<AuthState> = {}): AuthState {
 }
 
 describe('ProfilePage', () => {
-  it('renders Profile Hub with completion card and leaderboard deep link', () => {
+  it('renders mobile section list on /profile without tab', () => {
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState()),
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/profile']}>
+        <ProfilePage />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('プロフィール設定')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-hub-section-list')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-hub-section-list')).toHaveTextContent('学習・受験');
+  });
+
+  it('renders privacy leaderboard via legacy deep link', () => {
     vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
       selector(createAuthState()),
     );
@@ -79,8 +109,7 @@ describe('ProfilePage', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('プロフィール設定')).toBeInTheDocument();
-    expect(screen.getByText(/コックピット準備/)).toBeInTheDocument();
     expect(screen.getByText('学習者ランキング（任意参加）')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-hub-back')).toBeInTheDocument();
   });
 });

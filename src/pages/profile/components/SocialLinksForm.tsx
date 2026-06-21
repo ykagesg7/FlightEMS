@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Database } from '../../../types/database.types';
 import { Button } from '../../../components/ui';
 import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
@@ -16,12 +16,14 @@ interface SocialLinksFormProps {
   currentSocialLinks?: Database['public']['Tables']['profiles']['Row']['social_links'] | null;
   onSave?: (socialLinks: SocialLinks) => Promise<void>;
   onError?: (error: string) => void;
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
 export const SocialLinksForm: React.FC<SocialLinksFormProps> = ({
   currentSocialLinks,
   onSave,
   onError,
+  onDirtyChange,
 }) => {
   const [socialLinks, setSocialLinks] = useState<SocialLinks>(() => {
     if (currentSocialLinks && typeof currentSocialLinks === 'object') {
@@ -37,6 +39,22 @@ export const SocialLinksForm: React.FC<SocialLinksFormProps> = ({
       setSocialLinks((currentSocialLinks as SocialLinks) || {});
     }
   }, [currentSocialLinks]);
+
+  const baselineLinks = useMemo(() => {
+    if (currentSocialLinks && typeof currentSocialLinks === 'object') {
+      return (currentSocialLinks as SocialLinks) || {};
+    }
+    return {};
+  }, [currentSocialLinks]);
+
+  const isDirty = useMemo(
+    () => JSON.stringify(socialLinks) !== JSON.stringify(baselineLinks),
+    [baselineLinks, socialLinks],
+  );
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   // URLバリデーション
   const validateUrl = (url: string, platform: keyof SocialLinks): string | null => {
@@ -195,7 +213,7 @@ export const SocialLinksForm: React.FC<SocialLinksFormProps> = ({
           ))}
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button type="submit" variant="brand" disabled={isSaving}>
+            <Button type="submit" variant="brand" disabled={isSaving || !isDirty}>
               {isSaving ? '保存中...' : '保存'}
             </Button>
           </div>

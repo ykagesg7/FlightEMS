@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { ExamTargetSelect } from '../../../components/learning/ExamTargetSelect';
@@ -17,11 +17,13 @@ type ExamChoice = 'month' | 'undecided';
 interface ProfileCohortSectionProps {
   onError: (message: string) => void;
   onSuccess: (message: string) => void;
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
 export const ProfileCohortSection: React.FC<ProfileCohortSectionProps> = ({
   onError,
   onSuccess,
+  onDirtyChange,
 }) => {
   const queryClient = useQueryClient();
   const { profile, invalidate, isLoading, fetchError } = useCohortProfile();
@@ -41,6 +43,22 @@ export const ProfileCohortSection: React.FC<ProfileCohortSectionProps> = ({
       setExamMonth(profile.target_test_date.slice(0, 7));
     }
   }, [profile]);
+
+  const isDirty = useMemo(() => {
+    if (!profile) return false;
+    const profileLicense = profile.license_target === 'PPL' ? 'PPL' : 'CPL';
+    if (licenseTarget !== profileLicense) return true;
+    if (examChoice === 'undecided') {
+      return profile.exam_date_status !== 'undecided';
+    }
+    if (profile.exam_date_status === 'undecided') return true;
+    const profileMonth = profile.target_test_date?.slice(0, 7) ?? '';
+    return examMonth !== profileMonth;
+  }, [examChoice, examMonth, licenseTarget, profile]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   const handleSaveCohort = useCallback(async () => {
     if (examChoice === 'month' && !examMonth) {
@@ -152,7 +170,7 @@ export const ProfileCohortSection: React.FC<ProfileCohortSectionProps> = ({
               <span className="text-sm">受験日未定</span>
             </label>
           </fieldset>
-          <Button type="button" variant="brand" disabled={saving} onClick={() => void handleSaveCohort()}>
+          <Button type="button" variant="brand" disabled={saving || !isDirty} onClick={() => void handleSaveCohort()}>
             {saving ? '保存中...' : '受験予定を保存'}
           </Button>
         </div>

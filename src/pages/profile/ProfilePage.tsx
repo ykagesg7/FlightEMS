@@ -5,30 +5,22 @@ import {
   computeProfileCompletion,
   resolveProfileRoute,
   type ProfileHubSection,
-  type ProfilePanelId,
-  type ResolvedProfileRoute,
 } from '../../auth/profileCompletion';
 import { Typography } from '../../components/ui/Typography';
 import { useAuthStore } from '../../stores/authStore';
 import supabase from '../../utils/supabase';
-import { LeaderboardSettings } from './components/LeaderboardSettings';
-import { NotificationPreferences } from './components/NotificationPreferences';
-import { ProfileAccountSection } from './components/ProfileAccountSection';
-import { ProfileCohortSection } from './components/ProfileCohortSection';
-import { ProfileCompletionCard } from './components/ProfileCompletionCard';
+import { ProfileCombinedAccountSection } from './components/ProfileCombinedAccountSection';
+import { ProfileCombinedLearningSection } from './components/ProfileCombinedLearningSection';
+import { ProfileCombinedPrivacySection } from './components/ProfileCombinedPrivacySection';
+import { ProfileCombinedProfileSection } from './components/ProfileCombinedProfileSection';
+import { ProfileCompletionStrip } from './components/ProfileCompletionStrip';
+import { ProfileHubBackLink } from './components/ProfileHubBackLink';
+import { ProfileHubSectionList } from './components/ProfileHubSectionList';
+import { ProfileHubSidebar } from './components/ProfileHubSidebar';
 import { ProfileIdentityHeader } from './components/ProfileIdentityHeader';
-import { ProfilePublicSection } from './components/ProfilePublicSection';
-import { ProfileSectionNav } from './components/ProfileSectionNav';
-import { ProfileSecuritySection } from './components/ProfileSecuritySection';
-import { SocialLinksForm } from './components/SocialLinksForm';
-
-type SocialLinks = {
-  twitter?: string;
-  instagram?: string;
-  youtube?: string;
-  facebook?: string;
-  linkedin?: string;
-};
+import { ProfileStickySaveBar } from './components/ProfileStickySaveBar';
+import { getProfileHubSectionMeta } from './components/profileHubSections';
+import { useUnsavedFormGuard } from './hooks/useUnsavedFormGuard';
 
 const ProfilePage: React.FC = () => {
   const user = useAuthStore((state) => state.user);
@@ -37,16 +29,29 @@ const ProfilePage: React.FC = () => {
   const updateProfile = useAuthStore((state) => state.updateProfile);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [route, setRoute] = useState<ResolvedProfileRoute>(() =>
-    resolveProfileRoute(searchParams.get('tab'), searchParams.get('panel')),
-  );
+  const tabParam = searchParams.get('tab');
+  const route = resolveProfileRoute(tabParam, searchParams.get('panel'));
+  const activeSection: ProfileHubSection = route.section ?? 'profile';
+  const showMobileList = !tabParam;
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [hasNotificationSettings, setHasNotificationSettings] = useState(false);
+  const [dirtyFlags, setDirtyFlags] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    setRoute(resolveProfileRoute(searchParams.get('tab'), searchParams.get('panel')));
-  }, [searchParams]);
+  const setSectionDirty = useCallback((key: string, dirty: boolean) => {
+    setDirtyFlags((prev) => {
+      if (prev[key] === dirty) return prev;
+      return { ...prev, [key]: dirty };
+    });
+  }, []);
+
+  const isDirty = useMemo(
+    () => Object.values(dirtyFlags).some(Boolean),
+    [dirtyFlags],
+  );
+
+  useUnsavedFormGuard(isDirty);
 
   useEffect(() => {
     const fetchNotificationFlag = async () => {
@@ -69,9 +74,9 @@ const ProfilePage: React.FC = () => {
     [profile, hasNotificationSettings],
   );
 
-  const navigateRoute = useCallback(
-    (section: ProfileHubSection, panel?: ProfilePanelId) => {
-      setSearchParams(buildProfileSearchParams(section, panel), { replace: true });
+  const navigateSection = useCallback(
+    (section: ProfileHubSection) => {
+      setSearchParams(buildProfileSearchParams(section), { replace: false });
     },
     [setSearchParams],
   );
@@ -86,17 +91,57 @@ const ProfilePage: React.FC = () => {
     setTimeout(() => setSuccess(null), 3000);
   }, []);
 
-  const handleSocialLinksSave = useCallback(
-    async (socialLinks: SocialLinks) => {
-      const { error: saveError } = await updateProfile({
-        social_links: socialLinks,
-        updated_at: new Date().toISOString(),
-      });
-      if (saveError) throw saveError;
-      showSuccess('ソーシャルリンクを保存しました');
-    },
-    [showSuccess, updateProfile],
-  );
+  const handleNotificationSettingsSaved = useCallback(() => {
+    setHasNotificationSettings(true);
+  }, []);
+
+  const sectionMeta = getProfileHubSectionMeta(activeSection);
+
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'profile':
+        return (
+          <ProfileCombinedProfileSection
+            profile={profile}
+            onSave={updateProfile}
+            onError={showError}
+            onSuccess={showSuccess}
+            onDirtyChange={(dirty) => setSectionDirty('profile', dirty)}
+          />
+        );
+      case 'learning':
+        return (
+          <ProfileCombinedLearningSection
+            onError={showError}
+            onSuccess={showSuccess}
+            onDirtyChange={(dirty) => setSectionDirty('learning', dirty)}
+          />
+        );
+      case 'privacy':
+        return (
+          <ProfileCombinedPrivacySection
+            profile={profile}
+            updateProfile={updateProfile}
+            onError={showError}
+            onSuccess={showSuccess}
+            onNotificationSettingsSaved={handleNotificationSettingsSaved}
+            onDirtyChange={(dirty) => setSectionDirty('privacy-leaderboard', dirty)}
+          />
+        );
+      case 'account':
+        return (
+          <ProfileCombinedAccountSection
+            email={user?.email}
+            profile={profile}
+            updateProfile={updateProfile}
+            onError={showError}
+            onSuccess={showSuccess}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   if (loading) {
     return (
@@ -112,9 +157,9 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] py-8">
+    <div className="min-h-screen bg-[var(--bg)] py-8 pb-24 md:pb-8">
       <div className="container mx-auto max-w-6xl px-4">
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-center md:text-left">
           <Typography variant="h1" color="brand" className="mb-2">
             プロフィール設定
           </Typography>
@@ -140,71 +185,37 @@ const ProfilePage: React.FC = () => {
         )}
 
         <ProfileIdentityHeader profile={profile} email={user?.email} />
-        <ProfileCompletionCard completion={completion} />
-        <ProfileSectionNav
-          activeSection={route.section}
-          activePanel={route.panel}
-          onSelectSection={navigateRoute}
-          onSelectPanel={(panel) => navigateRoute(route.section, panel)}
-        />
 
-        <div>
-          {route.section === 'public' && route.panel === 'profile' && (
-            <ProfilePublicSection
-              profile={profile}
-              userEmail={user?.email}
-              onSave={updateProfile}
-              onError={showError}
-              onSuccess={showSuccess}
-            />
-          )}
+        <div className="mb-6 md:hidden">
+          <ProfileCompletionStrip completion={completion} />
+        </div>
 
-          {route.section === 'public' && route.panel === 'social' && (
-            <SocialLinksForm
-              currentSocialLinks={profile?.social_links}
-              onSave={handleSocialLinksSave}
-              onError={showError}
-            />
-          )}
+        <div className="flex flex-col gap-8 md:flex-row">
+          <ProfileHubSidebar
+            activeSection={activeSection}
+            completion={completion}
+            onSelect={navigateSection}
+          />
 
-          {route.section === 'cohort' && (
-            <ProfileCohortSection onError={showError} onSuccess={showSuccess} />
-          )}
+          <div className="min-w-0 flex-1">
+            {showMobileList ? (
+              <ProfileHubSectionList onSelect={navigateSection} />
+            ) : null}
 
-          {route.section === 'preferences' && route.panel === 'notifications' && (
-            <NotificationPreferences onError={showError} onSuccess={showSuccess} />
-          )}
-
-          {route.section === 'preferences' && route.panel === 'leaderboard' && profile && (
-            <LeaderboardSettings
-              profile={profile}
-              updateProfile={updateProfile}
-              onError={showError}
-              onSuccess={showSuccess}
-            />
-          )}
-
-          {route.section === 'preferences' && route.panel === 'leaderboard' && !profile && (
-            <Typography variant="body" color="muted">
-              プロフィール情報を読み込み中です。
-            </Typography>
-          )}
-
-          {route.section === 'account' && route.panel === 'account' && (
-            <ProfileAccountSection email={user?.email} />
-          )}
-
-          {route.section === 'account' && route.panel === 'security' && (
-            <ProfileSecuritySection
-              userEmail={user?.email}
-              profile={profile}
-              updateProfile={updateProfile}
-              onError={showError}
-              onSuccess={showSuccess}
-            />
-          )}
+            <div className={showMobileList ? 'hidden md:block' : 'block'}>
+              {!showMobileList ? <ProfileHubBackLink /> : null}
+              {!showMobileList ? (
+                <Typography variant="h2" color="brand" className="mb-6 text-lg font-bold md:hidden">
+                  {sectionMeta.label}
+                </Typography>
+              ) : null}
+              {renderSection()}
+            </div>
+          </div>
         </div>
       </div>
+
+      <ProfileStickySaveBar visible={isDirty} />
     </div>
   );
 };

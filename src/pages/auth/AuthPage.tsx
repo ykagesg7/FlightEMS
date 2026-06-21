@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { mapAuthErrorToMessage } from '../../auth/authErrorMessages';
+import { shouldPromptLoginMfa } from '../../auth/mfaAuth';
 import { isPasswordRecoveryActive } from '../../auth/passwordRecovery';
 import { getPostAuthPath } from '../../auth/profileSetup';
 import { EmailDeliveryHint } from '../../components/auth/EmailDeliveryHint';
+import { LoginMfaChallenge } from '../../components/auth/LoginMfaChallenge';
 import { TurnstileWidget } from '../../components/auth/TurnstileWidget';
 import { Button } from '../../components/ui';
 import { useAuthStore } from '../../stores/authStore';
@@ -59,8 +61,11 @@ const AuthPage: React.FC = () => {
   const [pendingEmailKind, setPendingEmailKind] = useState<PendingEmailKind | null>(null);
   const [verificationLink, setVerificationLink] = useState<string | null>(null);
   const [isDevelopment] = useState(process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost');
+  const [loginMfaFactorId, setLoginMfaFactorId] = useState<string | null>(null);
+  const [loginMfaCheckDone, setLoginMfaCheckDone] = useState(false);
 
   const showTimeoutBanner = state?.timeout || params.get('timeout') === '1';
+  const mfaRequiredFromQuery = params.get('mfa') === 'required';
 
   useAuthCallback({
     onError: (message) => setError(message),
@@ -85,15 +90,46 @@ const AuthPage: React.FC = () => {
 
   useEffect(() => {
     if (!user || !session || isPasswordRecoveryActive() || !initialized) {
+      setLoginMfaFactorId(null);
+      setLoginMfaCheckDone(false);
       return;
     }
     if (profile === null) {
       void useAuthStore.getState().fetchProfile(user.id);
       return;
     }
+
+    let cancelled = false;
+    void (async () => {
+      const { required, factorId, error: mfaError } = await shouldPromptLoginMfa(profile);
+      if (cancelled) return;
+
+      if (mfaError) {
+        setError(mfaError);
+      }
+
+      if (required && factorId) {
+        setLoginMfaFactorId(factorId);
+        setLoginMfaCheckDone(true);
+        return;
+      }
+
+      setLoginMfaFactorId(null);
+      setLoginMfaCheckDone(true);
+      const from = state?.from?.pathname || '/';
+      navigate(getPostAuthPath(profile, from), { replace: true });
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, session, profile, initialized, navigate, state]);
+
+  const completeLoginAfterMfa = useCallback(() => {
+    if (!profile) return;
     const from = state?.from?.pathname || '/';
     navigate(getPostAuthPath(profile, from), { replace: true });
-  }, [user, session, profile, initialized, navigate, state]);
+  }, [navigate, profile, state?.from?.pathname]);
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
@@ -231,6 +267,29 @@ const AuthPage: React.FC = () => {
     setError(null);
     setSuccess('ログインリンクをメールで送信しました。メールをご確認ください。');
   }, []);
+
+  if (user && session && profile && loginMfaFactorId && loginMfaCheckDone) {
+    return (
+      <AuthLayout title="二要素認証">
+        {mfaRequiredFromQuery ? (
+          <AuthAlert variant="timeout">
+            セキュリティのため、二要素認証の確認が必要です。
+          </AuthAlert>
+        ) : null}
+        {error && <AuthAlert variant="error">{error}</AuthAlert>}
+        <LoginMfaChallenge
+          factorId={loginMfaFactorId}
+          onError={setError}
+          onVerified={completeLoginAfterMfa}
+          onRecoveryUsed={() => {
+            setSuccess(
+              'リカバリーコードでログインしました。二要素認証は解除されました。プロフィールから再設定することをおすすめします。',
+            );
+          }}
+        />
+      </AuthLayout>
+    );
+  }
 
   if (pendingEmailKind) {
     const isMagicLink = pendingEmailKind === 'magic-link';

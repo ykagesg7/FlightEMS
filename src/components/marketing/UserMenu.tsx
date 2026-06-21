@@ -3,7 +3,6 @@ import { LogOut, UserCircle } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
-import { ADMIN_NAV_ITEMS } from '../../constants/adminNav';
 import { isAdminUser } from '../../utils/isAdminUser';
 import { Button } from '../ui';
 
@@ -137,18 +136,8 @@ export const UserMenu: React.FC = () => {
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-3 px-4 py-2 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-primary/10"
                   >
-                    管理画面
+                    管理 Hub
                   </Link>
-                  {ADMIN_NAV_ITEMS.map((item) => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2 pl-8 text-sm text-[var(--text-primary)] transition-colors hover:bg-brand-primary/10"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
                 </>
               ) : null}
               <button

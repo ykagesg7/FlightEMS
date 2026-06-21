@@ -56,6 +56,15 @@ Implement UI with **Tailwind** tokens defined in [`tailwind.config.js`](tailwind
 - Prefer existing page shells and `max-w-*` patterns used in articles (`max-w-3xl` inner column with `min-w-0` where flex children exist).
 - **Breakpoints**: follow Tailwind defaults (`md`, `lg`, …).
 
+## Profile Hub (`/profile`)
+
+- **Mobile (`< md`)**: iOS Settings–style section list → detail drill-down via `?tab=`. Back link: `ProfileHubBackLink`.
+- **Desktop (`md+`)**: sticky left `ProfileHubSidebar` + content; no list screen.
+- **Completion**: `ProfileCompletionStrip` in mobile header area and sidebar (not a standalone card).
+- **Danger zone**: account delete block uses `border-red-500/40` / red heading; confirm phrase required.
+- **Unsaved changes**: mobile `ProfileStickySaveBar` when explicit-save forms are dirty; notifications auto-save (no bar).
+- **Admin**: no admin items in Profile; use header ADMIN + `/admin` Hub.
+
 ## Japanese content
 
 - Lesson voice and structure: follow [`.cursor/rules/mdx-article-guide.mdc`](.cursor/rules/mdx-article-guide.mdc).

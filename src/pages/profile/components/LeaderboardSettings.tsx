@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
 import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
 import type { Database } from '../../../types/database.types';
-import { ProfileUserBadgesSection } from './ProfileUserBadgesSection';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -12,6 +11,7 @@ interface Props {
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: { message: string } | null }>;
   onError: (message: string) => void;
   onSuccess: (message: string) => void;
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
 /**
@@ -22,6 +22,7 @@ export const LeaderboardSettings: React.FC<Props> = ({
   updateProfile,
   onError,
   onSuccess,
+  onDirtyChange,
 }) => {
   const [optIn, setOptIn] = useState(false);
   const [displayName, setDisplayName] = useState('');
@@ -38,6 +39,19 @@ export const LeaderboardSettings: React.FC<Props> = ({
   }, [profile]);
 
   const wasOptedIn = profile?.leaderboard_opt_in === true;
+
+  const isDirty = useMemo(() => {
+    if (!profile) return false;
+    const nextDisplayName = optIn ? (displayName.trim() || null) : null;
+    return (
+      optIn !== (profile.leaderboard_opt_in ?? false)
+      || nextDisplayName !== (profile.leaderboard_display_name ?? null)
+    );
+  }, [displayName, optIn, profile]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +77,6 @@ export const LeaderboardSettings: React.FC<Props> = ({
   };
 
   return (
-    <>
     <Card variant="brand" padding="lg">
       <CardHeader>
         <Typography variant="h3" color="brand" className="text-xl font-bold">
@@ -131,14 +144,12 @@ export const LeaderboardSettings: React.FC<Props> = ({
           )}
 
           <div className="flex justify-end pt-2">
-            <Button type="submit" variant="brand" disabled={saving}>
+            <Button type="submit" variant="brand" disabled={saving || !isDirty}>
               {saving ? '保存中...' : '保存'}
             </Button>
           </div>
         </form>
       </CardContent>
     </Card>
-    <ProfileUserBadgesSection />
-    </>
   );
 };

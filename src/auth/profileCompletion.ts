@@ -30,7 +30,7 @@ const FIELD_WEIGHTS: Array<{
     id: 'username',
     weight: 20,
     label: 'ユーザー名を設定',
-    href: '/profile?tab=public',
+    href: '/profile?tab=profile',
     benefit: '学習記録やコメントに名前が表示されます',
     isComplete: (p) => Boolean(p.username?.trim()),
   },
@@ -38,7 +38,7 @@ const FIELD_WEIGHTS: Array<{
     id: 'avatar_url',
     weight: 25,
     label: 'プロフィール画像を追加',
-    href: '/profile?tab=public',
+    href: '/profile?tab=profile',
     benefit: 'ダッシュボードやメニューがパーソナルになります',
     isComplete: (p) => Boolean(p.avatar_url?.trim()),
   },
@@ -46,15 +46,15 @@ const FIELD_WEIGHTS: Array<{
     id: 'bio',
     weight: 20,
     label: '学習目標を書く',
-    href: '/profile?tab=public',
+    href: '/profile?tab=profile',
     benefit: '仲間にあなたの目標が伝わります',
     isComplete: (p) => Boolean(p.bio?.trim()),
   },
   {
     id: 'social_links',
-    weight: 15,
+    weight: 10,
     label: 'ソーシャルリンクを追加',
-    href: '/profile?tab=public&panel=social',
+    href: '/profile?tab=profile',
     benefit: 'SNS でつながりやすくなります',
     isComplete: (p) => hasAnySocialLink(p.social_links),
   },
@@ -62,15 +62,15 @@ const FIELD_WEIGHTS: Array<{
     id: 'website',
     weight: 10,
     label: 'Webサイトを追加',
-    href: '/profile?tab=public',
+    href: '/profile?tab=profile',
     benefit: 'ポートフォリオやブログを共有できます',
     isComplete: (p) => Boolean(p.website?.trim()),
   },
   {
     id: 'notifications',
-    weight: 10,
+    weight: 15,
     label: '通知設定を確認',
-    href: '/profile?tab=preferences',
+    href: '/profile?tab=privacy',
     benefit: '学習リマインダーを受け取れます',
     isComplete: () => false,
   },
@@ -120,87 +120,66 @@ export function computeProfileCompletion({
   };
 }
 
-/** Top-level Profile Hub sections (4 groups) */
-export type ProfileHubSection = 'public' | 'cohort' | 'preferences' | 'account';
+/** Profile Hub sections (4 groups, no sub-panels) */
+export type ProfileHubSection = 'profile' | 'learning' | 'privacy' | 'account';
 
-/** Sub-panels within a hub section */
-export type ProfilePanelId =
-  | 'profile'
-  | 'social'
-  | 'notifications'
-  | 'leaderboard'
-  | 'account'
-  | 'security';
-
-/** @deprecated Use ProfileHubSection — kept for gradual migration */
+/** @deprecated Use ProfileHubSection */
 export type ProfileSectionId = ProfileHubSection;
 
 export interface ResolvedProfileRoute {
-  section: ProfileHubSection;
-  panel: ProfilePanelId;
+  section: ProfileHubSection | null;
 }
 
-const DEFAULT_PANEL: Record<ProfileHubSection, ProfilePanelId> = {
+const VALID_SECTIONS: readonly ProfileHubSection[] = [
+  'profile',
+  'learning',
+  'privacy',
+  'account',
+];
+
+/** Legacy ?tab= values mapped to new section ids */
+const LEGACY_TAB_MAP: Record<string, ProfileHubSection> = {
+  profile: 'profile',
   public: 'profile',
-  cohort: 'profile',
-  preferences: 'notifications',
+  social: 'profile',
+  'ppl-ranks': 'profile',
+  cohort: 'learning',
+  preferences: 'privacy',
+  notifications: 'privacy',
+  leaderboard: 'privacy',
   account: 'account',
-};
-
-/** Legacy ?tab= values mapped to hub section + panel */
-const LEGACY_TAB_MAP: Record<string, ResolvedProfileRoute> = {
-  profile: { section: 'public', panel: 'profile' },
-  public: { section: 'public', panel: 'profile' },
-  social: { section: 'public', panel: 'social' },
-  cohort: { section: 'cohort', panel: 'profile' },
-  notifications: { section: 'preferences', panel: 'notifications' },
-  leaderboard: { section: 'preferences', panel: 'leaderboard' },
-  account: { section: 'account', panel: 'account' },
-  security: { section: 'account', panel: 'security' },
-  'ppl-ranks': { section: 'public', panel: 'profile' },
-};
-
-const VALID_PANELS: Record<ProfileHubSection, readonly ProfilePanelId[]> = {
-  public: ['profile', 'social'],
-  cohort: ['profile'],
-  preferences: ['notifications', 'leaderboard'],
-  account: ['account', 'security'],
+  security: 'account',
 };
 
 export function resolveProfileRoute(
   tabParam: string | null,
-  panelParam: string | null,
+  _panelParam?: string | null,
 ): ResolvedProfileRoute {
-  const legacy = tabParam && tabParam in LEGACY_TAB_MAP ? LEGACY_TAB_MAP[tabParam] : null;
-  const section = legacy?.section
-    ?? (tabParam && tabParam in DEFAULT_PANEL ? (tabParam as ProfileHubSection) : 'public');
-
-  const allowedPanels = VALID_PANELS[section];
-  if (panelParam && allowedPanels.includes(panelParam as ProfilePanelId)) {
-    return { section, panel: panelParam as ProfilePanelId };
+  if (!tabParam) {
+    return { section: null };
   }
-  return { section, panel: legacy?.panel ?? DEFAULT_PANEL[section] };
+  if (tabParam in LEGACY_TAB_MAP) {
+    return { section: LEGACY_TAB_MAP[tabParam] };
+  }
+  if (VALID_SECTIONS.includes(tabParam as ProfileHubSection)) {
+    return { section: tabParam as ProfileHubSection };
+  }
+  return { section: 'profile' };
 }
 
 /** @deprecated Use resolveProfileRoute */
-export function resolveProfileSection(tabParam: string | null): ProfileHubSection {
-  return resolveProfileRoute(tabParam, null).section;
+export function resolveProfileSection(tabParam: string | null): ProfileHubSection | null {
+  return resolveProfileRoute(tabParam).section;
 }
 
-export function buildProfileSearchParams(
-  section: ProfileHubSection,
-  panel?: ProfilePanelId,
-): Record<string, string> {
-  const resolvedPanel = panel ?? DEFAULT_PANEL[section];
-  if (section === 'cohort') {
-    return { tab: 'cohort' };
-  }
-  if (resolvedPanel === DEFAULT_PANEL[section]) {
-    return { tab: section };
-  }
-  return { tab: section, panel: resolvedPanel };
+export function buildProfileSearchParams(section: ProfileHubSection): Record<string, string> {
+  return { tab: section };
 }
 
 export function profileSectionToTabParam(section: ProfileHubSection): string {
   return section;
+}
+
+export function isProfileHubSection(value: string): value is ProfileHubSection {
+  return VALID_SECTIONS.includes(value as ProfileHubSection);
 }
