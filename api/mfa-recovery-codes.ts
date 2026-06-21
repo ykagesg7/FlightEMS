@@ -49,6 +49,21 @@ function getAction(req: VercelRequest): RecoveryAction | null {
   return null;
 }
 
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  const segments = token.split('.');
+  if (segments.length < 2) {
+    return null;
+  }
+  try {
+    const base64 = segments[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
+    const json = Buffer.from(padded, 'base64').toString('utf8');
+    return JSON.parse(json) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
 async function requireUser(req: VercelRequest, res: VercelResponse) {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
@@ -64,19 +79,20 @@ async function requireUser(req: VercelRequest, res: VercelResponse) {
     return null;
   }
 
-  return { anonClient, user };
+  return { anonClient, user, accessToken };
 }
 
-async function requireAal2(
-  anonClient: ReturnType<typeof getSupabaseAnonClient>,
-  res: VercelResponse,
-): Promise<boolean> {
-  const { data: aalData, error: aalError } = await anonClient.auth.mfa.getAuthenticatorAssuranceLevel();
-  if (aalError) {
-    res.status(403).json({ error: aalError.message });
-    return false;
-  }
-  if (aalData.currentLevel !== 'aal2') {
+/**
+ * Validate AAL2 from the verified access token JWT.
+ *
+ * The server creates a stateless Supabase client per request (bearer token only),
+ * so the SDK's `getAuthenticatorAssuranceLevel()` cannot read the AAL from a stored
+ * session and reports a non-aal2 level. The token is already verified by `getUser()`,
+ * so we read the `aal` claim from the JWT directly.
+ */
+function requireAal2(accessToken: string, res: VercelResponse): boolean {
+  const payload = decodeJwtPayload(accessToken);
+  if (payload?.aal !== 'aal2') {
     res.status(403).json({ error: 'MFA verification required' });
     return false;
   }
@@ -118,8 +134,7 @@ async function handleGenerate(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const ok = await requireAal2(session.anonClient, res);
-  if (!ok) {
+  if (!requireAal2(session.accessToken, res)) {
     return;
   }
 
@@ -200,8 +215,7 @@ async function handleClear(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const ok = await requireAal2(session.anonClient, res);
-  if (!ok) {
+  if (!requireAal2(session.accessToken, res)) {
     return;
   }
 
