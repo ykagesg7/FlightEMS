@@ -13,6 +13,10 @@
     }
   ],
   "functions": {
+    "api/cron/cohort-weekly.ts": {
+      "memory": 1024,
+      "maxDuration": 60
+    },
     "api/**/*.ts": {
       "memory": 1024,
       "maxDuration": 30
@@ -34,5 +38,11 @@
   "devCommand": "vite --port 5173 --strictPort",
   "buildCommand": "npm run vercel-build",
   "installCommand": "npm install",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "crons": [
+    {
+      "path": "/api/cron/cohort-weekly",
+      "schedule": "0 0 * * 0"
+    }
+  ]
 }

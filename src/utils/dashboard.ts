@@ -116,6 +116,7 @@ async function getPublicLeaderboard(): Promise<PublicLeaderboardEntry[] | undefi
     return [];
   }
   return data.map((row) => ({
+    userId: row.user_id,
     displayName: row.display_name,
     xpPoints: row.xp_points ?? 0,
     rankTier: (row.rank as UserRank | null) ?? null,

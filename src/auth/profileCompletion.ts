@@ -54,7 +54,7 @@ const FIELD_WEIGHTS: Array<{
     id: 'social_links',
     weight: 15,
     label: 'ソーシャルリンクを追加',
-    href: '/profile?tab=social',
+    href: '/profile?tab=public&panel=social',
     benefit: 'SNS でつながりやすくなります',
     isComplete: (p) => hasAnySocialLink(p.social_links),
   },
@@ -70,7 +70,7 @@ const FIELD_WEIGHTS: Array<{
     id: 'notifications',
     weight: 10,
     label: '通知設定を確認',
-    href: '/profile?tab=notifications',
+    href: '/profile?tab=preferences',
     benefit: '学習リマインダーを受け取れます',
     isComplete: () => false,
   },
@@ -120,27 +120,87 @@ export function computeProfileCompletion({
   };
 }
 
-/** Legacy ?tab= values mapped to Profile Hub section ids */
-export type ProfileSectionId = 'public' | 'account' | 'social' | 'notifications' | 'leaderboard' | 'security';
+/** Top-level Profile Hub sections (4 groups) */
+export type ProfileHubSection = 'public' | 'cohort' | 'preferences' | 'account';
 
-const LEGACY_TAB_MAP: Record<string, ProfileSectionId> = {
-  profile: 'public',
-  public: 'public',
-  account: 'account',
-  social: 'social',
-  notifications: 'notifications',
-  leaderboard: 'leaderboard',
-  security: 'security',
-  'ppl-ranks': 'public',
-};
+/** Sub-panels within a hub section */
+export type ProfilePanelId =
+  | 'profile'
+  | 'social'
+  | 'notifications'
+  | 'leaderboard'
+  | 'account'
+  | 'security';
 
-export function resolveProfileSection(tabParam: string | null): ProfileSectionId {
-  if (tabParam && tabParam in LEGACY_TAB_MAP) {
-    return LEGACY_TAB_MAP[tabParam];
-  }
-  return 'public';
+/** @deprecated Use ProfileHubSection — kept for gradual migration */
+export type ProfileSectionId = ProfileHubSection;
+
+export interface ResolvedProfileRoute {
+  section: ProfileHubSection;
+  panel: ProfilePanelId;
 }
 
-export function profileSectionToTabParam(section: ProfileSectionId): string {
+const DEFAULT_PANEL: Record<ProfileHubSection, ProfilePanelId> = {
+  public: 'profile',
+  cohort: 'profile',
+  preferences: 'notifications',
+  account: 'account',
+};
+
+/** Legacy ?tab= values mapped to hub section + panel */
+const LEGACY_TAB_MAP: Record<string, ResolvedProfileRoute> = {
+  profile: { section: 'public', panel: 'profile' },
+  public: { section: 'public', panel: 'profile' },
+  social: { section: 'public', panel: 'social' },
+  cohort: { section: 'cohort', panel: 'profile' },
+  notifications: { section: 'preferences', panel: 'notifications' },
+  leaderboard: { section: 'preferences', panel: 'leaderboard' },
+  account: { section: 'account', panel: 'account' },
+  security: { section: 'account', panel: 'security' },
+  'ppl-ranks': { section: 'public', panel: 'profile' },
+};
+
+const VALID_PANELS: Record<ProfileHubSection, readonly ProfilePanelId[]> = {
+  public: ['profile', 'social'],
+  cohort: ['profile'],
+  preferences: ['notifications', 'leaderboard'],
+  account: ['account', 'security'],
+};
+
+export function resolveProfileRoute(
+  tabParam: string | null,
+  panelParam: string | null,
+): ResolvedProfileRoute {
+  const legacy = tabParam && tabParam in LEGACY_TAB_MAP ? LEGACY_TAB_MAP[tabParam] : null;
+  const section = legacy?.section
+    ?? (tabParam && tabParam in DEFAULT_PANEL ? (tabParam as ProfileHubSection) : 'public');
+
+  const allowedPanels = VALID_PANELS[section];
+  if (panelParam && allowedPanels.includes(panelParam as ProfilePanelId)) {
+    return { section, panel: panelParam as ProfilePanelId };
+  }
+  return { section, panel: legacy?.panel ?? DEFAULT_PANEL[section] };
+}
+
+/** @deprecated Use resolveProfileRoute */
+export function resolveProfileSection(tabParam: string | null): ProfileHubSection {
+  return resolveProfileRoute(tabParam, null).section;
+}
+
+export function buildProfileSearchParams(
+  section: ProfileHubSection,
+  panel?: ProfilePanelId,
+): Record<string, string> {
+  const resolvedPanel = panel ?? DEFAULT_PANEL[section];
+  if (section === 'cohort') {
+    return { tab: 'cohort' };
+  }
+  if (resolvedPanel === DEFAULT_PANEL[section]) {
+    return { tab: section };
+  }
+  return { tab: section, panel: resolvedPanel };
+}
+
+export function profileSectionToTabParam(section: ProfileHubSection): string {
   return section;
 }

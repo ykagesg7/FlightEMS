@@ -20,6 +20,8 @@
 | CPL 工学・気象・航法 `learning_contents` メタ同期 | `20260412_learning_contents_cpl_engineering_*_meta.sql`、`20260424_learning_contents_cpl_meteo_331_3312_meta.sql`、`20260430_learning_contents_cpl_navigation_341_347_meta.sql` |
 | **PPL Master Subject 5（航空法規）** MDX メタ同期（4＋3＋7 本） | `20260512_learning_contents_ppl_aviation_law_four.sql`（501〜504）、`20260512_learning_contents_ppl_subject5_505_507.sql`（505〜507）、`20260512_learning_contents_ppl_subject5_508_514.sql`（508〜514）（[`PPL_Subject5_Aviation_Law_Structure.md`](../../docs/content_outlines/PPL_Subject5_Aviation_Law_Structure.md)） |
 | **USAF 編隊飛行（操縦）** ep.1 | `20260616_learning_contents_fmt_wingman_vfr.sql`（`FMT-1-1_WingmanVFR`、`order_index` 601） |
+| **USAF 編隊飛行（操縦）** ep.2 | `20260617_learning_contents_fmt_runway_lineup_takeoff.sql`（`FMT-1-2_RunwayLineupTakeoff`、`order_index` 602） |
+| **cohort 週次ミッション・TOP3 バッジ** | `20260620_cohort_weekly_missions.sql`（`user_learning_profiles` cohort 列、週次 RPC、通知テーブル） |
 | **記事 XP 付与修正** | `20260616_award_article_xp_fix.sql`（`learning_progress.xp_awarded_at`、`award_article_xp` RPC） |
 | **汎用 XP イベント** | `20260616_xp_award_events.sql`（`xp_award_events`、`award_xp_event` RPC） |
 | **登録 XP バックフィル** | `20260616_backfill_registration_xp.sql`（オンボーディング完了済み・未付与ユーザーへ 100 XP） |

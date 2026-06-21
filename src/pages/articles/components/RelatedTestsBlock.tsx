@@ -1,10 +1,8 @@
 import { ClipboardList } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import supabase from '../../../utils/supabase';
-
-const TEST_SUB_ALL = 'all';
-const DEFAULT_COUNT = 10;
+import { buildContentTestHref } from '../../test/testHubFilters';
+import { trackArticleToQuizClick } from '../../../lib/quizAnalytics';
 
 type MappingRow = {
   topic_category: string | null;
@@ -22,17 +20,12 @@ function countQuestionIds(row: MappingRow): number {
 
 function buildTestHref(contentId: string, row: MappingRow): string {
   const subject = row.topic_category || row.subject_area || '';
-  const params = new URLSearchParams();
-  params.set('subject', subject);
-  params.set('sub', TEST_SUB_ALL);
-  params.set('count', String(DEFAULT_COUNT));
-  params.set('mode', 'practice');
-  params.set('contentId', contentId);
   const cat = (row.content_category || '').toUpperCase();
-  if (cat.includes('PPL') || cat === 'PPL') {
-    params.set('exam', 'ppl');
-  }
-  return `/test?${params.toString()}`;
+  return buildContentTestHref({
+    contentId,
+    subject,
+    exam: cat.includes('PPL') || cat === 'PPL' ? 'ppl' : 'all',
+  });
 }
 
 interface RelatedTestsBlockProps {
@@ -105,11 +98,11 @@ export const RelatedTestsBlock: React.FC<RelatedTestsBlockProps> = ({ contentId 
 
   return (
     <section
-      className="mt-8 rounded-xl border border-l-4 border-[color:var(--hud-primary)]/30 border-l-[color:var(--hud-primary)] bg-[var(--panel)]/50 p-6 shadow-sm"
+      className="mt-8 rounded-xl border border-l-4 border-brand-primary/30 border-l-brand-primary bg-brand-secondary-dark/50 p-6 shadow-sm"
       aria-labelledby="related-tests-heading"
     >
       <div className="mb-4 flex items-center gap-3">
-        <ClipboardList className="h-8 w-8 text-[color:var(--hud-primary)]" aria-hidden />
+        <ClipboardList className="h-8 w-8 text-brand-primary" aria-hidden />
         <div>
           <h2 id="related-tests-heading" className="text-lg font-semibold text-[var(--text-primary)]">
             関連テスト
@@ -127,12 +120,13 @@ export const RelatedTestsBlock: React.FC<RelatedTestsBlockProps> = ({ contentId 
             <li key={mainLabel}>
               <Link
                 to={href}
-                className="flex items-center justify-between gap-4 rounded-lg border border-[color:var(--hud-primary)]/15 bg-[var(--bg)]/80 px-4 py-3 text-sm transition hover:border-[color:var(--hud-primary)]/40 hover:bg-[var(--panel)]"
+                onClick={() => trackArticleToQuizClick(contentId, mainLabel)}
+                className="flex items-center justify-between gap-4 rounded-lg border border-brand-primary/15 bg-[var(--bg)]/80 px-4 py-3 text-sm transition hover:border-brand-primary/40 hover:bg-brand-primary/5"
               >
                 <span className="font-medium text-[var(--text-primary)]">{mainLabel}</span>
                 <span className="shrink-0 text-[var(--text-muted)]">
                   {n > 0 ? `対象設問 ${n} 件` : '練習を開始'}
-                  <span className="ml-2 text-[color:var(--hud-primary)]">→</span>
+                  <span className="ml-2 text-brand-primary">→</span>
                 </span>
               </Link>
             </li>

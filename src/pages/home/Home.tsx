@@ -4,6 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Card, CardContent, Typography } from '../../components/ui';
 import { HomeContinueReading } from './components/HomeContinueReading';
+import { HomeQuizDiagnostic } from './components/HomeQuizDiagnostic';
 import { useAuthStore } from '../../stores/authStore';
 
 /**
@@ -289,6 +290,7 @@ const Home: React.FC = () => {
             会員の方は学習記事から単元を深めましょう。
           </p>
           <HomeContinueReading />
+          <HomeQuizDiagnostic />
           <Link to="/articles">
             <Button variant="brand" size="lg" className="px-8 py-4 text-lg">
               JOIN our Formation

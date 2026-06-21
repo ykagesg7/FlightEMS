@@ -513,6 +513,7 @@ export interface TAFData {
 - **ProtectedRoute**（`/mission`・`/profile`・`/welcome` は要ログイン、`/admin/*` は `profiles.roll = admin`）
 - **Cloudflare Turnstile**（任意・`VITE_TURNSTILE_SITE_KEY` + Supabase Dashboard secret）
 - 確認メール送信: **Brevo Custom SMTP**（Supabase Dashboard 設定、詳細は [04_Operations_Guide.md](04_Operations_Guide.md)）
+- メール送信後 UI: サインアップ / Magic Link / パスワードリセット完了画面で **迷惑メールフォルダ確認**を案内（`EmailDeliveryHint`）
 
 #### **認証 UI（`/auth`）**
 
@@ -523,11 +524,26 @@ export interface TAFData {
 #### **新規ユーザーセットアップ（`/welcome`）**
 
 - `profiles.onboarding_completed_at` が **NULL** のユーザーに、ログイン直後 **1 回だけ** 誘導（`AuthPage` / OAuth コールバック完了時）
-- 3 ステップ（ユーザー名・アバター / ランキング / 通知）— **各ステップおよび全体がスキップ可能**
-- **ランキング**: `/welcome` Step 2 で **デフォルト ON**（同意 pre-checked）。プロフィールから **いつでもオフ** 可能。Step 2 スキップ時は DB を変更しない
-- スキップ / 「あとで設定する」 / 完了時に `onboarding_completed_at = now()` を設定し、以降 `/welcome` は非表示
-- 既存ユーザーは migration `20260606_profiles_onboarding_completed.sql` でバックフィル（再表示しない）
-- 全ルートをブロックするガードは **設けない**（`LeaderboardOptInCta` 等の継続リマインドは維持）
+- **4 ステップ**（ユーザー名・アバター / **cohort 必須** / ランキング・バッジ公開 / 通知）— **cohort ステップのみスキップ不可**
+- **cohort**: CPL + 試験年月（`YYYY-MM`）または **受験日未定**（`cohort_key = CPL-UNDECIDED`）。`user_learning_profiles` に `cohort_key`・`exam_date_status` 等を保存（RPC `upsert_user_cohort`）
+- **ランキング・バッジ公開**: Step 3 で **デフォルト ON**（`profiles.leaderboard_opt_in`）。OFF 時は他人がプロフィールでバッジ閲覧不可
+- スキップ / 「あとで設定する」 / 完了時に `onboarding_completed_at = now()` を設定（**cohort 登録完了が前提**）
+- 既存ユーザー（cohort 未登録）: `CohortRegistrationCta` + `/welcome?mode=cohort` + 通知（announcement / push）
+- 全ルートをブロックするガードは **設けない**
+
+#### **試験月 cohort・週次ミッション（Phase D pilot）**
+
+| 項目 | 仕様 |
+|------|------|
+| **cohort キー** | 確定: `CPL-YYYY-MM`（`target_test_date` は月初正規化）。未定: `CPL-UNDECIDED` |
+| **週次 ID** | ISO `YYYY-Www`（月曜始まり、**JST 固定**） |
+| **集計ウィンドウ** | 当該 ISO 週の **月 0:00 〜 土 23:59:59 JST**（土曜深夜締め、日曜 0:00 排他） |
+| **バッチ** | **日曜 09:00 JST** — 前週スコア確定 → TOP3 バッジ付与 → 今週ミッション通知 |
+| **TOP3** | 公開榜なし。cohort 母集団 **≥10** で `user_achievements` 付与 |
+| **PostWritten** | ユーザー「学科試験完了」ボタンのみ（`cohort_phase = post_written`）。試験月ベース CTA は **exam_date_status = set** のみ |
+| **正本 SQL** | [`scripts/database/20260620_cohort_weekly_missions.sql`](../scripts/database/20260620_cohort_weekly_missions.sql) |
+
+**RPC（cohort）**: `upsert_user_cohort`, `get_cohort_anonymous_stats`, `compute_cohort_weekly_scores`, `award_cohort_weekly_top3`, `mark_written_exam_complete`, `get_public_user_badges`, `enqueue_cohort_notifications`
 
 ### **RPC（Remote Procedure Call）関数**
 

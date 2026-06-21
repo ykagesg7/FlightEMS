@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { LeaderboardOptInCta } from '../../components/learning/LeaderboardOptInCta';
+import { CohortRegistrationCta } from '../../components/learning/CohortRegistrationCta';
+import { useCohortProfile } from '../../hooks/useCohortProfile';
 import { ProfileCompletionNudge } from '../../components/profile/ProfileCompletionNudge';
 import { useGamification } from '../../hooks/useGamification';
 import { useAuthStore } from '../../stores/authStore';
@@ -15,6 +17,7 @@ import { MissionTabs } from './components/MissionTabs';
  */
 const MissionDashboard: React.FC = () => {
   const { profile: authProfile } = useAuthStore();
+  const { isRegistered } = useCohortProfile();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<'blog' | 'test' | 'planning'>(() => {
@@ -187,6 +190,16 @@ const MissionDashboard: React.FC = () => {
             />
           </div>
         ) : null}
+
+        {!isRegistered && (
+          <div className="max-w-3xl mx-auto mb-10 px-2">
+            <CohortRegistrationCta
+              registered={isRegistered}
+              variant="card"
+              dismissStorageKey="cohort_cta_dismiss_mission_v1"
+            />
+          </div>
+        )}
 
         <ProfileCompletionNudge
           dismissStorageKey="profile_completion_nudge_mission_avatar_v1"

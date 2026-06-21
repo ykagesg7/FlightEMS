@@ -19,6 +19,7 @@
 | **CPL（深文化・Phase 2）** | **[14 §6–§7](Article_Coverage_Backlog.md)** の Tier A/B と [10](10_航空工学_学科試験攻略ブログ_ロードマップ.md) を参照し、**拡張単元 `3.2.7`〜`3.2.9` の体裁・出典・リンク**、[14](Article_Coverage_Backlog.md) 上位クラスタへの **マッピング準備または追補**のいずれかを **週次行に正直に記録**。新規 CPL 本体 MDX が無い週でもよい。 |
 | **PPL（C-7／二次 KPI）** | Phase C KPI は **「PPL 25/150 以上」が 6–7月合算**。6月のみの達成強制としない。**6月の狙い**: (1) [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md) の未済トピックから **新規 `PPL-*.mdx` を ≥1 本**、または (2) **CPL の未リンク記事への PPL 復習 Callout を ≥3 単位累計**。どちらも難しい場合は [05 の週次メモと 01 の更新履歴](01_Current_Status_and_Roadmap.md) に **延期理由と 7月継続方針**を 1 行残す。**UI レイアウト変更は DESIGN・承認の原則**に従う。 |
 | **B-4（テスト）** | [06 §1.2](06_Long_Term_Execution.md) の優先層から **追加 4〜8 テスト単位**（複数ファイル可）。`npm run test:run` 緑。**`src` 実効 15%** は Phase C **7月末までの主目標**のため、6月のみで未達でも可。増分時は **`swimNotamCore` / `dashboard` の分岐、`services/` の純粋関数** 等、モックしやすい塊から。 |
+| **Quiz Hub + GA4（Lane A）** | `/test` Hub 化（`testHubFilters`・UI 分割・診断デフォルト・弱点 Hero・URL 双方向同期）、GA4 カスタムイベント 5 種、Welcome/Home 学習ループ、E2E 拡張。[02 §/test](02_System_Spec.md)・[Component_Structure_Guide](Component_Structure_Guide.md) 更新済み（2026-06-06）。 |
 | **Phase C のプロダクト改修（C-1〜C-5）** | **ブランド・SEO・PWA・本格 A11y・Lighthouse CI** は DESIGN・スコープ承認が必要。**6月中にコードへ着手する場合**は別途承認済みとして [01 Phase C](01_Current_Status_and_Roadmap.md) とリンク。**未承認の場合**は、[Phase_C §2–§3](Phase_C_Quality_Preparation.md) に沿った **監査・アーティファクトの蓄積のみ** でよい（UI の無承認変更はしない）。 |
 
 ---
@@ -43,12 +44,14 @@
 
 **実績の記録場所**は [05 の週次表](05_Content_Pipeline.md)。ここでは **[June コンテンツスプリント](June_2026_Content_Sprint.md)** と同じ優先を **一覧**だけ示す。**六月末の手順一覧**は同スプリント **§7**。
 
-| 週 | 目安締め | フォーカス（要約） |
-|----|-----------|-------------------|
-| **2026-W23** | （〜2026-06-10） | **[May §2 ブロック C](May_2026_Late_Content_Sprint.md) の未完を最優先**。**法規 `3.1.1`〜`3.1.3`** 体裁。工学 **`3.2.7`〜`3.2.9`** の相互リンク・体裁。[14 §6](Article_Coverage_Backlog.md) 上位クラスタ 1 つへ **`learning_test_mapping` 追補**。**[06 §1.2](06_Long_Term_Execution.md) B-4** を週単位で分割。 |
-| **2026-W24** | （〜2026-06-17） | [14 §7 Tier A](Article_Coverage_Backlog.md)（例: **総則/目的・航法計器系**）の記事側拡張＋マッピング。**Tier B** から 1 本のマッピング精緻化。**PPL**: CPL の **復習 Callout** を累計目標へ積増し。 |
-| **2026-W25** | （〜2026-06-24） | **マッピング 1 サイクル**: [14 §5](Article_Coverage_Backlog.md) 手順で MCP スナップショットを取り、[14](Article_Coverage_Backlog.md) に日付・数値。**Tier A/B** の残枠、性能と耐空性 ↔ **PPL-1-1-9** の役割整理。**B-4** の続き。 |
-| **2026-W26** | （〜2026-07-01） | **六月末ゲート**: `npm run test:coverage` → **`FlightAcademyTsx/src/` Statements 実効** を [Phase_C §4](Phase_C_Quality_Preparation.md)、[01 更新履歴](01_Current_Status_and_Roadmap.md) に反映。[Phase_C §2–§3](Phase_C_Quality_Preparation.md) に従う **Lighthouse/A11y 監査メモ**。**注意**: `.gitignore` 衝突回避のため **アーティファクト名は `phase` で始めない**（§5）。六月 PPL／CPL 未達時は **[01](01_Current_Status_and_Roadmap.md)** に延期理由 1 行。 |
+| 週 | 目安締め | Lane A（Quiz Hub） | Lane B（コンテンツ・品質） |
+|----|-----------|-------------------|---------------------------|
+| **2026-W23** | （〜2026-06-10） | PR-Q0 GA4、PR-Q1 `testHubFilters` + テスト | 法規 `3.1.1`〜`3.1.3` 体裁。工学 `3.2.7`〜`3.2.9` リンク。B-4 1–2 単位 |
+| **2026-W24** | （〜2026-06-17） | PR-Q2 Quiz Hub UI、PR-Q3 結果/モバイル着手 | Tier A マッピング（空力基礎→`3.2.7`）。PPL Callout 累計 |
+| **2026-W25** | （〜2026-06-24） | PR-Q3 完了、PR-Q4 学習ループ | マッピング 1 サイクル（MCP スナップショット）。B-4 続き |
+| **2026-W26** | （〜2026-07-01） | PR-Q5 E2E/docs、`/test` A11y 監査メモ | 六月末ゲート：`test:coverage` → Phase_C §4、01 更新履歴 |
+
+**2026-06-06 実績**: Lane A **PR-Q0〜Q5 完了**（Quiz Hub 刷新・GA4 5 イベント・`src` 実効 **18.07%**）。Lane B W24 マッピング SQL 適用（verified 未マッピング **47→36**）。
 
 ---
 

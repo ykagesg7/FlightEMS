@@ -176,6 +176,44 @@ winget install --id Anysphere.Cursor -e
 
 ---
 
+## Brevo MCP（Transactional / Senders 調査）
+
+[Brevo 公式 MCP](https://developers.brevo.com/docs/mcp-protocol) は **ホスト型 HTTP サーバー**（`https://mcp.brevo.com`）で、Senders・テンプレート・CRM 等を Cursor から参照できる。**cohort 週次メールの Vercel env とは別トークン**である。
+
+### トークンの種類（混同しない）
+
+| 種類 | 用途 | 設定先 |
+|------|------|--------|
+| **MCP token** | Cursor / エージェント調査 | `.cursor/mcp.json` の `brevo` |
+| **API key**（`xkeysib-…`） | Transactional API（`/v3/smtp/email`） | Vercel `BREVO_API_KEY` |
+| **SMTP key** | Supabase Auth（Magic Link 等） | Supabase Dashboard → Authentication → SMTP |
+
+**Deactivated** のキーはいずれも使えない。Transactional と SMTP は **別キーを新規発行**する。
+
+### 手順
+
+1. Brevo → **SMTP & API → API Keys** で **MCP 用トークン**を発行（[公式手順](https://developers.brevo.com/docs/mcp-protocol)）。
+2. [`.cursor/mcp.json.example`](../.cursor/mcp.json.example) を参考に、ローカル `.cursor/mcp.json` の `brevo` ブロックで `YOUR_BREVO_MCP_TOKEN` を差し替える。
+3. **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** で `brevo` が接続済みか確認する。
+
+```json
+"brevo": {
+  "url": "https://mcp.brevo.com/v1/brevo/mcp",
+  "headers": {
+    "Authorization": "Bearer YOUR_BREVO_MCP_TOKEN"
+  }
+}
+```
+
+モジュールを絞る場合は [公式の個別エンドポイント](https://developers.brevo.com/docs/mcp-protocol)（例: Senders のみ）に URL を変更できる。
+
+### Flight Academy での用途
+
+- cohort メール障害時: **Senders の Verified 状態**、API キー Active/Deactivated の確認補助
+- **Transactional Email logs が 0** のとき: Vercel の `BREVO_API_KEY` が Deactivated キーを指していないか（Dashboard / MCP）
+
+---
+
 ## Google Analytics MCP（任意・実験的）
 
 Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics/google-analytics-mcp)（PyPI: `analytics-mcp`）は、**Google Analytics Admin API** と **Data API** 経由で **読み取り専用**のツール（`run_report`、`run_realtime_report`、`get_account_summaries` 等）をエージェントに公開する。概要は [Google Developers: Try the Google Analytics MCP server](https://developers.google.com/analytics/devguides/MCP?hl=ja) を参照。
@@ -303,7 +341,11 @@ MCP ツール **`get_account_summaries`** が **空配列でない**こと、続
 - `GOOGLE_APPLICATION_CREDENTIALS`: ADC の場合は `gcloud auth application-default login` 完了時に示される **JSON の絶対パス**、サービスアカウントの場合は **発行したキー JSON の絶対パス**。
 - `GOOGLE_PROJECT_ID`: GCP の [プロジェクト ID](https://support.google.com/googleapi/answer/7014113)（公式 README の `env` 名に合わせる）。
 
-**pipx** が PATH に無い場合は `where pipx` で確認する。`cmd` ラップは他のローカル MCP と同様。
+**pipx** が PATH に無い場合は `where pipx` で確認する。
+
+**Windows で `pipx install analytics-mcp` 済みのとき**は、`pipx run analytics-mcp` ではなく **`%USERPROFILE%\.local\bin\analytics-mcp.EXE` を `command` に直接指定**する（`args` は `[]`）。`pipx run` は起動のたびに `.cache` へ一時 venv を作ろうとし、`Permission denied` で MCP が落ちることがある（2026-06 確認）。
+
+初回インストールのみ: `pipx install analytics-mcp`（または `pipx install git+https://github.com/googleanalytics/google-analytics-mcp`）。
 
 ### ルート B を `npx` で足すとき（構成の形だけ・コミット例なし）
 
@@ -329,8 +371,9 @@ GA4 を [BigQuery にリンクする](https://support.google.com/analytics/answe
 
 ### トラブルシューティング
 
+- **`pipx run` / `Permission denied` on `pipx\.cache\...\python.exe`**: 既に `pipx install analytics-mcp` 済みなら `.cursor/mcp.json` の `command` を `C:/Users/…/.local/bin/analytics-mcp.EXE` に変更し、`pipx run` をやめる。ログに `analytics-mcp is already on your PATH` と出る場合も同様。
 - **API not enabled**: Cloud Console で Admin API / Data API がその GCP プロジェクトで有効か確認する。
-- **Permission denied**: GA4 管理画面で当該メール／サービスアカウントにプロパティアクセスがあるか確認する。
+- **Permission denied（GA4）**: GA4 管理画面で当該メール／サービスアカウントにプロパティアクセスがあるか確認する。
 - **`get_account_summaries` が `[]`**: 認証は通っていても GA 側に権限が無い、または **ユーザー OAuth 未完了**のことがある。上記 **OAuth デスクトップ + ADC** または **プロパティへの SA 招待**を再確認する。
 - 詳細は [google-analytics-mcp の Issues](https://github.com/googleanalytics/google-analytics-mcp/issues) を参照。
 

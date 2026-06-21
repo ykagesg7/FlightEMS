@@ -57,6 +57,19 @@
 ### **Supabase Auth（メール・OAuth・CAPTCHA）**
 
 - **確認メール / Magic Link / パスワードリセット**: **Brevo** を Supabase **Authentication → SMTP Settings**（Custom SMTP）に設定。アプリの `.env` には SMTP 秘密情報を置かない。
+- **Brevo SMTP キー（Auth 用）**:
+  - Brevo → **SMTP & API → SMTP** → **Generate a new SMTP key**（`Master Password` 等が **Deactivated** なら必ず新規）
+  - Supabase → **Project Settings → Authentication → SMTP Settings**:
+    - Host: `smtp-relay.brevo.com`
+    - Port: `587`
+    - Username: Brevo SMTP 画面の **Login**（例: `82c24c001@smtp-brevo.com`）
+    - Password: **新しい SMTP key**（API key `xkeysib-` とは別）
+    - Sender email: `1031102104290504kage@gmail.com`（Brevo Senders で **Verified** のアドレス）
+- **Brevo キー 3 種**（混同禁止）: MCP token → [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) / `BREVO_API_KEY`（Transactional）→ Vercel / SMTP key → Supabase Auth のみ
+- **迷惑メール対策（UI + 運用）**:
+  - アプリ: Auth のメール送信完了画面・プロフィール「メール通知」ON 時に、**迷惑メール / Gmail プロモーション** 確認を案内（[`EmailDeliveryHint`](../src/components/auth/EmailDeliveryHint.tsx)）
+  - Supabase **Authentication → Email Templates** で Reset password / Confirm signup を日本語件名（例: `Flight Academy — パスワード再設定`）に変更すると Gmail 振分けが改善しやすい
+  - Brevo Transactional ログで `delivered` なのに未着のときは Gmail 側フィルタを疑う（[`transac_templates_get_transac_email_content`](Cursor_MCP_Setup.md) / Dashboard）
 - **Google OAuth**:
   1. Google Cloud Console で OAuth 2.0 Web クライアントを作成。
   2. Authorized redirect URI: `https://fstynltdfdetpyvbrswr.supabase.co/auth/v1/callback`
@@ -68,6 +81,29 @@
   3. Supabase **Authentication → Bot and Abuse Protection** に Secret を設定。
   4. ローカル検証: `.env.local` に `VITE_TURNSTILE_SITE_KEY=` を追加。
 - **DB マイグレーション（OAuth username）**: [`scripts/database/20260606_handle_new_user_oauth_fallback.sql`](../scripts/database/20260606_handle_new_user_oauth_fallback.sql) — MCP `apply_migration` 名 `handle_new_user_oauth_fallback_20260606`。
+
+### **Cohort 週次 cron・通知（Phase D pilot）**
+
+- **スケジュール**: Vercel Cron `0 0 * * 0`（UTC）= **日曜 09:00 JST** → [`api/cron/cohort-weekly.ts`](../api/cron/cohort-weekly.ts)
+- **処理順**: 前週スコア集計 → TOP3 バッジ → アプリ内通知 enqueue → （`BREVO_API_KEY` あり時）メール配信
+- **Vercel Production 必須 env**:
+  - `CRON_SECRET` — Cron 認証（`Authorization: Bearer`）
+  - `SUPABASE_SERVICE_ROLE_KEY` — RPC 実行
+  - `VITE_SUPABASE_URL` または `SUPABASE_URL`
+  - `BREVO_API_KEY` + `BREVO_SENDER_EMAIL`（メール通知を有効化する場合）
+  - `BREVO_API_KEY` は Brevo **API Keys** で **Active** な `xkeysib-…`（**Deactivated** の `supabaseEmail` 等は不可）。Auth SMTP キーと別物
+  - `BREVO_SENDER_EMAIL` = `1031102104290504kage@gmail.com`（Verified sender。API キー文字列を入れない）
+  - `VITE_APP_URL`（メール内リンク。未設定時は `https://flight-lms.vercel.app`）
+- **手動確認**（本番デプロイ後）:
+  ```bash
+  curl -sS -H "Authorization: Bearer $CRON_SECRET" "https://flight-lms.vercel.app/api/cron/cohort-weekly"
+  ```
+  レスポンス JSON の `missionNotifications` / `email.weeklyMission` を確認。`FUNCTION_INVOCATION_TIMEOUT` が出る場合は [`vercel.json`](../vercel.json) の `api/cron/cohort-weekly.ts` `maxDuration`（60s）とメール並列数（`api/_lib/notificationEmail.ts`）を確認し **再デプロイ**する。
+- **Supabase Auth SMTP 設定後の確認**: Supabase Dashboard → **Authentication → Email Templates** からテスト送信、または本番 `/auth` で **パスワードリセット**を自分のアドレスに送り Gmail 受信を確認（cohort メールとは別経路）。
+- **アプリ内通知**: Dashboard の「お知らせ」— 既読で非表示（`in_app_notifications.read_at`）
+- **メール opt-in**: プロフィール → 通知・公開 → 「メール通知」ON かつ「ミッション更新」ON
+- **Web Push**: 購読保存のみ。`VAPID_*` 未設定時は [`api/notifications/push.ts`](../api/notifications/push.ts) が 503 でスキップ
+- **DB 正本**: [`scripts/database/20260620_cohort_weekly_missions.sql`](../scripts/database/20260620_cohort_weekly_missions.sql)
 
 ### **GA4（Google Analytics 4）**
 

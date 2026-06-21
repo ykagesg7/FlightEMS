@@ -16,6 +16,29 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+self.addEventListener('push', (event) => {
+  if (!event.data) return;
+  let payload = { title: 'Flight Academy', body: '', url: '/' };
+  try {
+    payload = { ...payload, ...JSON.parse(event.data.text()) };
+  } catch {
+    payload.body = event.data.text();
+  }
+  event.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      data: { url: payload.url },
+      icon: '/F2favicon.png',
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/';
+  event.waitUntil(clients.openWindow(url));
+});
+
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);

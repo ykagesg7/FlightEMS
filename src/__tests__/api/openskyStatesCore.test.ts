@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { proxyOpenSkyStates } from '../../../api/lib/openskyStatesCore';
+import { proxyOpenSkyStates } from '../../../api/_lib/openskyStatesCore';
 
 describe('proxyOpenSkyStates', () => {
   it('returns 400 when any bbox query is missing', async () => {

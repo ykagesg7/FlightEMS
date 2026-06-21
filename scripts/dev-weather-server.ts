@@ -2,7 +2,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
-import { dispatchSwimNotamSearch } from '../api/lib/swimNotamHttpShared';
+import { dispatchSwimNotamSearch } from '../api/_lib/swimNotamHttpShared';
 import { proxyOpenSkyStates } from '../lib/openskyStatesCore';
 
 // .env.local を読み、あれば .env.server.local で上書き（SWIM は多くが .env.local のみのため）

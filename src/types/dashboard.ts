@@ -19,6 +19,7 @@ export interface LearningXpBenchmark {
 
 /** RPC get_public_leaderboard の1行（任意参加のみ） */
 export interface PublicLeaderboardEntry {
+  userId: string;
   displayName: string;
   xpPoints: number;
   rankTier: UserRank | null;

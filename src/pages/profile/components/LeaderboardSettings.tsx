@@ -3,6 +3,7 @@ import { Button } from '../../../components/ui/Button';
 import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
 import type { Database } from '../../../types/database.types';
+import { ProfileUserBadgesSection } from './ProfileUserBadgesSection';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -62,6 +63,7 @@ export const LeaderboardSettings: React.FC<Props> = ({
   };
 
   return (
+    <>
     <Card variant="brand" padding="lg">
       <CardHeader>
         <Typography variant="h3" color="brand" className="text-xl font-bold">
@@ -136,5 +138,7 @@ export const LeaderboardSettings: React.FC<Props> = ({
         </form>
       </CardContent>
     </Card>
+    <ProfileUserBadgesSection />
+    </>
   );
 };

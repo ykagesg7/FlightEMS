@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { pairToLngLat, extractGeometryFromDigitalNotamXml } from '../../../api/lib/swimNotamGeometry';
+import { pairToLngLat, extractGeometryFromDigitalNotamXml } from '../../../api/_lib/swimNotamGeometry';
 
 describe('swimNotamGeometry.pairToLngLat', () => {
   it('interprets AIXM-style lat lon for Japan when only lat-lon order fits', () => {

@@ -7,4 +7,4 @@ export {
   proxyWeatherForecast,
   type WeatherForecastProxyResult,
   type ProxyWeatherForecastOptions,
-} from '../api/lib/weatherApiCore';
+} from '../api/_lib/weatherApiCore';

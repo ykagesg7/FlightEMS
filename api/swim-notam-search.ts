@@ -6,7 +6,7 @@
  * 任意: fir, nof
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { dispatchSwimNotamSearch } from './lib/swimNotamHttpShared';
+import { dispatchSwimNotamSearch } from './_lib/swimNotamHttpShared';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');

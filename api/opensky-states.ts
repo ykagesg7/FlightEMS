@@ -9,7 +9,7 @@
  * 共有ロジックは `api/lib/` 配下（プロジェクト直下の lib/ は本番バンドルに含まれないことがある）。
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { proxyOpenSkyStates } from './lib/openskyStatesCore';
+import { proxyOpenSkyStates } from './_lib/openskyStatesCore';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');

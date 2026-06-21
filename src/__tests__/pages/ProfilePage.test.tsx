@@ -10,8 +10,11 @@ vi.mock('@/utils/supabase', () => ({
   default: {
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+      eq: vi.fn(() => ({
+        maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+        then: (resolve: (value: { data: unknown[]; error: null }) => void) =>
+          Promise.resolve({ data: [], error: null }).then(resolve),
+      })),
     })),
   },
 }));

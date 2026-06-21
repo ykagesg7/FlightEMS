@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { proxyAviationWeather } from '../../../api/lib/aviationWeatherApiCore';
+import { proxyAviationWeather } from '../../../api/_lib/aviationWeatherApiCore';
 
 describe('proxyAviationWeather', () => {
   it('returns 400 when type or icao is missing', async () => {

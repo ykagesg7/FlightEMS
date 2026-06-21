@@ -7,9 +7,13 @@ import { useNotificationSettings } from '../hooks/useNotificationSettings';
 
 interface NotificationPreferencesProps {
   onError?: (error: string) => void;
+  onSuccess?: (message: string) => void;
 }
 
-export const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ onError }) => {
+export const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({
+  onError,
+  onSuccess,
+}) => {
   const user = useAuthStore((state) => state.user);
   const {
     settings,
@@ -24,7 +28,9 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
     const { error } = await saveSettings();
     if (error) {
       onError?.(error.message || '保存に失敗しました');
+      return;
     }
+    onSuccess?.('通知設定を保存しました');
   };
 
   const handleToggle = (key: 'learning_reminder_enabled' | 'new_content_enabled' | 'announcement_enabled' | 'mission_update_enabled' | 'email_notifications_enabled') => {
@@ -95,6 +101,11 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
               enabled={settings.email_notifications_enabled ?? false}
               onChange={() => handleToggle('email_notifications_enabled')}
             />
+            {(settings.email_notifications_enabled ?? false) && (
+              <Typography variant="caption" color="muted" className="block -mt-2 pl-1">
+                週次ミッションなどのメールは、迷惑メールフォルダに振り分けられることがあります。届かない場合はそちらもご確認ください。
+              </Typography>
+            )}
           </div>
 
           <div>

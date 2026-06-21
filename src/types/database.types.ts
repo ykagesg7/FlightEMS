@@ -993,6 +993,12 @@ export type Database = {
           user_id: string | null
           weak_subjects: string[] | null
           weekly_study_goal_minutes: number | null
+          license_target: string
+          exam_date_status: string | null
+          cohort_key: string | null
+          cohort_phase: string
+          written_exam_completed_at: string | null
+          cohort_registered_at: string | null
         }
         Insert: {
           created_at?: string | null
@@ -1011,6 +1017,12 @@ export type Database = {
           user_id?: string | null
           weak_subjects?: string[] | null
           weekly_study_goal_minutes?: number | null
+          license_target?: string
+          exam_date_status?: string | null
+          cohort_key?: string | null
+          cohort_phase?: string
+          written_exam_completed_at?: string | null
+          cohort_registered_at?: string | null
         }
         Update: {
           created_at?: string | null
@@ -1029,6 +1041,12 @@ export type Database = {
           user_id?: string | null
           weak_subjects?: string[] | null
           weekly_study_goal_minutes?: number | null
+          license_target?: string
+          exam_date_status?: string | null
+          cohort_key?: string | null
+          cohort_phase?: string
+          written_exam_completed_at?: string | null
+          cohort_registered_at?: string | null
         }
         Relationships: [
           {
@@ -1445,11 +1463,52 @@ export type Database = {
       get_public_leaderboard: {
         Args: { p_limit?: number }
         Returns: {
+          user_id: string
           display_name: string
           leaderboard_position: number
           rank: Database["public"]["Enums"]["user_rank_type"]
           xp_points: number
         }[]
+      }
+      get_user_cohort_profile: {
+        Args: Record<string, never>
+        Returns: Json
+      }
+      get_cohort_anonymous_stats: {
+        Args: { p_cohort_key?: string | null }
+        Returns: Json
+      }
+      upsert_user_cohort: {
+        Args: {
+          p_license?: string
+          p_exam_ym?: string | null
+          p_undecided?: boolean
+        }
+        Returns: Json
+      }
+      mark_written_exam_complete: {
+        Args: Record<string, never>
+        Returns: Json
+      }
+      get_public_user_badges: {
+        Args: { p_user_id: string }
+        Returns: Json[]
+      }
+      compute_cohort_weekly_scores: {
+        Args: { p_iso_week: string }
+        Returns: number
+      }
+      award_cohort_weekly_top3: {
+        Args: { p_iso_week: string }
+        Returns: number
+      }
+      enqueue_cohort_notifications: {
+        Args: {
+          p_template_key: string
+          p_iso_week?: string | null
+          p_dedupe_suffix?: string | null
+        }
+        Returns: number
       }
       get_unified_statistics: {
         Args: never

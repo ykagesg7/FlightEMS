@@ -93,7 +93,7 @@ export function devWeatherApiPlugin(): Plugin {
 
           if (isSwim) {
             const env = loadEnv(server.config.mode, process.cwd(), '');
-            const rawSwim = await server.ssrLoadModule('/api/lib/swimNotamHttpShared.ts');
+            const rawSwim = await server.ssrLoadModule('/api/_lib/swimNotamHttpShared.ts');
             const mod = unwrapSsrModuleExports<{
               mergeSwimEnvFromLoaded: (e: Record<string, string>) => void;
               dispatchSwimNotamSearch: (
@@ -112,7 +112,7 @@ export function devWeatherApiPlugin(): Plugin {
           }
 
           if (isAviation) {
-            const rawAviation = await server.ssrLoadModule('/api/lib/aviationWeatherApiCore.ts');
+            const rawAviation = await server.ssrLoadModule('/api/_lib/aviationWeatherApiCore.ts');
             const mod = unwrapSsrModuleExports<{
               proxyAviationWeather: (
                 q: Record<string, string | string[] | undefined>,
@@ -127,7 +127,7 @@ export function devWeatherApiPlugin(): Plugin {
           const env = loadEnv(server.config.mode, process.cwd(), '');
           const apiKey = env.WEATHER_API_KEY || process.env.WEATHER_API_KEY || '';
 
-          const rawWeather = await server.ssrLoadModule('/api/lib/weatherApiCore.ts');
+          const rawWeather = await server.ssrLoadModule('/api/_lib/weatherApiCore.ts');
           const mod = unwrapSsrModuleExports<{
             proxyWeatherForecast: (
               q: Record<string, string | string[] | undefined>,

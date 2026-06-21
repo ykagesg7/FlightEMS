@@ -212,7 +212,7 @@
 | --- | ----------------------- | ---------------------------------------- | --- |
 | D-1 | **CPL Phase 1 完了 + 拡張** | 19 本完走後は Phase 2 または科目別拡張に着手             | 最高  |
 | D-2 | テストカバレッジ 50% 達成         | コンポーネントテスト、統合テストの追加                      | 高   |
-| D-3 | ランキング機能実装               | XP・正答率ベースのユーザーランキング                      | 中   |
+| D-3 | **cohort 週次バッジ**（非公開榜） | 試験月 cohort・週次ミッション・TOP3 バッジ・通知（自衛隊 pilot） | 高   |
 | D-4 | PPL 記事 50% 目標（二次）       | 75/150。CPL 進捗とトレードオフになる場合は 03 を次回レビューで更新 | 高   |
 | D-5 | ユーザーフィードバック収集           | フィードバックフォーム、使用状況分析                       | 中   |
 | D-6 | LMS 目標設定機能              | GoalSetting.tsx の実装                      | 低   |
@@ -223,7 +223,7 @@
 - **CPL 記事: Phase 1（19/19）完了**
 - PPL 記事: **50%（75/150）** 到達を目標（二次）
 - テストカバレッジ **50%**（北極星。中間で **40%** 等に言い換える場合は本書・[00](00_Flight_Academy_Strategy.md) で整合）
-- ランキング機能が稼働
+- cohort 週次ミッション・TOP3 バッジが pilot cohort で稼働
 - 月間アクティブユーザー数を計測可能な状態
 
 ---
@@ -297,6 +297,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-06 | **v4.0.22 / 6月期ゲート・Quiz Hub**: Lane A **PR-Q0〜Q5** — `/test` Quiz Hub（`testHubFilters`・UI 分割・GA4 5 イベント・学習ループ）。`npm run test:coverage` → **`src` Statements 18.07%**（5302/29341）。[Phase_C §4](Phase_C_Quality_Preparation.md)、[02 §/test](02_System_Spec.md)。Lane B: W24 マッピング（空力基礎→`3.2.7`、未マッピング **47→36**）、PPL Callout、`testHubFilters.test.ts`（14）。A11y: [`accessibility_audit_memo_2026-06-06.md`](../artifacts/accessibility_audit_memo_2026-06-06.md)。 |
 | 2026-05-10 | **v4.0.21 / プロダクト指標と docs 連携**: [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) を参照する **「プロダクト指標（ALPM）とエンジニアリング KPI」** 節を追加。推奨読み順に同文書を挿入。[00](00_Flight_Academy_Strategy.md)・[docs/README](README.md) v4.49 と整合。 |
 | 2026-05-09 | **v4.0.20 / May 後半 W21→W22 ドキュメント整備**: **W21 完了** — [`3.2.8`](../src/content/lessons/3.2.8_PowerAndPerformance.mdx)、[`PPL-1-1-9`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx)。[May](May_2026_Late_Content_Sprint.md) §6・§2、[05](05_Content_Pipeline.md) W21/W22、[May 後半アウトライン](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[content_outlines/README.md](content_outlines/README.md) を整合。**W22 実行素案** [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md) 追加、**W21** `content_outlines/W21_2026/` 撤去。**[docs/README](README.md)** 索引 v4.48。 |
 | 2026-05-08 | **v4.0.19 / May 後半 W20→W21 ドキュメント整備**: W20 で実装済みの **コンテンツ**（[`3.2.7`](../src/content/lessons/3.2.7_LiftAndDrag.mdx)、[`PPL-1-1-3`/`4`](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx)）と [May](May_2026_Late_Content_Sprint.md) §6 完了ログ、[05](05_Content_Pipeline.md) W20/W21 行、[May 後半アウトライン](content_outlines/May_2026_Late_PPL_CPL_Outlines.md) を整合。**W21 実行用ワーク**は `content_outlines/W21_2026/`（**2026-05-09 実装後に削除**）。W20 用 Gemini 素案ファイル削除。 |

@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { mapAuthErrorToMessage } from '../../auth/authErrorMessages';
 import { isPasswordRecoveryActive } from '../../auth/passwordRecovery';
 import { getPostAuthPath } from '../../auth/profileSetup';
+import { EmailDeliveryHint } from '../../components/auth/EmailDeliveryHint';
 import { TurnstileWidget } from '../../components/auth/TurnstileWidget';
 import { Button } from '../../components/ui';
 import { useAuthStore } from '../../stores/authStore';
@@ -24,7 +25,7 @@ interface LocationState {
   timeout?: boolean;
 }
 
-type PendingEmailKind = 'signup' | 'magic-link';
+type PendingEmailKind = 'signup' | 'magic-link' | 'password-reset';
 
 const AuthPage: React.FC = () => {
   const user = useAuthStore((state) => state.user);
@@ -214,7 +215,8 @@ const AuthPage: React.FC = () => {
       if (resetError) {
         setError(mapAuthErrorToMessage(resetError, 'パスワードリセットに失敗しました。メールアドレスを確認してください。'));
       } else {
-        setSuccess('パスワードリセット手順をメールで送信しました。メールをご確認ください。');
+        setPendingEmailKind('password-reset');
+        setSuccess('パスワードリセット手順をメールで送信しました。');
       }
     } catch {
       setError('パスワードリセット処理中にエラーが発生しました。');
@@ -231,8 +233,15 @@ const AuthPage: React.FC = () => {
 
   if (pendingEmailKind) {
     const isMagicLink = pendingEmailKind === 'magic-link';
+    const isPasswordReset = pendingEmailKind === 'password-reset';
+    const title = isPasswordReset
+      ? 'パスワードリセット'
+      : isMagicLink
+        ? 'メールを確認'
+        : 'メール検証';
+
     return (
-      <AuthLayout title={isMagicLink ? 'メールを確認' : 'メール検証'}>
+      <AuthLayout title={title}>
         {error && <AuthAlert variant="error">{error}</AuthAlert>}
         {success && <AuthAlert variant="success">{success}</AuthAlert>}
 
@@ -241,13 +250,13 @@ const AuthPage: React.FC = () => {
             <strong>メールアドレス:</strong> {email}
           </p>
           <p className="mb-3 text-[var(--text-muted)]">
-            {isMagicLink
-              ? '上記のメールアドレスにログインリンクを送信しました。メール内のリンクをクリックしてログインを完了してください。'
-              : '上記のメールアドレスに確認リンクを送信しました。メールを確認して認証を完了してください。'}
+            {isPasswordReset
+              ? '上記のメールアドレスにパスワード再設定リンクを送信しました。メール内のリンクから新しいパスワードを設定してください。'
+              : isMagicLink
+                ? '上記のメールアドレスにログインリンクを送信しました。メール内のリンクをクリックしてログインを完了してください。'
+                : '上記のメールアドレスに確認リンクを送信しました。メールを確認して認証を完了してください。'}
           </p>
-          <p className="text-sm text-[var(--text-muted)]">
-            メールが届かない場合、迷惑メールフォルダも確認してください。
-          </p>
+          <EmailDeliveryHint showSearchHint={isPasswordReset} />
         </div>
 
         {!isMagicLink && isDevelopment && (

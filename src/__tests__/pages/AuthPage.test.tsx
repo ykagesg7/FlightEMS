@@ -140,5 +140,7 @@ describe('AuthPage', () => {
     await waitFor(() => {
       expect(resetPassword).toHaveBeenCalledWith('reset@example.com', undefined);
     });
+    expect(await screen.findByText(/迷惑メールフォルダ/)).toBeInTheDocument();
+    expect(screen.getByText(/reset@example.com/)).toBeInTheDocument();
   });
 });

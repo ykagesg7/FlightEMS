@@ -7,6 +7,7 @@ import * as profileSetup from '@/auth/profileSetup';
 import WelcomeSetupPage from '@/pages/welcome/WelcomeSetupPage';
 import type { AuthState } from '@/stores/authStore';
 import * as authStore from '@/stores/authStore';
+import * as cohortApi from '@/utils/cohortApi';
 
 vi.mock('@/stores/authStore');
 vi.mock('@/auth/profileSetup', async (importOriginal) => {
@@ -16,11 +17,21 @@ vi.mock('@/auth/profileSetup', async (importOriginal) => {
     completeWelcomeSetup: vi.fn().mockResolvedValue({ error: null }),
   };
 });
+vi.mock('@/utils/cohortApi', () => ({
+  upsertUserCohort: vi.fn().mockResolvedValue({
+    data: { cohort_key: 'CPL-2026-12' },
+    error: null,
+  }),
+}));
+vi.mock('@/utils/pushNotifications', () => ({
+  registerPushSubscriptionIfAllowed: vi.fn().mockResolvedValue(undefined),
+}));
 vi.mock('@/pages/profile/hooks/useNotificationSettings', () => ({
   useNotificationSettings: () => ({
     settings: {
       learning_reminder_enabled: true,
       new_content_enabled: true,
+      mission_update_enabled: true,
       email_notifications_enabled: false,
       notification_time: '09:00:00',
     },
@@ -103,31 +114,94 @@ describe('WelcomeSetupPage', () => {
     vi.clearAllMocks();
   });
 
-  it('ランキング参加はデフォルトで ON', () => {
+  it('ランキング参加はデフォルトで ON', async () => {
     vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
       selector(createAuthState()),
     );
+    vi.mocked(cohortApi.upsertUserCohort).mockResolvedValue({
+      data: { cohort_key: 'CPL-UNDECIDED' },
+      error: null,
+    });
 
     renderWelcomeSetupPage();
 
     fireEvent.click(screen.getByRole('button', { name: 'スキップ' }));
-    expect(screen.getByRole('checkbox', { name: 'ランキングに参加する' })).toBeChecked();
+    fireEvent.click(screen.getByLabelText('受験日未定'));
+    fireEvent.click(screen.getByRole('button', { name: '次へ' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('checkbox', { name: 'ランキング・バッジを公開する' })).toBeChecked();
+    });
+  });
+
+  it('デフォルトの試験年月で cohort を保存できる', async () => {
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState()),
+    );
+    vi.mocked(cohortApi.upsertUserCohort).mockResolvedValue({
+      data: { cohort_key: 'CPL-2026-06' },
+      error: null,
+    });
+
+    renderWelcomeSetupPage();
+    fireEvent.click(screen.getByRole('button', { name: 'スキップ' }));
+    fireEvent.click(screen.getByRole('button', { name: '次へ' }));
+
+    await waitFor(() => {
+      expect(cohortApi.upsertUserCohort).toHaveBeenCalledWith(
+        expect.objectContaining({
+          license: 'CPL',
+          undecided: false,
+          examYm: expect.stringMatching(/^\d{4}-\d{2}$/),
+        }),
+      );
+    });
+  });
+
+  it('受験日未定で cohort を保存できる', async () => {
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState()),
+    );
+    vi.mocked(cohortApi.upsertUserCohort).mockResolvedValue({
+      data: { cohort_key: 'CPL-UNDECIDED' },
+      error: null,
+    });
+
+    renderWelcomeSetupPage();
+    fireEvent.click(screen.getByRole('button', { name: 'スキップ' }));
+    fireEvent.click(screen.getByLabelText('受験日未定'));
+    fireEvent.click(screen.getByRole('button', { name: '次へ' }));
+
+    await waitFor(() => {
+      expect(cohortApi.upsertUserCohort).toHaveBeenCalledWith({
+        license: 'CPL',
+        examYm: null,
+        undecided: true,
+      });
+    });
   });
 
   it('あとで設定するで completeWelcomeSetup を呼ぶ', async () => {
     vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
       selector(createAuthState()),
     );
+    vi.mocked(cohortApi.upsertUserCohort).mockResolvedValue({
+      data: { cohort_key: 'CPL-UNDECIDED' },
+      error: null,
+    });
 
     renderWelcomeSetupPage();
 
     fireEvent.click(screen.getByRole('button', { name: 'スキップ' }));
+    fireEvent.click(screen.getByLabelText('受験日未定'));
+    fireEvent.click(screen.getByRole('button', { name: '次へ' }));
 
     await waitFor(() => {
-      expect(profileSetup.completeWelcomeSetup).not.toHaveBeenCalled();
+      expect(screen.getByRole('checkbox', { name: 'ランキング・バッジを公開する' })).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText('あとで設定する（ホームへ）'));
+    fireEvent.click(screen.getByRole('button', { name: 'スキップ' }));
+    fireEvent.click(screen.getByRole('button', { name: 'スキップ' }));
 
     await waitFor(() => {
       expect(profileSetup.completeWelcomeSetup).toHaveBeenCalledWith('user-1');

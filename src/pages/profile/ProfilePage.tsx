@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
+  buildProfileSearchParams,
   computeProfileCompletion,
-  profileSectionToTabParam,
-  resolveProfileSection,
-  type ProfileSectionId,
+  resolveProfileRoute,
+  type ProfileHubSection,
+  type ProfilePanelId,
+  type ResolvedProfileRoute,
 } from '../../auth/profileCompletion';
 import { Typography } from '../../components/ui/Typography';
 import { useAuthStore } from '../../stores/authStore';
@@ -12,6 +14,7 @@ import supabase from '../../utils/supabase';
 import { LeaderboardSettings } from './components/LeaderboardSettings';
 import { NotificationPreferences } from './components/NotificationPreferences';
 import { ProfileAccountSection } from './components/ProfileAccountSection';
+import { ProfileCohortSection } from './components/ProfileCohortSection';
 import { ProfileCompletionCard } from './components/ProfileCompletionCard';
 import { ProfileIdentityHeader } from './components/ProfileIdentityHeader';
 import { ProfilePublicSection } from './components/ProfilePublicSection';
@@ -34,16 +37,15 @@ const ProfilePage: React.FC = () => {
   const updateProfile = useAuthStore((state) => state.updateProfile);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeSection, setActiveSection] = useState<ProfileSectionId>(() =>
-    resolveProfileSection(searchParams.get('tab')),
+  const [route, setRoute] = useState<ResolvedProfileRoute>(() =>
+    resolveProfileRoute(searchParams.get('tab'), searchParams.get('panel')),
   );
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [hasNotificationSettings, setHasNotificationSettings] = useState(false);
 
   useEffect(() => {
-    const raw = searchParams.get('tab');
-    setActiveSection(resolveProfileSection(raw));
+    setRoute(resolveProfileRoute(searchParams.get('tab'), searchParams.get('panel')));
   }, [searchParams]);
 
   useEffect(() => {
@@ -67,10 +69,9 @@ const ProfilePage: React.FC = () => {
     [profile, hasNotificationSettings],
   );
 
-  const selectSection = useCallback(
-    (section: ProfileSectionId) => {
-      setActiveSection(section);
-      setSearchParams({ tab: profileSectionToTabParam(section) }, { replace: true });
+  const navigateRoute = useCallback(
+    (section: ProfileHubSection, panel?: ProfilePanelId) => {
+      setSearchParams(buildProfileSearchParams(section, panel), { replace: true });
     },
     [setSearchParams],
   );
@@ -140,10 +141,15 @@ const ProfilePage: React.FC = () => {
 
         <ProfileIdentityHeader profile={profile} email={user?.email} />
         <ProfileCompletionCard completion={completion} />
-        <ProfileSectionNav activeSection={activeSection} onSelect={selectSection} />
+        <ProfileSectionNav
+          activeSection={route.section}
+          activePanel={route.panel}
+          onSelectSection={navigateRoute}
+          onSelectPanel={(panel) => navigateRoute(route.section, panel)}
+        />
 
         <div>
-          {activeSection === 'public' && (
+          {route.section === 'public' && route.panel === 'profile' && (
             <ProfilePublicSection
               profile={profile}
               userEmail={user?.email}
@@ -153,11 +159,7 @@ const ProfilePage: React.FC = () => {
             />
           )}
 
-          {activeSection === 'account' && (
-            <ProfileAccountSection email={user?.email} />
-          )}
-
-          {activeSection === 'social' && (
+          {route.section === 'public' && route.panel === 'social' && (
             <SocialLinksForm
               currentSocialLinks={profile?.social_links}
               onSave={handleSocialLinksSave}
@@ -165,11 +167,15 @@ const ProfilePage: React.FC = () => {
             />
           )}
 
-          {activeSection === 'notifications' && (
-            <NotificationPreferences onError={showError} />
+          {route.section === 'cohort' && (
+            <ProfileCohortSection onError={showError} onSuccess={showSuccess} />
           )}
 
-          {activeSection === 'leaderboard' && profile && (
+          {route.section === 'preferences' && route.panel === 'notifications' && (
+            <NotificationPreferences onError={showError} onSuccess={showSuccess} />
+          )}
+
+          {route.section === 'preferences' && route.panel === 'leaderboard' && profile && (
             <LeaderboardSettings
               profile={profile}
               updateProfile={updateProfile}
@@ -178,13 +184,17 @@ const ProfilePage: React.FC = () => {
             />
           )}
 
-          {activeSection === 'leaderboard' && !profile && (
+          {route.section === 'preferences' && route.panel === 'leaderboard' && !profile && (
             <Typography variant="body" color="muted">
               プロフィール情報を読み込み中です。
             </Typography>
           )}
 
-          {activeSection === 'security' && (
+          {route.section === 'account' && route.panel === 'account' && (
+            <ProfileAccountSection email={user?.email} />
+          )}
+
+          {route.section === 'account' && route.panel === 'security' && (
             <ProfileSecuritySection
               userEmail={user?.email}
               profile={profile}

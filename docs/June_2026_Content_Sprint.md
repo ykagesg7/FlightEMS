@@ -61,9 +61,9 @@ ISO 週と目安締めは [June 実装計画 §2](June_2026_Implementation_Plan.
 | ブロック／週 | 状態 | MDX／DB／メモ |
 |---------------|------|----------------|
 | **D / W23** | **済（2026-05-12）** | 法規 `3.1.1`〜`3.1.3`：シリーズ **Callout**。`3.1.1` tags 調整。**`3.2.9`** ← **`3.2.7` / `3.2.8`** リンク。**DB**: [`20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql`](../scripts/database/20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql) 本番適用（`総則/目的` 14 問）。B-4：`pressureAltitudeIsa` テスト。 |
-| **E / W24** | **未** | （同上） |
-| **F / W25** | **未** | **マッピング スナップショット実施時**は日付・主要数値を [14](Article_Coverage_Backlog.md) と整合させること。 |
-| **G / W26** | **未** | **六月末ゲート**（§7）完了後、Phase_C §4 と [01](01_Current_Status_and_Roadmap.md) を更新したことを記載。 |
+| **E / W24** | **済（2026-06-06）** | **Tier A**: 空力基礎 3 クラスタ → `3.2.7_LiftAndDrag`（[`20260606_learning_test_mapping_aero_lift_drag_clusters.sql`](../scripts/database/20260606_learning_test_mapping_aero_lift_drag_clusters.sql) MCP 適用）。**PPL Callout**: `3.2.7` に PPL-1-1-3/4 リンク。 |
+| **F / W25** | **済（2026-06-06）** | MCP スナップショット: verified 未マッピング **47→36**、`learning_test_mapping` **73→74 行** / **64 記事**（[14](Article_Coverage_Backlog.md) ヘッダ更新）。 |
+| **G / W26** | **済（2026-06-06）** | `test:coverage` → **`src` Statements 18.07%**（Phase_C §4）。A11y メモ: [`artifacts/accessibility_audit_memo_2026-06-06.md`](../artifacts/accessibility_audit_memo_2026-06-06.md)。Lane A Quiz Hub 完了。 |
 
 ---
 

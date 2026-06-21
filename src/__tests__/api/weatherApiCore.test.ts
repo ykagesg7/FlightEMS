@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { createDevMockFilteredWeather } from '../../../api/lib/weatherApiCore';
+import { createDevMockFilteredWeather } from '../../../api/_lib/weatherApiCore';
 
 describe('createDevMockFilteredWeather', () => {
   it('returns WeatherAPI-shaped mock with JP location metadata', () => {

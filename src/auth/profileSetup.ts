@@ -6,6 +6,10 @@ export function needsWelcomeSetup(profile: Profile | null): boolean {
   return profile != null && profile.onboarding_completed_at == null;
 }
 
+export function isCohortOnlyWelcomeMode(searchParams: URLSearchParams): boolean {
+  return searchParams.get('mode') === 'cohort';
+}
+
 export function getWelcomeRedirectTarget(searchParams: URLSearchParams): string {
   const next = searchParams.get('next');
   if (next && next.startsWith('/') && !next.startsWith('//')) {

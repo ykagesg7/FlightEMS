@@ -61,9 +61,9 @@ export const AvatarMenu: React.FC = () => {
           </div>
           <div className="h-px bg-[color:var(--hud-dim)] my-1" />
           <button className={itemClass} onClick={() => { navigate('/profile'); setOpen(false); }}>アカウントセンター</button>
-          <button className={itemClass} onClick={() => { navigate('/profile?tab=profile'); setOpen(false); }}>プロフィール</button>
-          <button className={itemClass} onClick={() => { navigate('/profile?tab=security'); setOpen(false); }}>セキュリティ</button>
-          <button className={itemClass} onClick={() => { navigate('/profile?tab=leaderboard'); setOpen(false); }}>ランキング参加設定</button>
+          <button className={itemClass} onClick={() => { navigate('/profile?tab=public'); setOpen(false); }}>プロフィール</button>
+          <button className={itemClass} onClick={() => { navigate('/profile?tab=account&panel=security'); setOpen(false); }}>セキュリティ</button>
+          <button className={itemClass} onClick={() => { navigate('/profile?tab=preferences&panel=leaderboard'); setOpen(false); }}>ランキング参加設定</button>
           <div className="h-px bg-[color:var(--hud-dim)] my-1" />
           {session ? (
             <button className={itemClass} onClick={async () => { await signOut(); setOpen(false); }}>ログアウト</button>

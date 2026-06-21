@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { summarizeDigitalNotamXml } from '../../../api/lib/swimNotamCore';
+import { summarizeDigitalNotamXml } from '../../../api/_lib/swimNotamCore';
 
 const RUNWAY_CLOSURE_XML = `
 <AIXMBasicMessage xmlns="http://www.aixm.aero/schema/5.1">

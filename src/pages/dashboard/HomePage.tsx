@@ -9,8 +9,12 @@ import { AnnouncementCard } from './components/AnnouncementCard';
 import { DailyTasks } from './components/DailyTasks';
 import { LearningHeatmap } from './components/LearningHeatmap';
 import { LearningBenchmarkCard } from './components/LearningBenchmarkCard';
+import { CohortCard } from './components/CohortCard';
 import { PublicLeaderboardSection } from './components/PublicLeaderboardSection';
 import { ProfileCompletionNudge } from '../../components/profile/ProfileCompletionNudge';
+import { CohortRegistrationCta } from '../../components/learning/CohortRegistrationCta';
+import { InAppNotificationBell } from '../../components/learning/InAppNotificationBell';
+import { useCohortProfile } from '../../hooks/useCohortProfile';
 import { SubjectRadarChart } from './components/SubjectRadarChart';
 
 const useReveal = (deps?: React.DependencyList) => {
@@ -96,6 +100,7 @@ const DashboardSkeleton: React.FC = () => {
  */
 const DashboardContent: React.FC = () => {
   const { user } = useAuthStore();
+  const { isRegistered } = useCohortProfile();
   const [metrics, setMetrics] = React.useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -246,6 +251,15 @@ const DashboardContent: React.FC = () => {
           dismissStorageKey="profile_completion_nudge_home_v1"
           className="mb-8 max-w-3xl"
         />
+
+        <div className="mb-8 max-w-3xl space-y-4">
+          <InAppNotificationBell />
+          <CohortRegistrationCta
+            registered={isRegistered}
+            dismissStorageKey="cohort_cta_dismiss_dashboard_v1"
+          />
+          <CohortCard />
+        </div>
 
         {metrics.xpBenchmark ? (
           <div className="mb-8 max-w-3xl">

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LEARNING_ARTICLE_CTA_LABEL } from '../../../../constants/learningArticleNav';
+import { trackReviewArticleClick } from '../../../../lib/quizAnalytics';
 import { useAuth } from '../../../../hooks/useAuth';
 import supabase from '../../../../utils/supabase';
 
@@ -302,6 +303,7 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
           <Link
             key={content.id}
             to={`/articles/${content.id}`}
+            onClick={() => trackReviewArticleClick(content.id, 'results')}
             aria-label={`${LEARNING_ARTICLE_CTA_LABEL}: ${content.title}`}
             className={linkCardClass}
           >
