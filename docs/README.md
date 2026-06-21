@@ -40,6 +40,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-06-21（Profile Hub + MFA 本番）**: Profile Hub 4 セクション・TOTP ログインゲート・リカバリーコード・アカウント削除を **本番デプロイ済**（`54b2a27`〜`99401d3`）。Vercel: API 13 本→`[action].ts` 統合で 12 本上限内。CI verify: 通知 auto-save 後の未使用 prop 修正。詳細: [02](02_System_Spec.md) Profile Hub 節・[04](04_Operations_Guide.md) MFA 運用・[03](03_Development_Guide.md) Serverless 上限。
 - **2026-06-21（Phase D cohort pilot・Supabase 運用）**: D-3 **pilot 本番** — cohort 週次 cron（日曜 09:00 JST）、Welcome cohort 必須、in-app + Brevo メール、RPC hardening（[`20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql)）。Supabase Free: Leaked Password OFF（Pro 制限）、Postgres **Pause/Restore** 実施、Security Advisor 7 WARN は許容/監視（[04_Operations_Guide.md](04_Operations_Guide.md)）。[01](01_Current_Status_and_Roadmap.md) v4.0.23。
 - **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の **`PPL-5-4-1`〜`PPL-5-4-7`** を **`learning_contents`** の **508〜514** に追加 [`20260512_learning_contents_ppl_subject5_508_514.sql`](../scripts/database/20260512_learning_contents_ppl_subject5_508_514.sql)（同日 MCP `execute_sql`）。
 - **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の **`PPL-5-3-1`〜`PPL-5-3-3`** を **`learning_contents`** の **505〜507** に追加 [`20260512_learning_contents_ppl_subject5_505_507.sql`](../scripts/database/20260512_learning_contents_ppl_subject5_505_507.sql)（同日 MCP `execute_sql`）。
@@ -174,7 +175,7 @@
 - ✅ エラー監視: Sentry 導入済み（DSN設定で有効化）
 - ✅ **GA4（アクセス解析）**: **本番受信確認済**（2026-05-06・GA4 リアルタイム）— [04_Operations_Guide.md](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」表・`G-22VFYSM69J`
 - ✅ **Phase D cohort pilot（D-3）**: 週次ミッション・TOP3 バッジ・in-app/Brevo 通知 — **本番稼働**（2026-06-21）。運用: [04_Operations_Guide.md](04_Operations_Guide.md)「Cohort 週次 cron・通知」
-- ✅ **Profile Hub + MFA（2026-06）**: 4 セクション IA（`profile`/`learning`/`privacy`/`account`）、通知 auto-save、TOTP ログインゲート・`mfa_required_at_login`、リカバリーコード API、アカウント削除 — [02](02_System_Spec.md) Profile Hub 節・[04](04_Operations_Guide.md) MFA 運用
+- ✅ **Profile Hub + MFA（2026-06）**: 4 セクション IA、通知 auto-save、TOTP ログインゲート・`mfa_required_at_login`、リカバリーコード API、アカウント削除 — **本番デプロイ済**（2026-06-21）— [02](02_System_Spec.md) Profile Hub 節・[04](04_Operations_Guide.md) MFA 運用
 - ⏳ Flight Academy ブランド移行（Phase C: 2026年6月〜）
 - ⏸️ ランキング機能（Phase D）
 - ⏸️ LMS 目標設定・弱点分析（Phase D / E）
@@ -316,6 +317,13 @@ npm run lint         # Lintチェック
 ---
 
 ## 🔄 最近の主要変更
+
+### Profile Hub + MFA 本番（2026-06-21）
+- ✅ **Profile Hub**: 4 セクション IA（`profile`/`learning`/`privacy`/`account`）、通知 debounce auto-save、完成度ストリップ
+- ✅ **MFA**: Supabase TOTP、ログインゲート、`mfa_required_at_login`、リカバリーコード 10 件、ログイン時デバイス紛失フロー
+- ✅ **アカウント削除**: `POST /api/account/delete`（確認フレーズ + 再認証）
+- ✅ **デプロイ**: Vercel 本番 OK（`api/account/mfa-recovery-codes/[action].ts` で Serverless 10 本）。GitHub Actions verify OK
+- 仕様: [02_System_Spec.md](02_System_Spec.md) · 運用: [04_Operations_Guide.md](04_Operations_Guide.md) · Vercel 上限: [03_Development_Guide.md](03_Development_Guide.md)
 
 ### /test・Dashboard・学習時間・プロフィール整備（2026年3月）
 - ✅ **/test 科目選択必須**: 全科目一括出題を廃止し、科目選択後にサブ科目・問題数を絞る導線へ変更

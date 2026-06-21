@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { unenrollVerifiedMfaFactor, verifyMfaFactorCode, verifyMfaForSensitiveAction } from '../../../auth/mfaAuth';
 import { MfaRecoveryCodesPanel } from '../../../components/auth/MfaRecoveryCodesPanel';
 import { Button } from '../../../components/ui';
@@ -45,12 +45,15 @@ export const ProfileMfaSection: React.FC<{
   const [unenrolling, setUnenrolling] = useState(false);
   const [loginMfaSaving, setLoginMfaSaving] = useState(false);
   const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null);
+  const [recoveryCodesSource, setRecoveryCodesSource] = useState<'enroll' | 'regenerate' | null>(null);
   const [recoveryRemaining, setRecoveryRemaining] = useState<number | null>(null);
   const [showRegenerateForm, setShowRegenerateForm] = useState(false);
   const [regenerateCode, setRegenerateCode] = useState('');
+  const [regenerateError, setRegenerateError] = useState<string | null>(null);
   const [regenerating, setRegenerating] = useState(false);
+  const recoveryPanelRef = useRef<HTMLDivElement>(null);
 
-  const loginMfaRequired = profile?.mfa_required_at_login !== false;
+  const loginMfaRequired = profile?.mfa_required_at_login === true;
 
   const refreshFactors = useCallback(async () => {
     setLoading(true);
@@ -104,20 +107,29 @@ export const ProfileMfaSection: React.FC<{
     }
   }, [verifiedFactors.length, refreshRecoveryStatus]);
 
-  const issueRecoveryCodes = useCallback(async (): Promise<boolean> => {
-    const { codes, error } = await generateMfaRecoveryCodes();
-    if (error) {
-      onError(error);
-      return false;
+  useEffect(() => {
+    if (recoveryCodes) {
+      recoveryPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-    if (codes.length === 0) {
-      onError('リカバリーコードの発行に失敗しました');
-      return false;
-    }
-    setRecoveryCodes(codes);
-    setRecoveryRemaining(codes.length);
-    return true;
-  }, [onError]);
+  }, [recoveryCodes]);
+
+  const issueRecoveryCodes = useCallback(
+    async (reportError: (message: string) => void = onError): Promise<boolean> => {
+      const { codes, error } = await generateMfaRecoveryCodes();
+      if (error) {
+        reportError(error);
+        return false;
+      }
+      if (codes.length === 0) {
+        reportError('リカバリーコードの発行に失敗しました');
+        return false;
+      }
+      setRecoveryCodes(codes);
+      setRecoveryRemaining(codes.length);
+      return true;
+    },
+    [onError],
+  );
 
   const handleStartEnroll = async () => {
     setEnrolling(true);
@@ -159,7 +171,7 @@ export const ProfileMfaSection: React.FC<{
 
       await supabase.auth.refreshSession();
 
-      const { error: profileError } = await updateProfile({ mfa_required_at_login: true });
+      const { error: profileError } = await updateProfile({ mfa_required_at_login: false });
       if (profileError) {
         onError(profileError.message || 'ログイン時 MFA 設定の保存に失敗しました');
         return;
@@ -170,6 +182,7 @@ export const ProfileMfaSection: React.FC<{
         return;
       }
 
+      setRecoveryCodesSource('enroll');
       setQrCode(null);
       setFactorId(null);
       setVerifyCode('');
@@ -182,15 +195,34 @@ export const ProfileMfaSection: React.FC<{
   };
 
   const handleRecoveryAcknowledged = () => {
+    const message =
+      recoveryCodesSource === 'enroll'
+        ? '二要素認証とリカバリーコードを設定しました'
+        : 'リカバリーコードを保存しました';
     setRecoveryCodes(null);
-    onSuccess('二要素認証とリカバリーコードを設定しました');
+    setRecoveryCodesSource(null);
+    setShowRegenerateForm(false);
+    void refreshRecoveryStatus();
+    onSuccess(message);
   };
+
+  const reportRegenerateError = useCallback(
+    (message: string) => {
+      setRegenerateError(message);
+      onError(message);
+    },
+    [onError],
+  );
 
   const handleRegenerate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!primaryFactor) return;
+    setRegenerateError(null);
+    if (!primaryFactor) {
+      reportRegenerateError('二要素認証の設定を読み込めませんでした。ページを再読み込みしてください。');
+      return;
+    }
     if (!regenerateCode.trim()) {
-      onError('認証アプリの 6 桁コードを入力してください');
+      reportRegenerateError('認証アプリの 6 桁コードを入力してください');
       return;
     }
 
@@ -198,20 +230,20 @@ export const ProfileMfaSection: React.FC<{
     try {
       const { error: mfaError } = await verifyMfaForSensitiveAction(primaryFactor.id, regenerateCode);
       if (mfaError) {
-        onError(mfaError.message || '認証コードの確認に失敗しました');
+        reportRegenerateError(mfaError.message || '認証コードの確認に失敗しました');
         return;
       }
 
-      const issued = await issueRecoveryCodes();
+      const issued = await issueRecoveryCodes(reportRegenerateError);
       if (!issued) {
         return;
       }
 
-      setShowRegenerateForm(false);
+      setRecoveryCodesSource('regenerate');
       setRegenerateCode('');
-      onSuccess('新しいリカバリーコードを発行しました。必ず保存してください');
+      onSuccess('新しいリカバリーコードを発行しました。下の一覧を必ず保存してください');
     } catch (err) {
-      onError(toAppError(err).message);
+      reportRegenerateError(toAppError(err).message);
     } finally {
       setRegenerating(false);
     }
@@ -273,10 +305,6 @@ export const ProfileMfaSection: React.FC<{
       <CardContent className="space-y-5">
         <MfaIntro />
 
-        {recoveryCodes ? (
-          <MfaRecoveryCodesPanel codes={recoveryCodes} onAcknowledged={handleRecoveryAcknowledged} />
-        ) : null}
-
         {loading ? (
           <Typography variant="body-sm" color="muted">読み込み中...</Typography>
         ) : loadError ? (
@@ -304,12 +332,23 @@ export const ProfileMfaSection: React.FC<{
                 認証アプリにアクセスできないとき、ログイン画面から 1 回使いのコードで復旧できます。
                 {recoveryRemaining !== null ? ` 残り ${recoveryRemaining} 件` : ''}
               </Typography>
-              {!showRegenerateForm ? (
+              {recoveryCodes ? (
+                <div ref={recoveryPanelRef}>
+                  <MfaRecoveryCodesPanel
+                    codes={recoveryCodes}
+                    title="新しいリカバリーコード"
+                    onAcknowledged={handleRecoveryAcknowledged}
+                  />
+                </div>
+              ) : !showRegenerateForm ? (
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => setShowRegenerateForm(true)}
+                  onClick={() => {
+                    setRegenerateError(null);
+                    setShowRegenerateForm(true);
+                  }}
                 >
                   新しいリカバリーコードを発行
                 </Button>
@@ -323,10 +362,21 @@ export const ProfileMfaSection: React.FC<{
                     inputMode="numeric"
                     autoComplete="one-time-code"
                     value={regenerateCode}
-                    onChange={(e) => setRegenerateCode(e.target.value)}
+                    disabled={regenerating}
+                    onChange={(e) => {
+                      setRegenerateCode(e.target.value);
+                      if (regenerateError) {
+                        setRegenerateError(null);
+                      }
+                    }}
                     placeholder="6桁の認証コード"
                     className="w-full rounded-lg border-2 border-brand-primary/30 bg-brand-secondary-dark px-4 py-3 text-[var(--text-primary)]"
                   />
+                  {regenerateError ? (
+                    <Typography variant="caption" className="block text-red-400">
+                      {regenerateError}
+                    </Typography>
+                  ) : null}
                   <div className="flex flex-wrap gap-2">
                     <Button type="submit" variant="brand" size="sm" disabled={regenerating}>
                       {regenerating ? '発行中...' : '発行する'}
@@ -339,6 +389,7 @@ export const ProfileMfaSection: React.FC<{
                       onClick={() => {
                         setShowRegenerateForm(false);
                         setRegenerateCode('');
+                        setRegenerateError(null);
                       }}
                     >
                       キャンセル
@@ -426,6 +477,10 @@ export const ProfileMfaSection: React.FC<{
               </form>
             )}
           </div>
+        ) : recoveryCodes ? (
+          <div ref={recoveryPanelRef}>
+            <MfaRecoveryCodesPanel codes={recoveryCodes} onAcknowledged={handleRecoveryAcknowledged} />
+          </div>
         ) : (
           <>
             {!qrCode ? (
@@ -496,4 +551,4 @@ const MfaIntro: React.FC = () => (
     </div>
   </div>
 );
-
+

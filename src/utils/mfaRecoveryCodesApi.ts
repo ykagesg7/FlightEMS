@@ -5,6 +5,13 @@ async function getAccessToken(): Promise<string | null> {
   return session?.access_token ?? null;
 }
 
+function translateRecoveryApiError(error: string | undefined, fallback: string): string {
+  if (error === 'MFA verification required') {
+    return 'セッションの二要素認証が未完了です。6桁コードを入力してからもう一度お試しください。';
+  }
+  return error || fallback;
+}
+
 async function authFetch(path: string, init?: RequestInit): Promise<Response> {
   const token = await getAccessToken();
   if (!token) {
@@ -26,7 +33,10 @@ export async function generateMfaRecoveryCodes(): Promise<{ codes: string[]; err
   });
   const payload = (await response.json()) as { codes?: string[]; error?: string };
   if (!response.ok) {
-    return { codes: [], error: payload.error || 'リカバリーコードの発行に失敗しました' };
+    return {
+      codes: [],
+      error: translateRecoveryApiError(payload.error, 'リカバリーコードの発行に失敗しました'),
+    };
   }
   return { codes: payload.codes ?? [], error: null };
 }

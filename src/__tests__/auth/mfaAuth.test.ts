@@ -56,6 +56,12 @@ describe('mfaAuth', () => {
     it('skips login MFA when flag is false', () => {
       expect(profileRequiresLoginMfa({ ...baseProfile, mfa_required_at_login: false })).toBe(false);
     });
+
+    it('skips login MFA when flag is unset (default off)', () => {
+      expect(
+        profileRequiresLoginMfa({ ...baseProfile, mfa_required_at_login: undefined as unknown as boolean }),
+      ).toBe(false);
+    });
   });
 
   describe('shouldPromptLoginMfa', () => {
@@ -97,10 +103,15 @@ describe('mfaAuth', () => {
     challengeMock.mockResolvedValue({ data: { id: 'challenge-1' }, error: null });
     verifyMock.mockResolvedValue({ data: {}, error: null });
     refreshSessionMock.mockResolvedValue({ data: {}, error: null });
+    getAalMock.mockResolvedValue({
+      data: { currentLevel: 'aal2', nextLevel: 'aal2' },
+      error: null,
+    });
 
     const result = await verifyMfaForSensitiveAction('factor-1', '123456');
     expect(result.error).toBeNull();
     expect(refreshSessionMock).toHaveBeenCalled();
+    expect(getAalMock).toHaveBeenCalled();
   });
 
   it('unenrolls after verifying TOTP and refreshes session', async () => {

@@ -221,10 +221,21 @@
 ### **プロフィール — MFA / アカウント削除（運用）**
 
 - **MFA（TOTP）**: Supabase Dashboard で Auth MFA を有効化したうえで Profile → アカウントから enroll / 解除。解除時は認証アプリの 6 桁コードで本人確認後 `mfa.unenroll` を実行。iPhone は「パスワード」App、Android は Authenticator 等（**メール非送付**）
-- **リカバリーコード**: 2FA 有効化時に 10 件を一度だけ表示（`POST /api/account/mfa-recovery-codes/generate`、AAL2 必須）。Profile から再発行可（旧コードは無効化）。ログイン MFA 画面の「認証アプリにアクセスできない」から 1 件消費 → 2FA 解除してログイン（`POST .../consume`）。**既存 2FA ユーザー**は Profile で「新しいリカバリーコードを発行」を実行してバックアップを作成すること
-- **ログイン時 MFA トグル**: `profiles.mfa_required_at_login`（デフォルト true）。2FA 有効ユーザーは Profile でログイン時コード要求の ON/OFF を切替可能（OFF でもパスワード変更・削除は MFA 必須）
+- **リカバリーコード**: 2FA 有効化時に 10 件を一度だけ表示（`POST /api/account/mfa-recovery-codes/generate`、AAL2 必須）。Profile から再発行可（旧コードは無効化）。ログイン MFA 画面の「認証アプリにアクセスできない」から 1 件消費 → 2FA 解除してログイン（`POST .../consume`）。**既存 2FA ユーザー**は Profile で「新しいリカバリーコードを発行」を実行してバックアップを作成すること。実装は **`api/account/mfa-recovery-codes/[action].ts`**（Vercel Serverless 上限のため 4 ファイルを 1 本に統合；クライアント URL 不変）
+- **ログイン時 MFA トグル**: `profiles.mfa_required_at_login`（デフォルト **false**・opt-in）。2FA 有効ユーザーは Profile でログイン時コード要求を ON にできる（OFF でもパスワード変更・削除は MFA 必須）
 - **ログイン MFA フロー**: verified 因子あり + トグル ON + セッション AAL1 の場合、`/auth` で 6 桁コード入力後にリダイレクト。保護ルート直アクセス時は `/auth?mfa=required` へ誘導
+- **セッション**: Supabase `persistSession` + `autoRefreshToken`（localStorage）。リフレッシュ有効期間中は再ログイン不要（個人端末向け。共有 PC は明示ログアウト推奨）
 - **アカウント削除**: Profile → アカウント → Danger zone。`POST /api/account/delete` は `SUPABASE_SERVICE_ROLE_KEY` 必須。2FA 有効時は削除前に TOTP コード必須。関連行は `profiles` 等の ON DELETE CASCADE を前提（削除前に `scripts/database/` で監査推奨）
+
+#### **Profile Hub + MFA デプロイ（2026-06-21 本番確認）**
+
+| 項目 | 内容 |
+|------|------|
+| **本番 URL** | [https://flight-lms.vercel.app/](https://flight-lms.vercel.app/) |
+| **主要コミット** | `54b2a27` feat · `651990f` API tsc · `3e6442c` `[action].ts` 統合 · `99401d3` lint |
+| **Vercel** | MFA 追加で API **13 本** → Hobby **12 本**上限超過。`[action].ts` で **10 本**に圧縮して解消（[03_Development_Guide.md](03_Development_Guide.md)） |
+| **verify-build** | `NotificationPreferences` の未使用 `onSuccess` を削除（通知 auto-save 後） |
+| **本番 env** | `SUPABASE_SERVICE_ROLE_KEY`（リカバリーコード・削除 API）。任意: `MFA_RECOVERY_CODE_PEPPER` |
 
 ### **プロフィールページUI改善（2025年12月21日）**
 

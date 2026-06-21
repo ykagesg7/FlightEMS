@@ -32,7 +32,7 @@ export function profileRequiresLoginMfa(profile: Profile | null): boolean {
   if (!profile) {
     return false;
   }
-  return profile.mfa_required_at_login !== false;
+  return profile.mfa_required_at_login === true;
 }
 
 export async function shouldPromptLoginMfa(profile: Profile | null): Promise<{
@@ -87,7 +87,25 @@ export async function verifyMfaForSensitiveAction(
     return { error };
   }
 
-  await supabase.auth.refreshSession();
+  const { error: refreshError } = await supabase.auth.refreshSession();
+  if (refreshError) {
+    return { error: refreshError };
+  }
+
+  const { data: aalData, error: aalError } =
+    await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aalError) {
+    return { error: aalError };
+  }
+  if (aalData.currentLevel !== 'aal2') {
+    return {
+      error: {
+        name: 'MfaVerificationIncomplete',
+        message: '二要素認証の確認が完了していません。コードを確認してもう一度お試しください。',
+      } as AuthError,
+    };
+  }
+
   return { error: null };
 }
 
