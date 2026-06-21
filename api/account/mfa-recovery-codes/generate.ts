@@ -4,8 +4,8 @@ import {
   generatePlainRecoveryCodes,
   storeRecoveryCodesForUser,
   userHasVerifiedTotpFactor,
-} from '../_lib/mfaRecoveryCodesCore';
-import { getServiceSupabase } from '../_lib/supabaseService';
+} from '../../_lib/mfaRecoveryCodesCore';
+import { getServiceSupabase } from '../../_lib/supabaseService';
 
 function getSupabaseAnonClient(accessToken: string) {
   const url = process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL;

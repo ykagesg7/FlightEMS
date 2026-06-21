@@ -54,7 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const result = await consumeRecoveryCode(service, user.id, code);
-    if (!result.ok) {
+    if (result.ok === false) {
       const message =
         result.reason === 'none_left'
           ? '有効なリカバリーコードがありません'
