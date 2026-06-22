@@ -3,9 +3,11 @@
 **Project**: `fstynltdfdetpyvbrswr` (Free, ap-northeast-1)
 **Docs**: `docs/04_Operations_Guide.md` § Supabase Security Advisor
 
-## 2026-06-21 状態（Pause/Restore 後）
+## 2026-06-22 状態（mfa_recovery_codes RLS ポリシー追加後）
 
 7 WARN — いずれも即時修正不要:
+
+0. ~~**rls_enabled_no_policy** (`mfa_recovery_codes`)~~ — **解消**（`20260625_mfa_recovery_codes_rls_policies.sql` で anon/authenticated 向け deny ポリシー追加。service_role API のみ）
 
 1. **authenticated_security_definer_function_executable ×5** — 許容。cohort ユーザー RPC（`upsert_user_cohort`, `get_user_cohort_profile`, `get_cohort_anonymous_stats`, `mark_written_exam_complete`, `get_public_user_badges`）。`SECURITY DEFINER` + `auth.uid()`/opt-in + `SET search_path=public`。`anon` EXECUTE revoke 済（`20260621_cohort_rpc_hardening.sql`）。INVOKER 化禁止。
 

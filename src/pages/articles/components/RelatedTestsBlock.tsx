@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { buildContentTestHref } from '../../test/testHubFilters';
 import { trackArticleToQuizClick } from '../../../lib/quizAnalytics';
+import supabase from '../../../utils/supabase';
 
 type MappingRow = {
   topic_category: string | null;
