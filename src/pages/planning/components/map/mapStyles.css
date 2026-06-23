@@ -21,6 +21,10 @@
   filter: grayscale(1) brightness(0.88) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
 }
 
+.opensky-ac-stale .opensky-ac-img {
+  opacity: 0.65;
+}
+
 .leaflet-wind-barb-icon {
   background: transparent !important;
   border: none !important;

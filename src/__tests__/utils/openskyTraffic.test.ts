@@ -4,10 +4,21 @@ import {
   JAPAN_BBOX,
   parseOpenSkyStatesJson,
   parseStateVector,
+  quantizeBoundsForTrafficCache,
   toOpenSkyBboxParams,
 } from '../../utils/openskyTraffic';
 
 describe('openskyTraffic', () => {
+  it('quantizeBoundsForTrafficCache rounds outward', () => {
+    const box = { south: 35.12, west: 139.08, north: 36.22, east: 140.31 };
+    expect(quantizeBoundsForTrafficCache(box)).toEqual({
+      south: 35,
+      west: 139,
+      north: 36.5,
+      east: 140.5,
+    });
+  });
+
   it('intersectWithJapanBBox returns intersection inside Japan', () => {
     const inner = { south: 35, west: 139, north: 36, east: 140 };
     const r = intersectWithJapanBBox(inner);

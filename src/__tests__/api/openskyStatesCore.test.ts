@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { proxyOpenSkyStates } from '../../../api/_lib/openskyStatesCore';
+import { quantizeBboxForTrafficCache, proxyOpenSkyStates } from '../../../api/_lib/openskyStatesCore';
 
 describe('proxyOpenSkyStates', () => {
   it('returns 400 when any bbox query is missing', async () => {
@@ -31,5 +31,14 @@ describe('proxyOpenSkyStates', () => {
         states: [],
       }),
     );
+  });
+
+  it('quantizeBboxForTrafficCache matches client step', () => {
+    expect(quantizeBboxForTrafficCache(35.12, 36.22, 139.08, 140.31)).toEqual({
+      lamin: 35,
+      lamax: 36.5,
+      lomin: 139,
+      lomax: 140.5,
+    });
   });
 });

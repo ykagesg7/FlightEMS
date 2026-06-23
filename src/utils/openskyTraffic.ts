@@ -23,6 +23,29 @@ export const JAPAN_BBOX: GeoBBox = {
   east: 154.5,
 };
 
+/** 3分ポーリング（参考表示用）。useLiveTrafficLayer と同期。 */
+export const TRAFFIC_POLL_MS = 180_000;
+
+/** CDN / キャッシュキー安定化。api/_lib/openskyStatesCore.ts と同期。 */
+export const TRAFFIC_BBOX_QUANTIZE_STEP_DEG = 0.5;
+
+/** この期間更新がなければマーカーを prune。 */
+export const TRAFFIC_STALE_MAX_AGE_MS = 15 * 60_000;
+
+/**
+ * キャッシュキー用に表示域を粗く丸める（微小なパンでキーが変わらないようにする）
+ */
+export function quantizeBoundsForTrafficCache(
+  box: GeoBBox,
+  stepDeg = TRAFFIC_BBOX_QUANTIZE_STEP_DEG
+): GeoBBox {
+  const s = Math.floor(box.south / stepDeg) * stepDeg;
+  const w = Math.floor(box.west / stepDeg) * stepDeg;
+  const n = Math.ceil(box.north / stepDeg) * stepDeg;
+  const e = Math.ceil(box.east / stepDeg) * stepDeg;
+  return { south: s, west: w, north: n, east: e };
+}
+
 /**
  * 地図表示範囲と日本域の積集合。無ければ null。
  */

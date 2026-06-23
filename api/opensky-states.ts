@@ -4,7 +4,7 @@
  * GET /api/opensky-states?lamin=&lamax=&lomin=&lomax=
  * クエリはサーバ側で日本域 BBOX に再度クリップする。
  *
- * オプション: OPENSKY_USERNAME / OPENSKY_PASSWORD で Basic 認証（レート緩和）
+ * OAuth2（任意）: OPENSKY_CLIENT_ID / OPENSKY_CLIENT_SECRET で Bearer 認証（レート緩和）
  *
  * 共有ロジックは `api/lib/` 配下（プロジェクト直下の lib/ は本番バンドルに含まれないことがある）。
  */
@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (result.status === 200) {
       res.setHeader(
         'Cache-Control',
-        'public, s-maxage=15, stale-while-revalidate=45'
+        'public, s-maxage=150, stale-while-revalidate=180'
       );
     }
     res.status(result.status).json(result.body);

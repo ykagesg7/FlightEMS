@@ -1,16 +1,24 @@
 import type { GeoBBox } from '../utils/openskyTraffic';
-import { buildStatesQueryParams, parseOpenSkyStatesJson, type OpenSkyStatesResponse } from '../utils/openskyTraffic';
+import {
+  buildStatesQueryParams,
+  parseOpenSkyStatesJson,
+  quantizeBoundsForTrafficCache,
+  type OpenSkyStatesResponse,
+} from '../utils/openskyTraffic';
 import { getDevApiBase } from '../utils/devApiBase';
+
+export type TrafficFetchResult =
+  | { ok: true; response: OpenSkyStatesResponse }
+  | { ok: false; status: number; retryAfterSeconds?: number };
 
 /**
  * プロキシ経由で OpenSky states を取得（/api/opensky-states）
  *
- * 本番では `window.location.origin` を優先する（weather / aviation-weather と同様）。
- * `VITE_VERCEL_DEV_API_ORIGIN` が Production に誤設定されると getDevApiBase() だけだと
- * localhost へ向き、ブラウザから到達不能で常に空表示になる。
+ * bbox は量子化してから送信（CDN ヒット率・微小パンでの再取得抑制）。
  */
-export async function fetchTrafficStates(bbox: GeoBBox): Promise<OpenSkyStatesResponse> {
-  const qs = buildStatesQueryParams(bbox).toString();
+export async function fetchTrafficStates(bbox: GeoBBox): Promise<TrafficFetchResult> {
+  const qbox = quantizeBoundsForTrafficCache(bbox);
+  const qs = buildStatesQueryParams(qbox).toString();
   const isProd = import.meta.env.PROD;
   const deploymentDomain =
     isProd && typeof window !== 'undefined' ? window.location.origin : null;
@@ -29,9 +37,20 @@ export async function fetchTrafficStates(bbox: GeoBBox): Promise<OpenSkyStatesRe
   if (!res.ok) {
     const text = await res.text().catch(() => '');
     console.warn('[openskyTraffic] fetch failed', res.status, text.slice(0, 200));
-    return { time: 0, states: [] };
+
+    let retryAfterSeconds: number | undefined;
+    try {
+      const errJson = JSON.parse(text) as { retryAfterSeconds?: unknown };
+      if (typeof errJson.retryAfterSeconds === 'number' && Number.isFinite(errJson.retryAfterSeconds)) {
+        retryAfterSeconds = errJson.retryAfterSeconds;
+      }
+    } catch {
+      /* ignore */
+    }
+
+    return { ok: false, status: res.status, retryAfterSeconds };
   }
 
   const json: unknown = await res.json();
-  return parseOpenSkyStatesJson(json);
+  return { ok: true, response: parseOpenSkyStatesJson(json) };
 }

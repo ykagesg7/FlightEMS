@@ -239,7 +239,8 @@ src/pages/
 │           │   ├── useCloseLayersOnMapClick.ts
 │           │   ├── useMapLayersOpenMapLock.ts
 │           │   ├── useCursorNearestNavaids.ts
-│           │   ├── useLiveTrafficLayer.ts   # OpenSky 航空機（airplane.png 上視・HUD 系ポップアップ）
+│           │   ├── liveTrafficLayerState.ts # OpenSky merge/prune/stale 純関数
+│           │   ├── useLiveTrafficLayer.ts   # OpenSky 航空機（3分 poll・Stale 保持・HUD ポップアップ）
 │           │   ├── useRainViewerRadarLayer.ts  # RainViewer 降水レーダータイル（マニフェスト取得・rainViewerPane）
 │           │   ├── usePlanningMapWindGrid.ts  # 上層風バーブ用格子取得
 │           │   ├── useWindBarbLayer.ts        # 格子からバーブ描画

@@ -26,11 +26,11 @@ def load_supabase_client() -> Client:
     
     load_dotenv('.env.local')
     
-    url = os.getenv('NEXT_PUBLIC_SUPABASE_URL')
+    url = os.getenv('VITE_SUPABASE_URL')
     key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
     
     if not url or not key:
-        print("ERROR: Supabase credentials not found in .env.local")
+        print("ERROR: Set VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local")
         sys.exit(1)
     
     return create_client(url, key)
