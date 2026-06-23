@@ -24,39 +24,12 @@ try {
   /* 非 Node ランタイムでは無視 */
 }
 
-/** Vercel: undici fetch 1 試行あたりの上限（合計は options.timeoutMs 内） */
-const VERCEL_FETCH_SLICE_MS = 7000;
-
-/** Vercel: node:https hostname フォールバック（IPv4 直結は fra1 から ETIMEDOUT のため使わない） */
-const VERCEL_HTTPS_SLICE_MS = 7000;
-
-/** Vercel: fetch 再試行（Undici の瞬断対策） */
-const VERCEL_FETCH_RETRY_MS = 5000;
-
-function formatUpstreamError(err: unknown): string {
-  if (!(err instanceof Error)) return String(err);
-  const cause = err.cause instanceof Error ? err.cause.message : '';
-  return cause ? `${err.message} (${cause})` : err.message;
-}
-
-/** @internal テスト用 */
-export function isUpstreamTimeoutError(error: unknown): boolean {
-  if (!(error instanceof Error)) return false;
-  if (error.name === 'AbortError' || error.name === 'TimeoutError') return true;
-  const msg = error.message.toLowerCase();
-  if (msg.includes('timeout') || msg.includes('timed out')) return true;
-  const cause = error.cause;
-  if (cause instanceof Error) {
-    if (cause.name === 'AbortError' || cause.name === 'TimeoutError') return true;
-    const code = (cause as NodeJS.ErrnoException).code;
-    if (code === 'ETIMEDOUT' || code === 'UND_ERR_CONNECT_TIMEOUT') return true;
-  }
-  return false;
-}
+/** Vercel: 1 試行の最小 ms */
+const VERCEL_UPSTREAM_MIN_SLICE_MS = 1500;
 
 /**
- * Vercel 本番: fetch → node:https(hostname) → fetch 再試行。
- * IPv4 直結は除外（30s 内・OAuth 前置きと両立）。
+ * Vercel 本番: options.timeoutMs を壁時計予算として fetch → node:https(hostname)。
+ * IPv4 直結は除外。3 段目の fetch 再試行は 30s 超過のため行わない。
  */
 async function upstreamHttpsRequestVercel(
   urlStr: string,
@@ -67,36 +40,64 @@ async function upstreamHttpsRequestVercel(
     timeoutMs: number;
   }
 ): Promise<{ statusCode: number; text: string; responseHeaders: Record<string, string | string[] | undefined> }> {
-  const fetchMs = Math.min(VERCEL_FETCH_SLICE_MS, options.timeoutMs);
-  const httpsMs = Math.min(
-    VERCEL_HTTPS_SLICE_MS,
-    Math.max(3000, options.timeoutMs - fetchMs)
-  );
-  const retryMs = Math.min(
-    VERCEL_FETCH_RETRY_MS,
-    Math.max(3000, options.timeoutMs - fetchMs - httpsMs)
-  );
+  const deadline = Date.now() + options.timeoutMs;
+  const remainingMs = (): number => Math.max(0, deadline - Date.now());
   const errors: string[] = [];
 
-  try {
-    return await fetchUpstreamText(urlStr, { ...options, timeoutMs: fetchMs });
-  } catch (err) {
-    errors.push(`fetch: ${formatUpstreamError(err)}`);
+  const firstMs = Math.min(6000, Math.floor(options.timeoutMs * 0.55));
+  if (firstMs >= VERCEL_UPSTREAM_MIN_SLICE_MS) {
+    try {
+      return await fetchUpstreamText(urlStr, {
+        ...options,
+        timeoutMs: Math.min(firstMs, remainingMs()),
+      });
+    } catch (err) {
+      errors.push(`fetch: ${formatUpstreamError(err)}`);
+    }
   }
 
-  try {
-    return await httpsRequestByHostname(urlStr, { ...options, timeoutMs: httpsMs });
-  } catch (err) {
-    errors.push(`hostname: ${formatUpstreamError(err)}`);
+  const secondMs = Math.min(6000, remainingMs() - 200);
+  if (secondMs >= VERCEL_UPSTREAM_MIN_SLICE_MS) {
+    try {
+      return await httpsRequestByHostname(urlStr, { ...options, timeoutMs: secondMs });
+    } catch (err) {
+      errors.push(`hostname: ${formatUpstreamError(err)}`);
+    }
   }
 
-  try {
-    return await fetchUpstreamText(urlStr, { ...options, timeoutMs: retryMs });
-  } catch (err) {
-    errors.push(`fetch-retry: ${formatUpstreamError(err)}`);
-  }
+  throw Object.assign(new Error(errors.join(' | ') || 'OpenSky upstream budget exhausted'), {
+    name: 'UpstreamError',
+  });
+}
 
-  throw Object.assign(new Error(errors.join(' | ')), { name: 'UpstreamError' });
+function upstreamErrorCauseMessage(err: unknown): string | undefined {
+  if (!err || typeof err !== 'object' || !('cause' in err)) return undefined;
+  const cause = (err as { cause?: unknown }).cause;
+  return cause instanceof Error ? cause.message : undefined;
+}
+
+function formatUpstreamError(err: unknown): string {
+  if (!(err instanceof Error)) return String(err);
+  const cause = upstreamErrorCauseMessage(err);
+  return cause ? `${err.message} (${cause})` : err.message;
+}
+
+/** @internal テスト用 */
+export function isUpstreamTimeoutError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  if (error.name === 'AbortError' || error.name === 'TimeoutError') return true;
+  const msg = error.message.toLowerCase();
+  if (msg.includes('timeout') || msg.includes('timed out')) return true;
+  const cause = upstreamErrorCauseMessage(error);
+  if (cause && cause.toLowerCase().includes('timeout')) return true;
+  if (error && typeof error === 'object' && 'cause' in error) {
+    const raw = (error as { cause?: unknown }).cause;
+    if (raw && typeof raw === 'object' && 'code' in raw) {
+      const code = (raw as { code?: string }).code;
+      if (code === 'ETIMEDOUT' || code === 'UND_ERR_CONNECT_TIMEOUT') return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -324,17 +325,17 @@ function httpsRequestTextIpv4(
 
 const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
 
-/**
- * OpenSky 待ち上限（壁時計）。`vercel.json` maxDuration 30s より短く、
- * フォールバック試行分の余裕も残す。
- */
+/** ローカル dev: states 待ち上限（壁時計） */
 const OPENSKY_FETCH_TIMEOUT_MS = 18000;
 
 /** ローカル dev フォールバック用 */
 const OPENSKY_FALLBACK_TIMEOUT_MS = 6000;
 
-/** OAuth トークン取得（states より前に走るため短め） */
-const OPENSKY_TOKEN_TIMEOUT_MS = 8000;
+/** Vercel: OAuth 用の短い壁時計予算 */
+const OPENSKY_TOKEN_TIMEOUT_MS = 5000;
+
+/** Vercel: states 用の壁時計予算（OAuth 後も maxDuration 30s 内） */
+const OPENSKY_VERCEL_STATES_TIMEOUT_MS = 12000;
 
 /** CDN ヒット率向上用。src/utils/openskyTraffic.ts の TRAFFIC_BBOX_QUANTIZE_STEP_DEG と同期。 */
 export const TRAFFIC_BBOX_QUANTIZE_STEP_DEG = 0.5;
@@ -495,7 +496,7 @@ export async function proxyOpenSkyStates(
     const { statusCode, text, responseHeaders } = await upstreamHttpsRequest(url, {
       method: 'GET',
       reqHeaders: headers,
-      timeoutMs: OPENSKY_FETCH_TIMEOUT_MS,
+      timeoutMs: process.env.VERCEL ? OPENSKY_VERCEL_STATES_TIMEOUT_MS : OPENSKY_FETCH_TIMEOUT_MS,
     });
 
     if (statusCode === 429) {
