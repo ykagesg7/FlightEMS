@@ -12,14 +12,41 @@
     }
   ],
   "functions": {
-    "api/opensky-states.ts": {},
+    "api/mfa-recovery-codes.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
+    "api/weather.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
+    "api/aviation-weather.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
+    "api/swim-notam-search.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
+    "api/rainviewer-maps.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
+    "api/account/delete.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
+    "api/notifications/send.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
+    "api/notifications/push.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
     "api/cron/cohort-weekly.ts": {
       "memory": 1024,
       "maxDuration": 60
-    },
-    "api/**/*.ts": {
-      "memory": 1024,
-      "maxDuration": 30
     }
   },
   "routes": [
