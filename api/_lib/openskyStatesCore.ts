@@ -37,6 +37,11 @@ async function upstreamHttpsRequest(
     timeoutMs: number;
   }
 ): Promise<{ statusCode: number; text: string; responseHeaders: Record<string, string | string[] | undefined> }> {
+  // Vercel: fetch のみ（フォールバック連鎖 + OAuth 前置きで 30s 超過するため）
+  if (process.env.VERCEL) {
+    return fetchUpstreamText(urlStr, options);
+  }
+
   const fallbackMs = Math.min(options.timeoutMs, OPENSKY_FALLBACK_TIMEOUT_MS);
   const errors: string[] = [];
 
@@ -249,10 +254,13 @@ const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
  * OpenSky 待ち上限（壁時計）。`vercel.json` maxDuration 30s より短く、
  * フォールバック試行分の余裕も残す。
  */
-const OPENSKY_FETCH_TIMEOUT_MS = 22000;
+const OPENSKY_FETCH_TIMEOUT_MS = 18000;
 
-/** フォールバック試行は短く（合計が maxDuration を超えないように） */
+/** ローカル dev フォールバック用 */
 const OPENSKY_FALLBACK_TIMEOUT_MS = 6000;
+
+/** OAuth トークン取得（states より前に走るため短め） */
+const OPENSKY_TOKEN_TIMEOUT_MS = 8000;
 
 /** CDN ヒット率向上用。src/utils/openskyTraffic.ts の TRAFFIC_BBOX_QUANTIZE_STEP_DEG と同期。 */
 export const TRAFFIC_BBOX_QUANTIZE_STEP_DEG = 0.5;
@@ -327,7 +335,7 @@ async function fetchOAuthTokenFromEnv(): Promise<ReturnType<typeof parseTokenRes
         'User-Agent': 'FlightAcademyTsx/1.0',
       },
       body,
-      timeoutMs: 12000,
+      timeoutMs: OPENSKY_TOKEN_TIMEOUT_MS,
     });
 
     if (statusCode < 200 || statusCode >= 300) {
