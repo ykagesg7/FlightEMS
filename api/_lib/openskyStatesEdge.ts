@@ -188,8 +188,9 @@ export async function proxyOpenSkyStatesEdge(
 
     return { status: 200, body: JSON.parse(text) as unknown };
   } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'upstream fetch failed';
     const name = error instanceof Error ? error.name : '';
-    if (name === 'AbortError' || name === 'TimeoutError') {
+    if (name === 'AbortError' || name === 'TimeoutError' || message.toLowerCase().includes('timeout')) {
       return {
         status: 504,
         body: { error: 'Gateway Timeout', message: 'OpenSky request timed out' },
@@ -199,7 +200,7 @@ export async function proxyOpenSkyStatesEdge(
       status: 502,
       body: {
         error: 'Bad Gateway',
-        message: error instanceof Error ? error.message : 'upstream fetch failed',
+        message,
       },
     };
   }

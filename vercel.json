@@ -12,6 +12,9 @@
     }
   ],
   "functions": {
+    "api/opensky-states.ts": {
+      "runtime": "edge"
+    },
     "api/cron/cohort-weekly.ts": {
       "memory": 1024,
       "maxDuration": 60

@@ -4,11 +4,11 @@
  * Node サーバレス（fra1 / iad1）から opensky-network.org へ届かない事象があるため
  * Edge Runtime + fetch のみで上流へ接続する。
  */
+import { proxyOpenSkyStatesEdge } from './_lib/openskyStatesEdge';
+
 export const config = {
   runtime: 'edge',
 };
-
-import { proxyOpenSkyStatesEdge } from './_lib/openskyStatesEdge';
 
 const CORS_HEADERS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
