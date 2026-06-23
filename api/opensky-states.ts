@@ -8,6 +8,7 @@ import { proxyOpenSkyStatesEdge } from './_lib/openskyStatesEdge';
 
 export const config = {
   runtime: 'edge',
+  regions: ['fra1'],
 };
 
 const CORS_HEADERS: Record<string, string> = {
