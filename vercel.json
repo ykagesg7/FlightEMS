@@ -12,6 +12,10 @@
     }
   ],
   "functions": {
+    "api/opensky-states.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
     "api/mfa-recovery-codes.ts": {
       "memory": 1024,
       "maxDuration": 30

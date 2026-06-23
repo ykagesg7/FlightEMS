@@ -1,54 +1,45 @@
 /**
- * Vercel Edge: OpenSky Network /api/states/all プロキシ（CORS 回避・日本域クリップ）
+ * Vercel Serverless: OpenSky Network /api/states/all プロキシ（CORS 回避・日本域クリップ）
  *
- * Node サーバレス（fra1 / iad1）から opensky-network.org へ届かない事象があるため
- * Edge Runtime + fetch のみで上流へ接続する。
+ * GET /api/opensky-states?lamin=&lamax=&lomin=&lomax=
+ * クエリはサーバ側で日本域 BBOX に再度クリップする。
+ *
+ * OAuth2（任意）: OPENSKY_CLIENT_ID / OPENSKY_CLIENT_SECRET で Bearer 認証（レート緩和）
+ *
+ * 共有ロジック: `api/_lib/openskyStatesCore.ts`（ローカル dev / Vite プラグインも共用）
  */
-import { proxyOpenSkyStatesEdge } from './_lib/openskyStatesEdge';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { proxyOpenSkyStates } from './_lib/openskyStatesCore';
 
-export const config = {
-  runtime: 'edge',
-  regions: ['fra1'],
-};
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
-
-export default async function handler(request: Request): Promise<Response> {
-  if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 200, headers: CORS_HEADERS });
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
   }
 
-  if (request.method !== 'GET') {
-    return Response.json({ error: 'Method Not Allowed' }, { status: 405, headers: CORS_HEADERS });
+  if (req.method !== 'GET') {
+    res.status(405).json({ error: 'Method Not Allowed' });
+    return;
   }
 
   try {
-    const url = new URL(request.url);
-    const query: Record<string, string | null> = {
-      lamin: url.searchParams.get('lamin'),
-      lamax: url.searchParams.get('lamax'),
-      lomin: url.searchParams.get('lomin'),
-      lomax: url.searchParams.get('lomax'),
-    };
-
-    const result = await proxyOpenSkyStatesEdge(query);
-    const headers = new Headers(CORS_HEADERS);
+    const result = await proxyOpenSkyStates(req.query);
     if (result.status === 200) {
-      headers.set('Cache-Control', 'public, s-maxage=150, stale-while-revalidate=180');
+      res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=150, stale-while-revalidate=180'
+      );
     }
-    return Response.json(result.body, { status: result.status, headers });
+    res.status(result.status).json(result.body);
   } catch (err) {
     console.error('[opensky-states]', err);
-    return Response.json(
-      {
-        error: 'Internal Server Error',
-        message: err instanceof Error ? err.message : 'handler failed',
-      },
-      { status: 500, headers: CORS_HEADERS }
-    );
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: err instanceof Error ? err.message : 'handler failed',
+    });
   }
 }
