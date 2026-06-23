@@ -195,7 +195,7 @@ src/pages/
 │   ├── utils/
 │   │   ├── buildWaypointFromNavaid.ts
 │   │   └── magneticOffsetValidation.ts
-│   # 補助: src/utils/openskyTraffic.ts、src/services/openskyTraffic.ts、api/opensky-states.ts（Vercel プロキシ）、api/lib/openskyStatesCore.ts（本番バンドル本体。lib/ は re-export）、vite/devOpenskyApiPlugin.ts；api/weather.ts、api/aviation-weather.ts、api/lib/weatherApiCore.ts・api/lib/aviationWeatherApiCore.ts（本番バンドル本体。lib/ は re-export）、vite/devWeatherApiPlugin.ts（npm run dev 時の /api/weather・/api/aviation-weather・/api/swim-notam-search）；api/swim-notam-search.ts、api/lib/swimNotamCore.ts、api/lib/swimNotamHttpShared.ts、api/lib/swimNotamGeometry.ts；src/services/swimNotam.ts；src/services/weather.ts、src/services/aviationWeather.ts；src/utils/rainViewerRadar.ts、api/rainviewer-maps.ts（任意プロキシ）；src/services/openMeteo.ts、src/utils/windComponents.ts、src/utils/routeOpenMeteoWind.ts、src/utils/windGridOpenMeteo.ts、src/utils/windBarbHtml.ts、src/utils/pressureAltitudeIsa.ts；scripts/transparent_public_png.py（F2favicon / airplane 等の透過）
+│   # 補助: src/utils/openskyTraffic.ts、src/services/openskyTraffic.ts、api/opensky-states.ts（Vercel プロキシ）、api/_lib/openskyStatesCore.ts・api/_lib/openskyOAuthToken.ts（本番バンドル本体。lib/ は re-export）、vite/devOpenskyApiPlugin.ts；api/weather.ts、api/aviation-weather.ts、api/lib/weatherApiCore.ts・api/lib/aviationWeatherApiCore.ts（本番バンドル本体。lib/ は re-export）、vite/devWeatherApiPlugin.ts（npm run dev 時の /api/weather・/api/aviation-weather・/api/swim-notam-search）；api/swim-notam-search.ts、api/lib/swimNotamCore.ts、api/lib/swimNotamHttpShared.ts、api/lib/swimNotamGeometry.ts；src/services/swimNotam.ts；src/services/weather.ts、src/services/aviationWeather.ts；src/utils/rainViewerRadar.ts、api/rainviewer-maps.ts（任意プロキシ）；src/services/openMeteo.ts、src/utils/windComponents.ts、src/utils/routeOpenMeteoWind.ts、src/utils/windGridOpenMeteo.ts、src/utils/windBarbHtml.ts、src/utils/pressureAltitudeIsa.ts；scripts/transparent_public_png.py（F2favicon / airplane 等の透過）
 │   └── components/
 │       ├── flight/
 │       │   ├── AirportSelect.tsx
@@ -240,7 +240,7 @@ src/pages/
 │           │   ├── useMapLayersOpenMapLock.ts
 │           │   ├── useCursorNearestNavaids.ts
 │           │   ├── liveTrafficLayerState.ts # OpenSky merge/prune/stale 純関数
-│           │   ├── useLiveTrafficLayer.ts   # OpenSky 航空機（3分 poll・Stale 保持・HUD ポップアップ）
+│           │   ├── useLiveTrafficLayer.ts   # OpenSky 航空機（3分 poll・Stale 保持・ポップアップ追跡再 open）
 │           │   ├── useRainViewerRadarLayer.ts  # RainViewer 降水レーダータイル（マニフェスト取得・rainViewerPane）
 │           │   ├── usePlanningMapWindGrid.ts  # 上層風バーブ用格子取得
 │           │   ├── useWindBarbLayer.ts        # 格子からバーブ描画
@@ -267,6 +267,7 @@ src/pages/
 │           │   ├── planningNotamSheetContext.tsx  # シート open/close・Leaflet からの imperative 起動
 │           │   ├── PlanningNotamSheetProvider.tsx # ページレベル NOTAM シート（Preflight Briefing 連動）
 │           │   ├── hooks/usePlanningNotamFetch.ts
+│           │   ├── openskyTrafficPopup.ts  # OpenSky 航空機 HUD ポップアップ HTML・OPENSKY_TRAFFIC_POPUP_OPTIONS
 │           │   └── weatherPopup.ts   # 空港気象ポップアップ HTML。METAR/TAF は <details> 折りたたみ
 │           ├── mapStyles.css
 │           └── types.ts

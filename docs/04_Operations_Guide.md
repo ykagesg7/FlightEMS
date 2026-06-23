@@ -149,6 +149,23 @@
 
 **Restore 後チェック**: ログイン・cohort 登録・`/api/cron/cohort-weekly` 手動 curl・Advisor 再確認。
 
+### **OpenSky 航空機レイヤー（Planning 地図）**
+
+- **用途**: 教育・参考の ADS-B 表示（`/planning` 地図タブ → レイヤー「航空機（参考・OpenSky）」）。実運航用ではない。
+- **Vercel env（推奨）**:
+  - `OPENSKY_CLIENT_ID` — OpenSky Account → API Clients（**Production + Preview + Development**）
+  - `OPENSKY_CLIENT_SECRET` — 同上（**Secret**。Production + Preview 推奨）
+  - 未設定時は匿名 API（429 多発しやすい）。**2026-03〜 Basic `OPENSKY_USERNAME/PASSWORD` は非対応**
+- **Supabase 接続用 env の正本**: フロントは **`VITE_SUPABASE_URL`** / **`VITE_SUPABASE_ANON_KEY`**。Vercel に **`NEXT_PUBLIC_SUPABASE_*`** や **`POSTGRES_*`** を置かない（2026-06 整理済み。Python スクリプトも `VITE_SUPABASE_URL` のみ参照）。
+- **リージョン**: [`vercel.json`](../vercel.json) トップレベル **`regions: ["fra1"]`**（OpenSky 欧州向け）。
+- **本番確認**（デプロイ後）:
+  ```bash
+  curl -sS "https://flight-lms.vercel.app/api/opensky-states?lamin=32&lamax=34&lomin=133&lomax=136" | head -c 200
+  ```
+  HTTP **200** と JSON（`states` 配列）を期待。**502** = upstream 到達失敗、**504** = 関数タイムアウト（OAuth + 多段フォールバックは Vercel 上無効化済み）。
+- **Secret を Preview のみにした場合**: Production 地図レイヤーが空になる。**Environment** 列で Production にも Secret を付与し **Redeploy**。
+- **仕様・開発**: [02_System_Spec.md](02_System_Spec.md) 地図節、[03_Development_Guide.md](03_Development_Guide.md) OpenSky 節、[Component_Structure_Guide.md](Component_Structure_Guide.md) `planning/components/map`。
+
 ### **GA4（Google Analytics 4）**
 
 - **本番 URL**: **https://flight-lms.vercel.app/**（このオリジンで計測する。GA の Web データストリームの「ウェブサイトの URL」もこれに合わせる）

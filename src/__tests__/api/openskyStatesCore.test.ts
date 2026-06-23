@@ -1,6 +1,30 @@
 import { describe, expect, it } from 'vitest';
 
-import { quantizeBboxForTrafficCache, proxyOpenSkyStates } from '../../../api/_lib/openskyStatesCore';
+import {
+  isUpstreamTimeoutError,
+  quantizeBboxForTrafficCache,
+  proxyOpenSkyStates,
+} from '../../../api/_lib/openskyStatesCore';
+
+describe('isUpstreamTimeoutError', () => {
+  it('detects AbortError and TimeoutError', () => {
+    expect(isUpstreamTimeoutError(Object.assign(new Error('aborted'), { name: 'AbortError' }))).toBe(
+      true
+    );
+    expect(isUpstreamTimeoutError(Object.assign(new Error('t'), { name: 'TimeoutError' }))).toBe(
+      true
+    );
+  });
+
+  it('detects undici fetch failed with connect timeout cause', () => {
+    const err = Object.assign(new TypeError('fetch failed'), {
+      cause: Object.assign(new Error('Connect Timeout Error'), {
+        code: 'UND_ERR_CONNECT_TIMEOUT',
+      }),
+    });
+    expect(isUpstreamTimeoutError(err)).toBe(true);
+  });
+});
 
 describe('proxyOpenSkyStates', () => {
   it('returns 400 when any bbox query is missing', async () => {

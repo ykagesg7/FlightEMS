@@ -242,7 +242,7 @@ winget install --id Anysphere.Cursor -e
 
 リリース前または月次: `get_advisors`（security）→ [04_Operations_Guide.md](04_Operations_Guide.md)「Supabase Security Advisor」の許容 WARN 表と照合。[ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md) §1 参照。
 
-Serena メモ: `mem:ops/supabase_security_advisor`（cohort RPC・Free 制限・Postgres 監視の要約）。
+Serena メモ: `mem:ops/supabase_security_advisor`（cohort RPC・Free 制限・Postgres 監視の要約）。`mem:planning/opensky_traffic_layer`（OpenSky 本番 env・502/504 対策・モジュール索引）。
 
 ---
 

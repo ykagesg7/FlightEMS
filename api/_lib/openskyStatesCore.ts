@@ -24,9 +24,84 @@ try {
   /* 非 Node ランタイムでは無視 */
 }
 
+/** Vercel: undici fetch 1 試行あたりの上限（合計は options.timeoutMs 内） */
+const VERCEL_FETCH_SLICE_MS = 7000;
+
+/** Vercel: node:https hostname フォールバック（IPv4 直結は fra1 から ETIMEDOUT のため使わない） */
+const VERCEL_HTTPS_SLICE_MS = 7000;
+
+/** Vercel: fetch 再試行（Undici の瞬断対策） */
+const VERCEL_FETCH_RETRY_MS = 5000;
+
+function formatUpstreamError(err: unknown): string {
+  if (!(err instanceof Error)) return String(err);
+  const cause = err.cause instanceof Error ? err.cause.message : '';
+  return cause ? `${err.message} (${cause})` : err.message;
+}
+
+/** @internal テスト用 */
+export function isUpstreamTimeoutError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  if (error.name === 'AbortError' || error.name === 'TimeoutError') return true;
+  const msg = error.message.toLowerCase();
+  if (msg.includes('timeout') || msg.includes('timed out')) return true;
+  const cause = error.cause;
+  if (cause instanceof Error) {
+    if (cause.name === 'AbortError' || cause.name === 'TimeoutError') return true;
+    const code = (cause as NodeJS.ErrnoException).code;
+    if (code === 'ETIMEDOUT' || code === 'UND_ERR_CONNECT_TIMEOUT') return true;
+  }
+  return false;
+}
+
+/**
+ * Vercel 本番: fetch → node:https(hostname) → fetch 再試行。
+ * IPv4 直結は除外（30s 内・OAuth 前置きと両立）。
+ */
+async function upstreamHttpsRequestVercel(
+  urlStr: string,
+  options: {
+    method: 'GET' | 'POST';
+    reqHeaders: Record<string, string>;
+    body?: string;
+    timeoutMs: number;
+  }
+): Promise<{ statusCode: number; text: string; responseHeaders: Record<string, string | string[] | undefined> }> {
+  const fetchMs = Math.min(VERCEL_FETCH_SLICE_MS, options.timeoutMs);
+  const httpsMs = Math.min(
+    VERCEL_HTTPS_SLICE_MS,
+    Math.max(3000, options.timeoutMs - fetchMs)
+  );
+  const retryMs = Math.min(
+    VERCEL_FETCH_RETRY_MS,
+    Math.max(3000, options.timeoutMs - fetchMs - httpsMs)
+  );
+  const errors: string[] = [];
+
+  try {
+    return await fetchUpstreamText(urlStr, { ...options, timeoutMs: fetchMs });
+  } catch (err) {
+    errors.push(`fetch: ${formatUpstreamError(err)}`);
+  }
+
+  try {
+    return await httpsRequestByHostname(urlStr, { ...options, timeoutMs: httpsMs });
+  } catch (err) {
+    errors.push(`hostname: ${formatUpstreamError(err)}`);
+  }
+
+  try {
+    return await fetchUpstreamText(urlStr, { ...options, timeoutMs: retryMs });
+  } catch (err) {
+    errors.push(`fetch-retry: ${formatUpstreamError(err)}`);
+  }
+
+  throw Object.assign(new Error(errors.join(' | ')), { name: 'UpstreamError' });
+}
+
 /**
  * opensky-network.org へ HTTPS（fetch 優先、失敗時 hostname / IPv4 直結の順で試行）。
- * Vercel 本番では IPv4 直結が ETIMEDOUT になることがあるため fetch を第一選択とする。
+ * Vercel 本番では undici fetch が不安定なため hostname https フォールバックを挟む（IPv4 直結は使わない）。
  */
 async function upstreamHttpsRequest(
   urlStr: string,
@@ -37,9 +112,8 @@ async function upstreamHttpsRequest(
     timeoutMs: number;
   }
 ): Promise<{ statusCode: number; text: string; responseHeaders: Record<string, string | string[] | undefined> }> {
-  // Vercel: fetch のみ（フォールバック連鎖 + OAuth 前置きで 30s 超過するため）
   if (process.env.VERCEL) {
-    return fetchUpstreamText(urlStr, options);
+    return upstreamHttpsRequestVercel(urlStr, options);
   }
 
   const fallbackMs = Math.min(options.timeoutMs, OPENSKY_FALLBACK_TIMEOUT_MS);
@@ -455,8 +529,7 @@ export async function proxyOpenSkyStates(
     }
     return { status: 200, body: data };
   } catch (error: unknown) {
-    const name = error instanceof Error ? error.name : '';
-    if (name === 'AbortError' || name === 'TimeoutError') {
+    if (isUpstreamTimeoutError(error)) {
       return {
         status: 504,
         body: { error: 'Gateway Timeout', message: 'OpenSky request timed out' },
