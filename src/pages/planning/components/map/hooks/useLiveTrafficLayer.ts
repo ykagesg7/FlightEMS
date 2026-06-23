@@ -15,6 +15,10 @@ import {
   type CachedTrafficAircraft,
   type TrafficLayerFetchMeta,
 } from '../liveTrafficLayerState';
+import {
+  buildOpenSkyTrafficPopupHtml,
+  OPENSKY_TRAFFIC_POPUP_OPTIONS,
+} from '../popups/openskyTrafficPopup';
 
 const OPENSKY_AC_ICON_SRC = '/airplane.png';
 
@@ -34,48 +38,23 @@ function openskyAircraftIcon(trackDeg: number | null, onGround: boolean, stale: 
   });
 }
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function buildPopupHtml(ac: ParsedOpenSkyAircraft, ageLabel: string): string {
-  const altFt =
-    ac.baroAltitudeM != null
-      ? String(Math.round(ac.baroAltitudeM * 3.28084))
-      : ac.geoAltitudeM != null
-        ? String(Math.round(ac.geoAltitudeM * 3.28084))
-        : '—';
-  const spdKt = ac.velocityMs != null ? String(Math.round(ac.velocityMs * 1.94384)) : '—';
-  const trackStr =
-    ac.trueTrackDeg != null && Number.isFinite(ac.trueTrackDeg)
-      ? `${Math.round(ac.trueTrackDeg)}°`
-      : '—';
-  const cs = ac.callsign ? escapeHtml(ac.callsign.trim()) : '—';
-  const icao = escapeHtml(ac.icao24);
+function iconNeedsUpdate(
+  prev: ParsedOpenSkyAircraft,
+  next: ParsedOpenSkyAircraft,
+  stale: boolean,
+  prevStale: boolean
+): boolean {
   return (
-    `<div class="opensky-ac-popup">` +
-    `<div class="opensky-ac-popup-header">` +
-    `<span class="opensky-ac-popup-icao">${icao}</span>` +
-    `<img src="${OPENSKY_AC_ICON_SRC}" class="opensky-ac-popup-thumb" width="22" height="22" alt="" />` +
-    `</div>` +
-    `<div class="opensky-ac-popup-body">` +
-    `<div class="opensky-ac-popup-row"><span class="opensky-ac-popup-label">Callsign</span><span class="opensky-ac-popup-value">${cs}</span></div>` +
-    `<div class="opensky-ac-popup-row"><span class="opensky-ac-popup-label">進行方位(真)</span><span class="opensky-ac-popup-value">${trackStr}</span></div>` +
-    `<div class="opensky-ac-popup-row"><span class="opensky-ac-popup-label">高度(ft)</span><span class="opensky-ac-popup-value">${altFt}</span></div>` +
-    `<div class="opensky-ac-popup-row"><span class="opensky-ac-popup-label">地速(kt)</span><span class="opensky-ac-popup-value">${spdKt}</span></div>` +
-    `</div>` +
-    `<div class="opensky-ac-popup-foot">参考・OpenSky（${escapeHtml(ageLabel)}・実運航用ではありません）</div>` +
-    `</div>`
+    prev.trueTrackDeg !== next.trueTrackDeg ||
+    prev.onGround !== next.onGround ||
+    stale !== prevStale
   );
 }
 
 type MarkerEntry = {
   marker: L.Marker;
   cached: CachedTrafficAircraft;
+  stale: boolean;
 };
 
 /**
@@ -90,11 +69,23 @@ export function useLiveTrafficLayer(
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const cacheRef = useRef<Map<string, CachedTrafficAircraft>>(new Map());
   const markersRef = useRef<Map<string, MarkerEntry>>(new Map());
+  const openPopupIcaoRef = useRef<string | null>(null);
   const metaRef = useRef<TrafficLayerFetchMeta>({
     lastSuccessAtMs: null,
     lastFetchFailed: false,
     openSkyTimeSec: null,
   });
+
+  const bindOpenPopupTracking = useCallback((marker: L.Marker, icao: string) => {
+    marker.on('popupopen', () => {
+      openPopupIcaoRef.current = icao;
+    });
+    marker.on('popupclose', () => {
+      if (openPopupIcaoRef.current === icao) {
+        openPopupIcaoRef.current = null;
+      }
+    });
+  }, []);
 
   const syncMarkersToCache = useCallback(
     (layerGroupLocal: L.LayerGroup, stale: boolean) => {
@@ -102,36 +93,70 @@ export function useLiveTrafficLayer(
       const markers = markersRef.current;
       const meta = metaRef.current;
       const ageLabel = formatTrafficAgeLabel(meta, Date.now());
+      let reopenIcao: string | null = null;
 
       for (const [icao, entry] of cache) {
         const ac = entry.aircraft;
+        const html = buildOpenSkyTrafficPopupHtml(ac, ageLabel);
         const existing = markers.get(icao);
+
         if (existing) {
+          const wasOpen = existing.marker.isPopupOpen();
+          const prevAc = existing.cached.aircraft;
+          const prevStale = existing.stale;
           existing.cached = entry;
-          existing.marker.setLatLng([ac.latitude, ac.longitude]);
-          existing.marker.setIcon(openskyAircraftIcon(ac.trueTrackDeg, ac.onGround, stale));
-          existing.marker.setPopupContent(buildPopupHtml(ac, ageLabel));
+
+          const latLng = L.latLng(ac.latitude, ac.longitude);
+          if (!existing.marker.getLatLng().equals(latLng)) {
+            existing.marker.setLatLng(latLng);
+          }
+
+          if (iconNeedsUpdate(prevAc, ac, stale, prevStale)) {
+            existing.marker.setIcon(openskyAircraftIcon(ac.trueTrackDeg, ac.onGround, stale));
+            existing.stale = stale;
+          }
+
+          const popup = existing.marker.getPopup();
+          if (popup) {
+            popup.setContent(html);
+            if (wasOpen) {
+              popup.update();
+              reopenIcao = icao;
+            }
+          } else {
+            existing.marker.bindPopup(html, OPENSKY_TRAFFIC_POPUP_OPTIONS);
+          }
         } else {
           const m = L.marker([ac.latitude, ac.longitude], {
             icon: openskyAircraftIcon(ac.trueTrackDeg, ac.onGround, stale),
           });
-          m.bindPopup(buildPopupHtml(ac, ageLabel), {
-            className: 'opensky-traffic-popup',
-            maxWidth: 300,
-          });
+          m.bindPopup(html, OPENSKY_TRAFFIC_POPUP_OPTIONS);
+          bindOpenPopupTracking(m, icao);
           m.addTo(layerGroupLocal);
-          markers.set(icao, { marker: m, cached: entry });
+          markers.set(icao, { marker: m, cached: entry, stale });
         }
       }
 
       for (const [icao, entry] of markers) {
         if (!cache.has(icao)) {
+          if (openPopupIcaoRef.current === icao) {
+            openPopupIcaoRef.current = null;
+          }
           layerGroupLocal.removeLayer(entry.marker);
           markers.delete(icao);
         }
       }
+
+      const trackedOpen = openPopupIcaoRef.current;
+      const icaoToReopen = reopenIcao ?? trackedOpen;
+      if (icaoToReopen) {
+        const target = markers.get(icaoToReopen);
+        if (target && !target.marker.isPopupOpen()) {
+          target.marker.openPopup();
+        }
+      }
     },
-    []
+    [bindOpenPopupTracking]
   );
 
   const refresh = useCallback(async () => {
@@ -146,7 +171,6 @@ export function useLiveTrafficLayer(
     });
 
     if (!box) {
-      // 日本域外でも保持（ユーザー合意）。fetch のみスキップ。
       const stale = isTrafficLayerStale(metaRef.current, TRAFFIC_POLL_MS, Date.now());
       syncMarkersToCache(layerGroup, stale);
       return;
@@ -186,6 +210,7 @@ export function useLiveTrafficLayer(
       layerGroup.clearLayers();
       cacheRef.current = new Map();
       markersRef.current = new Map();
+      openPopupIcaoRef.current = null;
       metaRef.current = {
         lastSuccessAtMs: null,
         lastFetchFailed: false,
@@ -200,11 +225,22 @@ export function useLiveTrafficLayer(
     void refresh();
     intervalRef.current = setInterval(() => void refresh(), TRAFFIC_POLL_MS);
 
+    const onMoveEnd = () => {
+      const icao = openPopupIcaoRef.current;
+      if (!icao) return;
+      const entry = markersRef.current.get(icao);
+      if (entry && !entry.marker.isPopupOpen()) {
+        entry.marker.openPopup();
+      }
+    };
+    map.on('moveend', onMoveEnd);
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
+      map.off('moveend', onMoveEnd);
     };
   }, [map, layerGroup, enabled, refresh]);
 }
