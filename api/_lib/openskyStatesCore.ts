@@ -45,23 +45,25 @@ async function upstreamHttpsRequestVercel(
   const errors: string[] = [];
 
   const firstMs = Math.min(6000, Math.floor(options.timeoutMs * 0.55));
+  const secondMs = Math.min(6000, Math.max(VERCEL_UPSTREAM_MIN_SLICE_MS, options.timeoutMs - firstMs - 200));
+
+  // undici fetch が fra1 から不安定なことが多いため hostname https を先に試す
   if (firstMs >= VERCEL_UPSTREAM_MIN_SLICE_MS) {
     try {
-      return await fetchUpstreamText(urlStr, {
+      return await httpsRequestByHostname(urlStr, {
         ...options,
         timeoutMs: Math.min(firstMs, remainingMs()),
       });
     } catch (err) {
-      errors.push(`fetch: ${formatUpstreamError(err)}`);
+      errors.push(`hostname: ${formatUpstreamError(err)}`);
     }
   }
 
-  const secondMs = Math.min(6000, remainingMs() - 200);
-  if (secondMs >= VERCEL_UPSTREAM_MIN_SLICE_MS) {
+  if (secondMs >= VERCEL_UPSTREAM_MIN_SLICE_MS && remainingMs() >= VERCEL_UPSTREAM_MIN_SLICE_MS) {
     try {
-      return await httpsRequestByHostname(urlStr, { ...options, timeoutMs: secondMs });
+      return await fetchUpstreamText(urlStr, { ...options, timeoutMs: Math.min(secondMs, remainingMs()) });
     } catch (err) {
-      errors.push(`hostname: ${formatUpstreamError(err)}`);
+      errors.push(`fetch: ${formatUpstreamError(err)}`);
     }
   }
 
@@ -335,7 +337,7 @@ const OPENSKY_FALLBACK_TIMEOUT_MS = 6000;
 const OPENSKY_TOKEN_TIMEOUT_MS = 5000;
 
 /** Vercel: states 用の壁時計予算（OAuth 後も maxDuration 30s 内） */
-const OPENSKY_VERCEL_STATES_TIMEOUT_MS = 12000;
+const OPENSKY_VERCEL_STATES_TIMEOUT_MS = 18000;
 
 /** CDN ヒット率向上用。src/utils/openskyTraffic.ts の TRAFFIC_BBOX_QUANTIZE_STEP_DEG と同期。 */
 export const TRAFFIC_BBOX_QUANTIZE_STEP_DEG = 0.5;
@@ -394,6 +396,8 @@ async function fetchOAuthTokenFromEnv(): Promise<ReturnType<typeof parseTokenRes
   const clientSecret = process.env.OPENSKY_CLIENT_SECRET;
   if (!clientId || !clientSecret) return null;
 
+  const tokenTimeoutMs = process.env.VERCEL ? 3000 : OPENSKY_TOKEN_TIMEOUT_MS;
+
   const body = new URLSearchParams({
     grant_type: 'client_credentials',
     client_id: clientId,
@@ -410,7 +414,7 @@ async function fetchOAuthTokenFromEnv(): Promise<ReturnType<typeof parseTokenRes
         'User-Agent': 'FlightAcademyTsx/1.0',
       },
       body,
-      timeoutMs: OPENSKY_TOKEN_TIMEOUT_MS,
+      timeoutMs: tokenTimeoutMs,
     });
 
     if (statusCode < 200 || statusCode >= 300) {
@@ -492,11 +496,15 @@ export async function proxyOpenSkyStates(
     headers.Authorization = `Bearer ${bearer}`;
   }
 
+  const statesTimeoutMs = process.env.VERCEL
+    ? OPENSKY_VERCEL_STATES_TIMEOUT_MS
+    : OPENSKY_FETCH_TIMEOUT_MS;
+
   try {
     const { statusCode, text, responseHeaders } = await upstreamHttpsRequest(url, {
       method: 'GET',
       reqHeaders: headers,
-      timeoutMs: process.env.VERCEL ? OPENSKY_VERCEL_STATES_TIMEOUT_MS : OPENSKY_FETCH_TIMEOUT_MS,
+      timeoutMs: statesTimeoutMs,
     });
 
     if (statusCode === 429) {
