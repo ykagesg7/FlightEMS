@@ -1,56 +1,57 @@
 import type { GeoBBox } from '../utils/openskyTraffic';
 import {
-  buildStatesQueryParams,
-  parseOpenSkyStatesJson,
-  quantizeBoundsForTrafficCache,
+  buildAirplanesLiveUrl,
+  filterAircraftToBBox,
+  parseAirplanesLiveJson,
   type OpenSkyStatesResponse,
 } from '../utils/openskyTraffic';
-import { getDevApiBase } from '../utils/devApiBase';
 
 export type TrafficFetchResult =
   | { ok: true; response: OpenSkyStatesResponse }
   | { ok: false; status: number; retryAfterSeconds?: number };
 
 /**
- * プロキシ経由で OpenSky states を取得（/api/opensky-states）
+ * airplanes.live（ADSBExchange v2 互換）から ADS-B 機体を直接取得する。
  *
- * bbox は量子化してから送信（CDN ヒット率・微小パンでの再取得抑制）。
+ * OpenSky はクラウド（Vercel）IP を遮断するためサーバ側プロキシが使えず、
+ * かつ OpenSky の CORS は自社オリジンのみ許可でブラウザ直 fetch も不可。
+ * airplanes.live は `Access-Control-Allow-Origin: *` でブラウザ直 fetch 可能。
+ *
+ * 表示矩形は中心 + 半径（最大 250NM）へ変換して問い合わせ、結果を矩形へ絞り込む。
+ * レート制限は 1 req/sec。クライアントのポーリングは 3 分間隔のため余裕がある。
  */
 export async function fetchTrafficStates(bbox: GeoBBox): Promise<TrafficFetchResult> {
-  const qbox = quantizeBoundsForTrafficCache(bbox);
-  const qs = buildStatesQueryParams(qbox).toString();
-  const isProd = import.meta.env.PROD;
-  const deploymentDomain =
-    isProd && typeof window !== 'undefined' ? window.location.origin : null;
-  const devApi = getDevApiBase();
-  const url = deploymentDomain
-    ? `${deploymentDomain}/api/opensky-states?${qs}`
-    : devApi
-      ? `${devApi}/api/opensky-states?${qs}`
-      : `/api/opensky-states?${qs}`;
+  const url = buildAirplanesLiveUrl(bbox);
 
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+    });
+  } catch (err) {
+    console.warn('[openskyTraffic] fetch error', err);
+    return { ok: false, status: 0 };
+  }
 
   if (!res.ok) {
     const text = await res.text().catch(() => '');
     console.warn('[openskyTraffic] fetch failed', res.status, text.slice(0, 200));
 
     let retryAfterSeconds: number | undefined;
-    try {
-      const errJson = JSON.parse(text) as { retryAfterSeconds?: unknown };
-      if (typeof errJson.retryAfterSeconds === 'number' && Number.isFinite(errJson.retryAfterSeconds)) {
-        retryAfterSeconds = errJson.retryAfterSeconds;
-      }
-    } catch {
-      /* ignore */
+    const header = res.headers.get('retry-after');
+    if (header) {
+      const n = parseInt(header, 10);
+      if (Number.isFinite(n) && n >= 0) retryAfterSeconds = n;
     }
 
     return { ok: false, status: res.status, retryAfterSeconds };
   }
 
   const json: unknown = await res.json();
-  return { ok: true, response: parseOpenSkyStatesJson(json) };
+  const parsed = parseAirplanesLiveJson(json);
+  return {
+    ok: true,
+    response: { time: parsed.time, states: filterAircraftToBBox(parsed.states, bbox) },
+  };
 }

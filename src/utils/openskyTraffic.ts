@@ -81,6 +81,120 @@ export function buildStatesQueryParams(box: GeoBBox): URLSearchParams {
   return p;
 }
 
+/** airplanes.live REST API（ADSBExchange v2 互換・point+radius・最大 250NM・CORS 許可）。 */
+export const AIRPLANES_LIVE_BASE = 'https://api.airplanes.live/v2';
+
+/** point クエリ半径の上限（NM）。API 制約。 */
+export const MAX_TRAFFIC_RADIUS_NM = 250;
+
+/** 半径下限（NM）。極端に狭い表示でも最低限の機体を拾う。 */
+const MIN_TRAFFIC_RADIUS_NM = 10;
+
+export interface PointRadiusQuery {
+  lat: number;
+  lon: number;
+  radiusNm: number;
+}
+
+/**
+ * 表示矩形を point+radius（中心 + 外接円半径 NM）へ変換。API 上限 250NM でクランプ。
+ */
+export function bboxToPointRadiusNm(box: GeoBBox): PointRadiusQuery {
+  const lat = (box.south + box.north) / 2;
+  const lon = (box.west + box.east) / 2;
+  const halfLatNm = ((box.north - box.south) / 2) * 60;
+  const halfLonNm = ((box.east - box.west) / 2) * 60 * Math.cos((lat * Math.PI) / 180);
+  const diagNm = Math.sqrt(halfLatNm * halfLatNm + halfLonNm * halfLonNm);
+  const radiusNm = Math.min(
+    MAX_TRAFFIC_RADIUS_NM,
+    Math.max(MIN_TRAFFIC_RADIUS_NM, Math.ceil(diagNm))
+  );
+  return { lat, lon, radiusNm };
+}
+
+export function buildAirplanesLiveUrl(box: GeoBBox): string {
+  const { lat, lon, radiusNm } = bboxToPointRadiusNm(box);
+  return `${AIRPLANES_LIVE_BASE}/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radiusNm}`;
+}
+
+const FT_TO_M = 0.3048;
+const KT_TO_MS = 0.514444;
+
+/**
+ * airplanes.live / ADSBExchange v2 の 1 機体を ParsedOpenSkyAircraft へ写像。
+ * 高度は ft→m、速度は kt→m/s に変換（既存のポップアップが m/m·s 前提のため）。
+ */
+export function parseAirplanesLiveAircraft(raw: unknown, nowSec: number): ParsedOpenSkyAircraft | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const o = raw as Record<string, unknown>;
+
+  const hex = typeof o.hex === 'string' ? o.hex.replace(/^~/, '').trim().toLowerCase() : '';
+  if (!hex) return null;
+  const lat = numOrNull(o.lat);
+  const lon = numOrNull(o.lon);
+  if (lat === null || lon === null) return null;
+
+  const onGround = o.alt_baro === 'ground';
+  const baroFt = onGround ? null : numOrNull(o.alt_baro);
+  const geomFt = numOrNull(o.alt_geom);
+  const gsKt = numOrNull(o.gs);
+  const track = numOrNull(o.track) ?? numOrNull(o.true_heading);
+
+  const seenPos = numOrNull(o.seen_pos) ?? numOrNull(o.seen) ?? 0;
+  const lastContact = Math.floor(nowSec - seenPos);
+
+  return {
+    icao24: hex,
+    callsign: strOrNull(o.flight),
+    latitude: lat,
+    longitude: lon,
+    baroAltitudeM: baroFt === null ? null : baroFt * FT_TO_M,
+    geoAltitudeM: geomFt === null ? null : geomFt * FT_TO_M,
+    velocityMs: gsKt === null ? null : gsKt * KT_TO_MS,
+    trueTrackDeg: track,
+    onGround,
+    lastContact,
+    timePosition: lastContact,
+  };
+}
+
+/**
+ * airplanes.live レスポンス（{ ac: [...], now }）を OpenSkyStatesResponse 互換へ整形。
+ */
+export function parseAirplanesLiveJson(data: unknown): OpenSkyStatesResponse {
+  if (!data || typeof data !== 'object') {
+    return { time: 0, states: [] };
+  }
+  const o = data as Record<string, unknown>;
+  const nowMsOrSec = typeof o.now === 'number' ? o.now : Date.now();
+  // airplanes.live の now はミリ秒。秒へ正規化（10^12 以上ならミリ秒とみなす）。
+  const nowSec = nowMsOrSec > 1e12 ? Math.floor(nowMsOrSec / 1000) : Math.floor(nowMsOrSec);
+  const raw = o.ac;
+  if (!Array.isArray(raw)) {
+    return { time: nowSec, states: [] };
+  }
+  const states: ParsedOpenSkyAircraft[] = [];
+  for (const row of raw) {
+    const p = parseAirplanesLiveAircraft(row, nowSec);
+    if (p) states.push(p);
+  }
+  return { time: nowSec, states };
+}
+
+/** 円形取得結果を表示矩形へ絞り込む（マーカーが表示域と一致するように）。 */
+export function filterAircraftToBBox(
+  aircraft: ParsedOpenSkyAircraft[],
+  box: GeoBBox
+): ParsedOpenSkyAircraft[] {
+  return aircraft.filter(
+    (a) =>
+      a.latitude >= box.south &&
+      a.latitude <= box.north &&
+      a.longitude >= box.west &&
+      a.longitude <= box.east
+  );
+}
+
 export interface ParsedOpenSkyAircraft {
   icao24: string;
   callsign: string | null;

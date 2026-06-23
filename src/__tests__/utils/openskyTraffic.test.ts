@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
+  bboxToPointRadiusNm,
+  buildAirplanesLiveUrl,
+  filterAircraftToBBox,
   intersectWithJapanBBox,
   JAPAN_BBOX,
+  MAX_TRAFFIC_RADIUS_NM,
+  parseAirplanesLiveAircraft,
+  parseAirplanesLiveJson,
   parseOpenSkyStatesJson,
   parseStateVector,
   quantizeBoundsForTrafficCache,
@@ -92,5 +98,78 @@ describe('openskyTraffic', () => {
     expect(r.time).toBe(1);
     expect(r.states).toHaveLength(1);
     expect(r.states[0]!.icao24).toBe('a1');
+  });
+});
+
+describe('airplanes.live mapping', () => {
+  it('bboxToPointRadiusNm returns center and clamped radius', () => {
+    const box = { south: 35, west: 139, north: 36, east: 140 };
+    const r = bboxToPointRadiusNm(box);
+    expect(r.lat).toBeCloseTo(35.5, 5);
+    expect(r.lon).toBeCloseTo(139.5, 5);
+    expect(r.radiusNm).toBeGreaterThan(0);
+    expect(r.radiusNm).toBeLessThanOrEqual(MAX_TRAFFIC_RADIUS_NM);
+  });
+
+  it('bboxToPointRadiusNm clamps very wide bbox to API max', () => {
+    const r = bboxToPointRadiusNm(JAPAN_BBOX);
+    expect(r.radiusNm).toBe(MAX_TRAFFIC_RADIUS_NM);
+  });
+
+  it('buildAirplanesLiveUrl builds point/lat/lon/radius path', () => {
+    const url = buildAirplanesLiveUrl({ south: 35, west: 139, north: 36, east: 140 });
+    expect(url).toMatch(/\/v2\/point\/35\.5000\/139\.5000\/\d+$/);
+  });
+
+  it('parseAirplanesLiveAircraft maps fields and converts units', () => {
+    const raw = {
+      hex: '~89ABCD',
+      flight: 'ANA123  ',
+      lat: 35.5,
+      lon: 139.5,
+      alt_baro: 10000,
+      alt_geom: 10500,
+      gs: 250,
+      track: 90,
+      seen_pos: 5,
+    };
+    const p = parseAirplanesLiveAircraft(raw, 1000);
+    expect(p).not.toBeNull();
+    expect(p!.icao24).toBe('89abcd');
+    expect(p!.callsign).toBe('ANA123');
+    expect(p!.onGround).toBe(false);
+    expect(p!.baroAltitudeM).toBeCloseTo(10000 * 0.3048, 3);
+    expect(p!.velocityMs).toBeCloseTo(250 * 0.514444, 3);
+    expect(p!.trueTrackDeg).toBe(90);
+    expect(p!.lastContact).toBe(995);
+  });
+
+  it('parseAirplanesLiveAircraft treats ground and uses true_heading fallback', () => {
+    const p = parseAirplanesLiveAircraft(
+      { hex: 'abc123', alt_baro: 'ground', true_heading: 149, lat: 35, lon: 139 },
+      1000
+    );
+    expect(p!.onGround).toBe(true);
+    expect(p!.baroAltitudeM).toBeNull();
+    expect(p!.trueTrackDeg).toBe(149);
+  });
+
+  it('parseAirplanesLiveJson normalizes ms now and parses ac array', () => {
+    const r = parseAirplanesLiveJson({
+      now: 1700000000000,
+      ac: [{ hex: 'a1', lat: 36, lon: 140, alt_baro: 5000, gs: 100, track: 10 }],
+    });
+    expect(r.time).toBe(1700000000);
+    expect(r.states).toHaveLength(1);
+    expect(r.states[0]!.icao24).toBe('a1');
+  });
+
+  it('filterAircraftToBBox keeps only aircraft inside the box', () => {
+    const box = { south: 35, west: 139, north: 36, east: 140 };
+    const inside = parseAirplanesLiveAircraft({ hex: 'in', lat: 35.5, lon: 139.5 }, 1)!;
+    const outside = parseAirplanesLiveAircraft({ hex: 'out', lat: 40, lon: 145 }, 1)!;
+    const r = filterAircraftToBBox([inside, outside], box);
+    expect(r).toHaveLength(1);
+    expect(r[0]!.icao24).toBe('in');
   });
 });

@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年6月23日  
-**バージョン**: Roadmap v4.0.26（Strategy v1.2・CPL 主軸・Phase D cohort pilot 本番・OpenSky 航空機レイヤー本番安定化）
+**最終更新**: 2026年6月24日  
+**バージョン**: Roadmap v4.0.27（Strategy v1.2・CPL 主軸・Phase D cohort pilot 本番・航空機レイヤー airplanes.live 移行）
 
 ---
 
@@ -297,6 +297,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-24 | **v4.0.27 / 航空機レイヤーを airplanes.live へ移行**: OpenSky が **クラウド IP 遮断**・CORS 制限で Vercel から利用不可（恒常的 502/504）と確定。**airplanes.live**（ADSBExchange v2 互換・CORS `*`）への **ブラウザ直 fetch** に変更しサーバプロキシ廃止。point+radius（最大 250NM）・3 分 poll・Stale・ポップアップ維持。`src/services/openskyTraffic.ts`・`src/utils/openskyTraffic.ts`。[02](02_System_Spec.md) · [03](03_Development_Guide.md) · [04](04_Operations_Guide.md)。 |
 | 2026-06-23 | **v4.0.26 / OpenSky 航空機レイヤー 本番安定化**: Planning 地図 **航空機（参考・OpenSky）** — OAuth2 プロキシ（`api/_lib/openskyOAuthToken.ts`・`openskyStatesCore.ts`）、3 分 poll・BBOX 0.5° 量子化・Stale merge（`liveTrafficLayerState.ts`）、Vercel upstream **fetch-only**（502/504 回避）、ポップアップ維持（`openskyTrafficPopup.ts`）。Vercel env: `OPENSKY_CLIENT_ID` / `OPENSKY_CLIENT_SECRET` 追加、未使用 `NEXT_PUBLIC_SUPABASE_*`・`POSTGRES_*` 削除。テスト: `openskyOAuthToken` / `openskyStatesCore` / `liveTrafficLayerState` / `openskyTraffic`。コミット: `9a7ee0b`〜`707a003`。[02](02_System_Spec.md) · [03](03_Development_Guide.md) · [04](04_Operations_Guide.md) OpenSky 運用。 |
 | 2026-06-21 | **v4.0.25 / MFA リカバリーコード 本番確認**: Profile で **10 件のリカバリーコード再発行成功**。Vercel: ネスト `[action].ts` 非デプロイ → **`api/mfa-recovery-codes.ts` + `?action=`**（`6edfdc5`）。サーバー AAL2: JWT `aal` クレーム（`3648940`）。ログイン MFA デフォルト OFF（[`20260624`](../scripts/database/20260624_profiles_mfa_required_at_login_default_off.sql)）。CI: `WelcomeSetupPage` 非同期 teardown（`b58facd`）。コミット: `d1c6ec9`〜`3648940`。[02](02_System_Spec.md) · [04](04_Operations_Guide.md) MFA 運用。 |
 | 2026-06-21 | **v4.0.24 / Profile Hub + MFA 本番**: Profile Hub 4 セクション・TOTP ログインゲート・リカバリーコード・アカウント削除を **本番デプロイ済**（`54b2a27`〜`99401d3`）。Vercel: API 統合で 12 Serverless 上限内。verify-build: 通知 auto-save lint 修正。DB: [`20260622`](../scripts/database/20260622_profiles_mfa_required_at_login.sql) / [`20260623`](../scripts/database/20260623_mfa_recovery_codes.sql)。[02](02_System_Spec.md) · [04](04_Operations_Guide.md) MFA 運用。 |

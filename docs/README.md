@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年6月23日（OpenSky 航空機レイヤー本番安定化・Vercel env 整理）
-**バージョン**: Documentation Index v4.54
+**最終更新**: 2026年6月24日（航空機レイヤーを airplanes.live へ移行・OpenSky クラウド遮断対応）
+**バージョン**: Documentation Index v4.55
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -40,6 +40,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-06-24（航空機レイヤーを airplanes.live へ移行）**: OpenSky が **クラウド（Vercel）IP を遮断**し CORS も自社オリジンのみ（本番で恒常的 502/504）と判明。データ取得先を **airplanes.live**（ADSBExchange v2 互換・CORS `*`）へ変更し、**ブラウザ直 fetch**（サーバプロキシ廃止）。point+radius（最大 250NM）クエリ・3 分 poll・Stale 保持は維持。`src/services/openskyTraffic.ts`・`src/utils/openskyTraffic.ts`（`parseAirplanesLiveJson` 等）。詳細: [02](02_System_Spec.md) 地図節 · [03](03_Development_Guide.md) · [04](04_Operations_Guide.md) OpenSky 運用。
 - **2026-06-23（OpenSky 航空機レイヤー 本番安定化）**: Planning 地図の **航空機（参考・OpenSky）** を OAuth2 プロキシ・3 分 poll・Stale 保持で本番稼働（`9a7ee0b`〜`707a003`）。Vercel: `OPENSKY_CLIENT_ID` / `OPENSKY_CLIENT_SECRET`（Production + Preview）、upstream **fetch-only**（502 ETIMEDOUT / 504 回避）、`regions: fra1`。ポップアップ維持: `openskyTrafficPopup.ts` + `useLiveTrafficLayer` 追跡再 open。Vercel から未使用 env 削除（`NEXT_PUBLIC_SUPABASE_*`・`POSTGRES_*`）。詳細: [02](02_System_Spec.md) 地図節 · [03](03_Development_Guide.md) OpenSky · [04](04_Operations_Guide.md) OpenSky 運用。
 - **2026-06-21（MFA リカバリーコード 本番確認）**: Profile で **10 件のリカバリーコード再発行成功**（`3648940`）。Vercel はネスト `[action].ts` 非デプロイ → **`api/mfa-recovery-codes.ts` + `?action=`**。サーバー AAL2 は JWT `aal` クレーム（`getAuthenticatorAssuranceLevel()` はステートレス client で不可）。ログイン MFA デフォルト OFF（`20260624`）。コミット: `d1c6ec9`〜`3648940`。詳細: [04](04_Operations_Guide.md) MFA 運用 · [02](02_System_Spec.md) Profile Hub 節。
 - **2026-06-21（Profile Hub + MFA 本番）**: Profile Hub 4 セクション・TOTP ログインゲート・リカバリーコード・アカウント削除を **本番デプロイ済**（`54b2a27`〜`99401d3`）。Vercel: API 13 本→統合で 12 本上限内。CI verify: 通知 auto-save 後の未使用 prop 修正。詳細: [02](02_System_Spec.md) Profile Hub 節・[04](04_Operations_Guide.md) MFA 運用・[03](03_Development_Guide.md) Serverless 上限。
