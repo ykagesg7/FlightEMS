@@ -37,6 +37,7 @@ async function upstreamHttpsRequest(
     timeoutMs: number;
   }
 ): Promise<{ statusCode: number; text: string; responseHeaders: Record<string, string | string[] | undefined> }> {
+  const fallbackMs = Math.min(options.timeoutMs, OPENSKY_FALLBACK_TIMEOUT_MS);
   const errors: string[] = [];
 
   try {
@@ -46,13 +47,13 @@ async function upstreamHttpsRequest(
   }
 
   try {
-    return await httpsRequestByHostname(urlStr, options);
+    return await httpsRequestByHostname(urlStr, { ...options, timeoutMs: fallbackMs });
   } catch (err) {
     errors.push(`hostname: ${err instanceof Error ? err.message : String(err)}`);
   }
 
   try {
-    return await httpsRequestTextIpv4(urlStr, options);
+    return await httpsRequestTextIpv4(urlStr, { ...options, timeoutMs: fallbackMs });
   } catch (err) {
     errors.push(`ipv4: ${err instanceof Error ? err.message : String(err)}`);
   }
@@ -245,10 +246,13 @@ function httpsRequestTextIpv4(
 const OPENSKY_BASE = 'https://opensky-network.org/api/states/all';
 
 /**
- * OpenSky 待ち上限（壁時計）。`vercel.json` の `api/opensky-states.ts` の maxDuration より
- * 数秒短くし、JSON 解析とレスポンス送信の余裕を残す。
+ * OpenSky 待ち上限（壁時計）。`vercel.json` maxDuration 30s より短く、
+ * フォールバック試行分の余裕も残す。
  */
-const OPENSKY_FETCH_TIMEOUT_MS = 26000;
+const OPENSKY_FETCH_TIMEOUT_MS = 22000;
+
+/** フォールバック試行は短く（合計が maxDuration を超えないように） */
+const OPENSKY_FALLBACK_TIMEOUT_MS = 6000;
 
 /** CDN ヒット率向上用。src/utils/openskyTraffic.ts の TRAFFIC_BBOX_QUANTIZE_STEP_DEG と同期。 */
 export const TRAFFIC_BBOX_QUANTIZE_STEP_DEG = 0.5;
@@ -323,7 +327,7 @@ async function fetchOAuthTokenFromEnv(): Promise<ReturnType<typeof parseTokenRes
         'User-Agent': 'FlightAcademyTsx/1.0',
       },
       body,
-      timeoutMs: 15000,
+      timeoutMs: 12000,
     });
 
     if (statusCode < 200 || statusCode >= 300) {
