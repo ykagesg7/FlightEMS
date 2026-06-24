@@ -1,7 +1,8 @@
 # 記事単元の網羅状況とバックログ
 
 **作成日**: 2026-04-10  
-**スナップショット更新**: 2026-06-06（MCP `execute_sql` 再取得。**verified 未マッピング 36**・`learning_test_mapping` **74 行 / 64 記事**。W24 空力基礎 3 クラスタ → `3.2.7` 追補適用後）
+**スナップショット更新**: 2026-06-24（リポジトリ MDX **85**・**PPL 34**。DB マッピング指標は **2026-06-06** MCP のまま）  
+**MCP 再取得（マッピング）**: 2026-06-06 — verified 未マッピング **36**・`learning_test_mapping` **74 行 / 64 記事**（W24 空力基礎 3 クラスタ → `3.2.7` 追補）
 **前回スナップショット**: 2026-04-13（MCP `execute_sql` 再取得。`3.4.2`/`3.4.3` は `question_text` 条件。Post-Phase-B で PPL 3 本・`3.4.5`/`3.4.6`/`3.5.5` マッピング追補）
 **計画監査ターン**: **2026-05-06** — MCP `execute_sql` で §1 と同種の集計を再実行。**値は 2026-05-06 §5.2 メモ記録時と一致**: verified クラスタ **224**・`learning_contents` **90**・`learning_test_mapping` DISTINCT **50** / 総行 **58**・verified 未マッピング設問 **69**。同日に **追加 SQL は適用しておらず**、[14 §5](Article_Coverage_Backlog.md) の正本のみ整合確認。  
 **§5.2 メモ更新**: **2026-05-06** — 次段クラスタ（荷重と強度・機体の構造・燃料供給系統・総則/定義・雑音と空電）を `engineering_basics` / `3.1.1` に束ね、[20260506_learning_test_mapping_unmapped_tier2.sql](../scripts/database/20260506_learning_test_mapping_unmapped_tier2.sql) を本番適用（MCP `execute_sql`）。verified で **§5.2 経路に載らない設問は 69 件**、`learning_test_mapping` **行数 58**（**DISTINCT `learning_content_id` は 50 のまま**・同一記事に複数 `topic_category`）。  
@@ -21,11 +22,11 @@
 |------|-----|------|
 | **verified 設問クラスタ数** | **224** | `DISTINCT (main_subject, sub_subject)`（再取得していない場合は据え置き） |
 | **`learning_contents` 総行数** | **104**（見込み） | 2026-04-13 MCP スナップショット **90**。**2026-05-12** は **+4**（[`20260512_learning_contents_ppl_aviation_law_four.sql`](../scripts/database/20260512_learning_contents_ppl_aviation_law_four.sql)）＋ **+3**（[`20260512_learning_contents_ppl_subject5_505_507.sql`](../scripts/database/20260512_learning_contents_ppl_subject5_505_507.sql)）＋ **+7**（[`20260512_learning_contents_ppl_subject5_508_514.sql`](../scripts/database/20260512_learning_contents_ppl_subject5_508_514.sql)）、いずれも MCP `execute_sql` 済み。**再取得未取得の場合は 90 と併記**。 |
-| **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **27**（見込み：13＋航空法規14） / メンタリティー **15** / 思考法 **13** | PPL の航空法規先行本文化は **`order_index` 501〜514**（2026-05-12 登録ログ参照）。PrevNext は `order_index`。`GROUP BY` の再 MCP は未実行。 |
+| **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **34**（見込み：工学 **20** + 法規 **14**） / メンタリティー **15** / 思考法 **13** | PPL 法規 **`order_index` 501〜514**（2026-05-12）。Subject 2 気象は未登録 — [PPL_Subject2 構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) |
 | **`learning_test_mapping` がある記事** | **64** | `COUNT(DISTINCT learning_content_id)`・2026-06-06 |
 | **`learning_test_mapping` 行数** | **74** | 2026-06-06 MCP（W24 [`20260606_learning_test_mapping_aero_lift_drag_clusters.sql`](../scripts/database/20260606_learning_test_mapping_aero_lift_drag_clusters.sql) 適用後） |
 | **verified 未マッピング設問** | **36** | 2026-06-06 §5.2 クエリ（W24 前 **47**） |
-| **リポジトリ `src/content/lessons/*.mdx`** | **69** | 2026-04-13（Glob 集計） |
+| **リポジトリ `src/content/lessons/*.mdx`** | **85** | 2026-06-24（PPL **34** / CPL 3.x **44** / その他 **7**） |
 
 **正本**: 単元の木は **`unified_cpl_questions` の `(main_subject, sub_subject 全文)`**（[08](08_Syllabus_Management_Guide.md)）。本書の数値は FlightAcademy プロジェクトに対する **MCP `execute_sql`** で取得したスナップショットである。再取得する場合は §5 の SQL を使用する。
 
@@ -179,7 +180,8 @@ ORDER BY unmapped_questions DESC;
 
 ### Tier C — PPL シラバス残り（[07](PPL_Master_Syllabus.md)）
 
-- 航空気象・空中航法・航空通信・航空法規の **未チェック**トピックに対応する `PPL-*` 記事（工学以外の Subject 2〜5）。
+- **Subject 2 航空気象（最優先・2026-07）**: [PPL_Subject2 構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) Phase 1 **12 本**。Gemini 索引: [PPL_Meteorology_2026](content_outlines/PPL_Meteorology_2026/README.md)。
+- 空中航法・航空通信の **未チェック**トピックに対応する `PPL-*` 記事（工学・気象以外の Subject 3〜4）。
 
 ### 運用メモ
 

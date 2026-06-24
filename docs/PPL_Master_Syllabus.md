@@ -1,8 +1,8 @@
 # ✈️ Flight Academy: Phase 1 (PPL) Master Syllabus
 
 **作成日**: 2025年1月
-**最終更新**: 2026年4月
-**バージョン**: v1.3
+**最終更新**: 2026年6月24日
+**バージョン**: v1.4
 
 ## 📖 このドキュメントを読むべき人
 
@@ -28,21 +28,23 @@
 ## 📊 進捗サマリー
 
 ### 全体進捗
-- **全体**: 20/150 (13.3%)
-- **Phase 1**: 18/45 (40.0%) - 高頻出・重要トピック
-- **Phase 2**: 2/60 (3.3%) - 中頻出トピック
-- **Phase 3**: 0/45 (0%) - 体系的な網羅
+
+- **全体（MDX 本数 / シラバス 150 論点）**: **35/150（23.3%）** — `src/content/lessons/PPL-*.mdx` 実数（2026-06-24）
+- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本のうち Phase 1 優先トピックを **おおむねカバー**（厳密な論点対応は各 Subject 節の ✅ を正）
+- **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Phase 3 は未着手
+
+**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **34 本で MDX 上は達成**。`learning_contents` 同期・Subject 2 着手は 7 月以降の短期プラン。
 
 ### 科目別進捗
 
-| 科目 | 総数 | 完了 | 進捗 | Phase 1 | Phase 2 | Phase 3 |
-|------|------|------|------|---------|---------|---------|
-| **Subject 1: 航空工学** | 45 | 20 | 44.4% | 14/15 | 2/20 | 0/10 |
-| **Subject 2: 航空気象** | 35 | 0 | 0% | 0/12 | 0/15 | 0/8 |
+| 科目 | 総数（論点） | MDX 本数 | 進捗 | Phase 1 | Phase 2 | Phase 3 |
+|------|-------------|----------|------|---------|---------|---------|
+| **Subject 1: 航空工学** | 45 | **20** | 44.4% | 14/15 | 2/20 | 0/10 |
+| **Subject 2: 航空気象** | 35 | **1** | 2.9% | 1/12 | 0/15 | 0/8 |
 | **Subject 3: 空中航法** | 30 | 0 | 0% | 0/10 | 0/12 | 0/8 |
 | **Subject 4: 航空通信** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
-| **Subject 5: 航空法規** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
-| **合計** | **150** | **20** | **13.3%** | **18/45** | **2/60** | **0/45** |
+| **Subject 5: 航空法規** | 20 | **14** | 70.0% | 8/8 | 4/8 | 0/4 |
+| **合計** | **150** | **35** | **23.3%** | — | — | — |
 
 ---
 
@@ -154,10 +156,13 @@
 ## 🌩️ Subject 2: 航空気象 (Aviation Weather)
 > **空の自然現象を理解し、安全な飛行計画に役立てる。**
 
+> **記事ツリーの構成案（CPL `3.3.1`〜`3.3.12` との対応・推奨 stem・Gemini ブリーフ）**: [content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) — 執筆索引: [content_outlines/PPL_Meteorology_2026/README.md](content_outlines/PPL_Meteorology_2026/README.md)
+
 ### 2-1. 大気の物理
 
 #### 2-1-1. 大気の基礎
-- [ ] **Phase 1** 大気: 組成、鉛直構造（対流圏・成層圏）、国際標準大気（ISA）
+- [x] **Phase 1** 大気: 組成、鉛直構造（対流圏・成層圏）、国際標準大気（ISA）
+  - ✅ [PPL-2-1-1_AtmosphereAndIsaBasics](../src/content/lessons/PPL-2-1-1_AtmosphereAndIsaBasics.mdx) — 組成・低酸素症・対流圏/成層圏・ISA（2026-06-24）
 - [ ] **Phase 1** 温度: 熱の伝わり方、気温減率、逆転層
 - [ ] **Phase 1** 気圧: 気圧と高度の関係、QNH/QNE/QFE、高度計誤差
 - [ ] **Phase 1** 水分: 相の変化（潜熱）、湿度、露点温度
@@ -279,24 +284,39 @@
 > **記事ツリーの構成案（CPL `3.1.x` との対応・推奨 stem）**: [content_outlines/PPL_Subject5_Aviation_Law_Structure.md](content_outlines/PPL_Subject5_Aviation_Law_Structure.md)
 
 ### 5-1. 航空法の体系
-- [ ] **Phase 2** 国際条約: シカゴ条約の概要
-- [ ] **Phase 1** 総則: 航空機、航空従事者、飛行場の定義
+- [x] **Phase 2** 国際条約: シカゴ条約の概要
+  - ✅ [PPL-5-1-2_ChicagoConventionOverview](../src/content/lessons/PPL-5-1-2_ChicagoConventionOverview.mdx)
+- [x] **Phase 1** 総則: 航空機、航空従事者、飛行場の定義
+  - ✅ [PPL-5-1-1_AviationLawDefinitions](../src/content/lessons/PPL-5-1-1_AviationLawDefinitions.mdx)
 
 ### 5-2. 登録と安全性
-- [ ] **Phase 2** 登録: 国籍記号、登録の要件
-- [ ] **Phase 2** 耐空性: 耐空証明、整備規程、修理・改造
+- [x] **Phase 2** 登録: 国籍記号、登録の要件
+  - ✅ [PPL-5-2-1_AircraftNationalityAndRegistration](../src/content/lessons/PPL-5-2-1_AircraftNationalityAndRegistration.mdx)
+- [x] **Phase 2** 耐空性: 耐空証明、整備規程、修理・改造
+  - ✅ [PPL-5-2-2_AirworthinessAndMaintenanceOverview](../src/content/lessons/PPL-5-2-2_AirworthinessAndMaintenanceOverview.mdx)
 
 ### 5-3. 航空従事者
-- [ ] **Phase 1** 技能証明: 免許の種類、業務範囲、欠格事由
-- [ ] **Phase 1** 航空身体検査: 有効期間と基準
-- [ ] **Phase 2** 航空英語: 能力証明の要件
+- [x] **Phase 1** 技能証明: 免許の種類、業務範囲、欠格事由
+  - ✅ [PPL-5-3-1_PilotCertificateBasics](../src/content/lessons/PPL-5-3-1_PilotCertificateBasics.mdx)
+- [x] **Phase 1** 航空身体検査: 有効期間と基準
+  - ✅ [PPL-5-3-2_MedicalCertificateBasics](../src/content/lessons/PPL-5-3-2_MedicalCertificateBasics.mdx)
+- [x] **Phase 2** 航空英語: 能力証明の要件
+  - ✅ [PPL-5-3-3_AviationEnglishRequirements](../src/content/lessons/PPL-5-3-3_AviationEnglishRequirements.mdx)
 
 ### 5-4. 運航のルール
-- [ ] **Phase 1** 空域と施設: 航空路、飛行場の設置基準
-- [ ] **Phase 1** 運航: 機長の権限、出発前の確認、飛行禁止区域
-- [ ] **Phase 1** 特定操縦技能: 2年ごとの審査
-- [ ] **Phase 1** 安全阻害行為: 粗暴な操縦、飲酒等の禁止
-- [ ] **Phase 1** 事故報告: 事故と重大インシデントの報告義務
+- [x] **Phase 1** 空域と施設: 航空路、飛行場の設置基準
+  - ✅ [PPL-5-4-1_AirspaceAndFacilitiesOverview](../src/content/lessons/PPL-5-4-1_AirspaceAndFacilitiesOverview.mdx)
+- [x] **Phase 1** 運航: 機長の権限、出発前の確認、飛行禁止区域
+  - ✅ [PPL-5-4-2_CaptainAuthorityAndPreflight](../src/content/lessons/PPL-5-4-2_CaptainAuthorityAndPreflight.mdx)
+- [x] **Phase 1** 特定操縦技能: 2年ごとの審査
+  - ✅ [PPL-5-4-3_RecurrentProficiencyOverview](../src/content/lessons/PPL-5-4-3_RecurrentProficiencyOverview.mdx)
+- [x] **Phase 1** 安全阻害行為: 粗暴な操縦、飲酒等の禁止
+  - ✅ [PPL-5-4-4_SafetyEndangeringProhibitions](../src/content/lessons/PPL-5-4-4_SafetyEndangeringProhibitions.mdx)
+- [x] **Phase 1** 事故報告: 事故と重大インシデントの報告義務
+  - ✅ [PPL-5-4-5_AccidentIncidentReportingBasics](../src/content/lessons/PPL-5-4-5_AccidentIncidentReportingBasics.mdx)
+- [x] **Phase 1 拡張** 飛行場地上運用・IFR 最低高度入門（07 独立ノード外の分割記事）
+  - ✅ [PPL-5-4-6_AerodromeGroundOperationsBasics](../src/content/lessons/PPL-5-4-6_AerodromeGroundOperationsBasics.mdx)
+  - ✅ [PPL-5-4-7_IFRMinimumAltitudeIntroForPPL](../src/content/lessons/PPL-5-4-7_IFRMinimumAltitudeIntroForPPL.mdx)
 
 **Subject 5 合計**: 20トピック（Phase 1: 8, Phase 2: 8, Phase 3: 4）
 
@@ -472,6 +492,8 @@ src/content/lessons/
 | 2026-02-01 | Phase 2記事1件追加（PPL-1-2-7_LubricationCooling: オイルと冷却） | System |
 | 2026-03-01 | Phase 1記事1件追加（PPL-1-1-9_FlightPerformance: 飛行性能） | System |
 | 2026-05-13 | Subject 5 に **法規記事構成案**へのリンクを追加（`content_outlines/PPL_Subject5_Aviation_Law_Structure.md`） | — |
+| 2026-05-12 | Subject 5 **14 本**本文化・`learning_contents` 501〜514 登録（[Article_Coverage_Backlog](Article_Coverage_Backlog.md) 登録ログ） | — |
+| 2026-06-24 | **v1.4** — 進捗 **34/150**、Subject 5 ✅ 反映。Subject 2 に [気象構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) リンク | — |
 
 ## 📚 参考資料
 
@@ -484,5 +506,5 @@ src/content/lessons/
 
 ---
 
-**次のステップ**: Phase 1の優先トピックから記事作成を開始
+**次のステップ**: **Subject 2 航空気象 Phase 1（12 本）** — [気象構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)・[Gemini 索引](content_outlines/PPL_Meteorology_2026/README.md)。並行して CPL Phase 2・マッピング（[01](01_Current_Status_and_Roadmap.md) C-6）。
 

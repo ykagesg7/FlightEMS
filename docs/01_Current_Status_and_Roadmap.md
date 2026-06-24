@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
 **最終更新**: 2026年6月24日  
-**バージョン**: Roadmap v4.0.27（Strategy v1.2・CPL 主軸・Phase D cohort pilot 本番・航空機レイヤー airplanes.live 移行）
+**バージョン**: Roadmap v4.0.28（PPL 進捗 34/150・Subject 2 気象構造化・Phase C 後半短期プラン）
 
 ---
 
@@ -33,7 +33,21 @@
 ### 2026年6月期スプリント
 
 - **正本**: [**June_2026_Implementation_Plan.md**](June_2026_Implementation_Plan.md)（DONE 条件・W23〜W26・CPL/PPL/B-4／Phase C 準備の境界）。
-- **週次記録**: [05_Content_Pipeline.md](05_Content_Pipeline.md) の Phase 2 **週次着手記録表**へ毎週追記。
+- **週次記録**: [05_Content_Pipeline.md](05_Content_Pipeline.md) の Phase 2 **週次着手記録表**へ毎週追記。**W23〜W26 完了**（[June_2026_Content_Sprint.md](June_2026_Content_Sprint.md) §6）。
+
+### 2026年7月期（Phase C 後半 — 短期実行）
+
+六月スプリント（W23〜W26）完了後の **7〜8月フォーカス**。[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md) の DONE 条件を踏まえ、**UI 無承認変更なし**のまま次を週次で追う。
+
+| 優先 | タスク | 詳細 | 目安 |
+|------|--------|------|------|
+| **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md) Tier A/B。MCP 再集計 **月 1 回**。verified 未マッピング **36 件**から段階削減（ゼロ必須ではない） | 週 2〜4 着手単位 |
+| **2** | **C-7 PPL Subject 2 気象** | [PPL_Subject2 構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) Phase 1 **12 本**。Gemini 下書き → MDX 取り込み → `learning_contents` | ブロック A **2 本/週**目安 |
+| **3** | CPL↔PPL Callout | 気象 PPL 本文化に合わせ `3.3.x` の復習リンクを **PPL-2-* へ差し替え**（[構造案 §8](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)） | 記事取り込み直後 |
+| **4** | B-4 テスト | `src` 実効 **15%** 主目標（6月実測 **18.07%** 達成済 — 維持・ストレッチ 18%） | 月次記録 |
+| **5** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**コード着手。未承認時は A11y/Lighthouse **監査メモ**のみ | 随時 |
+
+**PPL KPI**: Phase C 合算 **25/150** — MDX **34 本**で達成。**7月の実質 KPI** は Subject 2 Phase 1 **+4〜6 本**（累計 **38〜40/150**）を目安とし、[05](05_Content_Pipeline.md) 週次表に記録する。
 
 ---
 
@@ -60,7 +74,7 @@
 | 項目                                | 状態                                                                                                                                                              | 分類                                                                                   |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | **CPL 記事（Phase 1: 06 の深文化 19 本）** | **本文化 19/19**（2026-04-12）— 正本: [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)。補助: [14](Article_Coverage_Backlog.md)（マッピング記事は Post-Phase-B 追補後 **50 記事**・MCP 実測 2026-04-13） | **Phase 1 本文化は完走** — 以降は Phase 2・マッピング精緻化（[05](05_Content_Pipeline.md)・[00](00_Flight_Academy_Strategy.md) 柱1） |
-| **PPL 記事**                        | 20/150（13.3%）                                                                                                                                                   | **継続** — CPL からのリンク先整備を意識。2026年末 50% は**二次 KPI**                                     |
+| **PPL 記事**                        | **34/150（22.7%）** — MDX 実数（工学 20 + 法規 14）。Subject 2 気象 **0/12 Phase 1 記事**（構造案 [content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)） | **継続（C-7）** — Phase C KPI **25/150 は MDX 上達成**。7月以降は **気象 Phase 1** を主軸。2026年末 50% は**二次 KPI** |
 | Phase 4: 体験搭乗                     | **削除済**（2026-04-12）                                                                                                                                            | **レガシー撤去** — ルート・UI から除去。戦略ロードマップ外                                        |
 | Phase 5: 目標設定・弱点分析                | 未実装                                                                                                                                                             | Phase D 以降                                                                           |
 | Phase 6: ランキング機能                  | 未実装                                                                                                                                                             | Phase D                                                                              |
@@ -297,6 +311,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-24 | **v4.0.28 / PPL 進捗同期・Subject 2 気象構造化**: MDX **34/150**（工学 20 + 法規 14）。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.4、[PPL_Subject2 構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)、[Gemini 索引](content_outlines/PPL_Meteorology_2026/README.md)。**§2026年7月期**短期プラン（C-6 マッピング + C-7 気象 Phase 1）を追加。 |
 | 2026-06-24 | **v4.0.27 / 航空機レイヤーを airplanes.live へ移行**: OpenSky が **クラウド IP 遮断**・CORS 制限で Vercel から利用不可（恒常的 502/504）と確定。**airplanes.live**（ADSBExchange v2 互換・CORS `*`）への **ブラウザ直 fetch** に変更しサーバプロキシ廃止。point+radius（最大 250NM）・3 分 poll・Stale・ポップアップ維持。`src/services/openskyTraffic.ts`・`src/utils/openskyTraffic.ts`。[02](02_System_Spec.md) · [03](03_Development_Guide.md) · [04](04_Operations_Guide.md)。 |
 | 2026-06-23 | **v4.0.26 / OpenSky 航空機レイヤー 本番安定化**: Planning 地図 **航空機（参考・OpenSky）** — OAuth2 プロキシ（`api/_lib/openskyOAuthToken.ts`・`openskyStatesCore.ts`）、3 分 poll・BBOX 0.5° 量子化・Stale merge（`liveTrafficLayerState.ts`）、Vercel upstream **fetch-only**（502/504 回避）、ポップアップ維持（`openskyTrafficPopup.ts`）。Vercel env: `OPENSKY_CLIENT_ID` / `OPENSKY_CLIENT_SECRET` 追加、未使用 `NEXT_PUBLIC_SUPABASE_*`・`POSTGRES_*` 削除。テスト: `openskyOAuthToken` / `openskyStatesCore` / `liveTrafficLayerState` / `openskyTraffic`。コミット: `9a7ee0b`〜`707a003`。[02](02_System_Spec.md) · [03](03_Development_Guide.md) · [04](04_Operations_Guide.md) OpenSky 運用。 |
 | 2026-06-21 | **v4.0.25 / MFA リカバリーコード 本番確認**: Profile で **10 件のリカバリーコード再発行成功**。Vercel: ネスト `[action].ts` 非デプロイ → **`api/mfa-recovery-codes.ts` + `?action=`**（`6edfdc5`）。サーバー AAL2: JWT `aal` クレーム（`3648940`）。ログイン MFA デフォルト OFF（[`20260624`](../scripts/database/20260624_profiles_mfa_required_at_login_default_off.sql)）。CI: `WelcomeSetupPage` 非同期 teardown（`b58facd`）。コミット: `d1c6ec9`〜`3648940`。[02](02_System_Spec.md) · [04](04_Operations_Guide.md) MFA 運用。 |

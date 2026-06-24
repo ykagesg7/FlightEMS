@@ -149,8 +149,8 @@ Flight Academy
 | 項目       | 現状（目安）     | 目標（詳細 KPI は [01](01_Current_Status_and_Roadmap.md)） |
 | -------- | ------------ | ------------------------------------------------ |
 | **CPL 記事** | **Phase 1 本文化 19/19 完了**（2026-04-12。正本 [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)）。計測の補助: [14](Article_Coverage_Backlog.md) | **以降の最優先**は [05](05_Content_Pipeline.md) **Phase 2** および**マッピング精緻化**（[01](01_Current_Status_and_Roadmap.md) 整合） |
-| **PPL 記事** | 20/150 前後（[01](01_Current_Status_and_Roadmap.md) の二次 KPI を正） | Master Syllabus に沿って**継続整備**。2026年末 50%（75/150）は**二次目標**（CPL とのバランスは [01](01_Current_Status_and_Roadmap.md) に従う）。CPL 記事からの**リンク先**として不足トピックを優先 |
-| MDX 記事合計 | 66 ファイル（`src/content/lessons`・2026-04-12 時点） | 100+ ファイル — 2026年末                                              |
+| **PPL 記事** | **34/150（22.7%）** — MDX 実数（[07](PPL_Master_Syllabus.md) v1.4）。Phase C KPI **25/150 達成** | Master Syllabus に沿って**継続整備**。**7月主軸**: Subject 2 気象 Phase 1（[構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)）。2026年末 50%（75/150）は**二次目標** |
+| MDX 記事合計 | **85** ファイル（`src/content/lessons`・2026-06-24） | 100+ ファイル — 2026年末 |
 
 **方針**:
 
