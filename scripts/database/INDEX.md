@@ -19,6 +19,7 @@
 | PPL／CPL 出題区分・バッチ適用の起点 | `20260324_add_unified_cpl_applicable_exams.sql`、[db/CPL_KPI_and_Database_Operations.md](../../docs/db/CPL_KPI_and_Database_Operations.md) の手順表 |
 | CPL 工学・気象・航法 `learning_contents` メタ同期 | `20260412_learning_contents_cpl_engineering_*_meta.sql`、`20260424_learning_contents_cpl_meteo_331_3312_meta.sql`、`20260430_learning_contents_cpl_navigation_341_347_meta.sql` |
 | **PPL Master Subject 5（航空法規）** MDX メタ同期（4＋3＋7 本） | `20260512_learning_contents_ppl_aviation_law_four.sql`（501〜504）、`20260512_learning_contents_ppl_subject5_505_507.sql`（505〜507）、`20260512_learning_contents_ppl_subject5_508_514.sql`（508〜514）（[`PPL_Subject5_Aviation_Law_Structure.md`](../../docs/content_outlines/PPL_Subject5_Aviation_Law_Structure.md)） |
+| **PPL Master Subject 2（航空気象）** Phase 1 | `20260624_learning_contents_ppl_subject2_201.sql`（`PPL-2-1-1`、`order_index` 201）、`20260624_learning_contents_ppl_subject2_202.sql`（`PPL-2-1-2`、`order_index` 202）、`20260625_learning_contents_ppl_subject2_203.sql`（`PPL-2-1-3`、`order_index` 203） |
 | **USAF 編隊飛行（操縦）** ep.1 | `20260616_learning_contents_fmt_wingman_vfr.sql`（`FMT-1-1_WingmanVFR`、`order_index` 601） |
 | **USAF 編隊飛行（操縦）** ep.2 | `20260617_learning_contents_fmt_runway_lineup_takeoff.sql`（`FMT-1-2_RunwayLineupTakeoff`、`order_index` 602） |
 | **cohort 週次ミッション・TOP3 バッジ** | `20260620_cohort_weekly_missions.sql`（`user_learning_profiles` cohort 列、週次 RPC、通知テーブル） |

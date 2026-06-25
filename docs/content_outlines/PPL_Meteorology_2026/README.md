@@ -21,8 +21,8 @@
 | 順 | stem | ブリーフ | 状態 |
 |----|------|----------|------|
 | 1 | `PPL-2-1-1_AtmosphereAndIsaBasics` | [PPL-2-1-1_gemini_brief.md](PPL-2-1-1_gemini_brief.md) | **済（2026-06-24）** |
-| 2 | `PPL-2-1-2_TemperatureLapseAndInversion` | [PPL-2-1-2_gemini_brief.md](PPL-2-1-2_gemini_brief.md) | 未執筆 |
-| 3 | `PPL-2-1-3_PressureAltimeterSettings` | [PPL-2-1-3_gemini_brief.md](PPL-2-1-3_gemini_brief.md) | 未執筆 |
+| 2 | `PPL-2-1-2_TemperatureLapseAndInversion` | [PPL-2-1-2_gemini_brief.md](PPL-2-1-2_gemini_brief.md) | **済（2026-06-24）** |
+| 3 | `PPL-2-1-3_PressureAltimeterSettings` | [PPL-2-1-3_gemini_brief.md](PPL-2-1-3_gemini_brief.md) | **済（2026-06-25）** |
 | 4 | `PPL-2-1-4_MoistureHumidityDewpoint` | [PPL-2-1-4_gemini_brief.md](PPL-2-1-4_gemini_brief.md) | 未執筆 |
 | 5 | `PPL-2-1-5_AtmosphericStabilityBasics` | （ブロック A 後半で起票） | — |
 | 6 | `PPL-2-1-6_CloudTypesAndFormation` | （同上） | — |
@@ -63,4 +63,5 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-06-25 | `PPL-2-1-2`・`PPL-2-1-3` 本文化・DB 登録（201〜203） |
 | 2026-06-24 | 初版。ブロック A ブリーフ 4 本、執筆フロー、チェックリスト |
