@@ -26,7 +26,7 @@
 | 4 | `PPL-2-1-4_MoistureHumidityDewpoint` | [PPL-2-1-4_gemini_brief.md](PPL-2-1-4_gemini_brief.md) | **済（2026-06-27）** |
 | 5 | `PPL-2-1-5_AtmosphericStabilityBasics` | — | **済（2026-06-28）** |
 | 6 | `PPL-2-1-6_CloudTypesAndFormation` | — | **済（2026-06-29）** |
-| 7 | `PPL-2-1-7_FogTypesAndFormation` | （同上） | — |
+| 7 | `PPL-2-1-7_FogTypesAndFormation` | — | **済（2026-06-30）** |
 
 **内部リンク**: `/articles/{ファイル stem}`（例: `/articles/PPL-2-1-1_AtmosphereAndIsaBasics`）。
 

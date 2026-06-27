@@ -1,7 +1,7 @@
 # 記事単元の網羅状況とバックログ
 
 **作成日**: 2026-04-10  
-**スナップショット更新**: 2026-06-29（リポジトリ MDX **90**・**PPL 40**。DB マッピング **2026-06-29 MCP** 更新）  
+**スナップショット更新**: 2026-06-30（リポジトリ MDX **91**・**PPL 41**。DB マッピング **2026-06-30 MCP** 更新）  
 **MCP 再取得（マッピング）**: 2026-06-27 — `learning_test_mapping` **87 行 / 77 記事**（PPL マッピング **28** 記事）。Subject 2 **`PPL-2-1-1`〜`4`** + Subject 1 工学 **`PPL-1-1-2`〜`1-1-10`** 追補。verified 未マッピングは **未再集計**（2026-06-06 値 **36** を暫定参照）。
 **MCP 再取得（前回）**: 2026-06-06 — verified 未マッピング **36**・`learning_test_mapping` **74 行 / 64 記事**（W24 空力基礎 3 クラスタ → `3.2.7` 追補）
 **前回スナップショット**: 2026-04-13（MCP `execute_sql` 再取得。`3.4.2`/`3.4.3` は `question_text` 条件。Post-Phase-B で PPL 3 本・`3.4.5`/`3.4.6`/`3.5.5` マッピング追補）
@@ -22,11 +22,11 @@
 | 指標 | 値 | 備考 |
 |------|-----|------|
 | **verified 設問クラスタ数** | **224** | `DISTINCT (main_subject, sub_subject)`（再取得していない場合は据え置き） |
-| **`learning_contents` 総行数** | **110**（見込み） | … **2026-06-29** Subject 2 **+1**（206）。**2026-06-28** **+1**（205）。 |
-| **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **40**（見込み：工学 **20** + 法規 **14** + 気象 **6**） / メンタリティー **15** / 思考法 **13** | Subject 2 気象 **`order_index` 201〜206**（2026-06-24〜29） |
-| **PPL 記事のマッピング** | **40 / 40 MDX** | 法規 **14**・気象 **6**・工学 **20** |
-| **`learning_test_mapping` がある記事** | **89** | 2026-06-29 MCP |
-| **`learning_test_mapping` 行数** | **99** | 2026-06-29 MCP（`PPL-2-1-6` **+1**） |
+| **`learning_contents` 総行数** | **111**（見込み） | … **2026-06-30** Subject 2 **+1**（207）。 |
+| **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **41**（見込み：工学 **20** + 法規 **14** + 気象 **7**） / メンタリティー **15** / 思考法 **13** | Subject 2 気象 **`order_index` 201〜207**（ブロックA 完結） |
+| **PPL 記事のマッピング** | **41 / 41 MDX** | 法規 **14**・気象 **7**・工学 **20** |
+| **`learning_test_mapping` がある記事** | **90** | 2026-06-30 MCP |
+| **`learning_test_mapping` 行数** | **100** | 2026-06-30 MCP（`PPL-2-1-7` **+1**） |
 | **verified 未マッピング設問** | **36**（暫定） | 2026-06-06 §5.2 クエリ — **再集計未実施** |
 | **リポジトリ `src/content/lessons/*.mdx`** | **90** | 2026-06-29（PPL **40** / CPL 3.x **44** / その他 **6**） |
 
@@ -36,7 +36,7 @@
 
 | 系列 | 公開 MDX | CPL `PPLからの復習` Callout | `learning_test_mapping` | 備考 |
 |------|----------|------------------------------|-------------------------|------|
-| **PPL-2-1（気象 Phase 1）** | 6 本 | **7 CPL 本** + **`3.3.2`** 更新済 | **6/6** 済 | [構造案 §8](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) |
+| **PPL-2-1（気象 Phase 1 / ブロックA）** | 7 本 | **7 CPL 本** + **`3.3.2`** 更新済 | **7/7** 済 | [構造案 §8](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) |
 | **PPL-1-1（工学・空力/性能）** | 11 本 | `3.2.x` に部分リンク（形式混在） | **11/11** 済 | — |
 | **PPL-1-2（計器/エンジン）** | 9 本 | `3.2.12` 等に部分リンク | **9/9** 済 | **`1-2-8/9`** は CPL プール束ね |
 | **PPL-5（法規）** | 14 本 | **3.1.x 未着手** | **14/14** 済 | CPL Callout はバックログ |
@@ -234,7 +234,8 @@ ORDER BY unmapped_questions DESC;
 
 | 日付 | 内容 |
 |------|------|
-| 2026-06-29 | **`PPL-2-1-6`**: MDX 公開 + `learning_contents` **206** + `learning_test_mapping`（雲の観測/形成 **14 問**）— [`20260629_learning_contents_ppl_subject2_206.sql`](../scripts/database/20260629_learning_contents_ppl_subject2_206.sql) / [`20260629_learning_test_mapping_ppl_subject2_206.sql`](../scripts/database/20260629_learning_test_mapping_ppl_subject2_206.sql)。**PPL 40/40 MDX**。 |
+| 2026-06-30 | **`PPL-2-1-7`**: MDX 公開 + `learning_contents` **207** + `learning_test_mapping`（霧の形成 **11 問**）— **ブロックA 完結**。PPL **41/41 MDX**。 |
+| 2026-06-29 | **`PPL-2-1-6`**: MDX 公開 + `learning_contents` **206** + mapping 14 問。PPL **40/40 MDX**。 |
 | 2026-06-28 | **`PPL-2-1-5`**: MDX 公開 + `learning_contents` **205** + `learning_test_mapping`（大気の基礎/安定度 **19 問**）— [`20260628_learning_contents_ppl_subject2_205.sql`](../scripts/database/20260628_learning_contents_ppl_subject2_205.sql) / [`20260628_learning_test_mapping_ppl_subject2_205.sql`](../scripts/database/20260628_learning_test_mapping_ppl_subject2_205.sql)。**PPL 39/39 MDX**。MDX **89**。 |
 | 2026-06-28 | **`PPL-1-1-11`・`1-2-8`・`1-2-9`**: `learning_test_mapping` 追補（[`20260628_learning_test_mapping_ppl_111_128_129.sql`](../scripts/database/20260628_learning_test_mapping_ppl_111_128_129.sql)）。**PPL 38/38 MDX すべてマッピング済**。 |
 | 2026-06-28 | **`PPL-1-2-1`〜`7`**: `learning_contents` + `learning_test_mapping` 本番適用。PPL マッピング **35/38**、全体 **84 記事 / 94 行**。 |

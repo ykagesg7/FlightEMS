@@ -1,8 +1,8 @@
 # ✈️ Flight Academy: Phase 1 (PPL) Master Syllabus
 
 **作成日**: 2025年1月
-**最終更新**: 2026年6月29日
-**バージョン**: v1.8
+**最終更新**: 2026年6月30日
+**バージョン**: v1.9
 
 ## 📖 このドキュメントを読むべき人
 
@@ -29,18 +29,18 @@
 
 ### 全体進捗
 
-- **全体（MDX 本数 / シラバス 150 論点）**: **40/150（26.7%）** — `src/content/lessons/PPL-*.mdx` 実数（2026-06-29）
-- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **6 本**のうち Phase 1 優先トピックを **おおむねカバー**（厳密な論点対応は各 Subject 節の ✅ を正）
+- **全体（MDX 本数 / シラバス 150 論点）**: **41/150（27.3%）** — `src/content/lessons/PPL-*.mdx` 実数（2026-06-30）
+- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **7 本**（**ブロックA 完結**）のうち Phase 1 優先トピックを **おおむねカバー**（厳密な論点対応は各 Subject 節の ✅ を正）
 - **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Phase 3 は未着手
 
-**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 は **6/12 本**（`learning_contents` **201〜206** 登録済）。
+**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 は **7/12 本**（`learning_contents` **201〜207** 登録済・**ブロックA 7/7 完結**）。
 
 ### 科目別進捗
 
 | 科目 | 総数（論点） | MDX 本数 | 進捗 | Phase 1 | Phase 2 | Phase 3 |
 |------|-------------|----------|------|---------|---------|---------|
 | **Subject 1: 航空工学** | 45 | **20** | 44.4% | 14/15 | 2/20 | 0/10 |
-| **Subject 2: 航空気象** | 35 | **6** | 17.1% | 6/12 | 0/15 | 0/8 |
+| **Subject 2: 航空気象** | 35 | **7** | 20.0% | 7/12 | 0/15 | 0/8 |
 | **Subject 3: 空中航法** | 30 | 0 | 0% | 0/10 | 0/12 | 0/8 |
 | **Subject 4: 航空通信** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
 | **Subject 5: 航空法規** | 20 | **14** | 70.0% | 8/8 | 4/8 | 0/4 |
@@ -175,7 +175,8 @@
 #### 2-1-2. 雲と霧
 - [x] **Phase 1** 雲: 十種雲形、発生と成長のメカニズム
   - ✅ [PPL-2-1-6_CloudTypesAndFormation](../src/content/lessons/PPL-2-1-6_CloudTypesAndFormation.mdx) — 10種表・Cu→CB成長・Embedded CB（2026-06-29）
-- [ ] **Phase 1** 霧: 放射霧、移流霧、蒸気霧、前線霧
+- [x] **Phase 1** 霧: 放射霧、移流霧、蒸気霧、前線霧
+  - ✅ [PPL-2-1-7_FogTypesAndFormation](../src/content/lessons/PPL-2-1-7_FogTypesAndFormation.mdx) — 視程・2大本質・5霧表・錯覚（2026-06-30）
 
 ### 2-2. 大気の運動
 
@@ -498,6 +499,7 @@ src/content/lessons/
 | 2026-03-01 | Phase 1記事1件追加（PPL-1-1-9_FlightPerformance: 飛行性能） | System |
 | 2026-05-13 | Subject 5 に **法規記事構成案**へのリンクを追加（`content_outlines/PPL_Subject5_Aviation_Law_Structure.md`） | — |
 | 2026-05-12 | Subject 5 **14 本**本文化・`learning_contents` 501〜514 登録（[Article_Coverage_Backlog](Article_Coverage_Backlog.md) 登録ログ） | — |
+| 2026-06-30 | **v1.9** — Subject 2 Phase 1 **+1 本**（`PPL-2-1-7`）。**ブロックA 7/7 完結**。進捗 **41/150**。`learning_contents` **207**（MCP `execute_sql`） | — |
 | 2026-06-29 | **v1.8** — Subject 2 Phase 1 **+1 本**（`PPL-2-1-6`）。進捗 **40/150**。`learning_contents` **206**（MCP `execute_sql`） | — |
 | 2026-06-28 | **v1.7** — Subject 2 Phase 1 **+1 本**（`PPL-2-1-5`）。進捗 **39/150**。`learning_contents` **205**（MCP `execute_sql`） | — |
 | 2026-06-27 | **v1.6** — Subject 2 Phase 1 **+1 本**（`PPL-2-1-4`）。進捗 **38/150**。`learning_contents` **204**（MCP `execute_sql`） | — |
