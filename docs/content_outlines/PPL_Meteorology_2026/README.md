@@ -24,7 +24,7 @@
 | 2 | `PPL-2-1-2_TemperatureLapseAndInversion` | [PPL-2-1-2_gemini_brief.md](PPL-2-1-2_gemini_brief.md) | **済（2026-06-24）** |
 | 3 | `PPL-2-1-3_PressureAltimeterSettings` | [PPL-2-1-3_gemini_brief.md](PPL-2-1-3_gemini_brief.md) | **済（2026-06-25）** |
 | 4 | `PPL-2-1-4_MoistureHumidityDewpoint` | [PPL-2-1-4_gemini_brief.md](PPL-2-1-4_gemini_brief.md) | **済（2026-06-27）** |
-| 5 | `PPL-2-1-5_AtmosphericStabilityBasics` | （ブロック A 後半で起票） | — |
+| 5 | `PPL-2-1-5_AtmosphericStabilityBasics` | — | **済（2026-06-28）** |
 | 6 | `PPL-2-1-6_CloudTypesAndFormation` | （同上） | — |
 | 7 | `PPL-2-1-7_FogTypesAndFormation` | （同上） | — |
 

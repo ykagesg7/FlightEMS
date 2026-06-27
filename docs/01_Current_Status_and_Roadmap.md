@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年6月27日  
-**バージョン**: Roadmap v4.0.30（PPL 進捗 38/150・Subject 2 Phase 1 4/12）
+**最終更新**: 2026年6月28日  
+**バージョン**: Roadmap v4.0.31（PPL 進捗 39/150・Subject 2 Phase 1 5/12）
 
 ---
 
@@ -47,7 +47,7 @@
 | **4** | B-4 テスト | `src` 実効 **15%** 主目標（6月実測 **18.07%** 達成済 — 維持・ストレッチ 18%） | 月次記録 |
 | **5** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**コード着手。未承認時は A11y/Lighthouse **監査メモ**のみ | 随時 |
 
-**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2 Phase 1 **4/12 本**（累計 MDX **38/150**）。7月目安 **+4〜6 本**（累計 **38〜40/150** は既に到達）を [05](05_Content_Pipeline.md) 週次表に記録する。
+**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2 Phase 1 **5/12 本**（累計 MDX **39/150**）。7月目安 **+4〜6 本**（累計 **38〜40/150** は既に到達）を [05](05_Content_Pipeline.md) 週次表に記録する。
 
 ---
 
@@ -74,7 +74,7 @@
 | 項目                                | 状態                                                                                                                                                              | 分類                                                                                   |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | **CPL 記事（Phase 1: 06 の深文化 19 本）** | **本文化 19/19**（2026-04-12）— 正本: [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)。補助: [14](Article_Coverage_Backlog.md)（マッピング記事は Post-Phase-B 追補後 **50 記事**・MCP 実測 2026-04-13） | **Phase 1 本文化は完走** — 以降は Phase 2・マッピング精緻化（[05](05_Content_Pipeline.md)・[00](00_Flight_Academy_Strategy.md) 柱1） |
-| **PPL 記事**                        | **38/150（25.3%）** — MDX 実数（工学 20 + 法規 14 + 気象 **4**）。Subject 2 Phase 1 **4/12**（[`PPL-2-1-1`](../src/content/lessons/PPL-2-1-1_AtmosphereAndIsaBasics.mdx)〜`PPL-2-1-4`、`learning_contents` **201〜204**） | **継続（C-7）** — Phase C KPI **25/150 達成済**。2026年末 50% は**二次 KPI** |
+| **PPL 記事**                        | **39/150（26.0%）** — MDX 実数（工学 20 + 法規 14 + 気象 **5**）。Subject 2 Phase 1 **5/12**（[`PPL-2-1-1`](../src/content/lessons/PPL-2-1-1_AtmosphereAndIsaBasics.mdx)〜`PPL-2-1-5`、`learning_contents` **201〜205**） | **継続（C-7）** — Phase C KPI **25/150 達成済**。2026年末 50% は**二次 KPI** |
 | Phase 4: 体験搭乗                     | **削除済**（2026-04-12）                                                                                                                                            | **レガシー撤去** — ルート・UI から除去。戦略ロードマップ外                                        |
 | Phase 5: 目標設定・弱点分析                | 未実装                                                                                                                                                             | Phase D 以降                                                                           |
 | Phase 6: ランキング機能                  | 未実装                                                                                                                                                             | Phase D                                                                              |
@@ -311,6 +311,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-28 | **v4.0.31 / PPL Subject 2 Phase 1 +1 本**: MDX [`PPL-2-1-5`](../src/content/lessons/PPL-2-1-5_AtmosphericStabilityBasics.mdx)（DALR/SALR/ELR・安定度判定）。累計 **39/150**、Phase 1 **5/12**。`learning_contents` **205** + mapping **19 問**（MCP `execute_sql`）。[`3.3.5`](../src/content/lessons/3.3.5_AtmosphericStability.mdx) Callout 更新。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.7 · [14](Article_Coverage_Backlog.md) 登録ログ。 |
 | 2026-06-27 | **v4.0.30 / PPL Subject 2 Phase 1 +1 本**: MDX [`PPL-2-1-4`](../src/content/lessons/PPL-2-1-4_MoistureHumidityDewpoint.mdx)（潜熱・露点・Spread）。累計 **38/150**、Phase 1 **4/12**。`learning_contents` **204**（MCP `execute_sql`）。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.6 · [14](Article_Coverage_Backlog.md) 登録ログ。 |
 | 2026-06-25 | **v4.0.29 / PPL Subject 2 Phase 1 着手**: MDX **+2**（[`PPL-2-1-2`](../src/content/lessons/PPL-2-1-2_TemperatureLapseAndInversion.mdx)・[`PPL-2-1-3`](../src/content/lessons/PPL-2-1-3_PressureAltimeterSettings.mdx)）。累計 **37/150**、Phase 1 **3/12**。`learning_contents` **202〜203**（MCP `execute_sql`）。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.5 · [14](Article_Coverage_Backlog.md) 登録ログ。 |
 | 2026-06-24 | **v4.0.28 / PPL 進捗同期・Subject 2 気象構造化**: MDX **35/150**（工学 20 + 法規 14 + 気象 1）。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.4、[PPL_Subject2 構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)、[Gemini 索引](content_outlines/PPL_Meteorology_2026/README.md)。**§2026年7月期**短期プラン（C-6 マッピング + C-7 気象 Phase 1）を追加。 |
