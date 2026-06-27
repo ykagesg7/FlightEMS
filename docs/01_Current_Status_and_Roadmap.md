@@ -43,7 +43,7 @@
 |------|--------|------|------|
 | **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md) Tier A/B。MCP 再集計 **月 1 回**。verified 未マッピング **36 件**から段階削減（ゼロ必須ではない） | 週 2〜4 着手単位 |
 | **2** | **C-7 PPL Subject 2 気象** | [PPL_Subject2 構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) Phase 1 **12 本**。Gemini 下書き → MDX 取り込み → `learning_contents` | ブロック A **2 本/週**目安 |
-| **3** | CPL↔PPL Callout | 気象 PPL 本文化に合わせ `3.3.x` の復習リンクを **PPL-2-* へ差し替え**（[構造案 §8](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)） | 記事取り込み直後 |
+| **3** | CPL↔PPL Callout | 気象 Phase 1 **7 本**（`3.3.1/2/5/6/8/10/11`）を **PPL-2-* へ差し替え済**（2026-06-27）。残: `3.3.3/4/12`（PPL-2-2/2-3 執筆後）、法規 `3.1.x` ← `PPL-5-*` | Phase 1 ✅ |
 | **4** | B-4 テスト | `src` 実効 **15%** 主目標（6月実測 **18.07%** 達成済 — 維持・ストレッチ 18%） | 月次記録 |
 | **5** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**コード着手。未承認時は A11y/Lighthouse **監査メモ**のみ | 随時 |
 

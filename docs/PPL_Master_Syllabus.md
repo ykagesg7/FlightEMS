@@ -283,7 +283,7 @@
 ---
 
 ## 📜 Subject 5: 航空法規 (Aviation Law)
-> **空のルールを遵守し、法的な責任を果たす。**  
+> **空のルールを遵守し、法的な責任を果たす。**
 > **記事ツリーの構成案（CPL `3.1.x` との対応・推奨 stem）**: [content_outlines/PPL_Subject5_Aviation_Law_Structure.md](content_outlines/PPL_Subject5_Aviation_Law_Structure.md)
 
 ### 5-1. 航空法の体系
