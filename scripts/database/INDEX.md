@@ -22,6 +22,8 @@
 | **PPL Master Subject 2（航空気象）** Phase 1 | `20260624_learning_contents_ppl_subject2_201.sql`〜`20260625_learning_contents_ppl_subject2_203.sql`、`20260627_learning_contents_ppl_subject2_204.sql`（`order_index` 201〜204） |
 | **PPL Subject 2 `learning_test_mapping`** | [`20260627_learning_test_mapping_ppl_subject2_201_204.sql`](20260627_learning_test_mapping_ppl_subject2_201_204.sql)（大気の基礎/大気・温度・気圧・水分 → `PPL-2-1-1`〜`4`） |
 | **PPL Subject 1 工学 `learning_test_mapping` バックフィル** | [`20260627_backfill_ppl_engineering_test_mapping.sql`](20260627_backfill_ppl_engineering_test_mapping.sql)（**2026-06-28 追補**: `PPL-1-2-1`〜`7` 含め全件本番適用済） |
+| **PPL Subject 2 `learning_contents`（雲形）** | [`20260629_learning_contents_ppl_subject2_206.sql`](20260629_learning_contents_ppl_subject2_206.sql)（`PPL-2-1-6`、`order_index` **206**） |
+| **PPL Subject 2 `learning_test_mapping`（雲形）** | [`20260629_learning_test_mapping_ppl_subject2_206.sql`](20260629_learning_test_mapping_ppl_subject2_206.sql)（雲の観測/形成 — **2026-06-29 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（安定度）** | [`20260628_learning_contents_ppl_subject2_205.sql`](20260628_learning_contents_ppl_subject2_205.sql)（`PPL-2-1-5`、`order_index` **205**） |
 | **PPL Subject 2 `learning_test_mapping`（安定度）** | [`20260628_learning_test_mapping_ppl_subject2_205.sql`](20260628_learning_test_mapping_ppl_subject2_205.sql)（大気の基礎/安定度 — **2026-06-28 本番適用済**） |
 | **PPL Subject 1 `learning_contents`（計器/エンジン 7 本）** | [`20260628_learning_contents_ppl_121_127.sql`](20260628_learning_contents_ppl_121_127.sql)（`order_index` 11〜15・17〜18、`1-2-8/9` → 19/20） |
