@@ -1,6 +1,6 @@
 -- Backfill wrapper for scripts/database/20260329_learning_test_mapping_incremental_ppl_clusters.sql
 -- (BEGIN/COMMIT removed for MCP / SQL Editor). Idempotent via NOT EXISTS per learning_content_id.
--- **2026-06-27**: PPL-1-1-*（1-1-2〜1-1-10）本番適用済（Supabase CLI `db query --linked`）。PPL-1-2-1〜7 は `learning_contents` 未登録のため 0 行（1-2-8/9 のみ DB 行あり・本 SQL 対象外）。
+-- **2026-06-28**: PPL-1-2-1〜7 本番適用済（learning_contents 登録後に backfill 再実行）。
 -- Links ReviewContentLink: unified_cpl_question_ids / test_question_ids overlaps.
 --
 -- Rules (see docs/08_Syllabus_Management_Guide.md):
