@@ -23,6 +23,7 @@
 | **PPL Subject 2 `learning_test_mapping`** | [`20260627_learning_test_mapping_ppl_subject2_201_204.sql`](20260627_learning_test_mapping_ppl_subject2_201_204.sql)（大気の基礎/大気・温度・気圧・水分 → `PPL-2-1-1`〜`4`） |
 | **PPL Subject 1 工学 `learning_test_mapping` バックフィル** | [`20260627_backfill_ppl_engineering_test_mapping.sql`](20260627_backfill_ppl_engineering_test_mapping.sql)（**2026-06-28 追補**: `PPL-1-2-1`〜`7` 含め全件本番適用済） |
 | **PPL Subject 1 `learning_contents`（計器/エンジン 7 本）** | [`20260628_learning_contents_ppl_121_127.sql`](20260628_learning_contents_ppl_121_127.sql)（`order_index` 11〜15・17〜18、`1-2-8/9` → 19/20） |
+| **PPL Subject 1 `learning_test_mapping` 残 3 本** | [`20260628_learning_test_mapping_ppl_111_128_129.sql`](20260628_learning_test_mapping_ppl_111_128_129.sql)（`PPL-1-1-11`・`1-2-8`・`1-2-9` — **2026-06-28 本番適用済**） |
 | **USAF 編隊飛行（操縦）** ep.1 | `20260616_learning_contents_fmt_wingman_vfr.sql`（`FMT-1-1_WingmanVFR`、`order_index` 601） |
 | **USAF 編隊飛行（操縦）** ep.2 | `20260617_learning_contents_fmt_runway_lineup_takeoff.sql`（`FMT-1-2_RunwayLineupTakeoff`、`order_index` 602） |
 | **cohort 週次ミッション・TOP3 バッジ** | `20260620_cohort_weekly_missions.sql`（`user_learning_profiles` cohort 列、週次 RPC、通知テーブル） |

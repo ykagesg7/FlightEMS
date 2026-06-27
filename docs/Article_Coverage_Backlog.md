@@ -24,9 +24,9 @@
 | **verified 設問クラスタ数** | **224** | `DISTINCT (main_subject, sub_subject)`（再取得していない場合は据え置き） |
 | **`learning_contents` 総行数** | **108**（見込み） | 2026-04-13 MCP スナップショット **90**。**2026-06-27** Subject 2 **+1**（204）。**2026-06-24〜25** **+3**（201〜203）。**2026-05-12** は **+4** + **+3** + **+7**（法規）。**再取得未取得の場合は 90 と併記**。 |
 | **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **38**（見込み：工学 **20** + 法規 **14** + 気象 **4**） / メンタリティー **15** / 思考法 **13** | PPL 法規 **`order_index` 501〜514**（2026-05-12）。Subject 2 気象 **`order_index` 201〜204**（2026-06-24〜27）— [PPL_Subject2 構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) |
-| **PPL 記事のマッピング** | **35 / 38 MDX** | 法規 **14**・気象 **4**・工学 **17**（`PPL-1-1-*` 10 + `PPL-1-2-*` 7）。未: **`PPL-1-1-11`**・**`PPL-1-2-8/9`** |
-| **`learning_test_mapping` がある記事** | **84** | `COUNT(DISTINCT learning_content_id)`・2026-06-28 MCP |
-| **`learning_test_mapping` 行数** | **94** | 2026-06-28 MCP（`PPL-1-2-1`〜`7` **+7**） |
+| **PPL 記事のマッピング** | **38 / 38 MDX** | 法規 **14**・気象 **4**・工学 **20**（`PPL-1-*` 全本） |
+| **`learning_test_mapping` がある記事** | **87** | `COUNT(DISTINCT learning_content_id)`・2026-06-28 MCP |
+| **`learning_test_mapping` 行数** | **97** | 2026-06-28 MCP（`PPL-1-1-11`・`1-2-8/9` **+3**） |
 | **verified 未マッピング設問** | **36**（暫定） | 2026-06-06 §5.2 クエリ — **再集計未実施** |
 | **リポジトリ `src/content/lessons/*.mdx`** | **88** | 2026-06-27（PPL **38** / CPL 3.x **44** / その他 **6**） |
 
@@ -37,8 +37,8 @@
 | 系列 | 公開 MDX | CPL `PPLからの復習` Callout | `learning_test_mapping` | 備考 |
 |------|----------|------------------------------|-------------------------|------|
 | **PPL-2-1（気象 Phase 1）** | 4 本 | **7 CPL 本**更新済（`3.3.1/2/5/6/8/10/11`） | **4/4** 済 | [構造案 §8](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) |
-| **PPL-1-1（工学・空力/性能）** | 11 本 | `3.2.x` に部分リンク（形式混在） | **10/11** 済 | **`PPL-1-1-11`** 未設計 |
-| **PPL-1-2（計器/エンジン）** | 9 本 | `3.2.12` 等に部分リンク | **7/9** 済（`1-2-1`〜`7`） | **`1-1-11`**・**`1-2-8/9`** マッピング未 |
+| **PPL-1-1（工学・空力/性能）** | 11 本 | `3.2.x` に部分リンク（形式混在） | **11/11** 済 | — |
+| **PPL-1-2（計器/エンジン）** | 9 本 | `3.2.12` 等に部分リンク | **9/9** 済 | **`1-2-8/9`** は CPL プール束ね |
 | **PPL-5（法規）** | 14 本 | **3.1.x 未着手** | **14/14** 済 | CPL Callout はバックログ |
 
 ---
@@ -234,6 +234,7 @@ ORDER BY unmapped_questions DESC;
 
 | 日付 | 内容 |
 |------|------|
+| 2026-06-28 | **`PPL-1-1-11`・`1-2-8`・`1-2-9`**: `learning_test_mapping` 追補（[`20260628_learning_test_mapping_ppl_111_128_129.sql`](../scripts/database/20260628_learning_test_mapping_ppl_111_128_129.sql)）。**PPL 38/38 MDX すべてマッピング済**。 |
 | 2026-06-28 | **`PPL-1-2-1`〜`7`**: `learning_contents` + `learning_test_mapping` 本番適用。PPL マッピング **35/38**、全体 **84 記事 / 94 行**。 |
 | 2026-06-27 | **PPL 横断**: Subject 2 `learning_test_mapping` **4 本**（[`20260627_learning_test_mapping_ppl_subject2_201_204.sql`](../scripts/database/20260627_learning_test_mapping_ppl_subject2_201_204.sql)）。Subject 1 工学 **8 本**追補（[`20260627_backfill_ppl_engineering_test_mapping.sql`](../scripts/database/20260627_backfill_ppl_engineering_test_mapping.sql)）。CPL 気象 **7 本**に PPL-2-* Callout。§1.1 監査表追加。mapping **77 記事 / 87 行**（verified 未マッピングは未再集計）。 |
 | 2026-06-06 | **2026-W24/W25 スナップショット**: 空力基礎 3 クラスタ → **`3.2.7_LiftAndDrag`**（[`20260606_learning_test_mapping_aero_lift_drag_clusters.sql`](../scripts/database/20260606_learning_test_mapping_aero_lift_drag_clusters.sql)）MCP 適用。verified 未マッピング **47→36**、mapping **73→74 行** / **64 記事**（§1 ヘッダ・2026-06-06 MCP）。 |
