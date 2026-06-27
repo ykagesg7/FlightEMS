@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography } from '../ui';
 import type { PublicUserBadge } from '../../utils/cohort';
+import { formatCohortWeeklyBadgeLabel } from '../../utils/cohort';
 import { fetchPublicUserBadges } from '../../utils/cohortApi';
 
 interface PublicUserBadgesPanelProps {
@@ -9,12 +10,8 @@ interface PublicUserBadgesPanelProps {
   onClose: () => void;
 }
 
-function badgeLabel(type: string): string {
-  const match = type.match(/cohort_weekly_w(\d)_rank(\d)/);
-  if (match) {
-    return `週次 TOP${match[2]}（W${match[1]}）`;
-  }
-  return type;
+function badgeLabel(type: string, metadata: Record<string, unknown> | null | undefined): string {
+  return formatCohortWeeklyBadgeLabel(type, metadata);
 }
 
 export const PublicUserBadgesPanel: React.FC<PublicUserBadgesPanelProps> = ({
@@ -54,7 +51,7 @@ export const PublicUserBadgesPanel: React.FC<PublicUserBadgesPanelProps> = ({
           {displayName} のバッジ
         </Typography>
         <Typography variant="body-sm" color="muted" className="mb-4">
-          週次 TOP3 バッジ（opt-in 公開）
+          週次 MVP / TOP3 バッジ（opt-in 公開）
         </Typography>
 
         {loading && <Typography variant="body-sm" color="muted">読み込み中...</Typography>}
@@ -68,7 +65,7 @@ export const PublicUserBadgesPanel: React.FC<PublicUserBadgesPanelProps> = ({
               key={b.achievement_type}
               className="rounded-lg border border-brand-primary/20 px-3 py-2 text-sm"
             >
-              {badgeLabel(b.achievement_type)}
+              {badgeLabel(b.achievement_type, b.metadata)}
               {b.achieved_at && (
                 <span className="ml-2 text-xs text-[var(--text-muted)]">
                   {new Date(b.achieved_at).toLocaleDateString('ja-JP')}

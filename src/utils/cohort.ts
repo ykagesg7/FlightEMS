@@ -1,5 +1,10 @@
+/** Minimum active cohort members required to award weekly MVP badge. */
+export const MIN_COHORT_FOR_MVP = 3;
+
 /** Minimum active cohort members required to award weekly TOP3 badges. */
 export const MIN_COHORT_FOR_TOP3 = 10;
+
+export type CohortAwardTier = 'none' | 'mvp' | 'top3';
 
 export type ExamDateStatus = 'set' | 'undecided';
 export type CohortPhase = 'active' | 'post_written' | 'alumni';
@@ -26,13 +31,60 @@ export interface CohortAnonymousStats {
   mission_title?: string;
   mission_description?: string;
   metric_type?: string;
+  min_population_mvp?: number;
   min_population_top3?: number;
+  award_tier?: CohortAwardTier;
 }
 
 export interface PublicUserBadge {
   achievement_type: string;
   achieved_at: string | null;
   metadata: Record<string, unknown> | null;
+}
+
+export function getCohortAwardTier(participantCount: number): CohortAwardTier {
+  if (participantCount >= MIN_COHORT_FOR_TOP3) return 'top3';
+  if (participantCount >= MIN_COHORT_FOR_MVP) return 'mvp';
+  return 'none';
+}
+
+/** Dashboard hint for weekly award eligibility by cohort size. */
+export function formatCohortAwardTierHint(
+  participantCount: number,
+  tier?: CohortAwardTier,
+): string {
+  const resolved = tier ?? getCohortAwardTier(participantCount);
+  switch (resolved) {
+    case 'top3':
+      return `週次 TOP3 バッジの対象です（参加者 ${participantCount} 名）。`;
+    case 'mvp':
+      return `週次 MVP バッジの対象です（参加者 ${participantCount} 名）。${MIN_COHORT_FOR_TOP3} 名以上で TOP3 に切り替わります。`;
+    default:
+      return `週次 MVP には参加者 ${MIN_COHORT_FOR_MVP} 名以上、TOP3 には ${MIN_COHORT_FOR_TOP3} 名以上が必要です（現在 ${participantCount} 名）。`;
+  }
+}
+
+const COHORT_WEEKLY_BADGE_RE = /^cohort_weekly_w(\d)_rank(\d)$/;
+
+/** Human-readable label for cohort weekly achievement badges. */
+export function formatCohortWeeklyBadgeLabel(
+  achievementType: string,
+  metadata?: Record<string, unknown> | null,
+): string {
+  const match = achievementType.match(COHORT_WEEKLY_BADGE_RE);
+  if (!match) return achievementType;
+
+  const weekIndex = match[1];
+  const rank = Number.parseInt(match[2], 10);
+  const awardMode = metadata?.award_mode;
+
+  if (awardMode === 'mvp' && rank === 1) {
+    return `週次 MVP（W${weekIndex}）`;
+  }
+  if (awardMode === 'top3' || rank >= 2) {
+    return `週次 TOP${rank}（W${weekIndex}）`;
+  }
+  return `週次 TOP${rank}（ローテ W${weekIndex}）`;
 }
 
 export function buildCohortKey(

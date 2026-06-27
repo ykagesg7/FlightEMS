@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
+  MIN_COHORT_FOR_MVP,
   MIN_COHORT_FOR_TOP3,
   buildCohortKey,
   cohortWeekIndexFromIsoWeek,
+  formatCohortAwardTierHint,
   formatCohortKeyLabel,
+  formatCohortWeeklyBadgeLabel,
+  getCohortAwardTier,
   getIsoWeekJst,
   isInCohortScoringWindow,
 } from '@/utils/cohort';
@@ -21,8 +25,34 @@ describe('cohort utils', () => {
     expect(formatCohortKeyLabel(null)).toBe('未登録');
   });
 
-  it('uses min population constant', () => {
+  it('uses min population constants', () => {
+    expect(MIN_COHORT_FOR_MVP).toBe(3);
     expect(MIN_COHORT_FOR_TOP3).toBe(10);
+  });
+
+  it('resolves award tier by participant count', () => {
+    expect(getCohortAwardTier(2)).toBe('none');
+    expect(getCohortAwardTier(3)).toBe('mvp');
+    expect(getCohortAwardTier(9)).toBe('mvp');
+    expect(getCohortAwardTier(10)).toBe('top3');
+  });
+
+  it('formats award tier hints', () => {
+    expect(formatCohortAwardTierHint(2)).toContain('3 名以上');
+    expect(formatCohortAwardTierHint(5)).toContain('MVP');
+    expect(formatCohortAwardTierHint(12)).toContain('TOP3');
+  });
+
+  it('formats weekly badge labels', () => {
+    expect(
+      formatCohortWeeklyBadgeLabel('cohort_weekly_w2_rank1', { award_mode: 'mvp' }),
+    ).toBe('週次 MVP（W2）');
+    expect(
+      formatCohortWeeklyBadgeLabel('cohort_weekly_w1_rank2', { award_mode: 'top3' }),
+    ).toBe('週次 TOP2（W1）');
+    expect(formatCohortWeeklyBadgeLabel('cohort_weekly_w3_rank1', null)).toBe(
+      '週次 TOP1（ローテ W3）',
+    );
   });
 
   it('rotates week index 1-4', () => {

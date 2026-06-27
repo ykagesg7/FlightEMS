@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography } from '../../../components/ui';
 import { useAuthStore } from '../../../stores/authStore';
+import { formatCohortWeeklyBadgeLabel } from '../../../utils/cohort';
 import supabase from '../../../utils/supabase';
 
 interface CohortBadgeRow {
@@ -10,12 +11,8 @@ interface CohortBadgeRow {
   metadata: Record<string, unknown> | null;
 }
 
-function badgeLabel(type: string): string {
-  const match = type.match(/cohort_weekly_w(\d)_rank(\d)/);
-  if (match) {
-    return `週次 TOP${match[2]}（ローテ W${match[1]}）`;
-  }
-  return type;
+function badgeLabel(type: string, metadata: Record<string, unknown> | null): string {
+  return formatCohortWeeklyBadgeLabel(type, metadata);
 }
 
 export const ProfileUserBadgesSection: React.FC = () => {
@@ -59,7 +56,7 @@ export const ProfileUserBadgesSection: React.FC = () => {
     return (
       <div className="mt-6 rounded-lg border border-brand-primary/20 p-4">
         <Typography variant="body-sm" color="muted">
-          週次 TOP3 バッジはまだありません。日曜に TOP3 が付与されます（同じ試験月の参加者が 10 名以上）。
+          週次 MVP / TOP3 バッジはまだありません。日曜に表彰されます（3 名以上で MVP、10 名以上で TOP3）。
         </Typography>
       </div>
     );
@@ -68,7 +65,7 @@ export const ProfileUserBadgesSection: React.FC = () => {
   return (
     <div className="mt-6">
       <Typography variant="h4" color="brand" className="text-base font-bold mb-2">
-        週次 TOP3 バッジ
+        週次 MVP / TOP3 バッジ
       </Typography>
       <ul className="space-y-2">
         {badges.map((b) => (
@@ -76,7 +73,7 @@ export const ProfileUserBadgesSection: React.FC = () => {
             key={b.id}
             className="rounded-lg border border-brand-primary/20 px-3 py-2 text-sm"
           >
-            {badgeLabel(b.achievement_type)}
+            {badgeLabel(b.achievement_type, b.metadata)}
             {b.achieved_at && (
               <span className="ml-2 text-xs text-[var(--text-muted)]">
                 {new Date(b.achieved_at).toLocaleDateString('ja-JP')}

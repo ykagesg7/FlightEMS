@@ -540,7 +540,7 @@ export interface TAFData {
 | **週次 ID** | ISO `YYYY-Www`（月曜始まり、**JST 固定**） |
 | **集計ウィンドウ** | 当該 ISO 週の **月 0:00 〜 土 23:59:59 JST**（土曜深夜締め、日曜 0:00 排他） |
 | **バッチ** | **日曜 09:00 JST** — 前週スコア確定 → TOP3 バッジ付与 → 今週ミッション通知 |
-| **TOP3** | 公開榜なし。cohort 母集団 **≥10** で `user_achievements` 付与 |
+| **TOP3 / MVP** | 公開榜なし。**3〜9 名** active → **MVP**（`rank=1`・`metric_value>0`・同率可）。**≥10 名** → **TOP3**（`rank<=3`・`metric_value>0`）。`user_achievements` metadata: `award_mode`, `participant_count`。SQL: [`20260626_cohort_weekly_mvp_tier_awards.sql`](../scripts/database/20260626_cohort_weekly_mvp_tier_awards.sql) |
 | **PostWritten** | ユーザー「学科試験完了」ボタンのみ（`cohort_phase = post_written`）。試験月ベース CTA は **exam_date_status = set** のみ |
 | **正本 SQL** | [`scripts/database/20260620_cohort_weekly_missions.sql`](../scripts/database/20260620_cohort_weekly_missions.sql) |
 

@@ -2,7 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Typography } from '../../../components/ui';
 import { useCohortProfile } from '../../../hooks/useCohortProfile';
-import { MIN_COHORT_FOR_TOP3, formatCohortKeyLabel, formatCohortPhaseLabel } from '../../../utils/cohort';
+import {
+  formatCohortAwardTierHint,
+  formatCohortKeyLabel,
+  formatCohortPhaseLabel,
+  getCohortAwardTier,
+} from '../../../utils/cohort';
 
 export const CohortCard: React.FC = () => {
   const { profile, stats, isRegistered, isLoading, isStatsLoading } = useCohortProfile();
@@ -20,7 +25,7 @@ export const CohortCard: React.FC = () => {
   }
 
   const participantCount = stats?.participant_count ?? 0;
-  const top3Eligible = participantCount >= MIN_COHORT_FOR_TOP3;
+  const awardTier = stats?.award_tier ?? getCohortAwardTier(participantCount);
 
   return (
     <Card variant="brand" padding="lg">
@@ -30,7 +35,11 @@ export const CohortCard: React.FC = () => {
       <Typography variant="body-sm" color="muted" className="mb-4">
         {profile?.cohort_phase === 'post_written'
           ? `${formatCohortPhaseLabel('post_written')} — 実技・FMT 記事を中心に学習しましょう`
-          : '今週のミッションに参加中（公開 TOP3 榜はありません）'}
+          : awardTier === 'top3'
+            ? '今週のミッションに参加中 — 週次 TOP3 バッジの対象'
+            : awardTier === 'mvp'
+              ? '今週のミッションに参加中 — 週次 MVP バッジの対象'
+              : '今週のミッションに参加中（公開ランキングはありません）'}
       </Typography>
 
       {isStatsLoading ? (
@@ -59,9 +68,9 @@ export const CohortCard: React.FC = () => {
         </dl>
       )}
 
-      {!top3Eligible && (
+      {profile?.cohort_phase !== 'post_written' && (
         <Typography variant="body-sm" color="muted" className="mb-3">
-          TOP3 バッジ付与には同じ試験月の参加者が {MIN_COHORT_FOR_TOP3} 名以上必要です（現在 {participantCount} 名）。
+          {formatCohortAwardTierHint(participantCount, awardTier)}
         </Typography>
       )}
 

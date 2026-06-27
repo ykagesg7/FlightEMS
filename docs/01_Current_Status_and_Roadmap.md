@@ -226,7 +226,7 @@
 | --- | ----------------------- | ---------------------------------------- | --- |
 | D-1 | **CPL Phase 1 完了 + 拡張** | 19 本完走後は Phase 2 または科目別拡張に着手             | 最高  |
 | D-2 | テストカバレッジ 50% 達成         | コンポーネントテスト、統合テストの追加                      | 高   |
-| D-3 | **cohort 週次バッジ**（非公開榜） | **pilot 本番稼働**（2026-06-21）— 試験月 cohort・週次ミッション・TOP3・in-app/Brevo 通知。SQL: [`20260620`](../scripts/database/20260620_cohort_weekly_missions.sql) / [`20260621`](../scripts/database/20260621_cohort_rpc_hardening.sql) | 高   |
+| D-3 | **cohort 週次バッジ**（非公開榜） | **pilot 本番稼働**（2026-06-21）— 試験月 cohort・週次ミッション・**MVP 3+ / TOP3 10+**・in-app/Brevo 通知。SQL: [`20260620`](../scripts/database/20260620_cohort_weekly_missions.sql) / [`20260621`](../scripts/database/20260621_cohort_rpc_hardening.sql) / [`20260626`](../scripts/database/20260626_cohort_weekly_mvp_tier_awards.sql) | 高   |
 | D-4 | PPL 記事 50% 目標（二次）       | 75/150。CPL 進捗とトレードオフになる場合は 03 を次回レビューで更新 | 高   |
 | D-5 | ユーザーフィードバック収集           | フィードバックフォーム、使用状況分析                       | 中   |
 | D-6 | LMS 目標設定機能              | GoalSetting.tsx の実装                      | 低   |

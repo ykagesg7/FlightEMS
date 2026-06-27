@@ -90,7 +90,7 @@
 ### **Cohort 週次 cron・通知（Phase D pilot）**
 
 - **スケジュール**: Vercel Cron `0 0 * * 0`（UTC）= **日曜 09:00 JST** → [`api/cron/cohort-weekly.ts`](../api/cron/cohort-weekly.ts)
-- **処理順**: 前週スコア集計 → TOP3 バッジ → アプリ内通知 enqueue → （`BREVO_API_KEY` あり時）メール配信
+- **処理順**: 前週スコア集計 → MVP（3〜9 名）/ TOP3（10 名以上）バッジ → アプリ内通知 enqueue → （`BREVO_API_KEY` あり時）メール配信
 - **Vercel Production 必須 env**:
   - `CRON_SECRET` — Cron 認証（`Authorization: Bearer`）
   - `SUPABASE_SERVICE_ROLE_KEY` — RPC 実行
@@ -108,7 +108,8 @@
 - **アプリ内通知**: Dashboard の「お知らせ」— 既読で非表示（`in_app_notifications.read_at`）
 - **メール opt-in**: プロフィール → 通知・公開 → 「メール通知」ON かつ「ミッション更新」ON
 - **Web Push**: 購読保存のみ。`VAPID_*` 未設定時は [`api/notifications/push.ts`](../api/notifications/push.ts) が 503 でスキップ
-- **DB 正本**: [`scripts/database/20260620_cohort_weekly_missions.sql`](../scripts/database/20260620_cohort_weekly_missions.sql)
+- **DB 正本**: [`scripts/database/20260620_cohort_weekly_missions.sql`](../scripts/database/20260620_cohort_weekly_missions.sql) · MVP tier: [`20260626_cohort_weekly_mvp_tier_awards.sql`](../scripts/database/20260626_cohort_weekly_mvp_tier_awards.sql)
+- **週次表彰**: active **3〜9 名** → MVP（`metric_value>0`・同率 1 位可）。**10 名以上** → TOP3。全員 inactive ならその週は表彰なし
 - **RPC 権限 hardening（本番適用済）**: [`scripts/database/20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql) — cron 系 RPC は **service_role のみ**、ユーザー RPC は **authenticated のみ**（`anon` EXECUTE 不可）
 
 ### **Supabase Security Advisor（本番運用）**

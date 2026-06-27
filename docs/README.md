@@ -183,7 +183,7 @@
 - ⏳ テストカバレッジ: **Phase C** で **`src` 実効 約 15%**（長期では Phase D **50%**）。**最新実測**（`coverage-final.json`・パス **`FlightAcademyTsx/src/`** のみ）は **約 13.99%** — 詳細は [01](01_Current_Status_and_Roadmap.md)。実測は `npm run test:coverage` と [vitest.config.ts](../vitest.config.ts) を正とする
 - ✅ エラー監視: Sentry 導入済み（DSN設定で有効化）
 - ✅ **GA4（アクセス解析）**: **本番受信確認済**（2026-05-06・GA4 リアルタイム）— [04_Operations_Guide.md](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」表・`G-22VFYSM69J`
-- ✅ **Phase D cohort pilot（D-3）**: 週次ミッション・TOP3 バッジ・in-app/Brevo 通知 — **本番稼働**（2026-06-21）。運用: [04_Operations_Guide.md](04_Operations_Guide.md)「Cohort 週次 cron・通知」
+- ✅ **Phase D cohort pilot（D-3）**: 週次ミッション・MVP（3+）/ TOP3（10+）バッジ・in-app/Brevo 通知 — **本番稼働**（2026-06-21）。運用: [04_Operations_Guide.md](04_Operations_Guide.md)「Cohort 週次 cron・通知」
 - ✅ **Profile Hub + MFA（2026-06）**: 4 セクション IA、通知 auto-save、TOTP ログインゲート・`mfa_required_at_login`（デフォルト OFF）、リカバリーコード API、**本番で 10 件発行確認済** — [02](02_System_Spec.md) Profile Hub 節・[04](04_Operations_Guide.md) MFA 運用
 - ⏳ Flight Academy ブランド移行（Phase C: 2026年6月〜）
 - ⏸️ ランキング機能（Phase D）
