@@ -1,8 +1,8 @@
 # ✈️ Flight Academy: Phase 1 (PPL) Master Syllabus
 
 **作成日**: 2025年1月
-**最終更新**: 2026年6月25日
-**バージョン**: v1.5
+**最終更新**: 2026年6月27日
+**バージョン**: v1.6
 
 ## 📖 このドキュメントを読むべき人
 
@@ -29,22 +29,22 @@
 
 ### 全体進捗
 
-- **全体（MDX 本数 / シラバス 150 論点）**: **37/150（24.7%）** — `src/content/lessons/PPL-*.mdx` 実数（2026-06-25）
-- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **3 本**のうち Phase 1 優先トピックを **おおむねカバー**（厳密な論点対応は各 Subject 節の ✅ を正）
+- **全体（MDX 本数 / シラバス 150 論点）**: **38/150（25.3%）** — `src/content/lessons/PPL-*.mdx` 実数（2026-06-27）
+- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **4 本**のうち Phase 1 優先トピックを **おおむねカバー**（厳密な論点対応は各 Subject 節の ✅ を正）
 - **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Phase 3 は未着手
 
-**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 は **3/12 本**（`learning_contents` **201〜203** 登録済）。
+**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 は **4/12 本**（`learning_contents` **201〜204** 登録済）。
 
 ### 科目別進捗
 
 | 科目 | 総数（論点） | MDX 本数 | 進捗 | Phase 1 | Phase 2 | Phase 3 |
 |------|-------------|----------|------|---------|---------|---------|
 | **Subject 1: 航空工学** | 45 | **20** | 44.4% | 14/15 | 2/20 | 0/10 |
-| **Subject 2: 航空気象** | 35 | **3** | 8.6% | 3/12 | 0/15 | 0/8 |
+| **Subject 2: 航空気象** | 35 | **4** | 11.4% | 4/12 | 0/15 | 0/8 |
 | **Subject 3: 空中航法** | 30 | 0 | 0% | 0/10 | 0/12 | 0/8 |
 | **Subject 4: 航空通信** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
 | **Subject 5: 航空法規** | 20 | **14** | 70.0% | 8/8 | 4/8 | 0/4 |
-| **合計** | **150** | **37** | **24.7%** | — | — | — |
+| **合計** | **150** | **38** | **25.3%** | — | — | — |
 
 ---
 
@@ -167,7 +167,8 @@
   - ✅ [PPL-2-1-2_TemperatureLapseAndInversion](../src/content/lessons/PPL-2-1-2_TemperatureLapseAndInversion.mdx) — 気温減率・逆転層・黄砂（2026-06-24）
 - [x] **Phase 1** 気圧: 気圧と高度の関係、QNH/QNE/QFE、高度計誤差
   - ✅ [PPL-2-1-3_PressureAltimeterSettings](../src/content/lessons/PPL-2-1-3_PressureAltimeterSettings.mdx) — QNH/QNE/QFE・切替忘れ・高度計誤差（2026-06-25）
-- [ ] **Phase 1** 水分: 相の変化（潜熱）、湿度、露点温度
+- [x] **Phase 1** 水分: 相の変化（潜熱）、湿度、露点温度
+  - ✅ [PPL-2-1-4_MoistureHumidityDewpoint](../src/content/lessons/PPL-2-1-4_MoistureHumidityDewpoint.mdx) — 潜熱・RH/露点/Spread・コックピット結露（2026-06-27）
 - [ ] **Phase 1** 安定度: 断熱減率、大気の状態曲線、安定・不安定の判定
 
 #### 2-1-2. 雲と霧
@@ -495,6 +496,7 @@ src/content/lessons/
 | 2026-03-01 | Phase 1記事1件追加（PPL-1-1-9_FlightPerformance: 飛行性能） | System |
 | 2026-05-13 | Subject 5 に **法規記事構成案**へのリンクを追加（`content_outlines/PPL_Subject5_Aviation_Law_Structure.md`） | — |
 | 2026-05-12 | Subject 5 **14 本**本文化・`learning_contents` 501〜514 登録（[Article_Coverage_Backlog](Article_Coverage_Backlog.md) 登録ログ） | — |
+| 2026-06-27 | **v1.6** — Subject 2 Phase 1 **+1 本**（`PPL-2-1-4`）。進捗 **38/150**。`learning_contents` **204**（MCP `execute_sql`） | — |
 | 2026-06-25 | **v1.5** — Subject 2 Phase 1 **+2 本**（`PPL-2-1-2`・`PPL-2-1-3`）。進捗 **37/150**。`learning_contents` **201〜203**（MCP `execute_sql`） | — |
 | 2026-06-24 | **v1.4** — 進捗 **35/150**、Subject 5 ✅ 反映。Subject 2 に [気象構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) リンク | — |
 

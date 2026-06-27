@@ -40,6 +40,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-06-27（PPL Subject 2 Phase 1 +1 本）**: MDX **38/150**（工学 20 + 法規 14 + 気象 **4**）。[`PPL-2-1-4`](../src/content/lessons/PPL-2-1-4_MoistureHumidityDewpoint.mdx)。`learning_contents` **204**。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.6、[01](01_Current_Status_and_Roadmap.md) v4.0.30、[14](Article_Coverage_Backlog.md) MDX **88**。
 - **2026-06-25（PPL Subject 2 Phase 1 +2 本）**: MDX **37/150**（工学 20 + 法規 14 + 気象 **3**）。[`PPL-2-1-2`](../src/content/lessons/PPL-2-1-2_TemperatureLapseAndInversion.mdx)・[`PPL-2-1-3`](../src/content/lessons/PPL-2-1-3_PressureAltimeterSettings.mdx)。`learning_contents` **202〜203**。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.5、[01](01_Current_Status_and_Roadmap.md) v4.0.29、[14](Article_Coverage_Backlog.md) MDX **87**。
 - **2026-06-24（PPL 進捗・Subject 2 気象構造化）**: MDX **35/150**（工学 20 + 法規 14 + 気象 1）。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.4、[01](01_Current_Status_and_Roadmap.md) v4.0.28（**§2026年7月期**短期プラン）、[PPL_Subject2 構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)、Gemini 索引 [PPL_Meteorology_2026](content_outlines/PPL_Meteorology_2026/README.md)（ブロック A ブリーフ 4 本）。 [14](Article_Coverage_Backlog.md) MDX **85** 反映。
 - **2026-06-24（航空機レイヤーを airplanes.live へ移行）**: OpenSky が **クラウド（Vercel）IP を遮断**し CORS も自社オリジンのみ（本番で恒常的 502/504）と判明。データ取得先を **airplanes.live**（ADSBExchange v2 互換・CORS `*`）へ変更し、**ブラウザ直 fetch**（サーバプロキシ廃止）。point+radius（最大 250NM）クエリ・3 分 poll・Stale 保持は維持。`src/services/openskyTraffic.ts`・`src/utils/openskyTraffic.ts`（`parseAirplanesLiveJson` 等）。詳細: [02](02_System_Spec.md) 地図節 · [03](03_Development_Guide.md) · [04](04_Operations_Guide.md) OpenSky 運用。
@@ -175,7 +176,7 @@
 **直近のフォーカス**: **CPL Phase 2 / マッピング精緻化**（[05](05_Content_Pipeline.md)・[14](Article_Coverage_Backlog.md)）、**PPL Subject 2 気象 Phase 1**（[構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)）。CPL Phase 1（19 本）は **本文化 19/19 完了**。
 
 - ✅ **CPL 記事 Phase 1**: **本文化 19/19**（正本 [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)）。以降は Phase 2・科目横断の拡張と `learning_test_mapping` の精緻化（[01](01_Current_Status_and_Roadmap.md)）
-- ⏳ **PPL 記事**: **37/150（24.7%）** — Phase C KPI **25/150 達成**（MDX）。Subject 2 Phase 1 **3/12**（[構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)）
+- ⏳ **PPL 記事**: **38/150（25.3%）** — Phase C KPI **25/150 達成**（MDX）。Subject 2 Phase 1 **4/12**（[構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)）
 - ⏳ テストカバレッジ: **Phase C** で **`src` 実効 約 15%**（長期では Phase D **50%**）。**最新実測**（`coverage-final.json`・パス **`FlightAcademyTsx/src/`** のみ）は **約 13.99%** — 詳細は [01](01_Current_Status_and_Roadmap.md)。実測は `npm run test:coverage` と [vitest.config.ts](../vitest.config.ts) を正とする
 - ✅ エラー監視: Sentry 導入済み（DSN設定で有効化）
 - ✅ **GA4（アクセス解析）**: **本番受信確認済**（2026-05-06・GA4 リアルタイム）— [04_Operations_Guide.md](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」表・`G-22VFYSM69J`
