@@ -4,6 +4,8 @@ import {
   buildContentTestHref,
   buildDiagnosticHref,
   buildReviewHref,
+  applyPartialTestHubState,
+  areTestHubSearchParamsEqual,
   buildTestHubSearchParams,
   buildWeakSubjectHref,
   countActiveTestFilters,
@@ -145,5 +147,23 @@ describe('testHubFilters', () => {
     expect(state.subject).toBe('航空工学');
     expect(state.sub).toBe(ALL_SUBJECT_VALUE);
     expect(state.subject).not.toBe(PLACEHOLDER_SUBJECT);
+  });
+
+  it('applyPartialTestHubState maps review tab to review mode', () => {
+    const next = applyPartialTestHubState(DEFAULT_TEST_HUB_STATE, { tab: 'review' });
+    expect(next.tab).toBe('review');
+    expect(next.mode).toBe('review');
+  });
+
+  it('areTestHubSearchParamsEqual compares serialized params', () => {
+    const a = new URLSearchParams('tab=review&mode=review');
+    const b = new URLSearchParams('mode=review&tab=review');
+    expect(areTestHubSearchParamsEqual(a, b)).toBe(false);
+    expect(areTestHubSearchParamsEqual(a, new URLSearchParams(a.toString()))).toBe(true);
+  });
+
+  it('parseTestHubSearchParams normalizes count=0 to default', () => {
+    const state = parseTestHubSearchParams(new URLSearchParams('count=0'));
+    expect(state.count).toBe(DIAGNOSTIC_DEFAULT_COUNT);
   });
 });

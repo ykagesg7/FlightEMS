@@ -15,7 +15,7 @@ import {
   type FilterSortOrder,
   type SubSubjectOption,
 } from '../testFilterOptionUtils';
-import { PLACEHOLDER_SUBJECT } from '../testHubFilters';
+import { PLACEHOLDER_SUBJECT, type TestHubTab } from '../testHubFilters';
 import { normalizeSubSubjectLabel } from '../utils/normalizeSubSubject';
 import supabase from '../../../utils/supabase';
 
@@ -26,6 +26,7 @@ type UpdateHubState = (partial: {
 }) => void;
 
 export function useTestSubjectFilters(params: {
+  hubTab: TestHubTab;
   selectedSubject: string;
   selectedSubSubject: string;
   questionCount: number;
@@ -33,7 +34,7 @@ export function useTestSubjectFilters(params: {
   examLevel: ExamLevelFilter;
   updateHubState: UpdateHubState;
 }) {
-  const { selectedSubject, selectedSubSubject, questionCount, sortOrder, examLevel, updateHubState } = params;
+  const { hubTab, selectedSubject, selectedSubSubject, questionCount, sortOrder, examLevel, updateHubState } = params;
 
   const [subjects, setSubjects] = useState<FilterOption[]>([]);
   const [subjectSearch, setSubjectSearch] = useState('');
@@ -118,9 +119,9 @@ export function useTestSubjectFilters(params: {
   }, [examLevel]);
 
   useEffect(() => {
+    if (hubTab !== 'subject') return;
     if (!selectedSubject || selectedSubject === ALL_OPTION_VALUE || selectedSubject === PLACEHOLDER_SUBJECT) {
       setSubSubjects([]);
-      updateHubState({ sub: ALL_OPTION_VALUE });
       setSubSubjectSearch('');
       return;
     }
@@ -192,7 +193,7 @@ export function useTestSubjectFilters(params: {
       }
     };
     void fetchSubSubjects();
-  }, [selectedSubject, examLevel, selectedSubSubject, updateHubState]);
+  }, [hubTab, selectedSubject, examLevel, selectedSubSubject, updateHubState]);
 
   const selectedSubSubjectRawValues = useMemo(() => {
     if (selectedSubSubject === ALL_OPTION_VALUE) return EMPTY_SUB_SUBJECT_RAW_VALUES;
@@ -267,10 +268,10 @@ export function useTestSubjectFilters(params: {
   );
 
   useEffect(() => {
+    if (hubTab !== 'subject') return;
     const fetchCount = async () => {
       if (selectedSubject === PLACEHOLDER_SUBJECT || selectedSubject === ALL_OPTION_VALUE) {
         setQuestionCountOptions([]);
-        if (questionCount !== 0) updateHubState({ count: 0 });
         return;
       }
       let query = supabase
@@ -289,7 +290,6 @@ export function useTestSubjectFilters(params: {
       if (error) maxCount = 0;
       if (maxCount <= 0) {
         setQuestionCountOptions([]);
-        if (questionCount !== 0) updateHubState({ count: 0 });
         return;
       }
 
@@ -308,7 +308,7 @@ export function useTestSubjectFilters(params: {
       }
     };
     void fetchCount();
-  }, [selectedSubject, selectedSubSubject, selectedSubSubjectRawValues, examLevel, questionCount, updateHubState]);
+  }, [hubTab, selectedSubject, selectedSubSubject, selectedSubSubjectRawValues, examLevel, questionCount, updateHubState]);
 
   return {
     subjectSearch,

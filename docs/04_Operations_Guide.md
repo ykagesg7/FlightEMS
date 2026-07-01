@@ -217,6 +217,18 @@
 
 サイトを BigQuery とリンクさせる運用は **GCP 請求・アクセス権・コスト**が絡むため、**運用 MVP（タグ確認＋MCP / Data API）とは別フェーズ**として計画することが多い。[Google ヘルプ: BigQuery とリンクする](https://support.google.com/analytics/answer/9358801?hl=ja) を参照し、必要性が決まってから環境設計する。
 
+#### **デプロイ後のチャンクエラー（Sentry / ユーザー報告）**
+
+Vercel デプロイ直後に **記事・クイズが白画面**、`Importing a module script failed`、`Failed to fetch dynamically imported module` が Sentry に上がることがある。
+
+| 対策（アプリ） | 場所 |
+|----------------|------|
+| lazy import リトライ + 1 セッション 1 回の自動リロード | [`lazyWithRetry`](../src/utils/lazyWithRetry.ts)、[`chunkLoadRecovery`](../src/utils/chunkLoadRecovery.ts) |
+| エラーバウンダリ・MDX 読込 UI | [`EnhancedErrorBoundary`](../src/components/ui/EnhancedErrorBoundary.tsx)、[`MDXLoader`](../src/components/mdx/MDXLoader.tsx) |
+| Service Worker: **script/style は network-first** | [`public/sw.js`](../public/sw.js)（`flight-academy-shell-v2`） |
+
+**運用手順**: デプロイ後、既存ユーザーには **1 回のハードリロード**（または上記自動リロード）で新チャンクを取得させる。Sentry で `/test` の `history.replaceState` ループは **2026-06-03** 修正済（[02 §/test](02_System_Spec.md)）。**Quiz Hub の GA4 カスタムイベント**（`quiz_hub_view` / `quiz_start` 等）は Data API で `eventName` フィルタ可能（プロパティ ID `532610432`）。
+
 ### **テーマシステム統一（2025年12月21日）**
 
 - **HUD固定スタイル**: Dayモード（HUDグリーン `#39FF14`）を固定使用

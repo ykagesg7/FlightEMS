@@ -1,5 +1,6 @@
 import { MDXProvider } from '@mdx-js/react';
 import React, { useEffect, useState } from 'react';
+import { isChunkLoadFailure, reloadOnceForStaleChunk } from '../../utils/chunkLoadRecovery';
 import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
 import type { ArticleMeta, MDXModule } from '../../types/articles';
 import { getArticleBySlug } from '../../utils/articlesIndex';
@@ -24,6 +25,7 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
   const [Content, setContent] = useState<React.ComponentType | null>(null);
   const [meta, setMeta] = useState<ArticleMeta | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,6 +33,7 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
       try {
         setLoading(true);
         setError(null);
+        setLoadError(null);
 
         let module: MDXModule;
         let articleMeta: ArticleMeta | null = null;
@@ -83,7 +86,14 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
       } catch (err) {
         console.error('MDXの読み込みに失敗しました:', err);
         const identifier = slug || contentId;
-        setError(`コンテンツ "${identifier}" の読み込みに失敗しました。ファイルが存在するか確認してください。`);
+        setLoadError(err);
+        if (isChunkLoadFailure(err)) {
+          setError(
+            `コンテンツ "${identifier}" の読み込みに失敗しました。アプリが更新された可能性があります。再読み込みしてください。`,
+          );
+        } else {
+          setError(`コンテンツ "${identifier}" の読み込みに失敗しました。ファイルが存在するか確認してください。`);
+        }
         setContent(null);
         setMeta(null);
       } finally {
@@ -122,12 +132,22 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
   }
 
   if (error) {
+    const chunkError = loadError ? isChunkLoadFailure(loadError) : false;
     return (
       <div className="bg-red-100 border-l-4 border-red-500 p-4 my-4 rounded-lg shadow-sm">
         <p className="text-red-700">{error}</p>
         <p className="text-sm text-red-600 mt-2">
           以下のコンテンツIDが使用されました: {contentId}
         </p>
+        {chunkError ? (
+          <button
+            type="button"
+            onClick={() => reloadOnceForStaleChunk()}
+            className="mt-3 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+          >
+            ページを再読み込み
+          </button>
+        ) : null}
       </div>
     );
   }

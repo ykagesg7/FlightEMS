@@ -1,6 +1,7 @@
-const CACHE_NAME = 'flight-academy-shell-v1';
+const CACHE_NAME = 'flight-academy-shell-v2';
 const APP_SHELL = ['/', '/manifest.webmanifest', '/F2favicon.png'];
 const CACHEABLE_DESTINATIONS = new Set(['script', 'style', 'image', 'font']);
+const NETWORK_FIRST_DESTINATIONS = new Set(['script', 'style']);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
@@ -51,6 +52,21 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (!CACHEABLE_DESTINATIONS.has(event.request.destination)) return;
+
+  if (NETWORK_FIRST_DESTINATIONS.has(event.request.destination)) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request)),
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {

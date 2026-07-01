@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
 import React, { Component, ReactNode } from 'react';
+import { isChunkLoadFailure, reloadOnceForStaleChunk } from '../../utils/chunkLoadRecovery';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -86,6 +87,10 @@ class EnhancedErrorBoundary extends Component<EnhancedErrorBoundaryProps, ErrorB
   };
 
   private handleReload = () => {
+    if (this.state.error && isChunkLoadFailure(this.state.error)) {
+      reloadOnceForStaleChunk();
+      return;
+    }
     window.location.reload();
   };
 
@@ -107,6 +112,7 @@ class EnhancedErrorBoundary extends Component<EnhancedErrorBoundaryProps, ErrorB
       }
 
       const { error, retryCount } = this.state;
+      const chunkError = error ? isChunkLoadFailure(error) : false;
 
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
@@ -119,12 +125,13 @@ class EnhancedErrorBoundary extends Component<EnhancedErrorBoundaryProps, ErrorB
 
             <div className="text-center">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                予期しないエラーが発生しました
+                {chunkError ? 'アプリの更新を検出しました' : '予期しないエラーが発生しました'}
               </h1>
 
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                申し訳ございません。システムで問題が発生しました。
-                以下の方法で問題を解決できる可能性があります。
+                {chunkError
+                  ? '新しいバージョンが公開された可能性があります。ページを再読み込みすると解消することが多いです。'
+                  : '申し訳ございません。システムで問題が発生しました。以下の方法で問題を解決できる可能性があります。'}
               </p>
 
               <div className="space-y-3 mb-6">

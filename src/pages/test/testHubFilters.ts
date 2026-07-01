@@ -131,6 +131,27 @@ export function parseTestHubSearchParams(params: URLSearchParams): TestHubState 
   };
 }
 
+/** Merge partial hub updates (same rules as TestPage `updateHubState`). */
+export function applyPartialTestHubState(
+  state: TestHubState,
+  partial: Partial<TestHubState>,
+): TestHubState {
+  const next: TestHubState = { ...state, ...partial };
+  if (partial.tab === 'review') {
+    next.mode = 'review';
+  } else if (partial.tab === 'diagnostic') {
+    next.mode = 'practice';
+    next.subject = PLACEHOLDER_SUBJECT;
+  } else if (partial.tab === 'subject' && next.subject === PLACEHOLDER_SUBJECT) {
+    next.mode = next.mode === 'review' ? 'practice' : next.mode;
+  }
+  return next;
+}
+
+export function areTestHubSearchParamsEqual(a: URLSearchParams, b: URLSearchParams): boolean {
+  return a.toString() === b.toString();
+}
+
 export function buildTestHubSearchParams(state: TestHubState): URLSearchParams {
   const params = new URLSearchParams();
 

@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトのコンポーネント構造と配置方針について説明します。
 
-**最終更新**: 2026年6月（Quiz Hub `src/pages/test/` 分割、`AGENTS`/`FOLDER_STRUCTURE` と整合）
-**バージョン**: Component Structure Guide v1.7
+**最終更新**: 2026年6月3日（チャンクリカバリ utils・Quiz Hub URL ガード・GA4 イベント）
+**バージョン**: Component Structure Guide v1.8
 
 ---
 
@@ -79,7 +79,7 @@ src/components/
 │   ├── Tabs.tsx
 │   ├── DropdownMenu.tsx            # @radix-ui/react-dropdown-menu（計画ツールバー「ファイル」等）
 │   ├── LoadingSpinner.tsx
-│   ├── EnhancedErrorBoundary.tsx
+│   ├── EnhancedErrorBoundary.tsx   # チャンク読込失敗時は再読み込み案内（chunkLoadRecovery 連携）
 │   ├── AvatarMenu.tsx
 │   ├── NavLink.tsx
 │   ├── ProgressIndicator.tsx
@@ -273,7 +273,7 @@ src/pages/
 │           └── types.ts
 ├── test/
 │   ├── TestPage.tsx                 # Quiz Hub オーケストレータ（URL 同期・出題・結果）
-│   ├── testHubFilters.ts            # TestHubState・URL parse/build・legacy 互換
+│   ├── testHubFilters.ts            # TestHubState・URL parse/build・applyPartialTestHubState・legacy 互換
 │   ├── testFilterOptionUtils.ts     # 科目 Listbox ソート・検索ヘルパ
 │   ├── testQuizFetch.ts             # Supabase 出題 fetch（診断・科目・Review・記事連動）
 │   ├── quizQuestionUtils.ts         # parseUnifiedCplQuestion・shuffleAndSlice

@@ -20,6 +20,7 @@ import { LEARNING_ARTICLES_HUB_LABEL } from '../../constants/learningArticleNav'
 import { useAuthStore } from '../../stores/authStore';
 import {
   trackQuizFilterOpen,
+  trackQuizHubView,
   trackQuizSessionComplete,
   trackQuizSessionStart,
 } from '../../lib/quizAnalytics';
@@ -32,6 +33,8 @@ import {
   fetchSubjectQuestionsPool,
 } from './testQuizFetch';
 import {
+  applyPartialTestHubState,
+  areTestHubSearchParamsEqual,
   buildTestHubSearchParams,
   countActiveTestFilters,
   getVisibleTestHubTabs,
@@ -39,7 +42,6 @@ import {
   isTestFiltersLocked,
   parseLegacyTestHubParams,
   parseTestHubSearchParams,
-  PLACEHOLDER_SUBJECT,
   type TestHubState,
   type TestHubTab,
 } from './testHubFilters';
@@ -93,21 +95,17 @@ const TestPage: React.FC = () => {
 
   const updateHubState = useCallback(
     (partial: Partial<TestHubState>) => {
-      const next: TestHubState = { ...hubState, ...partial };
-      if (partial.tab === 'review') {
-        next.mode = 'review';
-      } else if (partial.tab === 'diagnostic') {
-        next.mode = 'practice';
-        next.subject = PLACEHOLDER_SUBJECT;
-      } else if (partial.tab === 'subject' && next.subject === PLACEHOLDER_SUBJECT) {
-        next.mode = next.mode === 'review' ? 'practice' : next.mode;
+      const next = applyPartialTestHubState(hubState, partial);
+      const canonical = buildTestHubSearchParams(next);
+      if (!areTestHubSearchParamsEqual(canonical, searchParams)) {
+        setSearchParams(canonical, { replace: true });
       }
-      setSearchParams(buildTestHubSearchParams(next), { replace: true });
     },
-    [hubState, setSearchParams],
+    [hubState, searchParams, setSearchParams],
   );
 
   const subjectFilters = useTestSubjectFilters({
+    hubTab: hubState.tab,
     selectedSubject,
     selectedSubSubject,
     questionCount,
@@ -140,12 +138,20 @@ const TestPage: React.FC = () => {
       searchParams.has('exam');
     if (!searchParams.has('tab') && hasLegacy) {
       const canonical = buildTestHubSearchParams(parseTestHubSearchParams(searchParams));
-      if (canonical.toString() !== searchParams.toString()) {
+      if (!areTestHubSearchParamsEqual(canonical, searchParams)) {
         setSearchParams(canonical, { replace: true });
       }
     }
     void parseLegacyTestHubParams(searchParams);
   }, [searchParams, setSearchParams]);
+
+  useEffect(() => {
+    trackQuizHubView({
+      tab: hubState.tab,
+      exam: hubState.exam,
+      content_id: hubState.contentId ?? undefined,
+    });
+  }, [hubState.tab, hubState.exam, hubState.contentId]);
 
   useEffect(() => {
     setDiagnosticStarted(hubState.tab !== 'diagnostic');
@@ -240,9 +246,11 @@ const TestPage: React.FC = () => {
         mode,
         count: questions.length,
         subject: subjectSelected ? selectedSubject : undefined,
+        content_id: contentId ?? undefined,
+        exam: examLevel,
       });
     }
-  }, [questions.length, quizFinished, hubState.tab, mode, selectedSubject, subjectSelected]);
+  }, [questions.length, quizFinished, hubState.tab, mode, selectedSubject, subjectSelected, contentId, examLevel]);
 
   useEffect(() => {
     if (!quizFinished) return;

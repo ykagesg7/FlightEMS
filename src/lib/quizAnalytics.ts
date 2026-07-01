@@ -1,5 +1,17 @@
 import { sendGa4Event } from './googleAnalytics';
 
+export function trackQuizHubView(params: {
+  tab: string;
+  exam: string;
+  content_id?: string;
+}): void {
+  sendGa4Event('quiz_hub_view', {
+    tab: params.tab,
+    exam: params.exam,
+    content_id: params.content_id ?? '',
+  });
+}
+
 export function trackQuizFilterOpen(tab: string, exam?: string): void {
   sendGa4Event('quiz_filter_open', { tab, exam: exam ?? 'all' });
 }
@@ -9,13 +21,19 @@ export function trackQuizSessionStart(params: {
   mode: string;
   count: number;
   subject?: string;
+  content_id?: string;
+  exam?: string;
 }): void {
-  sendGa4Event('quiz_session_start', {
+  const payload = {
     tab: params.tab,
     mode: params.mode,
     count: params.count,
     subject: params.subject ?? '',
-  });
+    content_id: params.content_id ?? '',
+    exam: params.exam ?? 'all',
+  };
+  sendGa4Event('quiz_session_start', payload);
+  sendGa4Event('quiz_start', payload);
 }
 
 export function trackQuizSessionComplete(params: {

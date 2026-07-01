@@ -3,6 +3,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React, { lazy, Suspense } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import { Navigate, Route, BrowserRouter as Router, Routes, useParams } from 'react-router-dom';
+import { lazyWithRetry } from './utils/lazyWithRetry';
 
 // Contexts
 import { ProgressProvider } from './contexts/ProgressContext';
@@ -29,13 +30,13 @@ const Links = lazy(() => import('./pages/links/Links'));
 const HomePage = lazy(() => import('./pages/dashboard/HomePage'));
 const PlanningMapPage = lazy(() => import('./pages/planning/PlanningMapPage'));
 // LearningPage is now integrated into ArticlesPage
-const ArticlesPage = lazy(() => import('./pages/articles/ArticlesPage'));
-const ArticleDetailPage = lazy(() => import('./pages/articles/ArticleDetailPage'));
+const ArticlesPage = lazyWithRetry(() => import('./pages/articles/ArticlesPage'));
+const ArticleDetailPage = lazyWithRetry(() => import('./pages/articles/ArticleDetailPage'));
 const ProfilePage = lazy(() => import('./pages/profile/ProfilePage'));
 const AuthPage = lazy(() => import('./pages/auth/AuthPage')); // AuthPageを追加
 const PasswordRecoveryPage = lazy(() => import('./pages/auth/PasswordRecoveryPage'));
 const WelcomeSetupPage = lazy(() => import('./pages/welcome/WelcomeSetupPage'));
-const TestPage = lazy(() => import('./pages/test/TestPage')); // Testページを追加
+const TestPage = lazyWithRetry(() => import('./pages/test/TestPage')); // Testページを追加
 // Admin Pages
 const RankConfigPage = lazy(() => import('./pages/admin/RankConfigPage'));
 const XpConfigPage = lazy(() => import('./pages/admin/XpConfigPage'));
