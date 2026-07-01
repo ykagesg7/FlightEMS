@@ -14,7 +14,7 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトの運用、保守、トラブルシューティングについて説明します。
 
-**最終更新**: 2026年6月21日（Phase D cohort pilot 本番・Supabase Security Advisor 許容 WARN・Postgres Pause/Restore 実施）
+**最終更新**: 2026年6月3日（Supabase Security Advisor 0029 解消・cohort RPC INVOKER 化）
 **バージョン**: Operations & Maintenance Guide v3.0
 
 ---
@@ -125,17 +125,33 @@
 
 リリース前・月次メンテでは [ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md) §1 と併用する。
 
-#### 2026-06-21 時点の WARN 7 件（対応方針）
+#### 2026-06-03 時点の WARN 2 件（対応方針）
 
 | WARN | 件数 | 対応 |
 |------|------|------|
-| `authenticated_security_definer_function_executable` | 5 | **許容（意図的）** — cohort ユーザー RPC。`SECURITY DEFINER` + 関数内 `auth.uid()` / opt-in チェック + `SET search_path = public`。`anon` EXECUTE は revoke 済み。**INVOKER 化や REVOKE はアプリ破壊のため行わない** |
-| `auth_leaked_password_protection` | 1 | **許容（Free 制限）** — Pro でのみ ON。他 Auth 強化は Dashboard で ON 済み |
-| `vulnerable_postgres_version` | 1 | **監視** — `supabase-postgres-15.8.1.085`。Free の **Pause → Restore** 実施後も同一（プラットフォーム配信待ち）。Pro の **Infrastructure → Upgrade project** は将来オプション |
+| `auth_leaked_password_protection` | 1 | **許容（Free 制限）** — [HaveIBeenPwned 連携](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection) は **Pro プラン以上**でのみ ON。Free では Dashboard から有効化不可 |
+| `vulnerable_postgres_version` | 1 | **監視** — `supabase-postgres-15.8.1.085`。Free は **Pause → Restore** または Pro の **Infrastructure → Upgrade project**（[Upgrading](https://supabase.com/docs/guides/platform/upgrading)）。MCP / SQL ではエンジンアップグレード不可 |
 
-**意図的 SECURITY DEFINER（authenticated 可）**: `upsert_user_cohort`, `get_user_cohort_profile`, `get_cohort_anonymous_stats`, `mark_written_exam_complete`, `get_public_user_badges`
+**解消済（2026-06-03）**: linter **0029** `authenticated_security_definer_function_executable` ×5 — cohort ユーザー RPC を `private.*_impl`（DEFINER）+ `public.*`（**INVOKER** ラッパー）へ移行。[`20260603_cohort_rpc_security_invoker_wrappers.sql`](../scripts/database/20260603_cohort_rpc_security_invoker_wrappers.sql)（MCP: `cohort_rpc_security_invoker_wrappers_20260603`）。アプリの RPC 名・挙動は変更なし。
+
+**意図的 SECURITY DEFINER（private 実装）**: `private.upsert_user_cohort_impl`, `private.get_cohort_anonymous_stats_impl`, `private.get_user_cohort_profile_impl`, `private.mark_written_exam_complete_impl`, `private.get_public_user_badges_impl`
+
+**public INVOKER（PostgREST RPC 表面）**: `upsert_user_cohort`, `get_cohort_anonymous_stats`, `get_user_cohort_profile`, `mark_written_exam_complete`, `get_public_user_badges`
 
 **service_role のみ（cron / Vercel）**: `compute_cohort_weekly_scores`, `award_cohort_weekly_top3`, `enqueue_cohort_notifications`
+
+#### 2026-06-21 時点の WARN 7 件（履歴・旧方針）
+
+<details>
+<summary>クリックで展開（0029 ×5 は 2026-06-03 に解消）</summary>
+
+| WARN | 件数 | 旧対応 |
+|------|------|--------|
+| `authenticated_security_definer_function_executable` | 5 | ~~許容（意図的）~~ → **2026-06-03 INVOKER 化で解消** |
+| `auth_leaked_password_protection` | 1 | 許容（Free 制限） |
+| `vulnerable_postgres_version` | 1 | 監視 |
+
+</details>
 
 #### Postgres バージョンアップ（Free プラン）
 
@@ -239,7 +255,7 @@ Vercel デプロイ直後に **記事・クイズが白画面**、`Importing a m
 
 - `public.v_mapped_questions` を SECURITY INVOKER 化
 - 公開スキーマ上のバックアップテーブルを削除またはRLS有効化
-- **cohort RPC（2026-06）**: [`20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql) — cron RPC の anon 実行 WARN を解消。ユーザー向け SECURITY DEFINER RPC の linter 0029 WARN は **設計上許容**（上記「Supabase Security Advisor」）
+- **cohort RPC（2026-06）**: [`20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql) — cron RPC の anon 実行 WARN を解消。[`20260603_cohort_rpc_security_invoker_wrappers.sql`](../scripts/database/20260603_cohort_rpc_security_invoker_wrappers.sql) — ユーザー RPC の linter **0029** を INVOKER 化（Security Advisor **7→2** WARN）
 
 ### **管理者機能**
 

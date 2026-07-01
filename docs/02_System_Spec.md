@@ -559,7 +559,7 @@ export interface TAFData {
 | `award_cohort_weekly_top3` | **service_role** | 同上 |
 | `enqueue_cohort_notifications` | **service_role** | 同上 |
 
-上記ユーザー RPC は **`SECURITY DEFINER`**（`SET search_path = public`）。Supabase Security Advisor の linter **0029** WARN は **意図的**（`anon` EXECUTE 不可・関数内ガードあり）。運用: [04_Operations_Guide.md](04_Operations_Guide.md)「Supabase Security Advisor」。
+上記ユーザー RPC は **public 上 `SECURITY INVOKER`**（PostgREST 表面）。集計・更新本体は **`private.*_impl`**（`SECURITY DEFINER`、`SET search_path = public`）。`anon` EXECUTE 不可・関数内 `auth.uid()` / opt-in ガードあり。適用: [`20260603_cohort_rpc_security_invoker_wrappers.sql`](../scripts/database/20260603_cohort_rpc_security_invoker_wrappers.sql)（Security Advisor linter **0029** 解消）。運用: [04_Operations_Guide.md](04_Operations_Guide.md)「Supabase Security Advisor」。
 
 **通知テーブル**:
 

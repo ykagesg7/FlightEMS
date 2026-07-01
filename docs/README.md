@@ -40,6 +40,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-06-03（Supabase Security Advisor）**: cohort ユーザー RPC 5 件を **INVOKER ラッパー + private DEFINER 実装**へ移行 — WARN **7→2**（残: Leaked Password / Postgres 版）。SQL: [`20260603_cohort_rpc_security_invoker_wrappers.sql`](../scripts/database/20260603_cohort_rpc_security_invoker_wrappers.sql)。[04](04_Operations_Guide.md)・[02](02_System_Spec.md) cohort 節。
 - **2026-06-03（Quiz Hub 安定化・GA4・チャンクリカバリ）**: `/test` の `history.replaceState` ループ修正（`count=0` と URL 正規化、`areTestHubSearchParamsEqual`）。GA4 に `quiz_hub_view`・`quiz_start`（`content_id` / `exam` 付き）。デプロイ後チャンク失敗対策: `lazyWithRetry`・`chunkLoadRecovery`・SW `v2`（script/style network-first）。詳細: [02 §/test](02_System_Spec.md)、[04](04_Operations_Guide.md)「デプロイ後のチャンクエラー」。
 - **2026-06-30（PPL Subject 2 ブロックA 完結）**: MDX **41/150**（気象 **7**）。[`PPL-2-1-7`](../src/content/lessons/PPL-2-1-7_FogTypesAndFormation.mdx)。`learning_contents` **207** + mapping 11 問。[01](01_Current_Status_and_Roadmap.md) v4.0.33、[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.9。
 - **2026-06-29（PPL Subject 2 Phase 1 +1 本）**: MDX **40/150**（気象 **6**）。[`PPL-2-1-6`](../src/content/lessons/PPL-2-1-6_CloudTypesAndFormation.mdx)。[01](01_Current_Status_and_Roadmap.md) v4.0.32、[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.8。
