@@ -1,8 +1,8 @@
 # 記事単元の網羅状況とバックログ
 
 **作成日**: 2026-04-10  
-**スナップショット更新**: 2026-06-30（リポジトリ MDX **91**・**PPL 41**。DB マッピング **2026-06-30 MCP** 更新）  
-**MCP 再取得（マッピング）**: 2026-06-27 — `learning_test_mapping` **87 行 / 77 記事**（PPL マッピング **28** 記事）。Subject 2 **`PPL-2-1-1`〜`4`** + Subject 1 工学 **`PPL-1-1-2`〜`1-1-10`** 追補。verified 未マッピングは **未再集計**（2026-06-06 値 **36** を暫定参照）。
+**スナップショット更新**: 2026-06-30（リポジトリ MDX **96**・**PPL 46**。DB マッピング **2026-06-30 MCP** 六月末ゲート再集計）  
+**MCP 再取得（六月末ゲート）**: 2026-06-30 — `learning_contents` **125**・`learning_test_mapping` **106 行 / 95 記事**・verified 未マッピング **23**（W26 Tier B → `3.4.2` 航法計器 + PPL Subject 2 **`PPL-2-2-1`〜`2-3-2`** 5 本）。SQL: [`20260630_learning_test_mapping_nav_instruments_w26.sql`](../scripts/database/20260630_learning_test_mapping_nav_instruments_w26.sql)・[`20260630_learning_contents_ppl_subject2_211_222.sql`](../scripts/database/20260630_learning_contents_ppl_subject2_211_222.sql)
 **MCP 再取得（前回）**: 2026-06-06 — verified 未マッピング **36**・`learning_test_mapping` **74 行 / 64 記事**（W24 空力基礎 3 クラスタ → `3.2.7` 追補）
 **前回スナップショット**: 2026-04-13（MCP `execute_sql` 再取得。`3.4.2`/`3.4.3` は `question_text` 条件。Post-Phase-B で PPL 3 本・`3.4.5`/`3.4.6`/`3.5.5` マッピング追補）
 **計画監査ターン**: **2026-05-06** — MCP `execute_sql` で §1 と同種の集計を再実行。**値は 2026-05-06 §5.2 メモ記録時と一致**: verified クラスタ **224**・`learning_contents` **90**・`learning_test_mapping` DISTINCT **50** / 総行 **58**・verified 未マッピング設問 **69**。同日に **追加 SQL は適用しておらず**、[14 §5](Article_Coverage_Backlog.md) の正本のみ整合確認。  
@@ -22,13 +22,13 @@
 | 指標 | 値 | 備考 |
 |------|-----|------|
 | **verified 設問クラスタ数** | **224** | `DISTINCT (main_subject, sub_subject)`（再取得していない場合は据え置き） |
-| **`learning_contents` 総行数** | **111**（見込み） | … **2026-06-30** Subject 2 **+1**（207）。 |
-| **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **41**（見込み：工学 **20** + 法規 **14** + 気象 **7**） / メンタリティー **15** / 思考法 **13** | Subject 2 気象 **`order_index` 201〜207**（ブロックA 完結） |
-| **PPL 記事のマッピング** | **41 / 41 MDX** | 法規 **14**・気象 **7**・工学 **20** |
-| **`learning_test_mapping` がある記事** | **90** | 2026-06-30 MCP |
-| **`learning_test_mapping` 行数** | **100** | 2026-06-30 MCP（`PPL-2-1-7` **+1**） |
-| **verified 未マッピング設問** | **36**（暫定） | 2026-06-06 §5.2 クエリ — **再集計未実施** |
-| **リポジトリ `src/content/lessons/*.mdx`** | **90** | 2026-06-29（PPL **40** / CPL 3.x **44** / その他 **6**） |
+| **`learning_contents` 総行数** | **125** | 2026-06-30 MCP（Subject 2 **+5** → 211〜222） |
+| **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **46**（工学 **20** + 法規 **14** + 気象 **12**） / メンタリティー **15** / 思考法 **13** | Subject 2 **`order_index` 201〜222**（**Phase 1 12/12 完走**） |
+| **PPL 記事のマッピング** | **46 / 46 MDX** | 法規 **14**・気象 **12**・工学 **20** |
+| **`learning_test_mapping` がある記事** | **95** | 2026-06-30 MCP |
+| **`learning_test_mapping` 行数** | **106** | 2026-06-30 MCP（Tier B + PPL 211〜222 **+6**） |
+| **verified 未マッピング設問** | **23** | 2026-06-30 §5.2 再集計（36→28→**23**） |
+| **リポジトリ `src/content/lessons/*.mdx`** | **96** | 2026-06-30（PPL **46** / CPL 3.x **44** / その他 **6**） |
 
 **正本**: 単元の木は **`unified_cpl_questions` の `(main_subject, sub_subject 全文)`**（[08](08_Syllabus_Management_Guide.md)）。本書の数値は FlightAcademy プロジェクトに対する **MCP `execute_sql`** で取得したスナップショットである。再取得する場合は §5 の SQL を使用する。
 
@@ -234,6 +234,7 @@ ORDER BY unmapped_questions DESC;
 
 | 日付 | 内容 |
 |------|------|
+| 2026-06-30 | **六月末ゲート（W26 残タスク）**: Tier B — 航法計器/無線航法計器 → **`3.4.2_VORNavigation`**（[`20260630_learning_test_mapping_nav_instruments_w26.sql`](../scripts/database/20260630_learning_test_mapping_nav_instruments_w26.sql)）。PPL Subject 2 Phase 1 **完走** — **`PPL-2-2-1`〜`2-3-2`** MDX + [`20260630_learning_contents_ppl_subject2_211_222.sql`](../scripts/database/20260630_learning_contents_ppl_subject2_211_222.sql)。CPL **`3.3.3/4/7/9/12`** に PPL Callout。MCP 再集計: 未マッピング **23**・mapping **106 行 / 95 記事**。PPL **46/46 MDX**。 |
 | 2026-06-30 | **`PPL-2-1-7`**: MDX 公開 + `learning_contents` **207** + `learning_test_mapping`（霧の形成 **11 問**）— **ブロックA 完結**。PPL **41/41 MDX**。 |
 | 2026-06-29 | **`PPL-2-1-6`**: MDX 公開 + `learning_contents` **206** + mapping 14 問。PPL **40/40 MDX**。 |
 | 2026-06-28 | **`PPL-2-1-5`**: MDX 公開 + `learning_contents` **205** + `learning_test_mapping`（大気の基礎/安定度 **19 問**）— [`20260628_learning_contents_ppl_subject2_205.sql`](../scripts/database/20260628_learning_contents_ppl_subject2_205.sql) / [`20260628_learning_test_mapping_ppl_subject2_205.sql`](../scripts/database/20260628_learning_test_mapping_ppl_subject2_205.sql)。**PPL 39/39 MDX**。MDX **89**。 |

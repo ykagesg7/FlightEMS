@@ -210,7 +210,11 @@ Phase 2 計画リスト上の **新規本文化** が一段落したフェーズ
 | **2026-W23**（〜2026-06-10） | **4** | ① 法規 **`3.1.1_AviationLegal0`〜`3.1.3`** — シリーズ **Callout** ・`3.1.1` の tags から「スタブ」除去。② 工学 **`3.2.9`** に **`3.2.7`**／**`3.2.8`** の関連リンク追記。③ **マッピング**: **[`20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql`](../scripts/database/20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql)** — 航空法規 **`総則/目的`**（verified **14** 問）→`3.1.1`。**MCP 本番適用済み**（[14 §9](Article_Coverage_Backlog.md) 記録）。④ **B-4**: **`pressureAltitudeIsa.test.ts`** 拡張。 |
 | **2026-W24**（〜2026-06-17） | **3** | ① **Tier A マッピング**: 空力の基礎理論 3 クラスタ → **`3.2.7_LiftAndDrag`**（[`20260606_learning_test_mapping_aero_lift_drag_clusters.sql`](../scripts/database/20260606_learning_test_mapping_aero_lift_drag_clusters.sql)）— MCP 本番適用済み。② **PPL Callout**: `3.2.7` に PPL-1-1-3/4 復習リンク。③ **Lane A**: Quiz Hub UI（PR-Q2〜Q3）。 |
 | **2026-W25**（〜2026-06-24） | **2** | ① **マッピング 1 サイクル**: MCP 再集計 — verified 未マッピング **47→36**、mapping **74 行 / 64 記事**（2026-06-06）→ [14](Article_Coverage_Backlog.md) ヘッダ。② **B-4**: `testHubFilters.test.ts`（14 ケース）、`testQuizFetch` / `testFilterOptionUtils` 抽出。③ **Lane A**: 学習ループ PR-Q4。 |
-| **2026-W26**（〜2026-07-01） | **2** | ① **六月末ゲート**: `src` Statements **18.07%** → [Phase_C §4](Phase_C_Quality_Preparation.md)。② A11y メモ [`accessibility_audit_memo_2026-06-06.md`](../artifacts/accessibility_audit_memo_2026-06-06.md)。③ **Lane A**: E2E 拡張・docs 追補（PR-Q5）。GA4 ファネル再取得は投入 4 週後。 |
+| **2026-W26**（〜2026-07-01） | **5** | ① **六月末ゲート完了**: MCP 再集計 — verified 未マッピング **23**、mapping **106 行 / 95 記事**。② **Tier B**: 航法計器 → `3.4.2`。③ **PPL Subject 2 Phase 1 完走**（`PPL-2-2-1`〜`2-3-2`）。④ CPL **`3.3.3/4/7/9/12`** PPL Callout。⑤ `src` Statements **18.07%**（2026-06-06 記録）。GA4 ファネルは **7 月初旬フォロー**。 |
+| **2026-W27**（〜2026-07-08） | **2〜3**（目安） | **[July ブロック H](July_2026_Content_Sprint.md)**: GA4 ファネルメモ。法規 **`3.1.x` ← `PPL-5-*` Callout** 着手。MCP 七月第 1 再集計。B-4 1 単位。 |
+| **2026-W28**（〜2026-07-15） | **2〜3**（目安） | **[July ブロック I](July_2026_Content_Sprint.md)**: **Tier A マッピング 1 本**（例: 着氷クラスタ）。PPL Subject 2 **Phase 2 第 1 本**（`PPL-2-2-4` または `PPL-2-3-3`）。 |
+| **2026-W29**（〜2026-07-22） | **2〜3**（目安） | **[July ブロック J](July_2026_Content_Sprint.md)**: **Tier B 精緻化 1 本**。PPL Phase 2 **第 2 本**。Callout 残り。 |
+| **2026-W30**（〜2026-07-29） | **2**（目安） | **[July ブロック K / §7 ゲート](July_2026_Content_Sprint.md)**: `test:coverage` → Phase_C / 01 更新。MCP スナップショット。Phase C 6–7月振り返り 1 行。 |
 
 ---
 
