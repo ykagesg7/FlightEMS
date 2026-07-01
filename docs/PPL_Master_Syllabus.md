@@ -182,7 +182,7 @@
 
 #### 2-2-1. 風
 - [x] **Phase 1** 風の観測: 風向・風速の定義、通報
-  - ✅ [PPL-2-2-1_WindObservationBasics](../src/content/lessons/PPL-2-2-1_WindObservationBasics.mdx) — 風向・METAR 風グループ（2026-06-30）
+  - ✅ [PPL-2-2-1_WindObservationBasics](../src/content/lessons/PPL-2-2-1_WindObservationBasics.mdx) — 真磁・METAR 風・吹き流し（2026-07-01 深文化）
 - [ ] **Phase 2** 吹く原因: 気圧傾度力、コリオリ力、摩擦力
 - [ ] **Phase 2** 高度変化: 摩擦層と自由大気、地衡風
 - [ ] **Phase 2** 風系: 海陸風、山谷風、季節風

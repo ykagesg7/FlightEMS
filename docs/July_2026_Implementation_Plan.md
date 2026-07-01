@@ -79,7 +79,7 @@
 ### 4.2 PPL（C-7 二次）
 
 1. **Subject 2 Phase 2** — [構造案 §4](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md): `PPL-2-2-4`、`PPL-2-3-3`、`PPL-2-3-4`（優先 2 本以上）
-2. **Phase 1 深文化** — `PPL-2-2-1`〜`2-3-2` に試験型 `Check Six` を追加（新規 stem より後回し可）
+2. **Phase 1 深文化** — ~~`PPL-2-2-1`~~ ✅（2026-07-01）。`PPL-2-2-2`〜`2-3-2` に試験型 `Check Six` を追加（新規 stem より後回し可）
 3. **Subject 3/4** — 7月必須ではない。余力のみ
 
 ### 4.3 リンク網（Callout）
