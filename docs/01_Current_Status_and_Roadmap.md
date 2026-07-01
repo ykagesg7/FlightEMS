@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
 **最終更新**: 2026年6月30日  
-**バージョン**: Roadmap v4.0.33（PPL 進捗 41/150・Subject 2 Phase 1 7/12・ブロックA完結）
+**バージョン**: Roadmap v4.0.34（PPL 進捗 46/150・Subject 2 Phase 1 12/12 完走・六月スプリント完了）
 
 ---
 
@@ -35,19 +35,21 @@
 - **正本**: [**June_2026_Implementation_Plan.md**](June_2026_Implementation_Plan.md)（DONE 条件・W23〜W26・CPL/PPL/B-4／Phase C 準備の境界）。
 - **週次記録**: [05_Content_Pipeline.md](05_Content_Pipeline.md) の Phase 2 **週次着手記録表**へ毎週追記。**W23〜W26 完了**（[June_2026_Content_Sprint.md](June_2026_Content_Sprint.md) §6）。
 
-### 2026年7月期（Phase C 後半 — 短期実行）
+### 2026年7月期スプリント
 
-六月スプリント（W23〜W26）完了後の **7〜8月フォーカス**。[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md) の DONE 条件を踏まえ、**UI 無承認変更なし**のまま次を週次で追う。
+- **正本**: [**July_2026_Implementation_Plan.md**](July_2026_Implementation_Plan.md)（DONE 条件・W27〜W30・C-6/C-7/Callout/GA4/B-4・Phase C 後半境界）。
+- **週次記録**: [05_Content_Pipeline.md](05_Content_Pipeline.md) の Phase 2 **週次着手記録表**へ毎週追記。**W27〜W30**（[July_2026_Content_Sprint.md](July_2026_Content_Sprint.md) ブロック H〜K）。
 
 | 優先 | タスク | 詳細 | 目安 |
 |------|--------|------|------|
-| **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md) Tier A/B。MCP 再集計 **月 1 回**。verified 未マッピング **36 件**から段階削減（ゼロ必須ではない） | 週 2〜4 着手単位 |
-| **2** | **C-7 PPL Subject 2 気象** | [PPL_Subject2 構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) Phase 1 **12 本**。Gemini 下書き → MDX 取り込み → `learning_contents` | ブロック A **2 本/週**目安 |
-| **3** | CPL↔PPL Callout | 気象 Phase 1 **7 本**（`3.3.1/2/5/6/8/10/11`）を **PPL-2-* へ差し替え済**（2026-06-27）。残: `3.3.3/4/12`（PPL-2-2/2-3 執筆後）、法規 `3.1.x` ← `PPL-5-*` | Phase 1 ✅ |
-| **4** | B-4 テスト | `src` 実効 **15%** 主目標（6月実測 **18.07%** 達成済 — 維持・ストレッチ 18%） | 月次記録 |
-| **5** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**コード着手。未承認時は A11y/Lighthouse **監査メモ**のみ | 随時 |
+| **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md) Tier A/B。MCP 再集計 **月 1 回**。verified 未マッピング **23 件**から段階削減（ゼロ必須ではない） | 週 2〜4 着手単位 |
+| **2** | **C-7 PPL Subject 2 Phase 2** | [PPL_Subject2 構造案 §4](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) — `PPL-2-2-4` / `2-3-3` / `2-3-4` 等 **≥2 本**、または Phase 1 **深文化 ≥2 本** | W28〜W29 |
+| **3** | CPL↔PPL Callout | 気象 `3.3.3/4/7/9/12` **2026-06-30 済**。7月: 法規 **`3.1.x` ← `PPL-5-*`** **≥3 記事** | W27〜W29 |
+| **4** | GA4 ファネル | Quiz Hub 投入（2026-06-06）から **4 週以降**の計測レビュー（`artifacts/` メモ） | W27 初旬 |
+| **5** | B-4 テスト | `src` 実効 **18.07% 維持**（Phase C 15% 主目標は六月達成済） | 月次記録 |
+| **6** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**コード着手。未承認時は A11y/Lighthouse **監査メモ**のみ | 随時 |
 
-**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2 Phase 1 **7/12 本**（累計 MDX **41/150**、**ブロックA 7/7 完結**）。
+**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2 Phase 1 **12/12 本**（累計 MDX **46/150**、**六月末完走**）。
 
 ---
 
@@ -74,7 +76,7 @@
 | 項目                                | 状態                                                                                                                                                              | 分類                                                                                   |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | **CPL 記事（Phase 1: 06 の深文化 19 本）** | **本文化 19/19**（2026-04-12）— 正本: [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)。補助: [14](Article_Coverage_Backlog.md)（マッピング記事は Post-Phase-B 追補後 **50 記事**・MCP 実測 2026-04-13） | **Phase 1 本文化は完走** — 以降は Phase 2・マッピング精緻化（[05](05_Content_Pipeline.md)・[00](00_Flight_Academy_Strategy.md) 柱1） |
-| **PPL 記事**                        | **41/150（27.3%）** — MDX 実数（工学 20 + 法規 14 + 気象 **7**）。Subject 2 Phase 1 **7/12**（[`PPL-2-1-1`](../src/content/lessons/PPL-2-1-1_AtmosphereAndIsaBasics.mdx)〜`PPL-2-1-7`、`learning_contents` **201〜207**） | **継続（C-7）** — Phase C KPI **25/150 達成済**。2026年末 50% は**二次 KPI** |
+| **PPL 記事**                        | **46/150（30.7%）** — MDX 実数（工学 20 + 法規 14 + 気象 **12**）。Subject 2 Phase 1 **12/12 完走**（[`PPL-2-1-1`](../src/content/lessons/PPL-2-1-1_AtmosphereAndIsaBasics.mdx)〜`PPL-2-3-2`、`learning_contents` **201〜212**） | **継続（C-7 Phase 2）** — Phase C KPI **25/150 達成済**。2026年末 50% は**二次 KPI** |
 | Phase 4: 体験搭乗                     | **削除済**（2026-04-12）                                                                                                                                            | **レガシー撤去** — ルート・UI から除去。戦略ロードマップ外                                        |
 | Phase 5: 目標設定・弱点分析                | 未実装                                                                                                                                                             | Phase D 以降                                                                           |
 | Phase 6: ランキング機能                  | 未実装                                                                                                                                                             | Phase D                                                                              |
@@ -311,6 +313,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-30 | **v4.0.34 / 六月スプリント完走 + 7月計画**: W26 ゲート — verified 未マッピング **23**、mapping **106 行 / 95 記事**。PPL Subject 2 Phase 1 **12/12**（`PPL-2-2-1`〜`2-3-2`）。累計 **46/150**。CPL Callout **`3.3.3/4/7/9/12`**。Tier B 航法計器→`3.4.2`。`src` **18.07%**。[July_2026_Implementation_Plan](July_2026_Implementation_Plan.md) · [July_2026_Content_Sprint](July_2026_Content_Sprint.md) 初版。 |
 | 2026-06-30 | **v4.0.33 / PPL Subject 2 ブロックA 完結**: MDX [`PPL-2-1-7`](../src/content/lessons/PPL-2-1-7_FogTypesAndFormation.mdx)（視程・2大本質・5霧）。累計 **41/150**、Phase 1 **7/12**。`learning_contents` **207** + mapping **11 問**（MCP `execute_sql`）。[`3.3.11`](../src/content/lessons/3.3.11_VisibilityAndFog.mdx) Callout 更新。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.9 · [14](Article_Coverage_Backlog.md) 登録ログ。 |
 | 2026-06-29 | **v4.0.32 / PPL Subject 2 Phase 1 +1 本**: MDX [`PPL-2-1-6`](../src/content/lessons/PPL-2-1-6_CloudTypesAndFormation.mdx)（10種雲形・Cu→CB・Embedded CB）。累計 **40/150**、Phase 1 **6/12**。`learning_contents` **206** + mapping **14 問**（MCP `execute_sql`）。[`3.3.2`](../src/content/lessons/3.3.2_CloudsAndPrecipitation.mdx)・[`3.3.10`](../src/content/lessons/3.3.10_CloudTypes.mdx) Callout 更新。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.8 · [14](Article_Coverage_Backlog.md) 登録ログ。 |
 | 2026-06-28 | **v4.0.31 / PPL Subject 2 Phase 1 +1 本**: MDX [`PPL-2-1-5`](../src/content/lessons/PPL-2-1-5_AtmosphericStabilityBasics.mdx)（DALR/SALR/ELR・安定度判定）。累計 **39/150**、Phase 1 **5/12**。`learning_contents` **205** + mapping **19 問**（MCP `execute_sql`）。[`3.3.5`](../src/content/lessons/3.3.5_AtmosphericStability.mdx) Callout 更新。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.7 · [14](Article_Coverage_Backlog.md) 登録ログ。 |

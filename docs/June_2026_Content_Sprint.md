@@ -1,7 +1,7 @@
 # 2026年6月（W23〜W26）コンテンツ・品質スプリント
 
 **作成日**: 2026-05-12  
-**前回更新**: 2026-05-12 — **W23 実績**を §6 に反映（法規・工学リンク・マッピング草案・Vitest）  
+**前回更新**: 2026-06-30 — **W26 六月末ゲート完了**（Tier B・PPL Phase 1 12/12・MCP 再集計）  
 **正本の位置づけ**: [June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md) の **週次実行メモ**。DONE 条件・禁止事項の正本は同ファイルおよび [01](01_Current_Status_and_Roadmap.md)。**週次の表の正本**: [05_Content_Pipeline.md](05_Content_Pipeline.md) Phase 2 週次着手記録。
 
 ---
@@ -61,9 +61,9 @@ ISO 週と目安締めは [June 実装計画 §2](June_2026_Implementation_Plan.
 | ブロック／週 | 状態 | MDX／DB／メモ |
 |---------------|------|----------------|
 | **D / W23** | **済（2026-05-12）** | 法規 `3.1.1`〜`3.1.3`：シリーズ **Callout**。`3.1.1` tags 調整。**`3.2.9`** ← **`3.2.7` / `3.2.8`** リンク。**DB**: [`20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql`](../scripts/database/20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql) 本番適用（`総則/目的` 14 問）。B-4：`pressureAltitudeIsa` テスト。 |
-| **E / W24** | **済（2026-06-06）** | **Tier A**: 空力基礎 3 クラスタ → `3.2.7_LiftAndDrag`（[`20260606_learning_test_mapping_aero_lift_drag_clusters.sql`](../scripts/database/20260606_learning_test_mapping_aero_lift_drag_clusters.sql) MCP 適用）。**PPL Callout**: `3.2.7` に PPL-1-1-3/4 リンク。 |
+| **E / W24** | **済（2026-06-30）** | **Tier A**: 空力基礎 3 クラスタ → `3.2.7_LiftAndDrag`（2026-06-06）。**Tier B**: 航法計器/無線航法計器 → **`3.4.2_VORNavigation`**（[`20260630_learning_test_mapping_nav_instruments_w26.sql`](../scripts/database/20260630_learning_test_mapping_nav_instruments_w26.sql)）。**PPL Callout**: `3.2.7` に PPL-1-1-3/4 リンク。 |
 | **F / W25** | **済（2026-06-06）** | MCP スナップショット: verified 未マッピング **47→36**、`learning_test_mapping` **73→74 行** / **64 記事**（[14](Article_Coverage_Backlog.md) ヘッダ更新）。 |
-| **G / W26** | **済（2026-06-06）** | `test:coverage` → **`src` Statements 18.07%**（Phase_C §4）。A11y メモ: [`artifacts/accessibility_audit_memo_2026-06-06.md`](../artifacts/accessibility_audit_memo_2026-06-06.md)。Lane A Quiz Hub 完了。 |
+| **G / W26** | **済（2026-06-30）** | **六月末ゲート完了**: MCP 再集計 — 未マッピング **23**、mapping **106 行 / 95 記事**。PPL Subject 2 Phase 1 **12/12**（`PPL-2-2-1`〜`2-3-2`）。`test:coverage` **18.07%**（2026-06-06）。A11y メモ済。Lane A 完了。**GA4 ファネル**は 7 月初旬フォロー。 |
 
 ---
 
@@ -86,5 +86,6 @@ ISO 週と目安締めは [June 実装計画 §2](June_2026_Implementation_Plan.
 
 | 日付 | 内容 |
 |------|------|
+| 2026-06-30 | **W26 六月末ゲート完了** — Tier B（`3.4.2`）、PPL Phase 1 **12/12**、MCP 再集計（未マッピング **23**）、CPL Callout 5 本。 |
 | 2026-05-12 | **W23 実行**ログを §6 に追記。[05](05_Content_Pipeline.md) の W23 行を実績に更新。 |
 | 2026-05-12 | 初版。W23〜W26 ブロック D〜G、六月 PPL/CPL 狙い、§7 ゲート・チェックリスト、[05](05_Content_Pipeline.md)・[June 実装計画](June_2026_Implementation_Plan.md) との連携。 |

@@ -1,0 +1,83 @@
+import { Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空気象】風の観測と通報：地上の「矢印」が教える空の流れ',
+  slug: 'ppl-2-2-1-wind-observation-basics',
+  date: '2026-06-30',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '航空気象', '風', '風向', '風速', 'METAR'],
+  series: 'PPL-Master-Syllabus',
+  order: 211,
+  readingTime: 10,
+  excerpt: '風は「吹いてくる向き」で表す。地上観測・通報の読み方を押さえ、離着陸やルート選択の第一歩をハックする。',
+  publishedAt: '2026-06-30'
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Wind+Observation"
+  alt="航空気象：風の観測のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] 風向は **吹いてくる方位**（360°）で表すことを説明できる。
+- [ ] 風速の単位（m/s・kt）と、地上観測値が離着陸に与える影響を理解する。
+- [ ] METAR 等の風グループ（例: `27008KT`）を読み取れる。
+
+> **データ連携**: `unified_cpl_questions` の **風/風系**・**風/風の吹く原因** クラスタと対応。CPL 深掘りは [偏西風と風系（3.3.7）](/articles/3.3.7_WesterliesAndWind) へ。
+
+---
+
+## 📋 概要
+
+PPL で最初に押さえる風は「大気の運動」の入り口たい。[大気組成と ISA（PPL-2-1-1）](/articles/PPL-2-1-1_AtmosphereAndIsaBasics) で空の層を知ったあと、**地上で何 kt・どの向きから**吹いとるかを読むのが実務の第一歩や。
+
+---
+
+## 📚 詳細解説
+
+### 1. 風向・風速の表し方
+
+- **風向**: 風が **吹いてくる** 方位（真北=360/000°）。「270°」= 西風（西から東へ流れる空気）。
+- **風速**: 国際では **kt** が一般的。METAR では `KT`、国内資料では m/s も出る。
+- **平均風と gust**: 最大風速が平均より大きいとき `G**` で gust を付記。
+
+### 2. 地上観測の意味
+
+離着陸帯付近の風は、**揚力・方向修正・クロスコンポーネント**に直結する。風向が滑走路と交差すると、修正量が増え、失速マージンが削られる。
+
+### 3. 高度との関係（予告）
+
+地上風と上空風は一致しない。[気温減率と逆転層（PPL-2-1-2）](/articles/PPL-2-1-2_TemperatureLapseAndInversion) で学んだ層構造が、風の鉛直変化の土台になる。詳細は CPL [3.3.7](/articles/3.3.7_WesterliesAndWind) で本格化。
+
+---
+
+## 🎯 試験の罠
+
+> **問:** 風向270°、風速10kt の意味として正しいものはどれか。
+
+**正解の型**: 270°（西）**から** 10kt の風が吹いてくる。機体が向いている方位そのものではない。
+
+---
+
+## 📝 まとめ
+
+1. 風向は **来る方向**、風速は **強さ**。
+2. METAR の風グループは離着陸判断の基本データ。
+3. 地上と上空の風は別物 — ブロック B の続きで深掘りする。
+
+---
+
+## 🔗 関連リンク
+
+- [前: 霧の種類（PPL-2-1-7）](/articles/PPL-2-1-7_FogTypesAndFormation)
+- [次: 気団と前線（PPL-2-2-2）](/articles/PPL-2-2-2_AirMassesAndFronts)
+- [CPL: 偏西風と風系](/articles/3.3.7_WesterliesAndWind)
+
+---
+
+> **注:** 本記事に登場する人物・会話はフィクションです。

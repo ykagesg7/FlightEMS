@@ -1,0 +1,87 @@
+import { Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空気象】METAR・TAF・気象通報の読み方：空港の「今」と「予報」',
+  slug: 'ppl-2-3-2-metar-taf-and-weather-reports',
+  date: '2026-06-30',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '航空気象', 'METAR', 'TAF', 'SPECI', '気象通報'],
+  series: 'PPL-Master-Syllabus',
+  order: 222,
+  readingTime: 12,
+  excerpt: 'METAR は現況、TAF は予報。風・視程・雲・気温のグループを PPL レベルで読み解き、出発前ブリーフィングに活かす。',
+  publishedAt: '2026-06-30'
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=METAR+and+TAF"
+  alt="航空気象：METARとTAFのイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **METAR**（現況）と **TAF**（予報）の役割の違いを説明できる。
+- [ ] 風・視程・雲・気温/露点の **主要グループ** を読み取れる。
+- [ ] SPECI が「急変時の特別現況」であることを理解する。
+
+> **データ連携**: **気象通報/飛行場の気象情報** クラスタ。アプリの気象画面は **参考表示** — 公式通報で最終確認すること。
+
+---
+
+## 📋 概要
+
+[風の観測（PPL-2-2-1）](/articles/PPL-2-2-1_WindObservationBasics) で METAR の風グループに触れた。ここでは **通報全体** をブリーフィング用に読む。Planning の気象ポップアップも同系統の情報だが、**運航判断は最新の公式 METAR/TAF** を正とする。
+
+---
+
+## 📚 詳細解説
+
+### 1. METAR / SPECI
+
+- **METAR**: 定時（例: 毎時30分 UTC 前後）の **現況**。
+- **SPECI**: 基準を超える **急変** があったときの特別現況。
+- 先頭は空港識別（例: `RJSS`）、続いて日時（`DDHHMMZ`）。
+
+### 2. 主要グループ（例）
+
+| グループ | 例 | 意味 |
+|----------|-----|------|
+| 風 | `27008KT` | 270°から 8kt |
+| 視程 | `9999` / `0800` | 10km以上 / 800m |
+| 天気 | `-RA BR` | 弱い雨・もや |
+| 雲 | `BKN015` | 5〜7分の8分の雲、1500ft |
+| 気温/露点 | `12/08` | 12°C / 露点 8°C |
+
+### 3. TAF（予報）
+
+**将来の変化**を示す。有効期間・PROB/TEMPO/BECMG 等で **時間帯付き** の悪化・改善を読む。出発前に **到着時刻付近** の TAF を必ず確認。
+
+---
+
+## 🎯 試験の罠
+
+METAR を **予報** と TAF を **現況** と逆に覚えない。頭文字: **M**=Measured/現況、**T**=Terminal forecast。
+
+---
+
+## 📝 まとめ
+
+1. METAR/SPECI = 今、TAF = これから。
+2. 風・視程・雲・気温/露点が VFR 判断の芯。
+3. Subject 2 Phase 1 完走 — 次は Phase 2 増補または CPL ハブへ。
+
+---
+
+## 🔗 関連リンク
+
+- [前: 気象障害（PPL-2-3-1）](/articles/PPL-2-3-1_FlightWeatherHazardsBasics)
+- [Phase 1 入口: 大気と ISA（PPL-2-1-1）](/articles/PPL-2-1-1_AtmosphereAndIsaBasics)
+- [CPL 気象ハブ](/articles/CPL-Hub-Meteorology)
+
+---
+
+> **注:** 本記事に登場する人物・会話はフィクションです。本アプリの気象表示は教育用参考であり、実運航の唯一の情報源にしないこと。

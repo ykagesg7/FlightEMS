@@ -35,6 +35,8 @@
 - **[May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)** — **2026年5月後半**（W20〜W22）。**§6 完了ログ**。**現在週素案**: [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。一覧: [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。
 - **[June_2026_Content_Sprint.md](June_2026_Content_Sprint.md)** — **2026年6月**（**W23〜W26**）の**週次実行メモ**（ブロック D〜G、六月末ゲート **§7**）。週次表の正本は [05](05_Content_Pipeline.md)。
 - **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — **2026年6月期**の DONE 条件、[05](05_Content_Pipeline.md) 週次（W23〜W26）・CPL/PPL 拡充の優先、マッピング監査／B-4／Phase C 準備（UI は承認制）を定義する。**週別一覧**は §2.1。
+- **[July_2026_Implementation_Plan.md](July_2026_Implementation_Plan.md)** — **2026年7月期**（W27〜W30）Phase C 後半。C-6 マッピング・C-7 PPL Phase 2・法規 Callout・GA4 ファネル・B-4 維持。
+- **[July_2026_Content_Sprint.md](July_2026_Content_Sprint.md)** — **2026年7月**週次実行メモ（ブロック H〜K、七月末ゲート §7）。
 
 ### 更新履歴（抜粋）
 

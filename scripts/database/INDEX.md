@@ -22,6 +22,8 @@
 | **PPL Master Subject 2（航空気象）** Phase 1 | `20260624_learning_contents_ppl_subject2_201.sql`〜`20260625_learning_contents_ppl_subject2_203.sql`、`20260627_learning_contents_ppl_subject2_204.sql`（`order_index` 201〜204） |
 | **PPL Subject 2 `learning_test_mapping`** | [`20260627_learning_test_mapping_ppl_subject2_201_204.sql`](20260627_learning_test_mapping_ppl_subject2_201_204.sql)（大気の基礎/大気・温度・気圧・水分 → `PPL-2-1-1`〜`4`） |
 | **PPL Subject 1 工学 `learning_test_mapping` バックフィル** | [`20260627_backfill_ppl_engineering_test_mapping.sql`](20260627_backfill_ppl_engineering_test_mapping.sql)（**2026-06-28 追補**: `PPL-1-2-1`〜`7` 含め全件本番適用済） |
+| **W26 六月末 Tier B + PPL Phase 1 完走** | [`20260630_learning_test_mapping_nav_instruments_w26.sql`](20260630_learning_test_mapping_nav_instruments_w26.sql)（航法計器/無線航法計器 → `3.4.2` — **2026-06-30 本番適用済**） |
+| **PPL Subject 2 Phase 1 ブロック B/C（211〜222）** | [`20260630_learning_contents_ppl_subject2_211_222.sql`](20260630_learning_contents_ppl_subject2_211_222.sql)（`PPL-2-2-1`〜`2-3-2` + mapping — **2026-06-30 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（視程・霧）** | [`20260630_learning_contents_ppl_subject2_207.sql`](20260630_learning_contents_ppl_subject2_207.sql)（`PPL-2-1-7`、`order_index` **207** — ブロックA 完結） |
 | **PPL Subject 2 `learning_test_mapping`（視程・霧）** | [`20260630_learning_test_mapping_ppl_subject2_207.sql`](20260630_learning_test_mapping_ppl_subject2_207.sql)（霧の形成 — **2026-06-30 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（雲形）** | [`20260629_learning_contents_ppl_subject2_206.sql`](20260629_learning_contents_ppl_subject2_206.sql)（`PPL-2-1-6`、`order_index` **206**） |

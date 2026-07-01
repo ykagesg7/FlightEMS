@@ -29,22 +29,22 @@
 
 ### 全体進捗
 
-- **全体（MDX 本数 / シラバス 150 論点）**: **41/150（27.3%）** — `src/content/lessons/PPL-*.mdx` 実数（2026-06-30）
-- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **7 本**（**ブロックA 完結**）のうち Phase 1 優先トピックを **おおむねカバー**（厳密な論点対応は各 Subject 節の ✅ を正）
+- **全体（MDX 本数 / シラバス 150 論点）**: **46/150（30.7%）** — `src/content/lessons/PPL-*.mdx` 実数（2026-06-30）
+- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本**（**Phase 1 完走**）のうち Phase 1 優先トピックを **おおむねカバー**（厳密な論点対応は各 Subject 節の ✅ を正）
 - **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Phase 3 は未着手
 
-**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 は **7/12 本**（`learning_contents` **201〜207** 登録済・**ブロックA 7/7 完結**）。
+**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 は **12/12 本**（`learning_contents` **201〜222** 登録済・**六月末完走**）。
 
 ### 科目別進捗
 
 | 科目 | 総数（論点） | MDX 本数 | 進捗 | Phase 1 | Phase 2 | Phase 3 |
 |------|-------------|----------|------|---------|---------|---------|
 | **Subject 1: 航空工学** | 45 | **20** | 44.4% | 14/15 | 2/20 | 0/10 |
-| **Subject 2: 航空気象** | 35 | **7** | 20.0% | 7/12 | 0/15 | 0/8 |
+| **Subject 2: 航空気象** | 35 | **12** | 34.3% | 12/12 | 0/15 | 0/8 |
 | **Subject 3: 空中航法** | 30 | 0 | 0% | 0/10 | 0/12 | 0/8 |
 | **Subject 4: 航空通信** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
 | **Subject 5: 航空法規** | 20 | **14** | 70.0% | 8/8 | 4/8 | 0/4 |
-| **合計** | **150** | **38** | **25.3%** | — | — | — |
+| **合計** | **150** | **46** | **30.7%** | — | — | — |
 
 ---
 
@@ -181,36 +181,41 @@
 ### 2-2. 大気の運動
 
 #### 2-2-1. 風
-- [ ] **Phase 1** 風の観測: 風向・風速の定義、通報
+- [x] **Phase 1** 風の観測: 風向・風速の定義、通報
+  - ✅ [PPL-2-2-1_WindObservationBasics](../src/content/lessons/PPL-2-2-1_WindObservationBasics.mdx) — 風向・METAR 風グループ（2026-06-30）
 - [ ] **Phase 2** 吹く原因: 気圧傾度力、コリオリ力、摩擦力
 - [ ] **Phase 2** 高度変化: 摩擦層と自由大気、地衡風
 - [ ] **Phase 2** 風系: 海陸風、山谷風、季節風
 
 #### 2-2-2. 気団と前線
-- [ ] **Phase 1** 気団: 日本に影響する気団（シベリア、小笠原等）と変質
-- [ ] **Phase 1** 前線: 寒冷・温暖・停滞・閉塞前線の構造と特徴
-- [ ] **Phase 1** 日本付近の前線: 梅雨前線、秋雨前線
+- [x] **Phase 1** 気団: 日本に影響する気団（シベリア、小笠原等）と変質
+- [x] **Phase 1** 前線: 寒冷・温暖・停滞・閉塞前線の構造と特徴
+- [x] **Phase 1** 日本付近の前線: 梅雨前線、秋雨前線
+  - ✅ [PPL-2-2-2_AirMassesAndFronts](../src/content/lessons/PPL-2-2-2_AirMassesAndFronts.mdx) — 気団・前線基礎（2026-06-30）
 
 #### 2-2-3. 高気圧と低気圧
-- [ ] **Phase 1** 気圧配置: 高気圧・低気圧に伴う風と天気
-- [ ] **Phase 1** 低気圧の種類: 温帯低気圧のライフサイクル
-- [ ] **Phase 1** 熱帯気象: 台風（熱帯低気圧）の構造と移動
+- [x] **Phase 1** 気圧配置: 高気圧・低気圧に伴う風と天気
+- [x] **Phase 1** 低気圧の種類: 温帯低気圧のライフサイクル
+- [x] **Phase 1** 熱帯気象: 台風（熱帯低気圧）の構造と移動
+  - ✅ [PPL-2-2-3_PressureSystemsAndJapanWeather](../src/content/lessons/PPL-2-2-3_PressureSystemsAndJapanWeather.mdx) — 高低気圧・台風概要（2026-06-30）
 
 ### 2-3. 気象障害と航空気象情報
 
 #### 2-3-1. 飛行に影響する気象障害
-- [ ] **Phase 1** 乱気流: CAT（晴天乱気流）、山岳波、後方乱気流
+- [x] **Phase 1** 乱気流: CAT（晴天乱気流）、山岳波、後方乱気流
 - [ ] **Phase 2** ウィンドシアー: ダウンバースト、ガストフロント
-- [ ] **Phase 1** 雷雲: 発生条件、回避方法、雷雨の3ステージ
-- [ ] **Phase 1** 着氷: 機体への着氷の種類と影響
-- [ ] **Phase 1** 視程障害: 霧、もや、煙霧、黄砂、ホワイトアウト
+- [x] **Phase 1** 雷雲: 発生条件、回避方法、雷雨の3ステージ
+- [x] **Phase 1** 着氷: 機体への着氷の種類と影響
+- [x] **Phase 1** 視程障害: 霧、もや、煙霧、黄砂、ホワイトアウト
 - [ ] **Phase 2** 火山灰: エンジンへの影響と回避
+  - ✅ [PPL-2-3-1_FlightWeatherHazardsBasics](../src/content/lessons/PPL-2-3-1_FlightWeatherHazardsBasics.mdx) — 障害分類・回避（2026-06-30）
 
 #### 2-3-2. 気象情報
-- [ ] **Phase 1** 気象通報: 観測方法、定時観測
-- [ ] **Phase 1** 飛行場気象情報: METAR、SPECI、TAFの解読
+- [x] **Phase 1** 気象通報: 観測方法、定時観測
+- [x] **Phase 1** 飛行場気象情報: METAR、SPECI、TAFの解読
 - [ ] **Phase 2** 空域情報: SIGMET、AIRMET
 - [ ] **Phase 2** 天気図: 実況天気図、予想天気図、高層天気図の解析
+  - ✅ [PPL-2-3-2_MetarTafAndWeatherReports](../src/content/lessons/PPL-2-3-2_MetarTafAndWeatherReports.mdx) — METAR/SPECI/TAF 入門（2026-06-30）
 
 **Subject 2 合計**: 35トピック（Phase 1: 12, Phase 2: 15, Phase 3: 8）
 
@@ -499,6 +504,7 @@ src/content/lessons/
 | 2026-03-01 | Phase 1記事1件追加（PPL-1-1-9_FlightPerformance: 飛行性能） | System |
 | 2026-05-13 | Subject 5 に **法規記事構成案**へのリンクを追加（`content_outlines/PPL_Subject5_Aviation_Law_Structure.md`） | — |
 | 2026-05-12 | Subject 5 **14 本**本文化・`learning_contents` 501〜514 登録（[Article_Coverage_Backlog](Article_Coverage_Backlog.md) 登録ログ） | — |
+| 2026-06-30 | **v2.0** — Subject 2 Phase 1 **12/12 完走**（`PPL-2-2-1`〜`2-3-2`）。進捗 **46/150**。`learning_contents` **211〜222**（MCP `execute_sql`）。Tier B マッピング → `3.4.2`。 |
 | 2026-06-30 | **v1.9** — Subject 2 Phase 1 **+1 本**（`PPL-2-1-7`）。**ブロックA 7/7 完結**。進捗 **41/150**。`learning_contents` **207**（MCP `execute_sql`） | — |
 | 2026-06-29 | **v1.8** — Subject 2 Phase 1 **+1 本**（`PPL-2-1-6`）。進捗 **40/150**。`learning_contents` **206**（MCP `execute_sql`） | — |
 | 2026-06-28 | **v1.7** — Subject 2 Phase 1 **+1 本**（`PPL-2-1-5`）。進捗 **39/150**。`learning_contents` **205**（MCP `execute_sql`） | — |

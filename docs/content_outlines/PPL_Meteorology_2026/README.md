@@ -38,11 +38,11 @@
 
 | 順 | stem | 備考 |
 |----|------|------|
-| 8 | `PPL-2-2-1_WindObservationBasics` | 3.3.7 扉 |
-| 9 | `PPL-2-2-2_AirMassesAndFronts` | 3.3.3 |
-| 10 | `PPL-2-2-3_PressureSystemsAndJapanWeather` | 3.3.3, 3.3.4 |
-| 11 | `PPL-2-3-1_FlightWeatherHazardsBasics` | 3.3.9, 3.3.12 |
-| 12 | `PPL-2-3-2_MetarTafAndWeatherReports` | アプリ `/weather` ツールへの言及可（仕様変更なし） |
+| 8 | `PPL-2-2-1_WindObservationBasics` | 3.3.7 扉 | **済（2026-06-30）** |
+| 9 | `PPL-2-2-2_AirMassesAndFronts` | 3.3.3 | **済（2026-06-30）** |
+| 10 | `PPL-2-2-3_PressureSystemsAndJapanWeather` | 3.3.3, 3.3.4 | **済（2026-06-30）** |
+| 11 | `PPL-2-3-1_FlightWeatherHazardsBasics` | 3.3.9, 3.3.12 | **済（2026-06-30）** |
+| 12 | `PPL-2-3-2_MetarTafAndWeatherReports` | アプリ `/weather` ツールへの言及可（仕様変更なし） | **済（2026-06-30）** — **Phase 1 完走** |
 
 ブロック B の個別 `*_gemini_brief.md` は **ブロック A の 4 本取り込み後**に起票する。
 
