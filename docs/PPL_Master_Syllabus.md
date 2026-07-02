@@ -191,7 +191,7 @@
 - [x] **Phase 1** 気団: 日本に影響する気団（シベリア、小笠原等）と変質
 - [x] **Phase 1** 前線: 寒冷・温暖・停滞・閉塞前線の構造と特徴
 - [x] **Phase 1** 日本付近の前線: 梅雨前線、秋雨前線
-  - ✅ [PPL-2-2-2_AirMassesAndFronts](../src/content/lessons/PPL-2-2-2_AirMassesAndFronts.mdx) — 気団・前線基礎（2026-06-30）
+  - ✅ [PPL-2-2-2_AirMassesAndFronts](../src/content/lessons/PPL-2-2-2_AirMassesAndFronts.mdx) — 気団・前線3次元（2026-07-02 深文化）
 
 #### 2-2-3. 高気圧と低気圧
 - [x] **Phase 1** 気圧配置: 高気圧・低気圧に伴う風と天気

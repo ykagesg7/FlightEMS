@@ -39,7 +39,7 @@
 | 順 | stem | 備考 |
 |----|------|------|
 | 8 | `PPL-2-2-1_WindObservationBasics` | 3.3.7 扉 | **済（2026-07-01 深文化）** |
-| 9 | `PPL-2-2-2_AirMassesAndFronts` | 3.3.3 | **済（2026-06-30）** |
+| 9 | `PPL-2-2-2_AirMassesAndFronts` | 3.3.3 | **済（2026-07-02 深文化）** |
 | 10 | `PPL-2-2-3_PressureSystemsAndJapanWeather` | 3.3.3, 3.3.4 | **済（2026-06-30）** |
 | 11 | `PPL-2-3-1_FlightWeatherHazardsBasics` | 3.3.9, 3.3.12 | **済（2026-06-30）** |
 | 12 | `PPL-2-3-2_MetarTafAndWeatherReports` | アプリ `/weather` ツールへの言及可（仕様変更なし） | **済（2026-06-30）** — **Phase 1 完走** |
