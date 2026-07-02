@@ -2,6 +2,7 @@
 
 **作成日**: 2026-04-10  
 **スナップショット更新**: 2026-07-01（リポジトリ MDX **96**・**PPL 46**。DB マッピング **2026-07-01 MCP** W27 七月第 1 サイクル）  
+**Quiz 品質（CBT/法規）**: 2026-05-28 — Phase1 降格 41 → D-2 改稿 8 件復帰 → **Phase2 削除 30 件**（D-1×2 + Tier A×28）。verified **2,255**、needs_review **20**。SQL: [`20260528_quiz_phase2_delete_d1_tier_a.sql`](../scripts/database/20260528_quiz_phase2_delete_d1_tier_a.sql) 他 — レポート [`artifacts/quiz_cbt_deletion_candidates_2026-05-28.md`](../artifacts/quiz_cbt_deletion_candidates_2026-05-28.md)
 **MCP 再取得（W27 七月第 1 サイクル）**: 2026-07-01 — `learning_contents` **125**・`learning_test_mapping` **106 行 / 95 記事**・verified 未マッピング **23**（六月末から変化なし）。上位: **着氷/着氷の防止 4**・**電波の伝播 3**・**航法計器/レーダー 2**（W28 Tier A 候補）。**新規 SQL なし**（Callout のみ）。
 **MCP 再取得（六月末ゲート）**: 2026-06-30 — 同上 **23** / **106 行 / 95 記事**（W26 Tier B → `3.4.2` 航法計器 + PPL Subject 2 **`PPL-2-2-1`〜`2-3-2`** 5 本）。SQL: [`20260630_learning_test_mapping_nav_instruments_w26.sql`](../scripts/database/20260630_learning_test_mapping_nav_instruments_w26.sql)・[`20260630_learning_contents_ppl_subject2_211_222.sql`](../scripts/database/20260630_learning_contents_ppl_subject2_211_222.sql)
 **MCP 再取得（前回）**: 2026-06-06 — verified 未マッピング **36**・`learning_test_mapping` **74 行 / 64 記事**（W24 空力基礎 3 クラスタ → `3.2.7` 追補）
