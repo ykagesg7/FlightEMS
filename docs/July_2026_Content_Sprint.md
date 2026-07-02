@@ -44,7 +44,7 @@
 
 | ブロック／週 | 状態 | MDX／DB／メモ |
 |---------------|------|----------------|
-| **H / W27** | **未着手** | — |
+| **H / W27** | **完了** | MCP 七月第 1 再集計（未マッピング **23**）。法規 Callout **`3.1.1`〜`3.1.3`** ← PPL-5-*。GA4 [`quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md)（MCP 数値取得済・Hub 6→3 完走）。B-4 [`quizAnalytics.test.ts`](../src/__tests__/lib/quizAnalytics.test.ts)。 |
 | **I / W28** | **未着手** | — |
 | **J / W29** | **未着手** | — |
 | **K / W30** | **未着手** | — |
