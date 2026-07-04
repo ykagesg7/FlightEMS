@@ -197,7 +197,7 @@
 - [x] **Phase 1** 気圧配置: 高気圧・低気圧に伴う風と天気
 - [x] **Phase 1** 低気圧の種類: 温帯低気圧のライフサイクル
 - [x] **Phase 1** 熱帯気象: 台風（熱帯低気圧）の構造と移動
-  - ✅ [PPL-2-2-3_PressureSystemsAndJapanWeather](../src/content/lessons/PPL-2-2-3_PressureSystemsAndJapanWeather.mdx) — 高低気圧・台風概要（2026-06-30）
+  - ✅ [PPL-2-2-3_PressureSystemsAndJapanWeather](../src/content/lessons/PPL-2-2-3_PressureSystemsAndJapanWeather.mdx) — 高低気圧・危険半円・避難飛行（2026-07-04 深文化）
 
 ### 2-3. 気象障害と航空気象情報
 
