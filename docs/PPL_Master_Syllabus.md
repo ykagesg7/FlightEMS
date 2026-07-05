@@ -208,14 +208,14 @@
 - [x] **Phase 1** 着氷: 機体への着氷の種類と影響
 - [x] **Phase 1** 視程障害: 霧、もや、煙霧、黄砂、ホワイトアウト
 - [ ] **Phase 2** 火山灰: エンジンへの影響と回避
-  - ✅ [PPL-2-3-1_FlightWeatherHazardsBasics](../src/content/lessons/PPL-2-3-1_FlightWeatherHazardsBasics.mdx) — 障害分類・回避（2026-06-30）
+  - ✅ [PPL-2-3-1_FlightWeatherHazardsBasics](../src/content/lessons/PPL-2-3-1_FlightWeatherHazardsBasics.mdx) — 4大ハザード・エアマンシップ（2026-07-05 深文化）
 
 #### 2-3-2. 気象情報
 - [x] **Phase 1** 気象通報: 観測方法、定時観測
 - [x] **Phase 1** 飛行場気象情報: METAR、SPECI、TAFの解読
 - [ ] **Phase 2** 空域情報: SIGMET、AIRMET
 - [ ] **Phase 2** 天気図: 実況天気図、予想天気図、高層天気図の解析
-  - ✅ [PPL-2-3-2_MetarTafAndWeatherReports](../src/content/lessons/PPL-2-3-2_MetarTafAndWeatherReports.mdx) — METAR/SPECI/TAF 入門（2026-06-30）
+  - ✅ [PPL-2-3-2_MetarTafAndWeatherReports](../src/content/lessons/PPL-2-3-2_MetarTafAndWeatherReports.mdx) — METAR/TAF/JST・Phase 1 完走（2026-07-06 深文化）
 
 **Subject 2 合計**: 35トピック（Phase 1: 12, Phase 2: 15, Phase 3: 8）
 

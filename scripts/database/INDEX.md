@@ -26,6 +26,9 @@
 | **PPL Subject 2 Phase 1 ブロック B/C（211〜222）** | [`20260630_learning_contents_ppl_subject2_211_222.sql`](20260630_learning_contents_ppl_subject2_211_222.sql)（`PPL-2-2-1`〜`2-3-2` + mapping — **2026-06-30 本番適用済**） |
 | **PPL-2-2-1 深文化 meta 同期** | [`20260701_learning_contents_ppl221_meta_rewrite.sql`](20260701_learning_contents_ppl221_meta_rewrite.sql)（title/description — **2026-07-01 本番適用済**） |
 | **PPL-2-2-2 深文化 meta 同期** | [`20260702_learning_contents_ppl222_meta_rewrite.sql`](20260702_learning_contents_ppl222_meta_rewrite.sql)（title/description — **2026-07-02 本番適用済**） |
+| **PPL-2-2-3 深文化 meta 同期** | [`20260704_learning_contents_ppl223_meta_rewrite.sql`](20260704_learning_contents_ppl223_meta_rewrite.sql)（title/description — **2026-07-04 本番適用済**） |
+| **PPL-2-3-1 深文化 meta 同期** | [`20260705_learning_contents_ppl231_meta_rewrite.sql`](20260705_learning_contents_ppl231_meta_rewrite.sql)（title/description — **2026-07-06 本番適用済**） |
+| **PPL-2-3-2 深文化 meta 同期** | [`20260706_learning_contents_ppl232_meta_rewrite.sql`](20260706_learning_contents_ppl232_meta_rewrite.sql)（title/description — **2026-07-06 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（視程・霧）** | [`20260630_learning_contents_ppl_subject2_207.sql`](20260630_learning_contents_ppl_subject2_207.sql)（`PPL-2-1-7`、`order_index` **207** — ブロックA 完結） |
 | **PPL Subject 2 `learning_test_mapping`（視程・霧）** | [`20260630_learning_test_mapping_ppl_subject2_207.sql`](20260630_learning_test_mapping_ppl_subject2_207.sql)（霧の形成 — **2026-06-30 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（雲形）** | [`20260629_learning_contents_ppl_subject2_206.sql`](20260629_learning_contents_ppl_subject2_206.sql)（`PPL-2-1-6`、`order_index` **206**） |

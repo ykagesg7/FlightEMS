@@ -68,8 +68,8 @@ Master の Phase 2（15 論点）・Phase 3（8 論点）は、Phase 1 本文化
 | 07 Phase | 代表トピック | 推奨対応（案） |
 |----------|--------------|----------------|
 | **Phase 2** | 風の原因（気圧傾度・コリオリ・摩擦）、地衡風、海陸風 | `PPL-2-2-4_WindDynamicsBasics.mdx`（order 214）または 2-2-1 増補 |
-| **Phase 2** | ウィンドシアー、火山灰 | `PPL-2-3-3_WindShearAndVolcanicAsh.mdx`（223） |
-| **Phase 2** | SIGMET/AIRMET、天気図 | `PPL-2-3-4_SigmetAndWeatherChartsIntro.mdx`（224） |
+| **Phase 2** | ウィンドシアー、火山灰 | [`PPL-2-3-3_WindShearAndVolcanicAsh.mdx`](PPL_Meteorology_2026/PPL-2-3-3_gemini_brief.md)（223）— **骨子済** |
+| **Phase 2** | SIGMET/AIRMET、天気図 | [`PPL-2-3-4_SigmetAndWeatherChartsIntro.mdx`](PPL_Meteorology_2026/PPL-2-3-4_gemini_brief.md)（224）— **骨子済** |
 | **Phase 3** | 用語集・体系網羅の穴埋め | 07 §2 の未チェック行を MCP 設問分布で再優先 |
 
 ---
@@ -142,5 +142,6 @@ Master の Phase 2（15 論点）・Phase 3（8 論点）は、Phase 1 本文化
 
 | 日付 | 内容 |
 |------|------|
+| 2026-07-06 | Phase 1 深文化 **12/12 完走**（`2-3-1`・`2-3-2` 登録）。§4 Phase 2 骨子リンク（`2-3-3`/`2-3-4`） |
 | 2026-06-27 | §8 CPL ↔ PPL Callout 更新（3.3.1/2/5/6/8/10/11）。`learning_test_mapping` **PPL-2-1-1〜4**（[`20260627_learning_test_mapping_ppl_subject2_201_204.sql`](../scripts/database/20260627_learning_test_mapping_ppl_subject2_201_204.sql)） |
 | 2026-06-24 | 初版：CPL 12 本 × Master §2 を 12 記事にマトリクス化、Gemini 執筆順・order 201〜222 |

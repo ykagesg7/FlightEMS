@@ -41,10 +41,20 @@
 | 8 | `PPL-2-2-1_WindObservationBasics` | 3.3.7 扉 | **済（2026-07-01 深文化）** |
 | 9 | `PPL-2-2-2_AirMassesAndFronts` | 3.3.3 | **済（2026-07-02 深文化）** |
 | 10 | `PPL-2-2-3_PressureSystemsAndJapanWeather` | 3.3.3, 3.3.4 | **済（2026-07-04 深文化）** |
-| 11 | `PPL-2-3-1_FlightWeatherHazardsBasics` | 3.3.9, 3.3.12 | **済（2026-06-30）** |
-| 12 | `PPL-2-3-2_MetarTafAndWeatherReports` | アプリ `/weather` ツールへの言及可（仕様変更なし） | **済（2026-06-30）** — **Phase 1 完走** |
+| 11 | `PPL-2-3-1_FlightWeatherHazardsBasics` | 3.3.9, 3.3.11, 3.3.12 | **済（2026-07-05 深文化）** |
+| 12 | `PPL-2-3-2_MetarTafAndWeatherReports` | — | **済（2026-07-06 深文化）** — **Phase 1 深文化 12/12 完走** |
 
-ブロック B の個別 `*_gemini_brief.md` は **ブロック A の 4 本取り込み後**に起票する。
+---
+
+## Phase 2 — 障害深化・広域情報（2026-07 〜）
+
+| 順 | stem | ブリーフ | 状態 |
+|----|------|----------|------|
+| 13 | `PPL-2-3-3_WindShearAndVolcanicAsh` | [PPL-2-3-3_gemini_brief.md](PPL-2-3-3_gemini_brief.md) | **骨子済** — W28 第 1 本候補 |
+| 14 | `PPL-2-3-4_SigmetAndWeatherChartsIntro` | [PPL-2-3-4_gemini_brief.md](PPL-2-3-4_gemini_brief.md) | **骨子済** — W29 第 2 本候補 |
+| — | `PPL-2-2-4_WindDynamicsBasics` | — | 未起票（地衡風・海陸風 — 構造案 §4） |
+
+**Phase 2 執筆順の推奨**: `2-3-3` → `2-3-4`（2-3-2 直後の「点→局地→面」）→ `2-2-4`。
 
 ---
 
@@ -63,6 +73,7 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-07-06 | Phase 2 骨子 **2 本**（`PPL-2-3-3`・`PPL-2-3-4`）。Phase 1 深文化 **12/12 完走**（`2-3-2` 登録） |
 | 2026-06-27 | `PPL-2-1-4` 本文化・DB 登録（`order_index` 204） |
 | 2026-06-25 | `PPL-2-1-2`・`PPL-2-1-3` 本文化・DB 登録（201〜203） |
 | 2026-06-24 | 初版。ブロック A ブリーフ 4 本、執筆フロー、チェックリスト |
