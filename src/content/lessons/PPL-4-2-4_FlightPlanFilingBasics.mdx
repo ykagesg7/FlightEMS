@@ -1,0 +1,118 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-4-2-4_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空通信】飛行計画の提出：ファイル・変更・クローズ',
+  slug: 'ppl-4-2-4-flight-plan-filing-basics',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '航空通信', '飛行計画', 'FPL', '通報'],
+  series: 'PPL-Master-Syllabus',
+  order: 406,
+  readingTime: 11,
+  excerpt: '飛行計画の提出・変更・クローズ。航法 PPL-3-1-5 の計画内容と通信側手順を接続。Subject 3×4 の橋記事。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Flight+Plan+Filing+Basics"
+  alt="航空通信：飛行計画の提出のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **飛行計画（Flight Plan）** を提出する目的（管制・捜索救難・交通整理）を説明できる。
+- [ ] **ファイル（提出）**、**変更**、**クローズ（終了通報）** の PPL レベルの流れを述べられる。
+- [ ] [PPL-3-1-5](/articles/PPL-3-1-5_FlightPlanningBasics) の計画項目と、通信で通報する項目の**対応**を理解できる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **飛行計画/記入**、**通報**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 「計画なき飛行は、地図なきドライブ」 — 航法で描いた計画を**誰に・いつ**渡すか
+- **必須リンク**: [飛行計画の基礎（PPL-3-1-5）](/articles/PPL-3-1-5_FlightPlanningBasics) — 燃料・ETA・ルートはそちらで復習
+- 前回: [飛行場管制の基礎（PPL-4-2-3）](/articles/PPL-4-2-3_AerodromeControlBasics)
+- 復習: [航空交通業務の概要（PPL-4-1-1）](/articles/PPL-4-1-1_AirTrafficServicesOverview)
+
+---
+
+## 📚 詳細解説
+
+### 1. 飛行計画を出す理由
+
+**[執筆メモ]**
+- 交通整理（管制）、警急・SAR（[PPL-4-1-2](/articles/PPL-4-1-2_SearchAndRescueBasics)）、情報提供（概念）
+
+### 2. ファイル（提出）の基本
+
+**[執筆メモ]**
+- いつ: 出発前（時間は AIP 参照 — 断定しすぎない）
+- どこへ: 飛行計画室・電子手段（概念）
+- 何を: 機種・ルート・高度・時間・燃料（3-1-5 対照表 1 つ推奨）
+
+### 3. 変更（Change）
+
+**[執筆メモ]**
+- ルート・高度・目的地変更 — **管制への通報**の必要性（定性）
+- 試験: 変更し忘れ vs 未提出
+
+### 4. クローズ（Close / Arrival report）
+
+**[執筆メモ]**
+- 到着・計画終了の**通報** — 警急網が「行方不明」と誤認しないため
+- 未クローズのリスク — SAR 誤発動の概念
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 旅行の帰宅連絡 — 出発 LINE は出したが帰宅報告忘れ → 親が警察（SAR）に電話
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **飛行計画の目的** — 管制・警急
+   - **答え：TBD（Gemini執筆）**
+
+2. **クローズ** — 到着通報の意味
+   - **答え：TBD（Gemini執筆）**
+
+3. **変更** — ルート変更時の通報必要性
+   - **答え：TBD（Gemini執筆）**
+
+4. **（任意）3-1-5 連携** — 計画書の燃料・ETA 項目
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** 提出の目的 — TBD
+- **[要点 2]** ファイル・変更・クローズ — TBD
+- **[要点 3]** 航法計画との対応 — TBD
+
+Subject 3×4 連携完了。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.4.4 飛行計画](/articles/3.4.4_FlightPlanning)、[CPL：3.5.2 航空情報](/articles/3.5.2_AeronauticalInformation) へ。
+
+<Callout type="warning" title="飛行計画の運用">
+  提出期限・様式は **最新 AIP・NOTAM** を正とする。本記事は PPL 学科の手順概要。
+</Callout>
+
+export default ({ children }) => <>{children}</>

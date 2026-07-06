@@ -5,7 +5,7 @@
 
 **週次の正本**: [05_Content_Pipeline.md](05_Content_Pipeline.md) Phase 2 **週次着手記録表**。**実行メモ（ブロック H〜K・ゲート §7）**: [July_2026_Content_Sprint.md](July_2026_Content_Sprint.md)。
 
-**六月からの引き継ぎ（2026-06-30 時点）**: verified 未マッピング **23**・`learning_test_mapping` **106 行 / 95 記事**・PPL **46/150 MDX**・Subject 2 Phase 1 **12/12 完走**・`src` Statements **18.07%**（2026-06-06）。
+**六月からの引き継ぎ（2026-07-07 更新）**: verified 未マッピング **17**・`learning_test_mapping` **111 行 / 97 記事**・PPL **48/150** 登録済（Subject 3 **2 本**深文化）・Subject 2 Phase 1 **12/12 完走**。
 
 ---
 
@@ -78,9 +78,9 @@
 
 ### 4.2 PPL（C-7 二次）
 
-1. **Subject 2 Phase 2** — [構造案 §4](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md): `PPL-2-2-4`、`PPL-2-3-3`、`PPL-2-3-4`（優先 2 本以上）
-2. **Phase 1 深文化** — ~~`PPL-2-2-1`~~ ✅（2026-07-01）〜 ~~`PPL-2-3-2`~~ ✅（2026-07-06）。**Subject 2 Phase 1 気象 12本 深文化完走**
-3. **Subject 3/4** — 7月必須ではない。余力のみ
+1. **Phase 1 深文化（Subject 2 気象）** — ~~`PPL-2-2-1`~~ ✅（2026-07-01）〜 ~~`PPL-2-3-2`~~ ✅（2026-07-06）。**12/12 完走**
+2. **Subject 2 Phase 2** — [構造案 §4](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md): `PPL-2-2-4`、`PPL-2-3-3`、`PPL-2-3-4`（気象の続き・**任意**）
+3. **Subject 3 / 4 Phase 1** — [航法構造案](content_outlines/PPL_Subject3_Aerial_Navigation_Structure.md) **9 本** + [通信構造案](content_outlines/PPL_Subject4_Aviation_Communication_Structure.md) **8 本**。骨子: [PPL_Navigation_Communication_2026/README.md](content_outlines/PPL_Navigation_Communication_2026/README.md) — **C-7 次フェーズ（深文化パイプライン）**
 
 ### 4.3 リンク網（Callout）
 

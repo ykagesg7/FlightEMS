@@ -1,0 +1,114 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-4-1-1_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空通信】航空交通業務の概要：管制・情報・警急の三本柱',
+  slug: 'ppl-4-1-1-air-traffic-services-overview',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '航空通信', 'ATS', '管制', '飛行情報'],
+  series: 'PPL-Master-Syllabus',
+  order: 401,
+  readingTime: 11,
+  excerpt: '航空交通業務（ATS）の三本柱 — 管制・飛行情報・警急。指示 vs 助言の型を正本とする。Subject 4 全記事の入口。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Air+Traffic+Services+Overview"
+  alt="航空通信：航空交通業務の概要のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] ATS の三種類（**管制・飛行情報・警急**）の目的を、自分の言葉で区別できる。
+- [ ] **管制業務（指示・クリアランス）** と **飛行情報業務（助言・情報）** で、操縦責任の所在がどう違うか説明できる。
+- [ ] 警急業務が「異常事態の入口」であることを理解し、後続記事（SAR・緊急通信）への地図を持てる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **航空交通業務**、**概論/航空交通業務**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 「全部管制官が面倒見てくれる」は死に直結 — 空の交通整理は**三本柱**
+- レジの「指示」と「お知らせ」を混同する比喩（道真ペルソナ）
+- Subject 4 入口 — 以降すべての通信記事の前提
+- 次回: [無線フレーズの基礎（PPL-4-2-1）](/articles/PPL-4-2-1_RadioPhraseologyBasics)
+
+---
+
+## 📚 詳細解説
+
+### 1. 管制業務（Air Traffic Control）
+
+**[執筆メモ]**
+- 目的: 交通整理・**間隔確保**
+- 形式: **許可・指示（クリアランス）**
+- 試験トラップ: 「情報提供だけ」と混同、「100% 管制任せ」
+
+### 2. 飛行情報業務（Flight Information Service）
+
+**[執筆メモ]**
+- **助言・情報提供** — 気象・他機・障害物など
+- **最終操縦判断はパイロット**
+- 表 1 つ: 三業務対照
+
+### 3. 警急業務（Alerting Service）
+
+**[執筆メモ]**
+- 遭難・通信途絶など **異常事態** の検知と関係機関への通報
+- [PPL-4-1-2 SAR](/articles/PPL-4-1-2_SearchAndRescueBasics)、[PPL-4-3-2 Mayday/PAN PAN](/articles/PPL-4-3-2_MaydayPanPanBasics) へ予告
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 博多の屋台 — 店主（管制）の「出せ」と、隣客情報（FIS）の「辛いで」。どっちが義務か混同するな
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **ATS 三業務** — 管制・飛行情報・警急の目的の対応
+   - **答え：TBD（Gemini執筆）**
+
+2. **管制 vs 飛行情報** — 指示/助言と操縦責任の所在
+   - **答え：TBD（Gemini執筆）**
+
+3. **警急業務** — 異常事態時の役割（通報・調整）
+   - **答え：TBD（Gemini執筆）**
+
+4. **（任意）責任の所在** — FIS で「避けろ」とは言われない、の型
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** ATS 三業務の仕分け — TBD
+- **[要点 2]** 指示 vs 助言と操縦責任 — TBD
+- **[要点 3]** 警急業務と後続記事への地図 — TBD
+
+次回は [無線フレーズの基礎（PPL-4-2-1）](/articles/PPL-4-2-1_RadioPhraseologyBasics) — 空の共通言語。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.5.1 航空交通業務](/articles/3.5.1_AirTrafficServices) へ。
+
+<Callout type="warning" title="航空交通業務の運用">
+  本記事は学科試験向けの概念整理。実運航は **最新 AIP・管制指示・運航者の SOP** を正とすること。
+</Callout>
+
+export default ({ children }) => <>{children}</>

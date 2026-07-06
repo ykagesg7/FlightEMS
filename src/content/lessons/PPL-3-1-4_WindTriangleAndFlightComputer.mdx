@@ -1,0 +1,108 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-3-1-4_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【空中航法】風力三角形と航法計算尺：風を第三の矢印として足す',
+  slug: 'ppl-3-1-4-wind-triangle-and-flight-computer',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '空中航法', '風力三角形', 'WCA', 'E6-B'],
+  series: 'PPL-Master-Syllabus',
+  order: 304,
+  readingTime: 12,
+  excerpt: '風力三角形、風修正角（WCA）、E6-B 等の航法計算尺。TH・TAS・風 → Track・GS・WCA の関係を腹案化。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Wind+Triangle+and+Flight+Computer"
+  alt="空中航法：風力三角形と航法計算尺のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] 風力三角形の **3 辺（TH/TAS、風、Track/GS）** の関係を図で説明できる。
+- [ ] **WCA** の符号（風からの吹き流し）と、TH = Track ± WCA の関係を述べられる。
+- [ ] E6-B（または同等計算尺）で **TAS・GS・WCA** を求める**基本手順**を説明できる（試験は概念＋簡単な数値）。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **風力三角形**、**航法計算**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 3-1-2 で TH ≠ Track を予告した。**風を「第三の矢印」として足す**
+- 前回: [航空図の基礎（PPL-3-1-3）](/articles/PPL-3-1-3_AeronauticalChartsBasics)
+- 次回: [飛行計画の基礎（PPL-3-1-5）](/articles/PPL-3-1-5_FlightPlanningBasics)
+- 復習: [航法要素と高度（PPL-3-1-2）](/articles/PPL-3-1-2_NavigationElementsAndAltitude)
+
+---
+
+## 📚 詳細解説
+
+### 1. 風力三角形
+
+**[執筆メモ]**
+- ベクトル図。追い風・向かい風・横風の GS への影響（定性＋簡単数値）
+- ASCII または Markdown で風力三角図 1 つ。数値例 1〜2
+
+### 2. WCA（風修正角）
+
+**[執筆メモ]**
+- 風修正角の定義、左右の符号
+- 磁気偏差・自差は Phase 2（3-2-3 予告）で本格化
+
+### 3. 航法計算尺（E6-B）
+
+**[執筆メモ]**
+- 速度面・風面の役割。回転スライドのイメージ
+- 電子計算機への言及は一言
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 屋台の風で傘が斜めになる＝WCA
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **追い風時 GS > TAS**（選択肢）
+   - **答え：TBD（Gemini執筆）**
+
+2. **WCA の符号** — 風が右から → 針路を右に振る（試験型）
+   - **答え：TBD（Gemini執筆）**
+
+3. **風力三角形の辺の対応**（TH/TAS vs Track/GS）
+   - **答え：TBD（Gemini執筆）**
+
+4. **横風のみ** — GS ≒ TAS、Track ≠ TH
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** 風力三角形の 3 辺 — TBD
+- **[要点 2]** WCA の符号と TH/Track 関係 — TBD
+- **[要点 3]** E6-B の基本手順 — TBD
+
+次回は [飛行計画の基礎（PPL-3-1-5）](/articles/PPL-3-1-5_FlightPlanningBasics) や。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.4.4 飛行計画](/articles/3.4.4_FlightPlanning) へ。
+
+export default ({ children }) => <>{children}</>

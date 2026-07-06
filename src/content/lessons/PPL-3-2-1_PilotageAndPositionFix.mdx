@@ -1,0 +1,110 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-3-2-1_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【空中航法】地文航法と機位確認：空では地図と景色を重ねる',
+  slug: 'ppl-3-2-1-pilotage-and-position-fix',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '空中航法', '地文航法', 'Fix', 'チェックポイント'],
+  series: 'PPL-Master-Syllabus',
+  order: 306,
+  readingTime: 11,
+  excerpt: '地文航法（pilotage）と機位確認（position fix）、DR チェックポイント。目で見たランドマークと地図・計画を結ぶ。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Pilotage+and+Position+Fix"
+  alt="空中航法：地文航法と機位確認のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **地文航法** — 目視ランドマークで位置・進路を確認 — を DR と対比して説明できる。
+- [ ] **Fix（位置確認）** の方法（地文 Fix、DR Fix、交差方位は 3-2-2 予告）を列挙できる。
+- [ ] **チェックポイント** を計画に設定し、ずれを早期発見する重要性を述べられる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **機位の確認**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 計画は紙の上。**空では地図と景色を重ねる** — pilotage の本質
+- 前回: [飛行計画の基礎（PPL-3-1-5）](/articles/PPL-3-1-5_FlightPlanningBasics)
+- 次回: [無線航法の概要（PPL-3-2-2）](/articles/PPL-3-2-2_RadioNavigationOverview)
+- 復習: [航空図の基礎（PPL-3-1-3）](/articles/PPL-3-1-3_AeronauticalChartsBasics)、[地球・座標・時間（PPL-3-1-1）](/articles/PPL-3-1-1_EarthCoordinatesAndTime)
+
+---
+
+## 📚 詳細解説
+
+### 1. 地文航法
+
+**[執筆メモ]**
+- 河川、道路、湖、海岸、塔、空港等。VFR の基本
+- 夜・IMC 限界は 3-3-1 へ
+- 九州の地文例（玄界灘、筑後川等）可
+
+### 2. Fix の種類
+
+**[執筆メモ]**
+- 地文 Fix、DR 位置、計器 Fix（VOR 等は 3-2-2）
+- Fix の精度と更新頻度
+- 表 1 つ: Fix 種別比較
+
+### 3. DR チェックポイント
+
+**[執筆メモ]**
+- 計画時に通過時刻・地物を決める
+- ずれ → 針路・高度・再計画
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 福岡タワーが見えたら「あ、ここや」— 地標 Fix
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **pilotage の定義 vs DR**
+   - **答え：TBD（Gemini執筆）**
+
+2. **Fix とは何か**（現在位置の確定）
+   - **答え：TBD（Gemini執筆）**
+
+3. **チェックポイントの目的** — 迷子防止
+   - **答え：TBD（Gemini執筆）**
+
+4. **地文 Fix が困難な条件**（低視程・夜 — 選択肢）
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** 地文航法と DR の対比 — TBD
+- **[要点 2]** Fix の種類と精度 — TBD
+- **[要点 3]** チェックポイントの早期発見 — TBD
+
+次回は [無線航法の概要（PPL-3-2-2）](/articles/PPL-3-2-2_RadioNavigationOverview) や。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.4.1 推測航法](/articles/3.4.1_DeadReckoning)、[CPL：3.4.7 推測航法（応用）](/articles/3.4.7_DeadReckoningAdvanced) へ。
+
+export default ({ children }) => <>{children}</>

@@ -1,0 +1,110 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-3-3-1_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【空中航法】VFR 運航と空域：どの空を、どんな天気で、目で飛べるか',
+  slug: 'ppl-3-3-1-vfr-operations-and-airspace',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '空中航法', 'VFR', 'VMC', '空域'],
+  series: 'PPL-Master-Syllabus',
+  order: 308,
+  readingTime: 11,
+  excerpt: 'VFR 運航と VMC を航法・運航実務の読み方から整理。空域の条文正本は PPL-5-4-1。地図・計画・目視航法と空域の関係。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=VFR+Operations+and+Airspace"
+  alt="空中航法：VFR 運航と空域のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **VFR** — Visual Flight Rules — と **IFR** の違いを、航法手段（地文 vs 計器）と結びつけて説明できる。
+- [ ] **VMC** の代表的要素（視程、雲との距離等 — PPL 試験レベル）を列挙できる（数値は代表値、詳細条文は 5-4-1 へ）。
+- [ ] 航空図上の**禁制・制限・危険・管制空域**を読み、ルート計画に反映する**考え方**を述べられる。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 航法の技術が揃った。**「どの空を、どんな天気で、目で飛べるか」** — VFR の枠組み
+- 前回: [無線航法の概要（PPL-3-2-2）](/articles/PPL-3-2-2_RadioNavigationOverview)
+- 次回: [空間識失調の基礎（PPL-3-3-2）](/articles/PPL-3-3-2_SpatialDisorientationBasics)
+- **法規正本（必須）**: [空域と施設の概要（PPL-5-4-1）](/articles/PPL-5-4-1_AirspaceAndFacilitiesOverview) — 空域の条文・分類はこちら
+- 復習: [航空図の基礎（PPL-3-1-3）](/articles/PPL-3-1-3_AeronauticalChartsBasics)
+
+<Callout type="info" title="法規の正本">
+  空域の条文・分類の詳細は [PPL-5-4-1 空域と施設の概要](/articles/PPL-5-4-1_AirspaceAndFacilitiesOverview) を正とする。本記事は航法・運航実務の読み方に集中。
+</Callout>
+
+---
+
+## 📚 詳細解説
+
+### 1. VFR vs IFR
+
+**[執筆メモ]**
+- 目視参照の可否、計器航法との関係（3-2-2 復習）
+- PPL は VFR 中心
+
+### 2. VMC
+
+**[執筆メモ]**
+- 最低視程・雲離隔の代表値（試験用）
+- METAR との接続（2-3-2 軽く）
+- 数値は代表値とし「最新は法規・AIP」と注記
+
+### 3. 空域の読み方（航法視点）
+
+**[執筆メモ]**
+- 図上の色・境界、進入・管制の**計画への影響**
+- 表 1 つ: VFR/IFR または空域種別の航法視点
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 霧の博多湾 — VMC 割れで VFR 不可
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **VFR の定義** — 目視で地表・障害物を参照
+   - **答え：TBD（Gemini執筆）**
+
+2. **VMC 未達時** — VFR 運航不可（一般論）
+   - **答え：TBD（Gemini執筆）**
+
+3. **禁制空域 vs 制限空域** — 図上の読み（定性）
+   - **答え：TBD（Gemini執筆）**
+
+4. **法規の正本はどこか** — PPL-5-4-1（メタ問題）
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** VFR と IFR の違い — TBD
+- **[要点 2]** VMC の代表要件 — TBD
+- **[要点 3]** 図上の空域と計画 — TBD
+
+次回は [空間識失調の基礎（PPL-3-3-2）](/articles/PPL-3-3-2_SpatialDisorientationBasics) — Phase 1 締め前。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.1.5 VFR 運航](/articles/3.1.5_VfrOperations) へ。
+
+export default ({ children }) => <>{children}</>

@@ -1,0 +1,115 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-4-2-2_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空通信】クリアランスと復唱：必ず読み返す項目',
+  slug: 'ppl-4-2-2-clearance-readback-basics',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '航空通信', 'クリアランス', '復唱', 'リードバック'],
+  series: 'PPL-Master-Syllabus',
+  order: 404,
+  readingTime: 11,
+  excerpt: 'クリアランスの種類と復唱（Readback）が必須の項目。滑走路誤進入・高度取り違えの試験トラップ対策。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Clearance+Readback+Basics"
+  alt="航空通信：クリアランスと復唱のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **クリアランス** が「指示・許可」であることを、[PPL-4-1-1](/articles/PPL-4-1-1_AirTrafficServicesOverview) の管制業務と結びつけて説明できる。
+- [ ] **復唱が必須**となる代表項目（滑走路・進路・高度・ホールドショート等）を列挙できる。
+- [ ] 復唱不要または読み返しのみの情報と、必須復唱の**境界**を試験レベルで仕分けできる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **飛行場管制/管制許可等**、**通則**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 「聞こえたつもり」は墜落の同義語 — 復唱＝注文の確認
+- 前回必須: [無線フレーズの基礎（PPL-4-2-1）](/articles/PPL-4-2-1_RadioPhraseologyBasics)
+- 復習: [航空交通業務の概要（PPL-4-1-1）](/articles/PPL-4-1-1_AirTrafficServicesOverview)
+- 次回: [飛行場管制の基礎（PPL-4-2-3）](/articles/PPL-4-2-3_AerodromeControlBasics)
+
+---
+
+## 📚 詳細解説
+
+### 1. クリアランスの種類（PPL 代表）
+
+**[執筆メモ]**
+- 離着陸 / 進路・高度 / 地上（Taxi, Hold short）/ 情報のみ
+- 表 1 つ: クリアランス種別と復唱要否
+
+### 2. 復唱必須項目 — 試験の芯
+
+**[執筆メモ]**
+- 滑走路番号（02 vs 20）
+- Hold short — 滑走路手前停止
+- 高度・フライトレベル — [PPL-4-2-1](/articles/PPL-4-2-1_RadioPhraseologyBasics) の読み方
+- 進路（Heading）
+- 「予測と復唱」 — CPL 扉へ
+
+### 3. 復唱の型
+
+**[執筆メモ]**
+- 自機コールサign + 復唱内容 + **Roger**
+- 訂正: **Correction** — 詳細は 3.5.5 扉
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 資さんうどん — 嫁の「肉ごぼ天ネギ抜き」を復唱せず横取り（CPL 3.5.3 比喩の PPL 短縮版）
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **滑走路クリアランス** — 番号復唱必須
+   - **答え：TBD（Gemini執筆）**
+
+2. **Hold short** — 意味と復唱
+   - **答え：TBD（Gemini執筆）**
+
+3. **離陸許可** — 他機指示の横取りリスク
+   - **答え：TBD（Gemini執筆）**
+
+4. **（任意）Roger のみ** — 実行確認 Wilco との違い（4-2-1 復習）
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** クリアランス＝指示・許可 — TBD
+- **[要点 2]** 復唱必須項目 — TBD
+- **[要点 3]** 復唱の型 — TBD
+
+次回は [飛行場管制の基礎（PPL-4-2-3）](/articles/PPL-4-2-3_AerodromeControlBasics) — タワー実務。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.5.3 無線通信](/articles/3.5.3_RadioCommunication) へ。
+
+<Callout type="warning" title="復唱・クリアランスの運用">
+  復唱要否の詳細は **最新 AIP・管制指示** を正とする。本記事は PPL 学科の代表項目整理。
+</Callout>
+
+export default ({ children }) => <>{children}</>

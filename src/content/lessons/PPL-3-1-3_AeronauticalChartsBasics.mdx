@@ -1,0 +1,108 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-3-1-3_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【空中航法】航空図の基礎：地図を飛行計画のキャンバスとして読む',
+  slug: 'ppl-3-1-3-aeronautical-charts-basics',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '空中航法', '航空図', '投影法', '縮尺'],
+  series: 'PPL-Master-Syllabus',
+  order: 303,
+  readingTime: 11,
+  excerpt: 'ランベルト正角円錐図法、縮尺、記号・凡例。地文航法・DR 計画の紙/PDF 地図リテラシー。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Aeronautical+Charts+Basics"
+  alt="空中航法：航空図の基礎のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **正角図法**（特にランベルト）の目的 — 針路・角度を保ちやすい — を説明できる。
+- [ ] **縮尺**（1:500,000 等）の読み方と、図上距離から地上距離（NM）への換算の考え方を述べられる。
+- [ ] 主要な**記号**（空港、禁制・制限、障害物、通信施設等）を凡例と照合して読める。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **航空図**、**投影法**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 座標（3-1-1）と要素（3-1-2）が揃った。**地図を「飛行計画のキャンバス」として読む**
+- 前回: [航法要素と高度（PPL-3-1-2）](/articles/PPL-3-1-2_NavigationElementsAndAltitude)
+- 次回: [風力三角形と航法計算尺（PPL-3-1-4）](/articles/PPL-3-1-4_WindTriangleAndFlightComputer)
+
+---
+
+## 📚 詳細解説
+
+### 1. 投影法
+
+**[執筆メモ]**
+- 地球 → 平面。正角・正積・正射の一言比較
+- **ランベルト正角円錐**を PPL 主役に
+- 試験トラップ: メルカトルとの混同
+
+### 2. 縮尺と距離
+
+**[執筆メモ]**
+- 代表縮尺、図上 cm/mm と NM
+- 表 1 つ: 投影法比較または記号例
+
+### 3. 記号と凡例
+
+**[執筆メモ]**
+- 色・線種・記号の体系
+- VFR 最低安全高度等は**図上の存在**を示す（詳細運用は 3-3-1）
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 福岡市街地図 vs 九州全图 — 縮尺が変わると見えるものが変わる
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **ランベルト図法の特徴**（正角）
+   - **答え：TBD（Gemini執筆）**
+
+2. **縮尺 1:500,000 の意味**
+   - **答え：TBD（Gemini執筆）**
+
+3. **記号読み**（禁制空域・空港等 — 選択肢形式）
+   - **答え：TBD（Gemini執筆）**
+
+4. **正角図法で針路をそのまま引ける理由**（定性）
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** ランベルト正角図法の役割 — TBD
+- **[要点 2]** 縮尺と距離換算 — TBD
+- **[要点 3]** 凡例と記号の読み方 — TBD
+
+次回は [風力三角形と航法計算尺（PPL-3-1-4）](/articles/PPL-3-1-4_WindTriangleAndFlightComputer) や。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.4.1 推測航法](/articles/3.4.1_DeadReckoning)、[CPL：3.4.4 飛行計画](/articles/3.4.4_FlightPlanning) へ。
+
+export default ({ children }) => <>{children}</>

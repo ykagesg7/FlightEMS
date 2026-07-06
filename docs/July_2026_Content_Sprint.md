@@ -45,7 +45,7 @@
 | ブロック／週 | 状態 | MDX／DB／メモ |
 |---------------|------|----------------|
 | **H / W27** | **完了** | MCP 七月第 1 再集計（未マッピング **23**）。法規 Callout **`3.1.1`〜`3.1.3`** ← PPL-5-*。GA4 [`quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md)（MCP 数値取得済・Hub 6→3 完走）。B-4 [`quizAnalytics.test.ts`](../src/__tests__/lib/quizAnalytics.test.ts)。 |
-| **I / W28** | **未着手** | — |
+| **I / W28** | **完了** | Tier A 着氷 **4 問** → `engineering_basics`。**PPL-3-1-1**・**PPL-3-1-2** 深文化 + mapping（111 行）。Subject 3/4 スタブ **15 本** + 骨子索引。法規 Callout **`3.1.4`/`3.1.5`**。MCP: 未マッピング **17**・`learning_contents` **99**。 |
 | **J / W29** | **未着手** | — |
 | **K / W30** | **未着手** | — |
 
@@ -69,4 +69,6 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-07-07 | W28 拡張 — PPL-3-1-2・Subject 3/4 スタブ・mapping 111 行。 |
+| 2026-07-06 | W28 ブロック I 完了（Tier A 着氷・PPL-3-1-1・Callout 3.1.4/5）。 |
 | 2026-06-30 | 初版。W27〜W30 ブロック H〜K、7月 PPL/CPL 狙い、§7 ゲート。 |

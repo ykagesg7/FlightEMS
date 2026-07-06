@@ -1,0 +1,114 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-4-3-2_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空通信】MAYDAY と PAN PAN：緊急・遭難通信の基礎',
+  slug: 'ppl-4-3-2-mayday-pan-pan-basics',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '航空通信', 'MAYDAY', 'PAN PAN', '緊急'],
+  series: 'PPL-Master-Syllabus',
+  order: 408,
+  readingTime: 12,
+  excerpt: 'MAYDAY（遭難）と PAN PAN（緊急）の重大度の違い、緊急通信の基本構成。Subject 4 Phase 1 の締め。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Mayday+Pan+Pan+Basics"
+  alt="航空通信：MAYDAY と PAN PAN のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **MAYDAY** と **PAN PAN** の危機度の違いを即答できる。
+- [ ] 緊急通信の**基本要素**（コールサign、位置、事実、意図、燃料・人数等）を列挙できる。
+- [ ] 緊急時も**フレーズロジー**と**復唱**の型を崩さない理由を述べられる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **緊急機に対する管制**、**救難手続**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- [PPL-4-3-1](/articles/PPL-4-3-1_CommFailureAndLightSignals) は**沈黙**、本記事は**SOS の型**
+- [PPL-4-1-2](/articles/PPL-4-1-2_SearchAndRescueBasics) の 121.5・警急業務へ接続
+- 前回必須: [無線故障と可視信号（PPL-4-3-1）](/articles/PPL-4-3-1_CommFailureAndLightSignals)
+- 復習: [捜索救難の基礎（PPL-4-1-2）](/articles/PPL-4-1-2_SearchAndRescueBasics)、[無線フレーズの基礎（PPL-4-2-1）](/articles/PPL-4-2-1_RadioPhraseologyBasics)
+- 任意: [空間識失調の基礎（PPL-3-3-2）](/articles/PPL-3-3-2_SpatialDisorientationBasics)（判断力・パニック）
+
+---
+
+## 📚 詳細解説
+
+### 1. MAYDAY vs PAN PAN
+
+**[執筆メモ]**
+- MAYDAY ×3: **遭難** — 直ちに助けが必要
+- PAN PAN ×3: **緊急** — 危険だが即墜落ではない
+- 表 1 つ: MAYDAY vs PAN PAN
+
+### 2. 緊急通信の構成（PPL）
+
+**[執筆メモ]**
+- MAYDAY/PAN PAN（3 回）→ Station → Identification → Nature（事実）→ Intention（意図）→ Position/Level/Heading
+- パニック時の**型** — 事実と意図の分離
+
+### 3. 管制・他機の優先
+
+**[執筆メモ]**
+- 緊急通信は**最優先**
+- [PPL-4-1-1](/articles/PPL-4-1-1_AirTrafficServicesOverview) 警急業務への移行
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 119 vs 救急 — 火事（MAYDAY）と高熱だけ（PAN PAN）。番号を間違えるな
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **MAYDAY vs PAN PAN** — 重大度
+   - **答え：TBD（Gemini執筆）**
+
+2. **MAYDAY 3 回** — 遭難の宣言
+   - **答え：TBD（Gemini執筆）**
+
+3. **通信構成** — 位置・事実・意図の欠落選択肢
+   - **答え：TBD（Gemini執筆）**
+
+4. **（任意）121.5** — 緊急周波数（4-1-2 復習）
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** MAYDAY vs PAN PAN — TBD
+- **[要点 2]** 緊急通信の構成要素 — TBD
+- **[要点 3]** Subject 4 Phase 1 完走 — 業務→用語→復唱→タワー→計画→SAR→故障→緊急
+
+Subject 4 Phase 1 完走。Phase 2 予告: FIR・レーダー・AIP。
+
+### 🎓 CPL（任意）への扉
+
+CPL ハブ: [CPL-Hub-Communication](/articles/CPL-Hub-Communication)。深掘り: [CPL：3.5.4 緊急手順](/articles/3.5.4_EmergencyProcedures) へ。
+
+<Callout type="warning" title="緊急通信の運用">
+  本記事は学科試験向けの概念整理。実運航では **最新 AIP・管制指示・運航者の緊急手順** を正とする。シミュレーション・フィクション比喩は学習用であり、実機での手順は教官・SOP に従うこと。
+</Callout>
+
+export default ({ children }) => <>{children}</>

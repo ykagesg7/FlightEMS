@@ -1,0 +1,114 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-4-1-2_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空通信】捜索救難の基礎：121.5 MHz と救難信号',
+  slug: 'ppl-4-1-2-search-and-rescue-basics',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '航空通信', 'SAR', '121.5MHz', '救難'],
+  series: 'PPL-Master-Syllabus',
+  order: 402,
+  readingTime: 11,
+  excerpt: '121.5 MHz、救難信号、捜索救難体制の PPL 入門。警急業務から SAR ネットワークへの接続。緊急通信の前に「誰が・何を探すか」。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Search+and+Rescue+Basics"
+  alt="航空通信：捜索救難の基礎のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **121.5 MHz（VHF 救難周波数）** の役割と、試験で問われる基本的な使い方を説明できる。
+- [ ] 代表的な**救難信号**（視覚・音響・無線の概念）を、PPL レベルで区別できる。
+- [ ] 捜索救難業務が ATS の**警急**とどう接続するか述べられる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **捜索救難業務**、**救難信号**、**緊急機**（参照）
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 「助けは来るが、自分も旗を振れ」 — 警急業務 → SAR ネットワーク
+- 前回必須: [航空交通業務の概要（PPL-4-1-1）](/articles/PPL-4-1-1_AirTrafficServicesOverview) 復習 1 段落
+- 次（執筆順）: [無線故障と可視信号（PPL-4-3-1）](/articles/PPL-4-3-1_CommFailureAndLightSignals)、[MAYDAY と PAN PAN（PPL-4-3-2）](/articles/PPL-4-3-2_MaydayPanPanBasics)
+
+---
+
+## 📚 詳細解説
+
+### 1. 121.5 MHz — 国際救難周波数
+
+**[執筆メモ]**
+- 121.5 MHz（VHF）。試験トラップ: 243 MHz（UHF）との混同
+- 遭難・緊急の**監視・呼び出し**
+- ELT 等は一言触れる程度
+
+### 2. 救難信号 — 見つけてもらう技術
+
+**[執筆メモ]**
+- 視覚: 煙、信号弾、SOS パターン（概念）
+- 音響: whistle 等
+- 無線: MAYDAY/PAN PAN — [PPL-4-3-2](/articles/PPL-4-3-2_MaydayPanPanBasics) へ予告
+- 表 1 つ: 周波数・信号対照
+
+### 3. SAR 体制（PPL 概観）
+
+**[執筆メモ]**
+- 管制・救難調整・捜索資源の**役割分担**（定性フロー可）
+- 日本域は定性的に — AIP 誘導
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 糸島の海岸で迷子 — 121.5 は「拡声器」、地上の煙は「目印の旗」
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **121.5 MHz** — 救難周波数の用途
+   - **答え：TBD（Gemini執筆）**
+
+2. **救難信号** — 視覚 vs 無線の目的
+   - **答え：TBD（Gemini執筆）**
+
+3. **警急業務と SAR** — ATS 三柱のうちどれに属するか
+   - **答え：TBD（Gemini執筆）**
+
+4. **（任意）243 MHz** — UHF 救難周波数の存在（選択肢の型）
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** 121.5 MHz の役割 — TBD
+- **[要点 2]** 救難信号の種類 — TBD
+- **[要点 3]** 警急業務と SAR の接続 — TBD
+
+「見つけてもらう準備」が Subject 4 緊急編の土台。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.5.1 航空交通業務](/articles/3.5.1_AirTrafficServices)、[CPL：3.5.4 緊急手順](/articles/3.5.4_EmergencyProcedures) へ。
+
+<Callout type="warning" title="捜索救難の運用">
+  救難手順・信号の詳細は **最新 AIP・運航者の緊急手順** を正とする。本記事は学科試験向けの概念整理。
+</Callout>
+
+export default ({ children }) => <>{children}</>

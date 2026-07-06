@@ -1,0 +1,109 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-3-1-5_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【空中航法】飛行計画の基礎：数字で「着けるか」を確認する',
+  slug: 'ppl-3-1-5-flight-planning-basics',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '空中航法', '飛行計画', 'ETE', '燃料', 'Reserve'],
+  series: 'PPL-Master-Syllabus',
+  order: 305,
+  readingTime: 12,
+  excerpt: '区間距離・ETE/ETA・Trip+Reserve 燃料。3-1-1〜3-1-4 の集大成。通信側の提出は PPL-4-2-4 へ。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Flight+Planning+Basics"
+  alt="空中航法：飛行計画の基礎のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] 区間 **距離（NM）÷ GS = 時間** の基本式で ETE を概算できる。
+- [ ] **Trip fuel** と **Reserve**（45 分等 — 試験レベルの代表値）の区別を説明できる。
+- [ ] チェックポイント・代替空港を計画に含める**理由**を PPL レベルで述べられる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **航法計算**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 図（3-1-3）にルートを引き、風（3-1-4）を入れた。**数字で「着けるか」を確認する**
+- 前回: [風力三角形と航法計算尺（PPL-3-1-4）](/articles/PPL-3-1-4_WindTriangleAndFlightComputer)
+- 次回: [地文航法と機位確認（PPL-3-2-1）](/articles/PPL-3-2-1_PilotageAndPositionFix)
+- **通信扉**: [飛行計画の提出（PPL-4-2-4）](/articles/PPL-4-2-4_FlightPlanFilingBasics) — 提出手順は通信 4-2-4
+
+---
+
+## 📚 詳細解説
+
+### 1. 時間計算
+
+**[執筆メモ]**
+- Distance/GS = Time。UTC で ETA を書く（3-1-1 復習）
+- 単位混同（km/h vs kt）に注意
+
+### 2. 燃料計画
+
+**[執筆メモ]**
+- Trip、Reserve、Contingency は PPL では Reserve 中心
+- 消費率（GPH）× 時間。安全側の丸め
+- 表 1 つ: 計画項目チェックリスト
+
+### 3. 計画の型
+
+**[執筆メモ]**
+- 出発・経路・チェックポイント・到着・代替
+- NOTAM/AIP は Phase 2 予告
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 高速道路の SA 計画 — ガソリンと休憩時間
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **120 NM、GS 90 kt → ETE 80 分**（数値問題）
+   - **答え：TBD（Gemini執筆）**
+
+2. **Reserve の意味** — Trip との混同
+   - **答え：TBD（Gemini執筆）**
+
+3. **ETA を UTC で書く理由**
+   - **答え：TBD（Gemini執筆）**
+
+4. **追い風で GS 増 → 燃料消費時間は？**（定性: 時間短縮）
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** 距離÷GS＝時間の基本 — TBD
+- **[要点 2]** Trip vs Reserve — TBD
+- **[要点 3]** チェックポイントと代替空港 — TBD
+
+次回は [地文航法と機位確認（PPL-3-2-1）](/articles/PPL-3-2-1_PilotageAndPositionFix) や。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.4.4 飛行計画](/articles/3.4.4_FlightPlanning) へ。
+
+export default ({ children }) => <>{children}</>

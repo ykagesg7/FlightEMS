@@ -1,0 +1,121 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-4-2-3_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空通信】飛行場管制の基礎：タワー・滑走・離着陸',
+  slug: 'ppl-4-2-3-aerodrome-control-basics',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '航空通信', 'タワー', 'Taxi', '離着陸'],
+  series: 'PPL-Master-Syllabus',
+  order: 405,
+  readingTime: 11,
+  excerpt: 'タワー管制の Taxi・Takeoff・Landing クリアランス。復唱の型を飛行場実務シーンに適用。可視信号は PPL-4-3-1 へ。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Aerodrome+Control+Basics"
+  alt="航空通信：飛行場管制の基礎のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **タワー管制**の役割（空港周辺・滑走路・滑走路面）を、[PPL-4-1-1](/articles/PPL-4-1-1_AirTrafficServicesOverview) と結びつけて説明できる。
+- [ ] **Taxi clearance** の要点（経路・Hold short・滑走路番号）を復唱付きで理解できる。
+- [ ] **離陸・着陸クリアランス**の順序と、誤進入リスクを試験レベルで述べられる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **地上滑走**、**到着機**、**可視信号**（参照 — ライトガンは 4-3-1）
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 復唱を学んだあと、**いちばん事故が多い場所＝空港**
+- 滑走路誤進入＝逆走車
+- 前回必須: [クリアランスと復唱（PPL-4-2-2）](/articles/PPL-4-2-2_ClearanceReadbackBasics)
+- 復習: [無線フレーズの基礎（PPL-4-2-1）](/articles/PPL-4-2-1_RadioPhraseologyBasics)
+- 次回: [飛行計画の提出（PPL-4-2-4）](/articles/PPL-4-2-4_FlightPlanFilingBasics)
+- 無線故障時: [PPL-4-3-1](/articles/PPL-4-3-1_CommFailureAndLightSignals)（可視信号）
+
+---
+
+## 📚 詳細解説
+
+### 1. タワー vs 地上管制（概念）
+
+**[執筆メモ]**
+- タワー: 滑走路・最終進入・離陸
+- 地上/Apron: 滑走路外の移動
+- 日本の呼称は AIP 参照
+
+### 2. 地上滑走（Taxi）
+
+**[執筆メモ]**
+- Taxi to runway XX via…
+- **Hold short of runway XX** — 必ず復唱（4-2-2 復習）
+
+### 3. 離陸シーケンス（PPL）
+
+**[執筆メモ]**
+- Line up and wait → Cleared for takeoff — **自機向けか確認**
+
+### 4. 着陸シーケンス（PPL）
+
+**[執筆メモ]**
+- Cleared to land — 滑走路番号復唱
+- Go-around 一言。着陸後 Taxi
+- 表 1 つ: Taxi/Takeoff/Land 対照
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 福岡空港のタクシー待ち — Hold short＝横断歩道の手前で止まれ
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **Hold short** — 滑走路手前で停止、復唱必須
+   - **答え：TBD（Gemini執筆）**
+
+2. **Takeoff clearance** — 他機への許可の横取り
+   - **答え：TBD（Gemini執筆）**
+
+3. **Landing clearance** — 滑走路番号の確認
+   - **答え：TBD（Gemini執筆）**
+
+4. **（任意）Line up and wait** — 離陸許可との違い
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** タワー vs 地上の管轄 — TBD
+- **[要点 2]** Taxi と Hold short — TBD
+- **[要点 3]** 離着陸クリアランスの順序 — TBD
+
+次回は [飛行計画の提出（PPL-4-2-4）](/articles/PPL-4-2-4_FlightPlanFilingBasics) や。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.5.3 無線通信](/articles/3.5.3_RadioCommunication) へ。
+
+<Callout type="warning" title="飛行場管制の運用">
+  滑走路・移動経路は **最新 AIP・空港図・管制指示** を正とする。本記事は学科向けの手順型。
+</Callout>
+
+export default ({ children }) => <>{children}</>

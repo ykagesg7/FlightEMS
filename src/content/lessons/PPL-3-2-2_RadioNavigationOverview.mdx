@@ -1,0 +1,113 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-3-2-2_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【空中航法】無線航法の概要：電波で「線」を引く',
+  slug: 'ppl-3-2-2-radio-navigation-overview',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '空中航法', 'VOR', 'DME', 'NDB', 'ILS'],
+  series: 'PPL-Master-Syllabus',
+  order: 307,
+  readingTime: 12,
+  excerpt: 'VOR・DME・NDB・ILS の PPL 向け概要。各装置の試験特化は CPL 3.4.2/5/6 へ。地文 Fix に計器 Fix を足す橋渡し。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Radio+Navigation+Overview"
+  alt="空中航法：無線航法の概要のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **VOR** — 針路・逆針路、TO/FROM、CDI の基本 — を説明できる。
+- [ ] **DME** — 斜距離（NM）、VOR/DME 併用 — の役割を述べられる。
+- [ ] **NDB/ADF** と **ILS**（ローカライザ・グライドスロープの役割）を、PPL 学科レベルで区別できる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **航法計器**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 目が見えないとき、電波で「線」を引く。計器航法の地図
+- 前回: [地文航法と機位確認（PPL-3-2-1）](/articles/PPL-3-2-1_PilotageAndPositionFix)
+- 次回: [VFR 運航と空域（PPL-3-3-1）](/articles/PPL-3-3-1_VfrOperationsAndAirspace)
+
+---
+
+## 📚 詳細解説
+
+### 1. VOR
+
+**[執筆メモ]**
+- 360 方位、OBS、CDI、逆 VOR。VOR Fix のイメージ
+- 深掘りは [CPL：3.4.2 VOR 航法](/articles/3.4.2_VORNavigation)
+
+### 2. DME
+
+**[執筆メモ]**
+- 距離読み、DME アーク
+- 扉: [CPL：3.4.6 DME 航法](/articles/3.4.6_DMENavigation)
+
+### 3. NDB/ADF
+
+**[執筆メモ]**
+- 非方向性ビーコン、相対方位
+- 扉: [CPL：3.4.5 NDB 航法](/articles/3.4.5_NDBNavigation)
+
+### 4. ILS
+
+**[執筆メモ]**
+- 精密進入の概要。LOC/GS、決心高度は PPL では定性
+- 表 1 つ: VOR/DME/NDB/ILS 比較
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 電波塔が「compass rose の中心」— VOR のイメージ
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **VOR の CDI** — 中心 = 選んだ針路上
+   - **答え：TBD（Gemini執筆）**
+
+2. **DME が測るもの**（斜距離 NM）
+   - **答え：TBD（Gemini執筆）**
+
+3. **NDB vs VOR** — 方向基準の違い（定性）
+   - **答え：TBD（Gemini執筆）**
+
+4. **ILS の 2 本の電波**（LOC + GS）
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** VOR の基本読み方 — TBD
+- **[要点 2]** DME/NDB の役割 — TBD
+- **[要点 3]** ILS の LOC/GS — TBD
+
+次回は [VFR 運航と空域（PPL-3-3-1）](/articles/PPL-3-3-1_VfrOperationsAndAirspace) や。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.4.2 VOR](/articles/3.4.2_VORNavigation)、[CPL：3.4.5 NDB](/articles/3.4.5_NDBNavigation)、[CPL：3.4.6 DME](/articles/3.4.6_DMENavigation) へ。
+
+export default ({ children }) => <>{children}</>

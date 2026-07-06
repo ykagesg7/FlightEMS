@@ -1,8 +1,8 @@
 # ✈️ Flight Academy: Phase 1 (PPL) Master Syllabus
 
 **作成日**: 2025年1月
-**最終更新**: 2026年6月30日
-**バージョン**: v1.9
+**最終更新**: 2026年7月7日  
+**バージョン**: v1.10
 
 ## 📖 このドキュメントを読むべき人
 
@@ -29,8 +29,8 @@
 
 ### 全体進捗
 
-- **全体（MDX 本数 / シラバス 150 論点）**: **46/150（30.7%）** — `src/content/lessons/PPL-*.mdx` 実数（2026-06-30）
-- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本**（**Phase 1 完走**）のうち Phase 1 優先トピックを **おおむねカバー**（厳密な論点対応は各 Subject 節の ✅ を正）
+- **全体（MDX 本数 / シラバス 150 論点）**: **48/150（32.0%）** — `learning_contents` 登録済 PPL **48** 本（2026-07-07）
+- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本** + 航法 Phase 1 **2 本**（Subject 3 着手）
 - **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Phase 3 は未着手
 
 **KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 は **12/12 本**（`learning_contents` **201〜222** 登録済・**六月末完走**）。
@@ -41,10 +41,10 @@
 |------|-------------|----------|------|---------|---------|---------|
 | **Subject 1: 航空工学** | 45 | **20** | 44.4% | 14/15 | 2/20 | 0/10 |
 | **Subject 2: 航空気象** | 35 | **12** | 34.3% | 12/12 | 0/15 | 0/8 |
-| **Subject 3: 空中航法** | 30 | 0 | 0% | 0/10 | 0/12 | 0/8 |
+| **Subject 3: 空中航法** | 30 | **2** | 6.7% | 2/10 | 0/12 | 0/8 |
 | **Subject 4: 航空通信** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
 | **Subject 5: 航空法規** | 20 | **14** | 70.0% | 8/8 | 4/8 | 0/4 |
-| **合計** | **150** | **46** | **30.7%** | — | — | — |
+| **合計** | **150** | **48** | **32.0%** | — | — | — |
 
 ---
 
@@ -223,14 +223,16 @@
 
 ## 🧭 Subject 3: 空中航法 (Aerial Navigation)
 > **自位置を知り、目的地へ到達するための技術。**
+> **記事ツリーの構成案（CPL `3.4.x` との対応・推奨 stem）**: [content_outlines/PPL_Subject3_Aerial_Navigation_Structure.md](content_outlines/PPL_Subject3_Aerial_Navigation_Structure.md)  
+> **Gemini 骨子索引（Phase 1）**: [content_outlines/PPL_Navigation_Communication_2026/README.md](content_outlines/PPL_Navigation_Communication_2026/README.md)
 
 ### 3-1. 航法一般
 
 #### 3-1-1. 地球と航法要素
-- [ ] **Phase 1** 航法の種類: 地文航法（Pilotage）、推測航法（Dead Reckoning）
-- [ ] **Phase 1** 地球: 緯度・経度、大圏・小圏、時差（UTC/JST）
-- [ ] **Phase 1** 航法要素: 針路（Heading）、航跡（Track）、速度（IAS/TAS/GS）、距離（NM）
-- [ ] **Phase 1** 高度: 真高度、絶対高度、圧力高度、密度高度
+- [x] **Phase 1** 航法の種類: 地文航法（Pilotage）、推測航法（Dead Reckoning） — [`PPL-3-1-1`](../src/content/lessons/PPL-3-1-1_EarthCoordinatesAndTime.mdx)
+- [x] **Phase 1** 地球: 緯度・経度、大圏・小圏、時差（UTC/JST） — [`PPL-3-1-1`](../src/content/lessons/PPL-3-1-1_EarthCoordinatesAndTime.mdx)
+- [x] **Phase 1** 航法要素: 針路（Heading）、航跡（Track）、速度（IAS/TAS/GS）、距離（NM） — [`PPL-3-1-2`](../src/content/lessons/PPL-3-1-2_NavigationElementsAndAltitude.mdx)
+- [x] **Phase 1** 高度: 真高度、絶対高度、圧力高度、密度高度 — [`PPL-3-1-2`](../src/content/lessons/PPL-3-1-2_NavigationElementsAndAltitude.mdx)
 
 #### 3-1-2. 航空図と風力三角形
 - [ ] **Phase 1** 航空図: 投影法（ランベルト等）、縮尺、図式記号
@@ -269,6 +271,8 @@
 
 ## 📡 Subject 4: 航空通信 (Aviation Communication)
 > **管制官や他機と意思疎通を行い、安全を確保する。**
+> **記事ツリーの構成案（CPL `3.5.x` との対応・推奨 stem）**: [content_outlines/PPL_Subject4_Aviation_Communication_Structure.md](content_outlines/PPL_Subject4_Aviation_Communication_Structure.md)  
+> **Gemini 骨子索引（Phase 1）**: [content_outlines/PPL_Navigation_Communication_2026/README.md](content_outlines/PPL_Navigation_Communication_2026/README.md)
 
 ### 4-1. 航空交通業務
 - [ ] **Phase 1** 業務概要: 管制業務、情報業務、警急業務

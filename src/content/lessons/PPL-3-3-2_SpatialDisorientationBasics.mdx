@@ -1,0 +1,115 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-3-3-2_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【空中航法】空間識失調の基礎：体が嘘をつくリスク',
+  slug: 'ppl-3-3-2-spatial-disorientation-basics',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '空中航法', '空間識失調', '前庭錯覚', '計器'],
+  series: 'PPL-Master-Syllabus',
+  order: 309,
+  readingTime: 12,
+  excerpt: '空間識失調の分類と前庭系錯覚、回復手順。Subject 3 Phase 1 の締め。航法技術があっても体が嘘をつく。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Spatial+Disorientation+Basics"
+  alt="空中航法：空間識失調の基礎のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **空間識失調** — 実際の姿勢・運動と感覚の不一致 — を定義できる。
+- [ ] 代表的 **前庭錯覚**（傾斜錯覚、コリオリ効果、重力錯覚等）を PPL 学科レベルで列挙できる。
+- [ ] **回復の基本** — 計器を信じる、外界参照、急な機動を避ける — を述べられる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **空間識失調/分類**、**飛行への適合性**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 3-3-1 で VFR の枠を学んだ。**IMC や夜、内耳はパイロットを裏切る** — Phase 1 最終テーマ
+- 前回: [VFR 運航と空域（PPL-3-3-1）](/articles/PPL-3-3-1_VfrOperationsAndAirspace)
+- **Subject 3 Phase 1 完走** — 次シリーズ: [航空交通業務の概要（PPL-4-1-1）](/articles/PPL-4-1-1_AirTrafficServicesOverview)
+- 復習: [無線航法の概要（PPL-3-2-2）](/articles/PPL-3-2-2_RadioNavigationOverview)、[航法要素と高度（PPL-3-1-2）](/articles/PPL-3-1-2_NavigationElementsAndAltitude)
+- Phase 2 予告: PPL-3-3-4 以降 HP ハブ（stem 未定 — 言及のみ）
+
+<Callout type="info" title="学科試験向け">
+  本記事は学科試験向け。実機回復は教官・訓練で。
+</Callout>
+
+---
+
+## 📚 詳細解説
+
+### 1. 空間識失調とは
+
+**[執筆メモ]**
+- 視覚・前庭・体性感覚の不一致
+- VFR→IMC 移行の危険性
+
+### 2. 錯覚の分類
+
+**[執筆メモ]**
+- 前庭系（傾斜、回転、コリオリ）、視覚系（偽地平線等）、組合せ
+- 試験頻出 3〜4 種に絞る
+- 表 1 つ: 錯覚の種類と症状
+
+### 3. 予防と回復
+
+**[執筆メモ]**
+- **計器飛行**への移行、180° ターンの限界、Trusted instruments
+- 実運航は訓練・IFR 資格の話は扉のみ
+- 軸: 「計器を信じろ」— 怖がらせすぎず
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 酔い船 — 内耳と目の不一致（博多港のフェリー等）
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **傾斜錯覚** — 長時間小傾斜後の水平感の狂い
+   - **答え：TBD（Gemini執筆）**
+
+2. **コリオリ効果** — 2 軸回転の組合せ（定性）
+   - **答え：TBD（Gemini執筆）**
+
+3. **回復の第一選択** — **計器を信頼**
+   - **答え：TBD（Gemini執筆）**
+
+4. **VFR パイロットが IMC に入ったときの典型結果**（選択肢 — 統計的危険）
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** 空間識失調の定義 — TBD
+- **[要点 2]** 代表的錯覚の分類 — TBD
+- **[要点 3]** 計器を信じる回復 — TBD
+
+Subject 3 Phase 1 完走。次シリーズは [航空交通業務の概要（PPL-4-1-1）](/articles/PPL-4-1-1_AirTrafficServicesOverview) から航空通信へ。
+
+### 🎓 CPL（任意）への扉
+
+CPL 直接対応は薄いが、PPL 駆動クラスタが厚い。Phase 2（磁気偏差、GNSS、HP 深化）予告。
+
+export default ({ children }) => <>{children}</>

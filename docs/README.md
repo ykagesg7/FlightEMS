@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年6月3日（Sentry/GA4 分析に基づく Quiz Hub・チャンクリカバリ・GA4 イベント拡張）
-**バージョン**: Documentation Index v4.56
+**最終更新**: 2026年7月7日（PPL Subject 3 着手・Subject 2/3 深文化）
+**バージョン**: Documentation Index v4.57
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -330,6 +330,12 @@ npm run lint         # Lintチェック
 ---
 
 ## 🔄 最近の主要変更
+
+### PPL Subject 3 着手 + Subject 2/3 深文化（2026-07-07）
+- ✅ **[PPL-3-1-1](../src/content/lessons/PPL-3-1-1_EarthCoordinatesAndTime.mdx)**・**[PPL-3-1-2](../src/content/lessons/PPL-3-1-2_NavigationElementsAndAltitude.mdx)** 深文化公開 + `learning_test_mapping`（65 問）
+- ✅ Subject 3/4 **MDX スタブ 15 本** + [Gemini 骨子索引](content_outlines/PPL_Navigation_Communication_2026/README.md)
+- ✅ **[PPL-2-2-3](../src/content/lessons/PPL-2-2-3_PressureSystemsAndJapanWeather.mdx)** 深文化（気象 Phase 1 系列）
+- 数値正本: [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) — `learning_contents` **99**・mapping **111 行**・未マッピング **17**
 
 ### Profile Hub + MFA 本番（2026-06-21）
 - ✅ **Profile Hub**: 4 セクション IA（`profile`/`learning`/`privacy`/`account`）、通知 debounce auto-save、完成度ストリップ

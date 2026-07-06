@@ -1,8 +1,10 @@
 # 記事単元の網羅状況とバックログ
 
 **作成日**: 2026-04-10  
-**スナップショット更新**: 2026-07-01（リポジトリ MDX **96**・**PPL 46**。DB マッピング **2026-07-01 MCP** W27 七月第 1 サイクル）  
-**Quiz 品質（CBT/法規）**: 2026-05-28 — Phase1 降格 41 → D-2 改稿 8 件復帰 → Phase2 削除 30 件 → **Phase3 削除 146 件**（D-2 重複×3 + Tier B 変針点 CAS/TAS×141 + 破損×2）+ needs_review 17 件棚卸し（修正 4 + verified 復帰 9）。verified **2,129**、needs_review **0**。SQL: [`20260528_quiz_phase3_delete_d2_dupes_tier_b.sql`](../scripts/database/20260528_quiz_phase3_delete_d2_dupes_tier_b.sql) 他 — レポート [`artifacts/quiz_cbt_deletion_candidates_2026-05-28.md`](../artifacts/quiz_cbt_deletion_candidates_2026-05-28.md)
+**スナップショット更新**: 2026-07-07（W28/W29 MCP — `learning_contents` **99**・mapping **111 行 / 97 記事**・verified 未マッピング **17**）
+**Quiz 品質（CBT/法規）**: 2026-05-28 — Phase1 降格 41 → D-2 改稿 8 件復帰 → Phase2 削除 30 件 → **Phase3 削除 146 件** + needs_review 棚卸し。verified **2,129**、needs_review **0**。レポート [`artifacts/quiz_cbt_deletion_candidates_2026-05-28.md`](../artifacts/quiz_cbt_deletion_candidates_2026-05-28.md)
+**MCP 再取得（W29 七月第 2 サイクル）**: 2026-07-07 — **PPL-3-1-1**・**PPL-3-1-2** 深文化公開 + mapping（地球15+時間6、航法要素18+高度26）— [`20260707_learning_test_mapping_ppl311_earth_time.sql`](../scripts/database/20260707_learning_test_mapping_ppl311_earth_time.sql)・[`20260707_learning_contents_ppl312_navigation_elements.sql`](../scripts/database/20260707_learning_contents_ppl312_navigation_elements.sql)・[`20260707_learning_test_mapping_ppl312_nav_elements_altitude.sql`](../scripts/database/20260707_learning_test_mapping_ppl312_nav_elements_altitude.sql)。Subject 3/4 **MDX スタブ 15 本** + Gemini 骨子索引。
+**MCP 再取得（W28 七月第 1 サイクル）**: 2026-07-06 — Tier A **着氷/着氷の防止 4 問** → `engineering_basics`（[`20260706_learning_test_mapping_icing_prevention_w28.sql`](../scripts/database/20260706_learning_test_mapping_icing_prevention_w28.sql)）。**PPL-3-1-1** `learning_contents` **301**（[`20260706_learning_contents_ppl311_earth_coordinates.sql`](../scripts/database/20260706_learning_contents_ppl311_earth_coordinates.sql)）。法規 Callout **`3.1.4`/`3.1.5`** ← PPL-5-*。
 **MCP 再取得（W27 七月第 1 サイクル）**: 2026-07-01 — `learning_contents` **125**・`learning_test_mapping` **106 行 / 95 記事**・verified 未マッピング **23**（六月末から変化なし）。上位: **着氷/着氷の防止 4**・**電波の伝播 3**・**航法計器/レーダー 2**（W28 Tier A 候補）。**新規 SQL なし**（Callout のみ）。
 **MCP 再取得（六月末ゲート）**: 2026-06-30 — 同上 **23** / **106 行 / 95 記事**（W26 Tier B → `3.4.2` 航法計器 + PPL Subject 2 **`PPL-2-2-1`〜`2-3-2`** 5 本）。SQL: [`20260630_learning_test_mapping_nav_instruments_w26.sql`](../scripts/database/20260630_learning_test_mapping_nav_instruments_w26.sql)・[`20260630_learning_contents_ppl_subject2_211_222.sql`](../scripts/database/20260630_learning_contents_ppl_subject2_211_222.sql)
 **MCP 再取得（前回）**: 2026-06-06 — verified 未マッピング **36**・`learning_test_mapping` **74 行 / 64 記事**（W24 空力基礎 3 クラスタ → `3.2.7` 追補）
@@ -24,13 +26,13 @@
 | 指標 | 値 | 備考 |
 |------|-----|------|
 | **verified 設問クラスタ数** | **224** | `DISTINCT (main_subject, sub_subject)`（再取得していない場合は据え置き） |
-| **`learning_contents` 総行数** | **125** | 2026-06-30 MCP（Subject 2 **+5** → 211〜222） |
-| **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **46**（工学 **20** + 法規 **14** + 気象 **12**） / メンタリティー **15** / 思考法 **13** | Subject 2 **`order_index` 201〜222**（**Phase 1 12/12 完走**） |
-| **PPL 記事のマッピング** | **46 / 46 MDX** | 法規 **14**・気象 **12**・工学 **20** |
-| **`learning_test_mapping` がある記事** | **95** | 2026-06-30 MCP |
-| **`learning_test_mapping` 行数** | **106** | 2026-06-30 MCP（Tier B + PPL 211〜222 **+6**） |
-| **verified 未マッピング設問** | **23** | 2026-06-30 §5.2 再集計（36→28→**23**） |
-| **リポジトリ `src/content/lessons/*.mdx`** | **96** | 2026-06-30（PPL **46** / CPL 3.x **44** / その他 **6**） |
+| **`learning_contents` 総行数** | **99** | 2026-07-07（`is_published` — PPL **48** + CPL **49** + 操縦 **2**） |
+| **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **48**（工学 **20** + 法規 **14** + 気象 **12** + 航法 **2**） / 操縦 **2** | Subject 3 **`PPL-3-1-1`・`3-1-2`** 公開 |
+| **PPL 記事のマッピング** | **48 / 48** 登録済 | 法規 **14**・気象 **12**・工学 **20**・航法 **2**（`3-1-1` 21問・`3-1-2` 44問） |
+| **`learning_test_mapping` がある記事** | **97** | 2026-07-07 MCP |
+| **`learning_test_mapping` 行数** | **111** | 2026-07-07（`3-1-1` **+2**・`3-1-2` **+2** 行） |
+| **verified 未マッピング設問** | **17** | 2026-07-07（変化なし） |
+| **リポジトリ `src/content/lessons/*.mdx`** | **117** | 2026-07-07（PPL **63** MDX — 公開 **48** + Subject 3/4 スタブ **15**） |
 
 **正本**: 単元の木は **`unified_cpl_questions` の `(main_subject, sub_subject 全文)`**（[08](08_Syllabus_Management_Guide.md)）。本書の数値は FlightAcademy プロジェクトに対する **MCP `execute_sql`** で取得したスナップショットである。再取得する場合は §5 の SQL を使用する。
 
@@ -41,7 +43,8 @@
 | **PPL-2-1（気象 Phase 1 / ブロックA）** | 7 本 | **7 CPL 本** + **`3.3.2`** 更新済 | **7/7** 済 | [構造案 §8](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) |
 | **PPL-1-1（工学・空力/性能）** | 11 本 | `3.2.x` に部分リンク（形式混在） | **11/11** 済 | — |
 | **PPL-1-2（計器/エンジン）** | 9 本 | `3.2.12` 等に部分リンク | **9/9** 済 | **`1-2-8/9`** は CPL プール束ね |
-| **PPL-5（法規）** | 14 本 | **`3.1.1`〜`3.1.3`** に PPL 復習 Callout（**3/8** CPL 法規本） | **14/14** 済 | 残: `3.1.4`〜`3.1.8`（W28–W29） |
+| **PPL-5（法規）** | 14 本 | **`3.1.1`〜`3.1.5`** に PPL 復習 Callout（**5/8** CPL 法規本） | **14/14** 済 | 残: `3.1.6`〜`3.1.8`（W29） |
+| **PPL-3（航法）Phase 1** | **2** 本公開 + **7** スタブ | — | **2/2** 済 | `3-1-1`・`3-1-2` 深文化。残スタブ **7** 本 |
 
 ---
 
@@ -147,13 +150,12 @@ ORDER BY unmapped_questions DESC;
 
 ## 6. 未マッピング設問が多いクラスタ（スナップショット上位）
 
-**注意**: 下表の **件数**は **2026-07-01** に §5.2 と同じ MCP クエリで再取得した値（W27 七月第 1 サイクル）。W28 Tier A 候補は **着氷/着氷の防止 4**・**電波の伝播 3**。
+**注意**: 下表の **件数**は **2026-07-06** W28 MCP 再取得値。着氷クラスタは **W28 適用済**。次候補: **電波の伝播 3**・**航法計器/レーダー 2**。
 
-2026-07-01 時点で、**未マッピング設問数が多い** `sub_subject` の例:
+2026-07-06 時点で、**未マッピング設問数が多い** `sub_subject` の例:
 
 | main_subject | sub_subject（抜粋） | unmapped_questions |
 |--------------|---------------------|-------------------:|
-| 航空工学 | 着氷/着氷の防止の概要 | 4 |
 | 航空工学 | 電波の伝播/電波の伝播 | 3 |
 | 航空工学 | 着陸装置/降着装置の形式 | 2 |
 | 航空工学 | 航法計器/レーダー | 2 |
@@ -253,7 +255,9 @@ ORDER BY unmapped_questions DESC;
 
 | 日付 | 内容 |
 |------|------|
+| 2026-07-07 | **PPL Subject 3 着手**: [`PPL-3-1-1`](../src/content/lessons/PPL-3-1-1_EarthCoordinatesAndTime.mdx)・[`PPL-3-1-2`](../src/content/lessons/PPL-3-1-2_NavigationElementsAndAltitude.mdx) 深文化 + mapping（[`20260707_*`](../scripts/database/INDEX.md)）。Subject 3/4 **スタブ 15 本** + [骨子索引](content_outlines/PPL_Navigation_Communication_2026/README.md)。MCP: `learning_contents` **99**・mapping **111 行 / 97 記事**・未マッピング **17**。 |
 | 2026-07-06 | **PPL Subject 2 Phase 1 深文化完走**: [`PPL-2-3-1`](../src/content/lessons/PPL-2-3-1_FlightWeatherHazardsBasics.mdx)・[`PPL-2-3-2`](../src/content/lessons/PPL-2-3-2_MetarTafAndWeatherReports.mdx) 深文化リライト + meta SQL（[`20260705`](../scripts/database/20260705_learning_contents_ppl231_meta_rewrite.sql)・[`20260706`](../scripts/database/20260706_learning_contents_ppl232_meta_rewrite.sql) MCP 済）。**深文化 12/12**（`2-2-1`〜`2-3-2`）。Phase 2 骨子 [`PPL-2-3-3`](../docs/content_outlines/PPL_Meteorology_2026/PPL-2-3-3_gemini_brief.md)・[`2-3-4`](../docs/content_outlines/PPL_Meteorology_2026/PPL-2-3-4_gemini_brief.md)。**新規 mapping なし**（既存 211〜222 クラスタ維持）。 |
+| 2026-07-06 | **W28 ブロック I 完了**: Tier A 着氷 **4 問** → `engineering_basics`（[`20260706_learning_test_mapping_icing_prevention_w28.sql`](../scripts/database/20260706_learning_test_mapping_icing_prevention_w28.sql) MCP 済）。**PPL-3-1-1** 深文化公開 + [`20260706_learning_contents_ppl311_earth_coordinates.sql`](../scripts/database/20260706_learning_contents_ppl311_earth_coordinates.sql)。法規 Callout **`3.1.4`/`3.1.5`** ← PPL-5-*（**5/8**）。MCP: 未マッピング **17**・mapping **107 行**・`learning_contents` **126**。 |
 | 2026-07-01 | **W27 七月第 1 サイクル**: MCP §5.2 再集計 — 未マッピング **23**（変化なし）・mapping **106 行 / 95 記事**・`learning_contents` **125**。CPL 法規 **`3.1.1`〜`3.1.3`** に PPL-5 復習 Callout（**3/8**）。GA4 ファネルメモ [`quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md)（MCP 認証失敗・手動チェックリスト）。B-4: [`quizAnalytics.test.ts`](../src/__tests__/lib/quizAnalytics.test.ts)。**新規 SQL なし**。 |
 | 2026-06-30 | **六月末ゲート（W26 残タスク）**: Tier B — 航法計器/無線航法計器 → **`3.4.2_VORNavigation`**（[`20260630_learning_test_mapping_nav_instruments_w26.sql`](../scripts/database/20260630_learning_test_mapping_nav_instruments_w26.sql)）。PPL Subject 2 Phase 1 **完走** — **`PPL-2-2-1`〜`2-3-2`** MDX + [`20260630_learning_contents_ppl_subject2_211_222.sql`](../scripts/database/20260630_learning_contents_ppl_subject2_211_222.sql)。CPL **`3.3.3/4/7/9/12`** に PPL Callout。MCP 再集計: 未マッピング **23**・mapping **106 行 / 95 記事**。PPL **46/46 MDX**。 |
 | 2026-06-30 | **`PPL-2-1-7`**: MDX 公開 + `learning_contents` **207** + `learning_test_mapping`（霧の形成 **11 問**）— **ブロックA 完結**。PPL **41/41 MDX**。 |

@@ -29,6 +29,11 @@
 | **PPL-2-2-3 深文化 meta 同期** | [`20260704_learning_contents_ppl223_meta_rewrite.sql`](20260704_learning_contents_ppl223_meta_rewrite.sql)（title/description — **2026-07-04 本番適用済**） |
 | **PPL-2-3-1 深文化 meta 同期** | [`20260705_learning_contents_ppl231_meta_rewrite.sql`](20260705_learning_contents_ppl231_meta_rewrite.sql)（title/description — **2026-07-06 本番適用済**） |
 | **PPL-2-3-2 深文化 meta 同期** | [`20260706_learning_contents_ppl232_meta_rewrite.sql`](20260706_learning_contents_ppl232_meta_rewrite.sql)（title/description — **2026-07-06 本番適用済**） |
+| **W28 Tier A 着氷クラスタ** | [`20260706_learning_test_mapping_icing_prevention_w28.sql`](20260706_learning_test_mapping_icing_prevention_w28.sql)（着氷/着氷の防止 **4 問** → `engineering_basics` — **2026-07-06 本番適用済**） |
+| **PPL Subject 3 Phase 1 第1本** | [`20260706_learning_contents_ppl311_earth_coordinates.sql`](20260706_learning_contents_ppl311_earth_coordinates.sql)（`PPL-3-1-1`、`order_index` **301** — **2026-07-07 深文化・本番適用済**） |
+| **PPL Subject 3 Phase 1 第1本 mapping** | [`20260707_learning_test_mapping_ppl311_earth_time.sql`](20260707_learning_test_mapping_ppl311_earth_time.sql)（地球15 + 時間6 → `PPL-3-1-1` — **2026-07-07 本番適用済**） |
+| **PPL Subject 3 Phase 1 第2本** | [`20260707_learning_contents_ppl312_navigation_elements.sql`](20260707_learning_contents_ppl312_navigation_elements.sql)（`PPL-3-1-2`、`order_index` **302** — **2026-07-07 本番適用済**） |
+| **PPL Subject 3 Phase 1 第2本 mapping** | [`20260707_learning_test_mapping_ppl312_nav_elements_altitude.sql`](20260707_learning_test_mapping_ppl312_nav_elements_altitude.sql)（航法要素18 + 高度26 → `PPL-3-1-2` — **2026-07-07 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（視程・霧）** | [`20260630_learning_contents_ppl_subject2_207.sql`](20260630_learning_contents_ppl_subject2_207.sql)（`PPL-2-1-7`、`order_index` **207** — ブロックA 完結） |
 | **PPL Subject 2 `learning_test_mapping`（視程・霧）** | [`20260630_learning_test_mapping_ppl_subject2_207.sql`](20260630_learning_test_mapping_ppl_subject2_207.sql)（霧の形成 — **2026-06-30 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（雲形）** | [`20260629_learning_contents_ppl_subject2_206.sql`](20260629_learning_contents_ppl_subject2_206.sql)（`PPL-2-1-6`、`order_index` **206**） |

@@ -1,0 +1,116 @@
+{/*
+  STUB / 素案 — Gemini 深文化前の骨子MDX
+  ブリーフ正本: docs/content_outlines/PPL_Navigation_Communication_2026/PPL-4-3-1_gemini_brief.md
+  執筆: ブリーフ §5/§6 Gemini依頼文 → Cursor レビュー → publishedAt 設定 → learning_contents 登録
+*/}
+
+import { Callout, Image } from '@mdx'
+import React from 'react'
+
+export const meta = {
+  type: 'lesson',
+  title: '【航空通信】無線故障と可視信号：ライトガンと三角形',
+  slug: 'ppl-4-3-1-comm-failure-and-light-signals',
+  date: '2026-07-07',
+  author: 'Michizane (Shadow)',
+  tags: ['PPL', '学科試験', '航空通信', '通信故障', 'ライトガン', '可視信号'],
+  series: 'PPL-Master-Syllabus',
+  order: 407,
+  readingTime: 11,
+  excerpt: '無線故障時の基本対応、ライトガン（可視信号）の色と意味、三角形手順。Mayday との住み分けは PPL-4-3-2 へ。',
+}
+
+<Image
+  src="https://placehold.co/1200x630/1a1a1a/FFF?text=Comm+Failure+and+Light+Signals"
+  alt="航空通信：無線故障と可視信号のイメージ"
+  width={1200}
+  height={630}
+/>
+
+## 🎯 今日のミッション（学習目標）
+
+- [ ] **通信故障**時にパイロットが取るべき基本行動（監視周波数・可視信号・着陸）を説明できる。
+- [ ] **ライトガン信号**の代表色（緑・赤・白）と意味を、試験レベルで対応づけできる。
+- [ ] 着陸後の**三角形（△）表示**の目的と配置の概念を述べられる。
+
+> **データ連携**: 本記事は `unified_cpl_questions` の
+> **可視信号**
+> に関連する設問クラスタと紐づく。
+
+---
+
+## 📋 概要
+
+**[執筆指示]**
+- 「沈黙は金」やない、空では赤信号 — 無線が切れた瞬間、**目とライト**が残る
+- 前回必須: [飛行場管制の基礎（PPL-4-2-3）](/articles/PPL-4-2-3_AerodromeControlBasics)
+- 復習: [捜索救難の基礎（PPL-4-1-2）](/articles/PPL-4-1-2_SearchAndRescueBasics)
+- 次回: [MAYDAY と PAN PAN（PPL-4-3-2）](/articles/PPL-4-3-2_MaydayPanPanBasics) — 故障≠遭難
+
+---
+
+## 📚 詳細解説
+
+### 1. 無線故障の基本対応（PPL）
+
+**[執筆メモ]**
+- 継続監視: 121.5 / 管制周波数を聴く（4-1-2 復習）
+- 可視: ライトガン・手信号に従う
+- 着陸: 指示に従い着陸、△表示
+- **三角形手順** — 空港近傍で通信不能を示す（AIP 参照）
+
+### 2. ライトガン信号（試験代表）
+
+**[執筆メモ]**
+- **緑**: 着陸可 / 進入可（文脈）
+- **赤**: 停止 / 立入禁止
+- **白**: 滑走路・滑走路面で移動可（概念）
+- 表 1 つ: ライトガン色と意味
+
+### 3. 三角形（△）手順
+
+**[執筆メモ]**
+- 着陸後、機体近くに**白地に赤△** — 通信故障の表示
+- 運用詳細は AIP
+
+---
+
+## ☕ 空中待機 — [比喩案]
+
+**[比喩案]** 信号機のない交差点 — 警察の手信号（ライトガン）だけが頼り
+
+---
+
+## 💡 試験対策：ここが出るばい！（Check Six）
+
+1. **ライトガン・緑** — 着陸/進入関連の意味
+   - **答え：TBD（Gemini執筆）**
+
+2. **ライトガン・赤** — 停止・禁止
+   - **答え：TBD（Gemini執筆）**
+
+3. **三角形** — 通信故障の地上表示
+   - **答え：TBD（Gemini執筆）**
+
+4. **（任意）121.5** — 故障時の監視（4-1-2 復習）
+   - **答え：TBD（Gemini執筆）**
+
+---
+
+## 📝 まとめ：道真のフライトデブリーフィング
+
+- **[要点 1]** 通信故障の基本行動 — TBD
+- **[要点 2]** ライトガン色の意味 — TBD
+- **[要点 3]** 三角形手順 — TBD
+
+次回は [MAYDAY と PAN PAN（PPL-4-3-2）](/articles/PPL-4-3-2_MaydayPanPanBasics) — 遭難・緊急の無線。
+
+### 🎓 CPL（任意）への扉
+
+PPL 範囲の復習（任意）: [CPL：3.5.4 緊急手順](/articles/3.5.4_EmergencyProcedures) へ。
+
+<Callout type="warning" title="通信故障・可視信号の運用">
+  ライトガン信号・三角形手順の**最新の定義**は **AIP・管制指示** を正とする。本記事は学科試験向けの代表整理。実運航では運航者の **通信故障チェックリスト** に従うこと。
+</Callout>
+
+export default ({ children }) => <>{children}</>

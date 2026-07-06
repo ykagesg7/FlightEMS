@@ -61,9 +61,13 @@ async function registerArticle(articleId) {
 
   const sub_category = /^PPL-5-/.test(articleId)
     ? '航空法規'
-    : /^PPL-2-/.test(articleId)
-      ? '航空気象'
-      : '航空工学';
+    : /^PPL-4-/.test(articleId)
+      ? '航空通信'
+      : /^PPL-3-/.test(articleId)
+        ? '空中航法'
+        : /^PPL-2-/.test(articleId)
+          ? '航空気象'
+          : '航空工学';
 
   const record = {
     id: articleId,

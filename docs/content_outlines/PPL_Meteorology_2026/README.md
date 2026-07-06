@@ -46,15 +46,14 @@
 
 ---
 
-## Phase 2 — 障害深化・広域情報（2026-07 〜）
+## Phase 2 — 障害深化・広域情報（Subject 2 気象・任意）
 
 | 順 | stem | ブリーフ | 状態 |
 |----|------|----------|------|
-| 13 | `PPL-2-3-3_WindShearAndVolcanicAsh` | [PPL-2-3-3_gemini_brief.md](PPL-2-3-3_gemini_brief.md) | **骨子済** — W28 第 1 本候補 |
-| 14 | `PPL-2-3-4_SigmetAndWeatherChartsIntro` | [PPL-2-3-4_gemini_brief.md](PPL-2-3-4_gemini_brief.md) | **骨子済** — W29 第 2 本候補 |
-| — | `PPL-2-2-4_WindDynamicsBasics` | — | 未起票（地衡風・海陸風 — 構造案 §4） |
+| 13 | `PPL-2-3-3_WindShearAndVolcanicAsh` | [PPL-2-3-3_gemini_brief.md](PPL-2-3-3_gemini_brief.md) | 骨子済（**Subject 2 Phase 2・任意**） |
+| 14 | `PPL-2-3-4_SigmetAndWeatherChartsIntro` | [PPL-2-3-4_gemini_brief.md](PPL-2-3-4_gemini_brief.md) | 骨子済（**Subject 2 Phase 2・任意**） |
 
-**Phase 2 執筆順の推奨**: `2-3-3` → `2-3-4`（2-3-2 直後の「点→局地→面」）→ `2-2-4`。
+> **次シリーズ（C-7 主軸）**: Subject 3（航法）・Subject 4（通信）→ [PPL_Navigation_Communication_2026/README.md](../PPL_Navigation_Communication_2026/README.md)
 
 ---
 
