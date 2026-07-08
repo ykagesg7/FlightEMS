@@ -27,8 +27,8 @@ const MissionDashboard = lazy(() => {
 const Schedule = lazy(() => import('./pages/schedule/Schedule'));
 const Links = lazy(() => import('./pages/links/Links'));
 // App Pages (lazy)
-const HomePage = lazy(() => import('./pages/dashboard/HomePage'));
-const PlanningMapPage = lazy(() => import('./pages/planning/PlanningMapPage'));
+const HomePage = lazyWithRetry(() => import('./pages/dashboard/HomePage'));
+const PlanningMapPage = lazyWithRetry(() => import('./pages/planning/PlanningMapPage'));
 // LearningPage is now integrated into ArticlesPage
 const ArticlesPage = lazyWithRetry(() => import('./pages/articles/ArticlesPage'));
 const ArticleDetailPage = lazyWithRetry(() => import('./pages/articles/ArticleDetailPage'));

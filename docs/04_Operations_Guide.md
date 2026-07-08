@@ -241,9 +241,36 @@ Vercel デプロイ直後に **記事・クイズが白画面**、`Importing a m
 |----------------|------|
 | lazy import リトライ + 1 セッション 1 回の自動リロード | [`lazyWithRetry`](../src/utils/lazyWithRetry.ts)、[`chunkLoadRecovery`](../src/utils/chunkLoadRecovery.ts) |
 | エラーバウンダリ・MDX 読込 UI | [`EnhancedErrorBoundary`](../src/components/ui/EnhancedErrorBoundary.tsx)、[`MDXLoader`](../src/components/mdx/MDXLoader.tsx) |
-| Service Worker: **script/style は network-first** | [`public/sw.js`](../public/sw.js)（`flight-academy-shell-v2`） |
+| Service Worker: **script/style は network-first** | [`public/sw.js`](../public/sw.js)（`flight-academy-shell-v3`） |
+| 自動リロード時の GA4 計測 | `chunk_recovery_reload`（`page_path`）— [`chunkLoadRecovery`](../src/utils/chunkLoadRecovery.ts) |
 
-**運用手順**: デプロイ後、既存ユーザーには **1 回のハードリロード**（または上記自動リロード）で新チャンクを取得させる。Sentry で `/test` の `history.replaceState` ループは **2026-06-03** 修正済（[02 §/test](02_System_Spec.md)）。**Quiz Hub の GA4 カスタムイベント**（`quiz_hub_view` / `quiz_start` 等）は Data API で `eventName` フィルタ可能（プロパティ ID `532610432`）。
+**`lazyWithRetry` 対象ルート（2026-07）**: `/`（HomePage）、`/planning`、`/test`、記事一覧・記事詳細。
+
+**運用手順**: デプロイ後、既存ユーザーには **1 回のハードリロード**（または上記自動リロード）で新チャンクを取得させる。Sentry で `/test` の `history.replaceState` ループは **2026-06-03** 修正済（[02 §/test](02_System_Spec.md)）。
+
+**Sentry 解消基準**: チャンク系 issue（例: `FLIGHT-ACADEMY-4` / `FLIGHT-ACADEMY-A`）は、**対策デプロイ後 7 日間に当該 issue へ新規イベントがなければ resolved** とする。確認は Sentry MCP `search_events`（`period: 7d`）または Issues 画面。
+
+**Quiz Hub の GA4 カスタムイベント**（`quiz_hub_view` / `quiz_start` / `quiz_session_complete` 等）は Data API で `eventName` フィルタ可能（プロパティ ID `532610432`）。
+
+#### **GA4 カスタムディメンション登録（Quiz 科目別分析・手動）**
+
+Data API / MCP で `exam`・`tab`・`content_id`・`subject` をディメンションとして集計するには、GA4 管理画面で **イベントスコープのカスタムディメンション**を登録する（リポジトリから自動化不可）。
+
+| パラメータ | 用途 |
+|-----------|------|
+| `exam` | PPL/CPL 別の開始・完了率 |
+| `tab` | random / subject / diagnostic 別 |
+| `content_id` | 記事連携クイズの完走率 |
+| `subject` | 科目別完了率 |
+
+**手順チェックリスト**:
+
+1. GA4 管理 → データ表示 → カスタム定義 → **カスタムディメンションを作成**
+2. スコープ: **イベント**、イベント パラメータに上記4つをそれぞれ登録
+3. 登録後 24〜48 時間で Data API `run_report` に反映（即時でない場合あり）
+4. MCP `run_report` で `quiz_session_complete` × `exam` 等を再取得し、科目別完了率を確認
+
+実装正本: [`quizAnalytics.ts`](../src/lib/quizAnalytics.ts)。ファネルメモ: [`artifacts/quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md)。
 
 ### **テーマシステム統一（2025年12月21日）**
 

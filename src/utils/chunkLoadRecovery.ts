@@ -1,3 +1,5 @@
+import { sendGa4Event } from '../lib/googleAnalytics';
+
 const CHUNK_RELOAD_KEY = 'fa_chunk_reload';
 
 export function isChunkLoadFailure(error: unknown): boolean {
@@ -16,6 +18,9 @@ export function reloadOnceForStaleChunk(): boolean {
   if (typeof sessionStorage === 'undefined') return false;
   if (sessionStorage.getItem(CHUNK_RELOAD_KEY)) return false;
   sessionStorage.setItem(CHUNK_RELOAD_KEY, '1');
+  sendGa4Event('chunk_recovery_reload', {
+    page_path: typeof window !== 'undefined' ? window.location.pathname : '',
+  });
   window.location.reload();
   return true;
 }

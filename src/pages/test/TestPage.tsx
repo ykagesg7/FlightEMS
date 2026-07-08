@@ -384,6 +384,10 @@ const TestPage: React.FC = () => {
           answers.length > 0 ? (answers.filter((a) => a.isCorrect).length / answers.length) * 100 : 0,
         count: answers.length,
         mode,
+        tab: hubState.tab,
+        exam: examLevel,
+        content_id: contentId ?? undefined,
+        subject: subjectSelected ? selectedSubject : undefined,
       });
     } catch (err: unknown) {
       setSaveError(formatQuizSaveError(err));

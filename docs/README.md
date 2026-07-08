@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年7月8日（PPL Subject 3 Phase 1 **7/10** — 3-1-3〜3-2-2 公開）
-**バージョン**: Documentation Index v4.58
+**最終更新**: 2026年7月8日（Quiz GA4・チャンク復旧・Quiz DB クリーンアップ SQL）
+**バージョン**: Documentation Index v4.59
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -332,17 +332,22 @@ npm run lint         # Lintチェック
 
 ## 🔄 最近の主要変更
 
+### Quiz GA4・チャンク復旧・DB クリーンアップ（2026-07-08）
+- ✅ **`quiz_session_complete`** に `tab` / `exam` / `content_id` / `subject` を追加（科目別完了率分析）
+- ✅ **`chunk_recovery_reload`** GA4 イベント + Home/Planning を `lazyWithRetry` 化、SW キャッシュ **`flight-academy-shell-v3`**
+- ✅ Quiz CBT 整合 SQL **5 本**をリポジトリ登録（[`20260528_quiz_*`](../scripts/database/INDEX.md) — verified **2,129**）
+- 運用: [04_Operations_Guide.md](04_Operations_Guide.md)（GA4 カスタムディメンション手順）· ファネル: [`artifacts/quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md)
+
 ### PPL Subject 3 Phase 1 拡充（2026-07-08）
 - ✅ **[PPL-3-1-3](../src/content/lessons/PPL-3-1-3_AeronauticalChartsBasics.mdx)**〜**[PPL-3-2-2](../src/content/lessons/PPL-3-2-2_RadioNavigationOverview.mdx)** 深文化公開 **5 本**（ブロックA完結 + 地文/無線）
 - ✅ `learning_test_mapping` **+7 行**（航空図30・風力22・航法計算7・機位2・航法計器1）
-- Subject 3 Phase 1 **7/10** — 残り **3-3-1**・**3-3-2** + スタブ
+- Subject 3 Phase 1 **7/10** — 残り **3-3-1**・**3-3-2**
 - 数値正本: [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) — `learning_contents` **104**・mapping **118 行**・未マッピング **17**
 
 ### PPL Subject 3 着手 + Subject 2/3 深文化（2026-07-07）
 - ✅ **[PPL-3-1-1](../src/content/lessons/PPL-3-1-1_EarthCoordinatesAndTime.mdx)**・**[PPL-3-1-2](../src/content/lessons/PPL-3-1-2_NavigationElementsAndAltitude.mdx)** 深文化公開 + `learning_test_mapping`（65 問）
 - ✅ Subject 3/4 **MDX スタブ 15 本** + [Gemini 骨子索引](content_outlines/PPL_Navigation_Communication_2026/README.md)
 - ✅ **[PPL-2-2-3](../src/content/lessons/PPL-2-2-3_PressureSystemsAndJapanWeather.mdx)** 深文化（気象 Phase 1 系列）
-- 数値正本: [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) — `learning_contents` **99**・mapping **111 行**・未マッピング **17**
 
 ### Profile Hub + MFA 本番（2026-06-21）
 - ✅ **Profile Hub**: 4 セクション IA（`profile`/`learning`/`privacy`/`account`）、通知 debounce auto-save、完成度ストリップ

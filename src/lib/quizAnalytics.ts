@@ -40,11 +40,19 @@ export function trackQuizSessionComplete(params: {
   score_pct: number;
   count: number;
   mode: string;
+  tab?: string;
+  exam?: string;
+  content_id?: string;
+  subject?: string;
 }): void {
   sendGa4Event('quiz_session_complete', {
     score_pct: Math.round(params.score_pct),
     count: params.count,
     mode: params.mode,
+    tab: params.tab ?? '',
+    exam: params.exam ?? 'all',
+    content_id: params.content_id ?? '',
+    subject: params.subject ?? '',
   });
 }
 

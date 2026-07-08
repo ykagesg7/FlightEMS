@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flight-academy-shell-v2';
+const CACHE_NAME = 'flight-academy-shell-v3';
 const APP_SHELL = ['/', '/manifest.webmanifest', '/F2favicon.png'];
 const CACHEABLE_DESTINATIONS = new Set(['script', 'style', 'image', 'font']);
 const NETWORK_FIRST_DESTINATIONS = new Set(['script', 'style']);

@@ -64,17 +64,25 @@ describe('quizAnalytics', () => {
     expect(sendGa4Event).toHaveBeenNthCalledWith(2, 'quiz_start', payload);
   });
 
-  it('trackQuizSessionComplete rounds score_pct', () => {
+  it('trackQuizSessionComplete rounds score_pct and sends dimensional params', () => {
     trackQuizSessionComplete({
       score_pct: 66.7,
       count: 5,
       mode: 'random',
+      tab: 'subject',
+      exam: 'ppl',
+      content_id: 'PPL-2-1-1_AtmosphereAndIsaBasics',
+      subject: '航空気象',
     });
 
     expect(sendGa4Event).toHaveBeenCalledWith('quiz_session_complete', {
       score_pct: 67,
       count: 5,
       mode: 'random',
+      tab: 'subject',
+      exam: 'ppl',
+      content_id: 'PPL-2-1-1_AtmosphereAndIsaBasics',
+      subject: '航空気象',
     });
   });
 
