@@ -30,13 +30,13 @@
 
 | 順 | stem | order | ブリーフ | 状態 |
 |----|------|-------|----------|------|
-| 1 | `PPL-3-1-1_EarthCoordinatesAndTime` | 301 | [PPL-3-1-1_gemini_brief.md](PPL-3-1-1_gemini_brief.md) | **素案 MDX 済** |
-| 2 | `PPL-3-1-2_NavigationElementsAndAltitude` | 302 | [PPL-3-1-2_gemini_brief.md](PPL-3-1-2_gemini_brief.md) | **素案 MDX 済** |
-| 3 | `PPL-3-1-3_AeronauticalChartsBasics` | 303 | [PPL-3-1-3_gemini_brief.md](PPL-3-1-3_gemini_brief.md) | **素案 MDX 済** |
-| 4 | `PPL-3-1-4_WindTriangleAndFlightComputer` | 304 | [PPL-3-1-4_gemini_brief.md](PPL-3-1-4_gemini_brief.md) | **素案 MDX 済** |
-| 5 | `PPL-3-1-5_FlightPlanningBasics` | 305 | [PPL-3-1-5_gemini_brief.md](PPL-3-1-5_gemini_brief.md) | **素案 MDX 済** |
-| 6 | `PPL-3-2-1_PilotageAndPositionFix` | 306 | [PPL-3-2-1_gemini_brief.md](PPL-3-2-1_gemini_brief.md) | **素案 MDX 済** |
-| 7 | `PPL-3-2-2_RadioNavigationOverview` | 307 | [PPL-3-2-2_gemini_brief.md](PPL-3-2-2_gemini_brief.md) | **素案 MDX 済** |
+| 1 | `PPL-3-1-1_EarthCoordinatesAndTime` | 301 | [PPL-3-1-1_gemini_brief.md](PPL-3-1-1_gemini_brief.md) | **公開済** |
+| 2 | `PPL-3-1-2_NavigationElementsAndAltitude` | 302 | [PPL-3-1-2_gemini_brief.md](PPL-3-1-2_gemini_brief.md) | **公開済** |
+| 3 | `PPL-3-1-3_AeronauticalChartsBasics` | 303 | [PPL-3-1-3_gemini_brief.md](PPL-3-1-3_gemini_brief.md) | **公開済** |
+| 4 | `PPL-3-1-4_WindTriangleAndFlightComputer` | 304 | [PPL-3-1-4_gemini_brief.md](PPL-3-1-4_gemini_brief.md) | **公開済** |
+| 5 | `PPL-3-1-5_FlightPlanningBasics` | 305 | [PPL-3-1-5_gemini_brief.md](PPL-3-1-5_gemini_brief.md) | **公開済** |
+| 6 | `PPL-3-2-1_PilotageAndPositionFix` | 306 | [PPL-3-2-1_gemini_brief.md](PPL-3-2-1_gemini_brief.md) | **公開済** |
+| 7 | `PPL-3-2-2_RadioNavigationOverview` | 307 | [PPL-3-2-2_gemini_brief.md](PPL-3-2-2_gemini_brief.md) | **公開済** |
 | 8 | `PPL-3-3-1_VfrOperationsAndAirspace` | 308 | [PPL-3-3-1_gemini_brief.md](PPL-3-3-1_gemini_brief.md) | **素案 MDX 済** |
 | 9 | `PPL-3-3-2_SpatialDisorientationBasics` | 309 | [PPL-3-3-2_gemini_brief.md](PPL-3-3-2_gemini_brief.md) | **素案 MDX 済** |
 

@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年7月7日（PPL Subject 3 着手・Subject 2/3 深文化）
-**バージョン**: Documentation Index v4.57
+**最終更新**: 2026年7月8日（PPL Subject 3 Phase 1 **7/10** — 3-1-3〜3-2-2 公開）
+**バージョン**: Documentation Index v4.58
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -42,6 +42,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-07-08（チャンク監視・Quiz 完了計測）**: SW `flight-academy-shell-v3`。`lazyWithRetry` を Home・Planning に拡張。GA4 `chunk_recovery_reload`。`quiz_session_complete` に `tab`/`exam`/`content_id`/`subject` 追加。GA4 カスタムディメンション手順: [04](04_Operations_Guide.md)。
 - **2026-06-03（Supabase Security Advisor）**: cohort ユーザー RPC 5 件を **INVOKER ラッパー + private DEFINER 実装**へ移行 — WARN **7→2**（残: Leaked Password / Postgres 版）。SQL: [`20260603_cohort_rpc_security_invoker_wrappers.sql`](../scripts/database/20260603_cohort_rpc_security_invoker_wrappers.sql)。[04](04_Operations_Guide.md)・[02](02_System_Spec.md) cohort 節。
 - **2026-06-03（Quiz Hub 安定化・GA4・チャンクリカバリ）**: `/test` の `history.replaceState` ループ修正（`count=0` と URL 正規化、`areTestHubSearchParamsEqual`）。GA4 に `quiz_hub_view`・`quiz_start`（`content_id` / `exam` 付き）。デプロイ後チャンク失敗対策: `lazyWithRetry`・`chunkLoadRecovery`・SW `v2`（script/style network-first）。詳細: [02 §/test](02_System_Spec.md)、[04](04_Operations_Guide.md)「デプロイ後のチャンクエラー」。
 - **2026-06-30（PPL Subject 2 ブロックA 完結）**: MDX **41/150**（気象 **7**）。[`PPL-2-1-7`](../src/content/lessons/PPL-2-1-7_FogTypesAndFormation.mdx)。`learning_contents` **207** + mapping 11 問。[01](01_Current_Status_and_Roadmap.md) v4.0.33、[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.9。
@@ -330,6 +331,12 @@ npm run lint         # Lintチェック
 ---
 
 ## 🔄 最近の主要変更
+
+### PPL Subject 3 Phase 1 拡充（2026-07-08）
+- ✅ **[PPL-3-1-3](../src/content/lessons/PPL-3-1-3_AeronauticalChartsBasics.mdx)**〜**[PPL-3-2-2](../src/content/lessons/PPL-3-2-2_RadioNavigationOverview.mdx)** 深文化公開 **5 本**（ブロックA完結 + 地文/無線）
+- ✅ `learning_test_mapping` **+7 行**（航空図30・風力22・航法計算7・機位2・航法計器1）
+- Subject 3 Phase 1 **7/10** — 残り **3-3-1**・**3-3-2** + スタブ
+- 数値正本: [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) — `learning_contents` **104**・mapping **118 行**・未マッピング **17**
 
 ### PPL Subject 3 着手 + Subject 2/3 深文化（2026-07-07）
 - ✅ **[PPL-3-1-1](../src/content/lessons/PPL-3-1-1_EarthCoordinatesAndTime.mdx)**・**[PPL-3-1-2](../src/content/lessons/PPL-3-1-2_NavigationElementsAndAltitude.mdx)** 深文化公開 + `learning_test_mapping`（65 問）

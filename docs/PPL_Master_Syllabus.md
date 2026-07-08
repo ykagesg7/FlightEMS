@@ -1,8 +1,8 @@
 # ✈️ Flight Academy: Phase 1 (PPL) Master Syllabus
 
 **作成日**: 2025年1月
-**最終更新**: 2026年7月7日  
-**バージョン**: v1.10
+**最終更新**: 2026年7月8日  
+**バージョン**: v1.11
 
 ## 📖 このドキュメントを読むべき人
 
@@ -29,8 +29,8 @@
 
 ### 全体進捗
 
-- **全体（MDX 本数 / シラバス 150 論点）**: **48/150（32.0%）** — `learning_contents` 登録済 PPL **48** 本（2026-07-07）
-- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本** + 航法 Phase 1 **2 本**（Subject 3 着手）
+- **全体（MDX 本数 / シラバス 150 論点）**: **53/150（35.3%）** — `learning_contents` 登録済 PPL **53** 本（2026-07-08）
+- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本** + 航法 Phase 1 **7 本**（Subject 3 ブロックA + 3-2-1/2）
 - **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Phase 3 は未着手
 
 **KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 は **12/12 本**（`learning_contents` **201〜222** 登録済・**六月末完走**）。
@@ -41,10 +41,10 @@
 |------|-------------|----------|------|---------|---------|---------|
 | **Subject 1: 航空工学** | 45 | **20** | 44.4% | 14/15 | 2/20 | 0/10 |
 | **Subject 2: 航空気象** | 35 | **12** | 34.3% | 12/12 | 0/15 | 0/8 |
-| **Subject 3: 空中航法** | 30 | **2** | 6.7% | 2/10 | 0/12 | 0/8 |
+| **Subject 3: 空中航法** | 30 | **7** | 23.3% | 7/10 | 0/12 | 0/8 |
 | **Subject 4: 航空通信** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
 | **Subject 5: 航空法規** | 20 | **14** | 70.0% | 8/8 | 4/8 | 0/4 |
-| **合計** | **150** | **48** | **32.0%** | — | — | — |
+| **合計** | **150** | **53** | **35.3%** | — | — | — |
 
 ---
 
@@ -235,20 +235,20 @@
 - [x] **Phase 1** 高度: 真高度、絶対高度、圧力高度、密度高度 — [`PPL-3-1-2`](../src/content/lessons/PPL-3-1-2_NavigationElementsAndAltitude.mdx)
 
 #### 3-1-2. 航空図と風力三角形
-- [ ] **Phase 1** 航空図: 投影法（ランベルト等）、縮尺、図式記号
-- [ ] **Phase 1** 風力三角形: 偏流角（WCA）の計算、CourseとHeadingの関係
-- [ ] **Phase 1** 航法計算: フライトコンピュータ（計算尺）の使用法
-- [ ] **Phase 1** フライトプラン: 燃料計算、所要時間算出
+- [x] **Phase 1** 航空図: 投影法（ランベルト等）、縮尺、図式記号 — [`PPL-3-1-3`](../src/content/lessons/PPL-3-1-3_AeronauticalChartsBasics.mdx)
+- [x] **Phase 1** 風力三角形: 偏流角（WCA）の計算、CourseとHeadingの関係 — [`PPL-3-1-4`](../src/content/lessons/PPL-3-1-4_WindTriangleAndFlightComputer.mdx)
+- [x] **Phase 1** 航法計算: フライトコンピュータ（計算尺）の使用法 — [`PPL-3-1-5`](../src/content/lessons/PPL-3-1-5_FlightPlanningBasics.mdx)（E6-B 試験手順）
+- [x] **Phase 1** フライトプラン: 燃料計算、所要時間算出 — [`PPL-3-1-5`](../src/content/lessons/PPL-3-1-5_FlightPlanningBasics.mdx)
 
 ### 3-2. 航法の実施
 
 #### 3-2-1. 機位の確認と修正
-- [ ] **Phase 1** 機位確認: 地上の目標物、フィックス（Fix）
+- [x] **Phase 1** 機位確認: 地上の目標物、フィックス（Fix） — [`PPL-3-2-1`](../src/content/lessons/PPL-3-2-1_PilotageAndPositionFix.mdx)
 - [ ] **Phase 2** 針路決定: 磁気偏差（Variation）と自差（Deviation）の修正
 - [ ] **Phase 2** ETOA修正: 到達予定時刻のずれと修正法
 
 #### 3-2-2. 無線航法
-- [ ] **Phase 1** 無線施設: VOR、DME、ADF（NDB）、ILSの概要
+- [x] **Phase 1** 無線施設: VOR、DME、ADF（NDB）、ILSの概要 — [`PPL-3-2-2`](../src/content/lessons/PPL-3-2-2_RadioNavigationOverview.mdx)
 - [ ] **Phase 2** GNSS: GPS航法の基礎、RAIM予測
 
 ### 3-3. 運航方式と人間工学

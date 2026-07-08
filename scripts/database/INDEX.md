@@ -34,6 +34,16 @@
 | **PPL Subject 3 Phase 1 第1本 mapping** | [`20260707_learning_test_mapping_ppl311_earth_time.sql`](20260707_learning_test_mapping_ppl311_earth_time.sql)（地球15 + 時間6 → `PPL-3-1-1` — **2026-07-07 本番適用済**） |
 | **PPL Subject 3 Phase 1 第2本** | [`20260707_learning_contents_ppl312_navigation_elements.sql`](20260707_learning_contents_ppl312_navigation_elements.sql)（`PPL-3-1-2`、`order_index` **302** — **2026-07-07 本番適用済**） |
 | **PPL Subject 3 Phase 1 第2本 mapping** | [`20260707_learning_test_mapping_ppl312_nav_elements_altitude.sql`](20260707_learning_test_mapping_ppl312_nav_elements_altitude.sql)（航法要素18 + 高度26 → `PPL-3-1-2` — **2026-07-07 本番適用済**） |
+| **PPL Subject 3 Phase 1 第3本** | [`20260707_learning_contents_ppl313_aeronautical_charts.sql`](20260707_learning_contents_ppl313_aeronautical_charts.sql)（`PPL-3-1-3`、`order_index` **303** — **2026-07-07 本番適用済**） |
+| **PPL Subject 3 Phase 1 第3本 mapping** | [`20260707_learning_test_mapping_ppl313_charts_projection.sql`](20260707_learning_test_mapping_ppl313_charts_projection.sql)（航空図13 + 投影法17 → `PPL-3-1-3` — **2026-07-07 本番適用済**） |
+| **PPL Subject 3 Phase 1 第4本** | [`20260707_learning_contents_ppl314_wind_triangle.sql`](20260707_learning_contents_ppl314_wind_triangle.sql)（`PPL-3-1-4`、`order_index` **304** — **2026-07-07 本番適用済**） |
+| **PPL Subject 3 Phase 1 第4本 mapping** | [`20260707_learning_test_mapping_ppl314_wind_triangle.sql`](20260707_learning_test_mapping_ppl314_wind_triangle.sql)（風力三角形15 + 航法計算7 → `PPL-3-1-4` — **2026-07-07 本番適用済**） |
+| **PPL Subject 3 Phase 1 第5本（ブロックA完結）** | [`20260708_learning_contents_ppl315_flight_planning.sql`](20260708_learning_contents_ppl315_flight_planning.sql)（`PPL-3-1-5`、`order_index` **305** — **2026-07-08 本番適用済**） |
+| **PPL Subject 3 Phase 1 第5本 mapping** | [`20260708_learning_test_mapping_ppl315_flight_planning.sql`](20260708_learning_test_mapping_ppl315_flight_planning.sql)（航法計算7 → `PPL-3-1-5` — **2026-07-08 本番適用済**） |
+| **PPL Subject 3 Phase 2 第1本（ブロックB開始）** | [`20260708_learning_contents_ppl321_pilotage_position_fix.sql`](20260708_learning_contents_ppl321_pilotage_position_fix.sql)（`PPL-3-2-1`、`order_index` **306** — **2026-07-08 本番適用済**） |
+| **PPL Subject 3 Phase 2 第1本 mapping** | [`20260708_learning_test_mapping_ppl321_position_fix.sql`](20260708_learning_test_mapping_ppl321_position_fix.sql)（機位の確認2 → `PPL-3-2-1` — **2026-07-08 本番適用済**） |
+| **PPL Subject 3 Phase 2 第2本** | [`20260708_learning_contents_ppl322_radio_navigation.sql`](20260708_learning_contents_ppl322_radio_navigation.sql)（`PPL-3-2-2`、`order_index` **307** — **2026-07-08 本番適用済**） |
+| **PPL Subject 3 Phase 2 第2本 mapping** | [`20260708_learning_test_mapping_ppl322_radio_navigation.sql`](20260708_learning_test_mapping_ppl322_radio_navigation.sql)（航法計器1 → `PPL-3-2-2` — **2026-07-08 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（視程・霧）** | [`20260630_learning_contents_ppl_subject2_207.sql`](20260630_learning_contents_ppl_subject2_207.sql)（`PPL-2-1-7`、`order_index` **207** — ブロックA 完結） |
 | **PPL Subject 2 `learning_test_mapping`（視程・霧）** | [`20260630_learning_test_mapping_ppl_subject2_207.sql`](20260630_learning_test_mapping_ppl_subject2_207.sql)（霧の形成 — **2026-06-30 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（雲形）** | [`20260629_learning_contents_ppl_subject2_206.sql`](20260629_learning_contents_ppl_subject2_206.sql)（`PPL-2-1-6`、`order_index` **206**） |
