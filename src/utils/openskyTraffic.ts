@@ -26,6 +26,19 @@ export const JAPAN_BBOX: GeoBBox = {
 /** 3分ポーリング（参考表示用）。useLiveTrafficLayer と同期。 */
 export const TRAFFIC_POLL_MS = 180_000;
 
+/** 手動更新ボタンの連打防止（airplanes.live 1 req/sec 制限）。 */
+export const TRAFFIC_MANUAL_REFRESH_COOLDOWN_MS = 2_500;
+
+/** 手動 refresh がクールダウン中でなければ true。 */
+export function canManualRefreshTraffic(
+  lastManualRefreshAtMs: number | null,
+  nowMs: number,
+  cooldownMs = TRAFFIC_MANUAL_REFRESH_COOLDOWN_MS,
+): boolean {
+  if (lastManualRefreshAtMs == null) return true;
+  return nowMs - lastManualRefreshAtMs >= cooldownMs;
+}
+
 /** CDN / キャッシュキー安定化。api/_lib/openskyStatesCore.ts と同期。 */
 export const TRAFFIC_BBOX_QUANTIZE_STEP_DEG = 0.5;
 

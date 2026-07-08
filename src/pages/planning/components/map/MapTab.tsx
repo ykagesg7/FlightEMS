@@ -10,6 +10,7 @@ import icon from '/images/marker-icon.png';
 import iconShadow from '/images/marker-shadow.png';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import type { WindGridMapOverlayModel } from './hooks/usePlanningMapWindGrid';
+import type { LiveTrafficLayerControls } from './hooks/useLiveTrafficLayer';
 import type { PlanningMapLayerController } from './hooks/usePlanningMapLayerController';
 import { useCloseLayersOnMapClick } from './hooks/useCloseLayersOnMapClick';
 import { useMapLayersOpenMapLock } from './hooks/useMapLayersOpenMapLock';
@@ -60,6 +61,7 @@ const MapTab: React.FC<MapTabProps> = ({
   const [map, setMap] = useState<L.Map | null>(null);
   const [windGridLegend, setWindGridLegend] = useState<WindGridMapOverlayModel | null>(null);
   const [layerController, setLayerController] = useState<PlanningMapLayerController | null>(null);
+  const [liveTrafficControls, setLiveTrafficControls] = useState<LiveTrafficLayerControls | null>(null);
   const [layersOpen, setLayersOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [airspaceSelection, setAirspaceSelection] = useState<AirspaceSelection | null>(null);
@@ -110,6 +112,12 @@ const MapTab: React.FC<MapTabProps> = ({
     setLayerController(controller);
   }, []);
 
+  const handleLiveTrafficControlsChange = useCallback((controls: LiveTrafficLayerControls | null) => {
+    setLiveTrafficControls(controls);
+  }, []);
+
+  const liveTrafficEnabled = layerController?.enabledOverlayIds.has('opensky_traffic') ?? false;
+
   const regions = useRegionsIndex();
   const navaidData = useNavaidGeojson();
   useMapDoubleClickWaypoint(map, setFlightPlan);
@@ -130,6 +138,8 @@ const MapTab: React.FC<MapTabProps> = ({
           layersOpen={layersOpen}
           cursorPosition={cursorPosition}
           navaidInfos={navaidInfos}
+          liveTrafficEnabled={liveTrafficEnabled}
+          liveTrafficControls={liveTrafficControls}
         />
 
         <Transition appear show={helpOpen} as={Fragment}>
@@ -165,7 +175,7 @@ const MapTab: React.FC<MapTabProps> = ({
                         <strong className="text-gray-200">地図をタップ</strong>
                         するとパネルが閉じます（複数レイヤーの連続操作のため、選択後の自動クローズはありません）。オーバーレイ
                         <strong className="text-gray-200">「航空機（参考・OpenSky）」</strong>
-                        は日本域に限定した OpenSky Network の公開データによる参考位置です。マーカーは上視の航空機シルエット画像（機首が真方位の進行方向、欠損時は北向き）。地上機はグレースケール表示です。欠損・遅延があり、実運航・航空交通管制には使用できません。
+                        は日本域に限定した ADS-B 参考位置（airplanes.live）です。マーカーは上視の航空機シルエット画像（機首が真方位の進行方向、欠損時は北向き）。地上機はグレースケール表示です。レイヤー ON 中は 3 分ごとに自動更新されますが、ツールバーまたはレイヤーパネルの<strong className="text-gray-200">「更新」</strong>ボタンで即時再取得もできます。欠損・遅延があり、実運航・航空交通管制には使用できません。
                       </li>
                       <li>
                         <strong className="text-gray-200">「降水レーダー（参考・RainViewer）」</strong>
@@ -232,6 +242,7 @@ const MapTab: React.FC<MapTabProps> = ({
                     tracks={tracks}
                     currentTrackTime={currentTrackTime}
                     onLayerControllerChange={handleLayerControllerChange}
+                    onLiveTrafficControlsChange={handleLiveTrafficControlsChange}
                     onAirspaceSelection={handleAirspaceSelection}
                   />
                 </MapContainer>
@@ -249,6 +260,8 @@ const MapTab: React.FC<MapTabProps> = ({
               open={layersOpen}
               onClose={closeLayers}
               windGridLegend={windGridLegend}
+              liveTrafficControls={liveTrafficControls}
+              liveTrafficEnabled={liveTrafficEnabled}
               useInlineSidebar={useInlineLayersSidebar}
             />
           </div>

@@ -4,6 +4,8 @@ import L from 'leaflet';
 import { MapCursorReadout } from './MapCursorReadout';
 import type { NavaidDistanceInfo } from './MapCursorReadout';
 import { usePlanningMapLayerControllerContext } from './planningMapLayerControllerContext';
+import type { LiveTrafficLayerControls } from './hooks/useLiveTrafficLayer';
+import { LiveTrafficRefreshButton } from './LiveTrafficRefreshButton';
 
 type Props = {
   hintVisible: boolean;
@@ -13,6 +15,8 @@ type Props = {
   layersOpen: boolean;
   cursorPosition: L.LatLng | null;
   navaidInfos: NavaidDistanceInfo[];
+  liveTrafficEnabled: boolean;
+  liveTrafficControls: LiveTrafficLayerControls | null;
 };
 
 const MAX_VISIBLE_CHIPS = 3;
@@ -25,6 +29,8 @@ export const MapToolbar: React.FC<Props> = ({
   layersOpen,
   cursorPosition,
   navaidInfos,
+  liveTrafficEnabled,
+  liveTrafficControls,
 }) => {
   const controller = usePlanningMapLayerControllerContext();
   const labels = controller?.activeLayerLabels ?? [];
@@ -60,6 +66,9 @@ export const MapToolbar: React.FC<Props> = ({
             >
               +{overflow}
             </button>
+          ) : null}
+          {liveTrafficEnabled && liveTrafficControls ? (
+            <LiveTrafficRefreshButton controls={liveTrafficControls} compact />
           ) : null}
           <button
             type="button"

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   bboxToPointRadiusNm,
   buildAirplanesLiveUrl,
+  canManualRefreshTraffic,
   filterAircraftToBBox,
   intersectWithJapanBBox,
   JAPAN_BBOX,
@@ -12,6 +13,7 @@ import {
   parseStateVector,
   quantizeBoundsForTrafficCache,
   toOpenSkyBboxParams,
+  TRAFFIC_MANUAL_REFRESH_COOLDOWN_MS,
 } from '../../utils/openskyTraffic';
 
 describe('openskyTraffic', () => {
@@ -171,5 +173,21 @@ describe('airplanes.live mapping', () => {
     const r = filterAircraftToBBox([inside, outside], box);
     expect(r).toHaveLength(1);
     expect(r[0]!.icao24).toBe('in');
+  });
+});
+
+describe('canManualRefreshTraffic', () => {
+  it('allows refresh when never refreshed before', () => {
+    expect(canManualRefreshTraffic(null, 10_000)).toBe(true);
+  });
+
+  it('blocks refresh within cooldown window', () => {
+    const last = 10_000;
+    expect(canManualRefreshTraffic(last, last + TRAFFIC_MANUAL_REFRESH_COOLDOWN_MS - 1)).toBe(false);
+  });
+
+  it('allows refresh after cooldown elapsed', () => {
+    const last = 10_000;
+    expect(canManualRefreshTraffic(last, last + TRAFFIC_MANUAL_REFRESH_COOLDOWN_MS)).toBe(true);
   });
 });

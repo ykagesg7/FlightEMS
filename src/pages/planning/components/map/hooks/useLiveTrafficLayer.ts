@@ -1,7 +1,8 @@
 import L from 'leaflet';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { fetchTrafficStates } from '../../../../../services/openskyTraffic';
 import {
+  canManualRefreshTraffic,
   intersectWithJapanBBox,
   TRAFFIC_POLL_MS,
   type ParsedOpenSkyAircraft,
@@ -21,6 +22,13 @@ import {
 } from '../popups/openskyTrafficPopup';
 
 const OPENSKY_AC_ICON_SRC = '/airplane.png';
+
+export type LiveTrafficLayerControls = {
+  refresh: () => Promise<void>;
+  isRefreshing: boolean;
+  lastUpdatedAtMs: number | null;
+  lastFetchFailed: boolean;
+};
 
 /** OpenSky true_track（真方位°）。上視シルエット（ノーズ上＝北）を進行方向へ回転 */
 function openskyAircraftIcon(trackDeg: number | null, onGround: boolean, stale: boolean): L.DivIcon {
@@ -58,23 +66,30 @@ type MarkerEntry = {
 };
 
 /**
- * レイヤー ON の間、日本域クリップ BBOX で OpenSky を 3 分間隔でポーリング。
+ * レイヤー ON の間、日本域クリップ BBOX で airplanes.live を 3 分間隔でポーリング。
  * 失敗時・パン時はマーカーを保持（Stale 表示）。
+ * 手動 refresh は {@link LiveTrafficLayerControls.refresh} 経由（クールダウン付き）。
  */
 export function useLiveTrafficLayer(
   map: L.Map | null,
   layerGroup: L.LayerGroup | null,
   enabled: boolean
-): void {
+): LiveTrafficLayerControls | null {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const cacheRef = useRef<Map<string, CachedTrafficAircraft>>(new Map());
   const markersRef = useRef<Map<string, MarkerEntry>>(new Map());
   const openPopupIcaoRef = useRef<string | null>(null);
+  const fetchingRef = useRef(false);
+  const lastManualRefreshAtRef = useRef<number | null>(null);
   const metaRef = useRef<TrafficLayerFetchMeta>({
     lastSuccessAtMs: null,
     lastFetchFailed: false,
     openSkyTimeSec: null,
   });
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdatedAtMs, setLastUpdatedAtMs] = useState<number | null>(null);
+  const [lastFetchFailed, setLastFetchFailed] = useState(false);
 
   const bindOpenPopupTracking = useCallback((marker: L.Marker, icao: string) => {
     marker.on('popupopen', () => {
@@ -159,7 +174,7 @@ export function useLiveTrafficLayer(
     [bindOpenPopupTracking]
   );
 
-  const refresh = useCallback(async () => {
+  const refreshInternal = useCallback(async () => {
     if (!map || !layerGroup || !enabled) return;
 
     const b = map.getBounds();
@@ -176,34 +191,55 @@ export function useLiveTrafficLayer(
       return;
     }
 
-    const nowMs = Date.now();
-    const result = await fetchTrafficStates(box);
+    if (fetchingRef.current) return;
+    fetchingRef.current = true;
+    setIsRefreshing(true);
 
-    if (!result.ok) {
+    try {
+      const nowMs = Date.now();
+      const result = await fetchTrafficStates(box);
+
+      if (!result.ok) {
+        metaRef.current = {
+          ...metaRef.current,
+          lastFetchFailed: true,
+        };
+        setLastFetchFailed(true);
+        const stale = isTrafficLayerStale(metaRef.current, TRAFFIC_POLL_MS, nowMs);
+        syncMarkersToCache(layerGroup, stale);
+        console.warn('[useLiveTrafficLayer] fetch failed', result.status, result.retryAfterSeconds);
+        return;
+      }
+
       metaRef.current = {
-        ...metaRef.current,
-        lastFetchFailed: true,
+        lastSuccessAtMs: nowMs,
+        lastFetchFailed: false,
+        openSkyTimeSec: result.response.time > 0 ? result.response.time : null,
       };
+      setLastUpdatedAtMs(nowMs);
+      setLastFetchFailed(false);
+
+      let cache = mergeTrafficCache(cacheRef.current, result.response.states, nowMs);
+      cache = pruneStaleTrafficCache(cache, nowMs);
+      cache = capTrafficCache(cache);
+      cacheRef.current = cache;
+
       const stale = isTrafficLayerStale(metaRef.current, TRAFFIC_POLL_MS, nowMs);
       syncMarkersToCache(layerGroup, stale);
-      console.warn('[useLiveTrafficLayer] fetch failed', result.status, result.retryAfterSeconds);
-      return;
+    } finally {
+      fetchingRef.current = false;
+      setIsRefreshing(false);
     }
-
-    metaRef.current = {
-      lastSuccessAtMs: nowMs,
-      lastFetchFailed: false,
-      openSkyTimeSec: result.response.time > 0 ? result.response.time : null,
-    };
-
-    let cache = mergeTrafficCache(cacheRef.current, result.response.states, nowMs);
-    cache = pruneStaleTrafficCache(cache, nowMs);
-    cache = capTrafficCache(cache);
-    cacheRef.current = cache;
-
-    const stale = isTrafficLayerStale(metaRef.current, TRAFFIC_POLL_MS, nowMs);
-    syncMarkersToCache(layerGroup, stale);
   }, [map, layerGroup, enabled, syncMarkersToCache]);
+
+  const refreshManual = useCallback(async () => {
+    if (!enabled) return;
+    const nowMs = Date.now();
+    if (fetchingRef.current) return;
+    if (!canManualRefreshTraffic(lastManualRefreshAtRef.current, nowMs)) return;
+    lastManualRefreshAtRef.current = nowMs;
+    await refreshInternal();
+  }, [enabled, refreshInternal]);
 
   useEffect(() => {
     if (!enabled && layerGroup) {
@@ -211,19 +247,23 @@ export function useLiveTrafficLayer(
       cacheRef.current = new Map();
       markersRef.current = new Map();
       openPopupIcaoRef.current = null;
+      lastManualRefreshAtRef.current = null;
       metaRef.current = {
         lastSuccessAtMs: null,
         lastFetchFailed: false,
         openSkyTimeSec: null,
       };
+      setIsRefreshing(false);
+      setLastUpdatedAtMs(null);
+      setLastFetchFailed(false);
     }
   }, [enabled, layerGroup]);
 
   useEffect(() => {
     if (!enabled || !map || !layerGroup) return;
 
-    void refresh();
-    intervalRef.current = setInterval(() => void refresh(), TRAFFIC_POLL_MS);
+    void refreshInternal();
+    intervalRef.current = setInterval(() => void refreshInternal(), TRAFFIC_POLL_MS);
 
     const onMoveEnd = () => {
       const icao = openPopupIcaoRef.current;
@@ -242,5 +282,19 @@ export function useLiveTrafficLayer(
       }
       map.off('moveend', onMoveEnd);
     };
-  }, [map, layerGroup, enabled, refresh]);
+  }, [map, layerGroup, enabled, refreshInternal]);
+
+  const controls = useMemo(
+    (): LiveTrafficLayerControls => ({
+      refresh: refreshManual,
+      isRefreshing,
+      lastUpdatedAtMs,
+      lastFetchFailed,
+    }),
+    [refreshManual, isRefreshing, lastUpdatedAtMs, lastFetchFailed]
+  );
+
+  if (!enabled) return null;
+
+  return controls;
 }

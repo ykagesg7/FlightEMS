@@ -25,7 +25,7 @@ import {
 } from './mapAirspaceLayerStyle';
 import { bindPlanningSwimNotamChip, swimNotamOpenChip } from './popups/swimNotamPopup';
 import { FlightPlanRouteLayer } from './FlightPlanRouteLayer';
-import { useLiveTrafficLayer } from './hooks/useLiveTrafficLayer';
+import { useLiveTrafficLayer, type LiveTrafficLayerControls } from './hooks/useLiveTrafficLayer';
 import { usePlanningMapLayerController } from './hooks/usePlanningMapLayerController';
 import type { PlanningMapLayerController } from './hooks/usePlanningMapLayerController';
 import { useRainViewerRadarLayer } from './hooks/useRainViewerRadarLayer';
@@ -48,10 +48,11 @@ export interface MapTabContentProps {
   tracks: FlightTrack[];
   currentTrackTime: number | null;
   onLayerControllerChange?: (controller: PlanningMapLayerController | null) => void;
+  onLiveTrafficControlsChange?: (controls: LiveTrafficLayerControls | null) => void;
   onAirspaceSelection?: (selection: AirspaceSelection) => void;
 }
 
-export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange, onAirspaceSelection }) => {
+export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange, onLiveTrafficControlsChange, onAirspaceSelection }) => {
   const liveTrafficLayerRef = useRef<L.LayerGroup | null>(null);
   if (!liveTrafficLayerRef.current) {
     liveTrafficLayerRef.current = L.layerGroup();
@@ -807,7 +808,12 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
     return () => onLayerControllerChange?.(null);
   }, [layerController, onLayerControllerChange]);
 
-  useLiveTrafficLayer(map, liveTrafficLayerRef.current, liveTrafficEnabled);
+  const liveTrafficControls = useLiveTrafficLayer(map, liveTrafficLayerRef.current, liveTrafficEnabled);
+
+  useEffect(() => {
+    onLiveTrafficControlsChange?.(liveTrafficControls);
+    return () => onLiveTrafficControlsChange?.(null);
+  }, [liveTrafficControls, onLiveTrafficControlsChange]);
 
   useRainViewerRadarLayer(map, rainViewerLayerRef.current, rainViewerEnabled);
 

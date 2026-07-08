@@ -8,6 +8,8 @@ import { MAP_LAYER_PRESETS } from './mapLayerPresets';
 import { MapLayersCollapsibleBlock } from './MapLayersCollapsibleBlock';
 import { MapLayersPanelSection } from './MapLayersPanelSection';
 import { usePlanningMapLayerControllerContext } from './planningMapLayerControllerContext';
+import type { LiveTrafficLayerControls } from './hooks/useLiveTrafficLayer';
+import { LiveTrafficRefreshPanel } from './LiveTrafficRefreshPanel';
 
 const GROUP_ORDER: MapLayerGroupId[] = ['aviation', 'waypoints', 'local', 'reference'];
 
@@ -15,6 +17,8 @@ type Props = {
   open: boolean;
   onClose: () => void;
   windGridLegend: WindGridMapOverlayModel | null;
+  liveTrafficControls: LiveTrafficLayerControls | null;
+  liveTrafficEnabled: boolean;
   /** false のとき lg でもボトムシート（split 左列が狭いときの地図圧迫回避） */
   useInlineSidebar?: boolean;
 };
@@ -42,6 +46,8 @@ export const MapLayersPanel: React.FC<Props> = ({
   open,
   onClose,
   windGridLegend,
+  liveTrafficControls,
+  liveTrafficEnabled,
   useInlineSidebar = true,
 }) => {
   const controller = usePlanningMapLayerControllerContext();
@@ -168,6 +174,12 @@ export const MapLayersPanel: React.FC<Props> = ({
       {controller.enabledOverlayIds.has('wind_barbs') && windGridLegend ? (
         <div className="border-b border-whiskyPapa-yellow/20 px-3 py-2">
           <WindGridLegendPanel model={windGridLegend} />
+        </div>
+      ) : null}
+
+      {liveTrafficEnabled && liveTrafficControls ? (
+        <div className="border-b border-whiskyPapa-yellow/20 px-3 py-2">
+          <LiveTrafficRefreshPanel controls={liveTrafficControls} />
         </div>
       ) : null}
 
