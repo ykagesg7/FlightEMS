@@ -26,7 +26,7 @@
 
 ---
 
-## Subject 3 — 空中航法 Phase 1（9 本・執筆順）
+## Subject 3 — 空中航法 Phase 1（9 本・**完走** ✅ 2026-07-09）
 
 | 順 | stem | order | ブリーフ | 状態 |
 |----|------|-------|----------|------|
@@ -37,12 +37,12 @@
 | 5 | `PPL-3-1-5_FlightPlanningBasics` | 305 | [PPL-3-1-5_gemini_brief.md](PPL-3-1-5_gemini_brief.md) | **公開済** |
 | 6 | `PPL-3-2-1_PilotageAndPositionFix` | 306 | [PPL-3-2-1_gemini_brief.md](PPL-3-2-1_gemini_brief.md) | **公開済** |
 | 7 | `PPL-3-2-2_RadioNavigationOverview` | 307 | [PPL-3-2-2_gemini_brief.md](PPL-3-2-2_gemini_brief.md) | **公開済** |
-| 8 | `PPL-3-3-1_VfrOperationsAndAirspace` | 308 | [PPL-3-3-1_gemini_brief.md](PPL-3-3-1_gemini_brief.md) | **素案 MDX 済** |
-| 9 | `PPL-3-3-2_SpatialDisorientationBasics` | 309 | [PPL-3-3-2_gemini_brief.md](PPL-3-3-2_gemini_brief.md) | **素案 MDX 済** |
+| 8 | `PPL-3-3-1_VfrOperationsAndAirspace` | 308 | [PPL-3-3-1_gemini_brief.md](PPL-3-3-1_gemini_brief.md) | **公開済** |
+| 9 | `PPL-3-3-2_SpatialDisorientationBasics` | 309 | [PPL-3-3-2_gemini_brief.md](PPL-3-3-2_gemini_brief.md) | **公開済** |
 
 ---
 
-## Subject 4 — 航空通信 Phase 1（8 本・執筆順）
+## Subject 4 — 航空通信 Phase 1（8 本・**次フェーズ** — 執筆順）
 
 | 順 | stem | order | ブリーフ | 状態 |
 |----|------|-------|----------|------|
@@ -76,5 +76,6 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-07-09 | **Subject 3 Phase 1 完走**（9/9 公開済）。次: Subject 4 Phase 1。 |
 | 2026-07-07 | **素案 MDX 17 本**（`src/content/lessons/PPL-3-*`×9 + `PPL-4-*`×8）。`publishedAt` なし |
 | 2026-07-06 | 初版。Subject 3 Phase 1×9 + Subject 4 Phase 1×8 骨子索引 |

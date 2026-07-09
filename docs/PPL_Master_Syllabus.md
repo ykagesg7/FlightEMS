@@ -1,8 +1,8 @@
 # ✈️ Flight Academy: Phase 1 (PPL) Master Syllabus
 
 **作成日**: 2025年1月
-**最終更新**: 2026年7月8日  
-**バージョン**: v1.11
+**最終更新**: 2026年7月9日  
+**バージョン**: v1.12
 
 ## 📖 このドキュメントを読むべき人
 
@@ -29,11 +29,11 @@
 
 ### 全体進捗
 
-- **全体（MDX 本数 / シラバス 150 論点）**: **53/150（35.3%）** — `learning_contents` 登録済 PPL **53** 本（2026-07-08）
-- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本** + 航法 Phase 1 **7 本**（Subject 3 ブロックA + 3-2-1/2）
-- **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Phase 3 は未着手
+- **全体（MDX 本数 / シラバス 150 論点）**: **55/150（36.7%）** — `learning_contents` 登録済 PPL **55** 本（2026-07-09）
+- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本** + 航法 Phase 1 **9 本**（Subject 3 **完走**）
+- **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Subject 3 Phase 2（磁気偏差・GNSS 等）・Subject 4 Phase 1（通信 **8 スタブ**）は未着手
 
-**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 は **12/12 本**（`learning_contents` **201〜222** 登録済・**六月末完走**）。
+**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 **12/12 本**完走。Subject 3 Phase 1 **9/9 本**完走（2026-07-09）。**次**: Subject 4 通信 Phase 1（[骨子索引](content_outlines/PPL_Navigation_Communication_2026/README.md) §Subject 4）。
 
 ### 科目別進捗
 
@@ -41,10 +41,10 @@
 |------|-------------|----------|------|---------|---------|---------|
 | **Subject 1: 航空工学** | 45 | **20** | 44.4% | 14/15 | 2/20 | 0/10 |
 | **Subject 2: 航空気象** | 35 | **12** | 34.3% | 12/12 | 0/15 | 0/8 |
-| **Subject 3: 空中航法** | 30 | **7** | 23.3% | 7/10 | 0/12 | 0/8 |
+| **Subject 3: 空中航法** | 30 | **9** | 30.0% | **9/9 完走** | 0/12 | 0/8 |
 | **Subject 4: 航空通信** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
 | **Subject 5: 航空法規** | 20 | **14** | 70.0% | 8/8 | 4/8 | 0/4 |
-| **合計** | **150** | **53** | **35.3%** | — | — | — |
+| **合計** | **150** | **55** | **36.7%** | — | — | — |
 
 ---
 
@@ -254,14 +254,14 @@
 ### 3-3. 運航方式と人間工学
 
 #### 3-3-1. 運航方式
-- [ ] **Phase 1** VFR飛行: 視認位置通報点、最低気象条件（VMC）
-- [ ] **Phase 1** 空域: 管制圏、情報圏、特別管制空域（PCA）
+- [x] **Phase 1** VFR飛行: 視認位置通報点、最低気象条件（VMC） — [`PPL-3-3-1`](../src/content/lessons/PPL-3-3-1_VfrOperationsAndAirspace.mdx)（条文正本は [`PPL-5-4-1`](../src/content/lessons/PPL-5-4-1_AirspaceAndFacilitiesOverview.mdx)）
+- [x] **Phase 1** 空域: 管制圏、情報圏、特別管制空域（PCA） — [`PPL-3-3-1`](../src/content/lessons/PPL-3-3-1_VfrOperationsAndAirspace.mdx)（航法視点・詳細は [`PPL-5-4-1`](../src/content/lessons/PPL-5-4-1_AirspaceAndFacilitiesOverview.mdx)）
 - [ ] **Phase 2** 航空情報: AIP、NOTAM、AIC
 
 #### 3-3-2. 人間の能力と限界 (Human Performance)
 - [ ] **Phase 2** 生理学: 低酸素症、過呼吸、減圧症、Gの影響
 - [ ] **Phase 2** 感覚: 視覚（盲点・順応）、聴覚
-- [ ] **Phase 1** 空間識: 空間識失調（バーティゴ）の種類と対策
+- [x] **Phase 1** 空間識: 空間識失調（バーティゴ）の種類と対策 — [`PPL-3-3-2`](../src/content/lessons/PPL-3-3-2_SpatialDisorientationBasics.mdx)
 - [ ] **Phase 2** 心理学: ヒューマンエラー、SHELLモデル、決断（ADM）
 - [ ] **Phase 3** CRM/TEM: チームマネジメントと脅威・エラー管理
 

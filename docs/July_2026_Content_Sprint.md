@@ -29,8 +29,8 @@
 | 軸 | 7月の累計目標 |
 |------|----------------|
 | **CPL（C-6）** | MCP 再集計 **≥1**、新規 mapping SQL **≥1**、未マッピング **23 から段階削減** |
-| **PPL（C-7）** | Subject 2 Phase 2 **≥2 MDX** または Phase 1 **≥2 本深文化** |
-| **Callout** | 法規 **`3.1.x` ← `PPL-5-*`** を **≥3 記事** |
+| **PPL（C-7）** | Subject 3 Phase 1 **9/9 完走** ✅。Subject 4 Phase 1 **≥2 MDX 深文化**（W29〜W30） |
+| **Callout** | 法規 **`3.1.x` ← `PPL-5-*`** **8/8 完走** ✅ |
 
 ---
 
@@ -45,8 +45,8 @@
 | ブロック／週 | 状態 | MDX／DB／メモ |
 |---------------|------|----------------|
 | **H / W27** | **完了** | MCP 七月第 1 再集計（未マッピング **23**）。法規 Callout **`3.1.1`〜`3.1.3`** ← PPL-5-*。GA4 [`quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md)（MCP 数値取得済・Hub 6→3 完走）。B-4 [`quizAnalytics.test.ts`](../src/__tests__/lib/quizAnalytics.test.ts)。 |
-| **I / W28** | **完了** | Tier A 着氷 **4 問** → `engineering_basics`。**PPL-3-1-1**・**PPL-3-1-2** 深文化 + mapping（111 行）。Subject 3/4 スタブ **15 本** + 骨子索引。法規 Callout **`3.1.4`/`3.1.5`**。MCP: 未マッピング **17**・`learning_contents` **99**。 |
-| **J / W29** | **未着手** | — |
+| **I / W28** | **完了** | Tier A 着氷 **4 問** → `engineering_basics`。**PPL Subject 3 Phase 1 完走**（`PPL-3-1-1`〜`3-3-2` **9 本** + mapping **+11 行**）。法規 Callout **`3.1.4`/`3.1.5`**。MCP（2026-07-09）: 未マッピング **17**・mapping **120 行**・`learning_contents` **106**。 |
+| **J / W29** | **完了** | **Callout 法規 8/8 完走**（`3.1.6`〜`3.1.8` 含む）。**Tier B 2 本** — トランスポンダ **2 問** → `3.5.3`、電波の伝播 **3 問** → `engineering_basics`。MCP: 未マッピング **12**（**17→12**）。`PPL-4-1-1` Supabase 未。 |
 | **K / W30** | **未着手** | — |
 
 ---
@@ -69,6 +69,8 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-07-10 | W29 完走 — Callout **8/8** + Tier B **2 本**（未マッピング **12**）。 |
+| 2026-07-09 | W28 完走 — **PPL Subject 3 Phase 1 9/9 完走**。W29 フォーカス → Subject 4。 |
 | 2026-07-07 | W28 拡張 — PPL-3-1-2・Subject 3/4 スタブ・mapping 111 行。 |
 | 2026-07-06 | W28 ブロック I 完了（Tier A 着氷・PPL-3-1-1・Callout 3.1.4/5）。 |
 | 2026-06-30 | 初版。W27〜W30 ブロック H〜K、7月 PPL/CPL 狙い、§7 ゲート。 |

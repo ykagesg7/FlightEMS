@@ -5,7 +5,7 @@
 
 **週次の正本**: [05_Content_Pipeline.md](05_Content_Pipeline.md) Phase 2 **週次着手記録表**。**実行メモ（ブロック H〜K・ゲート §7）**: [July_2026_Content_Sprint.md](July_2026_Content_Sprint.md)。
 
-**六月からの引き継ぎ（2026-07-07 更新）**: verified 未マッピング **17**・`learning_test_mapping` **111 行 / 97 記事**・PPL **48/150** 登録済（Subject 3 **2 本**深文化）・Subject 2 Phase 1 **12/12 完走**。
+**六月からの引き継ぎ（2026-07-10 更新）**: verified 未マッピング **12**・`learning_test_mapping` **122 行 / 103 記事**・PPL **55/150** 登録済。法規 Callout **`3.1.1`〜`3.1.8` 8/8 完走**。W29 Tier B **2 本**適用済。**次**: Subject 4 `PPL-4-1-1` Supabase 登録。
 
 ---
 
@@ -20,7 +20,7 @@
 | **マッピングサイクル** | **最低 1 サイクル**: [14 §5](Article_Coverage_Backlog.md) 再集計 → [14](Article_Coverage_Backlog.md) ヘッダ更新。**新規 `.sql` 本番適用 ≥1**（Tier A または Tier B）。verified 未マッピング **23→0 は必須としない**（段階削減）。 |
 | **C-6（CPL Phase 2・マッピング）** | [14 §6–§7](Article_Coverage_Backlog.md) 上位クラスタから **≥1 本**の `learning_test_mapping` 追補または既存記事スコープ拡張を週次行に記録。候補: **着氷/着氷の防止**、**航法計器/レーダー**、**電波の伝播** 等（2026-06-30 MCP 上位）。 |
 | **C-7（PPL 継続）** | Subject 2 **Phase 2 着手 ≥2 本**（[構造案 §4](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) の `PPL-2-2-4` / `PPL-2-3-3` / `PPL-2-3-4` 等）**または** Phase 1 記事 **≥2 本の深文化**（Compet Check Six 節追加等）。いずれかを週次で正直に記録。 |
-| **CPL↔PPL Callout** | **法規 `3.1.x` ← `PPL-5-*`** の復習 Callout を **≥3 記事**に追記（[14 §1.1](Article_Coverage_Backlog.md) 監査表と整合）。気象 `3.3.3/4/12` は **2026-06-30 済**。 |
+| **CPL↔PPL Callout** | **法規 `3.1.x` ← `PPL-5-*`** **8/8 完走** ✅（2026-07-10）。気象 `3.3.3/4/12` は **2026-06-30 済**。 |
 | **GA4（六月フォロー）** | Quiz Hub 投入（2026-06-06）から **4 週以降**に GA4 で **ファネル確認メモ**を `artifacts/` に 1 件（ファイル名は `phase` で始めない）。 |
 | **B-4（テスト）** | [06 §1.2](06_Long_Term_Execution.md) から **追加 2〜4 テスト単位**。`npm run test:run` 緑。Phase C **`src` 15% 主目標は六月に達成済** — 7月は維持・モックしやすい純関数優先。 |
 | **Phase C プロダクト（C-1〜C-5）** | **承認後のみ**コード着手。未承認時は [Phase_C §2–§3](Phase_C_Quality_Preparation.md) **監査メモのみ**（UI 無承認変更なし）。 |
@@ -49,7 +49,7 @@
 |----|-----------|-------------------|
 | **2026-W27** | （〜2026-07-08） | **GA4 ファネル**確認メモ。法規 **`3.1.x` ← `PPL-5-*` Callout** 着手（2〜3 本）。MCP 再集計（七月第 1 サイクル）。B-4 1 単位。 |
 | **2026-W28** | （〜2026-07-15） | **Tier A マッピング 1 本**（例: 着氷クラスタ → 工学 `3.2.x` または既存記事）。PPL Subject 2 **Phase 2 第 1 本**（`PPL-2-2-4` または `PPL-2-3-3`）。 |
-| **2026-W29** | （〜2026-07-22） | **Tier B マッピング精緻化 1 本**（例: `3.4.x` / `3.5.x` / 航法計器レーダー）。PPL Phase 2 **第 2 本**。Callout 残り。 |
+| **2026-W29** | （〜2026-07-22） | **完了** — Callout **`3.1.6`〜`3.1.8`**。Tier B **2 本**（トランスポンダ→`3.5.3`、電波の伝播→`engineering_basics`）。未マッピング **12**。 |
 | **2026-W30** | （〜2026-07-29） | **七月末ゲート**: `test:coverage` → Phase_C / 01 更新。MCP スナップショット。B-4 追補。Phase C 後半振り返り 1 行。 |
 
 ---
@@ -59,8 +59,8 @@
 | KPI | 六月末 | 7月の役割 |
 |-----|--------|-----------|
 | **`src` Statements 15%+** | **18.07% 達成** | **維持**（七月末再計測） |
-| **PPL 25/150+** | **46/150 達成** | 二次 KPI — Subject 2 Phase 2 または Subject 3 着手の記録 |
-| **CPL Phase 2 / マッピング** | 未マッピング **23** | **段階削減**（週次 SQL + 月次再集計） |
+| **PPL 25/150+** | **46/150 達成** | **55/150 達成**（Subject 3 Phase 1 完走）。7月残: Subject 4 Phase 1 着手 |
+| **CPL Phase 2 / マッピング** | 未マッピング **12**（2026-07-10） | **段階削減**（週次 SQL + 月次再集計） |
 | **Quiz Hub / GA4** | Lane A 完了 | **計測レビューのみ**（新 UI 機能は承認制） |
 | **C-1〜C-5 プロダクト** | 監査メモのみ | 承認が出るまで **着手しない** |
 
@@ -80,7 +80,7 @@
 
 1. **Phase 1 深文化（Subject 2 気象）** — ~~`PPL-2-2-1`~~ ✅（2026-07-01）〜 ~~`PPL-2-3-2`~~ ✅（2026-07-06）。**12/12 完走**
 2. **Subject 2 Phase 2** — [構造案 §4](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md): `PPL-2-2-4`、`PPL-2-3-3`、`PPL-2-3-4`（気象の続き・**任意**）
-3. **Subject 3 / 4 Phase 1** — [航法構造案](content_outlines/PPL_Subject3_Aerial_Navigation_Structure.md) **9 本** + [通信構造案](content_outlines/PPL_Subject4_Aviation_Communication_Structure.md) **8 本**。骨子: [PPL_Navigation_Communication_2026/README.md](content_outlines/PPL_Navigation_Communication_2026/README.md) — **C-7 次フェーズ（深文化パイプライン）**
+3. **Subject 3 / 4 Phase 1** — Subject 3 **9/9 完走** ✅（2026-07-09）。**Subject 4** [通信構造案](content_outlines/PPL_Subject4_Aviation_Communication_Structure.md) **8 本** — 骨子: [PPL_Navigation_Communication_2026/README.md](content_outlines/PPL_Navigation_Communication_2026/README.md) §Subject 4 — **C-7 次フェーズ（7月後半〜8月）**
 
 ### 4.3 リンク網（Callout）
 
@@ -118,5 +118,6 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-07-09 | Subject 3 Phase 1 **9/9 完走**（`PPL-3-3-1`/`3-3-2`）。C-7 次フェーズ → Subject 4。 |
 | 2026-07-06 | Phase 1 深文化完走（`2-3-2`）。Phase 2 骨子 `PPL-2-3-3`/`2-3-4` 起票。 |
 | 2026-06-30 | 初版。7月 DONE・W27–W30・C-6/C-7/Callout/GA4/B-4・Phase C 境界。 |

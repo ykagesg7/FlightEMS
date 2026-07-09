@@ -44,6 +44,11 @@
 | **PPL Subject 3 Phase 2 第1本 mapping** | [`20260708_learning_test_mapping_ppl321_position_fix.sql`](20260708_learning_test_mapping_ppl321_position_fix.sql)（機位の確認2 → `PPL-3-2-1` — **2026-07-08 本番適用済**） |
 | **PPL Subject 3 Phase 2 第2本** | [`20260708_learning_contents_ppl322_radio_navigation.sql`](20260708_learning_contents_ppl322_radio_navigation.sql)（`PPL-3-2-2`、`order_index` **307** — **2026-07-08 本番適用済**） |
 | **PPL Subject 3 Phase 2 第2本 mapping** | [`20260708_learning_test_mapping_ppl322_radio_navigation.sql`](20260708_learning_test_mapping_ppl322_radio_navigation.sql)（航法計器1 → `PPL-3-2-2` — **2026-07-08 本番適用済**） |
+| **PPL Subject 3 Phase 1 第8本** | [`20260709_learning_contents_ppl331_vfr_operations.sql`](20260709_learning_contents_ppl331_vfr_operations.sql)（`PPL-3-3-1`、`order_index` **308** — mapping は `PPL-5-4-1` に分担 — **2026-07-09 本番適用済**） |
+| **PPL Subject 3 Phase 1 第9本（締め）** | [`20260709_learning_contents_ppl332_spatial_disorientation.sql`](20260709_learning_contents_ppl332_spatial_disorientation.sql)（`PPL-3-3-2`、`order_index` **309** — **2026-07-09 本番適用済**） |
+| **PPL Subject 3 Phase 1 第9本 mapping** | [`20260709_learning_test_mapping_ppl332_spatial_disorientation.sql`](20260709_learning_test_mapping_ppl332_spatial_disorientation.sql)（空間識失調22 → `PPL-3-3-2` — **2026-07-09 本番適用済**） |
+| **W29 Tier B トランスポンダ** | [`20260710_learning_test_mapping_transponder_w29.sql`](20260710_learning_test_mapping_transponder_w29.sql)（航法計器/レーダー **2 問** → `3.5.3_RadioCommunication` — **2026-07-10 本番適用済**） |
+| **W29 Tier B 電波の伝播** | [`20260710_learning_test_mapping_radio_propagation_w29.sql`](20260710_learning_test_mapping_radio_propagation_w29.sql)（電波の伝播 **3 問** → `engineering_basics` — **2026-07-10 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（視程・霧）** | [`20260630_learning_contents_ppl_subject2_207.sql`](20260630_learning_contents_ppl_subject2_207.sql)（`PPL-2-1-7`、`order_index` **207** — ブロックA 完結） |
 | **PPL Subject 2 `learning_test_mapping`（視程・霧）** | [`20260630_learning_test_mapping_ppl_subject2_207.sql`](20260630_learning_test_mapping_ppl_subject2_207.sql)（霧の形成 — **2026-06-30 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（雲形）** | [`20260629_learning_contents_ppl_subject2_206.sql`](20260629_learning_contents_ppl_subject2_206.sql)（`PPL-2-1-6`、`order_index` **206**） |

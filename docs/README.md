@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年7月8日（Quiz GA4・チャンク復旧・Quiz DB クリーンアップ SQL）
-**バージョン**: Documentation Index v4.59
+**最終更新**: 2026年7月9日（PPL Subject 3 Phase 1 完走・W29 Subject 4 着手）
+**バージョン**: Documentation Index v4.60
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -42,6 +42,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-07-09（PPL Subject 3 Phase 1 完走）**: 空中航法 **9/9** 完走。PPL 登録 **55/150**。次: Subject 4 [`PPL-4-1-1`](../src/content/lessons/PPL-4-1-1_AirTrafficServicesOverview.mdx)。[July_2026_Content_Sprint](July_2026_Content_Sprint.md) W29 着手。
 - **2026-07-08（チャンク監視・Quiz 完了計測）**: SW `flight-academy-shell-v3`。`lazyWithRetry` を Home・Planning に拡張。GA4 `chunk_recovery_reload`。`quiz_session_complete` に `tab`/`exam`/`content_id`/`subject` 追加。GA4 カスタムディメンション手順: [04](04_Operations_Guide.md)。
 - **2026-06-03（Supabase Security Advisor）**: cohort ユーザー RPC 5 件を **INVOKER ラッパー + private DEFINER 実装**へ移行 — WARN **7→2**（残: Leaked Password / Postgres 版）。SQL: [`20260603_cohort_rpc_security_invoker_wrappers.sql`](../scripts/database/20260603_cohort_rpc_security_invoker_wrappers.sql)。[04](04_Operations_Guide.md)・[02](02_System_Spec.md) cohort 節。
 - **2026-06-03（Quiz Hub 安定化・GA4・チャンクリカバリ）**: `/test` の `history.replaceState` ループ修正（`count=0` と URL 正規化、`areTestHubSearchParamsEqual`）。GA4 に `quiz_hub_view`・`quiz_start`（`content_id` / `exam` 付き）。デプロイ後チャンク失敗対策: `lazyWithRetry`・`chunkLoadRecovery`・SW `v2`（script/style network-first）。詳細: [02 §/test](02_System_Spec.md)、[04](04_Operations_Guide.md)「デプロイ後のチャンクエラー」。
@@ -338,11 +339,16 @@ npm run lint         # Lintチェック
 - ✅ Quiz CBT 整合 SQL **5 本**をリポジトリ登録（[`20260528_quiz_*`](../scripts/database/INDEX.md) — verified **2,129**）
 - 運用: [04_Operations_Guide.md](04_Operations_Guide.md)（GA4 カスタムディメンション手順）· ファネル: [`artifacts/quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md)
 
+### PPL Subject 3 Phase 1 完走（2026-07-09）
+- ✅ **空中航法 Phase 1 全9本** — [`PPL-3-1-1`](../src/content/lessons/PPL-3-1-1_EarthCoordinatesAndTime.mdx)〜[`PPL-3-3-2`](../src/content/lessons/PPL-3-3-2_SpatialDisorientationBasics.mdx)（Jul 7–9 に **7 本**追加公開）
+- ✅ `learning_test_mapping` **+11 行**（`3-3-2` に空間識失調 **22 問**）。`3-3-1` は [PPL-5-4-1](../src/content/lessons/PPL-5-4-1_AirspaceAndFacilitiesOverview.mdx) に mapping 分担
+- **次**: Subject 4 通信 [`PPL-4-1-1`](../src/content/lessons/PPL-4-1-1_AirTrafficServicesOverview.mdx) から Phase 1 着手
+- 数値正本: [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) — `learning_contents` **106**・mapping **120 行**・未マッピング **17**
+
 ### PPL Subject 3 Phase 1 拡充（2026-07-08）
 - ✅ **[PPL-3-1-3](../src/content/lessons/PPL-3-1-3_AeronauticalChartsBasics.mdx)**〜**[PPL-3-2-2](../src/content/lessons/PPL-3-2-2_RadioNavigationOverview.mdx)** 深文化公開 **5 本**（ブロックA完結 + 地文/無線）
 - ✅ `learning_test_mapping` **+7 行**（航空図30・風力22・航法計算7・機位2・航法計器1）
-- Subject 3 Phase 1 **7/10** — 残り **3-3-1**・**3-3-2**
-- 数値正本: [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) — `learning_contents` **104**・mapping **118 行**・未マッピング **17**
+- Subject 3 Phase 1 **7/9** — 残り **3-3-1**・**3-3-2**
 
 ### PPL Subject 3 着手 + Subject 2/3 深文化（2026-07-07）
 - ✅ **[PPL-3-1-1](../src/content/lessons/PPL-3-1-1_EarthCoordinatesAndTime.mdx)**・**[PPL-3-1-2](../src/content/lessons/PPL-3-1-2_NavigationElementsAndAltitude.mdx)** 深文化公開 + `learning_test_mapping`（65 問）

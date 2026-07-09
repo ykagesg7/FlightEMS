@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年7月8日  
-**バージョン**: Roadmap v4.0.37（PPL Subject 3 Phase 1 **7/10** — ブロックA完結 + 3-2-1/3-2-2）
+**最終更新**: 2026年7月10日  
+**バージョン**: Roadmap v4.0.40（7月 Callout 8/8 完走・W29 Tier B 2 本）
 
 ---
 
@@ -42,14 +42,14 @@
 
 | 優先 | タスク | 詳細 | 目安 |
 |------|--------|------|------|
-| **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md) Tier A/B。MCP 再集計 **月 1 回**。verified 未マッピング **23 件**から段階削減（ゼロ必須ではない） | 週 2〜4 着手単位 |
-| **2** | **C-7 PPL Subject 2 Phase 2** | [PPL_Subject2 構造案 §4](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md) — `PPL-2-2-4` / `2-3-3` / `2-3-4` 等 **≥2 本**、または Phase 1 **深文化 ≥2 本** | W28〜W29 |
-| **3** | CPL↔PPL Callout | 気象 `3.3.3/4/7/9/12` **2026-06-30 済**。7月: 法規 **`3.1.x` ← `PPL-5-*`** **≥3 記事** | W27〜W29 |
+| **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md) Tier A/B。MCP 再集計 **月 1 回**。verified 未マッピング **12 件**（2026-07-10、**17→12**） | 週 2〜4 着手単位 |
+| **2** | **C-7 PPL Subject 4 Phase 1** | [PPL_Navigation_Communication_2026 §Subject 4](content_outlines/PPL_Navigation_Communication_2026/README.md) — **`PPL-4-1-1`** 深文化から **≥2 本**（Subject 3 は **9/9 完走**） | W29〜W30 |
+| **3** | CPL↔PPL Callout | 気象 `3.3.3/4/7/9/12` **2026-06-30 済**。法規 **`3.1.1`〜`3.1.8` 8/8 完走** ✅（2026-07-10） | W27〜W29 **完了** |
 | **4** | GA4 ファネル | Quiz Hub 投入（2026-06-06）から **4 週以降**の計測レビュー（`artifacts/` メモ） | W27 初旬 |
 | **5** | B-4 テスト | `src` 実効 **18.07% 維持**（Phase C 15% 主目標は六月達成済） | 月次記録 |
 | **6** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**コード着手。未承認時は A11y/Lighthouse **監査メモ**のみ | 随時 |
 
-**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2 Phase 1 **12/12 本**深文化完走。Subject 3 Phase 1 **7/10 本**（`PPL-3-1-1`〜`3-2-2`、2026-07-08）。PPL 登録済 **53/150**。Phase 2 骨子: 気象 [`PPL-2-3-3` / `2-3-4`](content_outlines/PPL_Meteorology_2026/README.md)、航法/通信 [`PPL_Navigation_Communication_2026`](content_outlines/PPL_Navigation_Communication_2026/README.md)。
+**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2 Phase 1 **12/12 本**深文化完走。Subject 3 Phase 1 **9/9 本完走**（`PPL-3-1-1`〜`3-3-2`、2026-07-09）。PPL 登録済 **55/150**。次: Subject 4 通信 Phase 1（[`PPL_Navigation_Communication_2026`](content_outlines/PPL_Navigation_Communication_2026/README.md) §Subject 4）。
 
 ---
 
@@ -313,6 +313,9 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-10 | **v4.0.40 / 7月 Callout + Tier B 完走**: 法規 Callout **`3.1.6`〜`3.1.8`** ← PPL-5-*（**8/8**）。Tier B **2 本** — トランスポンダ→`3.5.3`、電波の伝播→`engineering_basics`。MCP: 未マッピング **12**、mapping **122 行**。 |
+| 2026-07-09 | **v4.0.39 / PPL Subject 3 Phase 1 完走**: [`PPL-3-3-2`](../src/content/lessons/PPL-3-3-2_SpatialDisorientationBasics.mdx) 深文化 + mapping **22 問**（空間識失調11+適合性11）。Phase 1 **9/9 本**完走。SQL: [`20260709_*ppl332*`](../scripts/database/INDEX.md)。同日 v4.0.38 [`PPL-3-3-1`](../src/content/lessons/PPL-3-3-1_VfrOperationsAndAirspace.mdx) 公開。 |
+| 2026-07-09 | **v4.0.38 / PPL Subject 3 +1 本**: [`PPL-3-3-1`](../src/content/lessons/PPL-3-3-1_VfrOperationsAndAirspace.mdx) 深文化（VFR/VMC/空域・航法視点）。Subject 3 Phase 1 **8/10**（残 `PPL-3-3-2`）。`learning_contents` **308** — mapping は [`PPL-5-4-1`](../src/content/lessons/PPL-5-4-1_AirspaceAndFacilitiesOverview.mdx) に分担。SQL: [`20260709_learning_contents_ppl331_vfr_operations.sql`](../scripts/database/20260709_learning_contents_ppl331_vfr_operations.sql)。 |
 | 2026-07-08 | **v4.0.37 / PPL Subject 3 拡充**: [`PPL-3-1-3`](../src/content/lessons/PPL-3-1-3_AeronauticalChartsBasics.mdx)〜[`PPL-3-2-2`](../src/content/lessons/PPL-3-2-2_RadioNavigationOverview.mdx) 深文化 **5 本** + mapping **+7 行**（航空図30・風力22・航法計算7・機位2・航法計器1）。Subject 3 Phase 1 **7/10**。SQL: [`20260707_*`](../scripts/database/INDEX.md)・[`20260708_*`](../scripts/database/INDEX.md)。 |
 | 2026-07-07 | **v4.0.36 / PPL Subject 3 着手**: [`PPL-3-1-1`](../src/content/lessons/PPL-3-1-1_EarthCoordinatesAndTime.mdx)・[`PPL-3-1-2`](../src/content/lessons/PPL-3-1-2_NavigationElementsAndAltitude.mdx) 深文化 + mapping **65 問**。Subject 3/4 スタブ **15 本** + 骨子索引。MCP: `learning_contents` **99**・mapping **111 行**・未マッピング **17**。 |
 | 2026-07-06 | **v4.0.35 / PPL Subject 2 Phase 1 深文化完走**: MDX [`PPL-2-3-1`](../src/content/lessons/PPL-2-3-1_FlightWeatherHazardsBasics.mdx)・[`PPL-2-3-2`](../src/content/lessons/PPL-2-3-2_MetarTafAndWeatherReports.mdx) 深文化 + meta SQL MCP 済。**深文化 12/12**。Phase 2 骨子 `PPL-2-3-3`/`2-3-4`。 |
