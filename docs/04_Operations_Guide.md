@@ -241,14 +241,14 @@ Vercel デプロイ直後に **記事・クイズが白画面**、`Importing a m
 |----------------|------|
 | lazy import リトライ + 1 セッション 1 回の自動リロード | [`lazyWithRetry`](../src/utils/lazyWithRetry.ts)、[`chunkLoadRecovery`](../src/utils/chunkLoadRecovery.ts) |
 | エラーバウンダリ・MDX 読込 UI | [`EnhancedErrorBoundary`](../src/components/ui/EnhancedErrorBoundary.tsx)、[`MDXLoader`](../src/components/mdx/MDXLoader.tsx) |
-| Service Worker: **script/style は network-first** | [`public/sw.js`](../public/sw.js)（`flight-academy-shell-v3`） |
+| Service Worker: **`/assets/*` と script は network-only**（stale cache しない） | [`public/sw.js`](../public/sw.js)（`flight-academy-shell-v4`） |
 | 自動リロード時の GA4 計測 | `chunk_recovery_reload`（`page_path`）— [`chunkLoadRecovery`](../src/utils/chunkLoadRecovery.ts) |
 
-**`lazyWithRetry` 対象ルート（2026-07）**: `/`（HomePage）、`/planning`、`/test`、記事一覧・記事詳細。
+**`lazyWithRetry` 対象ルート（2026-07）**: `/`（HomePage）、`/planning`、`/test`、記事一覧・記事詳細。`/planning` 内の **MapTab（leaflet）は別チャンク**（モバイルは地図タブ選択時に読込）。
 
 **運用手順**: デプロイ後、既存ユーザーには **1 回のハードリロード**（または上記自動リロード）で新チャンクを取得させる。Sentry で `/test` の `history.replaceState` ループは **2026-06-03** 修正済（[02 §/test](02_System_Spec.md)）。
 
-**Sentry 解消基準**: チャンク系 issue（例: `FLIGHT-ACADEMY-4` / `FLIGHT-ACADEMY-A`）は、**対策デプロイ後 7 日間に当該 issue へ新規イベントがなければ resolved** とする。確認は Sentry MCP `search_events`（`period: 7d`）または Issues 画面。
+**Sentry 解消基準**: チャンク系 issue（例: `FLIGHT-ACADEMY-4` / `FLIGHT-ACADEMY-A`）は、**対策デプロイ後 7 日間に当該 issue へ新規イベントがなければ resolved** とする。確認は Sentry MCP `search_events`（`period: 7d`）または Issues 画面。`lazyWithRetry` はリロード開始後に **throw しない**（リロード待ちの pending promise）ため、成功リカバリのノイズを抑える。
 
 **Quiz Hub の GA4 カスタムイベント**（`quiz_hub_view` / `quiz_start` / `quiz_session_complete` 等）は Data API で `eventName` フィルタ可能（プロパティ ID `532610432`）。
 

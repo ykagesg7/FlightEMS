@@ -696,7 +696,7 @@ Articles Hub と同型の **URL 双方向同期 + タブ IA + GA4 カスタム�
 | `article_to_quiz_click` | RelatedTestsBlock クリック | `content_id`, `subject` |
 | `review_article_click` | ReviewContentLink クリック（`from=results` 等） | `content_id`, `from` |
 
-**デプロイ後の JS チャンク不整合**（Sentry: `Importing a module script failed` 等）: [`lazyWithRetry`](../src/utils/lazyWithRetry.ts)（Home・Planning・Test・記事 lazy ルート）、[`chunkLoadRecovery`](../src/utils/chunkLoadRecovery.ts)（1 セッション 1 回の自動リロード + GA4 `chunk_recovery_reload`）、[`EnhancedErrorBoundary`](../src/components/ui/EnhancedErrorBoundary.tsx)・[`MDXLoader`](../src/components/mdx/MDXLoader.tsx) の再読み込み UI、[`public/sw.js`](../public/sw.js) の **script/style は network-first**（キャッシュ名 `flight-academy-shell-v3`）。
+**デプロイ後の JS チャンク不整合**（Sentry: `Importing a module script failed` 等）: [`lazyWithRetry`](../src/utils/lazyWithRetry.ts)（Home・Planning・Test・記事 lazy ルート）、[`chunkLoadRecovery`](../src/utils/chunkLoadRecovery.ts)（1 セッション 1 回の自動リロード + GA4 `chunk_recovery_reload`）、Planning の **MapTab 遅延分割** + 本番 `vendor-leaflet`、[`EnhancedErrorBoundary`](../src/components/ui/EnhancedErrorBoundary.tsx)・[`MDXLoader`](../src/components/mdx/MDXLoader.tsx) の再読み込み UI、[`public/sw.js`](../public/sw.js) の **`/assets/*`・script は network-only**（キャッシュ名 `flight-academy-shell-v4`）。
 
 **学習ループ**: Welcome 完了（`next=/`）→ `/test?tab=diagnostic`。Home [`HomeQuizDiagnostic`](../src/pages/home/components/HomeQuizDiagnostic.tsx) CTA。
 

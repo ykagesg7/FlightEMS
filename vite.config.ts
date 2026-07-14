@@ -158,8 +158,13 @@ export default defineConfig(({ mode }) => {
         },
         output: {
           // より詳細なチャンク分割戦略（stagewise対応）
-          // 本番ビルドでは循環依存による初期化順序問題を回避するため、manualChunks を無効化
-          manualChunks: mode === 'development' ? (id) => {
+          // 本番は循環依存回避のため全面 manualChunks を避け、leaflet のみ分離（Planning 巨大チャンク緩和）
+          manualChunks: (id) => {
+            if (id.includes('node_modules/leaflet') || id.includes('node_modules/react-leaflet')) {
+              return 'vendor-leaflet';
+            }
+            if (mode !== 'development') return undefined;
+
             // Critical path (最優先読み込み)
             if (id.includes('react') || id.includes('react-dom')) {
               return 'critical-react';
@@ -186,8 +191,8 @@ export default defineConfig(({ mode }) => {
               return 'ui-components';
             }
 
-            // Map functionality (必要時読み込み)
-            if (id.includes('leaflet') || id.includes('mapbox')) {
+            // Map functionality (必要時読み込み) — leaflet は上で vendor-leaflet
+            if (id.includes('mapbox')) {
               return 'map-features';
             }
 
@@ -200,7 +205,7 @@ export default defineConfig(({ mode }) => {
             if (id.includes('node_modules')) {
               return 'utility-vendor';
             }
-          } : undefined,
+          },
           // Progressive loading対応のファイル名戦略
           entryFileNames: (chunkInfo) => {
             const name = chunkInfo.name;

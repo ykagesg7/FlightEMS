@@ -1,7 +1,7 @@
-const CACHE_NAME = 'flight-academy-shell-v3';
+const CACHE_NAME = 'flight-academy-shell-v4';
 const APP_SHELL = ['/', '/manifest.webmanifest', '/F2favicon.png'];
-const CACHEABLE_DESTINATIONS = new Set(['script', 'style', 'image', 'font']);
-const NETWORK_FIRST_DESTINATIONS = new Set(['script', 'style']);
+const CACHEABLE_DESTINATIONS = new Set(['style', 'image', 'font']);
+const NETWORK_FIRST_DESTINATIONS = new Set(['style']);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
@@ -45,6 +45,17 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/')) return;
+
+  // Hashed Vite assets must never be served from SW cache (stale chunk → iOS import failures).
+  if (url.pathname.startsWith('/assets/')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  if (event.request.destination === 'script') {
+    event.respondWith(fetch(event.request));
+    return;
+  }
 
   if (event.request.mode === 'navigate') {
     event.respondWith(fetch(event.request).catch(() => caches.match('/')));

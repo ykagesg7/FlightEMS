@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { Suspense, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useDebouncedCallback } from 'use-debounce';
@@ -6,9 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Ta
 import { WeatherCacheProvider } from '../../contexts/WeatherCacheContext';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { FlightPlan } from '../../types/index';
+import { lazyWithRetry } from '../../utils/lazyWithRetry';
 import type { FlightTrack } from './tracks/types';
 import PlanningTab from './components/flight/PlanningTab';
-import MapTab from './components/map/MapTab';
 import { PlanningNotamSheetProvider } from './components/map/PlanningNotamSheetProvider';
 import { createInitialFlightPlan } from './createInitialFlightPlan';
 import {
@@ -16,6 +16,17 @@ import {
   loadFlightPlanDraft,
   persistFlightPlanDraft,
 } from './flightPlanDraft';
+
+/** Leaflet 込みの地図は別チャンク（iOS の巨大 module 失敗を緩和） */
+const MapTab = lazyWithRetry(() => import('./components/map/MapTab'));
+
+function MapTabFallback() {
+  return (
+    <div className="flex h-48 items-center justify-center text-sm text-gray-400" role="status">
+      地図を読み込み中…
+    </div>
+  );
+}
 
 interface PlanningMapPageInnerProps {
   flightPlan: FlightPlan;
@@ -71,13 +82,15 @@ function PlanningMapPageInner({
               />
             </div>
             <div className="h-full min-h-[calc(100vh-5rem)] min-w-0">
-              <MapTab
-                layout="split"
-                flightPlan={flightPlan}
-                setFlightPlan={setFlightPlan}
-                tracks={tracks}
-                currentTrackTime={currentTrackTime}
-              />
+              <Suspense fallback={<MapTabFallback />}>
+                <MapTab
+                  layout="split"
+                  flightPlan={flightPlan}
+                  setFlightPlan={setFlightPlan}
+                  tracks={tracks}
+                  currentTrackTime={currentTrackTime}
+                />
+              </Suspense>
             </div>
           </div>
         </div>
@@ -134,12 +147,14 @@ function PlanningMapPageInner({
             </TabsContent>
             <TabsContent value="map" className="mt-0">
               <div className="h-full">
-                <MapTab
-                  flightPlan={flightPlan}
-                  setFlightPlan={setFlightPlan}
-                  tracks={tracks}
-                  currentTrackTime={currentTrackTime}
-                />
+                <Suspense fallback={<MapTabFallback />}>
+                  <MapTab
+                    flightPlan={flightPlan}
+                    setFlightPlan={setFlightPlan}
+                    tracks={tracks}
+                    currentTrackTime={currentTrackTime}
+                  />
+                </Suspense>
               </div>
             </TabsContent>
           </Tabs>

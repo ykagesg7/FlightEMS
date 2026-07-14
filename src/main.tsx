@@ -6,14 +6,12 @@ import 'katex/dist/katex.min.css';
 import { initAuthListener } from './auth/initAuthListener';
 import { primePasswordRecoveryFromUrl } from './auth/passwordRecovery';
 import { useAuthStore } from './stores/authStore';
-import { clearChunkReloadFlag } from './utils/chunkLoadRecovery';
-
 // GA4: 本番では Vite（injectGoogleTagPlugin）が index.html の <head> に gtag を挿入。ルート遷移は GoogleAnalyticsTracker。
+// chunk reload flag は lazyWithRetry 成功時に clear（起動時 clear すると再発時に無限リロードしうる）
 
 primePasswordRecoveryFromUrl();
 initAuthListener();
 void useAuthStore.getState().refreshSession();
-clearChunkReloadFlag();
 
 createRoot(document.getElementById('root')!).render(
   <>
