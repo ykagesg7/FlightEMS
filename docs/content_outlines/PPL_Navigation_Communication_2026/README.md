@@ -51,7 +51,7 @@
 | 3 | `PPL-4-2-2_ClearanceReadbackBasics` | 404 | [PPL-4-2-2_gemini_brief.md](PPL-4-2-2_gemini_brief.md) | **素案 MDX 済** |
 | 4 | `PPL-4-2-3_AerodromeControlBasics` | 405 | [PPL-4-2-3_gemini_brief.md](PPL-4-2-3_gemini_brief.md) | **素案 MDX 済** |
 | 5 | `PPL-4-2-4_FlightPlanFilingBasics` | 406 | [PPL-4-2-4_gemini_brief.md](PPL-4-2-4_gemini_brief.md) | **素案 MDX 済** |
-| 6 | `PPL-4-1-2_SearchAndRescueBasics` | 402 | [PPL-4-1-2_gemini_brief.md](PPL-4-1-2_gemini_brief.md) | **素案 MDX 済** |
+| 6 | `PPL-4-1-2_SearchAndRescueBasics` | 402 | [PPL-4-1-2_gemini_brief.md](PPL-4-1-2_gemini_brief.md) | **公開済**（2026-07-16・mapping 28 問） |
 | 7 | `PPL-4-3-1_CommFailureAndLightSignals` | 407 | [PPL-4-3-1_gemini_brief.md](PPL-4-3-1_gemini_brief.md) | **素案 MDX 済** |
 | 8 | `PPL-4-3-2_MaydayPanPanBasics` | 408 | [PPL-4-3-2_gemini_brief.md](PPL-4-3-2_gemini_brief.md) | **素案 MDX 済** |
 

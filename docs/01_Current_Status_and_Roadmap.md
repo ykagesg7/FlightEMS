@@ -43,13 +43,13 @@
 | 優先 | タスク | 詳細 | 目安 |
 |------|--------|------|------|
 | **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md) Tier A/B。MCP 再集計 **月 1 回**。verified 未マッピング **12 件**（2026-07-10、**17→12**） | 週 2〜4 着手単位 |
-| **2** | **C-7 PPL Subject 4 Phase 1** | [PPL_Navigation_Communication_2026 §Subject 4](content_outlines/PPL_Navigation_Communication_2026/README.md) — **`PPL-4-1-1`** 深文化から **≥2 本**（Subject 3 は **9/9 完走**） | W29〜W30 |
+| **2** | **C-7 PPL Subject 4 Phase 1** | [PPL_Navigation_Communication_2026 §Subject 4](content_outlines/PPL_Navigation_Communication_2026/README.md) — **`PPL-4-1-1`/`4-1-2` 公開済・≥2 本達成** ✅（残スタブ 6） | W29〜W30 |
 | **3** | CPL↔PPL Callout | 気象 `3.3.3/4/7/9/12` **2026-06-30 済**。法規 **`3.1.1`〜`3.1.8` 8/8 完走** ✅（2026-07-10） | W27〜W29 **完了** |
 | **4** | GA4 ファネル | Quiz Hub 投入（2026-06-06）から **4 週以降**の計測レビュー（`artifacts/` メモ） | W27 初旬 |
 | **5** | B-4 テスト | `src` 実効 **18.07% 維持**（Phase C 15% 主目標は六月達成済） | 月次記録 |
 | **6** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**コード着手。未承認時は A11y/Lighthouse **監査メモ**のみ | 随時 |
 
-**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2 Phase 1 **12/12 本**深文化完走。Subject 3 Phase 1 **9/9 本完走**（`PPL-3-1-1`〜`3-3-2`、2026-07-09）。PPL 登録済 **55/150**。次: Subject 4 通信 Phase 1（[`PPL_Navigation_Communication_2026`](content_outlines/PPL_Navigation_Communication_2026/README.md) §Subject 4）。
+**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2/3 Phase 1 完走。Subject 4 Phase 1 **≥2 本達成**（`PPL-4-1-1`・`4-1-2`、2026-07-16）。PPL 登録済 **57/150**。次: Subject 4 残スタブ（例: `PPL-4-2-1` / `4-3-1`）。
 
 ---
 
@@ -172,6 +172,7 @@
 
 | 項目 | 目的・範囲 | 備考 |
 |:-----|:-----------|:-----|
+| **Quiz Hub UX（科目完走・流入）試験明け** | 科目タブ完走率・Direct 依存の改善（UI 含む）。**学科試験週は着手禁止** → 試験明けに検討深化 | 詳細: [July_2026_Implementation_Plan.md §7](July_2026_Implementation_Plan.md) |
 | **GA4 Data API / 公式 MCP** | アクセス統計・ユーザーエンゲージメントの **週次レポート**、または Cursor 上での対話分析 | 計測が安定し GA に行が溜まってから。GCP・ADC・権限の運用コストあり。[公式 MCP 導入](https://developers.google.com/analytics/devguides/MCP?hl=ja)、設定は [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)。**タグの代替にはならない**（[04](04_Operations_Guide.md)「Data API / 公式 MCP」）。 |
 | **Planning: イタリア AIP 相当** | 空港・空域・NAVAID 等の **イタリア域**を地図の参照レイヤーとして追加 | データソース・ライセンス・既存の日本域／SWIM 等との役割分担は着手時に調査。仕様の一文は [02_System_Spec.md](02_System_Spec.md) Flight Planning。 |
 

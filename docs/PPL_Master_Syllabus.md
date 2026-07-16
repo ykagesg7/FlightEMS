@@ -1,8 +1,8 @@
 # ✈️ Flight Academy: Phase 1 (PPL) Master Syllabus
 
 **作成日**: 2025年1月
-**最終更新**: 2026年7月9日  
-**バージョン**: v1.12
+**最終更新**: 2026年7月16日  
+**バージョン**: v1.14
 
 ## 📖 このドキュメントを読むべき人
 
@@ -29,11 +29,11 @@
 
 ### 全体進捗
 
-- **全体（MDX 本数 / シラバス 150 論点）**: **55/150（36.7%）** — `learning_contents` 登録済 PPL **55** 本（2026-07-09）
-- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本** + 航法 Phase 1 **9 本**（Subject 3 **完走**）
-- **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Subject 3 Phase 2（磁気偏差・GNSS 等）・Subject 4 Phase 1（通信 **8 スタブ**）は未着手
+- **全体（MDX 本数 / シラバス 150 論点）**: **57/150（38.0%）** — `learning_contents` 登録済 PPL **57** 本（2026-07-16）
+- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本** + 航法 Phase 1 **9 本** + 通信 Phase 1 **2 本**（Subject 3 **完走**）
+- **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Subject 3 Phase 2（磁気偏差・GNSS 等）・Subject 4 Phase 1 残り **6 スタブ**
 
-**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2 Phase 1 **12/12 本**完走。Subject 3 Phase 1 **9/9 本**完走（2026-07-09）。**次**: Subject 4 通信 Phase 1（[骨子索引](content_outlines/PPL_Navigation_Communication_2026/README.md) §Subject 4）。
+**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2/3 Phase 1 完走。**進行中**: Subject 4 通信 Phase 1（[`PPL-4-1-1`](../src/content/lessons/PPL-4-1-1_AirTrafficServicesOverview.mdx)・[`PPL-4-1-2`](../src/content/lessons/PPL-4-1-2_SearchAndRescueBasics.mdx) 公開済 — **C-7 ≥2 本達成**）。
 
 ### 科目別進捗
 
@@ -42,9 +42,9 @@
 | **Subject 1: 航空工学** | 45 | **20** | 44.4% | 14/15 | 2/20 | 0/10 |
 | **Subject 2: 航空気象** | 35 | **12** | 34.3% | 12/12 | 0/15 | 0/8 |
 | **Subject 3: 空中航法** | 30 | **9** | 30.0% | **9/9 完走** | 0/12 | 0/8 |
-| **Subject 4: 航空通信** | 20 | 0 | 0% | 0/8 | 0/8 | 0/4 |
+| **Subject 4: 航空通信** | 20 | **2** | 10.0% | **2/8** | 0/8 | 0/4 |
 | **Subject 5: 航空法規** | 20 | **14** | 70.0% | 8/8 | 4/8 | 0/4 |
-| **合計** | **150** | **55** | **36.7%** | — | — | — |
+| **合計** | **150** | **57** | **38.0%** | — | — | — |
 
 ---
 
@@ -275,9 +275,9 @@
 > **Gemini 骨子索引（Phase 1）**: [content_outlines/PPL_Navigation_Communication_2026/README.md](content_outlines/PPL_Navigation_Communication_2026/README.md)
 
 ### 4-1. 航空交通業務
-- [ ] **Phase 1** 業務概要: 管制業務、情報業務、警急業務
+- [x] **Phase 1** 業務概要: 管制業務、情報業務、警急業務 — [`PPL-4-1-1`](../src/content/lessons/PPL-4-1-1_AirTrafficServicesOverview.mdx)（2026-07-14）
 - [ ] **Phase 2** 飛行情報区: FIRの概念
-- [ ] **Phase 1** 捜索救難: SARの仕組み、救難信号、緊急用周波数（121.5）
+- [x] **Phase 1** 捜索救難: SARの仕組み、救難信号、緊急用周波数（121.5） — [`PPL-4-1-2`](../src/content/lessons/PPL-4-1-2_SearchAndRescueBasics.mdx)（2026-07-16）
 
 ### 4-2. 航空交通管制の実際
 - [ ] **Phase 1** 用語（Phraseology）: アルファベット、数字の読み方、標準用語

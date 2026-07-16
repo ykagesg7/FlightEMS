@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年7月9日（PPL Subject 3 Phase 1 完走・W29 Subject 4 着手）
-**バージョン**: Documentation Index v4.60
+**最終更新**: 2026年7月14日（Planning チャンク v4 本番・試験明け UX 検討アイテム追記）
+**バージョン**: Documentation Index v4.61
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -42,8 +42,8 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-07-14（チャンク v4 本番・試験明け UX 検討）**: Planning チャンク再発対策を本番投入（SW `v4`・MapTab 分割・`vendor-leaflet`）。**科目完走 UX / 流入回復（Action2/3）は試験明けに検討深化**（試験週は UI 凍結）— [July_2026_Implementation_Plan §7](July_2026_Implementation_Plan.md)、[01 将来保留](01_Current_Status_and_Roadmap.md)、[July Content Sprint §6](July_2026_Content_Sprint.md)。
 - **2026-07-09（PPL Subject 3 Phase 1 完走）**: 空中航法 **9/9** 完走。PPL 登録 **55/150**。次: Subject 4 [`PPL-4-1-1`](../src/content/lessons/PPL-4-1-1_AirTrafficServicesOverview.mdx)。[July_2026_Content_Sprint](July_2026_Content_Sprint.md) W29 着手。
-- **2026-07-14（Planning チャンク再発対策）**: SW `v4`（`/assets/*` network-only）。MapTab 遅延分割・本番 `vendor-leaflet`。`lazyWithRetry` はリロード後 throw しない。[04](04_Operations_Guide.md)。
 - **2026-07-08（チャンク監視・Quiz 完了計測）**: SW `flight-academy-shell-v3`。`lazyWithRetry` を Home・Planning に拡張。GA4 `chunk_recovery_reload`。`quiz_session_complete` に `tab`/`exam`/`content_id`/`subject` 追加。GA4 カスタムディメンション手順: [04](04_Operations_Guide.md)。
 - **2026-06-03（Supabase Security Advisor）**: cohort ユーザー RPC 5 件を **INVOKER ラッパー + private DEFINER 実装**へ移行 — WARN **7→2**（残: Leaked Password / Postgres 版）。SQL: [`20260603_cohort_rpc_security_invoker_wrappers.sql`](../scripts/database/20260603_cohort_rpc_security_invoker_wrappers.sql)。[04](04_Operations_Guide.md)・[02](02_System_Spec.md) cohort 節。
 - **2026-06-03（Quiz Hub 安定化・GA4・チャンクリカバリ）**: `/test` の `history.replaceState` ループ修正（`count=0` と URL 正規化、`areTestHubSearchParamsEqual`）。GA4 に `quiz_hub_view`・`quiz_start`（`content_id` / `exam` 付き）。デプロイ後チャンク失敗対策: `lazyWithRetry`・`chunkLoadRecovery`・SW `v2`（script/style network-first）。詳細: [02 §/test](02_System_Spec.md)、[04](04_Operations_Guide.md)「デプロイ後のチャンクエラー」。
