@@ -1,0 +1,11 @@
+-- Fix open question_issue_reports (2026-07-20 batch, 12 reports + siblings)
+-- Sources: MLIT 指向信号灯告示, AEIS/対空センター, ATIS (運航情報官),
+--          飛行計画記入・通報要領 (スルーFP=別葉), wake category (以上/未満)
+-- Applied via Supabase MCP on 2026-07-20. open/triaged -> 0.
+
+-- Light gun: 赤色の閃光 = 着陸してはならない (not 不動光)
+-- Triangle: at least 2 circuits (not 3)
+-- AEIS: on-request info is valid; "only those offices" outdated
+-- ATIS: 運航情報官 (not 管制官)
+-- Through FP: 別葉 is correct; broad definition option is wrong
+-- Wake: Heavy is 136000kg 以上 (not を超える)
