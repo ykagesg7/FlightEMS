@@ -220,3 +220,46 @@ CSV内重複除外: 1972件
 1. **件数確認**: Supabase Dashboard または `SELECT COUNT(*) FROM unified_cpl_questions WHERE verification_status='verified'`
 2. **出題確認**: `/test` ページで科目・サブ科目が増えているか、問題が表示されるか確認
 3. **重複確認**: `SELECT main_subject, sub_subject, question_text, correct_answer, COUNT(*) FROM unified_cpl_questions GROUP BY 1,2,3,4 HAVING COUNT(*) > 1` で重複を検出
+
+---
+
+## MLIT 例題集取込（事業用操縦士・飛行機）
+
+> **スクリプト**: [`scripts/cpl_exam/import_mlit_sample_to_unified.py`](../scripts/cpl_exam/import_mlit_sample_to_unified.py)  
+> **版インベントリ**: [`scripts/cpl_exam/data/EDITION_INVENTORY.md`](../scripts/cpl_exam/data/EDITION_INVENTORY.md)
+
+### 方針
+
+- 登録するのは **公式例題集の版**のみ（PDFヘッダ年月）。CBT試験カレンダー月（2023-11〜2025-09 等）への水増し登録はしない
+- 確認済み版: **2024-08**（初回公開・SQL復元）、**2026-06**（現行 `001761087.pdf`）
+- `source_documents.sources[].type = mlit_sample`、`year` / `month` で版を識別
+- UI/DB は4択のため、5肢は不要肢を1つ削除（`choice_adaptation` に記録）。正答5（無し）は「4つ」を落とし無しを(4)へ再マップ
+- 既存本文とプレフィックス一致する問題はスキップ
+
+### 実行
+
+```bash
+# PDFテキスト（WebFetch等）を data/001761087_202606_webfetch.txt に配置してから
+python scripts/cpl_exam/import_mlit_sample_to_unified.py --skip-supabase
+# → scripts/database/20260720_unified_cpl_questions_mlit_sample_202606.sql
+# → scripts/database/20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql
+# → scripts/cpl_exam/data/mlit_sample_import_report.json
+
+# 本番投入（service role）
+python scripts/cpl_exam/data/_apply_via_supabase.py
+```
+
+### CBT期の薄い行について
+
+`unified_cpl_questions` に残る 2023-11〜2025-09（2024-08除く）の `official_exam` 行は、選択肢空・プレースホルダ本文のものが多く、**公式例題集ではない**。削除は任意の後続タスク（`needs_review` / `duplicate`）。
+
+### 2026-07-20 本番適用〜ファクトチェック結果
+
+初回投入は 107 行（2026-06: 74、2024-08 補完: 33）。その後の整理:
+
+- **要図2問は除外**（削除）
+- `=== Page N ===` 混入を除去（7件）
+- 科目誤タグ修正: 飛行場灯火・救急用具 → `航空法規`
+- 見張り義務の2024重複行を削除（2026版を正とする）
+- 航空法第85条（粗暴な操縦）の正答を法令文言と照合し一致を確認
+- **現状: `mlit_sample` 104問・全て `verified`**

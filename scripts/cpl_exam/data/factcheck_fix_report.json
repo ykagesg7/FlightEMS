@@ -1,0 +1,23 @@
+{
+  "fixed_page_marker_ids": [
+    "e26480de-d062-475c-adcc-a9f261f88406",
+    "e7f434b8-ab4d-48b1-a5de-83a79567620b",
+    "5affc595-bc0c-402c-983f-12e33a1ab0a4",
+    "6f3aa923-674e-46cb-b60b-8525799e8264",
+    "bfd647ac-4665-4e14-bff0-93cd83ea0705",
+    "14b9b0e6-0e95-4225-90d3-20994d8ab013",
+    "44866897-24a8-4ac0-9a8b-c89797a4609d"
+  ],
+  "subject_fixes": {
+    "44866897-24a8-4ac0-9a8b-c89797a4609d": "航空法規",
+    "6f3aa923-674e-46cb-b60b-8525799e8264": "航空法規"
+  },
+  "deleted_duplicates": [
+    "ac2a2a97-f6d6-4e26-ab67-0a184023f404"
+  ],
+  "soobo_answer": 1,
+  "soobo_ok_matches_aviation_act_85": true,
+  "alive": 104,
+  "verified": 104,
+  "still_has_page_marker": []
+}

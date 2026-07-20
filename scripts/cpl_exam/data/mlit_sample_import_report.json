@@ -1,0 +1,1047 @@
+{
+  "inventory": {
+    "confirmed_editions": [
+      "2024-08",
+      "2026-06"
+    ],
+    "mid_revisions": [],
+    "cbt_periods_not_registered": "2023-11..2025-09 stubs are not official sample editions"
+  },
+  "parsed": {
+    "2026-06": 100,
+    "2024-08": 99
+  },
+  "insert": {
+    "2026-06": 98,
+    "2024-08": 49
+  },
+  "skipped": {
+    "2026-06": [
+      {
+        "reason": "duplicate",
+        "year": 2026,
+        "no": 1,
+        "subject": "航空工学",
+        "prefix": "ピトー静圧系統に関する説明で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2026,
+        "no": 11,
+        "subject": "航空工学",
+        "prefix": "必要馬力と利用馬力についての記述で誤りはどれか。"
+      }
+    ],
+    "2024-08": [
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 1,
+        "subject": "航空工学",
+        "prefix": "ピトー静圧系統に関する説明で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 2,
+        "subject": "航空工学",
+        "prefix": "下図の飛行機（操縦席から見て右回転プロペラ）に関する記述で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 3,
+        "subject": "航空工学",
+        "prefix": "翼の平面形の説明について正しいものはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 5,
+        "subject": "航空工学",
+        "prefix": "層流と乱流の特性（a）～（d）のうち、正しいものはいくつあるか。 （１）～（５）の中から選 べ。 （a）層流は乱流よりも摩擦抗力がはるかに小さい。 （b）乱流は"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 6,
+        "subject": "航空工学",
+        "prefix": "安定性の説明（a）～（d）のうち、正しいものはいくつあるか。 （１）～（５）の中から選 べ。 （a）外力により機体の姿勢が変化したとき、元の姿勢に戻そうとする復"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 9,
+        "subject": "航空工学",
+        "prefix": "ジャイロシン・コンパス系統のフラックス・バルブの説明で正しいものはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 10,
+        "subject": "航空工学",
+        "prefix": "マス・バランスの目的で正しいものはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 11,
+        "subject": "航空工学",
+        "prefix": "必要馬力と利用馬力についての記述で誤りはどれか。 === Page 5 ==="
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 13,
+        "subject": "航空工学",
+        "prefix": "燃料タンクに設けられているベント・ラインの目的で正しいものはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 14,
+        "subject": "航空工学",
+        "prefix": "定速プロペラに用いられるガバナの役目について正しいものはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 15,
+        "subject": "航空工学",
+        "prefix": "航空機用エンジン滑油の作用で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 16,
+        "subject": "航空工学",
+        "prefix": "電池についての記述で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 18,
+        "subject": "航空工学",
+        "prefix": "航空燃料（ガソリン）のベーパ・ロック現象に関する記述で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 19,
+        "subject": "航空工学",
+        "prefix": "航空機の自重に含まれるもの（a）～（d）のうち、正しいものはいくつあるか。 （１）～ （５）の中から選べ。 （a） 使用不能燃料 （b） 滑油 （c） 動力装置"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 2,
+        "subject": "航空法規",
+        "prefix": "地文航法の説明で正しいものはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 5,
+        "subject": "航空工学",
+        "prefix": "メルカトル図及びランバート図についての記述（a）～（d）のうち、正しいものはいくつあるか。 === Page 9 === （ 1 ） ～（ 5 ） の中から選べ"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 7,
+        "subject": "航空法規",
+        "prefix": "ランバート図上で航程線コースの真方位を最も正確に測定する方法で正しいものはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 8,
+        "subject": "航空工学",
+        "prefix": "野外飛行において巡航中、計画通り WCA＋10°として飛行していたところ、機軸線上にある前 方の目標物が機軸線に沿って真っすぐ近づいてきた。この時の WCA に"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 10,
+        "subject": "航空法規",
+        "prefix": "会合法の原則で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 13,
+        "subject": "航空工学",
+        "prefix": "耳閉塞について誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 15,
+        "subject": "航空工学",
+        "prefix": "暗順応について誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 16,
+        "subject": "航空工学",
+        "prefix": "パイロットの航空業務に与える影響について誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 17,
+        "subject": "航空工学",
+        "prefix": "アルコールの飲用が飛行に及ぼす影響について誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 18,
+        "subject": "航空工学",
+        "prefix": "航空医学に関する記述で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 1,
+        "subject": "航空気象",
+        "prefix": "地球の大気に含まれる水蒸気について（a）～（d）のうち、正しいものはいくつあるか。 （１）～（５）の中から選べ。 （a）水蒸気は気体状態の水であり、目で確認でき"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 4,
+        "subject": "航空工学",
+        "prefix": "対流圏における逆転層の成因と特徴について（a）～（d）のうち、正しいものはいくつあるか。 （１）～（５）の中から選べ。 （a）冷気の上に暖気が重なって前線面を作"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 10,
+        "subject": "航空工学",
+        "prefix": "気団の説明について誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 11,
+        "subject": "航空気象",
+        "prefix": "前線に関する記述（a）～（d）のうち、正しいものはいくつあるか。 （１）～（５）の中から選 べ。 （a）性質の違った二つの気団が隣り合ってできる不連続面を前線面"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 12,
+        "subject": "航空気象",
+        "prefix": "沿岸前線に関する説明（a）～（d）のうち、正しいものはいくつあるか。 （１）～（５）の中か ら選べ。 （a）地上天気図には描かれない局地的な前線で、低気圧が接近"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 13,
+        "subject": "航空気象",
+        "prefix": "高気圧に関する説明で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 14,
+        "subject": "航空工学",
+        "prefix": "梅雨の一般的な特徴として誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 15,
+        "subject": "航空工学",
+        "prefix": "ガストフロントに関する説明で正しいものはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 17,
+        "subject": "航空気象",
+        "prefix": "航空気象通報式の通報型式例と口頭型式例の組み合わせで誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 1,
+        "subject": "航空工学",
+        "prefix": "航空交通業務の目的で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 2,
+        "subject": "航空通信",
+        "prefix": "管制業務の主たる対象について誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 3,
+        "subject": "航空通信",
+        "prefix": "航空交通管制業務に含まれないのはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 5,
+        "subject": "航空工学",
+        "prefix": "捜索救難の発動基準「遭難の段階」について誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 6,
+        "subject": "航空工学",
+        "prefix": "航空情報用略語の意義で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 7,
+        "subject": "航空工学",
+        "prefix": "航空情報の説明で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 8,
+        "subject": "航空工学",
+        "prefix": "有視界飛行方式の飛行計画の変更について誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 9,
+        "subject": "航空工学",
+        "prefix": "航空機の後方乱気流区分で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 10,
+        "subject": "航空通信",
+        "prefix": "航空保安無線施設の説明で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 12,
+        "subject": "航空工学",
+        "prefix": "高度計規正方式について誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 13,
+        "subject": "航空通信",
+        "prefix": "通信要領の文字と数字の言い表し方で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 15,
+        "subject": "航空通信",
+        "prefix": "管制用語「JOIN RIGHT TRAFFIC」の意味で正しいものはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 16,
+        "subject": "航空工学",
+        "prefix": "受信の感明度の組み合わせで誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 17,
+        "subject": "航空工学",
+        "prefix": "特別有視界飛行方式の説明で正しいものはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 19,
+        "subject": "航空工学",
+        "prefix": "TCA（terminal control area）アドバイザリー業務で実施される業務のうち誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 20,
+        "subject": "航空工学",
+        "prefix": "ブレーキングアクションの説明で誤りはどれか。"
+      },
+      {
+        "reason": "duplicate",
+        "year": 2024,
+        "no": 9,
+        "subject": "航空工学",
+        "prefix": "航空英語能力証明について正しいものはどれか。ただし、国土交通大臣が航空英語能力証明を受 けて行う必要がないと認めたものを除く。"
+      }
+    ]
+  },
+  "adaptations": [
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 2,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 3,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 4,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 5,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 6,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 8,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 12,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 19,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 5,
+      "subject": "空中航法",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 9,
+      "subject": "空中航法",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 1,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 2,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 3,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 4,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 5,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 6,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 7,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 8,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 11,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 12,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 16,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 18,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 19,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "５つ",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 20,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 1,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 2,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 3,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 5,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 8,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 14,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 4,
+        "dropped_text": "４つ",
+        "reason": "answer_was_nashi_drop_yottsu_remap_nashi_to_4",
+        "correct_before": 5,
+        "correct_after": 4,
+        "question_hint": "航空法規#14"
+      }
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "no": 19,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 7,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 12,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 9,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 3,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 7,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 8,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 18,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 20,
+      "subject": "航空工学",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 1,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 2,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 3,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 5,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 6,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 8,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 12,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 13,
+      "subject": "航空通信",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 14,
+      "subject": "航空気象",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 4,
+        "dropped_text": "４つ",
+        "reason": "answer_was_nashi_drop_yottsu_remap_nashi_to_4",
+        "correct_before": 5,
+        "correct_after": 4,
+        "question_hint": "航空気象#14"
+      }
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "no": 20,
+      "subject": "航空法規",
+      "adaptation": {
+        "from_count": 5,
+        "dropped_index": 5,
+        "dropped_text": "無し",
+        "reason": "drop_fifth_for_four_choice_ui",
+        "correct_unchanged": true
+      }
+    }
+  ],
+  "existing_hash_count": 4,
+  "sql_files": [
+    "scripts\\database\\20260720_unified_cpl_questions_mlit_sample_202606.sql",
+    "scripts\\database\\20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql"
+  ],
+  "db_prefix_filter": {
+    "2026-06": 74,
+    "2024-08": 33
+  },
+  "applied": {
+    "2026-06": 74,
+    "2024-08": 33,
+    "total": 107,
+    "verified": 105,
+    "pending_figures": 2
+  }
+}
