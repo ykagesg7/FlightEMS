@@ -27,11 +27,16 @@ import {
   type ArticleHubStatus,
   type ArticleHubTab,
 } from '../articleHubFilters';
+import {
+  pickNextComprehensionArticle,
+  resolveArticleComprehensionStatus,
+} from '../../../utils/articleComprehensionStatus';
 import { ArticleActiveFilterChips } from './ArticleActiveFilterChips';
 import { ArticleFilterDrawer } from './ArticleFilterDrawer';
 import { ArticleHubToolbar } from './ArticleHubToolbar';
 import { ContinueReadingHero } from './ContinueReadingHero';
 import { EnhancedArticleCard } from './EnhancedArticleCard';
+import { NextComprehensionCTA } from './NextComprehensionCTA';
 import { ProgressSidebar } from './ProgressSidebar';
 import { ProgressSummaryHeader } from './ProgressSummaryHeader';
 
@@ -69,6 +74,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     stats,
     isDemo,
     getArticleProgress,
+    comprehensionContentIds,
     isLoading: progressLoading,
     refreshProgress,
   } = useArticleProgress();
@@ -202,6 +208,32 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
     return statusMap;
   }, [filteredContents, getArticleProgress]);
 
+  const comprehensionStatuses = useMemo(() => {
+    const statusMap = new Map<
+      string,
+      ReturnType<typeof resolveArticleComprehensionStatus>
+    >();
+    filteredContents.forEach((article) => {
+      statusMap.set(
+        article.id,
+        resolveArticleComprehensionStatus(
+          getArticleProgress(article.id),
+          comprehensionContentIds.has(article.id),
+        ),
+      );
+    });
+    return statusMap;
+  }, [filteredContents, getArticleProgress, comprehensionContentIds]);
+
+  const nextComprehensionArticle = useMemo(() => {
+    if (isDemo) return null;
+    return pickNextComprehensionArticle(
+      articleContents,
+      getArticleProgress,
+      comprehensionContentIds,
+    );
+  }, [isDemo, articleContents, getArticleProgress, comprehensionContentIds]);
+
   const isNextToRead = useMemo(
     () =>
       computeNextToReadIds(filteredContents, articleMetas, getArticleProgress),
@@ -252,7 +284,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <Link
-            to="/mission"
+            to="/"
             className="inline-flex items-center gap-2 rounded-lg border border-brand-primary/30 px-4 py-2 text-sm font-medium text-brand-primary transition-colors hover:border-brand-primary/50 hover:text-brand-primary-dark"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -263,7 +295,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Mission Dashboardへ戻る
+            学習ダッシュボードへ
           </Link>
         </div>
 
@@ -275,8 +307,12 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
           />
         )}
 
+        {nextComprehensionArticle && (
+          <NextComprehensionCTA article={nextComprehensionArticle} />
+        )}
+
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-4">
-          <div className="order-2 xl:order-1 xl:col-span-1">
+          <div className="order-2 hidden xl:order-1 xl:col-span-1 xl:block">
             {stats && (
               <ProgressSidebar
                 stats={stats}
@@ -353,6 +389,9 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                         onArticleClick={() => handleArticleClick(article.id)}
                         isNextToRead={isNextToRead.has(article.id)}
                         articleStatus={articleStatuses.get(article.id) ?? 'in-progress'}
+                        comprehensionStatus={
+                          comprehensionStatuses.get(article.id) ?? 'unread'
+                        }
                       />
                     );
                   })}

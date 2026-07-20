@@ -142,6 +142,7 @@ CREATE TABLE learning_progress (
 - **詳細フィルタ**: ドロワー内のタグ（上位表示 + 検索）と進捗（すべて / 未読 / 完了）。一覧上部のタグウォールは廃止。
 - **非公開ブログ**: [`withdrawnArticleIds.ts`](../src/constants/withdrawnArticleIds.ts) + [`filterPublishedArticleContents`](../src/constants/articleHubCategories.ts) で一覧・進捗・PrevNext から二重除外。
 - **ロジック**: [`articleHubFilters.ts`](../src/pages/articles/articleHubFilters.ts)（パース・フィルタ・次に読む選定）。UI: `ArticleHubToolbar`, `ArticleFilterDrawer`, `ArticleActiveFilterChips`, `ContinueReadingHero`。
+- **理解確認 UX（2026年7月）**: [`useArticleProgress`](../src/hooks/useArticleProgress.ts) が `learning_progress` と `learning_milestones`（`milestone_type='article_comprehension'`、`milestone_key`=content_id）をバッチ取得。カードは 未読 / 読了 / 理解確認済。一覧上部の [`NextComprehensionCTA`](../src/pages/articles/components/NextComprehensionCTA.tsx) は読了済かつ未理解確認の1件を表示（`buildContentTestHref`）。戻るリンクは `/`「学習ダッシュボードへ」。`ProgressSidebar` は `xl+` のみ。
 - **Home / Welcome**: ログイン Home に [`HomeContinueReading`](../src/pages/home/components/HomeContinueReading.tsx)。Welcome 完了で `next=/` のとき `/articles?tab=continue` へ。
 - **記事詳細**: [`SeriesNextChapterCta`](../src/pages/articles/components/SeriesNextChapterCta.tsx) でシリーズ次章 CTA（`PrevNextNav` の上）。
 
@@ -801,7 +802,7 @@ Articles Hub と同型の **URL 双方向同期 + タブ IA + GA4 カスタム�
 
 **回帰テスト**: `npm run test:e2e` — PPL 件数、`/test` diagnostic タブ・URL 同期・レガシー `mode=review` リダイレクト（[`e2e/test-exam-ppl.spec.ts`](../e2e/test-exam-ppl.spec.ts)）
 
-**結果画面**: 先頭 Hero で不正解科目の推奨記事 1 件を強調（[`QuizResultsView`](../src/pages/test/components/QuizResultsView.tsx)）。不正解/フラグ再挑戦、[`ReviewContentLink`](../src/pages/articles/components/learning/ReviewContentLink.tsx) による `learning_test_mapping` 推薦。
+**結果画面**: 先頭にスコア、続けて **学習成果**（セッション XP・理解確認・あとで思い出せた・苦手を伸ばした・復習スケジュール更新。0件は非表示）。不正解科目の推奨記事、Primary CTA（不正解復習 or ダッシュボード/記事）、その他操作は折りたたみ（[`QuizResultsView`](../src/pages/test/components/QuizResultsView.tsx)）。
 
 **モバイル**: 問題パレットは画面下部固定 Bottom Sheet（`md:` 以上は従来インライン）。パレットボタン **44px** 相当（`h-11`）。
 
@@ -821,10 +822,11 @@ Articles Hub と同型の **URL 双方向同期 + タブ IA + GA4 カスタム�
 #### **ダッシュボード画面**
 
 - **Home/Dashboard統合**: ルートパス（`/`）でログイン状態に応じて自動切り替え
-- **サマリーカード**: 全体進捗率、テスト正答率、今週の学習時間、連続学習日数
-- **今週の学習時間**: `learning_sessions` 直近7日の `duration_minutes` 合計
-- **ヒートマップ**: 縦軸=曜日（日〜土）、横軸=週（左=古い、右=新しい）。色強度=学習分数、ツールチップに学習分・セッション数
-- **クイックアクション**: PLANNING、ARTICLE、LEARNING、TEST
+- **Phase 2 構成（ログイン Home）**: 短いヘッダー「今日の1手」+ `InAppNotificationBell` → `LearningJourneyCard`（平易ラベル: 復習待ち 等）→ サマリー3カード → `DailyTasks` → `CohortMissionSection`（未登録は登録 CTA のみ）→ 続きから再開 / 弱点トピック（`buildWeakSubjectHref` で科目リンク）→ `<details>`「詳しく」（レーダー・ヒートマップ・学習時間・ベンチマーク・公開ランキング）→ 3本柱ナビ（PLANNING / 学習記事 / QUIZ）
+- **サマリーカード**: 全体進捗率、クイズ正答率、連続学習日数
+- **今週の学習時間**: `learning_sessions` 直近7日の `duration_minutes` 合計（「詳しく」内）
+- **ヒートマップ**: 縦軸=曜日（日〜土）、横軸=週（左=古い、右=新しい）。色強度=学習分数、ツールチップに学習分・セッション数（「詳しく」内）
+- **クイックアクション**: PLANNING、学習記事、QUIZ
 - **Phase 1機能**: 今日の学習タスク、科目別レーダーチャート、学習履歴ヒートマップ
 - **学習 XP の相対位置（参考）**: `get_learning_xp_benchmark` は **public 上 `SECURITY INVOKER`** の RPC（`authenticated` のみ `EXECUTE`）。集計本体は **private** の `get_learning_xp_benchmark_impl`（`SECURITY DEFINER`、PostgREST の Exposed schemas に `private` を含めないこと）。返却は呼び出しユーザーの XP・集計メタのみ（他者の id・メール等なし）。**母集団 `population_n`**: `profiles` のうち `coalesce(xp_points,0) > 0` の行数。`**percentile**`: その母集団のうち、呼び出しユーザーより XP が**厳密に小さい**行の割合（0–100）。`**cohort_n` / `cohort_percentile`**: 同一 `rank`（`IS NOT DISTINCT FROM`）かつ XP>0 のサブセット内で同様に算出；コホートが極小の場合は SQL 側で NULL になり得る。フロントは `**population_n` < 5** のとき数値を出さず文言のみ（`MIN_POPULATION_FOR_XP_BENCHMARK`）。取得は `fetchDashboardMetrics` 内の `safeGet`、失敗時は空ベンチマークでプレースホルダー表示。集計ロジックの歴史的説明は `scripts/database/20260324_learning_xp_benchmark.sql`。**Security Advisor 対応の現行正本**: `scripts/database/20260511_security_definer_rpc_hardening.sql`（MCP: `security_definer_rpc_hardening_20260511`）
 - **学習者ランキング（デフォルト参加・オプトアウト可）**: `profiles.leaderboard_opt_in` が true のユーザーのみ `get_public_leaderboard(p_limit)`（public は **INVOKER**、集計は `private.get_public_leaderboard_impl`）で一覧化（上限 `least(p_limit, 50)`）。返却列は **表示名**（`trim(leaderboard_display_name)` が空なら `trim(username)`、両方空なら `Learner`）、**xp_points**、**rank**、**leaderboard_position**（`position` は予約語のため列名回避）。メール・`full_name` は SELECT しない。ダッシュボードに表形式で表示。**新規ユーザー**は `/welcome` Step 2 で **デフォルト ON**（プロフィールからいつでもオフ）。列・オプトインの歴史的説明: `scripts/database/20260324_leaderboard_opt_in.sql`。**INVOKER/DEFINER 分離の現行正本**: 上記 `20260511_security_definer_rpc_hardening.sql`

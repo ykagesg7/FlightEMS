@@ -43,7 +43,9 @@ describe('runMasteryLoopAfterSession', () => {
     expect(result).toEqual({
       success: true,
       delayedXp: 10,
+      delayedCount: 1,
       weaknessXp: 15,
+      weaknessCount: 1,
       srsCardsUpdated: 4,
     });
     expect(vi.mocked(supabase.rpc).mock.calls.map((c) => c[0])).toEqual([

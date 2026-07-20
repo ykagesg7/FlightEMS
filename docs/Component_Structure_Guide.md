@@ -153,6 +153,7 @@ src/pages/
 │       ├── CommentItem.tsx
 │       ├── CommentsModal.tsx
 │       ├── EnhancedArticleCard.tsx
+│       ├── NextComprehensionCTA.tsx
 │       ├── KeyboardShortcuts.tsx
 │       ├── MultimodalSearch.tsx
 │       ├── OptimizedSearchResults.tsx
@@ -184,8 +185,9 @@ src/pages/
 │   ├── HomePage.tsx
 │   └── components/
 │       ├── LearningJourneyCard.tsx   # get_learning_journey 現在地
-│       ├── FormationQuestCard.tsx    # 協力型編隊クエスト共有ゲージ
-│       ├── CohortCard.tsx
+│       ├── CohortMissionSection.tsx  # 個人ミッション + 編隊ゲージ（未登録は CTA）
+│       ├── FormationQuestCard.tsx    # 協力型編隊クエスト共有ゲージ（単体利用可）
+│       ├── CohortCard.tsx            # コホート受験予定カード（単体利用可）
 │       ├── DailyTasks.tsx
 │       ├── LearningHeatmap.tsx
 │       ├── SubjectRadarChart.tsx

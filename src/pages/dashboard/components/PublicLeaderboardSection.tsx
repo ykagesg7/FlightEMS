@@ -24,7 +24,7 @@ export const PublicLeaderboardSection: React.FC<Props> = ({ entries, borderColor
 
   return (
     <>
-      <Card variant="hud" padding="md" className={`${borderColor} mb-8`}>
+      <Card variant="hud" padding="md" className={borderColor}>
         <CardContent>
           <Typography variant="h4" color="hud" className="mb-2">
             学習活動XP（任意参加・参考）

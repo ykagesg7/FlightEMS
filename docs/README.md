@@ -43,6 +43,9 @@
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
 - **2026-07-14（チャンク v4 本番・試験明け UX 検討）**: Planning チャンク再発対策を本番投入（SW `v4`・MapTab 分割・`vendor-leaflet`）。**科目完走 UX / 流入回復（Action2/3）は試験明けに検討深化**（試験週は UI 凍結）— [July_2026_Implementation_Plan §7](July_2026_Implementation_Plan.md)、[01 将来保留](01_Current_Status_and_Roadmap.md)、[July Content Sprint §6](July_2026_Content_Sprint.md)。
+- **2026-07-20（HOME/Articles/Quiz UX）**: 結果画面に学習成果（XP・理解確認・復習更新）を表示。
+  HOME は「今日の1手」中心に再構成、Articles に次の理解チェックと読了状態チップ。
+  正本: [02](02_System_Spec.md)。
 - **2026-07-20（ゲーミフィケーション第2期・習熟ループ）**: クイズ後 SRS 書き込み、
   遅延再テスト/弱点改善 XP、協力型編隊クエスト。SQL
   [`20260720_gamification_phase2_mastery_loop.sql`](../scripts/database/20260720_gamification_phase2_mastery_loop.sql)。

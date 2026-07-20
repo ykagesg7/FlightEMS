@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import type { ArticleMeta } from '../types/articles';
+import { comprehensionIdsFromMilestoneKeys } from '../utils/articleComprehensionStatus';
 import {
   awardArticleReadXp,
   isSeriesCompleteForMembers,
@@ -239,6 +240,7 @@ export const useArticleProgress = () => {
   const { completeMissionByAction, profile } = useGamification();
   const gamificationRankProgress = 0;
   const [userProgress, setUserProgress] = useState<Record<string, ArticleProgress>>({});
+  const [comprehensionContentIds, setComprehensionContentIds] = useState<Set<string>>(new Set());
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -288,15 +290,28 @@ export const useArticleProgress = () => {
       setIsLoading(true);
       try {
         if (user) {
-          // 登録ユーザーの場合：Supabaseから進捗データとプロファイルを読み込み
-          const progressResult = await supabase
-            .from('learning_progress')
-            .select('*')
-            .eq('user_id', user.id);
+          // 登録ユーザーの場合：進捗 + 理解確認マイルストーンをバッチ取得（N+1回避）
+          const [progressResult, milestonesResult] = await Promise.all([
+            supabase.from('learning_progress').select('*').eq('user_id', user.id),
+            supabase
+              .from('learning_milestones')
+              .select('milestone_key')
+              .eq('user_id', user.id)
+              .eq('milestone_type', 'article_comprehension'),
+          ]);
 
           if (progressResult.error) {
             console.error('進捗データ取得エラー:', progressResult.error);
             throw progressResult.error;
+          }
+
+          if (milestonesResult.error) {
+            console.warn('理解確認マイルストーン取得エラー（無視して続行）:', milestonesResult.error);
+            setComprehensionContentIds(new Set());
+          } else {
+            setComprehensionContentIds(
+              comprehensionIdsFromMilestoneKeys(milestonesResult.data),
+            );
           }
 
           // プロファイルデータを取得（エラーが発生しても続行）
@@ -348,6 +363,7 @@ export const useArticleProgress = () => {
         } else {
           // 未登録ユーザーの場合：ダミーデータを使用
           setUserProgress(DEMO_PROGRESS);
+          setComprehensionContentIds(new Set());
           setStats(DEMO_STATS);
         }
       } catch (err) {
@@ -585,19 +601,35 @@ export const useArticleProgress = () => {
     return userProgress[articleSlug]?.bookmarked || false;
   }, [userProgress]);
 
+  const hasArticleComprehension = useCallback((contentId: string): boolean => {
+    return comprehensionContentIds.has(contentId);
+  }, [comprehensionContentIds]);
+
   // Supabaseから最新の進捗データを再取得
   const refreshProgress = useCallback(async () => {
     if (!user) return;
 
     try {
-      const progressResult = await supabase
-        .from('learning_progress')
-        .select('*')
-        .eq('user_id', user.id);
+      const [progressResult, milestonesResult] = await Promise.all([
+        supabase.from('learning_progress').select('*').eq('user_id', user.id),
+        supabase
+          .from('learning_milestones')
+          .select('milestone_key')
+          .eq('user_id', user.id)
+          .eq('milestone_type', 'article_comprehension'),
+      ]);
 
       if (progressResult.error) {
         console.error('進捗データ再取得エラー:', progressResult.error);
         return;
+      }
+
+      if (milestonesResult.error) {
+        console.warn('理解確認マイルストーン再取得エラー（無視して続行）:', milestonesResult.error);
+      } else {
+        setComprehensionContentIds(
+          comprehensionIdsFromMilestoneKeys(milestonesResult.data),
+        );
       }
 
       // プロファイルデータを取得（エラーが発生しても続行）
@@ -649,6 +681,7 @@ export const useArticleProgress = () => {
     // データ
     stats,
     userProgress,
+    comprehensionContentIds,
     isLoading,
     error,
 
@@ -665,6 +698,7 @@ export const useArticleProgress = () => {
     // ゲッター
     getArticleProgress,
     isArticleCompleted,
-    isArticleBookmarked
+    isArticleBookmarked,
+    hasArticleComprehension,
   };
 };

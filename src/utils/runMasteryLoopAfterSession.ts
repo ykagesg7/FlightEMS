@@ -6,7 +6,9 @@ import { supabase } from './supabase';
 export interface MasteryLoopResult {
   success: boolean;
   delayedXp?: number;
+  delayedCount?: number;
   weaknessXp?: number;
+  weaknessCount?: number;
   srsCardsUpdated?: number;
   error?: string;
 }
@@ -70,6 +72,8 @@ export async function runMasteryLoopAfterSession(
 
   const delayedXp = delayed?.xp_awarded ?? 0;
   const weaknessXp = weakness?.xp_awarded ?? 0;
+  const delayedCount = delayed?.milestones_awarded ?? 0;
+  const weaknessCount = weakness?.subjects_awarded ?? 0;
   const srsCardsUpdated = srs?.cards_updated ?? 0;
 
   if (delayedXp > 0) {
@@ -77,7 +81,7 @@ export async function runMasteryLoopAfterSession(
       milestone_type: 'delayed_retention',
       session_id: sessionId,
       xp_awarded: delayedXp,
-      milestones_awarded: delayed?.milestones_awarded ?? 0,
+      milestones_awarded: delayedCount,
     });
   }
   if (weaknessXp > 0) {
@@ -85,7 +89,7 @@ export async function runMasteryLoopAfterSession(
       milestone_type: 'weakness_improvement',
       session_id: sessionId,
       xp_awarded: weaknessXp,
-      subjects_awarded: weakness?.subjects_awarded ?? 0,
+      subjects_awarded: weaknessCount,
     });
   }
 
@@ -96,7 +100,9 @@ export async function runMasteryLoopAfterSession(
   return {
     success: true,
     delayedXp,
+    delayedCount,
     weaknessXp,
+    weaknessCount,
     srsCardsUpdated,
   };
 }

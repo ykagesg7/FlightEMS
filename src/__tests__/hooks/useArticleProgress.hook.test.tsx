@@ -84,6 +84,15 @@ function installStandardSupabaseMock(opts: {
         upsert,
       } as unknown as ReturnType<(typeof supabase)['from']>;
     }
+    if (table === 'learning_milestones') {
+      return {
+        select: () => ({
+          eq: () => ({
+            eq: () => Promise.resolve({ data: [], error: null }),
+          }),
+        }),
+      } as unknown as ReturnType<(typeof supabase)['from']>;
+    }
     if (table === 'user_learning_profiles') {
       return {
         select: () => ({
@@ -193,6 +202,15 @@ describe('useArticleProgress hook', () => {
           }),
         } as unknown as ReturnType<(typeof supabase)['from']>;
       }
+      if (table === 'learning_milestones') {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: () => Promise.resolve({ data: [], error: null }),
+            }),
+          }),
+        } as unknown as ReturnType<(typeof supabase)['from']>;
+      }
       return {} as unknown as ReturnType<(typeof supabase)['from']>;
     });
 
@@ -285,6 +303,15 @@ describe('useArticleProgress hook', () => {
           upsert,
         } as unknown as ReturnType<(typeof supabase)['from']>;
       }
+      if (table === 'learning_milestones') {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: () => Promise.resolve({ data: [], error: null }),
+            }),
+          }),
+        } as unknown as ReturnType<(typeof supabase)['from']>;
+      }
       if (table === 'user_learning_profiles') {
         return {
           select: () => ({
@@ -315,6 +342,15 @@ describe('useArticleProgress hook', () => {
             eq: () => Promise.resolve({ data: progressRows, error: null }),
           }),
           upsert,
+        } as unknown as ReturnType<(typeof supabase)['from']>;
+      }
+      if (table === 'learning_milestones') {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: () => Promise.resolve({ data: [], error: null }),
+            }),
+          }),
         } as unknown as ReturnType<(typeof supabase)['from']>;
       }
       if (table === 'user_learning_profiles') {

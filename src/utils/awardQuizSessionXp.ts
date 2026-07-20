@@ -14,6 +14,12 @@ export interface AwardQuizSessionXpParams {
   queryClient?: QueryClient;
 }
 
+export interface AwardQuizSessionXpResult {
+  success: boolean;
+  xpAwarded?: number;
+  error?: string;
+}
+
 /**
  * Awards XP for a completed quiz session (idempotent via session id).
  */
@@ -24,18 +30,36 @@ export async function awardQuizSessionXp({
   totalQuestions: _totalQuestions,
   mode: _mode,
   queryClient,
-}: AwardQuizSessionXpParams): Promise<void> {
+}: AwardQuizSessionXpParams): Promise<AwardQuizSessionXpResult> {
   if (!sessionId || sessionId === 'temp-session-id') {
-    return;
+    return { success: false, error: 'invalid_session' };
   }
 
   const { data, error } = await supabase.rpc('award_quiz_session_xp', {
     p_session_id: sessionId,
   });
-  const result = data as { success?: boolean } | null;
-  if (!error && result?.success && queryClient) {
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  const payload = data as {
+    success?: boolean;
+    xp_awarded?: number;
+    error?: string;
+  } | null;
+
+  if (!payload?.success) {
+    return { success: false, error: payload?.error ?? 'award_failed' };
+  }
+
+  if (queryClient) {
     await invalidateGamificationProfile(queryClient, userId);
   }
+
+  return {
+    success: true,
+    xpAwarded: payload.xp_awarded ?? 0,
+  };
 }
 
 /**

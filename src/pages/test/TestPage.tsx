@@ -8,6 +8,7 @@ import supabase from '../../utils/supabase';
 import { awardArticleComprehensionXp } from '../../utils/awardArticleComprehensionXp';
 import { awardQuizSessionXp } from '../../utils/awardQuizSessionXp';
 import { runMasteryLoopAfterSession } from '../../utils/runMasteryLoopAfterSession';
+import type { QuizSessionRewardSummary } from '../../types/quizRewards';
 import { syncStreakToUserLearningProfile } from '../../utils/streak';
 import { QuizActiveFilterChips } from './components/QuizActiveFilterChips';
 import { QuizComponent } from './components/QuizComponent';
@@ -80,6 +81,7 @@ const TestPage: React.FC = () => {
   const [userAnswers, setUserAnswers] = useState<UserQuizAnswer[]>([]);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [sessionRewards, setSessionRewards] = useState<QuizSessionRewardSummary | null>(null);
   const [retryIncorrectMode, setRetryIncorrectMode] = useState(false);
   const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<string[]>([]);
   const sessionStartedRef = useRef(false);
@@ -226,6 +228,7 @@ const TestPage: React.FC = () => {
     setRetryIncorrectMode(false);
     setQuizFinished(false);
     setUserAnswers([]);
+    setSessionRewards(null);
     setFlaggedQuestionIds([]);
     sessionStartedRef.current = false;
   }, [selectedSubject, selectedSubSubject, questionCount, mode, contentId, examLevel, hubState.tab, diagnosticStarted]);
@@ -376,8 +379,9 @@ const TestPage: React.FC = () => {
       }
 
       if (sessionId) {
+        const nextRewards: QuizSessionRewardSummary = {};
         try {
-          await awardQuizSessionXp({
+          const sessionXpResult = await awardQuizSessionXp({
             userId: user_id,
             sessionId,
             correctCount: answers.filter((a) => a.isCorrect).length,
@@ -385,6 +389,9 @@ const TestPage: React.FC = () => {
             mode: mode as 'practice' | 'exam' | 'review',
             queryClient,
           });
+          if (sessionXpResult.success && sessionXpResult.xpAwarded) {
+            nextRewards.sessionXp = sessionXpResult.xpAwarded;
+          }
         } catch (xpErr) {
           console.warn('quiz session XP award skipped:', xpErr);
         }
@@ -392,20 +399,32 @@ const TestPage: React.FC = () => {
         const correctCount = answers.filter((answer) => answer.isCorrect).length;
         if (contentId && answers.length >= 3 && correctCount / answers.length >= 0.8) {
           try {
-            await awardArticleComprehensionXp(contentId, sessionId);
+            const comprehension = await awardArticleComprehensionXp(contentId, sessionId);
+            if (comprehension.success) {
+              nextRewards.comprehensionAchieved = true;
+              nextRewards.comprehensionXp = comprehension.xpAwarded ?? 10;
+            }
           } catch (comprehensionError) {
             console.warn('article comprehension XP award skipped:', comprehensionError);
           }
         }
 
         try {
-          await runMasteryLoopAfterSession(sessionId, {
+          const mastery = await runMasteryLoopAfterSession(sessionId, {
             userId: user_id,
             queryClient,
           });
+          if (mastery.success) {
+            nextRewards.delayedXp = mastery.delayedXp;
+            nextRewards.delayedCount = mastery.delayedCount;
+            nextRewards.weaknessXp = mastery.weaknessXp;
+            nextRewards.weaknessCount = mastery.weaknessCount;
+            nextRewards.srsCardsUpdated = mastery.srsCardsUpdated;
+          }
         } catch (masteryError) {
           console.warn('mastery loop skipped:', masteryError);
         }
+        setSessionRewards(nextRewards);
       }
 
       trackQuizSessionComplete({
@@ -428,6 +447,7 @@ const TestPage: React.FC = () => {
   const handleRetryAll = () => {
     setRetryIncorrectMode(false);
     setQuizFinished(false);
+    setSessionRewards(null);
     setUserAnswers([]);
     setFlaggedQuestionIds([]);
     void runFetch();
@@ -532,8 +552,8 @@ const TestPage: React.FC = () => {
       ) : null}
 
       {hubState.tab === 'review' && !previewQuestionId && (
-        <p className="mb-4 text-center text-xs text-[var(--text-muted)]">
-          弱点復習 — SRS 対象または弱点データから出題します（ログイン必須）。
+        <p className="mb-4 text-center text-sm text-[var(--text-primary)]">
+          復習待ちの問題です。期限の来た復習と弱点データから出題します（ログイン必須）。
         </p>
       )}
 
@@ -582,6 +602,7 @@ const TestPage: React.FC = () => {
               setQuestions(incorrectQuestions);
               setQuizFinished(false);
               setUserAnswers([]);
+              setSessionRewards(null);
               setRetryIncorrectMode(true);
             }}
             onRetryFlagged={() => {
@@ -591,6 +612,7 @@ const TestPage: React.FC = () => {
               setQuestions(flaggedQuestions);
               setQuizFinished(false);
               setUserAnswers([]);
+              setSessionRewards(null);
               setRetryIncorrectMode(true);
             }}
             onRetryFlaggedAndIncorrect={() => {
@@ -601,6 +623,7 @@ const TestPage: React.FC = () => {
               setQuestions(combinedQuestions);
               setQuizFinished(false);
               setUserAnswers([]);
+              setSessionRewards(null);
               setRetryIncorrectMode(true);
             }}
             incorrectCount={userAnswers.filter((a) => !a.isCorrect).length}
@@ -614,6 +637,7 @@ const TestPage: React.FC = () => {
             contentId={contentId}
             selectedSubjectForFallback={subjectSelected ? selectedSubject : null}
             reportMeta={{ mode, tab: hubState.tab, content_id: contentId ?? null }}
+            rewards={sessionRewards}
           />
           {profile && profile.leaderboard_opt_in !== true && !saveError && !saving ? (
             <div className="mt-4 max-w-2xl mx-auto px-2">

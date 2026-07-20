@@ -29,7 +29,7 @@ const STAGE_ACTIONS: Record<
   },
   subject_mastery: {
     label: '復習・弱点を詰める',
-    description: '期限の来たSRS復習と弱点科目の再テストで定着を進めます。',
+    description: '復習待ちの問題と弱点科目の再テストで定着を進めます。',
     to: '/test?mode=review',
   },
   cross_subject: {
@@ -63,7 +63,7 @@ export const LearningJourneyCard: React.FC = () => {
   const progress = Math.min(100, Math.max(0, (journey.stage_order / 6) * 100));
 
   return (
-    <Card variant="hud" padding="md" className="mb-8 border-brand-primary/60">
+    <Card variant="hud" padding="md" className="mb-6 border-brand-primary/60">
       <CardContent>
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="min-w-0 flex-1">
@@ -83,8 +83,8 @@ export const LearningJourneyCard: React.FC = () => {
               />
             </div>
             <Typography variant="caption" color="muted" className="mt-2">
-              理解確認 {journey.article_comprehension_count}件 · 遅延再テスト{' '}
-              {journey.delayed_retention_count ?? 0}件 · SRS期限{' '}
+              理解チェック {journey.article_comprehension_count}件 · 再確認待ち{' '}
+              {journey.delayed_retention_count ?? 0}件 · 復習待ち{' '}
               {journey.srs_due_count ?? 0}件 · 習熟科目 {journey.mastered_subject_count}件
             </Typography>
           </div>

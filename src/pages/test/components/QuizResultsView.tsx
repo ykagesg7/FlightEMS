@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { UserQuizAnswer } from '../../../types/quiz';
 import { QuizQuestion } from '../../../types/quiz';
+import {
+  hasQuizRewardSummary,
+  type QuizSessionRewardSummary,
+} from '../../../types/quizRewards';
 import { normalizeSubSubjectLabel } from '../utils/normalizeSubSubject';
 import { LEARNING_ARTICLE_CTA_LABEL, LEARNING_ARTICLES_HUB_LABEL } from '../../../constants/learningArticleNav';
 import ReviewContentLink from '../../articles/components/learning/ReviewContentLink';
@@ -27,6 +31,7 @@ interface QuizResultsViewProps {
   /** 全問正解時のフォールバック（main_subject）。未選択科目のときは null */
   selectedSubjectForFallback?: string | null;
   reportMeta?: Pick<QuestionReportContext, 'mode' | 'tab' | 'content_id'>;
+  rewards?: QuizSessionRewardSummary | null;
 }
 
 export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
@@ -44,8 +49,10 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
   contentId,
   selectedSubjectForFallback = null,
   reportMeta,
+  rewards = null,
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showMoreActions, setShowMoreActions] = useState(false);
   const correctCount = userAnswers.filter(a => a.isCorrect).length;
   const totalCount = userAnswers.length;
   const accuracy = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
@@ -143,6 +150,40 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
         </p>
         <p className="text-sm text-[var(--text-muted)]">正答率: {accuracy}%</p>
       </div>
+
+      {hasQuizRewardSummary(rewards) && (
+        <div className="mb-6 rounded-xl border border-brand-primary/40 bg-brand-primary/10 p-4">
+          <h3 className="mb-2 text-sm font-semibold text-brand-primary">学習成果</h3>
+          <ul className="space-y-1 text-sm text-[var(--text-primary)]">
+            {rewards?.sessionXp && rewards.sessionXp > 0 ? (
+              <li>セッション XP +{rewards.sessionXp}</li>
+            ) : null}
+            {rewards?.comprehensionAchieved ? (
+              <li>
+                理解確認クリア
+                {rewards.comprehensionXp && rewards.comprehensionXp > 0
+                  ? ` +${rewards.comprehensionXp} XP`
+                  : ''}
+              </li>
+            ) : null}
+            {rewards?.delayedXp && rewards.delayedXp > 0 ? (
+              <li>
+                あとで思い出せた +{rewards.delayedXp} XP
+                {rewards.delayedCount ? `（${rewards.delayedCount}問）` : ''}
+              </li>
+            ) : null}
+            {rewards?.weaknessXp && rewards.weaknessXp > 0 ? (
+              <li>
+                苦手を伸ばした +{rewards.weaknessXp} XP
+                {rewards.weaknessCount ? `（${rewards.weaknessCount}科目）` : ''}
+              </li>
+            ) : null}
+            {rewards?.srsCardsUpdated && rewards.srsCardsUpdated > 0 ? (
+              <li>復習スケジュール更新 {rewards.srsCardsUpdated}件</li>
+            ) : null}
+          </ul>
+        </div>
+      )}
 
       {weakSubjects.length > 0 && (
         <div className="mb-6 p-4 rounded-xl bg-hud-red/10 border border-hud-red/30">
@@ -298,59 +339,93 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
 
       <div className="mt-6">
         <p className="text-xs font-semibold text-[var(--text-muted)] mb-3 text-center">
-          このテストの結果から、すぐに復習できます
+          次にやること
         </p>
-        <div className="flex flex-wrap gap-3 justify-center">
-        <button
-          className="px-6 py-3 rounded-xl border border-brand-primary/40 text-brand-primary shadow-lg transition-all duration-200 ease-in-out hover:bg-brand-primary/10 focus-visible:focus:ring-2 focus-visible:focus:ring-brand-primary"
-          onClick={onRetryAll}
-        >
-          もう一度挑戦
-        </button>
-        {incorrectCount > 0 && (
+        <div className="flex flex-col items-stretch gap-3 sm:items-center">
+          {incorrectCount > 0 ? (
+            <button
+              type="button"
+              className="px-6 py-3 rounded-xl bg-hud-red/20 border border-hud-red text-hud-red shadow-lg transition-all duration-200 ease-in-out hover:bg-hud-red/30 focus-visible:focus:ring-2 focus-visible:focus:ring-hud-red"
+              onClick={onRetryIncorrect}
+            >
+              不正解だけ復習 ({incorrectCount}問)
+            </button>
+          ) : contentId ? (
+            <Link
+              to={`/articles/${contentId}`}
+              className="px-6 py-3 rounded-xl bg-brand-primary/20 border border-brand-primary text-brand-primary text-center font-semibold hover:bg-brand-primary/30 transition-all duration-200"
+            >
+              {LEARNING_ARTICLE_CTA_LABEL}
+            </Link>
+          ) : (
+            <Link
+              to="/"
+              className="px-6 py-3 rounded-xl bg-brand-primary/20 border border-brand-primary text-brand-primary text-center font-semibold hover:bg-brand-primary/30 transition-all duration-200"
+            >
+              学習ダッシュボードへ
+            </Link>
+          )}
+
           <button
-            className="px-6 py-3 rounded-xl bg-hud-red/20 border border-hud-red text-hud-red shadow-lg transition-all duration-200 ease-in-out hover:bg-hud-red/30 focus-visible:focus:ring-2 focus-visible:focus:ring-hud-red"
-            onClick={onRetryIncorrect}
+            type="button"
+            className="text-sm text-[var(--text-muted)] underline-offset-2 hover:underline"
+            onClick={() => setShowMoreActions((v) => !v)}
+            aria-expanded={showMoreActions}
           >
-            不正解だけ復習 ({incorrectCount}問)
+            {showMoreActions ? 'その他の操作を閉じる' : 'その他の操作'}
           </button>
-        )}
-        {flaggedCount > 0 && onRetryFlagged && (
-          <button
-            className="px-6 py-3 rounded-xl border border-amber-500/60 text-amber-600 dark:text-amber-400 shadow-lg transition-all duration-200 ease-in-out hover:bg-amber-500/10 focus-visible:focus:ring-2 focus-visible:focus:ring-amber-500"
-            onClick={onRetryFlagged}
-          >
-            フラグだけ復習 ({flaggedCount}問)
-          </button>
-        )}
-        {flaggedAndIncorrectCount > 0 && onRetryFlaggedAndIncorrect && (
-          <button
-            className="px-6 py-3 rounded-xl border border-amber-600/60 bg-amber-500/10 text-amber-600 dark:text-amber-400 shadow-lg transition-all duration-200 ease-in-out hover:bg-amber-500/20 focus-visible:focus:ring-2 focus-visible:focus:ring-amber-500"
-            onClick={onRetryFlaggedAndIncorrect}
-          >
-            フラグ＋不正解を復習 ({flaggedAndIncorrectCount}問)
-          </button>
-        )}
-        {contentId && (
-          <Link
-            to={`/articles/${contentId}`}
-            className="px-6 py-3 rounded-xl border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10 transition-all duration-200"
-          >
-            {LEARNING_ARTICLE_CTA_LABEL}
-          </Link>
-        )}
-        <Link
-          to="/articles"
-          className="px-6 py-3 rounded-xl border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10 transition-all duration-200"
-        >
-          {LEARNING_ARTICLES_HUB_LABEL}
-        </Link>
-        <Link
-          to="/"
-          className="px-6 py-3 rounded-xl border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10 transition-all duration-200"
-        >
-          ダッシュボードへ戻る
-        </Link>
+
+          {showMoreActions && (
+            <div className="flex flex-wrap gap-3 justify-center">
+              <button
+                type="button"
+                className="px-4 py-2 rounded-lg border border-brand-primary/40 text-brand-primary text-sm hover:bg-brand-primary/10"
+                onClick={onRetryAll}
+              >
+                もう一度挑戦
+              </button>
+              {flaggedCount > 0 && onRetryFlagged && (
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-lg border border-amber-500/60 text-amber-600 dark:text-amber-400 text-sm hover:bg-amber-500/10"
+                  onClick={onRetryFlagged}
+                >
+                  フラグだけ復習 ({flaggedCount}問)
+                </button>
+              )}
+              {flaggedAndIncorrectCount > 0 && onRetryFlaggedAndIncorrect && (
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-lg border border-amber-600/60 text-amber-600 dark:text-amber-400 text-sm hover:bg-amber-500/10"
+                  onClick={onRetryFlaggedAndIncorrect}
+                >
+                  フラグ＋不正解を復習 ({flaggedAndIncorrectCount}問)
+                </button>
+              )}
+              {contentId && incorrectCount > 0 && (
+                <Link
+                  to={`/articles/${contentId}`}
+                  className="px-4 py-2 rounded-lg border border-brand-primary/40 text-brand-primary text-sm hover:bg-brand-primary/10"
+                >
+                  {LEARNING_ARTICLE_CTA_LABEL}
+                </Link>
+              )}
+              <Link
+                to="/articles"
+                className="px-4 py-2 rounded-lg border border-brand-primary/40 text-brand-primary text-sm hover:bg-brand-primary/10"
+              >
+                {LEARNING_ARTICLES_HUB_LABEL}
+              </Link>
+              {(incorrectCount > 0 || contentId) && (
+                <Link
+                  to="/"
+                  className="px-4 py-2 rounded-lg border border-brand-primary/40 text-brand-primary text-sm hover:bg-brand-primary/10"
+                >
+                  学習ダッシュボードへ
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

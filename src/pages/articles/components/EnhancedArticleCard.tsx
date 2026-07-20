@@ -5,6 +5,10 @@ import { useAuth } from '../../../hooks/useAuth';
 import { LearningContent } from '../../../types';
 import { ArticleMeta } from '../../../types/articles';
 import { calculateBaseArticleXp } from '../../../utils/articleXpRewards';
+import {
+  ARTICLE_COMPREHENSION_STATUS_LABEL,
+  type ArticleComprehensionUiStatus,
+} from '../../../utils/articleComprehensionStatus';
 
 interface EnhancedArticleCardProps {
   article: LearningContent;
@@ -21,8 +25,16 @@ interface EnhancedArticleCardProps {
   highlightId?: string;
   onArticleClick?: () => void;
   isNextToRead?: boolean;
+  /** @deprecated Prefer comprehensionStatus */
   articleStatus?: 'completed' | 'in-progress';
+  comprehensionStatus?: ArticleComprehensionUiStatus;
 }
+
+const STATUS_CHIP_CLASS: Record<ArticleComprehensionUiStatus, string> = {
+  unread: 'bg-gray-800/80 text-gray-300 border-gray-600/50',
+  read: 'bg-brand-primary/20 text-brand-primary border-brand-primary/30',
+  comprehended: 'bg-hud-green/20 text-hud-green border-hud-green/30',
+};
 
 export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
   article,
@@ -34,7 +46,8 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
   highlightId,
   onArticleClick,
   isNextToRead = false,
-  articleStatus = 'in-progress'
+  articleStatus = 'in-progress',
+  comprehensionStatus = 'unread',
 }) => {
   const { user } = useAuth();
   const [isHighlighted, setIsHighlighted] = useState(false);
@@ -53,6 +66,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
   const isCompleted = progress?.completed || false;
   const isBookmarked = progress?.bookmarked || false;
   const readingTime = articleMeta?.readingTime || 10;
+  const statusLabel = ARTICLE_COMPREHENSION_STATUS_LABEL[comprehensionStatus];
 
   const articleXp = useMemo(() => {
     if (!articleMeta) return 0;
@@ -61,22 +75,21 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
 
   const shouldBlur = isDemo && Math.random() > 0.6;
 
+  const highlightInProgress =
+    isNextToRead &&
+    (comprehensionStatus === 'unread' || articleStatus === 'in-progress');
+
   return (
     <div className={`
       group relative transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1
       ${isHighlighted ? 'highlight-article' : ''}
-      ${isNextToRead && articleStatus === 'in-progress' ? 'ring-2 ring-brand-primary ring-offset-2 ring-offset-[var(--bg)] shadow-lg shadow-brand-primary/50' : ''}
+      ${highlightInProgress ? 'ring-2 ring-brand-primary ring-offset-2 ring-offset-[var(--bg)] shadow-lg shadow-brand-primary/50' : ''}
     `}>
-      {articleStatus === 'completed' && (
-        <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded-full bg-hud-green/20 text-hud-green border border-hud-green/30 text-xs font-bold">
-          完了
-        </div>
-      )}
-      {articleStatus === 'in-progress' && !isCompleted && (
-        <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded-full bg-brand-primary/20 text-brand-primary border border-brand-primary/30 text-xs font-bold">
-          進行中
-        </div>
-      )}
+      <div
+        className={`absolute top-3 right-3 z-10 rounded-full border px-3 py-1 text-xs font-bold ${STATUS_CHIP_CLASS[comprehensionStatus]}`}
+      >
+        {statusLabel}
+      </div>
 
       {shouldBlur && (
         <div className="absolute inset-0 z-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm flex items-center justify-center">
@@ -99,7 +112,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
         {progress && progressPercentage > 0 && (
           <div className="absolute top-0 left-0 right-0 h-1 z-10 bg-gray-800">
             <div
-              className={`h-full transition-all duration-500 ${isCompleted ? 'bg-green-500' : 'bg-blue-500'
+              className={`h-full transition-all duration-500 ${isCompleted || comprehensionStatus !== 'unread' ? 'bg-green-500' : 'bg-blue-500'
                 }`}
               style={{ width: `${progressPercentage}%` }}
             />
@@ -108,19 +121,13 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
 
         <div className="p-5">
           <div className="flex items-start justify-between mb-3">
-            <div className="flex-1">
+            <div className="flex-1 pr-16">
               <div className="flex items-center space-x-2 mb-2">
                 <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-900/50 text-blue-400 border border-blue-700/50">
                   {article.category}
                 </span>
 
-                {isCompleted && (
-                  <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-900/50 text-green-400 border border-green-700/50">
-                    ✅ 完了
-                  </span>
-                )}
-
-                {progress && !isCompleted && progressPercentage > 0 && (
+                {progress && comprehensionStatus === 'unread' && progressPercentage > 0 && (
                   <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-900/50 text-yellow-400 border border-yellow-700/50">
                     {progressPercentage}% 進行中
                   </span>
