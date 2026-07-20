@@ -39,17 +39,24 @@
 
 - **正本**: [**July_2026_Implementation_Plan.md**](July_2026_Implementation_Plan.md)（DONE 条件・W27〜W30・C-6/C-7/Callout/GA4/B-4・Phase C 後半境界）。
 - **週次記録**: [05_Content_Pipeline.md](05_Content_Pipeline.md) の Phase 2 **週次着手記録表**へ毎週追記。**W27〜W30**（[July_2026_Content_Sprint.md](July_2026_Content_Sprint.md) ブロック H〜K）。
+- **ゲーミフィケーション第1期（2026-07-20）**: 学科試験完了までを
+  「準備→基礎訓練→科目習熟→横断演習→試験準備→学科試験完了」として実装。
+  記事 5 XP + 理解チェック 10 XP、週次達成 20 XP、MVP +30 / TOP3 +20、
+  本人固定・サーバー計算・冪等な XP RPC、ALPM 台帳を追加。
+  **第2期習熟ループ（SRS・遅延再テスト・弱点改善・編隊クエスト）も
+  `20260720_gamification_phase2_mastery_loop.sql` で本番適用済み**。
+  実技・ウイングマーク等の後続フェーズは未実装。
 
 | 優先 | タスク | 詳細 | 目安 |
 |------|--------|------|------|
 | **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md) Tier A/B。MCP 再集計 **月 1 回**。verified 未マッピング **12 件**（2026-07-10、**17→12**） | 週 2〜4 着手単位 |
-| **2** | **C-7 PPL Subject 4 Phase 1** | [PPL_Navigation_Communication_2026 §Subject 4](content_outlines/PPL_Navigation_Communication_2026/README.md) — **`PPL-4-1-1`/`4-1-2` 公開済・≥2 本達成** ✅（残スタブ 6） | W29〜W30 |
+| **2** | **C-7 PPL Subject 4 Phase 1** | [PPL_Navigation_Communication_2026 §Subject 4](content_outlines/PPL_Navigation_Communication_2026/README.md) — **`4-1-1`〜`4-2-3` 公開済・≥2 本達成** ✅（残スタブ 3） | W29〜W30 |
 | **3** | CPL↔PPL Callout | 気象 `3.3.3/4/7/9/12` **2026-06-30 済**。法規 **`3.1.1`〜`3.1.8` 8/8 完走** ✅（2026-07-10） | W27〜W29 **完了** |
 | **4** | GA4 ファネル | Quiz Hub 投入（2026-06-06）から **4 週以降**の計測レビュー（`artifacts/` メモ） | W27 初旬 |
 | **5** | B-4 テスト | `src` 実効 **18.07% 維持**（Phase C 15% 主目標は六月達成済） | 月次記録 |
 | **6** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**コード着手。未承認時は A11y/Lighthouse **監査メモ**のみ | 随時 |
 
-**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2/3 Phase 1 完走。Subject 4 Phase 1 **≥2 本達成**（`PPL-4-1-1`・`4-1-2`、2026-07-16）。PPL 登録済 **57/150**。次: Subject 4 残スタブ（例: `PPL-4-2-1` / `4-3-1`）。
+**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2/3 Phase 1 完走。Subject 4 Phase 1 **5/8**（`PPL-4-1-1`〜`4-2-3`、2026-07-18）。PPL 登録済 **60/150**。次: Subject 4 残スタブ（例: `PPL-4-2-4` / `4-3-1`）。
 
 ---
 
@@ -61,10 +68,10 @@
 | Phase                     | 内容                                         | 状態  |
 | ------------------------- | ------------------------------------------ | --- |
 | Phase 1: Brand Foundation | MarketingLayout/AppLayout、ブランドカラー          | 完了  |
-| Phase 2: Gamification     | 統合ランクシステム、XP、ミッション、ストリーク                   | 完了  |
+| Phase 2: Gamification（第1期） | 累積XPは活動参考値。習熟ジャーニーを学習者向け進行の正本として本番反映 | 第1期完了 |
 | Phase 3: Engagement       | Gallery（イベント管理・いいね）、ランク連動 Shop（UI は後に非表示化） | 完了  |
 | Phase 4.5-4.7             | デュアルテーマ、リポジトリ整理、MarketingLayout統合          | 完了  |
-| PPL ランクシステム               | PPL中間ランク統合、ppl_rank_definitions テーブル       | 完了  |
+| 旧PPLランクシステム               | DB互換用に保持。学習者向け表示と自動昇格は習熟ジャーニーへ移行       | 非推奨  |
 | CI/CD                     | GitHub Actions（test.yml、verify-build.yml）  | 完了  |
 | Flight Planning 拡張        | エクスポート/インポート、燃料計算、A4印刷                     | 完了  |
 | 記事システム                    | MDX、進捗管理、シリーズメタ（推奨順）、KaTeX                 | 完了  |

@@ -41,7 +41,12 @@ export const useLearningProgress = () => {
       }
 
       if (data && data.length > 0) {
-        setLearningContents(data);
+        setLearningContents(
+          data.map((row) => ({
+            ...row,
+            is_published: row.is_published ?? false,
+          })),
+        );
       } else {
         setLearningContents([]);
       }

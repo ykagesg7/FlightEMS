@@ -17,8 +17,8 @@ describe('articleXpRewards', () => {
   };
 
   it('returns per-article override from config when slug matches articles map', () => {
-    expect(getArticleXp('millionaire-teaching-1')).toBe(25);
-    expect(getArticleXp('logical-presentation-1')).toBe(20);
+    expect(getArticleXp('millionaire-teaching-1')).toBe(5);
+    expect(getArticleXp('logical-presentation-1')).toBe(5);
   });
 
   it('returns category Xp from first tag when no per-article entry', () => {
@@ -26,24 +26,24 @@ describe('articleXpRewards', () => {
   });
 
   it('returns default when slug and category do not match', () => {
-    expect(getArticleXp('no-such-article')).toBe(15);
+    expect(getArticleXp('no-such-article')).toBe(5);
   });
 
   it('getFirstReadBonus and getSeriesCompletionMultiplier read config', () => {
-    expect(getFirstReadBonus()).toBe(5);
-    expect(getSeriesCompletionMultiplier()).toBe(1.5);
+    expect(getFirstReadBonus()).toBe(0);
+    expect(getSeriesCompletionMultiplier()).toBe(1);
   });
 
   it('calculateBaseArticleXp aliases getArticleXp', () => {
-    expect(calculateBaseArticleXp('millionaire-teaching-1')).toBe(25);
+    expect(calculateBaseArticleXp('millionaire-teaching-1')).toBe(5);
   });
 
-  it('calculateTotalArticleXp applies series multiplier and first-read bonus', () => {
-    const base = 25;
+  it('calculateTotalArticleXp keeps legacy bonuses disabled', () => {
+    const base = 5;
     expect(calculateTotalArticleXp('millionaire-teaching-1', undefined, false, false)).toBe(base);
-    expect(calculateTotalArticleXp('millionaire-teaching-1', undefined, false, true)).toBe(38);
-    expect(calculateTotalArticleXp('millionaire-teaching-1', undefined, true, false)).toBe(30);
-    expect(calculateTotalArticleXp('millionaire-teaching-1', undefined, true, true)).toBe(43);
+    expect(calculateTotalArticleXp('millionaire-teaching-1', undefined, false, true)).toBe(base);
+    expect(calculateTotalArticleXp('millionaire-teaching-1', undefined, true, false)).toBe(base);
+    expect(calculateTotalArticleXp('millionaire-teaching-1', undefined, true, true)).toBe(base);
   });
 });
 

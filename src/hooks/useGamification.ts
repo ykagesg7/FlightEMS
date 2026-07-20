@@ -53,11 +53,12 @@ export const useGamification = () => {
       if (allMissionsError) throw allMissionsError;
 
       const completedMissionIds = new Set(
-        (completedMissions || []).map((m: UserMission) => m.mission_id)
+        (completedMissions || []).map((mission) => mission.mission_id)
       );
 
       const availableMissions = (allMissions || []).filter(
-        (m: Mission) => !completedMissionIds.has(m.id)
+        (mission) =>
+          mission.mission_type !== 'one_time' || !completedMissionIds.has(mission.id)
       );
 
       return {
@@ -118,13 +119,12 @@ export const useGamification = () => {
       }
 
       const { data, error } = await supabase.rpc('complete_mission', {
-        p_user_id: user.id,
         p_mission_id: missionId,
       });
 
       if (error) throw error;
 
-      return data as MissionCompletionResult;
+      return data as unknown as MissionCompletionResult;
     },
     onSuccess: () => {
       // プロフィールを再取得
@@ -149,33 +149,7 @@ export const useGamification = () => {
 
     // 各ミッションをチェックして達成可能なものを完了
     for (const mission of missions) {
-      // デイリー/ウィークリーミッションの場合は、既に今日/今週達成済みかチェック
-      if (mission.mission_type === 'daily' || mission.mission_type === 'weekly') {
-        const { data: recentCompletions, error: completionError } = await supabase
-          .from('user_missions')
-          .select('completed_at')
-          .eq('user_id', user.id)
-          .eq('mission_id', mission.id)
-          .order('completed_at', { ascending: false })
-          .limit(1);
-
-        // エラーが発生した場合や結果がない場合はスキップ
-        if (completionError || !recentCompletions || recentCompletions.length === 0) {
-          // エラーは無視して続行（初回達成の可能性があるため）
-        } else {
-          const recentCompletion = recentCompletions[0];
-          const completedAt = new Date(recentCompletion.completed_at);
-          const now = new Date();
-          const daysDiff = Math.floor(
-            (now.getTime() - completedAt.getTime()) / (1000 * 60 * 60 * 24)
-          );
-
-          if (mission.mission_type === 'daily' && daysDiff < 1) continue;
-          if (mission.mission_type === 'weekly' && daysDiff < 7) continue;
-        }
-      }
-
-      // ミッションを達成
+      // 達成条件と日次・週次の冪等性はサーバーで検証する。
       try {
         await completeMissionMutation.mutateAsync(mission.id);
       } catch (err) {

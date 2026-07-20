@@ -4,7 +4,9 @@ import { useAuthStore } from '../../../../stores/authStore';
 import supabase from '../../../../utils/supabase';
 import { useGamification } from '../../../../hooks/useGamification';
 import { awardQuizSessionXp } from '../../../../utils/awardQuizSessionXp';
+import { runMasteryLoopAfterSession } from '../../../../utils/runMasteryLoopAfterSession';
 import type { ExamLevelFilter } from '../../examLevelFilter';
+import type { Json } from '../../../../types/database.types';
 
 interface CPLQuestion {
   id: string;
@@ -103,15 +105,29 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
         }
 
         // 選択肢をパース
-        const parsedQuestions: CPLQuestion[] = selectedQuestions.map(q => ({
-          ...q,
-          options: Array.isArray(q.options)
-            ? q.options.map((opt: string | { text: string } | { number: number; text: string }, idx: number) => ({
-                number: idx + 1,
-                text: typeof opt === 'string' ? opt : ('text' in opt ? opt.text : String(opt))
-              }))
-            : []
-        }));
+        const parsedQuestions: CPLQuestion[] = selectedQuestions
+          .filter((q): q is typeof q & { correct_answer: number } => q.correct_answer != null)
+          .map((q) => ({
+            id: q.id,
+            main_subject: q.main_subject ?? '',
+            sub_subject: q.sub_subject ?? '',
+            question_text: q.question_text ?? '',
+            correct_answer: q.correct_answer,
+            explanation: q.explanation ?? undefined,
+            difficulty_level: q.difficulty_level ?? undefined,
+            importance_score: q.importance_score ?? undefined,
+            options: Array.isArray(q.options)
+              ? q.options.map((opt: unknown, idx: number) => ({
+                  number: idx + 1,
+                  text:
+                    typeof opt === 'string'
+                      ? opt
+                      : typeof opt === 'object' && opt !== null && 'text' in opt
+                        ? String((opt as { text?: string }).text ?? '')
+                        : String(opt),
+                }))
+              : [],
+          }));
 
         setQuestions(parsedQuestions);
         setTimeRemaining(settings.timeLimitMinutes * 60);
@@ -227,7 +243,12 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
 
       const { data, error } = await supabase
         .from('quiz_sessions')
-        .insert(examResult)
+        .insert({
+          ...examResult,
+          answers: userAnswers as unknown as Json,
+          settings: settings as unknown as Json,
+          subject_breakdown: subjectBreakdown as unknown as Json,
+        })
         .select()
         .single();
 
@@ -253,6 +274,15 @@ const CPLExamSession: React.FC<CPLExamSessionProps> = ({ settings, onComplete, o
           });
         } catch (xpErr) {
           console.warn('CPL exam XP award skipped:', xpErr);
+        }
+
+        try {
+          await runMasteryLoopAfterSession(data.id, {
+            userId: user.id,
+            queryClient,
+          });
+        } catch (masteryError) {
+          console.warn('CPL exam mastery loop skipped:', masteryError);
         }
       }
 

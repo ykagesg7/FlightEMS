@@ -11,7 +11,6 @@ import { syncStreakToUserLearningProfile } from '../utils/streak';
 import { supabase } from '../utils/supabase';
 import { useAuth } from './useAuth';
 import { useGamification } from './useGamification';
-import { usePPLRanks } from './usePPLRanks';
 
 // 記事の進捗情報
 export interface ArticleProgress {
@@ -237,8 +236,8 @@ export function calculateLearningStats(
 export const useArticleProgress = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { completeMissionByAction, profile, rankProgress: gamificationRankProgress } = useGamification();
-  const { checkRanksForContent, refreshRanks } = usePPLRanks();
+  const { completeMissionByAction, profile } = useGamification();
+  const gamificationRankProgress = 0;
   const [userProgress, setUserProgress] = useState<Record<string, ArticleProgress>>({});
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -320,7 +319,9 @@ export const useArticleProgress = () => {
                 console.warn('プロファイルデータ取得エラー（無視して続行）:', profileResult.error);
               }
             } else if (profileResult.data) {
-              userProfile = profileResult.data;
+              userProfile = {
+                current_streak_days: profileResult.data.current_streak_days ?? undefined,
+              };
             }
           } catch (profileError) {
             // 予期しないエラーも無視
@@ -416,23 +417,6 @@ export const useArticleProgress = () => {
           onConflict: 'user_id,content_id'
         });
 
-      // 記事が完了した場合、PPLランクをチェック
-      if (newProgress.completed && (!existing || !existing.completed)) {
-        // データベースのトリガーが自動的にランクをチェックするが、
-        // フロントエンドでもランクを再取得して通知を表示できるようにする
-        checkRanksForContent(articleSlug).then((newRanks) => {
-          refreshRanks();
-          // 新しいランクが取得された場合、通知を表示（グローバル通知システムが設定されている場合）
-          if (newRanks && newRanks.length > 0) {
-            // 通知はグローバル通知システムで処理される（将来実装）
-            // 現時点では、コンソールログで確認可能
-            console.log('PPLランク取得:', newRanks);
-          }
-        }).catch(err => {
-          console.warn('PPLランクチェックエラー（無視して続行）:', err);
-        });
-      }
-
       if (upsertError) {
         // ネットワークエラー（ERR_QUIC_PROTOCOL_ERROR、ERR_FAILEDなど）は無視
         // ページ離脱時やネットワーク不安定時に発生する可能性がある
@@ -520,7 +504,9 @@ export const useArticleProgress = () => {
               // エラーログは出力しない（コンソールを汚さない）
             }
           } else if (profileResult.data) {
-            userLearningProfile = profileResult.data;
+            userLearningProfile = {
+              current_streak_days: profileResult.data.current_streak_days ?? undefined,
+            };
           }
         } catch {
           // ネットワークエラーなどは無視（エラーログは出力しない）
@@ -561,7 +547,7 @@ export const useArticleProgress = () => {
       console.warn('進捗更新エラー（無視して続行）:', err);
       // setErrorは呼ばない（ネットワークエラーは正常）
     }
-  }, [user, userProgress, calculateStats, completeMissionByAction, articleIndex, articleIndexByFilename, checkRanksForContent, refreshRanks, profile, gamificationRankProgress, queryClient]);
+  }, [user, userProgress, calculateStats, completeMissionByAction, articleIndex, articleIndexByFilename, profile, queryClient]);
 
   // 記事をブックマーク
   const toggleBookmark = useCallback(async (articleSlug: string) => {
@@ -630,7 +616,9 @@ export const useArticleProgress = () => {
             console.warn('プロファイルデータ取得エラー（無視して続行）:', profileResult.error);
           }
         } else if (profileResult.data) {
-          userProfile = profileResult.data;
+          userProfile = {
+            current_streak_days: profileResult.data.current_streak_days ?? undefined,
+          };
         }
       } catch (profileError) {
         console.warn('プロファイルデータ取得エラー（無視して続行）:', profileError);

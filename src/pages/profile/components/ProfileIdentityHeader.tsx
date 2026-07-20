@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Profile } from '../../../stores/authStore';
 import { Typography } from '../../../components/ui/Typography';
-import { RANK_INFO } from '../../../types/gamification';
 
 interface ProfileIdentityHeaderProps {
   profile: Profile | null;
@@ -11,9 +10,6 @@ interface ProfileIdentityHeaderProps {
 
 export const ProfileIdentityHeader: React.FC<ProfileIdentityHeaderProps> = ({ profile, email }) => {
   const displayName = profile?.username?.trim() || email?.split('@')[0] || 'Learner';
-  const rankLabel = profile?.rank && profile.rank in RANK_INFO
-    ? RANK_INFO[profile.rank as keyof typeof RANK_INFO].displayName
-    : null;
 
   return (
     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -32,9 +28,7 @@ export const ProfileIdentityHeader: React.FC<ProfileIdentityHeaderProps> = ({ pr
             {displayName}
           </Typography>
           <Typography variant="body-sm" color="muted">
-            {[rankLabel, profile?.xp_points != null ? `XP ${profile.xp_points}` : null]
-              .filter(Boolean)
-              .join(' · ') || email}
+            {profile?.xp_points != null ? `学習活動 XP ${profile.xp_points}` : email}
           </Typography>
         </div>
       </div>
@@ -42,7 +36,7 @@ export const ProfileIdentityHeader: React.FC<ProfileIdentityHeaderProps> = ({ pr
         to="/mission"
         className="text-sm font-medium text-brand-primary underline hover:no-underline"
       >
-        PPL ランク・ミッションを見る
+        学習ジャーニー・ミッションを見る
       </Link>
     </div>
   );

@@ -75,7 +75,7 @@ export const generateArticleStructuredData = (
     },
     datePublished: content.created_at || new Date().toISOString(),
     dateModified: content.updated_at || new Date().toISOString(),
-    image: meta.image || `${baseUrl}/images/articles/${content.id}.jpg`,
+    image: meta.heroImage || `${baseUrl}/images/articles/${content.id}.jpg`,
     url: articleUrl,
     mainEntityOfPage: {
       '@type': 'WebPage',
@@ -83,7 +83,7 @@ export const generateArticleStructuredData = (
     },
     keywords: meta.tags,
     articleSection: content.category,
-    wordCount: meta.wordCount || 1000,
+    wordCount: meta.readingTime ? meta.readingTime * 200 : 1000,
     timeRequired: `PT${readingTime}M`,
     inLanguage: 'ja',
     isPartOf: {

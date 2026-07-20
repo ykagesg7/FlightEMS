@@ -106,10 +106,10 @@ export const RelatedTestsBlock: React.FC<RelatedTestsBlockProps> = ({ contentId 
         <ClipboardList className="h-8 w-8 text-brand-primary" aria-hidden />
         <div>
           <h2 id="related-tests-heading" className="text-lg font-semibold text-[var(--text-primary)]">
-            関連テスト
+            理解チェック
           </h2>
           <p className="text-sm text-[var(--text-muted)]">
-            この記事に対応する問題プールで練習モードを開始します（科目・件数はテスト画面で変更できます）。
+            記事読了で 5 XP。対応問題を3問以上解き、80%以上正解すると理解確認の 10 XP を獲得できます。
           </p>
         </div>
       </div>

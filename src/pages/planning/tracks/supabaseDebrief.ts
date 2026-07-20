@@ -1,5 +1,6 @@
 import { supabase } from '../../../utils/supabase';
 import { toPlanDocument } from '../../../utils/planDocument';
+import type { Json } from '../../../types/database.types';
 import type { FlightPlan } from '../../../types';
 import type { FlightTrack } from './types';
 
@@ -41,7 +42,7 @@ export async function saveDebriefSessionToSupabase(args: SaveDebriefSessionArgs)
       user_id: args.userId,
       title: args.title,
       description: args.description ?? null,
-      plan_document: toPlanDocument(args.flightPlan),
+      plan_document: toPlanDocument(args.flightPlan) as unknown as Json,
     })
     .select('id')
     .single<InsertedSession>();

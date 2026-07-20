@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, Typography } from '../../../components/ui';
 import { PublicUserBadgesPanel } from '../../../components/learning/PublicUserBadgesPanel';
 import { useAuthStore } from '../../../stores/authStore';
-import { RANK_INFO } from '../../../types/gamification';
 import type { PublicLeaderboardEntry } from '../../../types/dashboard';
 
 const PROFILE_LEADERBOARD_HREF = '/profile?tab=leaderboard';
@@ -13,15 +12,9 @@ interface Props {
   borderColor: string;
 }
 
-function rankLabel(tier: PublicLeaderboardEntry['rankTier']): string {
-  if (!tier || !(tier in RANK_INFO)) {
-    return '—';
-  }
-  return RANK_INFO[tier as keyof typeof RANK_INFO].displayName;
-}
-
 /**
- * 任意参加の XP ランキング（オプトイン利用者のみ表示。メール等は含まない）
+ * 任意参加の XP 参考ランキング（オプトイン利用者のみ表示）。
+ * 学習段階は個人の習熟証拠で決まり、この順位では変化しない。
  */
 export const PublicLeaderboardSection: React.FC<Props> = ({ entries, borderColor }) => {
   const profile = useAuthStore((s) => s.profile);
@@ -34,10 +27,10 @@ export const PublicLeaderboardSection: React.FC<Props> = ({ entries, borderColor
       <Card variant="hud" padding="md" className={`${borderColor} mb-8`}>
         <CardContent>
           <Typography variant="h4" color="hud" className="mb-2">
-            学習者ランキング（任意参加）
+            学習活動XP（任意参加・参考）
           </Typography>
           <Typography variant="body-sm" color="muted" className="mb-4 leading-relaxed">
-            プロフィールの「ランキング」タブで参加に同意した方のみが表示されます。表示名をクリックすると週次バッジを閲覧できます（opt-in 時）。
+            XPは学習行動量の参考値で、学習段階や資格を決めません。参加に同意した方だけを表示し、表示名から週次バッジを確認できます。
           </Typography>
 
           {showJoinRankingButton ? (
@@ -72,7 +65,6 @@ export const PublicLeaderboardSection: React.FC<Props> = ({ entries, borderColor
                     <th className="px-3 py-2 font-medium">#</th>
                     <th className="px-3 py-2 font-medium">表示名</th>
                     <th className="px-3 py-2 font-medium">XP</th>
-                    <th className="px-3 py-2 font-medium">ランク</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -83,16 +75,19 @@ export const PublicLeaderboardSection: React.FC<Props> = ({ entries, borderColor
                     >
                       <td className="px-3 py-2 text-brand-primary font-mono">{row.position}</td>
                       <td className="px-3 py-2">
-                        <button
-                          type="button"
-                          className="text-left underline hover:text-brand-primary"
-                          onClick={() => setBadgeUser({ id: row.userId, name: row.displayName })}
-                        >
-                          {row.displayName}
-                        </button>
+                        {/^[0-9a-f-]{36}$/i.test(row.userId) ? (
+                          <button
+                            type="button"
+                            className="text-left underline hover:text-brand-primary"
+                            onClick={() => setBadgeUser({ id: row.userId, name: row.displayName })}
+                          >
+                            {row.displayName}
+                          </button>
+                        ) : (
+                          <span>{row.displayName}</span>
+                        )}
                       </td>
                       <td className="px-3 py-2 font-mono">{row.xpPoints}</td>
-                      <td className="px-3 py-2 text-[color:var(--text-muted)]">{rankLabel(row.rankTier)}</td>
                     </tr>
                   ))}
                 </tbody>

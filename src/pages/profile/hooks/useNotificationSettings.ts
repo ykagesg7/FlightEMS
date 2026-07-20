@@ -49,6 +49,34 @@ export function notificationTimeForInput(value: string | null | undefined): stri
   return normalized.slice(0, 5);
 }
 
+type DbNotificationRow = {
+  id: string;
+  user_id: string;
+  learning_reminder_enabled: boolean | null;
+  new_content_enabled: boolean | null;
+  announcement_enabled: boolean | null;
+  mission_update_enabled: boolean | null;
+  email_notifications_enabled: boolean | null;
+  notification_time: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
+function normalizeNotificationRow(data: DbNotificationRow): Partial<NotificationSettings> {
+  return {
+    id: data.id,
+    user_id: data.user_id,
+    learning_reminder_enabled: data.learning_reminder_enabled ?? DEFAULT_SETTINGS.learning_reminder_enabled,
+    new_content_enabled: data.new_content_enabled ?? DEFAULT_SETTINGS.new_content_enabled,
+    announcement_enabled: data.announcement_enabled ?? DEFAULT_SETTINGS.announcement_enabled,
+    mission_update_enabled: data.mission_update_enabled ?? DEFAULT_SETTINGS.mission_update_enabled,
+    email_notifications_enabled: data.email_notifications_enabled ?? DEFAULT_SETTINGS.email_notifications_enabled,
+    notification_time: normalizeNotificationTime(data.notification_time),
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  };
+}
+
 export function serializeNotificationSettings(
   settings: Partial<NotificationSettings>,
 ): string {
@@ -107,10 +135,7 @@ export function useNotificationSettings(
           console.error('Failed to fetch notification settings:', error);
           lastPersistedSnapshotRef.current = serializeNotificationSettings(DEFAULT_SETTINGS);
         } else if (data) {
-          const normalized = {
-            ...data,
-            notification_time: normalizeNotificationTime(data.notification_time),
-          };
+          const normalized = normalizeNotificationRow(data);
           setSettings(normalized);
           lastPersistedSnapshotRef.current = serializeNotificationSettings(normalized);
         } else {

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../../utils/supabase';
-// import EnhancedMistakeReview from './EnhancedMistakeReview'; // TODO: コンポーネント作成時に有効化
-import { QuizAnswer } from '../../types';
+import { supabase } from '../../../../utils/supabase';
 import ReviewContentLink from '../../../articles/components/learning/ReviewContentLink';
 
 interface CPLExamResultsProps {
@@ -18,13 +16,20 @@ interface CPLExamSettings {
   reviewMode: boolean;
 }
 
+interface CplExamAnswer {
+  questionId: string;
+  selectedAnswer: number;
+  isCorrect: boolean;
+  timeSpent: number;
+}
+
 interface ExamSession {
   id: string;
   questions_attempted: number;
   questions_correct: number;
   total_time_spent: number;
   settings: CPLExamSettings;
-  answers: QuizAnswer[];
+  answers: CplExamAnswer[];
   completed_at: string;
 }
 
@@ -41,10 +46,37 @@ interface CplQuestionMetaRow {
   sub_subject: string;
 }
 
+function isCplExamAnswer(value: unknown): value is CplExamAnswer {
+  if (!value || typeof value !== 'object') return false;
+  const row = value as Record<string, unknown>;
+  return typeof row.questionId === 'string'
+    && typeof row.selectedAnswer === 'number'
+    && typeof row.isCorrect === 'boolean'
+    && typeof row.timeSpent === 'number';
+}
+
+function parseCplExamAnswers(value: unknown): CplExamAnswer[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(isCplExamAnswer);
+}
+
+function parseExamSession(row: Record<string, unknown>): ExamSession {
+  const settings = row.settings;
+  return {
+    id: String(row.id ?? ''),
+    questions_attempted: Number(row.questions_attempted ?? 0),
+    questions_correct: Number(row.questions_correct ?? 0),
+    total_time_spent: Number(row.total_time_spent ?? 0),
+    settings: (settings && typeof settings === 'object' ? settings : {}) as CPLExamSettings,
+    answers: parseCplExamAnswers(row.answers),
+    completed_at: String(row.completed_at ?? ''),
+  };
+}
+
 /** 集計キー `${main} - ${sub}` に一致する設問 ID のみ（メタ無し・0件時は全設問にフォールバック） */
 function questionIdsForSubjectStat(
   stat: SubjectStats,
-  answers: QuizAnswer[],
+  answers: CplExamAnswer[],
   meta: CplQuestionMetaRow[]
 ): string[] {
   const allIds = answers.map((a) => a.questionId);
@@ -86,12 +118,13 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
           .single();
 
         if (sessionError) throw sessionError;
-        setSession(sessionData);
+        const parsedSession = parseExamSession(sessionData as Record<string, unknown>);
+        setSession(parsedSession);
 
         // 科目別統計を計算
-        if (sessionData.answers && Array.isArray(sessionData.answers)) {
+        if (parsedSession.answers.length > 0) {
           // 問題IDから科目情報を取得
-          const questionIds = sessionData.answers.map((a: QuizAnswer) => a.questionId);
+          const questionIds = parsedSession.answers.map((a) => a.questionId);
 
           if (questionIds.length > 0) {
             const { data: questionsData, error: questionsError } = await supabase
@@ -106,8 +139,8 @@ const CPLExamResults: React.FC<CPLExamResultsProps> = ({
             // 科目別統計を集計
             const statsMap: { [key: string]: { total: number; correct: number } } = {};
 
-            sessionData.answers.forEach((answer: QuizAnswer) => {
-              const question = questionsData.find((q: { id: string; main_subject: string; sub_subject: string }) => q.id === answer.questionId);
+            parsedSession.answers.forEach((answer) => {
+              const question = questionsData?.find((q) => q.id === answer.questionId);
               if (question) {
                 const subjectKey = `${question.main_subject} - ${question.sub_subject}`;
                 if (!statsMap[subjectKey]) {

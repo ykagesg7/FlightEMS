@@ -38,14 +38,14 @@ describe('awardArticleReadXp utils', () => {
     ).toBe(meta);
   });
 
-  it('computeArticleReadXp applies first-read bonus from config', () => {
+  it('computeArticleReadXp returns the fixed completion reward', () => {
     const meta: ArticleMeta = { title: 't', slug: '/articles/x', tags: ['PPL'] };
-    expect(computeArticleReadXp('PPL-1-1-1_TemperatureBasics', meta, false)).toBe(10);
+    expect(computeArticleReadXp('PPL-1-1-1_TemperatureBasics', meta, false)).toBe(5);
   });
 
   it('awardArticleReadXp calls Supabase RPC on success', async () => {
     vi.mocked(supabase.rpc).mockResolvedValue({
-      data: { success: true, xp_awarded: 10 },
+      data: { success: true, xp_awarded: 5 },
       error: null,
     } as never);
 
@@ -53,11 +53,9 @@ describe('awardArticleReadXp utils', () => {
     const result = await awardArticleReadXp('user-1', 'PPL-1-1-1_TemperatureBasics', meta, false);
 
     expect(result.success).toBe(true);
-    expect(result.xpAwarded).toBe(10);
-    expect(supabase.rpc).toHaveBeenCalledWith('award_article_xp', {
-      p_user_id: 'user-1',
+    expect(result.xpAwarded).toBe(5);
+    expect(supabase.rpc).toHaveBeenCalledWith('award_article_read_xp', {
       p_article_slug: 'PPL-1-1-1_TemperatureBasics',
-      p_xp_amount: 10,
     });
   });
 });

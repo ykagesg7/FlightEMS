@@ -8,7 +8,7 @@ import {
 } from '../../../../types/index';
 import { calculateDistance, decimalToDMS } from '../../../../utils';
 import { calculateMagneticBearing } from '../../../../utils/bearing';
-import { planningRouteSelectStyles } from '../../../../utils/reactSelectStyles';
+import { asSelectStyles } from '../../../../utils/reactSelectStyles';
 import { buildWaypointFromNavaid } from '../../utils/buildWaypointFromNavaid';
 import WaypointForm, { WaypointCoordinateFormHandle } from './WaypointForm';
 
@@ -208,7 +208,7 @@ const WaypointAddPanel: React.FC<WaypointAddPanelProps> = ({
               onChange={handleNavaidChange}
               placeholder="NAVAID を選択"
               isClearable
-              styles={planningRouteSelectStyles}
+              styles={asSelectStyles<NavaidOption>()}
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -249,7 +249,7 @@ const WaypointAddPanel: React.FC<WaypointAddPanelProps> = ({
               onChange={handleWaypointChange}
               placeholder="Waypoint を選択"
               isClearable
-              styles={planningRouteSelectStyles}
+              styles={asSelectStyles<WaypointOption>()}
             />
           </div>
           {selectedWaypoint && (

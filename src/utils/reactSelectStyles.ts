@@ -1,4 +1,13 @@
-import { ControlProps, InputProps, MenuProps, OptionProps, PlaceholderProps, SingleValueProps, StylesConfig } from 'react-select';
+import {
+  ControlProps,
+  CSSObjectWithLabel,
+  InputProps,
+  MenuProps,
+  OptionProps,
+  PlaceholderProps,
+  SingleValueProps,
+  StylesConfig,
+} from 'react-select';
 
 // オプション型の定義
 export interface SelectOption {
@@ -8,7 +17,7 @@ export interface SelectOption {
 }
 
 export const reactSelectStyles: StylesConfig<SelectOption, false> = {
-  control: (provided: React.CSSProperties, _state: ControlProps<SelectOption, false>) => ({
+  control: (provided: CSSObjectWithLabel, _state: ControlProps<SelectOption, false>) => ({
     ...provided,
     borderRadius: '0.5rem',
     borderColor: 'var(--hud-primary)',
@@ -19,31 +28,36 @@ export const reactSelectStyles: StylesConfig<SelectOption, false> = {
       borderColor: 'var(--hud-primary)',
     },
   }),
-  menu: (provided: React.CSSProperties, _state: MenuProps<SelectOption, false>) => ({
+  menu: (provided: CSSObjectWithLabel, _state: MenuProps<SelectOption, false>) => ({
     ...provided,
     backgroundColor: 'rgba(0,0,0,0.85)',
     border: '1px solid var(--hud-primary)',
     color: 'var(--text-primary)'
   }),
-  option: (provided: React.CSSProperties, state: OptionProps<SelectOption, false>) => ({
+  option: (provided: CSSObjectWithLabel, state: OptionProps<SelectOption, false>) => ({
     ...provided,
     backgroundColor: state.isFocused ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.4)',
     color: 'var(--text-primary)',
     borderBottom: '1px solid rgba(255,255,255,0.06)'
   }),
-  placeholder: (provided: React.CSSProperties, _state: PlaceholderProps<SelectOption, false>) => ({
+  placeholder: (provided: CSSObjectWithLabel, _state: PlaceholderProps<SelectOption, false>) => ({
     ...provided,
     color: 'var(--text-primary)',
   }),
-  input: (provided: React.CSSProperties, _state: InputProps<SelectOption, false>) => ({
+  input: (provided: CSSObjectWithLabel, _state: InputProps<SelectOption, false>) => ({
     ...provided,
     color: 'var(--text-primary)',
   }),
-  singleValue: (provided: React.CSSProperties, _state: SingleValueProps<SelectOption, false>) => ({
+  singleValue: (provided: CSSObjectWithLabel, _state: SingleValueProps<SelectOption, false>) => ({
     ...provided,
     color: 'var(--text-primary)',
   }),
 };
+
+/** react-select StylesConfig を任意の Option 型へ安全に適用 */
+export function asSelectStyles<T extends SelectOption>(): StylesConfig<T, false> {
+  return reactSelectStyles as unknown as StylesConfig<T, false>;
+}
 
 /** /planning 経路フォーム用（ダークパネル・コンパクト） */
 export const planningRouteSelectStyles: StylesConfig<SelectOption, false> = {

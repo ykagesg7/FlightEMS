@@ -10,7 +10,7 @@ interface SupabaseLikeResult {
 function chainResult(result: SupabaseLikeResult) {
   const chain: Record<string, unknown> = {};
   const loop = (): typeof chain => chain;
-  for (const m of ['select', 'eq', 'lte', 'order', 'in', 'limit'] as const) {
+  for (const m of ['select', 'eq', 'lte', 'lt', 'order', 'in', 'limit'] as const) {
     chain[m] = loop;
   }
   chain.then = (onFulfilled: (v: SupabaseLikeResult) => unknown, onRejected?: (e: unknown) => unknown) =>
@@ -38,7 +38,12 @@ describe('taskGenerator.generateDailyTasks', () => {
   });
 
   it('returns empty array when weakness query has error', async () => {
-    mockFrom.mockImplementation(() => chainResult({ data: null, error: { message: 'fail' } }));
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'user_weak_areas') {
+        return chainResult({ data: null, error: { message: 'fail' } });
+      }
+      return chainResult({ data: null, error: { message: 'fail' } });
+    });
     await expect(generateDailyTasks('user-1')).resolves.toEqual([]);
   });
 
@@ -51,8 +56,35 @@ describe('taskGenerator.generateDailyTasks', () => {
     spy.mockRestore();
   });
 
-  it('returns weakness tasks for subjects at or below 60% with at least 5 attempts', async () => {
+  it('prefers user_weak_areas when available', async () => {
     mockFrom.mockImplementation((table: string) => {
+      if (table === 'user_weak_areas') {
+        return chainResult({
+          data: [
+            {
+              subject_category: '航空工学',
+              accuracy_rate: 40,
+              attempt_count: 12,
+              priority_level: 1,
+            },
+          ],
+          error: null,
+        });
+      }
+      return chainResult({ data: [], error: null });
+    });
+
+    const tasks = await generateDailyTasks('user-1');
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].type).toBe('weakness');
+    expect(tasks[0].title).toContain('航空工学');
+  });
+
+  it('falls back to user_test_results when weak areas are empty', async () => {
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'user_weak_areas') {
+        return chainResult({ data: [], error: null });
+      }
       if (table === 'user_test_results') {
         const rows: { subject_category: string; is_correct: boolean }[] = [];
         const weak = '航空工学';
@@ -73,6 +105,9 @@ describe('taskGenerator.generateDailyTasks', () => {
 
   it('merges weakness and review and returns at most 3 sorted by descending priority', async () => {
     mockFrom.mockImplementation((table: string) => {
+      if (table === 'user_weak_areas') {
+        return chainResult({ data: [], error: null });
+      }
       if (table === 'user_test_results') {
         const rows: { subject_category: string; is_correct: boolean }[] = [];
         const weak = '法规';
@@ -94,10 +129,10 @@ describe('taskGenerator.generateDailyTasks', () => {
 
     const tasks = await generateDailyTasks('user-1');
     expect(tasks.length).toBeLessThanOrEqual(3);
-    const types = tasks.map(t => t.type);
+    const types = tasks.map((t) => t.type);
     expect(types).toContain('weakness');
     expect(types).toContain('review');
-    const priorities = tasks.map(t => t.priority);
+    const priorities = tasks.map((t) => t.priority);
     expect(priorities).toEqual([...priorities].sort((a, b) => b - a));
   });
 });

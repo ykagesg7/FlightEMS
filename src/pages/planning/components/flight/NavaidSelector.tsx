@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Select, { SingleValue } from 'react-select';
 import { NavaidOption, Waypoint } from '../../../../types/index';
-import { planningRouteSelectStyles } from '../../../../utils/reactSelectStyles';
+import { asSelectStyles } from '../../../../utils/reactSelectStyles';
 import { buildWaypointFromNavaid } from '../../utils/buildWaypointFromNavaid';
 
 interface NavaidSelectorProps {
@@ -47,7 +47,7 @@ const NavaidSelector: React.FC<NavaidSelectorProps> = ({
         onChange={handleNavaidChange}
         placeholder="NAVAID を選択"
         isClearable
-        styles={planningRouteSelectStyles}
+        styles={asSelectStyles<NavaidOption>()}
       />
 
       <div className="mt-3 space-y-3">

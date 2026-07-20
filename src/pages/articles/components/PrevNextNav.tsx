@@ -4,7 +4,6 @@ import { filterPublishedArticleContents } from '../../../constants/articleHubCat
 import { useLearningProgress } from '../../../hooks/useLearningProgress';
 
 function prefetchMDX(id: string) {
-  // @ts-expect-error - best-effort prefetch; Vite will ignore unknown
   import(`../../content/articles/${id}.mdx`)
     .catch(() => import(`../../content/lessons/${id}.mdx`))
     .catch(() => undefined);

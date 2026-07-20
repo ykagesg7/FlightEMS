@@ -45,6 +45,7 @@ export async function buildDailyStudyStats(userId: string, days: number = 90): P
 
   // セッションデータを集計
   sessions?.forEach(session => {
+    if (!session.created_at) return;
     const sessionDate = new Date(session.created_at);
     const dateStr = formatDate(sessionDate);
     const current = dailyMap.get(dateStr) || { minutes: 0, sessionCount: 0 };

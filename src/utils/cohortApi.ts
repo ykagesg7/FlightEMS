@@ -1,5 +1,7 @@
 import type {
   CohortAnonymousStats,
+  CohortFormationProgress,
+  LearningJourney,
   LicenseTarget,
   PublicUserBadge,
   UserCohortProfile,
@@ -26,7 +28,7 @@ export async function upsertUserCohort(params: {
 }): Promise<{ data: Record<string, unknown> | null; error: Error | null }> {
   const { data, error } = await supabase.rpc('upsert_user_cohort', {
     p_license: params.license ?? 'CPL',
-    p_exam_ym: params.examYm ?? null,
+    p_exam_ym: params.examYm ?? undefined,
     p_undecided: params.undecided ?? false,
   });
 
@@ -47,7 +49,7 @@ export async function fetchUserCohortProfile(): Promise<{
   if (!data || typeof data !== 'object') {
     return { profile: null, error: null };
   }
-  return { profile: data as UserCohortProfile, error: null };
+  return { profile: data as unknown as UserCohortProfile, error: null };
 }
 
 export async function fetchCohortAnonymousStats(cohortKey?: string): Promise<{
@@ -55,20 +57,48 @@ export async function fetchCohortAnonymousStats(cohortKey?: string): Promise<{
   error: Error | null;
 }> {
   const { data, error } = await supabase.rpc('get_cohort_anonymous_stats', {
-    p_cohort_key: cohortKey ?? null,
+    p_cohort_key: cohortKey,
   });
   if (error) {
     return { stats: null, error: new Error(error.message) };
   }
-  return { stats: data as CohortAnonymousStats, error: null };
+  return { stats: data as unknown as CohortAnonymousStats, error: null };
 }
 
-export async function markWrittenExamComplete(): Promise<{ error: Error | null }> {
-  const { error } = await supabase.rpc('mark_written_exam_complete');
+export async function markWrittenExamComplete(): Promise<{
+  data: Record<string, unknown> | null;
+  error: Error | null;
+}> {
+  const { data, error } = await supabase.rpc('mark_written_exam_complete');
   if (error) {
-    return { error: new Error(error.message) };
+    return { data: null, error: new Error(error.message) };
   }
-  return { error: null };
+  return { data: data as Record<string, unknown>, error: null };
+}
+
+export async function fetchLearningJourney(): Promise<{
+  journey: LearningJourney | null;
+  error: Error | null;
+}> {
+  const { data, error } = await supabase.rpc('get_learning_journey');
+  if (error) {
+    return { journey: null, error: new Error(error.message) };
+  }
+  return { journey: data as unknown as LearningJourney, error: null };
+}
+
+export async function fetchCohortFormationProgress(): Promise<{
+  progress: CohortFormationProgress | null;
+  error: Error | null;
+}> {
+  const { data, error } = await supabase.rpc('get_cohort_formation_progress');
+  if (error) {
+    return { progress: null, error: new Error(error.message) };
+  }
+  return {
+    progress: data as unknown as CohortFormationProgress,
+    error: null,
+  };
 }
 
 export async function fetchPublicUserBadges(userId: string): Promise<{
@@ -81,7 +111,7 @@ export async function fetchPublicUserBadges(userId: string): Promise<{
   if (error) {
     return { badges: [], error: new Error(error.message) };
   }
-  return { badges: (data ?? []) as PublicUserBadge[], error: null };
+  return { badges: (data ?? []) as unknown as PublicUserBadge[], error: null };
 }
 
 export async function fetchUnreadInAppNotifications(userId: string) {

@@ -92,7 +92,7 @@ export const XpConfigPage: React.FC = () => {
   const resetConfig = useCallback(() => {
     if (!window.confirm('設定をリポジトリのデフォルト値に戻しますか？')) return;
     localStorage.removeItem(XP_CONFIG_STORAGE_KEY);
-    setConfig(articleXpRewardsConfig as StoredXpConfig);
+    setConfig(defaultArticleConfig as StoredXpConfig);
     setSuccess('デフォルト設定に戻しました');
     setTimeout(() => setSuccess(null), 4000);
   }, []);

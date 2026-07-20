@@ -1,4 +1,5 @@
-import { createBrowserClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../types/database.types';
 
 // Supabaseの設定（環境変数から取得）
@@ -14,16 +15,15 @@ if (import.meta.env.MODE !== 'test' && (!supabaseUrl || !supabaseKey)) {
 const isDevelopment = import.meta.env.MODE === 'development';
 
 // シングルトンパターンによるクライアント管理（@supabase/supabase-js の 2 本目を作らず GoTrue の多重インスタンス警告を避ける）
-let browserSupabaseClient: ReturnType<typeof createBrowserClient<Database>> | undefined;
+let browserSupabaseClient:
+  | SupabaseClient<Database, Database['__InternalSupabase'], 'public'>
+  | undefined;
 
-// ログ制御フラグ
-const _browserClientLogged = false;
-
-// ブラウザ環境用のSupabaseクライアント（@supabase/ssrパッケージ使用）
+// ブラウザ環境用のSupabaseクライアント
 export const createBrowserSupabaseClient = () => {
   if (!browserSupabaseClient) {
     // デバッグログを削除
-    browserSupabaseClient = createBrowserClient<Database>(supabaseUrl, supabaseKey, {
+    browserSupabaseClient = createClient<Database>(supabaseUrl, supabaseKey, {
       auth: {
         autoRefreshToken: true,
         persistSession: true,

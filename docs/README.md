@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年7月14日（Planning チャンク v4 本番・試験明け UX 検討アイテム追記）
-**バージョン**: Documentation Index v4.61
+**最終更新**: 2026年7月20日（ゲーミフィケーション第1期実装）
+**バージョン**: Documentation Index v4.62
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -43,6 +43,16 @@
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
 - **2026-07-14（チャンク v4 本番・試験明け UX 検討）**: Planning チャンク再発対策を本番投入（SW `v4`・MapTab 分割・`vendor-leaflet`）。**科目完走 UX / 流入回復（Action2/3）は試験明けに検討深化**（試験週は UI 凍結）— [July_2026_Implementation_Plan §7](July_2026_Implementation_Plan.md)、[01 将来保留](01_Current_Status_and_Roadmap.md)、[July Content Sprint §6](July_2026_Content_Sprint.md)。
+- **2026-07-20（ゲーミフィケーション第2期・習熟ループ）**: クイズ後 SRS 書き込み、
+  遅延再テスト/弱点改善 XP、協力型編隊クエスト。SQL
+  [`20260720_gamification_phase2_mastery_loop.sql`](../scripts/database/20260720_gamification_phase2_mastery_loop.sql)。
+  技術正本: [02](02_System_Spec.md)。**本番適用済み**。
+- **2026-07-20（ゲーミフィケーション第1期）**: 学科試験完了までの学習ジャーニー、
+  記事読了5 XP + 理解チェック10 XP、週次達成/MVP/TOP3報酬、ALPM台帳、
+  XP/RLS hardening を実装。技術正本: [02](02_System_Spec.md)、運用:
+  [04](04_Operations_Guide.md)、SQL:
+  [`20260720_gamification_phase1_foundation.sql`](../scripts/database/20260720_gamification_phase1_foundation.sql)。
+  **本番 migration・型再生成は適用済み**。旧XPランク更新を停止し、習熟ジャーニーを学習者向け進行表示に変更。
 - **2026-07-09（PPL Subject 3 Phase 1 完走）**: 空中航法 **9/9** 完走。PPL 登録 **55/150**。次: Subject 4 [`PPL-4-1-1`](../src/content/lessons/PPL-4-1-1_AirTrafficServicesOverview.mdx)。[July_2026_Content_Sprint](July_2026_Content_Sprint.md) W29 着手。
 - **2026-07-08（チャンク監視・Quiz 完了計測）**: SW `flight-academy-shell-v3`。`lazyWithRetry` を Home・Planning に拡張。GA4 `chunk_recovery_reload`。`quiz_session_complete` に `tab`/`exam`/`content_id`/`subject` 追加。GA4 カスタムディメンション手順: [04](04_Operations_Guide.md)。
 - **2026-06-03（Supabase Security Advisor）**: cohort ユーザー RPC 5 件を **INVOKER ラッパー + private DEFINER 実装**へ移行 — WARN **7→2**（残: Leaked Password / Postgres 版）。SQL: [`20260603_cohort_rpc_security_invoker_wrappers.sql`](../scripts/database/20260603_cohort_rpc_security_invoker_wrappers.sql)。[04](04_Operations_Guide.md)・[02](02_System_Spec.md) cohort 節。

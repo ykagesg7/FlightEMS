@@ -89,23 +89,15 @@ export const useTestResultTracker = () => {
       for (const [category, stats] of Object.entries(subjectStats)) {
         const accuracy = (stats.correct / stats.total) * 100;
 
-        if (accuracy < 70) { // 70%未満の場合は推奨コンテンツを設定
-          const { data: mappings } = await supabase
-            .from('learning_test_mapping')
-            .select('learning_content_id')
-            .eq('topic_category', category)
-            .limit(3);
-
-          const recommendedContentIds = mappings?.map(m => m.learning_content_id) || [];
-
+        if (accuracy < 70) { // 70%未満の場合は弱点エリアを記録
           await supabase
             .from('user_weak_areas')
             .upsert({
               user_id: user.id,
               subject_category: category,
               sub_category: 'general',
-              recommended_content_ids: recommendedContentIds,
-              last_attempt_at: new Date().toISOString()
+              accuracy_rate: accuracy,
+              last_updated: new Date().toISOString(),
             }, {
               onConflict: 'user_id,subject_category,sub_category'
             });
@@ -169,14 +161,17 @@ export const useTestResultTracker = () => {
       // セッション別に集計
       const sessionStats = data?.reduce((acc, result) => {
         const sessionId = result.session_id;
+        if (!sessionId) {
+          return acc;
+        }
         if (!acc[sessionId]) {
           acc[sessionId] = {
             sessionId,
-            learningContentId: result.learning_content_id,
-            subjectCategory: result.subject_category,
+            learningContentId: result.learning_content_id ?? undefined,
+            subjectCategory: result.subject_category ?? '',
             totalQuestions: 0,
             correctAnswers: 0,
-            date: result.created_at,
+            date: result.created_at ?? '',
             accuracy: 0
           };
         }

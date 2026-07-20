@@ -15,7 +15,7 @@ interface Props {
 }
 
 /**
- * 任意参加の学習者ランキング（表示名・XP・ランクのみ公開）
+ * 任意参加の学習活動XP一覧（表示名・XPのみ公開）
  */
 export const LeaderboardSettings: React.FC<Props> = ({
   profile,
@@ -85,7 +85,7 @@ export const LeaderboardSettings: React.FC<Props> = ({
       </CardHeader>
       <CardContent>
         <Typography variant="body-sm" color="muted" className="mb-6 leading-relaxed">
-          オンにすると、ダッシュボードの「任意参加」一覧に、あなたの表示名・学習 XP・ランクだけが載ることがあります。メールアドレスやフルネームは公開されません。いつでもオフにできます。
+          オンにすると、ダッシュボードの任意参加一覧に表示名と学習活動 XP が載ることがあります。学習段階、メールアドレス、フルネームは公開されません。いつでもオフにできます。
         </Typography>
 
         <form onSubmit={handleSubmit} className="space-y-6">

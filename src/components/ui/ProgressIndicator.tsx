@@ -44,17 +44,6 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
     }
   };
 
-  const _getStepColor = (step: ProgressStep) => {
-    switch (step.status) {
-      case 'completed':
-        return 'bg-green-500';
-      case 'current':
-        return 'bg-blue-500';
-      default:
-        return 'bg-gray-300';
-    }
-  };
-
   if (orientation === 'vertical') {
     return (
       <div className={`space-y-4 ${className}`}>

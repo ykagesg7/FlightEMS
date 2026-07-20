@@ -74,20 +74,20 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
             </div>
           </div>
 
-          {/* ランクアップ進捗 */}
+          {/* 記事読了率 */}
           <div className="rounded-xl border-2 border-brand-primary/20 bg-brand-secondary-dark p-3 shadow-lg shadow-brand-primary/20 backdrop-blur-sm sm:p-4">
             <div className="text-center">
               <div className="text-2xl font-bold mb-1 text-yellow-400">
-                {Math.round(stats.rankProgress)}%
+                {progressPercentage}%
               </div>
               <div className="text-xs font-medium text-gray-400">
-                ランクアップ進捗
+                記事読了率
               </div>
               {/* 進捗バー */}
               <div className="w-full h-1.5 rounded-full overflow-hidden bg-gray-700 mt-2">
                 <div
                   className="h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-yellow-500 to-yellow-400"
-                  style={{ width: `${Math.min(100, Math.max(0, stats.rankProgress))}%` }}
+                  style={{ width: `${progressPercentage}%` }}
                 />
               </div>
             </div>

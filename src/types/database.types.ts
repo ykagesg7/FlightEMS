@@ -32,6 +32,101 @@ export type Database = {
         }
         Relationships: []
       }
+      cohort_weekly_mission_templates: {
+        Row: {
+          completion_threshold: number
+          completion_xp: number
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          metric_type: string
+          min_questions: number
+          mvp_xp: number
+          title: string
+          top3_xp: number
+          week_index: number
+          xp_bonus: number
+        }
+        Insert: {
+          completion_threshold?: number
+          completion_xp?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          metric_type: string
+          min_questions?: number
+          mvp_xp?: number
+          title: string
+          top3_xp?: number
+          week_index: number
+          xp_bonus?: number
+        }
+        Update: {
+          completion_threshold?: number
+          completion_xp?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          metric_type?: string
+          min_questions?: number
+          mvp_xp?: number
+          title?: string
+          top3_xp?: number
+          week_index?: number
+          xp_bonus?: number
+        }
+        Relationships: []
+      }
+      cohort_weekly_scores: {
+        Row: {
+          cohort_key: string
+          computed_at: string
+          evidence: Json
+          id: string
+          iso_week: string
+          metric_type: string
+          metric_value: number
+          qualification_met: boolean
+          rank_in_cohort: number | null
+          user_id: string
+        }
+        Insert: {
+          cohort_key: string
+          computed_at?: string
+          evidence?: Json
+          id?: string
+          iso_week: string
+          metric_type: string
+          metric_value?: number
+          qualification_met?: boolean
+          rank_in_cohort?: number | null
+          user_id: string
+        }
+        Update: {
+          cohort_key?: string
+          computed_at?: string
+          evidence?: Json
+          id?: string
+          iso_week?: string
+          metric_type?: string
+          metric_value?: number
+          qualification_met?: boolean
+          rank_in_cohort?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cohort_weekly_scores_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flight_debrief_sessions: {
         Row: {
           created_at: string
@@ -117,6 +212,47 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "flight_debrief_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      in_app_notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link_url: string | null
+          read_at: string | null
+          template_key: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link_url?: string | null
+          read_at?: string | null
+          template_key: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link_url?: string | null
+          read_at?: string | null
+          template_key?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "in_app_notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -328,6 +464,47 @@ export type Database = {
           },
         ]
       }
+      learning_milestones: {
+        Row: {
+          achieved_at: string
+          id: string
+          metadata: Json
+          milestone_key: string
+          milestone_type: string
+          source_id: string | null
+          source_type: string
+          user_id: string
+        }
+        Insert: {
+          achieved_at?: string
+          id?: string
+          metadata?: Json
+          milestone_key: string
+          milestone_type: string
+          source_id?: string | null
+          source_type: string
+          user_id: string
+        }
+        Update: {
+          achieved_at?: string
+          id?: string
+          metadata?: Json
+          milestone_key?: string
+          milestone_type?: string
+          source_id?: string | null
+          source_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_milestones_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_progress: {
         Row: {
           completed: boolean
@@ -340,6 +517,7 @@ export type Database = {
           read_count: number
           updated_at: string
           user_id: string
+          xp_awarded_at: string | null
         }
         Insert: {
           completed?: boolean
@@ -352,6 +530,7 @@ export type Database = {
           read_count?: number
           updated_at?: string
           user_id: string
+          xp_awarded_at?: string | null
         }
         Update: {
           completed?: boolean
@@ -364,6 +543,7 @@ export type Database = {
           read_count?: number
           updated_at?: string
           user_id?: string
+          xp_awarded_at?: string | null
         }
         Relationships: [
           {
@@ -496,6 +676,75 @@ export type Database = {
         }
         Relationships: []
       }
+      mfa_recovery_codes: {
+        Row: {
+          code_hash: string
+          created_at: string
+          id: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          code_hash: string
+          created_at?: string
+          id?: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          code_hash?: string
+          created_at?: string
+          id?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      mission_completion_events: {
+        Row: {
+          completed_at: string
+          evidence: Json
+          id: string
+          mission_id: string
+          period_key: string
+          user_id: string
+          xp_earned: number
+        }
+        Insert: {
+          completed_at?: string
+          evidence?: Json
+          id?: string
+          mission_id: string
+          period_key: string
+          user_id: string
+          xp_earned: number
+        }
+        Update: {
+          completed_at?: string
+          evidence?: Json
+          id?: string
+          mission_id?: string
+          period_key?: string
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_completion_events_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_completion_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       missions: {
         Row: {
           created_at: string | null
@@ -507,6 +756,8 @@ export type Database = {
             | null
           mission_type: string | null
           required_action: string
+          requirement_config: Json
+          requirement_value: number
           title: string
           updated_at: string | null
           xp_reward: number | null
@@ -521,6 +772,8 @@ export type Database = {
             | null
           mission_type?: string | null
           required_action: string
+          requirement_config?: Json
+          requirement_value?: number
           title: string
           updated_at?: string | null
           xp_reward?: number | null
@@ -535,11 +788,51 @@ export type Database = {
             | null
           mission_type?: string | null
           required_action?: string
+          requirement_config?: Json
+          requirement_value?: number
           title?: string
           updated_at?: string | null
           xp_reward?: number | null
         }
         Relationships: []
+      }
+      notification_deliveries: {
+        Row: {
+          channel: string
+          dedupe_key: string
+          id: string
+          metadata: Json | null
+          sent_at: string
+          template_key: string
+          user_id: string
+        }
+        Insert: {
+          channel: string
+          dedupe_key: string
+          id?: string
+          metadata?: Json | null
+          sent_at?: string
+          template_key: string
+          user_id: string
+        }
+        Update: {
+          channel?: string
+          dedupe_key?: string
+          id?: string
+          metadata?: Json | null
+          sent_at?: string
+          template_key?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_deliveries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ppl_rank_definitions: {
         Row: {
@@ -669,29 +962,43 @@ export type Database = {
         }
         Relationships: []
       }
-      mfa_recovery_codes: {
+      push_subscriptions: {
         Row: {
-          id: string
-          user_id: string
-          code_hash: string
-          used_at: string | null
+          auth: string
           created_at: string
+          endpoint: string
+          id: string
+          p256dh: string
+          updated_at: string
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          code_hash: string
-          used_at?: string | null
+          auth: string
           created_at?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+          updated_at?: string
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          code_hash?: string
-          used_at?: string | null
+          auth?: string
           created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          updated_at?: string
+          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       question_issue_reports: {
         Row: {
@@ -736,6 +1043,13 @@ export type Database = {
             columns: ["question_id"]
             isOneToOne: false
             referencedRelation: "unified_cpl_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_issue_reports_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_mapped_questions"
             referencedColumns: ["id"]
           },
         ]
@@ -1004,13 +1318,18 @@ export type Database = {
       }
       user_learning_profiles: {
         Row: {
+          cohort_key: string | null
+          cohort_phase: string
+          cohort_registered_at: string | null
           created_at: string | null
           current_level: number | null
           current_streak_days: number | null
           daily_study_goal_minutes: number | null
+          exam_date_status: string | null
           id: string
           learning_preferences: Json | null
           learning_style: string | null
+          license_target: string
           longest_streak_days: number | null
           mastery_scores: Json | null
           preferred_difficulty: string | null
@@ -1020,21 +1339,21 @@ export type Database = {
           user_id: string | null
           weak_subjects: string[] | null
           weekly_study_goal_minutes: number | null
-          license_target: string
-          exam_date_status: string | null
-          cohort_key: string | null
-          cohort_phase: string
           written_exam_completed_at: string | null
-          cohort_registered_at: string | null
         }
         Insert: {
+          cohort_key?: string | null
+          cohort_phase?: string
+          cohort_registered_at?: string | null
           created_at?: string | null
           current_level?: number | null
           current_streak_days?: number | null
           daily_study_goal_minutes?: number | null
+          exam_date_status?: string | null
           id?: string
           learning_preferences?: Json | null
           learning_style?: string | null
+          license_target?: string
           longest_streak_days?: number | null
           mastery_scores?: Json | null
           preferred_difficulty?: string | null
@@ -1044,21 +1363,21 @@ export type Database = {
           user_id?: string | null
           weak_subjects?: string[] | null
           weekly_study_goal_minutes?: number | null
-          license_target?: string
-          exam_date_status?: string | null
-          cohort_key?: string | null
-          cohort_phase?: string
           written_exam_completed_at?: string | null
-          cohort_registered_at?: string | null
         }
         Update: {
+          cohort_key?: string | null
+          cohort_phase?: string
+          cohort_registered_at?: string | null
           created_at?: string | null
           current_level?: number | null
           current_streak_days?: number | null
           daily_study_goal_minutes?: number | null
+          exam_date_status?: string | null
           id?: string
           learning_preferences?: Json | null
           learning_style?: string | null
+          license_target?: string
           longest_streak_days?: number | null
           mastery_scores?: Json | null
           preferred_difficulty?: string | null
@@ -1068,12 +1387,7 @@ export type Database = {
           user_id?: string | null
           weak_subjects?: string[] | null
           weekly_study_goal_minutes?: number | null
-          license_target?: string
-          exam_date_status?: string | null
-          cohort_key?: string | null
-          cohort_phase?: string
           written_exam_completed_at?: string | null
-          cohort_registered_at?: string | null
         }
         Relationships: [
           {
@@ -1366,6 +1680,44 @@ export type Database = {
         }
         Relationships: []
       }
+      xp_award_events: {
+        Row: {
+          awarded_at: string
+          event_key: string
+          event_type: string
+          id: string
+          metadata: Json
+          user_id: string
+          xp_amount: number
+        }
+        Insert: {
+          awarded_at?: string
+          event_key: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          user_id: string
+          xp_amount: number
+        }
+        Update: {
+          awarded_at?: string
+          event_key?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          user_id?: string
+          xp_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xp_award_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       learning_content_stats: {
@@ -1404,10 +1756,46 @@ export type Database = {
         }
         Relationships: []
       }
+      v_question_report_summary: {
+        Row: {
+          last_reported_at: string | null
+          open_count: number | null
+          question_id: string | null
+          total_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_issue_reports_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "unified_cpl_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_issue_reports_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_mapped_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      award_article_xp: {
-        Args: { p_article_slug: string; p_user_id: string; p_xp_amount: number }
+      award_article_comprehension_xp: {
+        Args: { p_article_slug: string; p_session_id: string }
+        Returns: Json
+      }
+      award_article_read_xp: { Args: { p_article_slug: string }; Returns: Json }
+      award_cohort_weekly_top3: { Args: { p_iso_week: string }; Returns: Json }
+      award_delayed_retention_xp: {
+        Args: { p_session_id: string }
+        Returns: Json
+      }
+      award_quiz_session_xp: { Args: { p_session_id: string }; Returns: Json }
+      award_registration_xp: { Args: never; Returns: Json }
+      award_weakness_improvement_xp: {
+        Args: { p_session_id: string }
         Returns: Json
       }
       calculate_importance_score: {
@@ -1445,9 +1833,10 @@ export type Database = {
         }
         Returns: Json
       }
-      complete_mission: {
-        Args: { p_mission_id: string; p_user_id: string }
-        Returns: Json
+      complete_mission: { Args: { p_mission_id: string }; Returns: Json }
+      compute_cohort_weekly_scores: {
+        Args: { p_iso_week: string }
+        Returns: number
       }
       create_user_learning_profile: {
         Args: { p_user_id: string }
@@ -1461,6 +1850,14 @@ export type Database = {
           question2_id: string
           similarity_score: number
         }[]
+      }
+      enqueue_cohort_notifications: {
+        Args: {
+          p_dedupe_suffix?: string
+          p_iso_week?: string
+          p_template_key: string
+        }
+        Returns: number
       }
       ensure_user_learning_profile: {
         Args: { p_user_id: string }
@@ -1476,6 +1873,12 @@ export type Database = {
           reason: string
         }[]
       }
+      get_cohort_anonymous_stats: {
+        Args: { p_cohort_key?: string }
+        Returns: Json
+      }
+      get_cohort_formation_progress: { Args: never; Returns: Json }
+      get_learning_journey: { Args: never; Returns: Json }
       get_learning_xp_benchmark: {
         Args: never
         Returns: {
@@ -1490,53 +1893,13 @@ export type Database = {
       get_public_leaderboard: {
         Args: { p_limit?: number }
         Returns: {
-          user_id: string
           display_name: string
           leaderboard_position: number
           rank: Database["public"]["Enums"]["user_rank_type"]
           xp_points: number
         }[]
       }
-      get_user_cohort_profile: {
-        Args: Record<string, never>
-        Returns: Json
-      }
-      get_cohort_anonymous_stats: {
-        Args: { p_cohort_key?: string | null }
-        Returns: Json
-      }
-      upsert_user_cohort: {
-        Args: {
-          p_license?: string
-          p_exam_ym?: string | null
-          p_undecided?: boolean
-        }
-        Returns: Json
-      }
-      mark_written_exam_complete: {
-        Args: Record<string, never>
-        Returns: Json
-      }
-      get_public_user_badges: {
-        Args: { p_user_id: string }
-        Returns: Json[]
-      }
-      compute_cohort_weekly_scores: {
-        Args: { p_iso_week: string }
-        Returns: number
-      }
-      award_cohort_weekly_top3: {
-        Args: { p_iso_week: string }
-        Returns: number
-      }
-      enqueue_cohort_notifications: {
-        Args: {
-          p_template_key: string
-          p_iso_week?: string | null
-          p_dedupe_suffix?: string | null
-        }
-        Returns: number
-      }
+      get_public_user_badges: { Args: { p_user_id: string }; Returns: Json[] }
       get_unified_statistics: {
         Args: never
         Returns: {
@@ -1548,6 +1911,7 @@ export type Database = {
           total_questions: number
         }[]
       }
+      get_user_cohort_profile: { Args: never; Returns: Json }
       get_user_ppl_ranks: {
         Args: { p_user_id: string }
         Returns: {
@@ -1563,6 +1927,7 @@ export type Database = {
           subject_code: string
         }[]
       }
+      is_admin_user: { Args: never; Returns: boolean }
       map_exam_subject_to_official: {
         Args: { exam_subject: string }
         Returns: {
@@ -1581,6 +1946,7 @@ export type Database = {
           sub_subject: string
         }[]
       }
+      mark_written_exam_complete: { Args: never; Returns: Json }
       measure_learning_effectiveness: {
         Args: {
           p_content_id: string
@@ -1607,9 +1973,15 @@ export type Database = {
         }
         Returns: string
       }
+      refresh_user_weak_areas: { Args: never; Returns: Json }
+      sync_srs_after_session: { Args: { p_session_id: string }; Returns: Json }
       update_profile_rank_for_ppl: {
         Args: { p_user_id: string }
         Returns: undefined
+      }
+      upsert_user_cohort: {
+        Args: { p_exam_ym?: string; p_license?: string; p_undecided?: boolean }
+        Returns: Json
       }
     }
     Enums: {

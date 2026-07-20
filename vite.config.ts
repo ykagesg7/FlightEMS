@@ -3,7 +3,7 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, type PluginOption } from 'vite';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -97,37 +97,40 @@ export default defineConfig(({ mode }) => {
     }
   }
 
-  return {
-    plugins: [
-      mode === 'development' && devOpenskyApiPlugin(),
-      mode === 'development' && devWeatherApiPlugin(),
-      react({
-        // React 18対応の基本設定
-        jsxRuntime: 'automatic',
-      }),
-      mdx({
-        // MDX設定
-        providerImportSource: '@mdx-js/react',
-        remarkPlugins: [remarkGfm, remarkMath],
-        rehypePlugins: [rehypeKatex]
-      }),
-      injectGoogleTagPlugin(gaMeasurementId, mode === 'production'),
-      // Bundle分析プラグイン（開発時のみ）
-      mode === 'development' && visualizer({
+  const plugins: PluginOption[] = [
+    ...(mode === 'development' ? [devOpenskyApiPlugin(), devWeatherApiPlugin()] : []),
+    react({
+      jsxRuntime: 'automatic',
+    }),
+    mdx({
+      providerImportSource: '@mdx-js/react',
+      remarkPlugins: [remarkGfm, remarkMath],
+      rehypePlugins: [rehypeKatex],
+    }),
+    injectGoogleTagPlugin(gaMeasurementId, mode === 'production'),
+  ];
+  if (mode === 'development') {
+    plugins.push(
+      visualizer({
         filename: 'dist/stats.html',
         open: true,
         gzipSize: true,
         brotliSize: true,
       }),
-      // Sentry ソースマップアップロード（本番ビルド + 認証トークンがある場合のみ）
-      mode === 'production' &&
-        sentryAuthToken &&
-        sentryVitePlugin({
-          org: sentryOrg,
-          project: sentryProject,
-          authToken: sentryAuthToken,
-        }),
-    ].filter(Boolean),
+    );
+  }
+  if (mode === 'production' && sentryAuthToken) {
+    plugins.push(
+      sentryVitePlugin({
+        org: sentryOrg,
+        project: sentryProject,
+        authToken: sentryAuthToken,
+      }),
+    );
+  }
+
+  return {
+    plugins,
     server: {
       proxy: {
         '/api': {

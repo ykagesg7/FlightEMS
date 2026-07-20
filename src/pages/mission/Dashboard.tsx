@@ -13,7 +13,7 @@ import { MissionTabs } from './components/MissionTabs';
 
 /**
  * Mission Dashboard Page
- * ランク・バッジ確認とミッション一覧。学習記事は /articles へ誘導。
+ * 学習ジャーニー・バッジ確認とミッション一覧。学習記事は /articles へ誘導。
  */
 const MissionDashboard: React.FC = () => {
   const { profile: authProfile } = useAuthStore();
@@ -25,7 +25,7 @@ const MissionDashboard: React.FC = () => {
     if (tab === 'test' || tab === 'planning') return tab;
     return 'test';
   });
-  const { profile, rankInfo, xpToNextRank, rankProgress, isLoadingProfile } = useGamification();
+  const { profile, isLoadingProfile } = useGamification();
 
   // 旧リンク互換: ?tab=blog は学習記事一覧へ
   useEffect(() => {
@@ -78,7 +78,7 @@ const MissionDashboard: React.FC = () => {
   }
 
   // ローディングが完了したが、プロフィールが取得できなかった場合のみエラー表示
-  if (!isLoadingProfile && (!profile || !rankInfo)) {
+  if (!isLoadingProfile && !profile) {
     return (
       <div className="min-h-screen bg-whiskyPapa-black text-white flex items-center justify-center">
         <div className="text-center">
@@ -88,8 +88,7 @@ const MissionDashboard: React.FC = () => {
     );
   }
 
-  // TypeScriptの型チェッカーに、profileとrankInfoが確実に存在することを伝える
-  if (!profile || !rankInfo) {
+  if (!profile) {
     return (
       <div className="min-h-screen bg-whiskyPapa-black text-white flex items-center justify-center">
         <div className="text-center">
@@ -176,15 +175,12 @@ const MissionDashboard: React.FC = () => {
         {/* Rank & XP Section - Always visible */}
         <MissionRankSection
           profile={profile}
-          rankInfo={rankInfo}
-          xpToNextRank={xpToNextRank}
-          rankProgress={rankProgress}
         />
 
         {authProfile && authProfile.leaderboard_opt_in !== true ? (
           <div className="max-w-3xl mx-auto mb-10 px-2">
             <LeaderboardOptInCta
-              optedIn={authProfile.leaderboard_opt_in === true}
+              optedIn={Boolean(authProfile.leaderboard_opt_in)}
               variant="inline"
               dismissStorageKey="leaderboard_cta_dismiss_mission_v1"
             />

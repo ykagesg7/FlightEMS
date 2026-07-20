@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトの運用、保守、トラブルシューティングについて説明します。
 
-**最終更新**: 2026年6月3日（Supabase Security Advisor 0029 解消・cohort RPC INVOKER 化）
-**バージョン**: Operations & Maintenance Guide v3.0
+**最終更新**: 2026年7月20日（ゲーミフィケーション第2期・習熟ループ）
+**バージョン**: Operations & Maintenance Guide v3.1
 
 ---
 
@@ -90,7 +90,7 @@
 ### **Cohort 週次 cron・通知（Phase D pilot）**
 
 - **スケジュール**: Vercel Cron `0 0 * * 0`（UTC）= **日曜 09:00 JST** → [`api/cron/cohort-weekly.ts`](../api/cron/cohort-weekly.ts)
-- **処理順**: 前週スコア集計 → MVP（3〜9 名）/ TOP3（10 名以上）バッジ → アプリ内通知 enqueue → （`BREVO_API_KEY` あり時）メール配信
+- **処理順**: 前週スコア・達成条件集計 → 達成者20 XP → MVP（3〜9 名、追加30 XP）/ TOP3（10 名以上、追加20 XP）バッジ → アプリ内通知 enqueue → （`BREVO_API_KEY` あり時）メール配信
 - **Vercel Production 必須 env**:
   - `CRON_SECRET` — Cron 認証（`Authorization: Bearer`）
   - `SUPABASE_SERVICE_ROLE_KEY` — RPC 実行
@@ -108,9 +108,30 @@
 - **アプリ内通知**: Dashboard の「お知らせ」— 既読で非表示（`in_app_notifications.read_at`）
 - **メール opt-in**: プロフィール → 通知・公開 → 「メール通知」ON かつ「ミッション更新」ON
 - **Web Push**: 購読保存のみ。`VAPID_*` 未設定時は [`api/notifications/push.ts`](../api/notifications/push.ts) が 503 でスキップ
-- **DB 正本**: [`scripts/database/20260620_cohort_weekly_missions.sql`](../scripts/database/20260620_cohort_weekly_missions.sql) · MVP tier: [`20260626_cohort_weekly_mvp_tier_awards.sql`](../scripts/database/20260626_cohort_weekly_mvp_tier_awards.sql)
-- **週次表彰**: active **3〜9 名** → MVP（`metric_value>0`・同率 1 位可）。**10 名以上** → TOP3。全員 inactive ならその週は表彰なし
+- **DB 現行正本**: [`20260720_gamification_phase1_foundation.sql`](../scripts/database/20260720_gamification_phase1_foundation.sql) + [`20260720_gamification_phase1_production_hardening.sql`](../scripts/database/20260720_gamification_phase1_production_hardening.sql) + [`20260720_gamification_phase2_mastery_loop.sql`](../scripts/database/20260720_gamification_phase2_mastery_loop.sql) + [`20260720_gamification_phase2_rpc_invoker_wrappers.sql`](../scripts/database/20260720_gamification_phase2_rpc_invoker_wrappers.sql)（2026-07-20 本番適用済み）
+- **週次達成**: テンプレートの `completion_threshold` を満たしたユーザーに20 XP。`qualification_met` と `evidence` をスコア行へ保存
+- **週次表彰**: active **3〜9 名** → 達成者内 MVP（同率 1 位可、追加30 XP）。**10 名以上** → 達成者内 TOP3（追加20 XP）。全員未達成・inactive なら表彰なし
 - **RPC 権限 hardening（本番適用済）**: [`scripts/database/20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql) — cron 系 RPC は **service_role のみ**、ユーザー RPC は **authenticated のみ**（`anon` EXECUTE 不可）
+
+#### ゲーミフィケーション第1期のリリース手順
+
+1. `20260720_gamification_phase1_foundation.sql` と production hardening を Supabase migration として適用（完了）
+2. `20260720_gamification_phase2_mastery_loop.sql` を適用（完了）— SRS / 遅延再テスト / 弱点改善 / 編隊クエスト
+3. `20260720_gamification_phase2_rpc_invoker_wrappers.sql` を適用（完了）— journey / formation の INVOKER 境界
+4. 型再生成後、クイズ完了で `runMasteryLoopAfterSession` が呼ばれることを確認
+5. ダッシュボードに `FormationQuestCard`（コホート登録者のみ）と学習ジャーニーの SRS 期限件数が表示されること
+2. `profiles` / `learning_progress` の匿名 ALL policy が消え、本人 policy のみであることを確認
+3. `award_*_xp` の旧引数付き RPC がなく、新 RPC が authenticated のみに公開されていることを確認
+4. ステージングユーザーで記事95%読了（5 XP）→記事連動 Quiz 3問・80%以上（10 XP）を確認
+5. 同じ記事・sessionで再実行し `already_awarded` となり XP が増えないことを確認
+6. cron を1回手動実行し、レスポンス `awarded.mission_completions_awarded` /
+   `awarded.placement_awards_granted` と `xp_award_events` を照合
+7. 学科試験完了の確認ダイアログ、`post_written`、`learning_milestones` を確認
+8. GA4 DebugView で `learning_milestone_achieved`（記事理解・学科試験完了）を確認
+
+**ロールバック**: 旧公開 RPC や匿名書込 policy はセキュリティ上復元しない。障害時は
+フロントを直前デプロイへ戻し、新 RPC の EXECUTE を一時 revoke して報酬付与を停止する。
+付与済み XP を戻す場合は `xp_award_events` の対象 key を監査してから補正 migration を作る。
 
 ### **Supabase Security Advisor（本番運用）**
 

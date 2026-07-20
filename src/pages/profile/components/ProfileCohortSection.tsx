@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ExamTargetSelect } from '../../../components/learning/ExamTargetSelect';
 import { Button, Card, Typography } from '../../../components/ui';
 import { useCohortProfile } from '../../../hooks/useCohortProfile';
+import { sendGa4Event } from '../../../lib/googleAnalytics';
 import { formatCohortKeyLabel, formatCohortPhaseLabel } from '../../../utils/cohort';
 import {
   getDefaultExamYearMonth,
@@ -87,15 +88,24 @@ export const ProfileCohortSection: React.FC<ProfileCohortSectionProps> = ({
   }, [examChoice, examMonth, invalidate, licenseTarget, onError, onSuccess, queryClient]);
 
   const handleWrittenExamComplete = useCallback(async () => {
+    const confirmed = window.confirm(
+      '学科試験を実際に受験し、完了したことを記録しますか？この操作後は学科試験後フェーズへ移行します。',
+    );
+    if (!confirmed) return;
+
     setCompleting(true);
-    const { error } = await markWrittenExamComplete();
+    const { data, error } = await markWrittenExamComplete();
     setCompleting(false);
     if (error) {
       onError(error.message);
       return;
     }
     invalidate();
-    onSuccess('学科試験後フェーズに移行しました');
+    sendGa4Event('learning_milestone_achieved', {
+      milestone_type: 'written_exam_complete',
+      license_target: typeof data?.license_target === 'string' ? data.license_target : 'unknown',
+    });
+    onSuccess('学科試験完了を記録しました。学科試験後フェーズに移行します。');
   }, [invalidate, onError, onSuccess]);
 
   if (isLoading) {

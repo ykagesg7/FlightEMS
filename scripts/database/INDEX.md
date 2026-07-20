@@ -54,6 +54,12 @@
 | **PPL Subject 4 Phase 1 第1本 mapping** | [`20260714_learning_test_mapping_ppl411_air_traffic_services.sql`](20260714_learning_test_mapping_ppl411_air_traffic_services.sql)（航空交通業務52 + 概論23 → `PPL-4-1-1` — **2026-07-14 本番適用済**） |
 | **PPL Subject 4 Phase 1 第2本** | [`20260716_learning_contents_ppl412_search_and_rescue.sql`](20260716_learning_contents_ppl412_search_and_rescue.sql)（`PPL-4-1-2`、`order_index` **402** — **2026-07-16 本番適用済**） |
 | **PPL Subject 4 Phase 1 第2本 mapping** | [`20260716_learning_test_mapping_ppl412_search_and_rescue.sql`](20260716_learning_test_mapping_ppl412_search_and_rescue.sql)（捜索救難業務22 + 捜索救難信号6 → `PPL-4-1-2` — **2026-07-16 本番適用済**） |
+| **PPL Subject 4 Phase 1 第3本** | [`20260718_learning_contents_ppl421_radio_phraseology.sql`](20260718_learning_contents_ppl421_radio_phraseology.sql)（`PPL-4-2-1`、`order_index` **403** — **2026-07-18 本番適用済**） |
+| **PPL Subject 4 Phase 1 第3本 mapping** | [`20260718_learning_test_mapping_ppl421_radio_phraseology.sql`](20260718_learning_test_mapping_ppl421_radio_phraseology.sql)（管制業務一般/電話通信 **41** → `PPL-4-2-1` — **2026-07-18 本番適用済**） |
+| **PPL Subject 4 Phase 1 第4本** | [`20260718_learning_contents_ppl422_clearance_readback.sql`](20260718_learning_contents_ppl422_clearance_readback.sql)（`PPL-4-2-2`、`order_index` **404** — **2026-07-18 本番適用済**） |
+| **PPL Subject 4 Phase 1 第4本 mapping** | [`20260718_learning_test_mapping_ppl422_clearance_readback.sql`](20260718_learning_test_mapping_ppl422_clearance_readback.sql)（管制許可等4 + 通則5 → `PPL-4-2-2` — **2026-07-18 本番適用済**） |
+| **PPL Subject 4 Phase 1 第5本** | [`20260718_learning_contents_ppl423_aerodrome_control.sql`](20260718_learning_contents_ppl423_aerodrome_control.sql)（`PPL-4-2-3`、`order_index` **405** — **2026-07-18 本番適用済**） |
+| **PPL Subject 4 Phase 1 第5本 mapping** | [`20260718_learning_test_mapping_ppl423_aerodrome_control.sql`](20260718_learning_test_mapping_ppl423_aerodrome_control.sql)（地上滑走及び出発5 + 到着機2 → `PPL-4-2-3` — **2026-07-18 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（視程・霧）** | [`20260630_learning_contents_ppl_subject2_207.sql`](20260630_learning_contents_ppl_subject2_207.sql)（`PPL-2-1-7`、`order_index` **207** — ブロックA 完結） |
 | **PPL Subject 2 `learning_test_mapping`（視程・霧）** | [`20260630_learning_test_mapping_ppl_subject2_207.sql`](20260630_learning_test_mapping_ppl_subject2_207.sql)（霧の形成 — **2026-06-30 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（雲形）** | [`20260629_learning_contents_ppl_subject2_206.sql`](20260629_learning_contents_ppl_subject2_206.sql)（`PPL-2-1-6`、`order_index` **206**） |
@@ -65,6 +71,8 @@
 | **USAF 編隊飛行（操縦）** ep.1 | `20260616_learning_contents_fmt_wingman_vfr.sql`（`FMT-1-1_WingmanVFR`、`order_index` 601） |
 | **USAF 編隊飛行（操縦）** ep.2 | `20260617_learning_contents_fmt_runway_lineup_takeoff.sql`（`FMT-1-2_RunwayLineupTakeoff`、`order_index` 602） |
 | **cohort 週次ミッション・TOP3 バッジ** | `20260620_cohort_weekly_missions.sql`（`user_learning_profiles` cohort 列、週次 RPC、通知テーブル）。MVP tier（3〜9 名）: [`20260626_cohort_weekly_mvp_tier_awards.sql`](20260626_cohort_weekly_mvp_tier_awards.sql) |
+| **ゲーミフィケーション第1期（学科試験完了まで）** | [`20260720_gamification_phase1_foundation.sql`](20260720_gamification_phase1_foundation.sql) + [`20260720_gamification_phase1_production_hardening.sql`](20260720_gamification_phase1_production_hardening.sql) — 匿名書込RLS廃止、本人固定・サーバー計算XP、記事5 + 理解10、ALPM、週次達成/MVP/TOP3 XP、学習ジャーニー、公開RPCのINVOKER境界。**2026-07-20 本番適用済み** |
+| **ゲーミフィケーション第2期（習熟ループ）** | [`20260720_gamification_phase2_mastery_loop.sql`](20260720_gamification_phase2_mastery_loop.sql) + [`20260720_gamification_phase2_rpc_invoker_wrappers.sql`](20260720_gamification_phase2_rpc_invoker_wrappers.sql) — SRS同期、弱点リフレッシュ、遅延再テスト/弱点改善XP、編隊クエスト、学習ジャーニー拡張、INVOKER境界。**2026-07-20 本番適用済み** |
 | **cohort RPC 権限 hardening** | `20260621_cohort_rpc_hardening.sql`（cron RPC を service_role のみ、anon EXECUTE revoke、`notification_deliveries` SELECT-own RLS） |
 | **cohort RPC INVOKER ラッパー（Security Advisor 0029 解消）** | `20260603_cohort_rpc_security_invoker_wrappers.sql` — 本番適用済（MCP `cohort_rpc_security_invoker_wrappers_20260603`） |
 | **profiles ログイン時 MFA 設定** | `20260622_profiles_mfa_required_at_login.sql`（`mfa_required_at_login` 列） / `20260624_profiles_mfa_required_at_login_default_off.sql`（デフォルト **false**・opt-in） |

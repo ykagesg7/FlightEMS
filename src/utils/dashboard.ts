@@ -50,9 +50,14 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
 
   const [learningProgress, testResults, studyTime, streakDays, nextLesson, weakTopics, xpBenchmark, publicLeaderboard] =
     await Promise.all([
-      safeGet(() => getLearningProgress(userId), { progressPct: 0 }, '学習進捗'),
-      safeGet(() => getTestResults(userId), { accuracyPct: 0 }, 'テスト結果'),
-      safeGet(() => getStudyTime(userId), { weeklyMinutes: 0 }, '学習時間'),
+      safeGet(() => getLearningProgress(userId), { completedCount: 0, totalCount: 0, progressPct: 0 }, '学習進捗'),
+      safeGet(() => getTestResults(userId), {
+        totalAttempts: 0,
+        correctAttempts: 0,
+        accuracyPct: 0,
+        subjectBreakdown: [],
+      }, 'テスト結果'),
+      safeGet(() => getStudyTime(userId), { todayMinutes: 0, weeklyMinutes: 0, monthlyMinutes: 0 }, '学習時間'),
       safeGet(() => getStreakDays(userId), 0, '継続日数'),
       safeGet(() => getNextRecommendedLesson(userId), undefined, '推奨レッスン'),
       safeGet(() => getWeakTopics(userId), [], '弱点トピック'),
@@ -116,7 +121,7 @@ async function getPublicLeaderboard(): Promise<PublicLeaderboardEntry[] | undefi
     return [];
   }
   return data.map((row) => ({
-    userId: row.user_id,
+    userId: `rank-${row.leaderboard_position}`,
     displayName: row.display_name,
     xpPoints: row.xp_points ?? 0,
     rankTier: (row.rank as UserRank | null) ?? null,

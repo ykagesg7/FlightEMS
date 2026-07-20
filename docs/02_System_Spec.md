@@ -333,7 +333,105 @@ flowchart LR
 
 
 
-### **ゲーミフィケーションシステム（2025年1月実装）**
+### **ゲーミフィケーションシステム 第1期（2026年7月再設計・現行正本）**
+
+第1期のゴールは、ユーザーが PPL/CPL の**学科試験完了を記録するまで**です。累積 XP
+や架空ランクを主目的にせず、学習パス上の到達（ALPM）を中心に表示します。
+
+#### 学習ジャーニー
+
+`get_learning_journey()` が資格別に次の現在地を返し、ダッシュボードの
+`LearningJourneyCard` が次の1アクションを示します。
+
+1. 準備
+2. 基礎訓練
+3. 科目習熟
+4. 横断演習
+5. 試験準備
+6. 学科試験完了
+
+`profiles.rank` と `user_ppl_ranks` は後方互換のため残しますが、学習者向けの主指標では
+ありません。`fan` の表示名は「訓練準備」とし、PPL/CPL は免許保有を意味しない
+「PPL/CPL 学科到達」と表示します。
+
+#### XP と習熟マイルストーン
+
+| イベント | XP | サーバー判定・冪等キー |
+|---|---:|---|
+| 初回セットアップ | 100 | `registration:welcome_setup` |
+| 記事読了 | 5 | 進捗 95%以上、`article_read:{content_id}` |
+| 記事理解チェック | 10 | 記事連動 Quiz 3問以上・80%以上、`article_comprehension:{content_id}` |
+| Quiz セッション | 10 + 正解×2 + 満点15 | 完了済み `quiz_sessions.id`。exam は1.25倍 |
+| 遅延再テスト | 10/問 | due SRS または過去誤答≥7日後の正答、`delayed_retention:{qid}` |
+| 弱点改善 | 15/科目・週 | 直近10問≥70% かつ歴史的弱点、`weakness_improvement:{subject}:{ISO週}` |
+| 週次ミッション達成 | 20 | `ISO週:metric_type` |
+| 編隊クエスト | 10 | コホート半数が達成、`formation_quest:{週}:{cohort}:{metric}` |
+| MVP | 追加30 | active 3〜9名の1位 |
+| TOP3 | 追加20 | active 10名以上の1〜3位 |
+
+XP額はクライアントから渡しません。`private.apply_xp_reward` が
+
+#### 習熟ループ（Phase 2・2026-07-20）
+
+クイズ完了後のクライアント呼び出し順（`runMasteryLoopAfterSession`）:
+
+1. `award_delayed_retention_xp` — SRS 同期前に due 判定
+2. `sync_srs_after_session` — SM-2 風に `user_unified_srs_status` を upsert
+3. `award_weakness_improvement_xp` — `refresh_user_weak_areas` 後に回復判定
+
+協力型クエストは `get_cohort_formation_progress` が共有ゲージを返し、週次
+`award_cohort_weekly_top3` が編隊ボーナスを付与します。SQL 正本:
+[`20260720_gamification_phase2_mastery_loop.sql`](../scripts/database/20260720_gamification_phase2_mastery_loop.sql)。
+
+`xp_award_events` の一意制約を使って付与し、公開 RPC はすべて `auth.uid()` に固定します。
+記事カテゴリ倍率・シリーズ完走倍率・ストリーク XP 倍率は第1期では使用しません。
+
+`learning_milestones` は次の ALPM を保持します。
+
+- `article_comprehension`
+- `delayed_retention`（習熟ループ Phase 2 で判定・付与）
+- `weakness_improvement`（習熟ループ Phase 2 で判定・付与）
+- `weekly_mission`
+- `written_exam_complete`
+
+#### 公開 RPC と権限
+
+| RPC | 呼び出し元 | 入力 |
+|---|---|---|
+| `award_registration_xp` | authenticated | なし |
+| `award_article_read_xp` | authenticated | 記事 slug |
+| `award_article_comprehension_xp` | authenticated | 記事 slug、Quiz session ID |
+| `award_quiz_session_xp` | authenticated | Quiz session ID |
+| `award_delayed_retention_xp` | authenticated | Quiz session ID |
+| `award_weakness_improvement_xp` | authenticated | Quiz session ID |
+| `sync_srs_after_session` | authenticated | Quiz session ID |
+| `refresh_user_weak_areas` | authenticated | なし |
+| `get_cohort_formation_progress` | authenticated | なし |
+| `complete_mission` | authenticated | mission ID |
+| `get_learning_journey` | authenticated | なし |
+| `compute_cohort_weekly_scores` | service_role | ISO週 |
+| `award_cohort_weekly_top3` | service_role | ISO週 |
+
+`profiles` と `learning_progress` の匿名 ALL ポリシーは廃止し、本人の
+SELECT/INSERT/UPDATE（`learning_progress` は DELETE も）のみにします。
+`user_missions` はクライアント INSERT を禁止し、達成 RPC のみが書き込みます。
+証拠テーブルのない `plan_create` / `photo_post` と旧 weekly ミッションは無効化し、
+日次 Quiz は当日JSTの完了セッションをサーバーで検証します。
+
+#### 学科試験完了と第2期境界
+
+プロフィールの「学科試験完了」は試験月到達後に表示し、確認ダイアログ後に
+`mark_written_exam_complete()` を実行します。`cohort_phase = post_written`、
+`written_exam_completed_at`、`written_exam_complete` マイルストーンを同一トランザクションで
+記録します。ウイングマーク取得、実技・戦闘機課程等は**第2期**で、現時点では称号や
+完了条件を自動付与しません。
+
+**実装マイグレーション**:
+[`20260720_gamification_phase1_foundation.sql`](../scripts/database/20260720_gamification_phase1_foundation.sql)
+
+### **旧ゲーミフィケーション仕様（2025年1月実装・履歴）**
+
+以下は移行前の設計履歴です。XP額・ランク名・RPC名の現行仕様には使用しません。
 
 #### **ランクシステム（統合版）**
 
@@ -539,10 +637,10 @@ export interface TAFData {
 | **cohort キー** | 確定: `CPL-YYYY-MM`（`target_test_date` は月初正規化）。未定: `CPL-UNDECIDED` |
 | **週次 ID** | ISO `YYYY-Www`（月曜始まり、**JST 固定**） |
 | **集計ウィンドウ** | 当該 ISO 週の **月 0:00 〜 土 23:59:59 JST**（土曜深夜締め、日曜 0:00 排他） |
-| **バッチ** | **日曜 09:00 JST** — 前週スコア確定 → TOP3 バッジ付与 → 今週ミッション通知 |
-| **TOP3 / MVP** | 公開榜なし。**3〜9 名** active → **MVP**（`rank=1`・`metric_value>0`・同率可）。**≥10 名** → **TOP3**（`rank<=3`・`metric_value>0`）。`user_achievements` metadata: `award_mode`, `participant_count`。SQL: [`20260626_cohort_weekly_mvp_tier_awards.sql`](../scripts/database/20260626_cohort_weekly_mvp_tier_awards.sql) |
-| **PostWritten** | ユーザー「学科試験完了」ボタンのみ（`cohort_phase = post_written`）。試験月ベース CTA は **exam_date_status = set** のみ |
-| **正本 SQL** | [`scripts/database/20260620_cohort_weekly_missions.sql`](../scripts/database/20260620_cohort_weekly_missions.sql) |
+| **バッチ** | **日曜 09:00 JST** — 前週スコア・達成条件確定 → 達成20 XP → MVP/TOP3追加XP・バッジ → 今週ミッション通知 |
+| **TOP3 / MVP** | 公開榜なし。**3〜9 名** active → **MVP**（達成者内 `rank=1`・同率可、追加30 XP）。**≥10 名** → **TOP3**（達成者内 `rank<=3`、追加20 XP）。週を含む achievement key で再開催を冪等化 |
+| **PostWritten** | ユーザー「学科試験完了」ボタン + 確認。`cohort_phase = post_written` と ALPM を記録。試験月ベース CTA は **exam_date_status = set** のみ |
+| **現行正本 SQL** | [`20260720_gamification_phase1_foundation.sql`](../scripts/database/20260720_gamification_phase1_foundation.sql)（基礎: `20260620`、MVP tier: `20260626`） |
 
 **RPC（cohort）**: `upsert_user_cohort`, `get_cohort_anonymous_stats`, `compute_cohort_weekly_scores`, `award_cohort_weekly_top3`, `mark_written_exam_complete`, `get_public_user_badges`, `enqueue_cohort_notifications`, `get_user_cohort_profile`
 
@@ -570,8 +668,9 @@ export interface TAFData {
 
 #### **主要関数**
 
-- `get_quiz_session`: 学習セッション用の問題群を取得
-- `submit_answer`: ユーザーの解答を記録し、SRS情報を更新
+- `sync_srs_after_session`: 完了セッションから `user_unified_srs_status` を更新
+- `award_delayed_retention_xp` / `award_weakness_improvement_xp`: 習熟マイルストーン XP
+- `get_cohort_formation_progress`: 協力型編隊クエストの共有進捗
 - `get_review_questions`: 復習すべき問題のリストを取得
 - `get_recommended_categories`: 苦手カテゴリを推薦
 - `complete_mission`: ミッション達成を記録し、XPを付与
@@ -864,7 +963,7 @@ Flight Academy へのブランド移行は [00](00_Flight_Academy_Strategy.md) �
 - **MarketingLayout**: 全ページ統一レイアウト（黒×黄色基調）
 - **アクセントカラー**: Yellow (#FFD700)、ダーク背景 (#121212)（移行後は差し替え予定）
 
-#### **Phase 2: Gamification (Wingman Program)**
+#### **旧 Phase 2: Gamification (Wingman Program) — 履歴**
 
 - **ランクシステム**: 統合ランクシステム（PPL中間ランク + XPベースランク）
   - Fan (0 XP) → PPL中間ランク（記事完了ベース） → PPL (500XP到達) → Wingman (1,200 XP) → CPL (1,000XP到達) → Ace (1,500 XP) → Master (2,000 XP) → Legend (2,500 XP)

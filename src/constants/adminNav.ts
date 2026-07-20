@@ -12,8 +12,8 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   },
   {
     to: '/admin/ranks',
-    label: 'ランク設定',
-    description: 'PPL/CPL ランク昇格条件の管理',
+    label: '旧ランク設定',
+    description: '互換用ランク昇格条件の監査',
   },
   {
     to: '/admin/xp',

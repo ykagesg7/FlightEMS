@@ -25,6 +25,8 @@ export const fetchAirportWeather = (
 
   const ap = feature.properties as AirportProps;
   const airportId = ap.id;
+  if (!airportId || typeof airportId !== 'string') return;
+
   const icao =
     airportId && typeof airportId === 'string' && airportId.trim().length >= 3
       ? airportId.trim()

@@ -40,6 +40,8 @@ export interface Mission {
   title: string;
   description: string | null;
   required_action: RequiredAction;
+  requirement_value: number;
+  requirement_config: Record<string, unknown>;
   xp_reward: number;
   min_rank_required: UserRank;
   mission_type: MissionType;
@@ -76,7 +78,7 @@ export interface RankInfo {
 export const RANK_INFO: Record<UserRank, RankInfo> = {
   fan: {
     rank: 'fan',
-    displayName: 'ファン',
+    displayName: '訓練準備',
     color: '#808080', // グレー
     icon: '👤',
     xpRequired: 0,
@@ -157,7 +159,7 @@ export const RANK_INFO: Record<UserRank, RankInfo> = {
   },
   ppl: {
     rank: 'ppl',
-    displayName: '自家用操縦士',
+    displayName: 'PPL 学科到達',
     color: '#00CED1', // ダークターコイズ
     icon: '🎖️',
     xpRequired: 500, // PPL全記事読了で到達
@@ -175,7 +177,7 @@ export const RANK_INFO: Record<UserRank, RankInfo> = {
   },
   cpl: {
     rank: 'cpl',
-    displayName: '事業用操縦士',
+    displayName: 'CPL 学科到達',
     color: '#FF8C00', // ダークオレンジ
     icon: '✈️',
     xpRequired: 1000, // CPL全記事読了で到達

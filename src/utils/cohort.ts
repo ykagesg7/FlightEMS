@@ -42,6 +42,47 @@ export interface PublicUserBadge {
   metadata: Record<string, unknown> | null;
 }
 
+export type LearningJourneyStage =
+  | 'preparation'
+  | 'foundation'
+  | 'subject_mastery'
+  | 'cross_subject'
+  | 'exam_readiness'
+  | 'written_complete';
+
+export interface LearningJourney {
+  license_target: LicenseTarget | string;
+  stage: LearningJourneyStage;
+  stage_order: number;
+  cohort_phase: CohortPhase | string;
+  target_test_date: string | null;
+  article_comprehension_count: number;
+  delayed_retention_count: number;
+  weakness_improvement_count: number;
+  quiz_session_count: number;
+  mastered_subject_count: number;
+  srs_due_count: number;
+  written_exam_completed_at: string | null;
+}
+
+export interface CohortFormationProgress {
+  registered: boolean;
+  eligible: boolean;
+  cohort_key?: string;
+  iso_week?: string;
+  week_index?: number;
+  metric_type?: string;
+  mission_title?: string;
+  mission_description?: string;
+  participant_count?: number;
+  qualified_count?: number;
+  shared_threshold?: number;
+  shared_progress_pct?: number;
+  shared_complete?: boolean;
+  my_metric_value?: number;
+  my_qualification_met?: boolean;
+}
+
 export function getCohortAwardTier(participantCount: number): CohortAwardTier {
   if (participantCount >= MIN_COHORT_FOR_TOP3) return 'top3';
   if (participantCount >= MIN_COHORT_FOR_MVP) return 'mvp';
@@ -65,26 +106,32 @@ export function formatCohortAwardTierHint(
 }
 
 const COHORT_WEEKLY_BADGE_RE = /^cohort_weekly_w(\d)_rank(\d)$/;
+const COHORT_WEEKLY_DATED_BADGE_RE = /^cohort_weekly_(\d{4}-W\d{2})_rank(\d+)$/;
 
 /** Human-readable label for cohort weekly achievement badges. */
 export function formatCohortWeeklyBadgeLabel(
   achievementType: string,
   metadata?: Record<string, unknown> | null,
 ): string {
-  const match = achievementType.match(COHORT_WEEKLY_BADGE_RE);
+  const datedMatch = achievementType.match(COHORT_WEEKLY_DATED_BADGE_RE);
+  const legacyMatch = achievementType.match(COHORT_WEEKLY_BADGE_RE);
+  const match = datedMatch ?? legacyMatch;
   if (!match) return achievementType;
 
-  const weekIndex = match[1];
+  const periodLabel = datedMatch ? match[1] : `W${match[1]}`;
   const rank = Number.parseInt(match[2], 10);
   const awardMode = metadata?.award_mode;
 
   if (awardMode === 'mvp' && rank === 1) {
-    return `週次 MVP（W${weekIndex}）`;
+    return `週次 MVP（${periodLabel}）`;
   }
   if (awardMode === 'top3' || rank >= 2) {
-    return `週次 TOP${rank}（W${weekIndex}）`;
+    return `週次 TOP${rank}（${periodLabel}）`;
   }
-  return `週次 TOP${rank}（ローテ W${weekIndex}）`;
+  if (legacyMatch) {
+    return `週次 TOP${rank}（ローテ ${periodLabel}）`;
+  }
+  return `週次 TOP${rank}（${periodLabel}）`;
 }
 
 export function buildCohortKey(

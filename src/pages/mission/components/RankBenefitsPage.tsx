@@ -1,29 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { RANK_INFO } from '../../../types/gamification';
-import type { UserRank } from '../../../types/gamification';
-import RankBadge from '../../../components/marketing/RankBadge';
 
-/**
- * ランク特典一覧ページ
- */
+const LEARNING_STAGES = [
+  { name: '準備', evidence: '目標資格と受験予定を設定', outcome: '出発点と次の一歩が決まる' },
+  { name: '基礎訓練', evidence: '記事読了と理解チェック', outcome: '基礎用語を説明し、基本問題に答えられる' },
+  { name: '科目習熟', evidence: '科目別に10問以上・80%以上', outcome: '科目ごとの知識を安定して使える' },
+  { name: '横断演習', evidence: '複数科目で習熟基準を達成', outcome: '知識を組み合わせて判断できる' },
+  { name: '試験準備', evidence: '試験30日前・模試と弱点復習', outcome: '本番形式で仕上がりを確認できる' },
+  { name: '学科試験完了', evidence: '受験後に本人が完了を記録', outcome: '第1期を完了し、次の訓練へ進む' },
+] as const;
+
 export const RankBenefitsPage: React.FC = () => {
-  const ranks = Object.keys(RANK_INFO) as UserRank[];
-
-  // 各ランクの特典（計画に基づく）
-  const rankBenefits: Record<UserRank, string[]> = {
-    fan: ['基本コンテンツアクセス'],
-    spectator: ['プロフィールバッジ'],
-    trainee: ['限定記事アクセス'],
-    student: ['模擬試験無制限'],
-    apprentice: ['フライトプラン保存上限UP'],
-    pilot: ['拡張学習コンテンツ'],
-    wingman: ['上位ミッション・表示バッジ（予定）', '継続学習のマイルストーン'],
-    ace: ['優先サポート'],
-    master: ['メンター認定バッジ'],
-    legend: ['殿堂入り', '特別イベント招待'],
-  };
-
   return (
     <div className="min-h-screen p-8" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
       <div className="max-w-7xl mx-auto">
@@ -33,107 +20,35 @@ export const RankBenefitsPage: React.FC = () => {
           </Link>
         </div>
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold mb-4">ランク特典一覧</h1>
+          <h1 className="text-4xl font-bold mb-4">学科試験までの学習段階</h1>
           <p className="text-gray-400 text-lg">
-            各ランクに応じた特典をご用意しています。ランクアップしてより多くの特典を獲得しましょう！
+            XPの多さではなく、確認できた学習成果に基づいて現在地が進みます。
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ranks.map((rank, _index) => {
-            const rankInfo = RANK_INFO[rank];
-            const benefits = rankBenefits[rank] || [];
-
-            return (
-              <div
-                key={rank}
-                className="relative p-6 border-2 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-                style={{
-                  borderColor: rankInfo.color,
-                  backgroundColor: `${rankInfo.color}10`,
-                }}
-              >
-                {/* ランクバッジ */}
-                <div className="flex justify-center mb-4">
-                  <RankBadge rank={rank} size="lg" showLabel={true} animated={false} />
-                </div>
-
-                {/* ランク情報 */}
-                <div className="text-center mb-4">
-                  <h2
-                    className="text-2xl font-bold mb-2"
-                    style={{ color: rankInfo.color }}
-                  >
-                    {rankInfo.displayName}
-                  </h2>
-                  <p className="text-sm text-gray-400">
-                    必要XP: {rankInfo.xpRequired}
-                  </p>
-                  {rankInfo.nextRank && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      次のランク: {RANK_INFO[rankInfo.nextRank].displayName} ({rankInfo.nextRankXpRequired} XP)
-                    </p>
-                  )}
-                </div>
-
-                {/* 特典リスト */}
-                <div className="border-t border-gray-700 pt-4 mt-4">
-                  <h3 className="text-sm font-semibold text-gray-300 mb-3">特典</h3>
-                  <ul className="space-y-2">
-                    {benefits.map((benefit, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm">
-                        <span className="text-yellow-400 mt-1">✓</span>
-                        <span className="text-gray-300">{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* 特別マーク */}
-                {rank === 'wingman' && (
-                  <div className="absolute top-4 right-4">
-                    <span className="px-3 py-1 text-xs font-bold bg-yellow-600 text-white rounded-full">
-                      特別
-                    </span>
-                  </div>
-                )}
-                {rank === 'legend' && (
-                  <div className="absolute top-4 right-4">
-                    <span className="px-3 py-1 text-xs font-bold bg-purple-600 text-white rounded-full">
-                      最高
-                    </span>
-                  </div>
-                )}
+          {LEARNING_STAGES.map((stage, index) => (
+            <div
+              key={stage.name}
+              className="rounded-xl border border-brand-primary/30 bg-brand-secondary-dark/40 p-6"
+            >
+              <p className="mb-2 text-sm font-mono text-brand-primary">PHASE {index + 1}</p>
+              <h2 className="mb-3 text-2xl font-bold">{stage.name}</h2>
+              <p className="mb-4 text-sm text-gray-400">{stage.outcome}</p>
+              <div className="border-t border-gray-700 pt-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">到達の証拠</p>
+                <p className="mt-2 text-sm text-gray-300">{stage.evidence}</p>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
 
-        {/* ウイングマンランク（目安条件・実装は rank 定義に準拠） */}
         <div className="mt-12 p-6 border-2 border-yellow-500 rounded-xl bg-yellow-900/20">
-          <h2 className="text-2xl font-bold mb-4 text-yellow-400">ウイングマンランクについて</h2>
-          <p className="text-gray-300 mb-4">
-            ウイングマンランクは、継続的な学習と高い正答率を達成したユーザーを示すマイルストーンです。
-            以下は目安条件です（最終的な付与ロジックはランク定義・DB を正とします）：
+          <h2 className="text-2xl font-bold mb-4 text-yellow-400">第2期について</h2>
+          <p className="text-gray-300">
+            ウイングマーク、実技課程、戦闘機課程などは第2期で別の検証可能なマイルストーンとして追加します。
+            学科XPだけで自動付与することはありません。
           </p>
-          <ul className="space-y-2 text-gray-300">
-            <li className="flex items-start gap-2">
-              <span className="text-yellow-400 mt-1">•</span>
-              <span>経験値: 600 XP以上</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-yellow-400 mt-1">•</span>
-              <span>記事読了: 30記事以上</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-yellow-400 mt-1">•</span>
-              <span>試験パス: 全科目で80%以上の正答率</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-yellow-400 mt-1">•</span>
-              <span>ロイヤリティ: ストリーク30日以上 など（購買連動は廃止）</span>
-            </li>
-          </ul>
         </div>
       </div>
     </div>

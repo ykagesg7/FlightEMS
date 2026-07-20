@@ -9,6 +9,8 @@ import { AnnouncementCard } from './components/AnnouncementCard';
 import { DailyTasks } from './components/DailyTasks';
 import { LearningHeatmap } from './components/LearningHeatmap';
 import { LearningBenchmarkCard } from './components/LearningBenchmarkCard';
+import { LearningJourneyCard } from './components/LearningJourneyCard';
+import { FormationQuestCard } from './components/FormationQuestCard';
 import { CohortCard } from './components/CohortCard';
 import { PublicLeaderboardSection } from './components/PublicLeaderboardSection';
 import { ProfileCompletionNudge } from '../../components/profile/ProfileCompletionNudge';
@@ -186,6 +188,9 @@ const DashboardContent: React.FC = () => {
             進捗、弱点、次のアクションを一画面で確認
           </Typography>
         </div>
+
+        <LearningJourneyCard />
+        <FormationQuestCard />
 
         {/* サマリーカード */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

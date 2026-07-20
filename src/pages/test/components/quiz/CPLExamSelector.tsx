@@ -78,6 +78,14 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
     setSelectedSubjects([]);
   }, [examLevel]);
 
+  const totalAvailableQuestions = useMemo(
+    () =>
+      subjects
+        .filter(s => selectedSubjects.includes(`${s.main_subject}::${s.sub_subject}`))
+        .reduce((sum, s) => sum + s.question_count, 0),
+    [subjects, selectedSubjects],
+  );
+
   useEffect(() => {
     if (totalAvailableQuestions < 1) return;
     setQuestionCount((c) => Math.min(c, totalAvailableQuestions));
@@ -117,14 +125,6 @@ const CPLExamSelector: React.FC<CPLExamSelectorProps> = ({ onStartExam }) => {
 
     onStartExam(settings);
   };
-
-  const totalAvailableQuestions = useMemo(
-    () =>
-      subjects
-        .filter(s => selectedSubjects.includes(`${s.main_subject}::${s.sub_subject}`))
-        .reduce((sum, s) => sum + s.question_count, 0),
-    [subjects, selectedSubjects],
-  );
 
   const totalPoolQuestions = useMemo(
     () => subjects.reduce((sum, s) => sum + s.question_count, 0),

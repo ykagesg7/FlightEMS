@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card, CardContent, Typography } from '../../../components/ui';
-import { RANK_INFO } from '../../../types/gamification';
 import type { LearningXpBenchmark } from '../../../types/dashboard';
 import { MIN_POPULATION_FOR_XP_BENCHMARK } from '../../../utils/dashboard';
 
@@ -18,7 +17,7 @@ interface Props {
  * 学習 XP の相対位置（集計のみ・他者の識別子なし）
  */
 export const LearningBenchmarkCard: React.FC<Props> = ({ benchmark, borderColor }) => {
-  const { populationN, percentile, rankTier, cohortN, cohortPercentile } = benchmark;
+  const { populationN, percentile } = benchmark;
 
   if (populationN < MIN_POPULATION_FOR_XP_BENCHMARK) {
     return (
@@ -34,9 +33,6 @@ export const LearningBenchmarkCard: React.FC<Props> = ({ benchmark, borderColor 
       </Card>
     );
   }
-
-  const tierLabel =
-    rankTier && rankTier in RANK_INFO ? RANK_INFO[rankTier as keyof typeof RANK_INFO].displayName : 'あなたのランク帯';
 
   const mainLine =
     percentile != null ? (
@@ -55,16 +51,6 @@ export const LearningBenchmarkCard: React.FC<Props> = ({ benchmark, borderColor 
       </Typography>
     );
 
-  const cohortLine =
-    cohortN != null &&
-    cohortN >= 5 &&
-    cohortPercentile != null &&
-    rankTier ? (
-      <Typography variant="caption" color="muted" className="mt-3 block leading-relaxed">
-        同じランク帯（{tierLabel}）内では、XP があなたより低い方が約 {cohortPercentile}% です（参考）。
-      </Typography>
-    ) : null;
-
   return (
     <Card variant="hud" padding="md" className={borderColor}>
       <CardContent>
@@ -72,7 +58,6 @@ export const LearningBenchmarkCard: React.FC<Props> = ({ benchmark, borderColor 
           学習 XP の位置（参考）
         </Typography>
         {mainLine}
-        {cohortLine}
       </CardContent>
     </Card>
   );

@@ -223,7 +223,7 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <QuizQuestionText id={questionTextId} text={question.text} />
+      <QuizQuestionText id={questionTextId} text={question.text ?? question.question_text ?? ''} />
       {question.imagePlaceholder && (
         <div className={`my-3 rounded border border-dashed border-brand-primary/25 bg-[var(--panel)]/50 p-4 text-center hud-surface`}>
           <p className={`text-xs font-medium uppercase tracking-wide text-[color:var(--text-muted)]`}>図プレースホルダー</p>
@@ -234,7 +234,7 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
 
       {feedback && (
         <div
-          ref={feedbackRegionRef}
+          ref={feedbackRegionRef as React.Ref<HTMLDivElement>}
           role="status"
           aria-live="polite"
           aria-atomic="true"

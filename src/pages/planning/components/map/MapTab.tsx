@@ -43,7 +43,7 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-interface MapTabProps {
+export interface MapTabProps {
   layout?: PlanningPanelLayout;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;

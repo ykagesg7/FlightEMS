@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useState } from 'react';
+import React, { Suspense, useCallback, useState, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useDebouncedCallback } from 'use-debounce';
@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Ta
 import { WeatherCacheProvider } from '../../contexts/WeatherCacheContext';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { FlightPlan } from '../../types/index';
-import { lazyWithRetry } from '../../utils/lazyWithRetry';
+import { importWithChunkRetry } from '../../utils/lazyWithRetry';
 import type { FlightTrack } from './tracks/types';
 import PlanningTab from './components/flight/PlanningTab';
 import { PlanningNotamSheetProvider } from './components/map/PlanningNotamSheetProvider';
@@ -17,8 +17,15 @@ import {
   persistFlightPlanDraft,
 } from './flightPlanDraft';
 
+import type { MapTabProps } from './components/map/MapTab';
+
 /** Leaflet 込みの地図は別チャンク（iOS の巨大 module 失敗を緩和） */
-const MapTab = lazyWithRetry(() => import('./components/map/MapTab'));
+const MapTab = lazy(() =>
+  importWithChunkRetry(async () => {
+    const mod = await import('./components/map/MapTab');
+    return { default: mod.default as React.ComponentType };
+  })
+) as React.LazyExoticComponent<React.FC<MapTabProps>>;
 
 function MapTabFallback() {
   return (

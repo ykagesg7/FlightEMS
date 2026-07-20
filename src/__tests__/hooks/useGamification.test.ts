@@ -233,7 +233,7 @@ describe('useGamification', () => {
         expect(result.current.profile).toBeDefined();
       });
 
-      expect(result.current.rankInfo?.displayName).toBe('ファン');
+      expect(result.current.rankInfo?.displayName).toBe('訓練準備');
       expect(result.current.rankProgress).toBe(0);
     });
   });
@@ -411,11 +411,10 @@ describe('useGamification', () => {
 
       expect(mockRpc).toHaveBeenCalledWith('complete_mission', {
         p_mission_id: 'm-one',
-        p_user_id: 'user-123',
       });
     });
 
-    it('skips daily mission when last completion was within 1 day', async () => {
+    it('delegates daily mission period checks to the server', async () => {
       const now = new Date();
       const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
 
@@ -457,7 +456,9 @@ describe('useGamification', () => {
         await result.current.completeMissionByAction('quiz_pass');
       });
 
-      expect(mockRpc).not.toHaveBeenCalled();
+      expect(mockRpc).toHaveBeenCalledWith('complete_mission', {
+        p_mission_id: 'm-daily',
+      });
     });
 
     it('runs RPC for daily when no prior completion rows', async () => {
@@ -490,11 +491,10 @@ describe('useGamification', () => {
 
       expect(mockRpc).toHaveBeenCalledWith('complete_mission', {
         p_mission_id: 'm-daily2',
-        p_user_id: 'user-123',
       });
     });
 
-    it('skips weekly mission when last completion was within 7 days', async () => {
+    it('delegates weekly mission period checks to the server', async () => {
       const now = new Date();
       const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
 
@@ -536,7 +536,9 @@ describe('useGamification', () => {
         await result.current.completeMissionByAction('plan_create');
       });
 
-      expect(mockRpc).not.toHaveBeenCalled();
+      expect(mockRpc).toHaveBeenCalledWith('complete_mission', {
+        p_mission_id: 'm-weekly',
+      });
     });
   });
 });

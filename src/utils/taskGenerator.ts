@@ -39,6 +39,26 @@ export async function generateDailyTasks(userId: string): Promise<DailyTask[]> {
  * 弱点トピックからタスクを生成
  */
 async function getWeaknessTasks(userId: string): Promise<DailyTask[]> {
+  const { data: weakAreas, error: weakError } = await supabase
+    .from('user_weak_areas')
+    .select('subject_category, accuracy_rate, attempt_count, priority_level')
+    .eq('user_id', userId)
+    .lt('accuracy_rate', 70)
+    .order('priority_level', { ascending: true })
+    .limit(3);
+
+  if (!weakError && weakAreas && weakAreas.length > 0) {
+    return weakAreas.map((item, index) => ({
+      id: `weakness-${item.subject_category}-${index}`,
+      type: 'weakness' as TaskType,
+      title: `${item.subject_category}の弱点克服`,
+      estimatedMinutes: 20,
+      priority: 90 - Math.round(Number(item.accuracy_rate ?? 0)),
+      linkTo: `/test?subject=${encodeURIComponent(item.subject_category)}`,
+      completed: false,
+    }));
+  }
+
   const { data: results, error } = await supabase
     .from('user_test_results')
     .select('subject_category, is_correct')

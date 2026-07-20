@@ -183,11 +183,18 @@ src/pages/
 ├── dashboard/
 │   ├── HomePage.tsx
 │   └── components/
+│       ├── LearningJourneyCard.tsx   # get_learning_journey 現在地
+│       ├── FormationQuestCard.tsx    # 協力型編隊クエスト共有ゲージ
+│       ├── CohortCard.tsx
 │       ├── DailyTasks.tsx
 │       ├── LearningHeatmap.tsx
 │       ├── SubjectRadarChart.tsx
+│       ├── LearningBenchmarkCard.tsx
+│       ├── PublicLeaderboardSection.tsx
 │       └── AnnouncementCard.tsx
-│   # 補助: src/utils/dashboard.ts, src/utils/heatmapData.ts
+│   # 補助: src/utils/dashboard.ts, src/utils/heatmapData.ts,
+│   #        src/utils/runMasteryLoopAfterSession.ts（クイズ完了後 SRS/弱点/遅延XP）
+│   #        src/utils/taskGenerator.ts（DailyTasks: weak_areas 優先）
 ├── planning/
 │   ├── PlanningMapPage.tsx
 │   ├── createInitialFlightPlan.ts

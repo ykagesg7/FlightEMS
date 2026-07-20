@@ -17,18 +17,14 @@ vi.mock('../../hooks/useAuth', () => ({
 vi.mock('../../hooks/useGamification', () => ({
   useGamification: vi.fn(() => ({
     completeMissionByAction: mockCompleteMissionByAction,
-    profile: { completed_missions: [], rank: undefined as string | undefined },
+    profile: {
+      user_id: 'test-user',
+      completed_missions: [],
+      available_missions: [],
+      rank: 'fan',
+      xp_points: 0,
+    },
     rankProgress: 0,
-  })),
-}));
-
-const mockCheckRanksForContent = vi.fn().mockResolvedValue([]);
-const mockRefreshRanks = vi.fn();
-
-vi.mock('../../hooks/usePPLRanks', () => ({
-  usePPLRanks: vi.fn(() => ({
-    checkRanksForContent: mockCheckRanksForContent,
-    refreshRanks: mockRefreshRanks,
   })),
 }));
 
@@ -45,14 +41,12 @@ import type { User } from '@supabase/supabase-js';
 import type { UseAuthReturn } from '../../hooks/useAuth';
 import { useAuth } from '../../hooks/useAuth';
 import { useGamification } from '../../hooks/useGamification';
-import { usePPLRanks } from '../../hooks/usePPLRanks';
 import { useArticleProgress } from '../../hooks/useArticleProgress';
 import { supabase } from '../../utils/supabase';
 import { buildArticleIndex } from '../../utils/articlesIndex';
 
 const mockUseAuth = vi.mocked(useAuth);
 const mockUseGamification = vi.mocked(useGamification);
-const mockUsePPLRanks = vi.mocked(usePPLRanks);
 const mockBuildArticleIndex = vi.mocked(buildArticleIndex);
 
 function baseAuth(overrides: Partial<UseAuthReturn> = {}): UseAuthReturn {
@@ -127,14 +121,15 @@ describe('useArticleProgress hook', () => {
 
     mockUseGamification.mockReturnValue({
       completeMissionByAction: mockCompleteMissionByAction,
-      profile: { completed_missions: [], rank: undefined },
+      profile: {
+        user_id: 'test-user',
+        completed_missions: [],
+        available_missions: [],
+        rank: 'fan',
+        xp_points: 0,
+      },
       rankProgress: 0,
-    });
-
-    mockUsePPLRanks.mockReturnValue({
-      checkRanksForContent: mockCheckRanksForContent,
-      refreshRanks: mockRefreshRanks,
-    });
+    } as ReturnType<typeof useGamification>);
 
     mockUseAuth.mockReturnValue(baseAuth());
   });

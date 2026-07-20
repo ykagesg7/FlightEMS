@@ -40,7 +40,7 @@ interface LearningContent {
   id: string;
   title: string;
   category: string;
-  description: string;
+  description: string | null;
 }
 
 function filterExcluded(

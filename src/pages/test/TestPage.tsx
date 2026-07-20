@@ -5,7 +5,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useGamification } from '../../hooks/useGamification';
 import { QuizQuestion, UserQuizAnswer } from '../../types/quiz';
 import supabase from '../../utils/supabase';
+import { awardArticleComprehensionXp } from '../../utils/awardArticleComprehensionXp';
 import { awardQuizSessionXp } from '../../utils/awardQuizSessionXp';
+import { runMasteryLoopAfterSession } from '../../utils/runMasteryLoopAfterSession';
 import { syncStreakToUserLearningProfile } from '../../utils/streak';
 import { QuizActiveFilterChips } from './components/QuizActiveFilterChips';
 import { QuizComponent } from './components/QuizComponent';
@@ -24,6 +26,7 @@ import {
   trackQuizSessionComplete,
   trackQuizSessionStart,
 } from '../../lib/quizAnalytics';
+import type { Database } from '../../types/database.types';
 import { ALL_OPTION_VALUE, type FilterSortOrder } from './testFilterOptionUtils';
 import {
   fetchDiagnosticQuestionsPool,
@@ -291,6 +294,11 @@ const TestPage: React.FC = () => {
             answers.length > 0 ? (answers.filter((a) => a.isCorrect).length / answers.length) * 100 : 0,
           completed_at: new Date().toISOString(),
           is_completed: true,
+          settings: {
+            content_id: contentId,
+            tab: hubState.tab,
+            exam_level: examLevel,
+          },
         } as Record<string, unknown>;
         const { data: sessionData, error: sessionError } = await supabase
           .from('quiz_sessions')
@@ -306,7 +314,9 @@ const TestPage: React.FC = () => {
       const isUuid = (v: unknown) => typeof v === 'string' && /^[0-9a-fA-F-]{36}$/.test(v);
       const questionMap = new Map(questions.map((q) => [String(q.id), q]));
       const nowIso = new Date().toISOString();
-      const testResults = answers.map((a) => {
+      type UserTestResultInsert = Database['public']['Tables']['user_test_results']['Insert'];
+      const testResults: UserTestResultInsert[] = answers.flatMap((a) => {
+        if (!isUuid(a.questionId)) return [];
         const q = questionMap.get(String(a.questionId));
         const userAnswer = typeof a.answer === 'number' ? a.answer : Number(a.answer);
         const correct = (q as { correct_option_index?: number; correctAnswer?: number })?.correct_option_index ??
@@ -317,9 +327,10 @@ const TestPage: React.FC = () => {
           (q as { subject_category?: string })?.subject_category ?? null;
         const sub = (q as { sub_subject?: string })?.sub_subject;
         const subject = main && sub ? `${main} - ${sub}` : main;
-        const row: Record<string, unknown> = {
+        const row: UserTestResultInsert = {
           user_id,
-          question_id: isUuid(a.questionId) ? a.questionId : null,
+          question_id: a.questionId,
+          unified_question_id: a.questionId,
           user_answer: userAnswer,
           correct_answer: correct,
           is_correct: a.isCorrect,
@@ -331,7 +342,7 @@ const TestPage: React.FC = () => {
         if (typeof a.responseTimeMs === 'number') {
           row.response_time_seconds = Math.max(0, Math.round(a.responseTimeMs / 1000));
         }
-        return row;
+        return [row];
       });
       const { error: insertError } = await supabase.from('user_test_results').insert(testResults);
       if (insertError) throw insertError;
@@ -376,6 +387,24 @@ const TestPage: React.FC = () => {
           });
         } catch (xpErr) {
           console.warn('quiz session XP award skipped:', xpErr);
+        }
+
+        const correctCount = answers.filter((answer) => answer.isCorrect).length;
+        if (contentId && answers.length >= 3 && correctCount / answers.length >= 0.8) {
+          try {
+            await awardArticleComprehensionXp(contentId, sessionId);
+          } catch (comprehensionError) {
+            console.warn('article comprehension XP award skipped:', comprehensionError);
+          }
+        }
+
+        try {
+          await runMasteryLoopAfterSession(sessionId, {
+            userId: user_id,
+            queryClient,
+          });
+        } catch (masteryError) {
+          console.warn('mastery loop skipped:', masteryError);
         }
       }
 
@@ -589,7 +618,7 @@ const TestPage: React.FC = () => {
           {profile && profile.leaderboard_opt_in !== true && !saveError && !saving ? (
             <div className="mt-4 max-w-2xl mx-auto px-2">
               <LeaderboardOptInCta
-                optedIn={profile.leaderboard_opt_in === true}
+                optedIn={Boolean(profile.leaderboard_opt_in)}
                 variant="inline"
                 dismissStorageKey="leaderboard_cta_dismiss_test_v1"
               />

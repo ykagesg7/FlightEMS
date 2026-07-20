@@ -1,5 +1,4 @@
 import type { ArticleMeta } from '../types/articles';
-import { calculateTotalArticleXp } from './articleXpRewards';
 import { supabase } from './supabase';
 
 export interface ArticleProgressSnapshot {
@@ -44,31 +43,24 @@ export function resolveArticleMeta(
 }
 
 export function computeArticleReadXp(
-  contentId: string,
-  meta: ArticleMeta | undefined,
-  isSeriesComplete: boolean
+  _contentId: string,
+  _meta: ArticleMeta | undefined,
+  _isSeriesComplete: boolean
 ): number {
-  return calculateTotalArticleXp(contentId, meta, true, isSeriesComplete);
+  return 5;
 }
 
 /**
  * Awards XP for first-time article completion via Supabase RPC (idempotent server-side).
  */
 export async function awardArticleReadXp(
-  userId: string,
+  _userId: string,
   contentId: string,
-  meta: ArticleMeta | undefined,
-  isSeriesComplete: boolean
+  _meta: ArticleMeta | undefined,
+  _isSeriesComplete: boolean
 ): Promise<AwardArticleXpResult> {
-  const xpAmount = computeArticleReadXp(contentId, meta, isSeriesComplete);
-  if (xpAmount <= 0) {
-    return { success: false, error: 'zero_xp' };
-  }
-
-  const { data, error } = await supabase.rpc('award_article_xp', {
-    p_user_id: userId,
+  const { data, error } = await supabase.rpc('award_article_read_xp', {
     p_article_slug: contentId,
-    p_xp_amount: xpAmount,
   });
 
   if (error) {
@@ -85,5 +77,5 @@ export async function awardArticleReadXp(
     return { success: false, error: payload?.error ?? 'award_failed' };
   }
 
-  return { success: true, xpAwarded: payload.xp_awarded ?? xpAmount };
+  return { success: true, xpAwarded: payload.xp_awarded ?? 5 };
 }

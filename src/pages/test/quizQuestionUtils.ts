@@ -1,5 +1,9 @@
 import { QuestionType, type QuizQuestion } from '../../types/quiz';
 
+function toDifficultyLevel(value: unknown): 'easy' | 'medium' | 'hard' {
+  return value === 'easy' || value === 'medium' || value === 'hard' ? value : 'medium';
+}
+
 /** Map a unified_cpl_questions row to QuizQuestion. */
 export function parseUnifiedCplQuestion(q: Record<string, unknown>): QuizQuestion {
   const options =
@@ -18,7 +22,7 @@ export function parseUnifiedCplQuestion(q: Record<string, unknown>): QuizQuestio
     correct_option_index: correctIdx,
     explanation: (q.explanation as string) || '',
     explanation_image_url: (q.explanation_image_url as string) || null,
-    difficulty_level: (q.difficulty_level as string) || 'medium',
+    difficulty_level: toDifficultyLevel(q.difficulty_level),
     created_at: q.created_at as string,
     updated_at: q.updated_at as string,
     type: QuestionType.MULTIPLE_CHOICE,

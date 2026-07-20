@@ -1,8 +1,8 @@
 import React from 'react';
-import Select from 'react-select';
-import { AirportGroupOption, FlightPlan, NavaidOption, WaypointOption } from '../../../../types/index';
+import Select, { SingleValue, type StylesConfig } from 'react-select';
+import { AirportGroupOption, AirportOption, FlightPlan, NavaidOption, WaypointOption } from '../../../../types/index';
 import { MAGNETIC_DECLINATION } from '../../../../utils/bearing';
-import { planningRouteSelectStyles } from '../../../../utils/reactSelectStyles';
+import { asSelectStyles } from '../../../../utils/reactSelectStyles';
 import WaypointAddPanel from './WaypointAddPanel';
 import WaypointList from './WaypointList';
 import type { PlanningPanelLayout } from '../../planningPanelLayout';
@@ -49,13 +49,15 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
           <label htmlFor="departure" className="block text-xs sm:text-sm font-medium text-white mb-1">
             出発地
           </label>
-          <Select
+          <Select<AirportOption, false, AirportGroupOption>
             id="departure"
             placeholder="出発空港を選択.."
             options={airportOptions}
             value={flightPlan.departure}
-            onChange={(option) => setFlightPlan({ ...flightPlan, departure: option || undefined })}
-            styles={planningRouteSelectStyles}
+            onChange={(option: SingleValue<AirportOption>) =>
+              setFlightPlan({ ...flightPlan, departure: option ?? undefined })
+            }
+            styles={asSelectStyles<AirportOption>() as unknown as StylesConfig<AirportOption, false, AirportGroupOption>}
             classNamePrefix="react-select"
             className="text-xs sm:text-sm min-w-0"
           />
@@ -64,13 +66,15 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
           <label htmlFor="arrival" className="block text-xs sm:text-sm font-medium text-white mb-1">
             目的地
           </label>
-          <Select
+          <Select<AirportOption, false, AirportGroupOption>
             id="arrival"
             placeholder="到着空港を選択.."
             options={airportOptions}
             value={flightPlan.arrival}
-            onChange={(option) => setFlightPlan({ ...flightPlan, arrival: option || undefined })}
-            styles={planningRouteSelectStyles}
+            onChange={(option: SingleValue<AirportOption>) =>
+              setFlightPlan({ ...flightPlan, arrival: option ?? undefined })
+            }
+            styles={asSelectStyles<AirportOption>() as unknown as StylesConfig<AirportOption, false, AirportGroupOption>}
             classNamePrefix="react-select"
             className="text-xs sm:text-sm min-w-0"
           />

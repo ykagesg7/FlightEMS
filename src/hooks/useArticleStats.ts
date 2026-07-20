@@ -55,10 +55,11 @@ export function useArticleStats() {
         console.error('統計取得エラー:', statsError);
       } else if (statsData) {
         statsData.forEach(stat => {
-          if (articleStats[stat.content_id]) {
-            articleStats[stat.content_id].likes_count = stat.likes_count || 0;
-            articleStats[stat.content_id].comments_count = stat.comments_count || 0;
-            articleStats[stat.content_id].views_count = stat.views_count || 0;
+          const contentId = stat.content_id;
+          if (contentId && articleStats[contentId]) {
+            articleStats[contentId].likes_count = stat.likes_count || 0;
+            articleStats[contentId].comments_count = stat.comments_count || 0;
+            articleStats[contentId].views_count = stat.views_count || 0;
           }
         });
       }
@@ -76,8 +77,9 @@ export function useArticleStats() {
           console.error('ユーザーいいね状態取得エラー:', userLikesError);
         } else if (userLikesData) {
           userLikesData.forEach(like => {
-            if (articleStats[like.content_id]) {
-              articleStats[like.content_id].user_liked = true;
+            const contentId = like.content_id;
+            if (contentId && articleStats[contentId]) {
+              articleStats[contentId].user_liked = true;
             }
           });
         }
@@ -130,8 +132,8 @@ export function useArticleStats() {
           article_id: comment.content_id,
           user_id: comment.user_id,
           content: comment.content,
-          created_at: comment.created_at,
-          updated_at: comment.updated_at,
+          created_at: comment.created_at ?? '',
+          updated_at: comment.updated_at ?? '',
           user: {
             id: comment.user_id,
             email: '', // プライバシー保護のため空

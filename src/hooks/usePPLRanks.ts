@@ -96,8 +96,6 @@ export const usePPLRanks = (): UsePPLRanksResult => {
       // 新しいランクが付与された場合は再取得
       if (data && data.length > 0) {
         await fetchRanks();
-        // ランク取得通知（オプション）
-        return data as Array<{ rank_code: string; rank_name: string }>;
       }
     } catch (err) {
       console.error('ランクチェックエラー:', err);

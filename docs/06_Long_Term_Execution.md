@@ -142,8 +142,13 @@
 
 - `current_streak_days` の自動計算（現状はプロファイル行のブートストラップのみ）
 - フラグの永続保存・Review 連携
-- SRS 更新の強化
-- ランキング・ライバル比較
+- SRS due リマインダー（通知 cron）
+- ランキング・ライバル比較の拡張（公開 LB は任意参加の参考表示のみ）
+
+> **2026-07-20 更新**: クイズ完了後の SRS upsert（`sync_srs_after_session`）、
+> `user_weak_areas` リフレッシュ、遅延保持 / 弱点改善 XP、協力型編隊クエストは
+> [`20260720_gamification_phase2_mastery_loop.sql`](../scripts/database/20260720_gamification_phase2_mastery_loop.sql)
+> で実装・本番適用済み。
 
 ### 5.4 現状のデータソース
 
@@ -153,8 +158,8 @@
 | `learning_sessions` | 学習時間・ヒートマップの元データ（session_duration, duration_minutes） |
 | `user_learning_profiles` | 継続日数（current_streak_days）、ブートストラップ済み |
 | `quiz_sessions` | セッション単位（questions_attempted, questions_correct, score_percentage, session_type） |
-| `user_unified_srs_status` | SRS 復習スケジュール |
-| `user_weak_areas` | 弱点科目と推奨コンテンツ（現行本線では未使用の可能性あり） |
+| `user_unified_srs_status` | SRS 復習スケジュール（クイズ完了後に RPC で更新） |
+| `user_weak_areas` | 弱点科目スナップショット（`refresh_user_weak_areas` / DailyTasks 優先源） |
 
 ### 5.5 保存済みデータだけで出せる指標
 

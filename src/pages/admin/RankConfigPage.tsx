@@ -82,8 +82,8 @@ export const RankConfigPage: React.FC = () => {
 
   return (
     <AdminPageShell
-      title="ランク設定"
-      description="各ランクの昇格条件（rank_requirements）を確認・削除できます。"
+      title="旧ランク設定（互換用）"
+      description="学習者向け進行は学習ジャーニーへ移行済みです。旧 rank_requirements の監査・削除だけを行います。"
       headerAction={
         <button
           type="button"

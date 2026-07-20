@@ -153,7 +153,7 @@ export function devWeatherApiPlugin(): Plugin {
         }
       };
 
-      const stack = (server.middlewares as { stack: { route: string; handle: typeof handle }[] }).stack;
+      const stack = (server.middlewares as unknown as { stack: { route: string; handle: typeof handle }[] }).stack;
       stack.unshift({ route: '', handle });
     },
   };

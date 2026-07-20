@@ -71,7 +71,6 @@ export async function syncMDXToSupabase(directory: string): Promise<{success: bo
           updated_at: new Date().toISOString()
         }, {
           onConflict: 'id',
-          returning: 'minimal'
         });
       
       if (error) {

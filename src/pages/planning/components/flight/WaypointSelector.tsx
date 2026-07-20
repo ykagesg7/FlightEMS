@@ -3,7 +3,7 @@ import Select, { SingleValue } from 'react-select';
 import { FlightPlan, Waypoint, WaypointOption } from '../../../../types/index';
 import { calculateDistance, decimalToDMS } from '../../../../utils';
 import { calculateMagneticBearing } from '../../../../utils/bearing';
-import { planningRouteSelectStyles } from '../../../../utils/reactSelectStyles';
+import { asSelectStyles } from '../../../../utils/reactSelectStyles';
 
 interface WaypointSelectorProps {
   options: WaypointOption[];
@@ -120,7 +120,7 @@ const WaypointSelector: React.FC<WaypointSelectorProps> = ({
         onChange={handleWaypointChange}
         placeholder="Select Waypoint"
         isClearable
-        styles={planningRouteSelectStyles}
+        styles={asSelectStyles<WaypointOption>()}
       />
 
       {selectedWaypoint && (

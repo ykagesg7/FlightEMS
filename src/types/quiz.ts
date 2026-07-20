@@ -57,7 +57,7 @@ export interface Question {
   imagePlaceholder?: string;
   // フロントエンド互換フィールド（旧版コンポーネント用）
   text?: string;            // = question_text
-  options?: Option[];       // 詳細型オプション（id,text）
+  optionDetails?: Option[]; // 詳細型オプション（id,text）
   // DB由来（結果分析・弱点科目用）
   main_subject?: string;
   sub_subject?: string;
