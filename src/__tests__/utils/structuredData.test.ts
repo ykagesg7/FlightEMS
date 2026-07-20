@@ -43,7 +43,7 @@ describe('structuredData generators', () => {
     expect(data.keywords).toEqual(['tag1', 'tag2']);
     expect(data.articleSection).toBe('航空法規');
     expect(data.timeRequired).toBe('PT15M');
-    expect(data.wordCount).toBe(1000);
+    expect(data.wordCount).toBe(3000);
     expect(data.inLanguage).toBe('ja');
   });
 
