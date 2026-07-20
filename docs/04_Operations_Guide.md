@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトの運用、保守、トラブルシューティングについて説明します。
 
-**最終更新**: 2026年7月20日（ゲーミフィケーション第2期・習熟ループ）
-**バージョン**: Operations & Maintenance Guide v3.1
+**最終更新**: 2026年7月20日（ゲーミフィケーション第1〜2期 + HOME/Articles/Quiz UX）
+**バージョン**: Operations & Maintenance Guide v3.2
 
 ---
 
@@ -113,21 +113,23 @@
 - **週次表彰**: active **3〜9 名** → 達成者内 MVP（同率 1 位可、追加30 XP）。**10 名以上** → 達成者内 TOP3（追加20 XP）。全員未達成・inactive なら表彰なし
 - **RPC 権限 hardening（本番適用済）**: [`scripts/database/20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql) — cron 系 RPC は **service_role のみ**、ユーザー RPC は **authenticated のみ**（`anon` EXECUTE 不可）
 
-#### ゲーミフィケーション第1期のリリース手順
+#### ゲーミフィケーション第1〜2期のリリース手順
 
 1. `20260720_gamification_phase1_foundation.sql` と production hardening を Supabase migration として適用（完了）
 2. `20260720_gamification_phase2_mastery_loop.sql` を適用（完了）— SRS / 遅延再テスト / 弱点改善 / 編隊クエスト
 3. `20260720_gamification_phase2_rpc_invoker_wrappers.sql` を適用（完了）— journey / formation の INVOKER 境界
 4. 型再生成後、クイズ完了で `runMasteryLoopAfterSession` が呼ばれることを確認
-5. ダッシュボードに `FormationQuestCard`（コホート登録者のみ）と学習ジャーニーの SRS 期限件数が表示されること
-2. `profiles` / `learning_progress` の匿名 ALL policy が消え、本人 policy のみであることを確認
-3. `award_*_xp` の旧引数付き RPC がなく、新 RPC が authenticated のみに公開されていることを確認
-4. ステージングユーザーで記事95%読了（5 XP）→記事連動 Quiz 3問・80%以上（10 XP）を確認
-5. 同じ記事・sessionで再実行し `already_awarded` となり XP が増えないことを確認
-6. cron を1回手動実行し、レスポンス `awarded.mission_completions_awarded` /
+5. 結果画面に学習成果（セッション XP・理解確認・復習更新等）が出ること
+6. HOME が「今日の1手」→ジャーニー→`DailyTasks`→`CohortMissionSection` の順であること（編隊は登録者のみ）
+7. Articles に次の理解チェック CTA と 未読/読了/理解確認済 チップがあること
+8. `profiles` / `learning_progress` の匿名 ALL policy が消え、本人 policy のみであることを確認
+9. `award_*_xp` の旧引数付き RPC がなく、新 RPC が authenticated のみに公開されていることを確認
+10. ステージングユーザーで記事95%読了（5 XP）→記事連動 Quiz 3問・80%以上（10 XP）を確認
+11. 同じ記事・sessionで再実行し `already_awarded` となり XP が増えないことを確認
+12. cron を1回手動実行し、レスポンス `awarded.mission_completions_awarded` /
    `awarded.placement_awards_granted` と `xp_award_events` を照合
-7. 学科試験完了の確認ダイアログ、`post_written`、`learning_milestones` を確認
-8. GA4 DebugView で `learning_milestone_achieved`（記事理解・学科試験完了）を確認
+13. 学科試験完了の確認ダイアログ、`post_written`、`learning_milestones` を確認
+14. GA4 DebugView で `learning_milestone_achieved`（記事理解・学科試験完了）を確認
 
 **ロールバック**: 旧公開 RPC や匿名書込 policy はセキュリティ上復元しない。障害時は
 フロントを直前デプロイへ戻し、新 RPC の EXECUTE を一時 revoke して報酬付与を停止する。

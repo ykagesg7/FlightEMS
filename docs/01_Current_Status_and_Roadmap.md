@@ -45,6 +45,9 @@
   本人固定・サーバー計算・冪等な XP RPC、ALPM 台帳を追加。
   **第2期習熟ループ（SRS・遅延再テスト・弱点改善・編隊クエスト）も
   `20260720_gamification_phase2_mastery_loop.sql` で本番適用済み**。
+  **HOME/Articles/Quiz UX 再構成（2026-07-20）**: 結果画面の学習成果表示、
+  HOME「今日の1手」中心、Articles 理解チェック CTA／状態チップ — 本番デプロイ済み。
+  CI `test` / `verify-build` 通過確認済み。
   実技・ウイングマーク等の後続フェーズは未実装。
 
 | 優先 | タスク | 詳細 | 目安 |
@@ -68,7 +71,7 @@
 | Phase                     | 内容                                         | 状態  |
 | ------------------------- | ------------------------------------------ | --- |
 | Phase 1: Brand Foundation | MarketingLayout/AppLayout、ブランドカラー          | 完了  |
-| Phase 2: Gamification（第1期） | 累積XPは活動参考値。習熟ジャーニーを学習者向け進行の正本として本番反映 | 第1期完了 |
+| Phase 2: Gamification（第1〜2期） | 習熟ジャーニー + SRS/遅延再テスト/弱点改善/編隊。HOME/Articles/Quiz UX 再構成済み | 完了（実技課程は未） |
 | Phase 3: Engagement       | Gallery（イベント管理・いいね）、ランク連動 Shop（UI は後に非表示化） | 完了  |
 | Phase 4.5-4.7             | デュアルテーマ、リポジトリ整理、MarketingLayout統合          | 完了  |
 | 旧PPLランクシステム               | DB互換用に保持。学習者向け表示と自動昇格は習熟ジャーニーへ移行       | 非推奨  |
