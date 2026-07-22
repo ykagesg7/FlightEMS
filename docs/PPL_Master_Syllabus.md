@@ -2,7 +2,7 @@
 
 **作成日**: 2025年1月
 **最終更新**: 2026年7月16日  
-**バージョン**: v1.14
+**バージョン**: v1.20
 
 ## 📖 このドキュメントを読むべき人
 
@@ -29,11 +29,11 @@
 
 ### 全体進捗
 
-- **全体（MDX 本数 / シラバス 150 論点）**: **57/150（38.0%）** — `learning_contents` 登録済 PPL **57** 本（2026-07-16）
-- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本** + 航法 Phase 1 **9 本** + 通信 Phase 1 **2 本**（Subject 3 **完走**）
-- **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Subject 3 Phase 2（磁気偏差・GNSS 等）・Subject 4 Phase 1 残り **6 スタブ**
+- **全体（MDX 本数 / シラバス 150 論点）**: **63/150（42.0%）** — `learning_contents` 登録済 PPL **63** 本（2026-07-22）
+- **Phase 1 相当の記事**: 工学 20 本 + 法規 14 本 + 気象 Phase 1 **12 本** + 航法 Phase 1 **9 本** + 通信 Phase 1 **8 本**（Subject 3/4 Phase 1 **完走**）
+- **Phase 2 / 3**: 工学 Phase 2 記事 2 本ほか。Subject 3 Phase 2（磁気偏差・GNSS 等）・Subject 4 Phase 2（FIR・レーダー・AIP 等）
 
-**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2/3 Phase 1 完走。**進行中**: Subject 4 通信 Phase 1（[`PPL-4-1-1`](../src/content/lessons/PPL-4-1-1_AirTrafficServicesOverview.mdx)・[`PPL-4-1-2`](../src/content/lessons/PPL-4-1-2_SearchAndRescueBasics.mdx) 公開済 — **C-7 ≥2 本達成**）。
+**KPI 正本**: Phase C 目標 **25/150 以上**（[01](01_Current_Status_and_Roadmap.md) C-7）— **達成済**。Subject 2/3/4 Phase 1 完走。次: Subject 4 Phase 2 または Subject 3 Phase 2。
 
 ### 科目別進捗
 
@@ -42,7 +42,7 @@
 | **Subject 1: 航空工学** | 45 | **20** | 44.4% | 14/15 | 2/20 | 0/10 |
 | **Subject 2: 航空気象** | 35 | **12** | 34.3% | 12/12 | 0/15 | 0/8 |
 | **Subject 3: 空中航法** | 30 | **9** | 30.0% | **9/9 完走** | 0/12 | 0/8 |
-| **Subject 4: 航空通信** | 20 | **2** | 10.0% | **2/8** | 0/8 | 0/4 |
+| **Subject 4: 航空通信** | 20 | **8** | 40.0% | **8/8** | 0/8 | 0/4 |
 | **Subject 5: 航空法規** | 20 | **14** | 70.0% | 8/8 | 4/8 | 0/4 |
 | **合計** | **150** | **57** | **38.0%** | — | — | — |
 
@@ -280,15 +280,15 @@
 - [x] **Phase 1** 捜索救難: SARの仕組み、救難信号、緊急用周波数（121.5） — [`PPL-4-1-2`](../src/content/lessons/PPL-4-1-2_SearchAndRescueBasics.mdx)（2026-07-16）
 
 ### 4-2. 航空交通管制の実際
-- [ ] **Phase 1** 用語（Phraseology）: アルファベット、数字の読み方、標準用語
-- [ ] **Phase 1** クリアランス: 承認の受領と復唱（Read back）
-- [ ] **Phase 1** 飛行場管制: タワー業務、離着陸許可、地上滑走
+- [x] **Phase 1** 用語（Phraseology）: アルファベット、数字の読み方、標準用語 — [`PPL-4-2-1`](../src/content/lessons/PPL-4-2-1_RadioPhraseologyBasics.mdx)（2026-07-18）
+- [x] **Phase 1** クリアランス: 承認の受領と復唱（Read back） — [`PPL-4-2-2`](../src/content/lessons/PPL-4-2-2_ClearanceReadbackBasics.mdx)（2026-07-18）
+- [x] **Phase 1** 飛行場管制: タワー業務、離着陸許可、地上滑走 — [`PPL-4-2-3`](../src/content/lessons/PPL-4-2-3_AerodromeControlBasics.mdx)（2026-07-18）
 - [ ] **Phase 2** レーダー管制: 識別（Ident）、誘導（Vector）
-- [ ] **Phase 1** 飛行計画: ファイル、変更、クローズ
+- [x] **Phase 1** 飛行計画: ファイル、変更、クローズ — [`PPL-4-2-4`](../src/content/lessons/PPL-4-2-4_FlightPlanFilingBasics.mdx)（2026-07-22）
 
 ### 4-3. 緊急・異常時
-- [ ] **Phase 1** 通信設定: 無線機故障時の対応（空中の三角形、ライトガン信号）
-- [ ] **Phase 1** 緊急通信: Mayday（遭難）とPan-Pan（緊急）
+- [x] **Phase 1** 通信設定: 無線機故障時の対応（空中の三角形、ライトガン信号） — [`PPL-4-3-1`](../src/content/lessons/PPL-4-3-1_CommFailureAndLightSignals.mdx)（2026-07-22）
+- [x] **Phase 1** 緊急通信: Mayday（遭難）とPan-Pan（緊急） — [`PPL-4-3-2`](../src/content/lessons/PPL-4-3-2_MaydayPanPanBasics.mdx)（2026-07-22）
 
 **Subject 4 合計**: 20トピック（Phase 1: 8, Phase 2: 8, Phase 3: 4）
 
@@ -436,37 +436,25 @@
 - `series = 'PPL-Master-Syllabus'`で全体を管理
 - または`series = 'PPL-{Subject}-{Section}'`で細分化
 
-### PPLランクシステム（2026年1月実装）
-PPL Syllabus階層構造に基づく専門資格ランクシステムが統合されました。
+### 学習到達の扱い（2026年7月改訂）
 
-**ランク階層:**
-- **Phaseレベル**: Phase 1-3の完了ランク（例: PPL空力基礎初級、中級、マスター）
-- **Sectionレベル**: セクションマスター（例: PPL航空力学マスター）
-- **Categoryレベル**: カテゴリーマスター（例: PPL航空工学マスター）
-- **Subjectレベル**: 科目マスター（例: PPL航空気象マスター）
-- **PPL全体**: 自家用操縦士（全科目完了）
+シラバス上の Phase / Section / Category / Subject は、教材編成と習熟集計の単位です。
+免許・資格の取得を表す「ランク」としては扱いません。第1期は記事読了だけでなく、
+記事連動 Quiz の理解確認、科目別習熟、横断演習、試験準備を経て、ユーザーが
+学科試験完了を記録するまでを学習ジャーニーとして表示します。
 
-**ランク取得条件:**
-- Phaseランク: 必要な記事を全て読了
-- Sectionランク: そのセクションの全Phaseランク（Phase 1, 2, 3）を取得
-- Categoryランク: そのカテゴリーの全セクションマスターランクを取得
-- Subjectランク: その科目の全カテゴリーマスターランクを取得
-- PPL全体: 全5科目のマスターランクを取得
+- 記事読了: 初回 5 XP
+- 記事理解チェック: 3問以上・80%以上で初回 10 XPと ALPM
+- 科目習熟: 10問以上・80%以上を現在地判定の証拠として使用
+- `user_ppl_ranks` と `profiles.rank`: 後方互換用。免許保有の証明には使用しない
 
-**統合ランクシステム:**
-- PPL中間ランクは`user_ppl_ranks`テーブルで管理
-- `profiles.rank`には最も高いPPL中間ランクが反映される
-- ランク判定の優先順位: CPL > PPL > PPL中間ランク > XPベース
-
-**XP要件:**
-- PPL全記事（150記事）読了で500XP到達
-- CPL全記事読了で1,000XP到達（将来実装）
-- Wingman: 1,200 XP、Ace: 1,500 XP、Master: 2,000 XP、Legend: 2,500 XP
+XP・RPC・週次報酬・第2期境界の正本は
+[02_System_Spec.md](02_System_Spec.md)「ゲーミフィケーションシステム 第1期」を参照してください。
 
 ### 将来拡張
 - `learning_test_mapping`テーブルをPPL問題にも対応（将来実装）
 - PPL問題データベースとの連携
-- CPLランクシステムの実装（PPLと同様の階層構造）
+- 第2期の実技・ウイングマーク等は、学科到達と分離した検証可能なマイルストーンとして設計
 
 ---
 
@@ -495,6 +483,8 @@ src/content/lessons/
 
 | 日付 | 更新内容 | 更新者 |
 |------|----------|--------|
+| 2026-07-22 | **v1.20** — Subject 4 Phase 1 **完走**（`PPL-4-3-2`）。進捗 **63/150**。mapping 緊急・遭難 **34** | — |
+| 2026-07-22 | **v1.19** — Subject 4 Phase 1 **+1 本**（`PPL-4-3-1`）。進捗 **62/150**。mapping 可視信号 **15**。残スタブ `4-3-2` | — |
 | 2025-01 | 初版作成、PPL Master Syllabus策定 | System |
 | 2026-01 | Phase 1記事8件作成完了（温度換算、対気速度、ベルヌーイの定理、抗力の基礎、三軸と安定性、失速とスピン、V-n線図、プロペラの基礎）、KaTeX数式記法サポート追加 | System |
 | 2026-01-18 | PPLランクシステム統合実装完了（Spectator, Trainee, Student, Apprentice, Pilotランクを削除し、PPL中間ランクを統合）、XP要件更新（Wingman: 1,200, Ace: 1,500, Master: 2,000, Legend: 2,500） | System |

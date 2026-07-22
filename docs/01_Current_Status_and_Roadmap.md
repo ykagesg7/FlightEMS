@@ -53,13 +53,13 @@
 | 優先 | タスク | 詳細 | 目安 |
 |------|--------|------|------|
 | **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md) Tier A/B。MCP 再集計 **月 1 回**。verified 未マッピング **12 件**（2026-07-10、**17→12**） | 週 2〜4 着手単位 |
-| **2** | **C-7 PPL Subject 4 Phase 1** | [PPL_Navigation_Communication_2026 §Subject 4](content_outlines/PPL_Navigation_Communication_2026/README.md) — **`4-1-1`〜`4-2-3` 公開済・≥2 本達成** ✅（残スタブ 3） | W29〜W30 |
+| **2** | **C-7 PPL Subject 4 Phase 1** | [PPL_Navigation_Communication_2026 §Subject 4](content_outlines/PPL_Navigation_Communication_2026/README.md) — **`4-1-1`〜`4-3-2` 公開済・Phase 1 完走** ✅ | W29〜W30 |
 | **3** | CPL↔PPL Callout | 気象 `3.3.3/4/7/9/12` **2026-06-30 済**。法規 **`3.1.1`〜`3.1.8` 8/8 完走** ✅（2026-07-10） | W27〜W29 **完了** |
 | **4** | GA4 ファネル | Quiz Hub 投入（2026-06-06）から **4 週以降**の計測レビュー（`artifacts/` メモ） | W27 初旬 |
 | **5** | B-4 テスト | `src` 実効 **18.07% 維持**（Phase C 15% 主目標は六月達成済） | 月次記録 |
 | **6** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**コード着手。未承認時は A11y/Lighthouse **監査メモ**のみ | 随時 |
 
-**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2/3 Phase 1 完走。Subject 4 Phase 1 **5/8**（`PPL-4-1-1`〜`4-2-3`、2026-07-18）。PPL 登録済 **60/150**。次: Subject 4 残スタブ（例: `PPL-4-2-4` / `4-3-1`）。
+**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2/3/4 Phase 1 完走。Subject 4 Phase 1 **8/8**（`PPL-4-1-1`〜`4-3-2`、2026-07-22）。PPL 登録済 **63/150**。次: Subject 4 Phase 2 または Subject 3 Phase 2。
 
 ---
 

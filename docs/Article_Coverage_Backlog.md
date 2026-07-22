@@ -1,7 +1,13 @@
 # 記事単元の網羅状況とバックログ
 
 **作成日**: 2026-04-10  
-**スナップショット更新**: 2026-07-16（W29/W30 — `PPL-4-1-2` 公開・mapping **126 行**・PPL **57**）
+**スナップショット更新**: 2026-07-22（W30 — `PPL-4-3-2` 公開・mapping **139 行**・PPL **63**・Subject 4 Phase 1 **完走**）
+**MCP 再取得（W30 Subject 4 第8本）**: 2026-07-22 — **`PPL-4-3-2`** 深文化公開 + mapping **34 問**（緊急機の行動20 + 救難手続9 + 緊急機管制5）。SQL: [`20260722_learning_contents_ppl432_mayday_pan_pan.sql`](../scripts/database/20260722_learning_contents_ppl432_mayday_pan_pan.sql)・[`20260722_learning_test_mapping_ppl432_mayday_pan_pan.sql`](../scripts/database/20260722_learning_test_mapping_ppl432_mayday_pan_pan.sql)。
+**MCP 再取得（W30 Subject 4 第7本）**: 2026-07-22 — **`PPL-4-3-1`** 深文化公開 + mapping **15 問**（飛行場管制/可視信号）。SQL: [`20260722_learning_contents_ppl431_comm_failure.sql`](../scripts/database/20260722_learning_contents_ppl431_comm_failure.sql)・[`20260722_learning_test_mapping_ppl431_comm_failure.sql`](../scripts/database/20260722_learning_test_mapping_ppl431_comm_failure.sql)。
+**MCP 再取得（W30 Subject 4 第6本）**: 2026-07-22 — **`PPL-4-2-4`** 深文化公開 + mapping **22 問**（記入要領18 + 通報4）。SQL: [`20260722_learning_contents_ppl424_flight_plan_filing.sql`](../scripts/database/20260722_learning_contents_ppl424_flight_plan_filing.sql)・[`20260722_learning_test_mapping_ppl424_flight_plan_filing.sql`](../scripts/database/20260722_learning_test_mapping_ppl424_flight_plan_filing.sql)。
+**MCP 再取得（W30 Subject 4 第5本）**: 2026-07-18 — **`PPL-4-2-3`** 深文化公開 + mapping **7 問**（地上滑走及び出発5 + 到着機2）。SQL: [`20260718_learning_contents_ppl423_aerodrome_control.sql`](../scripts/database/20260718_learning_contents_ppl423_aerodrome_control.sql)・[`20260718_learning_test_mapping_ppl423_aerodrome_control.sql`](../scripts/database/20260718_learning_test_mapping_ppl423_aerodrome_control.sql)。
+**MCP 再取得（W30 Subject 4 第4本）**: 2026-07-18 — **`PPL-4-2-2`** 深文化公開 + mapping **9 問**（管制許可等4 + 通則5）。SQL: [`20260718_learning_contents_ppl422_clearance_readback.sql`](../scripts/database/20260718_learning_contents_ppl422_clearance_readback.sql)・[`20260718_learning_test_mapping_ppl422_clearance_readback.sql`](../scripts/database/20260718_learning_test_mapping_ppl422_clearance_readback.sql)。
+**MCP 再取得（W30 Subject 4 第3本）**: 2026-07-18 — **`PPL-4-2-1`** 深文化公開 + mapping **41 問**（管制業務一般/電話通信）。SQL: [`20260718_learning_contents_ppl421_radio_phraseology.sql`](../scripts/database/20260718_learning_contents_ppl421_radio_phraseology.sql)・[`20260718_learning_test_mapping_ppl421_radio_phraseology.sql`](../scripts/database/20260718_learning_test_mapping_ppl421_radio_phraseology.sql)。
 **MCP 再取得（W29 Subject 4 第2本）**: 2026-07-16 — **`PPL-4-1-2`** 深文化公開 + mapping **28 問**（捜索救難業務22 + 捜索救難信号6）。SQL: [`20260716_learning_contents_ppl412_search_and_rescue.sql`](../scripts/database/20260716_learning_contents_ppl412_search_and_rescue.sql)・[`20260716_learning_test_mapping_ppl412_search_and_rescue.sql`](../scripts/database/20260716_learning_test_mapping_ppl412_search_and_rescue.sql)。
 **MCP 再取得（W29 Subject 4 着手）**: 2026-07-14 — **`PPL-4-1-1`** 深文化公開 + mapping **75 問**（航空交通業務52 + 概論23）。SQL: [`20260714_learning_contents_ppl411_air_traffic_services.sql`](../scripts/database/20260714_learning_contents_ppl411_air_traffic_services.sql)・[`20260714_learning_test_mapping_ppl411_air_traffic_services.sql`](../scripts/database/20260714_learning_test_mapping_ppl411_air_traffic_services.sql)。
 **MCP 再取得（W29 七月第 4 サイクル）**: 2026-07-10 — Tier B **電波の伝播 3 問** → `engineering_basics`（[`20260710_learning_test_mapping_radio_propagation_w29.sql`](../scripts/database/20260710_learning_test_mapping_radio_propagation_w29.sql)）。法規 Callout **`3.1.7`/`3.1.8`** ← PPL-5-*（**8/8 完走**）。
@@ -32,13 +38,13 @@
 | 指標 | 値 | 備考 |
 |------|-----|------|
 | **verified 設問クラスタ数** | **224** | `DISTINCT (main_subject, sub_subject)`（再取得していない場合は据え置き） |
-| **`learning_contents` 総行数** | **108** | 2026-07-16（`is_published` — PPL **57** + CPL **49** + 操縦 **2**） |
-| **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **57**（工学 **20** + 法規 **14** + 気象 **12** + 航法 **9** + 通信 **2**） / 操縦 **2** | Subject 4 **`PPL-4-1-1`/`4-1-2`** |
-| **PPL 記事のマッピング** | **57 / 57** 登録済 | 法規 **14**・気象 **12**・工学 **20**・航法 **9**・通信 **2**（`3-3-1` は 5-4-1 に分担） |
-| **`learning_test_mapping` がある記事** | **105** | 2026-07-16 MCP |
-| **`learning_test_mapping` 行数** | **126** | 2026-07-16（`PPL-4-1-2` **+2** 行・28問） |
+| **`learning_contents` 総行数** | **114** | 2026-07-22（`is_published` — PPL **63** + CPL **49** + 操縦 **2**） |
+| **`learning_contents`・category 内訳** | CPL学科 **49** / PPL **63**（工学 **20** + 法規 **14** + 気象 **12** + 航法 **9** + 通信 **8**） / 操縦 **2** | Subject 4 Phase 1 **`4-1-1`〜`4-3-2` 完走** |
+| **PPL 記事のマッピング** | **63 / 63** 登録済 | 法規 **14**・気象 **12**・工学 **20**・航法 **9**・通信 **8**（`3-3-1` は 5-4-1 に分担） |
+| **`learning_test_mapping` がある記事** | **111** | 2026-07-22 MCP |
+| **`learning_test_mapping` 行数** | **139** | 2026-07-22（`PPL-4-3-2` **+5** 行・34問） |
 | **verified 未マッピング設問** | **12** | 2026-07-10（変化なし — 既マッピングクラスタの再紐付け） |
-| **リポジトリ `src/content/lessons/*.mdx`** | **119** | 2026-07-16（PPL **63** MDX — 公開 **57** + Subject 4 スタブ **6**） |
+| **リポジトリ `src/content/lessons/*.mdx`** | **119** | 2026-07-22（PPL **63** MDX — 公開 **63**） |
 
 **正本**: 単元の木は **`unified_cpl_questions` の `(main_subject, sub_subject 全文)`**（[08](08_Syllabus_Management_Guide.md)）。本書の数値は FlightAcademy プロジェクトに対する **MCP `execute_sql`** で取得したスナップショットである。再取得する場合は §5 の SQL を使用する。
 
@@ -50,7 +56,7 @@
 | **PPL-1-1（工学・空力/性能）** | 11 本 | `3.2.x` に部分リンク（形式混在） | **11/11** 済 | — |
 | **PPL-1-2（計器/エンジン）** | 9 本 | `3.2.12` 等に部分リンク | **9/9** 済 | **`1-2-8/9`** は CPL プール束ね |
 | **PPL-5（法規）** | 14 本 | **`3.1.1`〜`3.1.8`** に PPL 復習 Callout（**8/8** CPL 法規本） | **14/14** 済 | **7月 Callout 完走** ✅ |
-| **PPL-4（通信）Phase 1** | **2** 本公開 | — | **2/2** 済（`4-1-1`・`4-1-2`） | 残スタブ **6** |
+| **PPL-4（通信）Phase 1** | **8** 本公開 | — | **8/8** 済（`4-1-1`〜`4-3-2`） | Phase 1 **完走** |
 | **PPL-3（航法）Phase 1** | **9** 本公開 | — | **8/9** 済 | **`3-3-1`** は mapping なし（`PPL-5-4-1` 分担）。Phase 1 **完走** |
 
 ---
@@ -260,6 +266,12 @@ ORDER BY unmapped_questions DESC;
 
 | 日付 | 内容 |
 |------|------|
+| 2026-07-22 | **PPL Subject 4 Phase 1 完走（第8本）**: [`PPL-4-3-2`](../src/content/lessons/PPL-4-3-2_MaydayPanPanBasics.mdx) 深文化公開 + mapping **34 問**（緊急機の行動20 + 救難手続9 + 緊急機管制5）。MCP: PPL **63**・mapping **139 行**。Subject 4 Phase 1 **8/8**。 |
+| 2026-07-22 | **PPL Subject 4 Phase 1 第7本**: [`PPL-4-3-1`](../src/content/lessons/PPL-4-3-1_CommFailureAndLightSignals.mdx) 深文化公開 + mapping **15 問**（飛行場管制/可視信号）。MCP: PPL **62**・mapping **134 行**。Subject 4 Phase 1 残は `4-3-2`。 |
+| 2026-07-22 | **PPL Subject 4 Phase 1 第6本**: [`PPL-4-2-4`](../src/content/lessons/PPL-4-2-4_FlightPlanFilingBasics.mdx) 深文化公開 + mapping **22 問**（記入要領18 + 通報4）。MCP: PPL **61**・mapping **133 行**。Subject 4 Phase 1 残は `4-3-1`・`4-3-2`。 |
+| 2026-07-18 | **PPL Subject 4 Phase 1 第5本**: [`PPL-4-2-3`](../src/content/lessons/PPL-4-2-3_AerodromeControlBasics.mdx) 深文化公開 + mapping **7 問**（地上滑走及び出発5 + 到着機2）。MCP: PPL **60**・mapping **131 行**。 |
+| 2026-07-18 | **PPL Subject 4 Phase 1 第4本**: [`PPL-4-2-2`](../src/content/lessons/PPL-4-2-2_ClearanceReadbackBasics.mdx) 深文化公開 + mapping **9 問**（管制許可等4 + 通則5）。MCP: PPL **59**・mapping **129 行**。 |
+| 2026-07-18 | **PPL Subject 4 Phase 1 第3本**: [`PPL-4-2-1`](../src/content/lessons/PPL-4-2-1_RadioPhraseologyBasics.mdx) 深文化公開 + mapping **41 問**（電話通信）。MCP: PPL **58**・mapping **127 行**。 |
 | 2026-07-16 | **PPL Subject 4 Phase 1 第2本**: [`PPL-4-1-2`](../src/content/lessons/PPL-4-1-2_SearchAndRescueBasics.mdx) 深文化公開 + mapping **28 問**（捜索救難業務22 + 信号6）。C-7 **≥2 本達成**。MCP: PPL **57**・mapping **126 行**。 |
 | 2026-07-14 | **PPL Subject 4 Phase 1 着手**: [`PPL-4-1-1`](../src/content/lessons/PPL-4-1-1_AirTrafficServicesOverview.mdx) 深文化公開 + mapping **75 問**（航空交通業務52 + 概論23）。MCP: `learning_contents` **107**・mapping **124 行 / 104 記事**・未マッピング **12**。 |
 | 2026-07-10 | **W29 Callout + Tier B 完走**: Callout **`3.1.7`/`3.1.8`** ← PPL-5-*（法規 **8/8** 完走）。Tier B **電波の伝播 3 問** → `engineering_basics`（[`20260710_learning_test_mapping_radio_propagation_w29.sql`](../scripts/database/20260710_learning_test_mapping_radio_propagation_w29.sql)）。MCP: mapping **122 行**・未マッピング **12**（**17→12**）。 |

@@ -46,14 +46,14 @@
 
 | 順 | stem | order | ブリーフ | 状態 |
 |----|------|-------|----------|------|
-| 1 | `PPL-4-1-1_AirTrafficServicesOverview` | 401 | [PPL-4-1-1_gemini_brief.md](PPL-4-1-1_gemini_brief.md) | **素案 MDX 済** |
-| 2 | `PPL-4-2-1_RadioPhraseologyBasics` | 403 | [PPL-4-2-1_gemini_brief.md](PPL-4-2-1_gemini_brief.md) | **素案 MDX 済** |
-| 3 | `PPL-4-2-2_ClearanceReadbackBasics` | 404 | [PPL-4-2-2_gemini_brief.md](PPL-4-2-2_gemini_brief.md) | **素案 MDX 済** |
-| 4 | `PPL-4-2-3_AerodromeControlBasics` | 405 | [PPL-4-2-3_gemini_brief.md](PPL-4-2-3_gemini_brief.md) | **素案 MDX 済** |
-| 5 | `PPL-4-2-4_FlightPlanFilingBasics` | 406 | [PPL-4-2-4_gemini_brief.md](PPL-4-2-4_gemini_brief.md) | **素案 MDX 済** |
+| 1 | `PPL-4-1-1_AirTrafficServicesOverview` | 401 | [PPL-4-1-1_gemini_brief.md](PPL-4-1-1_gemini_brief.md) | **公開済**（2026-07-14・mapping 75 問） |
+| 2 | `PPL-4-2-1_RadioPhraseologyBasics` | 403 | [PPL-4-2-1_gemini_brief.md](PPL-4-2-1_gemini_brief.md) | **公開済**（2026-07-18・mapping 41 問） |
+| 3 | `PPL-4-2-2_ClearanceReadbackBasics` | 404 | [PPL-4-2-2_gemini_brief.md](PPL-4-2-2_gemini_brief.md) | **公開済**（2026-07-18・mapping 9 問） |
+| 4 | `PPL-4-2-3_AerodromeControlBasics` | 405 | [PPL-4-2-3_gemini_brief.md](PPL-4-2-3_gemini_brief.md) | **公開済**（2026-07-18・mapping 7 問） |
+| 5 | `PPL-4-2-4_FlightPlanFilingBasics` | 406 | [PPL-4-2-4_gemini_brief.md](PPL-4-2-4_gemini_brief.md) | **公開済**（2026-07-22・mapping 22 問） |
 | 6 | `PPL-4-1-2_SearchAndRescueBasics` | 402 | [PPL-4-1-2_gemini_brief.md](PPL-4-1-2_gemini_brief.md) | **公開済**（2026-07-16・mapping 28 問） |
-| 7 | `PPL-4-3-1_CommFailureAndLightSignals` | 407 | [PPL-4-3-1_gemini_brief.md](PPL-4-3-1_gemini_brief.md) | **素案 MDX 済** |
-| 8 | `PPL-4-3-2_MaydayPanPanBasics` | 408 | [PPL-4-3-2_gemini_brief.md](PPL-4-3-2_gemini_brief.md) | **素案 MDX 済** |
+| 7 | `PPL-4-3-1_CommFailureAndLightSignals` | 407 | [PPL-4-3-1_gemini_brief.md](PPL-4-3-1_gemini_brief.md) | **公開済**（2026-07-22・mapping 15 問） |
+| 8 | `PPL-4-3-2_MaydayPanPanBasics` | 408 | [PPL-4-3-2_gemini_brief.md](PPL-4-3-2_gemini_brief.md) | **公開済**（2026-07-22・mapping 34 問）・Phase 1 **完走** |
 
 ※ 執筆順は [Subject 4 構造案 §6](../PPL_Subject4_Aviation_Communication_Structure.md)（401→403→…→408）。表の `order` 列は `meta.order` / DB `order_index` 用。
 
