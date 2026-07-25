@@ -1,37 +1,13 @@
 ---
-description: Confirm docs update necessity on significant changes and keep docs in sync with implementation
-globs:
-alwaysApply: true
+description: >-
+  Confirm whether docs/ must be updated after significant product, UI, DB, or
+  feature changes. Use with Skill docs-sync for the file map and checklist.
+alwaysApply: false
 ---
 
-# Docs Sync Rule
+# Docs sync (pointer)
 
-When making significant changes to the project, always confirm whether `docs/` needs to be updated.
+Significant changes → verify `docs/` update necessity before finishing.
 
-## When to Check
-
-Confirm docs update necessity when you:
-
-- Change important specifications (behavior, flows, business rules)
-- Change UI flows or user-facing behavior
-- Change DB schema or add/modify migrations
-- Add or remove major features
-
-## Which Doc to Update
-
-Before updating docs, decide which file(s) to change:
-
-| Role | File | Content |
-|------|------|---------|
-| **Entry & summary** | `docs/README.md` | Overview, recent changes, main tables, links to detailed docs |
-| **Product growth & NSM** | `docs/Product_North_Star_and_GTM.md` | ALPM, onboarding, PMF slice (weather/comm), AI concierge role, data/logging intent, legal UX checklist |
-| **Specification** | `docs/02_System_Spec.md` | Current specs for /test, Dashboard, DB, data flows |
-| **Structure** | `docs/Component_Structure_Guide.md` | `src/` layout, component placement, key modules |
-| **Repo folders** | `docs/FOLDER_STRUCTURE.md` | Top-level directories (non-`src/`) |
-| **Scripts & tooling** | `docs/Scripts_Repository_Tooling.md` | CPL CSV import, `docs:watch` / validate, Git encoding notes |
-| **Cursor MCP** | `docs/Cursor_MCP_Setup.md` | MCP layout, Serena, Vercel/GitHub PAT notes |
-
-## Before Finishing
-
-- Do not stop at implementation only. Before completing a task, verify there are no docs update gaps.
-- Avoid duplicating information. Keep README as summary, `02_System_Spec` as spec, `Component_Structure_Guide` as structure.
+Full checklist and which doc to edit: Skill **`docs-sync`**  
+(`.cursor/skills/docs-sync/SKILL.md`).

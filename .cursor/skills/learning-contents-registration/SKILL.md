@@ -4,6 +4,10 @@ description: >-
   Registers or updates PPL/CPL lesson rows in Supabase learning_contents after MDX changes.
   Use when syncing src/content/lessons to the database, learning_contents upsert,
   CPL meta SQL scripts, or register_ppl_article.mjs. Triggers: 記事登録, learning_contents, Supabase insert lesson.
+paths:
+  - "src/content/lessons/**/*.mdx"
+  - "src/content/articles/**/*.mdx"
+  - "scripts/database/**"
 disable-model-invocation: false
 ---
 

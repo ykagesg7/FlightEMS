@@ -178,7 +178,7 @@
 | **エントリ** | 人間・クローン直後は [README.md](../README.md) を薄型化し、詳細インデックスは [docs/README.md](README.md) を継続して正とする。 |
 | **Project_Overview** | **存続（薄型）**。詳細は [docs/README](README.md) に集約（2026-04）。推奨読み順の入口として参照を維持。 |
 | **MCP 手順** | [docs/README.md](README.md) から切り離し、**[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)** に集約。 |
-| **GIT_COMMIT_MESSAGE_FIX** | 要点は [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) と [.cursor/rules/git-conventions.mdc](../.cursor/rules/git-conventions.mdc)。`docs/GIT_COMMIT_MESSAGE_FIX.md` は削除済み。 |
+| **GIT_COMMIT_MESSAGE_FIX** | 要点は [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) と [.cursor/skills/git-commit-en/SKILL.md](../.cursor/skills/git-commit-en/SKILL.md)。`docs/GIT_COMMIT_MESSAGE_FIX.md` は削除済み。 |
 | **06–10** | [第6節](#6-まとめ) のとおり **統合しない**。各ファイル先頭に記事パイプライン用の相互参照行を追加。 |
 | **KPI 数値** | **CPL Phase 1（19本）・PPL 17/150 等**は [01](01_Current_Status_and_Roadmap.md) v4.0・[00](00_Flight_Academy_Strategy.md) v1.2・シラバスと同期。CPL を主列、PPL は二次。 |
 | **FOLDER_STRUCTURE** | リポジトリ索引として維持。`docs/README` の大きな `src/` ツリーは削除し、本ファイルと 07 へ誘導。 |

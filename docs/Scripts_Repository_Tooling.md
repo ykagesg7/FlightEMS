@@ -7,9 +7,10 @@
 | Git コミット（英語・Windows 文字化け補足） | [下記](#git-コミットメッセージの文字化け対策windows-補足) |
 | **Supabase / database SQL** | [Indexing](#supabase-database-sql-scripts) と [scripts/database/INDEX.md](../../scripts/database/INDEX.md) |
 | ドキュメント自動更新 | [下記](#ドキュメント自動更新システム) |
+| MDX → Obsidian ミラー | [下記](#mdx--obsidian-参照ミラー) |
 | CPL Master CSV 取込 | [下記](#cpl-master-csv-取込仕様)（旧 `CPL_CSV_IMPORT_SPEC`） |
 | GA4 MCP・OAuth / ADC（ローカル例） | [下記](#ga4-mcp-oauth--adcローカル例) |
-| 規約ファイル | [.cursor/rules/git-conventions.mdc](../.cursor/rules/git-conventions.mdc) |
+| 規約ファイル | [.cursor/skills/git-commit-en/SKILL.md](../.cursor/skills/git-commit-en/SKILL.md)（ポインタ: [.cursor/rules/git-conventions.mdc](../.cursor/rules/git-conventions.mdc)） |
 | Phase 別テスト計画（参考） | [Phase_Testing_Plan.md](Phase_Testing_Plan.md) |
 
 ルートの npm: `npm run cpl:import`、`npm run docs:update`、`npm run sync:public-docs` 等。
@@ -20,7 +21,7 @@
 
 ## Git コミットメッセージの文字化け対策（Windows 補足）
 
-本リポジトリでは **コミットメッセージは英語のみ**（[.cursor/rules/git-conventions.mdc](../.cursor/rules/git-conventions.mdc)）を推奨し、PowerShell の文字化けを避けます。
+本リポジトリでは **コミットメッセージは英語のみ**（[.cursor/skills/git-commit-en/SKILL.md](../.cursor/skills/git-commit-en/SKILL.md)）を推奨し、PowerShell の文字化けを避けます。
 
 日本語をどうしても使う場合の UTF-8 設定・`git-commit-utf8.ps1` の使い方などは、従来 `scripts/README-git-commit.md` にあった内容を以下に要約します。
 
@@ -85,6 +86,28 @@ node scripts/utils/fix-encoding.js
 ```
 
 用途・オプションは各スクリプト先頭のコメントを正とする。
+
+---
+
+## MDX → Obsidian 参照ミラー
+
+個人の Obsidian Vault に、レッスン／記事 MDX を **参照用 Markdown** として書き出す。  
+**公開の正本は常に** `src/content/lessons/`・`src/content/articles/` の MDX。
+
+```bash
+node scripts/sync-mdx-to-obsidian.mjs
+# 任意: --vault "C:/path/to/Obsidian Vault"
+```
+
+| 項目 | 内容 |
+|------|------|
+| スクリプト | [`scripts/sync-mdx-to-obsidian.mjs`](../scripts/sync-mdx-to-obsidian.mjs) |
+| 既定出力 | `%USERPROFILE%/Documents/Obsidian Vault/FlightAcademy/` |
+| Lessons | `FlightAcademy/Lessons/` ← `src/content/lessons/` |
+| Articles | `FlightAcademy/Articles/` ← `src/content/articles/`（メンタル／自己啓発。学科と分離） |
+| 変換 | `export const meta` → YAML frontmatter、`<Image>` → `![]()`、`<Callout>` → Obsidian callout 等 |
+
+Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
 
 ---
 

@@ -1,7 +1,7 @@
 # プロジェクトフォルダ構造ガイド
 
-**最終更新**: 2026年5月5日（トップレベル7本柱・`vite/`・`e2e/` の索引追加。他は過去ログ参照）
-**バージョン**: Folder Structure Guide v1.9
+**最終更新**: 2026年7月25日（`.cursor` Skills 拡充・alwaysApply 縮小。他は過去ログ参照）
+**バージョン**: Folder Structure Guide v1.10
 
 **責務**: repo 全体のフォルダ概要。プロジェクトのクイックリファレンスと AI 向け索引は [docs/README.md](README.md)。`src/` の詳細は [Component_Structure_Guide.md](Component_Structure_Guide.md) を参照。
 
@@ -31,10 +31,11 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 #### `.cursor/`
 - **目的**: Cursor IDE のルール・スキル・サブエージェント。**旧ルート `.cursorrules` は廃止**し、粒度の細かい **`.cursor/rules/*.mdc`** とルート [**AGENTS.md**](../AGENTS.md) に寄せる。
 - **内容**:
-  - `rules/*.mdc`: パス別・常時適用ルール（例: `core-project.mdc`, `git-conventions.mdc`, `mdx-article-guide.mdc`）
-  - `skills/<name>/SKILL.md`: オンデマンド手順（記事登録・フライトプラン棚卸し等）
-  - `agents/*.md`: 委譲用サブエージェント
-- **ルート**: [AGENTS.md](../AGENTS.md)（エージェント要約）、[DESIGN.md](../DESIGN.md)（UI トークン）
+  - `rules/*.mdc`: **常時は `core-project` のみ**。他は glob または Agent Decide（例: `mdx-article-guide`, `docs-sync` ポインタ, `git-conventions` ポインタ）
+  - `skills/<name>/SKILL.md`: オンデマンド手順（`docs-sync`, `git-commit-en`, 記事登録, フライトプラン棚卸し等）
+  - `agents/*.md`: 委譲用サブエージェント（`mdx-content`, `aviation-safety-review`, `deep-analysis`, `verifier`）
+  - `hooks.json` + `hooks/*.mjs`: Agent シェル実行前の最小ガード（force-push to main 等）
+- **ルート**: [AGENTS.md](../AGENTS.md)（エージェント要約・コスト運用）、[DESIGN.md](../DESIGN.md)（UI トークン）
 - **注意**: `.cursor/mcp.json` は機密情報を含むため .gitignore で除外。手動テンプレは [`mcp.json.example`](../.cursor/mcp.json.example)
 
 #### `.github/`

@@ -4,12 +4,19 @@ description: >-
   Reviews flight plans for safety and consistency (fuel, alternates, weather margins,
   comms). Use when the user asks for a flight plan review, safety check,
   フライトプラン検証, or fuel leg validation. Uses project types in src/types.
+  For isolated audit persona without editing, prefer agent aviation-safety-review.
+paths:
+  - "src/types/**"
+  - "src/pages/planning/**"
+  - "src/utils/planDocument.ts"
 disable-model-invocation: false
 ---
 
 # Flight plan review skill
 
 フライトプランの整合性・安全性をレビューし、問題点と改善案を構造化して返す。
+
+**Skill vs agent**: 本 Skill = 型・コード参照つき手順レビュー。隔離した監査人格のみ欲しいとき → エージェント **`aviation-safety-review`**。
 
 ## 参照する型・コード
 

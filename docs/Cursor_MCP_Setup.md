@@ -5,19 +5,25 @@
 
 ---
 
-## ワークスペースの Cursor ルールとカスタムエージェント（2026-05-06）
+## ワークスペースの Cursor ルール・Skills・エージェント（2026-07-25）
 
 この節は MCP ではなく、**Cursor が会話に読み込むワークスペース指示**のメモである。
 
-| 種別 | パス | `alwaysApply` / 使い方 |
-|------|------|-------------------------|
-| **構造化・平易説明ペルソナ（常時）** | [`.cursor/rules/deep-analysis.mdc`](../.cursor/rules/deep-analysis.mdc) | `true` — 通常の Composer / Chat にも注入される |
-| **deep-analysis エージェント（追補）** | [`.cursor/agents/deep-analysis.md`](../.cursor/agents/deep-analysis.md) | エージェント **`deep-analysis`** を選んだスレッドでのみ、監査・前提の反証可能性・航空/学習 QA 向けの追加指示 |
-| **インデックスのみ** | [`.cursor/rules/deep-thinking.mdc`](../.cursor/rules/deep-thinking.mdc) | `false` — 上記 2 つの案内に差し替え済み |
+| 種別 | パス | 適用 |
+|------|------|------|
+| **常時** | [`.cursor/rules/core-project.mdc`](../.cursor/rules/core-project.mdc) | `alwaysApply: true` — 日本語・版/UI 制約・秘密情報など |
+| **Agent Decide** | [`.cursor/rules/deep-analysis.mdc`](../.cursor/rules/deep-analysis.mdc) | 深掘り・監査・トレードオフ時 |
+| **Agent Decide（ポインタ）** | [`.cursor/rules/docs-sync.mdc`](../.cursor/rules/docs-sync.mdc) / [`git-conventions.mdc`](../.cursor/rules/git-conventions.mdc) | 手順本体は Skills へ |
+| **glob** | `mdx-article-guide` / `ui-design` / `supabase-article-registration` / `generated-and-binary-assets` | 該当ファイル作業時 |
+| **Skills** | `docs-sync` / `git-commit-en` / `learning-contents-registration` / `flight-plan-review` | 関連時または `/skill` |
+| **Agents** | `deep-analysis` / `mdx-content` / `aviation-safety-review` / `verifier` | 明示選択または委譲 |
+| **Hooks** | [`.cursor/hooks.json`](../.cursor/hooks.json) + `hooks/deny-dangerous-shell.mjs` | `beforeShellExecution` — force-push to main/master 等を拒否 |
 
-**背景（履歴）**: 以前は [.cursor/rules/deep-thinking.mdc](../.cursor/rules/deep-thinking.mdc) で「長大プロンプトを毎チャットに載せない」方針とし、監査級の内容は **`deep-analysis` エージェントのみ**としていた。**2026-05-06**、ユーザー意図に合わせ **平易な構成・出力形式の基底ペルソナ**を [.cursor/rules/deep-analysis.mdc](../.cursor/rules/deep-analysis.mdc) に切り出し **`alwaysApply: true`** とした。エージェント側は YAML 無効状態の是正と、選択時のみの「追記レイヤ」に縮約した。
+**2026-07-25 変更**: `alwaysApply` を `core-project` のみに縮小。`docs-sync` / `git-commit-en` を Skill 化。死蔵の `deep-thinking.mdc` を削除。`AGENTS.md` にコスト運用（Composer/Grok 日常）を追加。Phase 4 で `verifier` エージェントと最小 Hooks を追加。
 
-**関連**: [AGENTS.md](../AGENTS.md) のサブエージェント記載。
+**履歴**: 2026-05-06 に `deep-analysis.mdc` を常時化していたが、コンテキスト肥大のため Agent Decide に戻した。
+
+**関連**: [AGENTS.md](../AGENTS.md)。
 
 ---
 
@@ -87,8 +93,41 @@ winget install --id Anysphere.Cursor -e
 
 | 置き場所 | 対象の例 |
 |----------|-----------|
-| **Global**（`%USERPROFILE%\.cursor\mcp.json`） | （任意）全リポジトリ共通の `github`（PAT）のみ、など |
+| **Global**（`%USERPROFILE%\.cursor\mcp.json`） | （任意）全リポジトリ共通の `github`（PAT）、**Obsidian**（個人 Vault）など |
 | **プロジェクト**（`.cursor/mcp.json`） | `chrome-devtools`、`hourei`（法令検索）、`vercel`、Supabase MCP、[Serena](https://oraios.github.io/serena/)、`github`（このリポジトリ専用）など |
+
+---
+
+## Obsidian MCP（個人ノート連携）
+
+読書メモ・ネタ帳など **個人の Obsidian Vault** を Cursor から読む／書くときは、[obsidian-mcp-rs](https://github.com/MrRefactoring/obsidian-mcp-rs) を **Global** に置く（プロジェクト固有のシークレットは不要。Vault パスはマシン固有）。
+
+**特徴**: Vault フォルダを直接読む（プラグイン不要・Obsidian アプリ起動も不要）。書き込みツールあり。読み取り専用にする場合は引数に `--no-edit` を付ける。
+
+**セットアップ例（Windows）**:
+
+```powershell
+npx -y obsidian-mcp-rs install cursor --global "C:\Users\YOU\Documents\Obsidian Vault"
+```
+
+インストール後、Windows では `npx` 直指定が失敗しやすいので、他 MCP と同様に **`cmd /c` ラップ**へ直す:
+
+```json
+"obsidian": {
+  "command": "cmd",
+  "args": [
+    "/c",
+    "npx",
+    "-y",
+    "obsidian-mcp-rs",
+    "C:\\Users\\YOU\\Documents\\Obsidian Vault"
+  ]
+}
+```
+
+変更後は **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** で `obsidian` が緑であることを確認する。Vault は AI から作成・編集・削除され得るため、Git 等でバックアップしておく。
+
+**代替**: PyPI の `obsidian-mcp`（`uvx`）もあるが、2026-07 時点で `fastmcp` 新版と非互換になりやすい。REST API プラグイン経由（`obsidian-mcp-server` / Local REST API）は Obsidian 起動が前提。
 
 ---
 
@@ -459,4 +498,4 @@ GA4 を [BigQuery にリンクする](https://support.google.com/analytics/answe
 
 ## コミットメッセージ（英語）
 
-プロジェクト規約ではコミットタイトルは **英語のみ**（Windows 文字化け対策）。詳細は [`.cursor/rules/git-conventions.mdc`](../.cursor/rules/git-conventions.mdc) と [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) を参照。
+プロジェクト規約ではコミットタイトルは **英語のみ**（Windows 文字化け対策）。詳細は Skill [`.cursor/skills/git-commit-en/SKILL.md`](../.cursor/skills/git-commit-en/SKILL.md) と [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) を参照。
