@@ -10,6 +10,8 @@ import { MapLayersPanelSection } from './MapLayersPanelSection';
 import { usePlanningMapLayerControllerContext } from './planningMapLayerControllerContext';
 import type { LiveTrafficLayerControls } from './hooks/useLiveTrafficLayer';
 import { LiveTrafficRefreshPanel } from './LiveTrafficRefreshPanel';
+import { NavaidRadialGridPanel } from './NavaidRadialGridPanel';
+import type { PlanningMapNavaid } from './planningMapTypes';
 
 const GROUP_ORDER: MapLayerGroupId[] = ['aviation', 'waypoints', 'local', 'reference'];
 
@@ -21,6 +23,10 @@ type Props = {
   liveTrafficEnabled: boolean;
   /** false のとき lg でもボトムシート（split 左列が狭いときの地図圧迫回避） */
   useInlineSidebar?: boolean;
+  radialGridEnabled?: boolean;
+  radialGridStationId?: string;
+  onSelectRadialGridStation?: (id: string) => void;
+  navaidData?: PlanningMapNavaid[];
 };
 
 function PanelHeader({ onClose }: { onClose: () => void }) {
@@ -49,6 +55,10 @@ export const MapLayersPanel: React.FC<Props> = ({
   liveTrafficControls,
   liveTrafficEnabled,
   useInlineSidebar = true,
+  radialGridEnabled = false,
+  radialGridStationId = 'AHT',
+  onSelectRadialGridStation,
+  navaidData = [],
 }) => {
   const controller = usePlanningMapLayerControllerContext();
   const isDesktop = useMediaQuery('(min-width: 1024px)');
@@ -180,6 +190,16 @@ export const MapLayersPanel: React.FC<Props> = ({
       {liveTrafficEnabled && liveTrafficControls ? (
         <div className="border-b border-whiskyPapa-yellow/20 px-3 py-2">
           <LiveTrafficRefreshPanel controls={liveTrafficControls} />
+        </div>
+      ) : null}
+
+      {radialGridEnabled && onSelectRadialGridStation ? (
+        <div className="border-b border-whiskyPapa-yellow/20 px-3 py-2">
+          <NavaidRadialGridPanel
+            navaids={navaidData}
+            selectedId={radialGridStationId}
+            onSelectId={onSelectRadialGridStation}
+          />
         </div>
       ) : null}
 

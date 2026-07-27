@@ -39,6 +39,7 @@ type ReferenceLayerSetters = {
   setLiveTrafficEnabled: (enabled: boolean) => void;
   setRainViewerEnabled: (enabled: boolean) => void;
   setWindBarbsEnabled: (enabled: boolean) => void;
+  setNavaidRadialGridEnabled: (enabled: boolean) => void;
 };
 
 export type UsePlanningMapLayerControllerParams = {
@@ -63,6 +64,8 @@ function syncReferenceLayerState(
     setters.setRainViewerEnabled(enabled);
   } else if (overlayId === 'wind_barbs') {
     setters.setWindBarbsEnabled(enabled);
+  } else if (overlayId === 'navaid_radial_grid') {
+    setters.setNavaidRadialGridEnabled(enabled);
   }
 }
 

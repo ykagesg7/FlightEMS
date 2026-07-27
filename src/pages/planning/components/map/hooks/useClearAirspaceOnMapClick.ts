@@ -18,9 +18,6 @@ export function useClearAirspaceOnMapClick(
       if (target instanceof Element && target.closest('.map-airspace-sheet')) {
         return;
       }
-      if (target instanceof Element && target.closest('.map-cursor-hud')) {
-        return;
-      }
       onClear();
     };
 

@@ -31,9 +31,10 @@ import type { PlanningMapLayerController } from './hooks/usePlanningMapLayerCont
 import { useRainViewerRadarLayer } from './hooks/useRainViewerRadarLayer';
 import { usePlanningMapWindGrid } from './hooks/usePlanningMapWindGrid';
 import { useWindBarbLayer } from './hooks/useWindBarbLayer';
+import { useNavaidRadialGridLayer } from './hooks/useNavaidRadialGridLayer';
 import { useWindGridOverlaySetter } from './windGridOverlayContext';
 import { TrackLayer } from './TrackLayer';
-import type { PlanningMapRegion } from './planningMapTypes';
+import type { PlanningMapNavaid, PlanningMapRegion } from './planningMapTypes';
 import type { PlanningMapOverlayGroups } from './mapLayerUtils';
 import type { AirportProps, NavaidProps } from './types';
 import type { FlightTrack } from '../../tracks/types';
@@ -50,9 +51,11 @@ export interface MapTabContentProps {
   onLayerControllerChange?: (controller: PlanningMapLayerController | null) => void;
   onLiveTrafficControlsChange?: (controls: LiveTrafficLayerControls | null) => void;
   onAirspaceSelection?: (selection: AirspaceSelection) => void;
+  navaidData?: PlanningMapNavaid[];
+  radialGridStationId?: string;
 }
 
-export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange, onLiveTrafficControlsChange, onAirspaceSelection }) => {
+export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange, onLiveTrafficControlsChange, onAirspaceSelection, navaidData = [], radialGridStationId = 'AHT' }) => {
   const liveTrafficLayerRef = useRef<L.LayerGroup | null>(null);
   if (!liveTrafficLayerRef.current) {
     liveTrafficLayerRef.current = L.layerGroup();
@@ -68,6 +71,11 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
     windBarbsLayerRef.current = L.layerGroup();
   }
   const [windBarbsEnabled, setWindBarbsEnabled] = useState(false);
+  const navaidRadialGridLayerRef = useRef<L.LayerGroup | null>(null);
+  if (!navaidRadialGridLayerRef.current) {
+    navaidRadialGridLayerRef.current = L.layerGroup();
+  }
+  const [navaidRadialGridEnabled, setNavaidRadialGridEnabled] = useState(false);
 
   const mapRef = useRef<L.Map | null>(null);
   useEffect(() => {
@@ -123,6 +131,25 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
       `;
       layer.bindPopup(popupContent);
     }
+  }, []);
+
+  const onEachPendingAirspacePopup = useCallback((feature: GeoJSON.Feature, layer: L.Layer) => {
+    const props = feature.properties as {
+      Area_ID?: string;
+      altitude?: string;
+      note?: string;
+    } | null;
+    if (!props?.Area_ID) return;
+    const altitude = props.altitude ?? '—';
+    const note = props.note ?? '今後変更予定（参考・非公式）';
+    layer.bindPopup(
+      `<div class="p-2 text-sm">` +
+        `<div class="font-semibold">${props.Area_ID}</div>` +
+        `<div>高度: ${altitude}</div>` +
+        `<div class="mt-1 text-xs text-amber-700">${note}</div>` +
+        `<div class="mt-1 text-xs text-gray-500">実運航・管制用ではありません</div>` +
+        `</div>`,
+    );
   }, []);
 
   // Waypointのスタイル設定関数
@@ -195,6 +222,18 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
       "航空機（参考・OpenSky）": liveTrafficLayerRef.current,
       "降水レーダー（参考・RainViewer）": rainViewerLayerRef.current,
       "上層風バーブ（参考・Open-Meteo）": windBarbsLayerRef.current,
+      "ラジアル／DME網（参考）": navaidRadialGridLayerRef.current,
+      "変更予定空域（参考）": L.geoJSON(null, {
+        style: {
+          color: '#ffaa00',
+          weight: 2,
+          opacity: 0.85,
+          dashArray: '6 4',
+          fillColor: '#ffaa00',
+          fillOpacity: 0.12,
+        },
+        onEachFeature: onEachPendingAirspacePopup,
+      }),
     };
   }
 
@@ -354,6 +393,7 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
     loadGeoJsonLayer('/geojson/TrainingAreaCivil.geojson', '民間訓練空域');
     loadGeoJsonLayer('/geojson/TrainingAreaHigh.geojson', '高高度訓練空域');
     loadGeoJsonLayer('/geojson/TrainingAreaLow.geojson', '低高度訓練空域');
+    loadGeoJsonLayer('/geojson/PendingAirspaceChanges.geojson', '変更予定空域（参考）');
 
     fetch('/geojson/Navaids.geojson')
       .then(res => res.json())
@@ -800,6 +840,7 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
       setLiveTrafficEnabled,
       setRainViewerEnabled,
       setWindBarbsEnabled,
+      setNavaidRadialGridEnabled,
     },
   });
 
@@ -818,6 +859,14 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
   useRainViewerRadarLayer(map, rainViewerLayerRef.current, rainViewerEnabled);
 
   useWindBarbLayer(map, windBarbsLayerRef.current, windBarbsEnabled, gridPoints);
+
+  useNavaidRadialGridLayer(
+    map,
+    navaidRadialGridLayerRef.current,
+    navaidRadialGridEnabled,
+    radialGridStationId,
+    navaidData,
+  );
 
   return (
     <>

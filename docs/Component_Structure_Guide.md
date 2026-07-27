@@ -222,9 +222,15 @@ src/pages/
 │       └── map/
 │           ├── MapTab.tsx
 │           ├── MapTabContent.tsx
-│           ├── MapToolbar.tsx              # アクティブレイヤーチップ・レイヤーボタン（lg+ で readout）
-│           ├── MapMapOverlays.tsx          # 地図上 HUD + 空域スナップシートのオーケストレータ
-│           ├── MapCursorHudOverlay.tsx     # モバイル上端座標 HUD
+│           ├── MapToolbar.tsx              # レイヤーチップ・レイヤーボタン（操作のみ）
+│           ├── MapMapOverlays.tsx          # 空域スナップシートのオーケストレータ
+│           ├── MapCursorFooter.tsx         # 地図下 DMS 1行 + 固定/解除 + 詳細トグル
+│           ├── MapCenterCrosshair.tsx      # タッチ端末の中央照準オーバーレイ
+│           ├── MapCursorDetailSheet.tsx    # DD・選択 NAVAID 磁方位/距離（地図上オーバーレイ）
+│           ├── cursorNavaidUtils.ts        # 最寄り/距離計算・NAVAID 検索フィルタ
+│           ├── navaidRadialGridUtils.ts    # ラジアル／DME 網の幾何（磁方位・海里）
+│           ├── NavaidRadialGridPanel.tsx   # レイヤーパネル内の基準 NAVAID 選択
+│           ├── mapPinInteraction.ts        # 地図背景クリックでピン可能かの判定
 │           ├── MapAirspaceSheet.tsx        # 空域 peek/half/full スナップシート
 │           ├── AirspaceSheetBody.tsx       # 空域シート本文（アコーディオン）
 │           ├── snapSheetUtils.ts           # スナップ高さ・最近傍 snap 純関数
@@ -234,7 +240,6 @@ src/pages/
 │           ├── MapLayersPanel.tsx          # 右ドロワー / モバイルボトムシート
 │           ├── MapLayersPanelSection.tsx
 │           ├── MapLayersCollapsibleBlock.tsx
-│           ├── MapCursorReadout.tsx
 │           ├── mapLayerCatalog.ts
 │           ├── mapLayerPresets.ts
 │           ├── planningMapLayerPreferences.ts
@@ -247,13 +252,14 @@ src/pages/
 │           │   ├── usePlanningMapLayerController.ts
 │           │   ├── useCloseLayersOnMapClick.ts
 │           │   ├── useMapLayersOpenMapLock.ts
-│           │   ├── useCursorNearestNavaids.ts
+│           │   ├── useCursorSelectedNavaid.ts
 │           │   ├── liveTrafficLayerState.ts # OpenSky merge/prune/stale 純関数
 │           │   ├── useLiveTrafficLayer.ts   # OpenSky 航空機（3分 poll・Stale 保持・ポップアップ追跡再 open）
 │           │   ├── useRainViewerRadarLayer.ts  # RainViewer 降水レーダータイル（マニフェスト取得・rainViewerPane）
 │           │   ├── usePlanningMapWindGrid.ts  # 上層風バーブ用格子取得
 │           │   ├── useWindBarbLayer.ts        # 格子からバーブ描画
-│           │   ├── useMapCursorPosition.ts
+│           │   ├── useNavaidRadialGridLayer.ts # NAVAID ラジアル／DME 網（10°/10nm・最大100nm）
+│           │   ├── useMapPinnedPosition.ts  # クリック/中央クロスヘアで座標固定
 │           │   ├── useMapDoubleClickWaypoint.ts
 │           │   ├── useAirspaceLayerClick.ts
 │           │   ├── useClearAirspaceOnMapClick.ts

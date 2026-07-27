@@ -41,6 +41,8 @@ export const STATIC_MAP_LAYER_CATALOG: MapLayerCatalogEntry[] = [
   { id: 'opensky_traffic', label: '航空機（参考・OpenSky）', group: 'reference', overlayGroup: 'Common Layers', layerKey: '航空機（参考・OpenSky）', referenceOnly: true },
   { id: 'rainviewer_radar', label: '降水レーダー（参考・RainViewer）', group: 'reference', overlayGroup: 'Common Layers', layerKey: '降水レーダー（参考・RainViewer）', referenceOnly: true },
   { id: 'wind_barbs', label: '上層風バーブ（参考・Open-Meteo）', group: 'reference', overlayGroup: 'Common Layers', layerKey: '上層風バーブ（参考・Open-Meteo）', referenceOnly: true },
+  { id: 'navaid_radial_grid', label: 'ラジアル／DME網（参考）', group: 'reference', overlayGroup: 'Common Layers', layerKey: 'ラジアル／DME網（参考）', referenceOnly: true },
+  { id: 'pending_airspace', label: '変更予定空域（参考）', group: 'reference', overlayGroup: 'Common Layers', layerKey: '変更予定空域（参考）', referenceOnly: true },
   { id: 'waypoints_all', label: 'すべて', group: 'waypoints', overlayGroup: 'Waypoints', layerKey: 'すべて' },
   { id: 'rjfa', label: 'RJFA', group: 'local', overlayGroup: 'Local Layers', layerKey: 'RJFA' },
   { id: 'rjfz', label: 'RJFZ', group: 'local', overlayGroup: 'Local Layers', layerKey: 'RJFZ' },

@@ -647,10 +647,60 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* 地図 HUD オーバーレイ（座標 readout） */
-.map-cursor-hud-panel {
-  background: rgba(0, 0, 0, 0.72);
-  border: 1px solid rgba(255, 215, 0, 0.25);
+/* NAVAID ラジアル／DME 網ラベル */
+.navaid-radial-label {
+  background: transparent !important;
+  border: none !important;
+}
+
+.navaid-radial-label span {
+  display: inline-block;
+  padding: 0 2px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  line-height: 1.2;
+  color: rgba(245, 215, 110, 0.9);
+  text-shadow:
+    0 0 2px rgba(0, 0, 0, 0.9),
+    0 1px 2px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.navaid-radial-label--dme span {
+  color: rgba(245, 215, 110, 0.75);
+  font-size: 9px;
+}
+
+/* タッチ端末：地図中央クロスヘア（座標固定の照準） */
+.map-center-crosshair__mark {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+
+.map-center-crosshair__mark::before,
+.map-center-crosshair__mark::after {
+  content: '';
+  position: absolute;
+  background: rgba(245, 215, 110, 0.95);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55);
+}
+
+.map-center-crosshair__mark::before {
+  left: 50%;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  transform: translateX(-50%);
+}
+
+.map-center-crosshair__mark::after {
+  top: 50%;
+  left: 2px;
+  right: 2px;
+  height: 2px;
+  transform: translateY(-50%);
 }
 
 /* 計画地図スナップシート（空域・NOTAM 共通ベース） */

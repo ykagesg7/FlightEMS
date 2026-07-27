@@ -1,15 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import type L from 'leaflet';
 import { MapAirspaceSheet } from './MapAirspaceSheet';
-import { MapCursorHudOverlay } from './MapCursorHudOverlay';
 import { useMapSelectionPan } from './hooks/useMapSelectionPan';
-import type { NavaidDistanceInfo } from './MapCursorReadout';
 import type { AirspaceSelection } from './planningAirspaceTypes';
 
 type Props = {
   map: L.Map | null;
-  cursorPosition: L.LatLng | null;
-  navaidInfos: NavaidDistanceInfo[];
   selection: AirspaceSelection | null;
   cruiseAltitudeFt: number;
   onClearSelection: () => void;
@@ -17,8 +13,6 @@ type Props = {
 
 export const MapMapOverlays: React.FC<Props> = ({
   map,
-  cursorPosition,
-  navaidInfos,
   selection,
   cruiseAltitudeFt,
   onClearSelection,
@@ -33,17 +27,16 @@ export const MapMapOverlays: React.FC<Props> = ({
 
   const showAirspace = selection != null && selection.hits.length > 0;
 
+  if (!showAirspace || !selection) return null;
+
   return (
     <div className="pointer-events-none absolute inset-0 z-[10001]" aria-hidden={false}>
-      <MapCursorHudOverlay cursorPosition={cursorPosition} navaidInfos={navaidInfos} />
-      {showAirspace && selection ? (
-        <MapAirspaceSheet
-          selection={selection}
-          cruiseAltitudeFt={cruiseAltitudeFt}
-          onClearSelection={onClearSelection}
-          onSheetHeightChange={handleSheetHeightChange}
-        />
-      ) : null}
+      <MapAirspaceSheet
+        selection={selection}
+        cruiseAltitudeFt={cruiseAltitudeFt}
+        onClearSelection={onClearSelection}
+        onSheetHeightChange={handleSheetHeightChange}
+      />
     </div>
   );
 };

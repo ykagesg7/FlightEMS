@@ -15,7 +15,10 @@ export function useNavaidGeojson(): PlanningMapNavaid[] {
           return {
             coordinates: L.latLng(lat, lng),
             id: feat.properties.id,
-            name: feat.properties.name,
+            name:
+              (feat.properties as { name?: string; name1?: string }).name1 ??
+              feat.properties.name ??
+              feat.properties.id,
           };
         });
         setNavaidData(navaids);

@@ -16,11 +16,14 @@ import { useCloseLayersOnMapClick } from './hooks/useCloseLayersOnMapClick';
 import { useMapLayersOpenMapLock } from './hooks/useMapLayersOpenMapLock';
 import { WindGridOverlaySetterContext } from './windGridOverlayContext';
 import { PlanningMapLayerControllerContext } from './planningMapLayerControllerContext';
-import { useCursorNearestNavaids } from './hooks/useCursorNearestNavaids';
-import { useMapCursorPosition } from './hooks/useMapCursorPosition';
+import { useCursorSelectedNavaid } from './hooks/useCursorSelectedNavaid';
+import { useMapPinnedPosition } from './hooks/useMapPinnedPosition';
 import { useMapDoubleClickWaypoint } from './hooks/useMapDoubleClickWaypoint';
 import { useNavaidGeojson } from './hooks/useNavaidGeojson';
 import { useRegionsIndex } from './hooks/useRegionsIndex';
+import { MapCenterCrosshair } from './MapCenterCrosshair';
+import { MapCursorDetailSheet } from './MapCursorDetailSheet';
+import { MapCursorFooter } from './MapCursorFooter';
 import { MapMapOverlays } from './MapMapOverlays';
 import { MapLayersPanel } from './MapLayersPanel';
 import { MapTabContent } from './MapTabContent';
@@ -64,6 +67,8 @@ const MapTab: React.FC<MapTabProps> = ({
   const [liveTrafficControls, setLiveTrafficControls] = useState<LiveTrafficLayerControls | null>(null);
   const [layersOpen, setLayersOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [cursorDetailOpen, setCursorDetailOpen] = useState(false);
+  const [radialGridStationId, setRadialGridStationId] = useState('AHT');
   const [airspaceSelection, setAirspaceSelection] = useState<AirspaceSelection | null>(null);
   const notamSheet = usePlanningNotamSheetOptional();
   const isXl = useMediaQuery('(min-width: 1280px)');
@@ -117,6 +122,7 @@ const MapTab: React.FC<MapTabProps> = ({
   }, []);
 
   const liveTrafficEnabled = layerController?.enabledOverlayIds.has('opensky_traffic') ?? false;
+  const radialGridEnabled = layerController?.enabledOverlayIds.has('navaid_radial_grid') ?? false;
 
   const regions = useRegionsIndex();
   const navaidData = useNavaidGeojson();
@@ -124,8 +130,25 @@ const MapTab: React.FC<MapTabProps> = ({
   useCloseLayersOnMapClick(map, layersOpen, closeLayers);
   useClearAirspaceOnMapClick(map, airspaceSelection, clearAirspaceSelection);
   useMapLayersOpenMapLock(map, layersOpen, useInlineLayersSidebar);
-  const cursorPosition = useMapCursorPosition(map);
-  const navaidInfos = useCursorNearestNavaids(cursorPosition, navaidData);
+  const {
+    displayPosition,
+    pinnedPosition,
+    isPinned,
+    isCoarsePointer,
+    pinCenter,
+    clearPin,
+  } = useMapPinnedPosition(map);
+  const {
+    selectedNavaidId,
+    setSelectedNavaidId,
+    selectNearest,
+    distanceInfo,
+    nearestId,
+  } = useCursorSelectedNavaid(pinnedPosition, navaidData);
+
+  useEffect(() => {
+    if (!isPinned) setCursorDetailOpen(false);
+  }, [isPinned]);
 
   return (
     <div className="relative flex h-[calc(100vh-4rem)] flex-col overflow-hidden rounded-lg bg-[color:var(--bg)] shadow-sm">
@@ -136,8 +159,6 @@ const MapTab: React.FC<MapTabProps> = ({
           onOpenHelp={() => setHelpOpen(true)}
           onOpenLayers={() => setLayersOpen((v) => !v)}
           layersOpen={layersOpen}
-          cursorPosition={cursorPosition}
-          navaidInfos={navaidInfos}
           liveTrafficEnabled={liveTrafficEnabled}
           liveTrafficControls={liveTrafficControls}
         />
@@ -188,9 +209,13 @@ const MapTab: React.FC<MapTabProps> = ({
                         ）と風速（kt）を表示します（移動・ズーム後はデバウンス・キャッシュ）。アニメによる負荷を避けるため粒子表示はありません。レイヤーパネル内に FL・代表風・予報参照（UTC/JST）を簡潔に表示します。非商用・参考のみ。計画タブの風反映オプションは磁方位と真風向未補正。
                       </li>
                       <li>
-                        モバイルではカーソル位置（DMS・十進度）は
-                        <strong className="text-gray-200">地図上端の HUD</strong>
-                        に表示されます。NAVAID 距離は「NAVAID▼」で展開できます。ACC Sector / RAPCON をタップすると、重なり空域は
+                        地図上の位置は地図下に
+                        <strong className="text-gray-200">DMS 1行</strong>
+                        で表示されます。マウスでは地図をクリックして位置を固定、タッチ端末では
+                        <strong className="text-gray-200">中央クロスヘア</strong>
+                        を合わせて「この位置を固定」します。「詳細」を開くと十進度（DD）と、選択した NAVAID からの磁方位・距離が
+                        <strong className="text-gray-200">地図上のシート</strong>
+                        に表示されます（初期は最寄り NAVAID、検索で任意に変更可）。地図の高さは詳細展開でも変わりません。ACC Sector / RAPCON をタップすると、重なり空域は
                         <strong className="text-gray-200">地図上のドラッグ可能なシート</strong>
                         に一覧表示されます（初期は peek の1行サマリー、モバイルは上フリックまたはドラッグ、デスクトップは「展開」「格納」ボタンで half/full、複数件はアコーディオン）。地図のシート外エリアはパン・ズーム可能です。
                       </li>
@@ -201,6 +226,16 @@ const MapTab: React.FC<MapTabProps> = ({
                       </li>
                       <li>NAVAID 等のポップアップからルートへの追加ができる場合があります（表示される操作に従ってください）。</li>
                       <li>地図上をダブルクリックすると、その位置にウェイポイントを追加できます。</li>
+                      <li>
+                        レイヤーの
+                        <strong className="text-gray-200">「ラジアル／DME網（参考）」</strong>
+                        をオンにすると、選択した NAVAID（初期は芦屋 TACAN / AHT）から磁方位 10°・距離 10 nm（最大 100 nm）の網を表示します。方位ラベルは 000/090/180/270 が 10 nm 刻み、その他は 50 nm と 100 nm、DME 距離ラベルは 010/100/190/280 上に 10 nm 刻みです。教育用の固定磁気偏差による参考表示で、実運航・管制用ではありません。
+                      </li>
+                      <li>
+                        レイヤーの
+                        <strong className="text-gray-200">「変更予定空域（参考）」</strong>
+                        には、今後変更が予定されている空域形状（例: R-134、N-1、N-21S）を参考表示します。現行の制限空域・高高度訓練空域とは別レイヤーです。非公式・参考のみで、実運航・管制用ではありません。
+                      </li>
                       <li>
                         キーボードショートカットで地図を操作する機能はありません。座標のキーボード入力は
                         <strong className="text-gray-200"> 計画タブの「座標」モード</strong>
@@ -244,17 +279,40 @@ const MapTab: React.FC<MapTabProps> = ({
                     onLayerControllerChange={handleLayerControllerChange}
                     onLiveTrafficControlsChange={handleLiveTrafficControlsChange}
                     onAirspaceSelection={handleAirspaceSelection}
+                    navaidData={navaidData}
+                    radialGridStationId={radialGridStationId}
                   />
                 </MapContainer>
                 <MapMapOverlays
                   map={map}
-                  cursorPosition={cursorPosition}
-                  navaidInfos={navaidInfos}
                   selection={airspaceSelection}
                   cruiseAltitudeFt={flightPlan.altitude}
                   onClearSelection={clearAirspaceSelection}
                 />
+                {isCoarsePointer ? <MapCenterCrosshair /> : null}
+                {pinnedPosition ? (
+                  <MapCursorDetailSheet
+                    open={cursorDetailOpen}
+                    onClose={() => setCursorDetailOpen(false)}
+                    cursorPosition={pinnedPosition}
+                    distanceInfo={distanceInfo}
+                    navaidData={navaidData}
+                    selectedNavaidId={selectedNavaidId}
+                    nearestId={nearestId}
+                    onSelectNavaidId={setSelectedNavaidId}
+                    onSelectNearest={selectNearest}
+                  />
+                ) : null}
               </div>
+              <MapCursorFooter
+                cursorPosition={displayPosition}
+                isPinned={isPinned}
+                isCoarsePointer={isCoarsePointer}
+                detailOpen={cursorDetailOpen}
+                onToggleDetail={() => setCursorDetailOpen((v) => !v)}
+                onPinCenter={pinCenter}
+                onClearPin={clearPin}
+              />
             </div>
             <MapLayersPanel
               open={layersOpen}
@@ -263,6 +321,10 @@ const MapTab: React.FC<MapTabProps> = ({
               liveTrafficControls={liveTrafficControls}
               liveTrafficEnabled={liveTrafficEnabled}
               useInlineSidebar={useInlineLayersSidebar}
+              radialGridEnabled={radialGridEnabled}
+              radialGridStationId={radialGridStationId}
+              onSelectRadialGridStation={setRadialGridStationId}
+              navaidData={navaidData}
             />
           </div>
         </WindGridOverlaySetterContext.Provider>

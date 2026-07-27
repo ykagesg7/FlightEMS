@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年7月20日（ゲーミフィケーション第1期実装）
-**バージョン**: Documentation Index v4.62
+**最終更新**: 2026年7月26日（地図カーソル Footer + 詳細シート・NAVAID 選択）
+**バージョン**: Documentation Index v4.65
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -35,13 +35,19 @@
 - **[May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)** — **2026年5月後半**（W20〜W22）。**§6 完了ログ**。**現在週素案**: [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。一覧: [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。
 - **[June_2026_Content_Sprint.md](June_2026_Content_Sprint.md)** — **2026年6月**（**W23〜W26**）の**週次実行メモ**（ブロック D〜G、六月末ゲート **§7**）。週次表の正本は [05](05_Content_Pipeline.md)。
 - **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — **2026年6月期**の DONE 条件、[05](05_Content_Pipeline.md) 週次（W23〜W26）・CPL/PPL 拡充の優先、マッピング監査／B-4／Phase C 準備（UI は承認制）を定義する。**週別一覧**は §2.1。
-- **[July_2026_Implementation_Plan.md](July_2026_Implementation_Plan.md)** — **2026年7月期**（W27〜W30）Phase C 後半。C-6 マッピング・C-7 PPL Phase 2・法規 Callout・GA4 ファネル・B-4 維持。
-- **[July_2026_Content_Sprint.md](July_2026_Content_Sprint.md)** — **2026年7月**週次実行メモ（ブロック H〜K、七月末ゲート §7）。
+- **[July_2026_Implementation_Plan.md](July_2026_Implementation_Plan.md)** — **2026年7月期**（W27〜W30）Phase C 後半。C-6 マッピング・C-7 PPL・法規 Callout・GA4・B-4。
+- **[July_2026_Content_Sprint.md](July_2026_Content_Sprint.md)** — **2026年7月**週次実行メモ（ブロック H〜K）— **W30 ゲート完了**。
+- **[August_2026_Implementation_Plan.md](August_2026_Implementation_Plan.md)** — **2026年8月期** Phase D 入口。CBT例題再分類・試験明け Action2/3・PPL 二次。
 
 ### 更新履歴（抜粋）
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-07-26（地図カーソル Footer + 詳細シート）**: 地図下に **DMS 1行**（`MapCursorFooter`）。詳細は地図上オーバーレイ（DD・選択 NAVAID 1件の磁方位/距離、検索で任意選択・初期は最寄り）。近傍3件固定・ツールバー内展開は廃止。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
+- **2026-07-26（地図座標ピン固定）**: マウスはクリックで固定、タッチは中央クロスヘア＋「この位置を固定」（`useMapPinnedPosition`）。詳細/NAVAID は固定後のみ。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
+- **2026-07-27（NAVAID ラジアル／DME 網）**: 参考レイヤー `navaid_radial_grid`。選択 NAVAID（初期 AHT）から磁方位 10°・距離 10 nm・最大 100 nm。方位ラベルは主要方位 10 nm 刻み・その他 50/100 nm。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
+- **2026-07-27（変更予定空域レイヤー）**: 参考レイヤー `pending_airspace`（`PendingAirspaceChanges.geojson`）。R-134・N-1・N-21S の今後変更予定形状。現行の制限空域・高高度訓練空域は未変更。
+- **2026-07-25（W30 七月末ゲート）**: 着陸装置 Tier B、`src` Statements **21.18%**、未マッピング総 **112**（CBT除外 **10**）。[August 実装計画](August_2026_Implementation_Plan.md) 初版。Phase C クローズ。
 - **2026-07-14（チャンク v4 本番・試験明け UX 検討）**: Planning チャンク再発対策を本番投入（SW `v4`・MapTab 分割・`vendor-leaflet`）。**科目完走 UX / 流入回復（Action2/3）は試験明けに検討深化**（試験週は UI 凍結）— [July_2026_Implementation_Plan §7](July_2026_Implementation_Plan.md)、[01 将来保留](01_Current_Status_and_Roadmap.md)、[July Content Sprint §6](July_2026_Content_Sprint.md)。
 - **2026-07-20（HOME/Articles/Quiz UX）**: 結果画面に学習成果（XP・理解確認・復習更新）を表示。
   HOME は「今日の1手」中心に再構成、Articles に次の理解チェックと読了状態チップ。
