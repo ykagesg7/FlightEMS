@@ -5,6 +5,7 @@ import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/w
 import { useArticleStats } from '../../hooks/useArticleStats';
 import { useAuth } from '../../hooks/useAuth';
 import { ArticleMeta } from '../../types/articles';
+import { isArticleReleased } from '../../utils/articlePublishGate';
 import { buildArticleIndex } from '../../utils/articlesIndex';
 import { getMetaForArticle } from './articleHubFilters';
 import { CommentSection } from './components/CommentSection';
@@ -108,6 +109,11 @@ const ArticleDetailPage: React.FC = () => {
 
   const articleComments = comments[contentId] || [];
   const withdrawn = isWithdrawnArticle(contentId);
+  const notYetReleased =
+    !withdrawn &&
+    !isLoadingMetas &&
+    Boolean(resolvedCurrentMeta?.publishedAt) &&
+    !isArticleReleased(resolvedCurrentMeta?.publishedAt);
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)', color: 'var(--text-primary)' }}>
@@ -128,6 +134,18 @@ const ArticleDetailPage: React.FC = () => {
           <div className="flex h-40 items-center justify-center">
             <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-brand-primary" />
           </div>
+        ) : notYetReleased ? (
+          <div
+            className="rounded-lg border border-brand-primary/30 bg-brand-secondary-dark px-4 py-6 text-[color:var(--text-primary)]"
+            role="status"
+          >
+            <p className="text-base leading-relaxed">
+              この記事はまだ公開前です（公開予定: {resolvedCurrentMeta?.publishedAt?.slice(0, 10)}）。
+            </p>
+            <Link to="/articles" className="mt-3 inline-block text-sm text-brand-primary underline">
+              記事一覧へ戻る
+            </Link>
+          </div>
         ) : (
           <>
             <ReadingProgressBar contentId={contentId} />
@@ -136,7 +154,7 @@ const ArticleDetailPage: React.FC = () => {
           </>
         )}
 
-        {!withdrawn && (
+        {!withdrawn && !notYetReleased && (
           <CommentSection
             articleId={contentId}
             comments={articleComments}
@@ -149,7 +167,7 @@ const ArticleDetailPage: React.FC = () => {
           />
         )}
 
-        {!withdrawn && (
+        {!withdrawn && !notYetReleased && (
           <SeriesNextChapterCta
             next={next}
             nextMeta={nextMeta}

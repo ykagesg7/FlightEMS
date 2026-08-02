@@ -1,4 +1,6 @@
 import type { LearningContent } from '../types';
+import type { ArticleMeta } from '../types/articles';
+import { isArticleReleased } from '../utils/articlePublishGate';
 import { isWithdrawnArticle } from './withdrawnArticleIds';
 
 /** Categories shown in the article hub (DB learning_contents.category). */
@@ -37,6 +39,22 @@ export function filterPublishedArticleContents(
       isArticleHubCategory(content.category) &&
       !isWithdrawnArticle(content.id)
   );
+}
+
+/**
+ * Hub list with MDX drip gate: if meta.publishedAt is set, hide until that JST day.
+ * Contents without meta / without publishedAt keep is_published-only behavior.
+ */
+export function filterReleasedArticleContents(
+  learningContents: LearningContent[],
+  metas: Record<string, ArticleMeta>,
+  now: Date = new Date(),
+): LearningContent[] {
+  return filterPublishedArticleContents(learningContents).filter((content) => {
+    const meta = metas[content.id];
+    if (!meta?.publishedAt) return true;
+    return isArticleReleased(meta.publishedAt, now);
+  });
 }
 
 export function countByCategory(

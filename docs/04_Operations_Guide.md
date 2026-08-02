@@ -87,6 +87,20 @@
   - **Leaked Password Protection**: **Pro プラン以上のみ** — Free では OFF のまま（Advisor WARN は許容。下記「Security Advisor」）
 - **DB マイグレーション（OAuth username）**: [`scripts/database/20260606_handle_new_user_oauth_fallback.sql`](../scripts/database/20260606_handle_new_user_oauth_fallback.sql) — MCP `apply_migration` 名 `handle_new_user_oauth_fallback_20260606`。
 
+### **Articles 日次公開・週次案内メール**
+
+- **方針**: 週末に MDX をまとめてデプロイ。公開は **JST の `publishedAt`（MDX）+ `learning_contents.is_published`（DB）** で日次制御。毎日の git コミットは不要。
+- **日次公開同期**: Vercel Cron `10 15 * * *`（UTC）= **毎日 00:10 JST** → [`api/cron/article-publish-sync.ts`](../api/cron/article-publish-sync.ts)  
+  スケジュール正本: [`api/_lib/articlePublishSchedule.ts`](../api/_lib/articlePublishSchedule.ts)
+- **週次案内メール**: Vercel Cron `0 23 * * 0`（UTC）= **月曜 08:00 JST** → [`api/cron/article-weekly-digest.ts`](../api/cron/article-weekly-digest.ts)  
+  テンプレ `weekly_article_digest`（X 文案トーン）。宛先: **メール通知 ON かつ 新着コンテンツ 非OFF**（2026-08-02 時点で 6 名）。
+- **手動実行**（本番）:
+  ```bash
+  curl -sS -H "Authorization: Bearer $CRON_SECRET" "https://flight-lms.vercel.app/api/cron/article-publish-sync"
+  curl -sS -H "Authorization: Bearer $CRON_SECRET" "https://flight-lms.vercel.app/api/cron/article-weekly-digest?isoWeek=2026-W32"
+  ```
+- **受信停止案内**: メール本文に「プロフィール → 通知設定 → メール通知 / 新着コンテンツ」を記載。
+
 ### **Cohort 週次 cron・通知（Phase D pilot）**
 
 - **スケジュール**: Vercel Cron `0 0 * * 0`（UTC）= **日曜 09:00 JST** → [`api/cron/cohort-weekly.ts`](../api/cron/cohort-weekly.ts)

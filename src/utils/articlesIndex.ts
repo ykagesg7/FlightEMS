@@ -1,5 +1,6 @@
 import { isWithdrawnArticle } from '../constants/withdrawnArticleIds';
 import type { ArticleIndexEntry, ArticleMeta, ArticleNavigation, ArticleSearchOptions, MDXModule } from '../types/articles';
+import { isArticleReleased } from './articlePublishGate';
 
 /**
  * 全記事のMDXモジュールを取得
@@ -125,7 +126,12 @@ export async function getArticleIndex(): Promise<ArticleIndexEntry[]> {
  */
 export async function getArticleBySlug(slug: string): Promise<ArticleIndexEntry | null> {
   const index = await getArticleIndex();
-  return index.find(entry => entry.meta.slug === slug) || null;
+  const entry = index.find(entry => entry.meta.slug === slug) || null;
+  if (!entry) return null;
+  if (entry.meta.publishedAt && !isArticleReleased(entry.meta.publishedAt)) {
+    return null;
+  }
+  return entry;
 }
 
 /**
@@ -143,9 +149,11 @@ export async function getArticles(options: ArticleSearchOptions = {}): Promise<A
 
   let articles = await getArticleIndex();
 
-  // 公開済みフィルタ
+  // 公開済みフィルタ（publishedAt があり、かつ JST 当日以前）
   if (publishedOnly) {
-    articles = articles.filter(article => article.meta.publishedAt);
+    articles = articles.filter(
+      (article) => article.meta.publishedAt && isArticleReleased(article.meta.publishedAt),
+    );
   }
 
   // 検索クエリフィルタ

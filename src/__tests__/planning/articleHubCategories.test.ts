@@ -3,9 +3,11 @@ import { WITHDRAWN_ARTICLE_IDS } from '../../constants/withdrawnArticleIds';
 import {
   countMindsetArticles,
   filterPublishedArticleContents,
+  filterReleasedArticleContents,
   isMindsetCategory,
 } from '../../constants/articleHubCategories';
 import type { LearningContent } from '../../types';
+import type { ArticleMeta } from '../../types/articles';
 
 function mockContent(
   id: string,
@@ -54,5 +56,32 @@ describe('articleHubCategories', () => {
     expect(countMindsetArticles(published)).toBe(0);
     expect(isMindsetCategory('思考法')).toBe(true);
     expect(isMindsetCategory('CPL学科')).toBe(false);
+  });
+
+  it('hides drip articles until publishedAt JST day', () => {
+    const contents = [
+      mockContent('4.1.1_ChoresAreTheJob', 'メンタリティー', true),
+      mockContent('legacy', 'PPL', true),
+    ];
+    const metas: Record<string, ArticleMeta> = {
+      '4.1.1_ChoresAreTheJob': {
+        title: '雑用こそ、仕事ばい',
+        slug: '/articles/chores-are-the-job',
+        tags: [],
+        publishedAt: '2026-08-03',
+      },
+    };
+    const before = filterReleasedArticleContents(
+      contents,
+      metas,
+      new Date('2026-08-02T03:00:00.000Z'),
+    );
+    expect(before.map((c) => c.id)).toEqual(['legacy']);
+    const after = filterReleasedArticleContents(
+      contents,
+      metas,
+      new Date('2026-08-02T15:00:00.000Z'),
+    );
+    expect(after.map((c) => c.id)).toEqual(['4.1.1_ChoresAreTheJob', 'legacy']);
   });
 });

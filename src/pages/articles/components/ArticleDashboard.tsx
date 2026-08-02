@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   CPL_CATEGORY,
-  filterPublishedArticleContents,
+  filterReleasedArticleContents,
   FLIGHT_OPS_CATEGORY,
   PPL_CATEGORY,
 } from '../../../constants/articleHubCategories';
@@ -86,8 +86,8 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   const [legacyMigrated, setLegacyMigrated] = useState(false);
 
   const articleContents = useMemo(
-    () => filterPublishedArticleContents(learningContents),
-    [learningContents]
+    () => filterReleasedArticleContents(learningContents, articleMetas),
+    [learningContents, articleMetas]
   );
 
   const visibleTabs = useMemo(() => getVisibleTabs(articleContents), [articleContents]);
