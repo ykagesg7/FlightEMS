@@ -59,7 +59,7 @@ describe('api/lib/notificationEmail', () => {
     ).toBe(false);
   });
 
-  it('requires email ON and new_content for weekly article digest', () => {
+  it('allows weekly article digest unless email master is explicitly OFF', () => {
     expect(
       isEmailAllowedForTemplate(
         {
@@ -77,18 +77,19 @@ describe('api/lib/notificationEmail', () => {
           email_notifications_enabled: null,
           mission_update_enabled: true,
           announcement_enabled: true,
-          new_content_enabled: true,
+          new_content_enabled: false,
         },
         'weekly_article_digest',
       ),
-    ).toBe(false);
+    ).toBe(true);
+    expect(isEmailAllowedForTemplate(null, 'weekly_article_digest')).toBe(true);
     expect(
       isEmailAllowedForTemplate(
         {
-          email_notifications_enabled: true,
+          email_notifications_enabled: false,
           mission_update_enabled: true,
           announcement_enabled: true,
-          new_content_enabled: false,
+          new_content_enabled: true,
         },
         'weekly_article_digest',
       ),

@@ -93,7 +93,8 @@
 - **日次公開同期**: Vercel Cron `10 15 * * *`（UTC）= **毎日 00:10 JST** → [`api/cron/article-publish-sync.ts`](../api/cron/article-publish-sync.ts)  
   スケジュール正本: [`api/_lib/articlePublishSchedule.ts`](../api/_lib/articlePublishSchedule.ts)
 - **週次案内メール**: Vercel Cron `0 23 * * 0`（UTC）= **月曜 08:00 JST** → [`api/cron/article-weekly-digest.ts`](../api/cron/article-weekly-digest.ts)  
-  テンプレ `weekly_article_digest`（X 文案トーン）。宛先: **メール通知 ON かつ 新着コンテンツ 非OFF**（2026-08-02 時点で 6 名）。
+  テンプレ `weekly_article_digest`（X 文案トーン）。  
+  **一時ブロードキャスト**: メールアドレスがあるプロフィール全員。ただし **`email_notifications_enabled = false`（明示OFF）は除外**。未設定・NULL は送信対象（カムバック想定）。本文にプロフィール通知OFF案内あり。
 - **手動実行**（本番）:
   ```bash
   curl -sS -H "Authorization: Bearer $CRON_SECRET" "https://flight-lms.vercel.app/api/cron/article-publish-sync"

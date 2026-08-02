@@ -5,7 +5,8 @@ import { dispatchWeeklyArticleDigestEmails } from '../_lib/notificationEmail';
 import { getServiceSupabase } from '../_lib/supabaseService';
 
 /**
- * Weekly article digest (X-style) to users with email + new_content ON.
+ * Weekly article digest (X-style).
+ * Audience (temporary): profiles with email, except explicit email_notifications OFF.
  * Cron: Monday 08:00 JST = Sunday 23:00 UTC → 0 23 * * 0
  *
  * Optional query: ?isoWeek=2026-W32 to force a week (still requires CRON_SECRET).

@@ -164,7 +164,7 @@ X（案内）→ Articles または Notion FA Public Wiki（長文）
 T-4 ハブは CTA に使わない。Public Wiki に T-4 リンクを書かない。
 
 **Articles 公開（2026-08）**: 週末に MDX 一括コミット可。日次表示は `publishedAt`（JST）+ cron `article-publish-sync`。
-週次メール案内（X 保留時）: cron `article-weekly-digest`（月曜 08:00 JST、`new_content` + メール ON）。詳細は [04_Operations_Guide.md](../04_Operations_Guide.md)。
+週次メール案内（X 保留時）: cron `article-weekly-digest`（月曜 08:00 JST）。一時的に明示メールOFF以外へブロードキャスト。詳細は [04_Operations_Guide.md](../04_Operations_Guide.md)。
 
 # パターン（1つ。先週と同じなら理由）
 A ナラティブ B PREP C 結論先出し D PAS E So what

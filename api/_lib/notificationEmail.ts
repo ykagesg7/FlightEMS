@@ -55,9 +55,9 @@ export function isEmailAllowedForTemplate(
     case 'cohort_registration_reminder':
       return settings?.announcement_enabled !== false;
     case 'weekly_article_digest':
-      // Stricter: master email must be explicitly ON (matches profile UI default OFF).
-      if (settings?.email_notifications_enabled !== true) return false;
-      return settings.new_content_enabled !== false;
+      // Temporary broadcast (2026-W32+): only explicit email master OFF is excluded.
+      // No settings row / null email_notifications → allowed (comeback reach).
+      return settings?.email_notifications_enabled !== false;
     default:
       return true;
   }
@@ -289,7 +289,10 @@ export async function dispatchEmailsForInAppDedupe(
   return summary;
 }
 
-/** Email users with email ON + new_content not OFF (weekly article digest). */
+/**
+ * Weekly article digest audience (temporary broadcast):
+ * all profiles with a non-empty email, except explicit email_notifications_enabled=false.
+ */
 export async function dispatchWeeklyArticleDigestEmails(
   supabase: SupabaseClient,
   digest: WeeklyArticleDigest,
@@ -300,17 +303,29 @@ export async function dispatchWeeklyArticleDigestEmails(
   const baseUrl = getAppBaseUrl();
   const { subject, htmlContent } = getWeeklyArticleDigestEmailContent(digest, baseUrl);
 
-  const { data: settingsRows, error } = await supabase
-    .from('user_notification_settings')
-    .select('user_id')
-    .eq('email_notifications_enabled', true)
-    .or('new_content_enabled.is.null,new_content_enabled.eq.true');
+  const { data: profiles, error: profilesError } = await supabase
+    .from('profiles')
+    .select('id, email')
+    .not('email', 'is', null);
 
-  if (error) {
-    throw new Error(error.message);
+  if (profilesError) {
+    throw new Error(profilesError.message);
   }
 
-  const userIds = (settingsRows ?? []).map((r) => r.user_id);
+  const { data: optedOutRows, error: optedOutError } = await supabase
+    .from('user_notification_settings')
+    .select('user_id')
+    .eq('email_notifications_enabled', false);
+
+  if (optedOutError) {
+    throw new Error(optedOutError.message);
+  }
+
+  const optedOut = new Set((optedOutRows ?? []).map((r) => r.user_id));
+  const userIds = (profiles ?? [])
+    .filter((p) => typeof p.email === 'string' && p.email.trim() !== '' && !optedOut.has(p.id))
+    .map((p) => p.id);
+
   for (let i = 0; i < userIds.length; i += EMAIL_DISPATCH_CONCURRENCY) {
     const batch = userIds.slice(i, i + EMAIL_DISPATCH_CONCURRENCY);
     const results = await Promise.all(
