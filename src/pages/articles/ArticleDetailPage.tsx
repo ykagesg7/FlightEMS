@@ -58,7 +58,8 @@ const ArticleDetailPage: React.FC = () => {
         const matched = await findArticleByRouteParam(contentId);
         if (cancelled) return;
         if (matched && matched.filename !== contentId) {
-          // Email / meta.slug use kebab paths; canonicalize to MDX filename.
+          // Resolve immediately so content loads even if URL rewrite is delayed.
+          setCanonicalId(matched.filename);
           navigate(`/articles/${matched.filename}`, { replace: true });
           return;
         }
