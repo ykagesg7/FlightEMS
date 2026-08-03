@@ -7,7 +7,7 @@ export interface ScheduledArticle {
   id: string;
   publishDate: string; // YYYY-MM-DD (JST)
   title: string;
-  slug: string; // path e.g. /articles/chores-are-the-job
+  slug: string; // pretty path used in digest email, e.g. /articles/chores-are-the-job (resolved to MDX id in app)
   hook: string; // X-style one-liner
 }
 

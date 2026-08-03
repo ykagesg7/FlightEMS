@@ -121,12 +121,42 @@ export async function getArticleIndex(): Promise<ArticleIndexEntry[]> {
   return cachedIndex;
 }
 
+/** Strip `/articles/` (or leading `/`) so route params match meta.slug. */
+export function normalizeArticleSlug(slug: string): string {
+  return slug.replace(/^\/articles\//, '').replace(/^\//, '');
+}
+
 /**
- * slugで記事を検索
+ * Resolve a route param to an index entry by filename or pretty slug
+ * (e.g. `4.1.1_ChoresAreTheJob` or `chores-are-the-job` / `/articles/chores-are-the-job`).
+ * Does not apply the publish gate — callers decide release UX.
+ */
+export async function findArticleByRouteParam(
+  param: string,
+): Promise<ArticleIndexEntry | null> {
+  const index = await getArticleIndex();
+  const key = normalizeArticleSlug(param);
+  return (
+    index.find((entry) => {
+      const metaSlug = entry.meta.slug || '';
+      const metaKey = normalizeArticleSlug(metaSlug);
+      return (
+        entry.filename === param ||
+        entry.filename === key ||
+        metaSlug === param ||
+        metaSlug === `/${key}` ||
+        metaSlug === `/articles/${key}` ||
+        metaKey === key
+      );
+    }) ?? null
+  );
+}
+
+/**
+ * slugで記事を検索（公開済みのみ）
  */
 export async function getArticleBySlug(slug: string): Promise<ArticleIndexEntry | null> {
-  const index = await getArticleIndex();
-  const entry = index.find(entry => entry.meta.slug === slug) || null;
+  const entry = await findArticleByRouteParam(slug);
   if (!entry) return null;
   if (entry.meta.publishedAt && !isArticleReleased(entry.meta.publishedAt)) {
     return null;

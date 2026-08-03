@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import MDXLoader from '../../components/mdx/MDXLoader';
 import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
 import { useArticleStats } from '../../hooks/useArticleStats';
 import { useAuth } from '../../hooks/useAuth';
 import { ArticleMeta } from '../../types/articles';
 import { isArticleReleased } from '../../utils/articlePublishGate';
-import { buildArticleIndex } from '../../utils/articlesIndex';
+import { buildArticleIndex, findArticleByRouteParam } from '../../utils/articlesIndex';
 import { getMetaForArticle } from './articleHubFilters';
 import { CommentSection } from './components/CommentSection';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
@@ -19,6 +19,7 @@ import { usePrevNext } from './components/usePrevNext';
 
 const ArticleDetailPage: React.FC = () => {
   const { contentId } = useParams<{ contentId: string }>();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const {
     comments,
@@ -32,29 +33,55 @@ const ArticleDetailPage: React.FC = () => {
 
   const [articleMetas, setArticleMetas] = useState<Record<string, ArticleMeta>>({});
   const [isLoadingMetas, setIsLoadingMetas] = useState(true);
+  /** Filename id after resolving pretty email/marketing slugs. */
+  const [canonicalId, setCanonicalId] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadArticleMetas = async () => {
+      if (!contentId) {
+        setIsLoadingMetas(false);
+        return;
+      }
+      setIsLoadingMetas(true);
+      setCanonicalId(null);
       try {
         const index = await buildArticleIndex();
+        if (cancelled) return;
         const metaMap: Record<string, ArticleMeta> = {};
         index.forEach((entry) => {
           metaMap[entry.filename] = entry.meta;
         });
         setArticleMetas(metaMap);
+
+        const matched = await findArticleByRouteParam(contentId);
+        if (cancelled) return;
+        if (matched && matched.filename !== contentId) {
+          // Email / meta.slug use kebab paths; canonicalize to MDX filename.
+          navigate(`/articles/${matched.filename}`, { replace: true });
+          return;
+        }
+        setCanonicalId(matched?.filename ?? contentId);
       } catch (error) {
         console.error('記事メタデータの読み込みエラー:', error);
+        if (!cancelled) setCanonicalId(contentId);
       } finally {
-        setIsLoadingMetas(false);
+        if (!cancelled) setIsLoadingMetas(false);
       }
     };
 
     loadArticleMetas();
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [contentId, navigate]);
 
-  const { prev, next } = usePrevNext(contentId ?? '');
+  const articleId = canonicalId ?? contentId ?? '';
 
-  const resolvedCurrentMeta = contentId ? articleMetas[contentId] : undefined;
+  const { prev, next } = usePrevNext(articleId);
+
+  const resolvedCurrentMeta = articleId ? articleMetas[articleId] : undefined;
 
   const nextMeta = useMemo(
     () => (next ? getMetaForArticle(next, articleMetas) : undefined),
@@ -62,38 +89,38 @@ const ArticleDetailPage: React.FC = () => {
   );
 
   useEffect(() => {
-    if (!contentId || isWithdrawnArticle(contentId)) return;
-    loadArticleStats([contentId]);
-    loadComments(contentId);
-  }, [contentId, loadArticleStats, loadComments]);
+    if (!articleId || isWithdrawnArticle(articleId)) return;
+    loadArticleStats([articleId]);
+    loadComments(articleId);
+  }, [articleId, loadArticleStats, loadComments]);
 
   const handleLoadComments = useCallback(async () => {
-    if (!contentId) return;
-    await loadComments(contentId);
-  }, [loadComments, contentId]);
+    if (!articleId) return;
+    await loadComments(articleId);
+  }, [loadComments, articleId]);
 
   const handleAddComment = useCallback(
     async (content: string) => {
-      if (!contentId) return;
-      await createComment({ article_id: contentId, content });
+      if (!articleId) return;
+      await createComment({ article_id: articleId, content });
     },
-    [createComment, contentId]
+    [createComment, articleId]
   );
 
   const handleEditComment = useCallback(
     async (commentId: string, content: string) => {
-      if (!contentId) return;
-      await updateComment({ comment_id: commentId, article_id: contentId, content });
+      if (!articleId) return;
+      await updateComment({ comment_id: commentId, article_id: articleId, content });
     },
-    [updateComment, contentId]
+    [updateComment, articleId]
   );
 
   const handleDeleteComment = useCallback(
     async (commentId: string) => {
-      if (!contentId) return;
-      await deleteComment({ comment_id: commentId, article_id: contentId });
+      if (!articleId) return;
+      await deleteComment({ comment_id: commentId, article_id: articleId });
     },
-    [deleteComment, contentId]
+    [deleteComment, articleId]
   );
 
   if (!contentId) {
@@ -107,8 +134,8 @@ const ArticleDetailPage: React.FC = () => {
     );
   }
 
-  const articleComments = comments[contentId] || [];
-  const withdrawn = isWithdrawnArticle(contentId);
+  const articleComments = comments[articleId] || [];
+  const withdrawn = isWithdrawnArticle(articleId);
   const notYetReleased =
     !withdrawn &&
     !isLoadingMetas &&
@@ -130,7 +157,7 @@ const ArticleDetailPage: React.FC = () => {
           >
             <p className="text-base leading-relaxed">{WITHDRAWN_ARTICLE_MESSAGE}</p>
           </div>
-        ) : isLoadingMetas ? (
+        ) : isLoadingMetas || !canonicalId ? (
           <div className="flex h-40 items-center justify-center">
             <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-brand-primary" />
           </div>
@@ -148,15 +175,15 @@ const ArticleDetailPage: React.FC = () => {
           </div>
         ) : (
           <>
-            <ReadingProgressBar contentId={contentId} />
-            <MDXLoader contentId={contentId} />
-            <RelatedTestsBlock contentId={contentId} />
+            <ReadingProgressBar contentId={articleId} />
+            <MDXLoader contentId={articleId} />
+            <RelatedTestsBlock contentId={articleId} />
           </>
         )}
 
-        {!withdrawn && !notYetReleased && (
+        {!withdrawn && !notYetReleased && canonicalId && (
           <CommentSection
-            articleId={contentId}
+            articleId={articleId}
             comments={articleComments}
             isLoading={isLoading}
             currentUserId={user?.id}
@@ -167,7 +194,7 @@ const ArticleDetailPage: React.FC = () => {
           />
         )}
 
-        {!withdrawn && !notYetReleased && (
+        {!withdrawn && !notYetReleased && canonicalId && (
           <SeriesNextChapterCta
             next={next}
             nextMeta={nextMeta}
@@ -175,7 +202,7 @@ const ArticleDetailPage: React.FC = () => {
           />
         )}
 
-        <PrevNextNav currentId={contentId} listPath="/articles" />
+        <PrevNextNav currentId={articleId} listPath="/articles" />
       </div>
       <ScrollToButtons />
       <KeyboardShortcuts prevId={prev?.id} nextId={next?.id} />
