@@ -62,6 +62,8 @@ npm exec -- tsc -b   # 型チェック
 2. レッスン MDX → [`.cursor/rules/mdx-article-guide.mdc`](.cursor/rules/mdx-article-guide.mdc)（必要なら agent `mdx-content`）
 3. `learning_contents` 登録 → Skill [`learning-contents-registration`](.cursor/skills/learning-contents-registration/SKILL.md)
 4. コミットメッセージ → Skill [`git-commit-en`](.cursor/skills/git-commit-en/SKILL.md)（英語・Conventional Commits）
+5. 週末クリップ整理／週次発信弧 → Skill [`weekend-ingest`](.cursor/skills/weekend-ingest/SKILL.md) / [`weekend-editorial`](.cursor/skills/weekend-editorial/SKILL.md)（正本 [`docs/ops/Weekend_Content_Pipeline.md`](docs/ops/Weekend_Content_Pipeline.md)）
+6. 土曜・GA4+Sentry 週次レビュー → 正本 [`docs/ops/Weekly_Telemetry_Review.md`](docs/ops/Weekly_Telemetry_Review.md)（現状・課題・解決案を追記。認証は [`docs/Cursor_MCP_Setup.md`](docs/Cursor_MCP_Setup.md)）
 
 ## サブエージェント / Skills
 
@@ -72,6 +74,7 @@ npm exec -- tsc -b   # 型チェック
 | フライトプラン手順レビュー | Skill `flight-plan-review` |
 | 航空安全の隔離監査 | agent `aviation-safety-review` |
 | 完了検証（テスト・抜け漏れ） | agent `verifier` |
+| 土曜 Ingest / 日曜 Editorial | `weekend-ingest` / `weekend-editorial` |
 
 組み込み Explore / Bash / Browser は設定不要（ノイズ隔離用）。
 

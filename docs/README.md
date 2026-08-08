@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年7月26日（地図カーソル Footer + 詳細シート・NAVAID 選択）
-**バージョン**: Documentation Index v4.65
+**最終更新**: 2026年8月8日（週次テレメトリ・レビュー正本）
+**バージョン**: Documentation Index v4.67
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -14,9 +14,9 @@
 | ハブ | 主なドキュメント |
 |------|------------------|
 | **Strategy & Product（戦略・プロダクト成長）** | [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)、**[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)**（NSM・ALPM・オンボーディング・PMF スライス・AI コンシェルジュ・データ・法務 UX）、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) |
-| **Content & Curriculum（コンテンツ・シラバス）** | [05_Content_Pipeline.md](05_Content_Pipeline.md)、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)、[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) |
+| **Content & Curriculum（コンテンツ・シラバス）** | [05_Content_Pipeline.md](05_Content_Pipeline.md)、**[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)**（週末 Ingest／Editorial・Notion Public Wiki 一方通行）、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)、[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) |
 | **Engineering & Spec（実装・仕様）** | [02_System_Spec.md](02_System_Spec.md)、[03_Development_Guide.md](03_Development_Guide.md)、[Component_Structure_Guide.md](Component_Structure_Guide.md)、[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)、[GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md) |
-| **Operations & Quality（運用・品質）** | [04_Operations_Guide.md](04_Operations_Guide.md)、[06_Long_Term_Execution.md](06_Long_Term_Execution.md)、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、[ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md)、[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) |
+| **Operations & Quality（運用・品質）** | [04_Operations_Guide.md](04_Operations_Guide.md)、[06_Long_Term_Execution.md](06_Long_Term_Execution.md)、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、[ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md)、[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)、**[ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)**（土曜・GA4+Sentry 週次レビュー正本）、[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) |
 | **Reference & Portal（参考・外部仕様転記）** | [Project_Overview.md](Project_Overview.md)、[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)、[SWIM_Portal/README.md](SWIM_Portal/README.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[content_outlines/README.md](content_outlines/README.md)、[templates/README.md](templates/README.md) |
 
 ---
@@ -43,6 +43,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-08-08（週次テレメトリ・レビュー）**: GA4 + Sentry を **土曜午前**ペースで残す正本 [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)（現状・課題・解決案・オープン課題ボード）。W32 初回記入。認証は [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)。
 - **2026-07-26（地図カーソル Footer + 詳細シート）**: 地図下に **DMS 1行**（`MapCursorFooter`）。詳細は地図上オーバーレイ（DD・選択 NAVAID 1件の磁方位/距離、検索で任意選択・初期は最寄り）。近傍3件固定・ツールバー内展開は廃止。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
 - **2026-07-26（地図座標ピン固定）**: マウスはクリックで固定、タッチは中央クロスヘア＋「この位置を固定」（`useMapPinnedPosition`）。詳細/NAVAID は固定後のみ。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
 - **2026-07-27（NAVAID ラジアル／DME 網）**: 参考レイヤー `navaid_radial_grid`。選択 NAVAID（初期 AHT）から磁方位 10°・距離 10 nm・最大 100 nm。方位ラベルは主要方位 10 nm 刻み・その他 50/100 nm。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
@@ -83,6 +84,7 @@
 - **2026-05-10（戦略方針の docs 再編）**: 新規 **[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)**（ALPM・二重オンボーディング・気象/通信 PMF・AI ナビ・データ・法務 UX・アクション一覧）。本 README **テーマ別ハブ**、[00](00_Flight_Academy_Strategy.md) §3.4 ほか、[01](01_Current_Status_and_Roadmap.md)、[02](02_System_Spec.md)、[06](06_Long_Term_Execution.md)、[Project_Overview.md](Project_Overview.md)、[AGENTS.md](../AGENTS.md) を連携。
 - **2026-05-09（May 後半 W21 完了・W22 素案）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §2・§6、[05_Content_Pipeline.md](05_Content_Pipeline.md) W21/W22、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、新規 [content_outlines/W22_2026/](content_outlines/W22_2026/README.md)。**W21** `content_outlines/W21_2026/` 撤去。**[01](01_Current_Status_and_Roadmap.md) v4.0.20**。[content_outlines/README.md](content_outlines/README.md) 現在週行を更新。
 - **2026-05-08（May 後半 W20 完了・W21 計画）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §6、[05](05_Content_Pipeline.md) W20/W21、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、一時ワーク `content_outlines/W21_2026/`（**2026-05-09 に実装完了後削除**）。W20 用 Gemini 素案ファイル削除。[01](01_Current_Status_and_Roadmap.md) v4.0.19。
+- **2026-08-01（週末コンテンツ・パイプライン）**: [ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)。Skills `weekend-ingest` / `weekend-editorial`。Notion **FA Public Wiki**（公開）と **T-4 学習ホーム**（受け持ち学生専用）の一方通行。Obsidian `raw/`・`wiki/`・`ops/failure-log/`。
 - **2026-07-25（Cursor 設定見直し）**: `alwaysApply` を `core-project` のみに縮小。`docs-sync` / `git-commit-en` を Skills 化。`deep-thinking.mdc` 削除。[AGENTS.md](../AGENTS.md) にコスト運用（Composer/Grok 日常）。`verifier` エージェントと最小 Hooks（危険シェル拒否）。詳細は [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)。
 - **2026-05-07（5月後半スプリント・アウトライン）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)、[content_outlines/May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。[01](01_Current_Status_and_Roadmap.md) v4.0.18、`---##` 改行修正。
 - **2026-05-07（6月期計画書）**: [June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md) を追加。[01](01_Current_Status_and_Roadmap.md) に **2026年6月期スプリント** の参照、[05](05_Content_Pipeline.md) で追う **2026-W23〜W26** の目安を明示。

@@ -251,6 +251,10 @@
 
 > AI/エージェントは Vercel ダッシュボードにアクセスできないため **この表の実データ記入は人手**。記入後、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) の Phase B 節に **1 行サマリー**を追記してもよい。
 
+#### **週次の読み取りレビュー（GA4 + Sentry）**
+
+タグ健常性の確認とは別に、**アクセスとエラーの判断ログ**は土曜午前に [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) へ追記する（現状 / 課題 / 解決案・オープン課題ボード）。別チャットの Agent はそちらを先に読む。単発の Quiz Hub ファネルは [`artifacts/quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md)。
+
 #### **Google Analytics Data API / 公式 MCP はタグの代替ではない**
 
 - **Data API**（および [Google 公式 Analytics MCP](https://developers.google.com/analytics/devguides/MCP?hl=ja) が内部で使う同系 API）は、**収集・集計済みのデータを読み取る**ためのものである。**`g/collect` がクライアントから届いていない**、別プロパティに入っている等の場合、API のレポートも **0 件に近く**なる。UI が空なのに「API だけ直す」ことはできない。
