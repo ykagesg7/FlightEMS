@@ -8,7 +8,8 @@
 $ErrorActionPreference = 'Stop'
 
 # Downloaded Desktop client JSON (OAuth client ID + secret) — never commit
-$ClientJson = Join-Path $env:USERPROFILE '.secrets\ga-oauth-desktop-adc.json'
+# Canonical local secrets root: %APPDATA%\FlightAcademy\secrets\
+$ClientJson = Join-Path $env:APPDATA 'FlightAcademy\secrets\ga-oauth-desktop-adc.json'
 
 # GCP project ID used for APIs and (optional) quota project
 $GcloudProjectId = 'your-gcp-project-id'

@@ -106,8 +106,10 @@ winget install --id Anysphere.Cursor -e
 
 **セットアップ例（Windows）**:
 
+Vault の実パスを渡す（iCloud 同期なら例: `C:\Users\YOU\iCloudDrive\iCloud~md~obsidian`。ローカル専用なら旧来の `Documents\Obsidian Vault` でも可）。
+
 ```powershell
-npx -y obsidian-mcp-rs install cursor --global "C:\Users\YOU\Documents\Obsidian Vault"
+npx -y obsidian-mcp-rs install cursor --global "C:\Users\YOU\iCloudDrive\iCloud~md~obsidian"
 ```
 
 インストール後、Windows では `npx` 直指定が失敗しやすいので、他 MCP と同様に **`cmd /c` ラップ**へ直す:
@@ -120,12 +122,16 @@ npx -y obsidian-mcp-rs install cursor --global "C:\Users\YOU\Documents\Obsidian 
     "npx",
     "-y",
     "obsidian-mcp-rs",
-    "C:\\Users\\YOU\\Documents\\Obsidian Vault"
+    "C:\\Users\\YOU\\iCloudDrive\\iCloud~md~obsidian"
   ]
 }
 ```
 
-変更後は **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** で `obsidian` が緑であることを確認する。Vault は AI から作成・編集・削除され得るため、Git 等でバックアップしておく。
+変更後は **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** で `obsidian` が緑であることを確認する。MCP 上の vault 名はフォルダ名由来（iCloud 例: `iCloud~md~obsidian`）になる。Vault は AI から作成・編集・削除され得るため、Git 等でバックアップしておく。
+
+**注意（2026-07）**: PC↔iPhone を iCloud にしたあと、MCP が旧 `Documents\Obsidian Vault` を指したままだと `MISSING` になる。`%USERPROFILE%\.cursor\mcp.json` のパスを実 Vault に合わせること。
+
+**週末発信**: Obsidian raw → wiki → Ideas の運用は [ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)。Skills `weekend-ingest` / `weekend-editorial`。Notion **FA Public Wiki** と **T-4** は一方通行（T-4→Public のみ、逆リンク禁止）。
 
 **代替**: PyPI の `obsidian-mcp`（`uvx`）もあるが、2026-07 時点で `fastmcp` 新版と非互換になりやすい。REST API プラグイン経由（`obsidian-mcp-server` / Local REST API）は Obsidian 起動が前提。
 
@@ -312,10 +318,23 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
 ### 前提（ルート A）
 
 1. **Python 3.10+** と [**pipx**](https://pipx.pypa.io/) をインストールする。
-2. Google Cloud で **Google Analytics Admin API** と **Google Analytics Data API** を有効化する（[有効化手順](https://support.google.com/googleapi/answer/6158841)）。
+2. Google Cloud で **Google Analytics Admin API** と **Google Analytics Data API** を有効化する（[有効化手順](https://support.google.com/googleapi/answer/6158841)）。**既存の GCP プロジェクトを再利用する**（GA MCP 専用の空プロジェクトを新規作成しない）。Flight Academy 運用では `GOOGLE_PROJECT_ID` に **`gen-lang-client-0986699229`（Generative Language Client）** を使う。
 3. [**Application Default Credentials (ADC)**](https://cloud.google.com/docs/authentication/provide-credentials-adc) を、`https://www.googleapis.com/auth/analytics.readonly` を含む形で設定する（OAuth デスクトップクライアント JSON ＋ `gcloud auth application-default login` 等）。手順の詳細は [公式 README（Setup instructions）](https://github.com/googleanalytics/google-analytics-mcp) と [セットアップ動画](https://www.youtube.com/watch?v=nS8HLdwmVlY)。
 4. **サービスアカウント**を使う場合は JSON をファイルに保存し、**環境変数にはそのパスのみ**設定する（`private_key` 文字列を `mcp.json` の `env` にべた書きしない方が運用・ローテが楽であり、Windows の `\n` 問題も減る）。
 5. 認証に使う Google アカウント（またはサービスアカウント）が、対象 GA4 プロパティに **閲覧者**以上でアクセスできること。
+
+#### ローカル secrets の置き場（Windows・正本）
+
+資格情報ファイルは **Git リポジトリ外**に集約する。Flight Academy マシンでは次を正本とする（旧 `%USERPROFILE%\.secrets` や Desktop 上の JSON / メモは使わない）。
+
+| パス | 用途 |
+|------|------|
+| `%APPDATA%\FlightAcademy\secrets\` | ローカル秘密のルート（例: `C:\Users\<自分>\AppData\Roaming\FlightAcademy\secrets\`） |
+| `ga-mcp-readonly.json` | GA4 MCP 用サービスアカウント鍵（現行推奨） |
+| `ga-oauth-desktop-adc.json` | ユーザー ADC 再建用の OAuth デスクトップクライアント JSON（代替経路） |
+| `desktop-api-notes.txt` 等 | デスクトップから移した作業用メモ（鍵と同様に扱えるようにする） |
+
+`.cursor/mcp.json` の `GOOGLE_APPLICATION_CREDENTIALS` は、上記の **絶対パス**（スラッシュ区切り可）だけを指す。アプリの `.env.local`（`VITE_*` 等）とは役割が違うので混ぜない。
 
 ### ADC と Analytics スコープ（403 対策）
 
@@ -334,9 +353,9 @@ gcloud がデフォルトのクライアント ID によるスコープ制限に
 手順の要約：
 
 1. [GCP Console → IAM と管理 → サービスアカウント](https://console.cloud.google.com/iam-admin/serviceaccounts)（対象プロジェクト `GOOGLE_PROJECT_ID` と同一）で **サービスアカウントを作成**（名前は任意、例 `ga-mcp-readonly`）。
-2. **鍵を追加**して **JSON をダウンロード**。ファイルは **Git に含めず**、`C:/Users/<自分>/.secrets/xxx.json` のようにユーザー配下のみに保存する。
+2. **鍵を追加**して **JSON をダウンロード**。ファイルは **Git に含めず**、`%APPDATA%\FlightAcademy\secrets\ga-mcp-readonly.json`（例: `C:/Users/<自分>/AppData/Roaming/FlightAcademy/secrets/ga-mcp-readonly.json`）に保存する。
 3. [Google Analytics の管理画面](https://analytics.google.com/) で、対象 **GA4 プロパティ** → **プロパティのアクセス設定** で、サービスアカウントの **メールアドレス**（`...@...iam.gserviceaccount.com`）を **閲覧者** として招待する。**測定 ID（`G-…`）ではなく、このプロパティに紐づくアクセス一覧に追加する必要がある**。
-4. `.cursor/mcp.json` の `google-analytics-mcp` で **`GOOGLE_APPLICATION_CREDENTIALS` をその JSON ファイルの絶対パス**に変更する（`/C:/.../` 形式可）。 **`GOOGLE_PROJECT_ID` は GCP のプロジェクト ID のまま**。
+4. `.cursor/mcp.json` の `google-analytics-mcp` で **`GOOGLE_APPLICATION_CREDENTIALS` をその JSON ファイルの絶対パス**に変更する（`C:/...` のスラッシュ推奨）。 **`GOOGLE_PROJECT_ID` は GCP のプロジェクト ID のまま**（`gen-lang-client-0986699229`）。
 5. Cursor を再起動し、MCP を再度試す。
 
 **GA の画面で「このメールアドレスは Google アカウントと一致しません」と出る場合**: プロパティのアクセス管理の入力欄が **人間用の Google アカウント（@gmail.com 等）だけ**を受け付け、**`…iam.gserviceaccount.com` を弾く**ことがある（Google 公式手順と矛盾する報告が 2024〜 以降もコミュニティにある）。次を試す。(1) **コピペの前後空白を削除**し、GCP の SA 詳細に表示されるメールと **一字一句一致**させる。(2) **アカウントのアクセス管理**（プロパティではなく **アカウント**側）から同じメールで **閲覧者**を付与する。(3) 別ブラウザ／シークレットで再試行。(4) いずれも不可なら、下記 **「ADC を自分用 OAuth クライアントで張る」**か、**Admin API で `accessBindings` を作成**する（管理者のユーザー OAuth が必要）など、**UI 以外の経路**を検討する。
@@ -354,7 +373,7 @@ gcloud がデフォルトのクライアント ID によるスコープ制限に
    - （推奨）`https://www.googleapis.com/auth/cloud-platform`  
    **公開ステータスが「テスト中」**なら、**テストユーザー**に **MCP で使う自分の Gmail アドレス**を必ず追加する。
 2. [**認証情報 → 認証情報を作成 → OAuth クライアント ID**](https://console.cloud.google.com/apis/credentials): アプリケーションの種類 **デスクトップアプリ**。作成後、JSON をダウンロードする。中身は **`installed` キー**付きのクライアントシークレット（`client_id` / `client_secret`）である。
-3. その JSON を **リポジトリ外**に置く（例: `C:\Users\<自分>\.secrets\ga-oauth-desktop-adc.json`）。**Git にコミットしない。**
+3. その JSON を **リポジトリ外**に置く（例: `%APPDATA%\FlightAcademy\secrets\ga-oauth-desktop-adc.json`）。**Git にコミットしない。**
 
 **B. 端末（ブラウザ／対話が開く）**
 
@@ -362,7 +381,7 @@ PowerShell 例（パスは自分の場所に合わせる）。
 
 ```powershell
 gcloud auth application-default login `
-  --client-id-file="C:\Users\yusuke\.secrets\ga-oauth-desktop-adc.json" `
+  --client-id-file="$env:APPDATA\FlightAcademy\secrets\ga-oauth-desktop-adc.json" `
   --scopes="https://www.googleapis.com/auth/analytics.readonly,https://www.googleapis.com/auth/cloud-platform"
 ```
 
@@ -409,8 +428,8 @@ MCP ツール **`get_account_summaries`** が **空配列でない**こと、続
 
 [`.cursor/mcp.json.example`](../.cursor/mcp.json.example) の `google-analytics-mcp` ブロックを参考に、ローカルの `.cursor/mcp.json` に追加する。
 
-- `GOOGLE_APPLICATION_CREDENTIALS`: ADC の場合は `gcloud auth application-default login` 完了時に示される **JSON の絶対パス**、サービスアカウントの場合は **発行したキー JSON の絶対パス**。
-- `GOOGLE_PROJECT_ID`: GCP の [プロジェクト ID](https://support.google.com/googleapi/answer/7014113)（公式 README の `env` 名に合わせる）。
+- `GOOGLE_APPLICATION_CREDENTIALS`: **現行推奨**はサービスアカウント鍵（`%APPDATA%\FlightAcademy\secrets\ga-mcp-readonly.json`）。ユーザー ADC 経路の場合は `gcloud auth application-default login` 完了時の **ADC JSON**（通常 `%APPDATA%\gcloud\application_default_credentials.json`）。
+- `GOOGLE_PROJECT_ID`: GCP の [プロジェクト ID](https://support.google.com/googleapi/answer/7014113)（Flight Academy: `gen-lang-client-0986699229`）。
 
 **pipx** が PATH に無い場合は `where pipx` で確認する。
 
