@@ -63,6 +63,61 @@ Articles/        … ミラー参照のみ。正本は Git MDX
 
 **Lessons 独立**: raw/wiki 経路に学科正本を入れない。
 
+### 2.1 状態グラフ（運用ノード）
+
+エージェント自動オーケストレーションはしない。人間が週末に動かすときのゲート付き地図。
+
+```mermaid
+flowchart LR
+  subgraph raw_layer [Obsidian raw]
+    RC[raw/content]
+    RP[raw/personal]
+    RO[raw/ops]
+  end
+  subgraph wiki_layer [Obsidian wiki]
+    WS[wiki/summaries]
+    WP[wiki/personal]
+    WO[wiki/ops]
+    WW[wiki/weeks]
+  end
+  IDEAS[Ideas/Week_YYYY-Www.md]
+  MDX[src/content/articles MDX]
+  SCH[articlePublishSchedule.ts]
+  DB[(learning_contents.is_published)]
+  APP[App hub / detail gate]
+  MAIL[週次 digest Brevo]
+  PUB[FA Public Wiki]
+  X[X teaser 保留可]
+
+  RC -->|土曜 Ingest| WS
+  RP -->|土曜 Ingest| WP
+  RO -->|土曜 Ingest| WO
+  WS --> WW
+  WW -->|日曜 Editorial draft| IDEAS
+  IDEAS -->|approved 後 MDX| MDX
+  MDX --> SCH
+  SCH -->|日次 cron 00:10 JST| DB
+  MDX -->|publishedAt JST| APP
+  DB --> APP
+  SCH -->|月曜 08:00 JST| MAIL
+  IDEAS -.->|補遺のみ| PUB
+  MAIL --> APP
+  X -.->|CTA| APP
+  X -.->|CTA| PUB
+```
+
+**ゲート（破ると契約違反）**
+
+| ゲート | ルール |
+|--------|--------|
+| personal/ops → Ideas | 入れない（消さない） |
+| Ideas → MDX | `status: approved` 後のみ |
+| MDX → 読者表示 | `publishedAt <= 今日(JST)` かつ DB `is_published` |
+| 公開 CTA | Articles or Public Wiki。**T-4 禁止** |
+| Public Wiki | T-4 へリンクしない |
+
+関連 Skill: `weekend-ingest` / `weekend-editorial` / `weekly-article-digest` / `article-publish-check` / `learning-contents-registration`
+
 ---
 
 ## 3. 読者・品質
@@ -199,3 +254,4 @@ series_hook（週あたり最大1）
 | 2026-08-01 | W31 Ingest。旧 `メモ/` Inbox 廃止。クリップは `raw/*` のみ |
 | 2026-08-01 | 連続性ロック: 過去＝同期／現在＝二人とも教官（見習い道真廃止）。詳細は Ideas/SeriesBible |
 | 2026-08-01 | Gemini回顧プロンプト正本: [Gemini_Memoir_Article_System_Prompt.md](Gemini_Memoir_Article_System_Prompt.md)。W32 Mon MDX `4.1.1_ChoresAreTheJob` |
+| 2026-08-08 | §2.1 状態グラフ。Skills `weekly-article-digest` / `article-publish-check`。Articles ドリップ＋週次メール運用をグラフに接続 |

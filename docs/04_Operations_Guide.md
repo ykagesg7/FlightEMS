@@ -101,6 +101,9 @@
   curl -sS -H "Authorization: Bearer $CRON_SECRET" "https://flight-lms.vercel.app/api/cron/article-weekly-digest?isoWeek=2026-W32"
   ```
 - **受信停止案内**: メール本文に「プロフィール → 通知設定 → メール通知 / 新着コンテンツ」を記載。
+- **文案 Skill**: [`.cursor/skills/weekly-article-digest/SKILL.md`](../.cursor/skills/weekly-article-digest/SKILL.md)（文案のみ。送信は明示時）
+- **公開確認 Skill**: [`.cursor/skills/article-publish-check/SKILL.md`](../.cursor/skills/article-publish-check/SKILL.md)
+- **状態グラフ**: [ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md) §2.1
 
 ### **Cohort 週次 cron・通知（Phase D pilot）**
 
@@ -162,6 +165,8 @@
 | **Dashboard** | **Advisor Center** / **Database → Security Advisor** |
 
 リリース前・月次メンテでは [ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md) §1 と併用する。
+
+**月次リズム（2026-08 追記）**: 毎月第1週末の土曜 Ingest 前後で `get_advisors`（security）を1回。新規 WARN が増えていなければ deep dive しない。Dangerous git は [`.cursor/hooks.json`](../.cursor/hooks.json) で拒否を維持。セキュリティ系 Web クリップは Articles にせず `raw/ops` → `wiki/ops` のみ。
 
 #### 2026-06-03 時点の WARN 2 件（対応方針）
 

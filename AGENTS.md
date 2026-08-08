@@ -63,7 +63,9 @@ npm exec -- tsc -b   # 型チェック
 3. `learning_contents` 登録 → Skill [`learning-contents-registration`](.cursor/skills/learning-contents-registration/SKILL.md)
 4. コミットメッセージ → Skill [`git-commit-en`](.cursor/skills/git-commit-en/SKILL.md)（英語・Conventional Commits）
 5. 週末クリップ整理／週次発信弧 → Skill [`weekend-ingest`](.cursor/skills/weekend-ingest/SKILL.md) / [`weekend-editorial`](.cursor/skills/weekend-editorial/SKILL.md)（正本 [`docs/ops/Weekend_Content_Pipeline.md`](docs/ops/Weekend_Content_Pipeline.md)）
-6. 土曜・GA4+Sentry 週次レビュー → 正本 [`docs/ops/Weekly_Telemetry_Review.md`](docs/ops/Weekly_Telemetry_Review.md)（現状・課題・解決案を追記。認証は [`docs/Cursor_MCP_Setup.md`](docs/Cursor_MCP_Setup.md)）
+6. 週次記事メール文案 → Skill [`weekly-article-digest`](.cursor/skills/weekly-article-digest/SKILL.md)（送信は明示時のみ）
+7. 記事ドリップ公開確認 → Skill [`article-publish-check`](.cursor/skills/article-publish-check/SKILL.md)
+8. 土曜・GA4+Sentry 週次レビュー → 正本 [`docs/ops/Weekly_Telemetry_Review.md`](docs/ops/Weekly_Telemetry_Review.md)（現状・課題・解決案を追記。認証は [`docs/Cursor_MCP_Setup.md`](docs/Cursor_MCP_Setup.md)）
 
 ## サブエージェント / Skills
 
@@ -75,6 +77,7 @@ npm exec -- tsc -b   # 型チェック
 | 航空安全の隔離監査 | agent `aviation-safety-review` |
 | 完了検証（テスト・抜け漏れ） | agent `verifier` |
 | 土曜 Ingest / 日曜 Editorial | `weekend-ingest` / `weekend-editorial` |
+| 週次 digest 文案 / 公開確認 | `weekly-article-digest` / `article-publish-check` |
 
 組み込み Explore / Bash / Browser は設定不要（ノイズ隔離用）。
 
