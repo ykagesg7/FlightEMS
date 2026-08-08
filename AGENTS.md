@@ -83,6 +83,20 @@ npm exec -- tsc -b   # 型チェック
 
 危険なシェル（`main`/`master` への force-push 等）は [`.cursor/hooks.json`](.cursor/hooks.json) で拒否。
 
+## Cursor Cloud specific instructions
+
+> 将来の Cloud Agent 向け。依存導入は起動時の update script（`npm install`）で済む前提。ここには「非自明な起動・実行の注意点」のみ記す。標準コマンドは `package.json` / README を参照。
+
+- **Node 22** 系で動作（CI も `node-version: 22`）。`engines` 指定はない。
+- **Supabase の env は起動時必須**。`src/utils/supabase.ts` は test モード以外で `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` が無いと **throw** する。実 Supabase 認証情報が無い環境では、CI と同じダミー値を `.env.local` に置けば `npm run dev` / `npm run build` は起動する（`.github/workflows/verify-build.yml` 参照）:
+  - `VITE_SUPABASE_URL=https://test.supabase.co`
+  - `VITE_SUPABASE_ANON_KEY=test-anon-key-ci`
+  - `.env.local` は gitignore 対象。Cloud VM では update script では作られないため、未設定なら手動作成が必要。
+- ダミー Supabase 値での **動作範囲**: クライアント完結機能（フライトプランニング `/planning` の地図・ルート作成・GPX インポート、記事スタブ表示）は動く。**ログイン・クイズ・進捗など実 DB 依存フローは動かない**（実 Supabase 認証情報が要る）。
+- 動作確認の hello-world は `/planning` で出発地・目的地を選びルート線を描く操作が手軽（外部 API 不要）。
+- 気象・NOTAM など `/api/*` をフルに使うには、別ターミナルで `npm run dev:weather`（Express, port 3001）を起動してから `npm run dev`（README 推奨構成）。`npm run dev` 単体でも一部 `/api/*` は Vite プラグインで処理される。
+- Lint は **警告のみ**で 0 エラー（`eslint .`）。
+
 ## 関連ドキュメント
 
 - [DESIGN.md](DESIGN.md)
