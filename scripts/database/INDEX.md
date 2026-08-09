@@ -16,6 +16,7 @@
 
 | 目的 | ファイル |
 |------|----------|
+| **Articles W33 学び編** `4.2.1`〜`4.2.5` | [`20260808_learning_contents_w33_training_basics.sql`](20260808_learning_contents_w33_training_basics.sql)（ドリップ開始時 `is_published=false` — **2026-08-08 本番 upsert 済**） |
 | PPL／CPL 出題区分・バッチ適用の起点 | `20260324_add_unified_cpl_applicable_exams.sql`、[db/CPL_KPI_and_Database_Operations.md](../../docs/db/CPL_KPI_and_Database_Operations.md) の手順表 |
 | **MLIT 例題集（CPL飛行機）** 2026-06 / 2024-08 | [`20260720_unified_cpl_questions_mlit_sample_202606.sql`](20260720_unified_cpl_questions_mlit_sample_202606.sql)、[`20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql`](20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql)（**2026-07-20 本番適用・ファクトチェック済**。要図除外後 **104問 verified**。手順は [Scripts_Repository_Tooling.md](../../docs/Scripts_Repository_Tooling.md)「MLIT 例題集取込」） |
 | CPL 工学・気象・航法 `learning_contents` メタ同期 | `20260412_learning_contents_cpl_engineering_*_meta.sql`、`20260424_learning_contents_cpl_meteo_331_3312_meta.sql`、`20260430_learning_contents_cpl_navigation_341_347_meta.sql` |
@@ -66,6 +67,7 @@
 | **PPL Subject 4 Phase 1 第7本 mapping** | [`20260722_learning_test_mapping_ppl431_comm_failure.sql`](20260722_learning_test_mapping_ppl431_comm_failure.sql)（可視信号 **15** → `PPL-4-3-1` — **2026-07-22 本番適用済**） |
 | **PPL Subject 4 Phase 1 第8本** | [`20260722_learning_contents_ppl432_mayday_pan_pan.sql`](20260722_learning_contents_ppl432_mayday_pan_pan.sql)（`PPL-4-3-2`、`order_index` **408** — **2026-07-22 本番適用済**） |
 | **PPL Subject 4 Phase 1 第8本 mapping** | [`20260722_learning_test_mapping_ppl432_mayday_pan_pan.sql`](20260722_learning_test_mapping_ppl432_mayday_pan_pan.sql)（緊急機の行動20 + 救難手続9 + 緊急機管制5 → `PPL-4-3-2` — **2026-07-22 本番適用済**） |
+| **W30 Tier B 着陸装置** | [`20260725_learning_test_mapping_landing_gear_w30.sql`](20260725_learning_test_mapping_landing_gear_w30.sql)（着陸装置/降着装置の形式 **2 問** → `engineering_basics` — **2026-07-25 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（視程・霧）** | [`20260630_learning_contents_ppl_subject2_207.sql`](20260630_learning_contents_ppl_subject2_207.sql)（`PPL-2-1-7`、`order_index` **207** — ブロックA 完結） |
 | **PPL Subject 2 `learning_test_mapping`（視程・霧）** | [`20260630_learning_test_mapping_ppl_subject2_207.sql`](20260630_learning_test_mapping_ppl_subject2_207.sql)（霧の形成 — **2026-06-30 本番適用済**） |
 | **PPL Subject 2 `learning_contents`（雲形）** | [`20260629_learning_contents_ppl_subject2_206.sql`](20260629_learning_contents_ppl_subject2_206.sql)（`PPL-2-1-6`、`order_index` **206**） |

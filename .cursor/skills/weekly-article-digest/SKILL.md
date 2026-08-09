@@ -3,7 +3,7 @@ name: weekly-article-digest
 description: >-
   Drafts X-style weekly article digest email copy from articlePublishSchedule
   and Ideas/Week_*.md. Does not send mail. Triggers: 週次メール文案, digest draft,
-  weekly_article_digest, Brevo記事案内, 月曜案内メール.
+  weekly_article_digest, Brevo記事案内, 日曜案内メール, 来週予告.
 disable-model-invocation: false
 ---
 
@@ -26,19 +26,21 @@ disable-model-invocation: false
 
 ## Steps
 
-1. 対象 `isoWeek` を決める（ユーザー指定 or 翌月曜の ISO 週）
-2. `WEEKLY_ARTICLE_DIGESTS[isoWeek]` を読む。無ければ **schedule 追記案** を先に出して停止（勝手に本番送信前提の架空IDを載せるな）
-3. 各記事について Ideas / MDX `excerpt` / 既存 `hook` から **1行 hook** を磨く（既にあれば微修正提案）
-4. チャットに以下を出力する:
+1. 対象 `isoWeek` は **来週（予告側）**（ユーザー指定 or 日曜送信時点の翌 ISO 週）
+2. 併せて **今週（リマインド側）** の digest も読む（前週 `WEEKLY_ARTICLE_DIGESTS`）
+3. `WEEKLY_ARTICLE_DIGESTS[isoWeek]` を読む。無ければ **schedule 追記案** を先に出して停止（勝手に本番送信前提の架空IDを載せるな）
+4. 各記事について Ideas / MDX `excerpt` / 既存 `hook` から **1行 hook** を磨く（既にあれば微修正提案）
+5. チャットに以下を出力する:
 
 ### Output template
 
 ```markdown
-## Digest draft — {isoWeek}
+## Digest draft — {isoWeek}（日曜夕方）
 
-**Subject:** Flight Academy — 今週の{seriesTitle}（{isoWeek}）
+**Subject:** Flight Academy — 来週の案内＋今週の振り返り（{isoWeek}）
 
-**Intro:** （2〜4文。シリーズの約束。読ませる）
+**Reminder week:** {prevIsoWeek}（読み逃し立て直し）
+**Intro (upcoming):** （2〜4文。シリーズの約束。読ませる）
 
 | 曜 | タイトル | hook（X核） | slug |
 |----|----------|-------------|------|
@@ -52,10 +54,11 @@ disable-model-invocation: false
 - [ ] `articlePublishSchedule.ts` の hook/intro をこの文案に合わせる？
 - [ ] MDX `publishedAt` と publishDate 一致？
 - [ ] `learning_contents` id と schedule id 一致？
+- [ ] cron は日曜 17:00 JST（`0 8 * * 0` UTC）？
 ```
 
-5. ユーザーが「schedule に反映して」と言ったら `articlePublishSchedule.ts` を更新する。**言われない限り送信しない**
-6. 送信が明示されたときだけ（人間が `CRON_SECRET` を使う前提）:
+6. ユーザーが「schedule に反映して」と言ったら `articlePublishSchedule.ts` を更新する。**言われない限り送信しない**
+7. 送信が明示されたときだけ（人間が `CRON_SECRET` を使う前提）:
 
 ```bash
 curl -sS -H "Authorization: Bearer $CRON_SECRET" \

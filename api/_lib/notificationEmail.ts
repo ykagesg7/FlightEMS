@@ -116,34 +116,48 @@ function weekdayLabelJst(isoDate: string): string {
   };
   return map[wd] ?? '・';
 }
-/** X-style weekly article digest (hook lines + CTA). */
+/** Sunday-evening digest: coming week preview + optional finishing-week reminder. */
 export function getWeeklyArticleDigestEmailContent(
   digest: WeeklyArticleDigest,
   baseUrl: string,
+  previousDigest?: WeeklyArticleDigest | null,
 ): { subject: string; htmlContent: string } {
-  const items = digest.articles
-    .map((a) => {
-      const day = weekdayLabelJst(a.publishDate);
-      const href = `${baseUrl}${a.slug.startsWith('/') ? a.slug : `/${a.slug}`}`;
-      return `<li style="margin-bottom:12px;">
+  const renderItems = (articles: WeeklyArticleDigest['articles']) =>
+    articles
+      .map((a) => {
+        const day = weekdayLabelJst(a.publishDate);
+        const href = `${baseUrl}${a.slug.startsWith('/') ? a.slug : `/${a.slug}`}`;
+        return `<li style="margin-bottom:12px;">
         <strong>${day}</strong> <a href="${href}">${a.title}</a><br/>
         <span style="color:#444;">${a.hook}</span>
       </li>`;
-    })
-    .join('\n');
+      })
+      .join('\n');
+
+  const upcomingItems = renderItems(digest.articles);
+  const reminderBlock = previousDigest
+    ? `
+      <h2 style="font-size:16px;margin:24px 0 8px;">今週の振り返り（${previousDigest.isoWeek}）</h2>
+      <p style="color:#555;">読み逃しがあれば、いまのうちに立て直せ。</p>
+      <ul style="padding-left:18px;list-style:disc;">
+        ${renderItems(previousDigest.articles)}
+      </ul>`
+    : '';
 
   const checklist = digest.checklistNote
     ? `<p style="margin-top:16px;color:#555;font-size:14px;">${digest.checklistNote}</p>`
     : '';
 
   return {
-    subject: `Flight Academy — 今週の${digest.seriesTitle}（${digest.isoWeek}）`,
+    subject: `Flight Academy — 来週の案内＋今週の振り返り（${digest.isoWeek}）`,
     htmlContent: `
-      <p>あんさん、今週の一本、置いとくけんね。</p>
+      <p>あんさん、日曜の夕方ばい。来週の一本と、今週の振り返りば置いとくけんね。</p>
+      ${reminderBlock}
+      <h2 style="font-size:16px;margin:24px 0 8px;">来週の案内（${digest.isoWeek}）— ${digest.seriesTitle}</h2>
       <p>${digest.intro}</p>
-      <p><strong>毎日1本。</strong>読み終わったら、明日の一手だけ試してみてほしい。</p>
+      <p><strong>月〜金、毎日1本。</strong>読み終わったら、明日の一手だけ試してみてほしい。</p>
       <ul style="padding-left:18px;list-style:disc;">
-        ${items}
+        ${upcomingItems}
       </ul>
       <p><a href="${baseUrl}/articles">Articles を開く</a></p>
       ${checklist}
@@ -296,12 +310,17 @@ export async function dispatchEmailsForInAppDedupe(
 export async function dispatchWeeklyArticleDigestEmails(
   supabase: SupabaseClient,
   digest: WeeklyArticleDigest,
+  previousDigest?: WeeklyArticleDigest | null,
 ): Promise<EmailDispatchSummary> {
   const summary: EmailDispatchSummary = { attempted: 0, sent: 0, skipped: 0, failed: 0 };
   const templateKey = 'weekly_article_digest' as const;
   const dedupeKey = buildCohortDedupeKey(templateKey, digest.isoWeek, null);
   const baseUrl = getAppBaseUrl();
-  const { subject, htmlContent } = getWeeklyArticleDigestEmailContent(digest, baseUrl);
+  const { subject, htmlContent } = getWeeklyArticleDigestEmailContent(
+    digest,
+    baseUrl,
+    previousDigest,
+  );
 
   const { data: profiles, error: profilesError } = await supabase
     .from('profiles')

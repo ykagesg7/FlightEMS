@@ -18,3 +18,8 @@ export function getIsoWeekJst(date: Date = new Date()): string {
 export function getPreviousIsoWeekJst(date: Date = new Date()): string {
   return getIsoWeekJst(new Date(date.getTime() - 7 * 86400000));
 }
+
+/** Next ISO week in JST calendar (Sunday evening digest → coming Mon–Fri week). */
+export function getNextIsoWeekJst(date: Date = new Date()): string {
+  return getIsoWeekJst(new Date(date.getTime() + 7 * 86400000));
+}

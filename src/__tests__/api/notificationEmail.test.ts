@@ -117,10 +117,27 @@ describe('api/lib/notificationEmail', () => {
         },
       ],
     };
-    const content = getWeeklyArticleDigestEmailContent(digest, 'https://example.test');
-    expect(content.subject).toContain('訓練の当たり前');
+    const previous: WeeklyArticleDigest = {
+      isoWeek: '2026-W31',
+      seriesTitle: '訓練の当たり前',
+      intro: 'prev',
+      articles: [
+        {
+          id: 'prev',
+          publishDate: '2026-07-27',
+          title: '前回テスト',
+          slug: '/articles/prev-test',
+          hook: '前回フック',
+        },
+      ],
+    };
+    const content = getWeeklyArticleDigestEmailContent(digest, 'https://example.test', previous);
+    expect(content.subject).toContain('来週の案内');
+    expect(content.subject).toContain('2026-W32');
     expect(content.htmlContent).toContain('後始末までが仕事ばい。');
     expect(content.htmlContent).toContain('https://example.test/articles/chores-are-the-job');
+    expect(content.htmlContent).toContain('今週の振り返り');
+    expect(content.htmlContent).toContain('前回フック');
     expect(content.htmlContent).toContain('新着コンテンツ');
   });
 });
