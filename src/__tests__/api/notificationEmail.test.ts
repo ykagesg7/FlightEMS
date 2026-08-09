@@ -139,5 +139,15 @@ describe('api/lib/notificationEmail', () => {
     expect(content.htmlContent).toContain('今週の振り返り');
     expect(content.htmlContent).toContain('前回フック');
     expect(content.htmlContent).toContain('新着コンテンツ');
+
+    const monday = getWeeklyArticleDigestEmailContent(
+      digest,
+      'https://example.test',
+      previous,
+      'week_start',
+    );
+    expect(monday.subject).toContain('今週の案内');
+    expect(monday.htmlContent).toContain('月曜の朝');
+    expect(monday.htmlContent).toContain('先週の振り返り');
   });
 });

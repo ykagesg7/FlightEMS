@@ -116,11 +116,14 @@ function weekdayLabelJst(isoDate: string): string {
   };
   return map[wd] ?? '・';
 }
-/** Sunday-evening digest: coming week preview + optional finishing-week reminder. */
+export type WeeklyArticleDigestTiming = 'sunday_preview' | 'week_start';
+
+/** Digest: coming-week preview (Sun) or week-start catch-up (Mon) + optional reminder. */
 export function getWeeklyArticleDigestEmailContent(
   digest: WeeklyArticleDigest,
   baseUrl: string,
   previousDigest?: WeeklyArticleDigest | null,
+  timing: WeeklyArticleDigestTiming = 'sunday_preview',
 ): { subject: string; htmlContent: string } {
   const renderItems = (articles: WeeklyArticleDigest['articles']) =>
     articles
@@ -135,9 +138,16 @@ export function getWeeklyArticleDigestEmailContent(
       .join('\n');
 
   const upcomingItems = renderItems(digest.articles);
+  const isWeekStart = timing === 'week_start';
+  const primaryLabel = isWeekStart ? '今週の案内' : '来週の案内';
+  const reminderLabel = isWeekStart ? '先週の振り返り' : '今週の振り返り';
+  const opener = isWeekStart
+    ? 'あんさん、月曜の朝ばい。今週の一本と、先週の振り返りば置いとくけんね。'
+    : 'あんさん、日曜の夕方ばい。来週の一本と、今週の振り返りば置いとくけんね。';
+
   const reminderBlock = previousDigest
     ? `
-      <h2 style="font-size:16px;margin:24px 0 8px;">今週の振り返り（${previousDigest.isoWeek}）</h2>
+      <h2 style="font-size:16px;margin:24px 0 8px;">${reminderLabel}（${previousDigest.isoWeek}）</h2>
       <p style="color:#555;">読み逃しがあれば、いまのうちに立て直せ。</p>
       <ul style="padding-left:18px;list-style:disc;">
         ${renderItems(previousDigest.articles)}
@@ -149,11 +159,11 @@ export function getWeeklyArticleDigestEmailContent(
     : '';
 
   return {
-    subject: `Flight Academy — 来週の案内＋今週の振り返り（${digest.isoWeek}）`,
+    subject: `Flight Academy — ${primaryLabel}＋${reminderLabel}（${digest.isoWeek}）`,
     htmlContent: `
-      <p>あんさん、日曜の夕方ばい。来週の一本と、今週の振り返りば置いとくけんね。</p>
+      <p>${opener}</p>
       ${reminderBlock}
-      <h2 style="font-size:16px;margin:24px 0 8px;">来週の案内（${digest.isoWeek}）— ${digest.seriesTitle}</h2>
+      <h2 style="font-size:16px;margin:24px 0 8px;">${primaryLabel}（${digest.isoWeek}）— ${digest.seriesTitle}</h2>
       <p>${digest.intro}</p>
       <p><strong>月〜金、毎日1本。</strong>読み終わったら、明日の一手だけ試してみてほしい。</p>
       <ul style="padding-left:18px;list-style:disc;">
@@ -311,6 +321,7 @@ export async function dispatchWeeklyArticleDigestEmails(
   supabase: SupabaseClient,
   digest: WeeklyArticleDigest,
   previousDigest?: WeeklyArticleDigest | null,
+  timing: WeeklyArticleDigestTiming = 'sunday_preview',
 ): Promise<EmailDispatchSummary> {
   const summary: EmailDispatchSummary = { attempted: 0, sent: 0, skipped: 0, failed: 0 };
   const templateKey = 'weekly_article_digest' as const;
@@ -320,6 +331,7 @@ export async function dispatchWeeklyArticleDigestEmails(
     digest,
     baseUrl,
     previousDigest,
+    timing,
   );
 
   const { data: profiles, error: profilesError } = await supabase

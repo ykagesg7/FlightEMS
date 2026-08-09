@@ -23,3 +23,29 @@ export function getPreviousIsoWeekJst(date: Date = new Date()): string {
 export function getNextIsoWeekJst(date: Date = new Date()): string {
   return getIsoWeekJst(new Date(date.getTime() + 7 * 86400000));
 }
+
+/** 0=Sun … 6=Sat in Asia/Tokyo. */
+export function getJstWeekday(date: Date = new Date()): number {
+  const wd = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Tokyo',
+    weekday: 'short',
+  }).format(date);
+  const map: Record<string, number> = {
+    Sun: 0,
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+    Sat: 6,
+  };
+  return map[wd] ?? 0;
+}
+
+/**
+ * Digest target week: Sunday JST → next ISO week (preview);
+ * Mon–Sat JST → current ISO week (Mon morning catch-up / fallback).
+ */
+export function resolveArticleDigestIsoWeek(date: Date = new Date()): string {
+  return getJstWeekday(date) === 0 ? getNextIsoWeekJst(date) : getIsoWeekJst(date);
+}

@@ -92,8 +92,10 @@
 - **方針**: 週末に MDX をまとめてデプロイ。公開は **JST の `publishedAt`（MDX）+ `learning_contents.is_published`（DB）** で日次制御。毎日の git コミットは不要。
 - **日次公開同期**: Vercel Cron `10 15 * * *`（UTC）= **毎日 00:10 JST** → [`api/cron/article-publish-sync.ts`](../api/cron/article-publish-sync.ts)  
   スケジュール正本: [`api/_lib/articlePublishSchedule.ts`](../api/_lib/articlePublishSchedule.ts)
-- **週次案内メール**: Vercel Cron `0 8 * * 0`（UTC）= **日曜 17:00 JST** → [`api/cron/article-weekly-digest.ts`](../api/cron/article-weekly-digest.ts)  
-  テンプレ `weekly_article_digest`（X 文案トーン）。**来週予告＋今週リマインド**。`?isoWeek=` は来週（予告側）の ISO 週。  
+- **週次案内メール**: [`api/cron/article-weekly-digest.ts`](../api/cron/article-weekly-digest.ts)  
+  - `0 8 * * 0`（UTC）= **日曜 17:00 JST** — 来週予告＋今週リマインド  
+  - `0 22 * * 0`（UTC）= **月曜 07:00 JST** — 日曜抜け時の当週キャッチアップ（`dedupe_key` で二重送信回避）  
+  テンプレ `weekly_article_digest`（X 文案トーン）。`?isoWeek=` で対象週を強制可。  
   **一時ブロードキャスト**: メールアドレスがあるプロフィール全員。ただし **`email_notifications_enabled = false`（明示OFF）は除外**。未設定・NULL は送信対象（カムバック想定）。本文にプロフィール通知OFF案内あり。
 - **手動実行**（本番）:
   ```bash
