@@ -1,7 +1,7 @@
 # FMT 編隊シリーズ — 執筆正本（Season 1 + 2）
 
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
-**既存公開**: なし（1-1〜1-3 は W34 ドリップ予定）。次ストック登録は **604**（1-4）。  
+**既存公開**: W34 ドリップ予定は 1-1〜1-3。**ストック**: 1-4〜1-8（604–608）。次登録は **609**。  
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
 **MDX 規則**: [`.cursor/rules/mdx-article-guide.mdc`](../../../.cursor/rules/mdx-article-guide.mdc)  
 **登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **編隊飛行**、`series`: **USAF-Formation-Flying**  
@@ -45,7 +45,7 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**（W34 で 1-1〜1-3 を�
 4. 完成後のみ `src/content/lessons/` に MDX を置く。
 5. `learning_contents` を **ストック登録**（`is_published: false`）。公開週が決まるまで schedule に載せない。
 
-**次のブリーフは 1-4**（Ops check / FENCE）。Season 2 のブリーフは Season 1 の編隊話が数本できてから。全 18 本を一括起票しない。
+**次のブリーフは 1-9**（LAB / tactical turns）— 未起票。Season 2 のブリーフは Season 1 の編隊話が数本できてから。全 18 本を一括起票しない。
 
 ---
 
@@ -67,11 +67,11 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**（W34 で 1-1〜1-3 を�
 | 1 | `FMT-1-1_WingmanVFR` | `fmt-1-1-wingman-vfr` | 1 | V.F.R | IFF §3.8、Vol.3 deconflict | **W34 月 8/17** |
 | 2 | `FMT-1-2_RunwayLineupTakeoff` | `fmt-1-2-runway-lineup-takeoff` | 2 | Lineup / T/O | Vol.3 §3.6–3.8、Vol.2 Area 71 | **W34 水 8/19** |
 | 3 | `FMT-1-3_FingertipRoute` | `fmt-1-3-fingertip-route` | 3 | Fingertip / Route | Fund **6.11–6.12**、Vol.2 Area 72 / 74 | **W34 金 8/21** |
-| 4 | `FMT-1-4_OpsCheckFence` | `fmt-1-4-ops-check-fence` | 4 | Ops check / FENCE | IFF §3.8、Fund 6A、IFF Ch2 | 未 |
-| 5 | `FMT-1-5_LeadChange` | `fmt-1-5-lead-change` | 5 | Lead change | Fund 6A、IFF §3.12、AFPAM 11-205 | 未 |
-| 6 | `FMT-1-6_Spread` | `fmt-1-6-spread` | 6 | Spread | IFF §3.10、Fund 6.14 | 未 |
-| 7 | `FMT-1-7_TrailFamily` | `fmt-1-7-trail-family` | 7 | Close Trail / ET / Fighting Wing / Fluid | Fund 6.23–6.25、IFF §3.11 | 未 |
-| 8 | `FMT-1-8_Rejoin` | `fmt-1-8-rejoin` | 8 | Rejoin / overshoot / breakout | Fund 6.20–6.22 | 未 |
+| 4 | `FMT-1-4_OpsCheckFence` | `fmt-1-4-ops-check-fence` | 4 | Ops check / FENCE | IFF §3.8、Fund 6A、IFF Ch2 | **ストック** |
+| 5 | `FMT-1-5_LeadChange` | `fmt-1-5-lead-change` | 5 | Lead change | Fund 6A、IFF §3.12、AFPAM 11-205 | **ストック** |
+| 6 | `FMT-1-6_Spread` | `fmt-1-6-spread` | 6 | Spread | IFF §3.10、Fund 6.14 | **ストック** |
+| 7 | `FMT-1-7_TrailFamily` | `fmt-1-7-trail-family` | 7 | Close Trail / ET / Fighting Wing / Fluid | Fund 6.23–6.25、IFF §3.11 | **ストック** |
+| 8 | `FMT-1-8_Rejoin` | `fmt-1-8-rejoin` | 8 | Rejoin / overshoot / breakout | Fund 6.20–6.22 | **ストック** |
 | 9 | `FMT-1-9_TacticalLAB` | `fmt-1-9-tactical-lab` | 9 | LAB / tactical turns / lookout | IFF §3.6、Fund 6.26–6.31 | 未 |
 | 10 | `FMT-1-10_LostWingman` | `fmt-1-10-lost-wingman` | 10 | Lost wingman / KIO | Vol.3 §6.7、Fund 6E | 未 |
 
@@ -80,7 +80,7 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**（W34 で 1-1〜1-3 を�
 | 題材 | 行き先 |
 |------|--------|
 | Echelon / Crossunder | **1-3** の短い Tips（本筋は Fingertip / Route） |
-| Pitchout / Take spacing | 1-7 または 1-8 |
+| Pitchout / Take spacing | **1-8**（Rejoin とセット） |
 | G exercise | Season 2（任意 2-0、または 2-3 の一節） |
 | 4-ship / BD check / formation landing | 1-9 または 1-10 末尾の短い注記 |
 
@@ -110,6 +110,39 @@ Season 1 の編隊話が数本できてからブリーフを書く。Heat-to-Gun
 ## 許可数字（原本突合済みのみ）
 
 数字を記事に書くときは、当該話のブリーフに再掲したものだけ。ここに無い値は書かない。BFM 数字は Season 2 まで出さない。
+
+### Rejoin 族（1-8 用）
+
+| 項目 | 値 | 出典 |
+|------|-----|------|
+| Pitchout | **300 KIAS**、約 **180°**。wing **5 s delay ≈ 1 nm**（T-38。T-4 読み替え） | Fund 6.17 |
+| Admin rejoin | **300 KIAS / 30° bank**。tactical 初動 350/45° は **1-9** | Fund 6.20 |
+| Straight overtake | 1 nm から **50 kt** が目安 | Fund 6.20.2 |
+| Turning | POM 下 **約 50 ft**（route まで）。overtake 目安 **30 kt**。3,000 ft 内: low **<50** / med **<30** / high **<10** kt | Fund 6.20.3 |
+| Overshoot | low 6 を **≥約 2 ship lengths**。save するな | Fund 6.21 |
+| 3/4-ship | 前機と **500 ft** まで | Fund 6.20–6.21 |
+| Breakout | 4 条件（指示 / 見失い / 下か前を切れない / hazard） | Fund 6.22 |
+| Vol.2 | 主 **79** Rejoin（uncontrolled / 衝突）。補助 **80 / 85 / 78**。**82 は tactical** | Vol.2 Table 3.1 |
+
+### Trail 族（1-7 用）
+
+| 項目 | 値 | 出典 |
+|------|-----|------|
+| Close Trail | **1–2 ship lengths**、jetwash 直下。**OTM 禁止**。**4 G max**（T-38。T-4 読み替え） | Fund 6.23 |
+| Fighting Wing | **30–45° AA**、**500–1,500 ft aft**。aerobatic 禁止 | Fund 6.24 |
+| ET | **30–45° AA**、**1,000–3,000 ft**。**2-ship only**。KIO: **<500 ft slant** または **3/9 前方** | Fund 6.25 |
+| Fluid formation | **1,000–3,000 ft**、**3/9 より aft**。6 直下に長居しない | IFF §3.11 |
+| Vol.2 | Area **76** Close Trail（過接近 / 喪失）。**77** ET。**84** Fighting Wing。**83 は FM であり Fluid formation ではない** | Vol.2 Table 3.1 |
+
+### Spread（1-6 用）
+
+| 項目 | 値 | 出典 |
+|------|-----|------|
+| Spread 間隔 | **1,000–3,000 ft**。LAB〜**30° aft**（T-38。T-4 は同思想・読み替え） | Fund 6.14、IFF §3.10 |
+| LAB | 可能な限り line abreast。自側への turn を anticipate してのみ aft | IFF §3.10 |
+| 旋回中の機間 | **最低 500 ft**。各自 side 維持（fluid 指示時除く） | IFF §3.10、Fund 6.14 |
+| 禁止 | tactical hook / delayed / in-place（deconflict 不能） | IFF §3.10 |
+| Vol.2 | **Spread 専用 Area なし**。Area 74 は Route | Vol.2 Table 3.1 |
 
 ### Fingertip / Route（1-3 用）
 
@@ -172,7 +205,7 @@ Assessment Window 2500–4500 ft / 25–45° AA、EM 図 GW **10,000 LB** / 15,0
 | `meta.series` | `USAF-Formation-Flying` |
 | `meta.order` | Season 1 は 1–10、Season 2 は 11–18 |
 
-SQL 先例: `scripts/database/20260616_learning_contents_fmt_wingman_vfr.sql`、`20260617_learning_contents_fmt_runway_lineup_takeoff.sql`、`20260813_learning_contents_fmt_fingertip_route.sql`。
+SQL 先例: `20260616`（1-1）〜`fmt_trail_family.sql`（1-7）、`fmt_rejoin.sql`（1-8 ストック）。
 
 ---
 
@@ -181,5 +214,13 @@ SQL 先例: `scripts/database/20260616_learning_contents_fmt_wingman_vfr.sql`、
 | 日付 | 内容 |
 |------|------|
 | 2026-08-13 | 初版。Season 1 が 10・Season 2 が 8。 |
-| 2026-08-13 | `FMT-1-3` 本文化・DB 登録（`order_index` 603）。1-2 予告を Fingertip/Route に修正。 |
 | 2026-08-13 | ドリップを 1-1 から。週 3 本（月水金）。W34 で 1-1〜1-3 を再掲。 |
+| 2026-08-13 | `FMT-1-3` 本文化・DB 登録（`order_index` 603）。1-2 予告を Fingertip/Route に修正。 |
+| 2026-08-13 | `FMT-1-4` ストック登録（`order_index` 604、`is_published: false`）。1-4 ブリーフ削除。1-5 ブリーフ起票。 |
+| 2026-08-13 | `FMT-1-5` ストック登録（`order_index` 605、`is_published: false`）。1-5 ブリーフ削除。次は 1-6（未起票）。 |
+| 2026-08-13 | 1-6 Spread ブリーフ起票。 |
+| 2026-08-13 | `FMT-1-6` ストック登録（`order_index` 606、`is_published: false`）。1-6 ブリーフ削除。次は 1-7（未起票）。 |
+| 2026-08-13 | 1-7 Trail 族ブリーフ起票。Pitchout は 1-8 へ確定。 |
+| 2026-08-13 | `FMT-1-7` ストック登録（`order_index` 607、`is_published: false`）。1-7 ブリーフ削除。次は 1-8（未起票）。 |
+| 2026-08-13 | 1-8 Rejoin ブリーフ起票（Pitchout 含む）。 |
+| 2026-08-13 | `FMT-1-8` ストック登録（`order_index` 608、`is_published: false`）。1-8 ブリーフ削除。次は 1-9（未起票）。 |
