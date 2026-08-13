@@ -218,7 +218,7 @@ ops/failure-log（関連ルールのみ）
 X（案内）→ Articles または Notion FA Public Wiki（長文）
 T-4 ハブは CTA に使わない。Public Wiki に T-4 リンクを書かない。
 
-**Articles 公開（2026-08）**: 週末に MDX 一括コミット可。日次表示は `publishedAt`（JST）+ cron `article-publish-sync`。
+**Articles 公開（2026-08）**: 週末に MDX 一括コミット可。日次表示は `publishedAt`（JST）+ cron `article-publish-sync`。既定は **週 3 本（月・水・金）**。FMT は 1-1 から（W34）。
 週次メール案内（X 保留時）: cron `article-weekly-digest`（日曜 17:00 JST／来週予告＋今週リマインド、月曜 07:00 JST／抜け時キャッチアップ）。一時的に明示メールOFF以外へブロードキャスト。詳細は [04_Operations_Guide.md](../04_Operations_Guide.md)。
 
 # パターン（1つ。先週と同じなら理由）
@@ -254,4 +254,4 @@ series_hook（週あたり最大1）
 | 2026-08-01 | W31 Ingest。旧 `メモ/` Inbox 廃止。クリップは `raw/*` のみ |
 | 2026-08-01 | 連続性ロック: 過去＝同期／現在＝二人とも教官（見習い道真廃止）。詳細は Ideas/SeriesBible |
 | 2026-08-01 | Gemini回顧プロンプト正本: [Gemini_Memoir_Article_System_Prompt.md](Gemini_Memoir_Article_System_Prompt.md)。W32 Mon MDX `4.1.1_ChoresAreTheJob` |
-| 2026-08-08 | §2.1 状態グラフ。Skills `weekly-article-digest` / `article-publish-check`。Articles ドリップ＋週次メール運用をグラフに接続 |
+| 2026-08-13 | FMT ドリップは 1-1 から。週 3 本（月水金）。W34 に 1-1〜1-3 |

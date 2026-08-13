@@ -17,6 +17,10 @@
 | 目的 | ファイル |
 |------|----------|
 | **Articles W33 学び編** `4.2.1`〜`4.2.5` | [`20260808_learning_contents_w33_training_basics.sql`](20260808_learning_contents_w33_training_basics.sql)（ドリップ開始時 `is_published=false` — **2026-08-08 本番 upsert 済**） |
+| **CBT 暫定束ね 第1バッチ** 航空通信 11→`CPL-Hub-Communication` | [`20260812_learning_test_mapping_cbt_comm_hub.sql`](20260812_learning_test_mapping_cbt_comm_hub.sql) |
+| **CBT 暫定束ね 第2バッチ** 気象 18 + 航法 18 | [`20260812_learning_test_mapping_cbt_meteo_nav_hub.sql`](20260812_learning_test_mapping_cbt_meteo_nav_hub.sql) |
+| **CBT 暫定束ね 第3バッチ** 工学 26 + 法規 31 | [`20260812_learning_test_mapping_cbt_eng_legal_hub.sql`](20260812_learning_test_mapping_cbt_eng_legal_hub.sql) |
+| **PPL-2-3-3** Phase 2 第1本 + mapping | [`20260812_learning_contents_ppl233_wind_shear_volcanic_ash.sql`](20260812_learning_contents_ppl233_wind_shear_volcanic_ash.sql)・[`20260812_learning_test_mapping_ppl233_wind_shear_volcanic_ash.sql`](20260812_learning_test_mapping_ppl233_wind_shear_volcanic_ash.sql) |
 | PPL／CPL 出題区分・バッチ適用の起点 | `20260324_add_unified_cpl_applicable_exams.sql`、[db/CPL_KPI_and_Database_Operations.md](../../docs/db/CPL_KPI_and_Database_Operations.md) の手順表 |
 | **MLIT 例題集（CPL飛行機）** 2026-06 / 2024-08 | [`20260720_unified_cpl_questions_mlit_sample_202606.sql`](20260720_unified_cpl_questions_mlit_sample_202606.sql)、[`20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql`](20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql)（**2026-07-20 本番適用・ファクトチェック済**。要図除外後 **104問 verified**。手順は [Scripts_Repository_Tooling.md](../../docs/Scripts_Repository_Tooling.md)「MLIT 例題集取込」） |
 | CPL 工学・気象・航法 `learning_contents` メタ同期 | `20260412_learning_contents_cpl_engineering_*_meta.sql`、`20260424_learning_contents_cpl_meteo_331_3312_meta.sql`、`20260430_learning_contents_cpl_navigation_341_347_meta.sql` |
@@ -78,6 +82,8 @@
 | **PPL Subject 1 `learning_test_mapping` 残 3 本** | [`20260628_learning_test_mapping_ppl_111_128_129.sql`](20260628_learning_test_mapping_ppl_111_128_129.sql)（`PPL-1-1-11`・`1-2-8`・`1-2-9` — **2026-06-28 本番適用済**） |
 | **USAF 編隊飛行（操縦）** ep.1 | `20260616_learning_contents_fmt_wingman_vfr.sql`（`FMT-1-1_WingmanVFR`、`order_index` 601） |
 | **USAF 編隊飛行（操縦）** ep.2 | `20260617_learning_contents_fmt_runway_lineup_takeoff.sql`（`FMT-1-2_RunwayLineupTakeoff`、`order_index` 602） |
+| **USAF 編隊飛行（操縦）** ep.3 | [`20260813_learning_contents_fmt_fingertip_route.sql`](20260813_learning_contents_fmt_fingertip_route.sql)（`FMT-1-3_FingertipRoute`、`order_index` **603**） |
+| **USAF 編隊 W34 ドリップ準備** | [`20260813_learning_contents_fmt_w34_unpublish.sql`](20260813_learning_contents_fmt_w34_unpublish.sql)（1-1〜1-3 を `is_published: false`。公開日は schedule） |
 | **cohort 週次ミッション・TOP3 バッジ** | `20260620_cohort_weekly_missions.sql`（`user_learning_profiles` cohort 列、週次 RPC、通知テーブル）。MVP tier（3〜9 名）: [`20260626_cohort_weekly_mvp_tier_awards.sql`](20260626_cohort_weekly_mvp_tier_awards.sql) |
 | **ゲーミフィケーション第1期（学科試験完了まで）** | [`20260720_gamification_phase1_foundation.sql`](20260720_gamification_phase1_foundation.sql) + [`20260720_gamification_phase1_production_hardening.sql`](20260720_gamification_phase1_production_hardening.sql) — 匿名書込RLS廃止、本人固定・サーバー計算XP、記事5 + 理解10、ALPM、週次達成/MVP/TOP3 XP、学習ジャーニー、公開RPCのINVOKER境界。**2026-07-20 本番適用済み** |
 | **ゲーミフィケーション第2期（習熟ループ）** | [`20260720_gamification_phase2_mastery_loop.sql`](20260720_gamification_phase2_mastery_loop.sql) + [`20260720_gamification_phase2_rpc_invoker_wrappers.sql`](20260720_gamification_phase2_rpc_invoker_wrappers.sql) — SRS同期、弱点リフレッシュ、遅延再テスト/弱点改善XP、編隊クエスト、学習ジャーニー拡張、INVOKER境界。**2026-07-20 本番適用済み** |

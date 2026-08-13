@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年8月8日（週次テレメトリ・レビュー正本）
-**バージョン**: Documentation Index v4.67
+**最終更新**: 2026年8月13日（FMT ドリップ 1-1 から・週3本）
+**バージョン**: Documentation Index v4.68
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -14,7 +14,7 @@
 | ハブ | 主なドキュメント |
 |------|------------------|
 | **Strategy & Product（戦略・プロダクト成長）** | [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)、**[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)**（NSM・ALPM・オンボーディング・PMF スライス・AI コンシェルジュ・データ・法務 UX）、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) |
-| **Content & Curriculum（コンテンツ・シラバス）** | [05_Content_Pipeline.md](05_Content_Pipeline.md)、**[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)**（週末 Ingest／Editorial・Notion Public Wiki 一方通行）、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)、[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) |
+| **Content & Curriculum（コンテンツ・シラバス）** | [05_Content_Pipeline.md](05_Content_Pipeline.md)、**[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)**（週末 Ingest／Editorial・Notion Public Wiki 一方通行）、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)、[CBT_Example_Reclassification_Memo.md](CBT_Example_Reclassification_Memo.md)、[Post_Exam_Action2_Action3_Policy_Memo.md](Post_Exam_Action2_Action3_Policy_Memo.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)、[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) |
 | **Engineering & Spec（実装・仕様）** | [02_System_Spec.md](02_System_Spec.md)、[03_Development_Guide.md](03_Development_Guide.md)、[Component_Structure_Guide.md](Component_Structure_Guide.md)、[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)、[GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md) |
 | **Operations & Quality（運用・品質）** | [04_Operations_Guide.md](04_Operations_Guide.md)、[06_Long_Term_Execution.md](06_Long_Term_Execution.md)、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、[ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md)、[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)、**[ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)**（土曜・GA4+Sentry 週次レビュー正本）、[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) |
 | **Reference & Portal（参考・外部仕様転記）** | [Project_Overview.md](Project_Overview.md)、[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)、[SWIM_Portal/README.md](SWIM_Portal/README.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[content_outlines/README.md](content_outlines/README.md)、[templates/README.md](templates/README.md) |
@@ -37,12 +37,15 @@
 - **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — **2026年6月期**の DONE 条件、[05](05_Content_Pipeline.md) 週次（W23〜W26）・CPL/PPL 拡充の優先、マッピング監査／B-4／Phase C 準備（UI は承認制）を定義する。**週別一覧**は §2.1。
 - **[July_2026_Implementation_Plan.md](July_2026_Implementation_Plan.md)** — **2026年7月期**（W27〜W30）Phase C 後半。C-6 マッピング・C-7 PPL・法規 Callout・GA4・B-4。
 - **[July_2026_Content_Sprint.md](July_2026_Content_Sprint.md)** — **2026年7月**週次実行メモ（ブロック H〜K）— **W30 ゲート完了**。
-- **[August_2026_Implementation_Plan.md](August_2026_Implementation_Plan.md)** — **2026年8月期** Phase D 入口。CBT例題再分類・試験明け Action2/3・PPL 二次。
+- **[August_2026_Implementation_Plan.md](August_2026_Implementation_Plan.md)** — **2026年8月期** Phase D 入口（2026-08-12 再整理: Articles ドリップ優先・CBT 暫定束ね・Action2/3）。
+- **[September_2026_Implementation_Plan.md](September_2026_Implementation_Plan.md)** — **2026年9月期** Phase D 第2ヶ月（A2-a 計測・CBT Phase B・PPL 二次・W36〜W40）。
 
 ### 更新履歴（抜粋）
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-08-13（FMT ドリップ 1-1 から・週3本）**: W34（8/17・19・21）に 1-1〜1-3。1-4 以降はストック。正本 [FMT_Formation_2026](content_outlines/FMT_Formation_2026/README.md)。
+- **2026-08-12（9月計画）**: [September_2026_Implementation_Plan.md](September_2026_Implementation_Plan.md) 起票。A2-a 計測 W36〜W39。
 - **2026-08-08（週次テレメトリ・レビュー）**: GA4 + Sentry を **土曜午前**ペースで残す正本 [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)（現状・課題・解決案・オープン課題ボード）。W32 初回記入。認証は [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)。
 - **2026-07-26（地図カーソル Footer + 詳細シート）**: 地図下に **DMS 1行**（`MapCursorFooter`）。詳細は地図上オーバーレイ（DD・選択 NAVAID 1件の磁方位/距離、検索で任意選択・初期は最寄り）。近傍3件固定・ツールバー内展開は廃止。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
 - **2026-07-26（地図座標ピン固定）**: マウスはクリックで固定、タッチは中央クロスヘア＋「この位置を固定」（`useMapPinnedPosition`）。詳細/NAVAID は固定後のみ。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。

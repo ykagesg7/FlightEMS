@@ -89,7 +89,7 @@
 
 ### **Articles 日次公開・週次案内メール**
 
-- **方針**: 週末に MDX をまとめてデプロイ。公開は **JST の `publishedAt`（MDX）+ `learning_contents.is_published`（DB）** で日次制御。毎日の git コミットは不要。
+- **方針**: 週末に MDX をまとめてデプロイ。公開は **JST の `publishedAt`（MDX）+ `learning_contents.is_published`（DB）** で日次制御。毎日の git コミットは不要。既定ペースは **週 3 本（月・水・金）**。FMT は 1-1 からドリップ（W34: 8/17・19・21）。1-4 以降はストックしてから schedule に載せる（[FMT 正本](content_outlines/FMT_Formation_2026/README.md)）。
 - **日次公開同期**: Vercel Cron `10 15 * * *`（UTC）= **毎日 00:10 JST** → [`api/cron/article-publish-sync.ts`](../api/cron/article-publish-sync.ts)  
   スケジュール正本: [`api/_lib/articlePublishSchedule.ts`](../api/_lib/articlePublishSchedule.ts)
 - **週次案内メール**: [`api/cron/article-weekly-digest.ts`](../api/cron/article-weekly-digest.ts)  
