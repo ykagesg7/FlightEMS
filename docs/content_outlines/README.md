@@ -10,4 +10,4 @@
 | [PPL_Subject2_Aviation_Meteorology_Structure.md](PPL_Subject2_Aviation_Meteorology_Structure.md) | **Subject 2 航空気象** — CPL `3.3.1`〜`3.3.12` と §2 を対応。Gemini: [PPL_Meteorology_2026/README.md](PPL_Meteorology_2026/README.md) |
 | [PPL_Subject3_Aerial_Navigation_Structure.md](PPL_Subject3_Aerial_Navigation_Structure.md) | **Subject 3 空中航法** — CPL `3.4.1`〜`3.4.7` と §3。Gemini: [PPL_Navigation_Communication_2026/README.md](PPL_Navigation_Communication_2026/README.md) |
 | [PPL_Subject4_Aviation_Communication_Structure.md](PPL_Subject4_Aviation_Communication_Structure.md) | **Subject 4 航空通信** — CPL `3.5.1`〜`3.5.5` と §4。Gemini: 同上 |
-| [FMT_Formation_2026/README.md](FMT_Formation_2026/README.md) | **USAF 編隊 FMT** — ドリップは **1-1 から**（W34 月水金）。1-4〜1-8 ストック済。次ブリーフは 1-9（LAB / tactical turns、未起票） |
+| [FMT_Formation_2026/README.md](FMT_Formation_2026/README.md) | **USAF 編隊 FMT** — ドリップは **1-1 から**（W34 月水金）。Season 1（1-4〜1-10）ストック済。Season 2 は未起票 |
