@@ -1,7 +1,7 @@
 # FMT 編隊シリーズ — 執筆正本（Season 1 + 2）
 
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
-**既存公開**: W34 ドリップ予定は 1-1〜1-3。**ストック**: 1-4〜1-10（604–610）。Season 1 完。次は Season 2（未起票）。  
+**既存公開**: W34 ドリップは **取消**（Contact Season 1 に差し替え）。**ストック**: 1-1〜1-10（601–610）。Season 1 完。次は Season 2（未起票）。  
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
 **MDX 規則**: [`.cursor/rules/mdx-article-guide.mdc`](../../../.cursor/rules/mdx-article-guide.mdc)  
 **登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **編隊飛行**、`series`: **USAF-Formation-Flying**  
@@ -16,12 +16,12 @@
 | 決めたこと | 運用 |
 |------------|------|
 | **週 3 本** | **月・水・金**（執筆が追いつくまでの既定。土日は入れない） |
-| **ドリップは 1-1 から** | 既出の 1-1〜1-3 はいったん非公開し、W34 で再掲 |
+| **ドリップは Contact が先** | W34 は Contact 1-1〜1-3。FMT 1-1〜1-3 は倉庫 |
 | **FMT はストック** | 1-4 以降は書いて倉庫へ。即公開しない |
 | **1 週 1 シリーズ** | その週の digest は FMT か「訓練の当たり前」か、どちらか |
 | **週次メール** | ストックを `WEEKLY_ARTICLE_DIGESTS` に載せてから。日曜 17:00 JST より前にデプロイ |
 
-**W34（2026-08-17 / 19 / 21）**: 1-1 → 1-2 → 1-3。日曜（8/16）17:00 案内の対象。本番デプロイが前提。
+**W34（2026-08-17 / 19 / 21）**: Contact 1-1 → 1-2 → 1-3。FMT はこの週に出さない。日曜（8/16）17:00 案内の対象。本番デプロイが前提。
 
 ### ストックの載せ方（1-4 以降）
 
@@ -33,7 +33,7 @@
 
 ### 在庫の目安
 
-Season 1 全 **10 話**＝週3本なら約 **3.5 週**（W34 で 1-1〜1-3 を使うので、1-4 以降は W35 から）。Season 2 は **8 話**。倉庫が薄くなったら「訓練の当たり前」次ブロックを同じパイプに乗せる。空週は常態化しない。
+Season 1 全 **10 話**＝週3本なら約 **3.5 週**。W34 は Contact。FMT のドリップ開始週は未定。
 
 ---
 
@@ -45,7 +45,7 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**（W34 で 1-1〜1-3 を�
 4. 完成後のみ `src/content/lessons/` に MDX を置く。
 5. `learning_contents` を **ストック登録**（`is_published: false`）。公開週が決まるまで schedule に載せない。
 
-**Season 1 は 1-10 までストック済。** Season 2 のブリーフは求められたときだけ。全 18 本を一括起票しない。
+**Season 1 は 1-10 までストック済。** 読む順は **Contact → FMT**。W34 ドリップは Contact 1-1〜1-3。[Contact_Transition_2026](../Contact_Transition_2026/README.md)。Season 2 のブリーフは求められたときだけ。全 18 本を一括起票しない。
 
 ---
 
@@ -64,9 +64,9 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**（W34 で 1-1〜1-3 を�
 
 | # | stem | slug | order | 主題 | 一次ソース | 状態 |
 |---|------|------|-------|------|------------|------|
-| 1 | `FMT-1-1_WingmanVFR` | `fmt-1-1-wingman-vfr` | 1 | V.F.R | IFF §3.8、Vol.3 deconflict | **W34 月 8/17** |
-| 2 | `FMT-1-2_RunwayLineupTakeoff` | `fmt-1-2-runway-lineup-takeoff` | 2 | Lineup / T/O | Vol.3 §3.6–3.8、Vol.2 Area 71 | **W34 水 8/19** |
-| 3 | `FMT-1-3_FingertipRoute` | `fmt-1-3-fingertip-route` | 3 | Fingertip / Route | Fund **6.11–6.12**、Vol.2 Area 72 / 74 | **W34 金 8/21** |
+| 1 | `FMT-1-1_WingmanVFR` | `fmt-1-1-wingman-vfr` | 1 | V.F.R | IFF §3.8、Vol.3 deconflict | **ストック** |
+| 2 | `FMT-1-2_RunwayLineupTakeoff` | `fmt-1-2-runway-lineup-takeoff` | 2 | Lineup / T/O | Vol.3 §3.6–3.8、Vol.2 Area 71 | **ストック** |
+| 3 | `FMT-1-3_FingertipRoute` | `fmt-1-3-fingertip-route` | 3 | Fingertip / Route | Fund **6.11–6.12**、Vol.2 Area 72 / 74 | **ストック** |
 | 4 | `FMT-1-4_OpsCheckFence` | `fmt-1-4-ops-check-fence` | 4 | Ops check / FENCE | IFF §3.8、Fund 6A、IFF Ch2 | **ストック** |
 | 5 | `FMT-1-5_LeadChange` | `fmt-1-5-lead-change` | 5 | Lead change | Fund 6A、IFF §3.12、AFPAM 11-205 | **ストック** |
 | 6 | `FMT-1-6_Spread` | `fmt-1-6-spread` | 6 | Spread | IFF §3.10、Fund 6.14 | **ストック** |
@@ -258,3 +258,4 @@ SQL 先例: `20260616`（1-1）〜`fmt_lost_wingman.sql`（1-10 ストック）�
 | 2026-08-15 | 1-9 Tactical LAB ブリーフ起票。次は 1-10（未起票）。 |
 | 2026-08-15 | `FMT-1-9` ストック登録（`order_index` 609、`is_published: false`）。1-9 ブリーフ削除。1-10 ブリーフ起票。 |
 | 2026-08-16 | `FMT-1-10` ストック登録（`order_index` 610、`is_published: false`）。1-10 ブリーフ削除。Season 1 完。 |
+| 2026-08-16 | W34 ドリップから FMT 1-1〜1-3 を外し、`publishedAt` を削除（倉庫）。W34 は Contact。 |

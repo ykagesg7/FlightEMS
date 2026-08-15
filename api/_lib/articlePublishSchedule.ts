@@ -1,7 +1,7 @@
 /**
  * Shared schedule for drip publish (learning_contents) and weekly digest email.
  * Keep in sync with MDX meta.publishedAt.
- * One series per ISO week (訓練の当たり前 or FMT).
+ * One series per ISO week (訓練の当たり前 / Contact / FMT).
  * Default drip: 3/week (Mon/Wed/Fri) when writing capacity is tight.
  * Stock unpublished IDs until listed here; cron only flips IDs in this file.
  */
@@ -115,30 +115,30 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W34': {
     isoWeek: '2026-W34',
-    seriesTitle: 'USAF 編隊（FMT）',
+    seriesTitle: 'USAF Contact（単機）',
     intro:
-      '来週は編隊の入口。月・水・金の3本。V.F.R の優先順位から、滑走路、空中の居場所まで。金魚のフンを卒業する週たい。',
+      '来週は単機の入口。月・水・金の3本。エリアにいる契約から、エネルギーの交換、操縦面とGまで。図形を描く前の学校たい。',
     articles: [
       {
-        id: 'FMT-1-1_WingmanVFR',
+        id: 'CTX-1-1_AreaAndPurpose',
         publishDate: '2026-08-17',
-        title: '第1話：ウイングマンの魂 ～V.F.Rの血の掟～',
-        slug: '/articles/fmt-1-1-wingman-vfr',
-        hook: 'V.F.R は気象じゃなか。Visual → Formation → Radar。レーダーを見る前にぶつかるな。',
+        title: '第1話：形を描く前に、エリアにいろ ～Contact の目的とエリア方位～',
+        slug: '/articles/ctx-1-1-area-and-purpose',
+        hook: '曲技の前にエリアにいろ。地上物が primary。20 radials で方式が分かれる。',
       },
       {
-        id: 'FMT-1-2_RunwayLineupTakeoff',
+        id: 'CTX-1-2_Energy',
         publishDate: '2026-08-19',
-        title: '第2話：滑走路のシンクロ ～的からの脱出と周辺視野～',
-        slug: '/articles/fmt-1-2-runway-lineup-takeoff',
-        hook: '地上は的。一点凝視を捨てて、周辺視野でリーダー機全体を捉えろ。',
+        title: '第2話：足りんなら換えろ ～高度と速度の交換～',
+        slug: '/articles/ctx-1-2-energy',
+        hook: '1,000 ft ≈ 50 kt。AB で買うな。作業空域の真ん中で 300 KIAS が目安たい。',
       },
       {
-        id: 'FMT-1-3_FingertipRoute',
+        id: 'CTX-1-3_ControlsGPio',
         publishDate: '2026-08-21',
-        title: '第3話：空中の居場所 ～FingertipとRoute～',
-        slug: '/articles/fmt-1-3-fingertip-route',
-        hook: '3フィートは丸暗記じゃなか。helmet が slab bolt と並ぶ見え方の目安たい。',
+        title: '第3話：効く面と壊れ方 ～操縦面 / PIO / G～',
+        slug: '/articles/ctx-1-3-controls-g-pio',
+        hook: 'ラダーは高 AOA、エルロンは低 AOA。PIO は freeze。G は warmup。',
       },
     ],
   },
