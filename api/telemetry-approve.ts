@@ -6,20 +6,26 @@ import {
   type SlackPayload,
 } from './_lib/telemetryApproveCore';
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 const DEFAULT_REPO = 'ykagesg7/FlightEMS';
 
 async function readRawBody(req: VercelRequest): Promise<string> {
+  if (typeof req.body === 'string') {
+    return req.body;
+  }
+  if (Buffer.isBuffer(req.body)) {
+    return req.body.toString('utf8');
+  }
   const chunks: Buffer[] = [];
   for await (const chunk of req) {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   }
-  return Buffer.concat(chunks).toString('utf8');
+  if (chunks.length > 0) {
+    return Buffer.concat(chunks).toString('utf8');
+  }
+  if (req.body && typeof req.body === 'object') {
+    return JSON.stringify(req.body);
+  }
+  return '';
 }
 
 async function dispatchGithub(payload: {
