@@ -2,7 +2,10 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import {
   TELEMETRY_APPROVE_WORKFLOW,
   filterSlackCallback,
-  verifySlackSignature,
+  filterSlashCommand,
+  formBodyFromObject,
+  slashPayloadFromBody,
+  verifySlackSignatureAny,
   type SlackPayload,
 } from './_lib/telemetryApproveCore';
 
@@ -28,11 +31,14 @@ async function readRawBody(req: VercelRequest): Promise<string> {
   return '';
 }
 
-async function dispatchGithub(payload: {
-  command: string;
-  threadTs: string;
-  slackUserId: string;
-}): Promise<void> {
+async function dispatchGithub(
+  payload: {
+    command: string;
+    threadTs: string;
+    slackUserId: string;
+  },
+  skipAck: boolean,
+): Promise<void> {
   const token = process.env.GITHUB_TELEMETRY_DISPATCH_TOKEN?.trim();
   const repo = process.env.TELEMETRY_GITHUB_REPO?.trim() || DEFAULT_REPO;
   if (!token) {
@@ -55,6 +61,7 @@ async function dispatchGithub(payload: {
           command: payload.command,
           thread_ts: payload.threadTs,
           slack_user_id: payload.slackUserId,
+          skip_ack: skipAck ? 'true' : 'false',
         },
       }),
     },
@@ -65,6 +72,37 @@ async function dispatchGithub(payload: {
   }
 }
 
+async function postSlashAck(responseUrl: string, threadTs: string, text: string): Promise<void> {
+  const response = await fetch(responseUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    body: JSON.stringify({
+      thread_ts: threadTs,
+      text,
+      response_type: 'in_channel',
+      unfurl_links: false,
+      unfurl_media: false,
+    }),
+  });
+  if (!response.ok) {
+    const detail = (await response.text()).slice(0, 200);
+    throw new Error(`slash ack HTTP ${response.status}: ${detail}`);
+  }
+}
+
+function ignoreMessage(reason: string): { text: string } {
+  if (reason === 'not_thread') {
+    return { text: 'Facts スレッドの返信欄で実行してください。' };
+  }
+  if (reason === 'not_command') {
+    return { text: 'HOLD または APPROVE-DOC を一行で指定してください。' };
+  }
+  if (reason === 'wrong_channel') {
+    return { text: 'このコマンドは #fa-telemetry のスレッド専用です。' };
+  }
+  return { text: '受け付けませんでした。' };
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -73,6 +111,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const signingSecret = process.env.SLACK_SIGNING_SECRET?.trim() ?? '';
   const timestamp = String(req.headers['x-slack-request-timestamp'] ?? '');
   const signature = String(req.headers['x-slack-signature'] ?? '');
+  const contentType = String(req.headers['content-type'] ?? '');
   let rawBody = '';
   try {
     rawBody = await readRawBody(req);
@@ -80,15 +119,44 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'invalid_body' });
   }
 
+  const bodies = [rawBody, formBodyFromObject(req.body)].filter((body, index, all) => {
+    return body.length > 0 && all.indexOf(body) === index;
+  });
   if (
-    !verifySlackSignature({
+    !verifySlackSignatureAny({
       signingSecret,
       timestamp,
-      rawBody,
       signature,
+      bodies,
     })
   ) {
+    console.info('[telemetry-approve]', { kind: 'unauthorized', contentType });
     return res.status(401).json({ error: 'unauthorized' });
+  }
+
+  const isSlash = contentType.includes('application/x-www-form-urlencoded');
+  if (isSlash) {
+    const slash = slashPayloadFromBody(rawBody, req.body);
+    const filtered = filterSlashCommand(slash ?? {});
+    console.info('[telemetry-approve]', {
+      kind: filtered.kind,
+      reason: filtered.kind === 'ignore' ? filtered.reason : undefined,
+      via: 'slash',
+    });
+    if (filtered.kind === 'ignore') {
+      return res.status(200).json(ignoreMessage(filtered.reason));
+    }
+    try {
+      if (filtered.responseUrl) {
+        await postSlashAck(filtered.responseUrl, filtered.threadTs, filtered.ack);
+      }
+      await dispatchGithub(filtered, Boolean(filtered.responseUrl));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'dispatch_failed';
+      console.error('[telemetry-approve]', message);
+      return res.status(200).json({ text: '受け付けましたが、後続処理に失敗しました。' });
+    }
+    return res.status(200).json({ text: '受け付けました。' });
   }
 
   let payload: SlackPayload;
@@ -103,6 +171,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     kind: filtered.kind,
     reason: filtered.kind === 'ignore' ? filtered.reason : undefined,
     slackRetry: req.headers['x-slack-retry-num'] ?? null,
+    via: 'events',
   });
   if (filtered.kind === 'url_verification') {
     return res.status(200).json({ challenge: filtered.challenge });
@@ -112,7 +181,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    await dispatchGithub(filtered);
+    await dispatchGithub(filtered, false);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'dispatch_failed';
     return res.status(500).json({ error: message });

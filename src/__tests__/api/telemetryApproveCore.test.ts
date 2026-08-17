@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   TELEMETRY_CHANNEL_ID,
   filterSlackCallback,
+  filterSlashCommand,
   isTelemetryApproveCommand,
   verifySlackSignature,
 } from '../../../api/_lib/telemetryApproveCore';
@@ -39,6 +40,7 @@ describe('telemetryApproveCore', () => {
       threadTs: '1.0',
       slackUserId: 'U0928GWP3AA',
       eventTs: '1.2',
+      ack: '記録: 正本PRのマージを開始します。',
     });
   });
 
@@ -123,5 +125,38 @@ describe('telemetryApproveCore', () => {
         nowMs,
       }),
     ).toBe(false);
+  });
+
+  it('accepts app mentions and slash commands in the telemetry thread', () => {
+    expect(
+      filterSlackCallback({
+        type: 'event_callback',
+        event: {
+          type: 'app_mention',
+          channel: TELEMETRY_CHANNEL_ID,
+          user: 'U0928GWP3AA',
+          text: '<@U0BQPPKM997> HOLD',
+          ts: '1.2',
+          thread_ts: '1.0',
+        },
+      }),
+    ).toMatchObject({
+      kind: 'dispatch',
+      command: 'HOLD',
+      ack: '記録: 今週は実行しません。',
+    });
+    expect(
+      filterSlashCommand({
+        text: 'HOLD',
+        user_id: 'U0928GWP3AA',
+        channel_id: TELEMETRY_CHANNEL_ID,
+        thread_ts: '1.0',
+        response_url: 'https://hooks.slack.com/commands/T/xxx',
+      }),
+    ).toMatchObject({
+      kind: 'dispatch',
+      command: 'HOLD',
+      responseUrl: 'https://hooks.slack.com/commands/T/xxx',
+    });
   });
 });

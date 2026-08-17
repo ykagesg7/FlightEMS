@@ -173,7 +173,7 @@ Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
   python scripts/telemetry/approve_command.py --self-test
   gh workflow run weekly-telemetry-approve.yml -f command=HOLD
   ```
-  Vercel 配線（一度）: Production に `SLACK_SIGNING_SECRET` と、`actions:write` のみの fine-grained PAT `GITHUB_TELEMETRY_DISPATCH_TOKEN`。Request URL は `https://flight-lms.vercel.app/api/telemetry-approve`。別 Slack アプリ `fa-telemetry-approve` で `message.channels` のみ。Save 後に再インストールする。
+  Vercel 配線（一度）: Production に `SLACK_SIGNING_SECRET` と、`actions:write` のみの fine-grained PAT `GITHUB_TELEMETRY_DISPATCH_TOKEN`。Request URL は `https://flight-lms.vercel.app/api/telemetry-approve`。別 Slack アプリ `fa-telemetry-approve` で Slash Command `/fa-approve`（スレッドで `/fa-approve HOLD`）。`message.channels` は届かないことがある。
 
 ## GA4 MCP・OAuth / ADC（ローカル例）
 

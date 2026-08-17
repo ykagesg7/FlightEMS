@@ -24,6 +24,11 @@ on:
         description: "Override PR number. Empty = the single open telemetry/YYYY-Www PR."
         required: false
         type: string
+      skip_ack:
+        description: "Set true when Vercel already ACKed via slash response_url."
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -127,7 +132,7 @@ jobs:
           gh pr merge "$PR_NUMBER" --squash --delete-branch
 
       - name: ACK Slack thread
-        if: ${{ always() && steps.plan.outputs.ack != '' }}
+        if: ${{ always() && steps.plan.outputs.ack != '' && github.event.inputs.skip_ack != 'true' }}
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
