@@ -2,7 +2,7 @@
 
 **正本**: 本書（別チャットの Agent はここを先に読む）  
 **作成**: 2026-08-08  
-**最終更新**: 2026-08-08（W32 初回記入）  
+**最終更新**: 2026-08-17（W33 追記・土曜枠は月へ繰越）  
 **実施ペース**: **土曜午前**（週末コンテンツ枠と同週。欠席週は行を飛ばさず「スキップ」理由を1行残す）
 
 関連:
@@ -47,10 +47,11 @@
 
 | ID | 課題 | 優先 | 状態 | 次アクション | 最終言及 |
 |----|------|------|------|--------------|----------|
-| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に `utm_source=brevo&utm_medium=email&utm_campaign=wNN` を検討 | W32 |
-| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | 配信継続しつつ、記事着地＋回遊の質を見る。ALPM イベントは別途 | W32 |
-| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | watch | 対策済想定。**7 日新規イベント無しなら resolve 候補**（[04](../04_Operations_Guide.md) 基準） | W32 |
-| T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | `findArticleByRouteParam` + canonical 先解決。W32 で kebab 着地を観測 | W32 |
+| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に `utm_source=brevo&utm_medium=email&utm_campaign=wNN` を検討。W33 は source が referral のみで切り出し不可 | W33 |
+| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | W33 は **users 1**。配信・ドリップ継続しつつ質を見る。ALPM は別途 | W33 |
+| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W33 で **再発**（Issues lastSeen 約 8/13）＋ GA `chunk_recovery_reload`×1。resolve 見送り・再監視 | W33 |
+| T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W32 確認。W33 でも `turn-feedback-into-action` 着地あり | W33 |
+| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。イベント `quiz_session_start` / `complete` + `tab`。W33 に quiz イベント無し | W36 計画 |
 
 ---
 
@@ -87,6 +88,49 @@
 ---
 
 ## 週次ログ（新しい週が上）
+
+### 2026-W33（2026-08-09〜08-15 / レビュー 2026-08-17）
+
+**データ取得**: SA + Google Analytics Data API / Sentry MCP（Issues）  
+**比較**: 前週 W32（当初メモ値。再取得では W32 が users 7 / sess 12 / PV 62 に更新されており遅延帰属あり）  
+**文脈**: 土曜午前レビューを欠席し月曜に実施。シリーズ 4.2.x（フィードバック）のドリップ想定。週間メールの月曜スパイクは W32 ほど目立たず。
+
+#### 現状（Facts）
+
+| 指標 | W33 | W32（当初メモ） |
+|------|----:|----------------:|
+| activeUsers | **1** | 5 |
+| sessions | **4** | 9 |
+| screenPageViews | **25** | 59 |
+| engagedSessions | **3** | 6 |
+
+- **日次**: 08/10 users 1 / sess 2 / PV 11。08/12 sess 1 / PV 13。08/13 sess 1 / PV 1。09・11・14・15 は行なし。
+- **記事**: `/articles` PV 9。正規 `4.2.1` / `4.2.2` / `4.2.3` 各 PV 2。kebab `turn-feedback-into-action` PV 1（ランディング 1＝メール／共有経路の痕跡）。
+- **流入**: `accounts.google.com / referral` のみ（4 sessions / 1 user / PV 25）。`(direct)` なし → UTM 無しでもメール切り出し困難（T-01）。
+- **端末**: mobile のみ。
+- **その他ページ**: `/` PV 6、`/planning` PV 3。
+- **カスタムイベント**: `chunk_recovery_reload`×1（1 user）。quiz_* は W33 期間 **0**。
+- **Sentry**: 未解決で直近活動ありは [FLIGHT-ACADEMY-4](https://yusuke-kage.sentry.io/issues/FLIGHT-ACADEMY-4) のみ。Issues 上 **lastSeen 約 4 日前（〜08/13）**・events 表記 1。W32 時点の「記事週は静か」から **再発**。Discover イベント検索は空振りあり → Issues メタを正とする。
+
+#### 課題（Issues）
+
+1. トラフィック急減（users 1）。週次比較のノイズが大きい（T-02）。
+2. 流入が Google ログイン referral 一色でメール効果が見えない（T-01）。
+3. planning チャンクが再発し、リカバリイベントも発火（T-03）。
+4. quiz 計測がこの週ゼロ — A2-a（T-05）のベースラインにはまだ使えない。
+
+#### 解決案（Actions）
+
+- [ ] T-01: 次のダイジェスト送信前に UTM 付与を実装検討（承認後）。
+- [ ] T-03: resolve しない。次回（W34）で lastSeen / `chunk_recovery_reload` を再確認。頻発なら SW / lazy chunk の追加対策を検討。
+- [ ] T-05: W36 までボード維持。W33 は quiz ゼロのためベースライン対象外。
+- [x] T-04: W33 でも kebab 着地を再確認 → closed 維持。
+
+#### メモ / 生データ
+
+- [`artifacts/ga4_w33_report.json`](../../artifacts/ga4_w33_report.json)（ローカル生成・コミット任意）
+
+---
 
 ### 2026-W32（2026-08-03〜08-08 / レビュー 2026-08-08）
 
@@ -132,4 +176,5 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-08-17 | W33 追記（土曜欠席→月曜実施）。T-03 を再発で open に戻す。T-01/02/05 更新。 |
 | 2026-08-08 | 初版。土曜午前運用・テンプレ・オープン課題ボード・W32 記入。 |
