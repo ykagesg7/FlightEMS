@@ -2,8 +2,8 @@
 
 **正本**: 本書（別チャットの Agent はここを先に読む）  
 **作成**: 2026-08-08  
-**最終更新**: 2026-08-17（W33 追記・土曜枠は月へ繰越）  
-**実施ペース**: **土曜午前**（週末コンテンツ枠と同週。欠席週は行を飛ばさず「スキップ」理由を1行残す）
+**最終更新**: 2026-08-17（ISO 週・火曜レビューへ切替。Slack `#fa-telemetry`）  
+**実施ペース**: **火曜 09:00 JST**（ISO 週: 月曜 00:00〜日曜 23:59、プロパティ TZ = Asia/Tokyo）。欠席週は行を飛ばさず「スキップ」理由を1行残す。**土曜に別窓で埋めない。**
 
 関連:
 
@@ -12,7 +12,29 @@
 | MCP・SA・secrets 正本 | [Cursor_MCP_Setup.md](../Cursor_MCP_Setup.md)「Google Analytics MCP」「ローカル secrets」 |
 | タグ／Realtime／チャンク運用 | [04_Operations_Guide.md](../04_Operations_Guide.md)「GA4」「Sentry」 |
 | Quiz Hub 単発ファネル | [`artifacts/quiz_hub_funnel_memo_2026-07-08.md`](../../artifacts/quiz_hub_funnel_memo_2026-07-08.md) |
-| 週末コンテンツ | [ops/Weekend_Content_Pipeline.md](Weekend_Content_Pipeline.md) |
+| 週末コンテンツ | [ops/Weekend_Content_Pipeline.md](Weekend_Content_Pipeline.md)（土曜 Ingest / 日曜 Editorial。テレメトリとは分離） |
+| Slack | `#fa-telemetry`（`C0BQ5R19QDV`） |
+
+### 契約切替（2026-08-17）
+
+- **旧窓**（W32/W33 ログ）: 土曜レビューのまま残す。数値を ISO 週で上書きしない。
+- **新窓**: 初回は **2026-W34（2026-08-17〜08-23）を 2026-08-25 火** に記入。
+- 旧窓と新窓を **前週比しない**。
+- 数字取得は GitHub Actions（クラウドはローカル SA JSON を読まない）。エージェントは要約・正本 PR・Slack。承認実行は許可リストのみ。
+
+### Slack 承認コマンド
+
+レポート投稿の **スレッドに返信**する。一行・大文字。絵文字だけでは判定しない。未承認のまま次の火曜が来たら **実行しない**（fail-closed）。
+
+| コマンド | 意味 | 段階 |
+|----------|------|------|
+| `APPROVE-DOC` | その週の正本 PR をマージしてよい | L0 |
+| `APPROVE T-xx` | 許可リストの項目を実行してよい（例: `APPROVE T-03`） | L1（L2 は後段） |
+| `SKIP T-xx` | その項目は今週やらない | — |
+| `HOLD` | 今週は実行しない | — |
+| `REJECT T-xx` | 提案を否定（ボードは open のまま） | — |
+
+ボットが投稿するチャンネルを「全メッセージで発火」にしない。承認はキーワード付きスレッド返信のみ。
 
 ---
 
@@ -35,7 +57,7 @@
 | SA 鍵パス（ローカル） | `%APPDATA%\FlightAcademy\secrets\ga-mcp-readonly.json` |
 | Sentry org / project | `yusuke-kage` / `flight-academy` |
 
-### 土曜の最小チェックリスト
+### 火曜の最小チェックリスト
 
 1. **GA4**（MCP または SA + Data API）: 今週・前週の users / sessions / screenPageViews / engagedSessions。日次。上位 `pagePath`・記事パス・source/medium・device・landing。
 2. **Sentry**: 直近 7d の error 件数、`is:unresolved lastSeen:-7d`、チャンク系（`FLIGHT-ACADEMY-4` 等）の最終発生。
@@ -61,7 +83,7 @@
 ### YYYY-Wnn（開始日〜終了日 / レビュー実施日）
 
 **データ取得**: GA4 MCP | SA+Data API / Sentry MCP | UI  
-**比較**: 前週 YYYY-Wnn-1
+**比較**: 直前の ISO 週のみ（旧土曜窓とは比べない）
 
 #### 現状（Facts）
 
@@ -176,5 +198,5 @@
 
 | 日付 | 内容 |
 |------|------|
-| 2026-08-17 | W33 追記（土曜欠席→月曜実施）。T-03 を再発で open に戻す。T-01/02/05 更新。 |
+| 2026-08-17 | ISO 週・火曜 09:00 JST へ切替（A案）。初回新窓は W34（8/25 レビュー）。Slack `#fa-telemetry` と承認コマンドを追加。 |
 | 2026-08-08 | 初版。土曜午前運用・テンプレ・オープン課題ボード・W32 記入。 |

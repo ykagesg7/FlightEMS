@@ -65,7 +65,7 @@ npm exec -- tsc -b   # 型チェック
 5. 週末クリップ整理／週次発信弧 → Skill [`weekend-ingest`](.cursor/skills/weekend-ingest/SKILL.md) / [`weekend-editorial`](.cursor/skills/weekend-editorial/SKILL.md)（正本 [`docs/ops/Weekend_Content_Pipeline.md`](docs/ops/Weekend_Content_Pipeline.md)）
 6. 週次記事メール文案 → Skill [`weekly-article-digest`](.cursor/skills/weekly-article-digest/SKILL.md)（送信は明示時のみ）
 7. 記事ドリップ公開確認 → Skill [`article-publish-check`](.cursor/skills/article-publish-check/SKILL.md)
-8. 土曜・GA4+Sentry 週次レビュー → 正本 [`docs/ops/Weekly_Telemetry_Review.md`](docs/ops/Weekly_Telemetry_Review.md)（現状・課題・解決案を追記。認証は [`docs/Cursor_MCP_Setup.md`](docs/Cursor_MCP_Setup.md)）
+8. 火曜・GA4+Sentry 週次レビュー（ISO 週） → 正本 [`docs/ops/Weekly_Telemetry_Review.md`](docs/ops/Weekly_Telemetry_Review.md)。Slack `#fa-telemetry` で承認コマンド。認証は [`docs/Cursor_MCP_Setup.md`](docs/Cursor_MCP_Setup.md)
 
 ## サブエージェント / Skills
 
