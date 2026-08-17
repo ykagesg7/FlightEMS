@@ -1,9 +1,9 @@
--- USAF Contact / Transition series ep.3: CTX-1-3_ControlsGPio
+-- USAF Contact / Transition series ep.3: CP-1-3_ControlsGPio
 -- W34 Fri 2026-08-21. is_published false until cron.
 
 INSERT INTO learning_contents (id, title, category, sub_category, description, order_index, parent_id, content_type, is_published, updated_at)
 VALUES (
-  'CTX-1-3_ControlsGPio',
+  'CP-1-3_ControlsGPio',
   '【操縦】第3話：効く面と壊れ方 ～操縦面 / PIO / G～',
   '操縦',
   '曲技飛行',

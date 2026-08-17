@@ -1,13 +1,14 @@
--- USAF Contact / Transition series ep.1: CTX-1-1_AreaAndPurpose
+-- CP series ep.1: CP-1-1_AreaAndPurpose
 -- Stock: is_published false until articlePublishSchedule.
+-- Do not re-run after W34 go-live; title patches go in later UPDATE files.
 
 INSERT INTO learning_contents (id, title, category, sub_category, description, order_index, parent_id, content_type, is_published, updated_at)
 VALUES (
-  'CTX-1-1_AreaAndPurpose',
-  '【操縦】第1話：形を描く前に、エリアにいろ ～Contact の目的とエリア方位～',
+  'CP-1-1_AreaAndPurpose',
+  '【操縦】第1話：形を描く前に、エリアにいろ ～CPの目的とエリア維持～',
   '操縦',
   '曲技飛行',
-  'Contactは包線の学校。最初の契約はエリア方位。地上参照がprimary。20 radialsでCenter RadialとPie-in-the-Sky。Area 16 / Att 6。',
+  'CPは包線の学校。最初の契約はエリア維持。地上参照がprimary。20 radialsでCenter RadialとPie-in-the-Sky。T-38のCSW/CDIは読み替え。Area 16 / Att 6。',
   611,
   NULL,
   'text',

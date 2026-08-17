@@ -115,29 +115,29 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W34': {
     isoWeek: '2026-W34',
-    seriesTitle: 'USAF Contact（単機）',
+    seriesTitle: 'CP（単機）',
     intro:
       '来週は単機の入口。月・水・金の3本。エリアにいる契約から、エネルギーの交換、操縦面とGまで。図形を描く前の学校たい。',
     articles: [
       {
-        id: 'CTX-1-1_AreaAndPurpose',
+        id: 'CP-1-1_AreaAndPurpose',
         publishDate: '2026-08-17',
-        title: '第1話：形を描く前に、エリアにいろ ～Contact の目的とエリア方位～',
-        slug: '/articles/ctx-1-1-area-and-purpose',
+        title: '第1話：形を描く前に、エリアにいろ ～CPの目的とエリア維持～',
+        slug: '/articles/cp-1-1-area-and-purpose',
         hook: '曲技の前にエリアにいろ。地上物が primary。20 radials で方式が分かれる。',
       },
       {
-        id: 'CTX-1-2_Energy',
+        id: 'CP-1-2_Energy',
         publishDate: '2026-08-19',
         title: '第2話：足りんなら換えろ ～高度と速度の交換～',
-        slug: '/articles/ctx-1-2-energy',
+        slug: '/articles/cp-1-2-energy',
         hook: '1,000 ft ≈ 50 kt。AB で買うな。作業空域の真ん中で 300 KIAS が目安たい。',
       },
       {
-        id: 'CTX-1-3_ControlsGPio',
+        id: 'CP-1-3_ControlsGPio',
         publishDate: '2026-08-21',
         title: '第3話：効く面と壊れ方 ～操縦面 / PIO / G～',
-        slug: '/articles/ctx-1-3-controls-g-pio',
+        slug: '/articles/cp-1-3-controls-g-pio',
         hook: 'ラダーは高 AOA、エルロンは低 AOA。PIO は freeze。G は warmup。',
       },
     ],

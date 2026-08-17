@@ -10,6 +10,16 @@ import { isArticleReleased } from './articlePublishGate';
 const articleModules = import.meta.glob<MDXModule>('../content/articles/*.mdx', { eager: false });
 const lessonModules = import.meta.glob<MDXModule>('../content/lessons/*.mdx', { eager: false });
 
+/** Published/emailed Contact stems → CP. Route params and filenames both resolve. */
+const ARTICLE_ROUTE_ALIASES: Record<string, string> = {
+  'ctx-1-1-area-and-purpose': 'cp-1-1-area-and-purpose',
+  'ctx-1-2-energy': 'cp-1-2-energy',
+  'ctx-1-3-controls-g-pio': 'cp-1-3-controls-g-pio',
+  'CTX-1-1_AreaAndPurpose': 'CP-1-1_AreaAndPurpose',
+  'CTX-1-2_Energy': 'CP-1-2_Energy',
+  'CTX-1-3_ControlsGPio': 'CP-1-3_ControlsGPio',
+};
+
 /**
  * ファイル名からslugを生成（フォールバック用）
  */
@@ -135,7 +145,8 @@ export async function findArticleByRouteParam(
   param: string,
 ): Promise<ArticleIndexEntry | null> {
   const index = await getArticleIndex();
-  const key = normalizeArticleSlug(param);
+  const rawKey = normalizeArticleSlug(param);
+  const key = ARTICLE_ROUTE_ALIASES[rawKey] ?? ARTICLE_ROUTE_ALIASES[param] ?? rawKey;
   return (
     index.find((entry) => {
       const metaSlug = entry.meta.slug || '';
@@ -143,9 +154,11 @@ export async function findArticleByRouteParam(
       return (
         entry.filename === param ||
         entry.filename === key ||
+        entry.filename === rawKey ||
         metaSlug === param ||
         metaSlug === `/${key}` ||
         metaSlug === `/articles/${key}` ||
+        metaSlug === `/articles/${rawKey}` ||
         metaKey === key
       );
     }) ?? null

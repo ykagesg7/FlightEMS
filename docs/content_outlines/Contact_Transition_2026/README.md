@@ -1,11 +1,12 @@
-# Contact / トランジション — 執筆正本（Season 1–5）
+# CP — 執筆正本（Season 1–5）
 
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
-**位置**: 読む順は **Contact → FMT**（単機の包線のあと編隊）。FMT Season 2（BFM 幾何）はそのさらに後。  
+**呼称**: 公開面は **CP**（空自）。USAF 教範の章名 Contact は出典参照に残す。  
+**位置**: 読む順は **CP → FMT**（単機の飛行Envelopeのあと編隊）。FMT Season 2（BFM 幾何）はそのさらに後。  
 **既存公開**: なし。**W34 ドリップ**: 1-1 月 8/17、1-2 水 8/19、1-3 金 8/21。Season 1 の 3 本は MDX 済。`is_published` は cron が schedule の日付で反転。  
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
 **MDX 規則**: [`.cursor/rules/mdx-article-guide.mdc`](../../../.cursor/rules/mdx-article-guide.mdc)  
-**登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **曲技飛行**、`series`: **USAF-Contact-Transition**  
+**登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **曲技飛行**、`series`: **USAF-Contact-Phase**  
 **公開**: [articlePublishSchedule.ts](../../../api/_lib/articlePublishSchedule.ts)  
 **一次ソース**: T-38 Flying Fundamentals **Ch5 Contact**（Obsidian `T38-Flying-Fundamentals.ja/Ch05*`）。採点は Vol.2 Table 3.1。briefing 契約は Vol.3 Att 6 を S1-1 に折り込む。
 
@@ -35,11 +36,17 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 
 - 公理 1 つ
 - サイトピクチャ 1 つ
-- Vol.2 不合格基準 1 つ（該当 Area。**Area 名を新造するな**）
+- **不合格要件**を日本語で 1 つ（読者は原本を見ない。本文・見出し・口頭試問・excerpt に **Area / Fund / Att / Vol.2 のカタログ番号を出すな**。番号は本 README の所有者表だけ）
 - Joe の口頭クイズ 1 つ
 - T-4 に AB はない
 - 数字は本 README「許可数字」と当該ブリーフに書いたものだけ
-- T-38 の EGT / canopy bow / shark fin / green donut を T-4 の正解にしない
+- T-38 の EGT / canopy bow / shark fin / green donut / CSW・CDI を T-4 の正解にしない（読み替え。CDW/CDB は使わない）
+- 太字は `「**…**」`（カギ括弧の内側）
+- 詳細解説の `###` は PREP（P / R / E / 締めの P）
+- 口頭試問の話者は **学生：** / **学生（白目）：**（`学生（あんさん）` も `お前（学生）` も使わない。ジョー台詞内の「お前」は二人称として残す）
+- 道真の語尾はひらがな **ばい**（`バイ！` は使わない）
+- 飛行包線・エンベロープ・envelope は **飛行Envelope** に統一
+- 呼称は **教官ジョー**（`教官ジョー（凄腕パイロット）` は使わない）
 
 ---
 
@@ -47,9 +54,9 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 
 | # | stem | slug | order | 主題 | 所有 | Vol.2 | 状態 |
 |---|------|------|-------|------|------|-------|------|
-| 1-1 | `CTX-1-1_AreaAndPurpose` | `ctx-1-1-area-and-purpose` | 1 | Contact の目的 / エリア方位 | **5.1–5.2**。Att 6 の空域契約を折込 | Att 6 / **16**（33 は出さない） | **W34 月 8/17** |
-| 1-2 | `CTX-1-2_Energy` | `ctx-1-2-energy` | 2 | エネルギー管理 | **5.3**（50 kt / 1,000 ft の唯一の所有者） | **32** の erratic（33 は出さない） | **W34 水 8/19** |
-| 1-3 | `CTX-1-3_ControlsGPio` | `ctx-1-3-controls-g-pio` | 3 | 操縦面 / PIO / G-awareness | **5.4–5.6** | **32** の smooth | **W34 金 8/21** |
+| 1-1 | `CP-1-1_AreaAndPurpose` | `cp-1-1-area-and-purpose` | 1 | CP の目的 / エリア維持 | **5.1–5.2**。Att 6 の空域契約を折込 | Att 6 / **16**（33 は出さない） | **W34 月 8/17** |
+| 1-2 | `CP-1-2_Energy` | `cp-1-2-energy` | 2 | エネルギー管理 | **5.3**（50 kt / 1,000 ft の唯一の所有者） | **32** の erratic（33 は出さない） | **W34 水 8/19** |
+| 1-3 | `CP-1-3_ControlsGPio` | `cp-1-3-controls-g-pio` | 3 | 操縦面 / PIO / G-awareness | **5.4–5.6** | **32** の smooth | **W34 金 8/21** |
 
 `order_index`: **611–613**。
 
@@ -61,12 +68,12 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 
 | # | stem | slug | order | 主題 | 所有 |
 |---|------|------|-------|------|------|
-| 2-1 | `CTX-2-1_DeepStall` | `ctx-2-1-deep-stall` | 1 | Deep stall | **5.7–5.8** |
-| 2-2 | `CTX-2-2_AcceleratedStall` | `ctx-2-2-accelerated-stall` | 2 | Accelerated stall | **5.14** |
-| 2-3 | `CTX-2-3_RollAuthority` | `ctx-2-3-roll-authority` | 3 | Rudder / aileron / reversal | **5.10, 5.12, 5.15** |
-| 2-4 | `CTX-2-4_Unload` | `ctx-2-4-unload` | 4 | Acceleration / stab demo | **5.13, 5.18** |
-| 2-5 | `CTX-2-5_TrimFailure` | `ctx-2-5-trim-failure` | 5 | Simulated trim failure | **5.9** |
-| 2-6 | `CTX-2-6_PitchbackSliceback` | `ctx-2-6-pitchback-sliceback` | 6 | Pitchback / Sliceback（handling） | **5.16–5.17**。Immelmann / Split-S ではない |
+| 2-1 | `CP-2-1_DeepStall` | `cp-2-1-deep-stall` | 1 | Deep stall | **5.7–5.8** |
+| 2-2 | `CP-2-2_AcceleratedStall` | `cp-2-2-accelerated-stall` | 2 | Accelerated stall | **5.14** |
+| 2-3 | `CP-2-3_RollAuthority` | `cp-2-3-roll-authority` | 3 | Rudder / aileron / reversal | **5.10, 5.12, 5.15** |
+| 2-4 | `CP-2-4_Unload` | `cp-2-4-unload` | 4 | Acceleration / stab demo | **5.13, 5.18** |
+| 2-5 | `CP-2-5_TrimFailure` | `cp-2-5-trim-failure` | 5 | Simulated trim failure | **5.9** |
+| 2-6 | `CP-2-6_PitchbackSliceback` | `cp-2-6-pitchback-sliceback` | 6 | Pitchback / Sliceback（handling） | **5.16–5.17**。Immelmann / Split-S ではない |
 
 `order_index`: **614–619**。
 
@@ -78,8 +85,8 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 
 | # | stem | slug | order | 主題 | 所有 | Vol.2 |
 |---|------|------|-------|------|------|-------|
-| 3-1 | `CTX-3-1_ConfiguredHandling` | `ctx-3-1-configured-handling` | 1 | Configured rudder / slow flight | **5.11, 5.20–5.21** | **32** Slow flight −3 / +5 |
-| 3-2 | `CTX-3-2_PatternATS` | `ctx-3-2-pattern-ats` | 2 | Pattern approach-to-stall | **5.22–5.25** | **29** |
+| 3-1 | `CP-3-1_ConfiguredHandling` | `cp-3-1-configured-handling` | 1 | Configured rudder / slow flight | **5.11, 5.20–5.21** | **32** Slow flight −3 / +5 |
+| 3-2 | `CP-3-2_PatternATS` | `cp-3-2-pattern-ats` | 2 | Pattern approach-to-stall | **5.22–5.25** | **29** |
 
 `order_index`: **620–621**。
 
@@ -91,8 +98,8 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 
 | # | stem | slug | order | 主題 | 所有 | Vol.2 |
 |---|------|------|-------|------|------|-------|
-| 4-1 | `CTX-4-1_NoseHigh` | `ctx-4-1-nose-high` | 1 | Nose-high recovery | **5.26–5.27** | **31** |
-| 4-2 | `CTX-4-2_NoseLow` | `ctx-4-2-nose-low` | 2 | Nose-low recovery | **5.28** | **30** |
+| 4-1 | `CP-4-1_NoseHigh` | `cp-4-1-nose-high` | 1 | Nose-high recovery | **5.26–5.27** | **31** |
+| 4-2 | `CP-4-2_NoseLow` | `cp-4-2-nose-low` | 2 | Nose-low recovery | **5.28** | **30** |
 
 `order_index`: **622–623**。
 
@@ -104,15 +111,15 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 
 | # | stem | slug | order | 主題 | 所有 |
 |---|------|------|-------|------|------|
-| 5-1 | `CTX-5-1_AerobaticContract` | `ctx-5-1-aerobatic-contract` | 1 | 曲技の契約・表 5.1/5.2 | **5.29–5.32**（5.3 を再講義しない） |
-| 5-2 | `CTX-5-2_AileronRoll` | `ctx-5-2-aileron-roll` | 2 | Aileron roll | **5.33** |
-| 5-3 | `CTX-5-3_LazyEight` | `ctx-5-3-lazy-eight` | 3 | Lazy Eight | **5.34** |
-| 5-4 | `CTX-5-4_BarrelRoll` | `ctx-5-4-barrel-roll` | 4 | Barrel roll | **5.35** |
-| 5-5 | `CTX-5-5_Loop` | `ctx-5-5-loop` | 5 | Loop | **5.36** |
-| 5-6 | `CTX-5-6_SplitSImmelmann` | `ctx-5-6-split-s-immelmann` | 6 | Split-S / Immelmann | **5.37–5.38** |
-| 5-7 | `CTX-5-7_CubanEight` | `ctx-5-7-cuban-eight` | 7 | Cuban Eight | **5.39** |
-| 5-8 | `CTX-5-8_Cloverleaf` | `ctx-5-8-cloverleaf` | 8 | Cloverleaf | **5.40** |
-| 5-9 | `CTX-5-9_Chandelle` | `ctx-5-9-chandelle` | 9 | Chandelle | **5.41** |
+| 5-1 | `CP-5-1_AerobaticContract` | `cp-5-1-aerobatic-contract` | 1 | 曲技の契約・表 5.1/5.2 | **5.29–5.32**（5.3 を再講義しない） |
+| 5-2 | `CP-5-2_AileronRoll` | `cp-5-2-aileron-roll` | 2 | Aileron roll | **5.33** |
+| 5-3 | `CP-5-3_LazyEight` | `cp-5-3-lazy-eight` | 3 | Lazy Eight | **5.34** |
+| 5-4 | `CP-5-4_BarrelRoll` | `cp-5-4-barrel-roll` | 4 | Barrel roll | **5.35** |
+| 5-5 | `CP-5-5_Loop` | `cp-5-5-loop` | 5 | Loop | **5.36** |
+| 5-6 | `CP-5-6_SplitSImmelmann` | `cp-5-6-split-s-immelmann` | 6 | Split-S / Immelmann | **5.37–5.38** |
+| 5-7 | `CP-5-7_CubanEight` | `cp-5-7-cuban-eight` | 7 | Cuban Eight | **5.39** |
+| 5-8 | `CP-5-8_Cloverleaf` | `cp-5-8-cloverleaf` | 8 | Cloverleaf | **5.40** |
+| 5-9 | `CP-5-9_Chandelle` | `cp-5-9-chandelle` | 9 | Chandelle | **5.41** |
 
 `order_index`: **624–632**。
 
@@ -122,7 +129,7 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 
 | 節 | 内容 | 所有者 |
 |----|------|--------|
-| 5.1–5.2 | 目的 / エリア方位 | **S1-1** |
+| 5.1–5.2 | 目的 / エリア維持 | **S1-1** |
 | 5.3 | エネルギー | **S1-2** |
 | 5.4–5.6 | 操縦面 / PIO / G | **S1-3** |
 | 5.7–5.8 | Handling 一般 / deep stall | **S2-1** |
@@ -214,13 +221,21 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 
 | 項目 | 値 |
 |------|-----|
-| `learning_contents.id` | stem と同じ |
+| `learning_contents.id` | stem と同じ（`CP-1-1_AreaAndPurpose`。旧 `CTX-*` は使わない） |
 | `category` | 操縦 |
 | `sub_category` | 曲技飛行（シリーズ統一。Season で割らない） |
 | `content_type` | text |
 | `is_published` | **ストックは `false`** |
 | `order_index` | 1-1 = **611**、以降連番（FMT 610 の次）。最終 5-9 = **632** |
-| `meta.series` | `USAF-Contact-Transition` |
+| `meta.series` | `USAF-Contact-Phase` |
+| `meta.order` | Season 内 1–N（S1 は 1–3、S5 は 1–9） |
+| 詳細解説 | **PREP**（`P（Point）` / `R（Reason）` / `E（Example）` / 締めの `P（Point）`）。FMT と同じ |
+| `category` | 操縦 |
+| `sub_category` | 曲技飛行（シリーズ統一。Season で割らない） |
+| `content_type` | text |
+| `is_published` | **ストックは `false`** |
+| `order_index` | 1-1 = **611**、以降連番（FMT 610 の次）。最終 5-9 = **632** |
+| `meta.series` | `USAF-Contact-Phase` |
 | `meta.order` | Season 内 1–N（S1 は 1–3、S5 は 1–9） |
 
 ---
@@ -231,7 +246,10 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 |------|------|
 | 2026-08-16 | 初版。FMT Season 2 の前に Contact 8 話。 |
 | 2026-08-16 | **5 Season / 22 話**に改定。Fund Ch5 の 5A–5E を MECE 所有者に。1-1 は Area / Purpose（5.1–5.2）。 |
-| 2026-08-16 | 読む順を **Contact → FMT** に変更。`CTX-1-1` ストック登録（`order_index` 611）。1-1 ブリーフ削除。 |
+| 2026-08-16 | 読む順を **Contact → FMT** に変更。`CP-1-1` ストック登録（`order_index` 611）。1-1 ブリーフ削除。 |
 | 2026-08-16 | W34 を Contact 1-1〜1-3 に差し替え（FMT ドリップ取消）。1-2 ブリーフ起票。 |
-| 2026-08-16 | `CTX-1-2` 登録（`order_index` 612、`publishedAt` 8/19）。1-2 ブリーフ削除。1-3 ブリーフ起票。 |
-| 2026-08-16 | `CTX-1-3` 登録（`order_index` 613、`publishedAt` 8/21）。Season 1 完。1-3 ブリーフ削除。 |
+| 2026-08-16 | `CP-1-2` 登録（`order_index` 612、`publishedAt` 8/19）。1-2 ブリーフ削除。1-3 ブリーフ起票。 |
+| 2026-08-16 | `CP-1-3` 登録（`order_index` 613、`publishedAt` 8/21）。Season 1 完。1-3 ブリーフ削除。 |
+| 2026-08-17 | 公開呼称を **CP** に統一。1-1 計器は T-38 CSW/CDI を読み替え（T-4 の正解にしない）。見出しはエリア維持。 |
+| 2026-08-17 | ファイル名・slug・DB id を `CP-*` に改名（旧 `ctx-*` URL は alias）。詳細解説は PREP（P/R/E/P）見出しに FMT と統一。 |
+| 2026-08-17 | 公開本文から Area / Fund / Att / Vol.2 番号を外す。不合格は「不合格要件」だけ。 |

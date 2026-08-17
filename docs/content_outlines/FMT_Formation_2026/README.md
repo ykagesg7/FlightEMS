@@ -1,7 +1,7 @@
 # FMT 編隊シリーズ — 執筆正本（Season 1 + 2）
 
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
-**既存公開**: W34 ドリップは **取消**（Contact Season 1 に差し替え）。**ストック**: 1-1〜1-10（601–610）。Season 1 完。次は Season 2（未起票）。  
+**既存公開**: W34 ドリップは **取消**（CP Season 1 に差し替え）。**ストック**: 1-1〜1-10（601–610）。Season 1 完。次は Season 2（未起票）。  
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
 **MDX 規則**: [`.cursor/rules/mdx-article-guide.mdc`](../../../.cursor/rules/mdx-article-guide.mdc)  
 **登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **編隊飛行**、`series`: **USAF-Formation-Flying**  
@@ -16,12 +16,12 @@
 | 決めたこと | 運用 |
 |------------|------|
 | **週 3 本** | **月・水・金**（執筆が追いつくまでの既定。土日は入れない） |
-| **ドリップは Contact が先** | W34 は Contact 1-1〜1-3。FMT 1-1〜1-3 は倉庫 |
+| **ドリップは CP が先** | W34 は CP 1-1〜1-3。FMT 1-1〜1-3 は倉庫 |
 | **FMT はストック** | 1-4 以降は書いて倉庫へ。即公開しない |
 | **1 週 1 シリーズ** | その週の digest は FMT か「訓練の当たり前」か、どちらか |
 | **週次メール** | ストックを `WEEKLY_ARTICLE_DIGESTS` に載せてから。日曜 17:00 JST より前にデプロイ |
 
-**W34（2026-08-17 / 19 / 21）**: Contact 1-1 → 1-2 → 1-3。FMT はこの週に出さない。日曜（8/16）17:00 案内の対象。本番デプロイが前提。
+**W34（2026-08-17 / 19 / 21）**: CP 1-1 → 1-2 → 1-3。FMT はこの週に出さない。日曜（8/16）17:00 案内の対象。本番デプロイが前提。
 
 ### ストックの載せ方（1-4 以降）
 
@@ -33,7 +33,7 @@
 
 ### 在庫の目安
 
-Season 1 全 **10 話**＝週3本なら約 **3.5 週**。W34 は Contact。FMT のドリップ開始週は未定。
+Season 1 全 **10 話**＝週3本なら約 **3.5 週**。W34 は CP。FMT のドリップ開始週は未定。
 
 ---
 
@@ -45,7 +45,7 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**。W34 は Contact。FMT �
 4. 完成後のみ `src/content/lessons/` に MDX を置く。
 5. `learning_contents` を **ストック登録**（`is_published: false`）。公開週が決まるまで schedule に載せない。
 
-**Season 1 は 1-10 までストック済。** 読む順は **Contact → FMT**。W34 ドリップは Contact 1-1〜1-3。[Contact_Transition_2026](../Contact_Transition_2026/README.md)。Season 2 のブリーフは求められたときだけ。全 18 本を一括起票しない。
+**Season 1 は 1-10 までストック済。** 読む順は **CP → FMT**。W34 ドリップは CP 1-1〜1-3。[Contact_Transition_2026](../Contact_Transition_2026/README.md)。Season 2 のブリーフは求められたときだけ。全 18 本を一括起票しない。
 
 ---
 
@@ -57,6 +57,10 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**。W34 は Contact。FMT �
 - Joe の口頭クイズ 1 つ
 - T-4 に AB はない（1-2 と同じ）
 - 数字は本 README「許可数字」と当該ブリーフに書いたものだけ
+- 詳細解説の `###` は **PREP**（`P（Point）` / `R（Reason）` / `E（Example）` / 締めの `P（Point）`）。Tips は PREP の外でよい
+- 口頭試問の話者は **学生：** / **学生（白目）：**（`お前（学生）` は使わない。ジョー台詞内の「お前」は二人称として残す）
+- 道真の語尾はひらがな **ばい**（`バイ！` は使わない）
+- 呼称は **教官ジョー**（`教官ジョー（凄腕パイロット）` は使わない）
 
 ---
 

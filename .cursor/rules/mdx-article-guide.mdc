@@ -64,6 +64,16 @@ PPL記事: `PPL-{Subject}-{Section}-{Topic}_{TitleInPascalCase}.mdx`
 - `PPL-1-2-5_CarburetorMixture.mdx` (Subject 1, Section 2, Topic 5)
 - `PPL-2-1-1_CloudTypes.mdx` (Subject 2, Section 1, Topic 1)
 
+操縦シリーズ:
+- 編隊: `FMT-{Season}-{N}_{Title}.mdx`（例: `FMT-1-1_WingmanVFR.mdx`）
+- CP: `CP-{Season}-{N}_{Title}.mdx`（例: `CP-1-1_AreaAndPurpose.mdx`。旧 `CTX-*` は使わない）
+- 詳細解説の `###` は PREP（`P（Point）` / `R（Reason）` / `E（Example）` / 締めの `P（Point）`）
+- CP の公開本文に Area / Fund / Att / Vol.2 のカタログ番号を出さない。不合格は「不合格要件」を日本語で書く
+- 口頭試問の話者は `**学生：**` / `**学生（白目）：**`。`学生（あんさん）` と `お前（学生）` は使わない
+- 道真の語尾はひらがな `ばい`（`バイ！` は使わない）
+- 飛行包線・エンベロープ・envelope は `飛行Envelope` に統一
+- 呼称は `教官ジョー`（`教官ジョー（凄腕パイロット）` は使わない）
+
 Subject 番号:
 1. 航空工学
 2. 航空気象
