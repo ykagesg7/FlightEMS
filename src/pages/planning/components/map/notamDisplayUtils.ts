@@ -83,6 +83,7 @@ export type NotamCardView = {
   verticalText?: string;
   hasGeometry: boolean;
   detailNotes: string[];
+  fullBodyText: string;
   technicalMeta?: {
     eventCode?: string;
     featureLabel?: string;
@@ -127,6 +128,7 @@ export function buildNotamCardView(item: SwimNotamItem): NotamCardView {
     verticalText: item.verticalText?.trim() || undefined,
     hasGeometry: item.geometry != null,
     detailNotes,
+    fullBodyText: (item.primaryText ?? item.noteSnippet ?? item.summary).trim(),
     technicalMeta: {
       eventCode: item.eventCode,
       featureLabel: item.featureLabel,

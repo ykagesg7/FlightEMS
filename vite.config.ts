@@ -7,6 +7,7 @@ import { defineConfig, loadEnv, type PluginOption } from 'vite';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import cesium from 'vite-plugin-cesium';
 import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
 import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
 import { injectGoogleTagPlugin } from './vite/injectGoogleTagPlugin';
@@ -98,6 +99,7 @@ export default defineConfig(({ mode }) => {
   }
 
   const plugins: PluginOption[] = [
+    cesium(),
     ...(mode === 'development' ? [devOpenskyApiPlugin(), devWeatherApiPlugin()] : []),
     react({
       jsxRuntime: 'automatic',
@@ -163,6 +165,9 @@ export default defineConfig(({ mode }) => {
           // より詳細なチャンク分割戦略（stagewise対応）
           // 本番は循環依存回避のため全面 manualChunks を避け、leaflet のみ分離（Planning 巨大チャンク緩和）
           manualChunks: (id) => {
+            if (id.includes('node_modules/cesium')) {
+              return 'vendor-cesium';
+            }
             if (id.includes('node_modules/leaflet') || id.includes('node_modules/react-leaflet')) {
               return 'vendor-leaflet';
             }
@@ -264,7 +269,10 @@ export default defineConfig(({ mode }) => {
         'react-leaflet',
         '@supabase/supabase-js',
         'react-window',
-        '@mdx-js/react'
+        '@mdx-js/react',
+        // Cesium が import する CJS（default export 欠落）を Vite prebundle で interop する
+        'cesium > mersenne-twister',
+        'mersenne-twister',
       ],
       // Stagewise対応の依存関係最適化
       esbuildOptions: {

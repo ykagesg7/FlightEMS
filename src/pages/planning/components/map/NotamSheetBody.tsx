@@ -69,12 +69,18 @@ function NotamCard({
         {variantBadge}
       </div>
       <h4 className="mt-1.5 text-sm font-semibold leading-snug text-gray-50">{card.cardTitle}</h4>
-      <p
-        className="mt-1 text-xs leading-relaxed text-gray-300"
-        title={card.bodyTruncated ? item.primaryText ?? item.noteSnippet : undefined}
-      >
-        {card.bodyText}
-      </p>
+      {card.bodyTruncated ? (
+        <details className="mt-1">
+          <summary className="cursor-pointer select-none text-xs leading-relaxed text-gray-300 hover:text-whiskyPapa-yellow">
+            {card.bodyText}
+          </summary>
+          <p className="mt-1.5 whitespace-pre-wrap text-xs leading-relaxed text-gray-300">
+            {card.fullBodyText}
+          </p>
+        </details>
+      ) : (
+        <p className="mt-1 text-xs leading-relaxed text-gray-300">{card.bodyText}</p>
+      )}
       <p className="mt-1.5 text-[11px] text-gray-400" title={card.period.titleAttr}>
         {card.period.label}
       </p>

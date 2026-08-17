@@ -56,6 +56,12 @@ export function notamTargetsCacheKey(targets: PreflightAirportNotamTarget[]): st
   return targets.map((t) => `${t.role}:${t.icao}`).join('|');
 }
 
+export type NotamHighlightEntry = {
+  key: string;
+  preview: string;
+  fullText: string;
+};
+
 export type AirportNotamBriefingSnapshot = {
   icao: string;
   label: string;
@@ -65,15 +71,53 @@ export type AirportNotamBriefingSnapshot = {
   currentCount: number;
   futureCount: number;
   peekSummary: string;
-  highlights: string[];
+  highlights: NotamHighlightEntry[];
 };
 
-const HIGHLIGHT_MAX = 3;
-const HIGHLIGHT_TEXT_MAX = 120;
+const HIGHLIGHT_MAX = 8;
+const HIGHLIGHT_TEXT_MAX = 140;
+const CATEGORY_ONLY = new Set(['施設', '滑走路', '誘導路', 'エプロン', '空域', 'その他', 'NOTAM']);
 
-function pickHighlightText(item: SwimNotamItem): string {
-  const text = (item.impactLabel ?? item.primaryText ?? item.summary).trim();
-  return text.length > HIGHLIGHT_TEXT_MAX ? `${text.slice(0, HIGHLIGHT_TEXT_MAX)}…` : text;
+function truncateHighlight(text: string): string {
+  const t = text.trim();
+  return t.length > HIGHLIGHT_TEXT_MAX ? `${t.slice(0, HIGHLIGHT_TEXT_MAX)}…` : t;
+}
+
+/** カテゴリ名だけの impactLabel（例: 施設）は本文にしない。 */
+export function notamItemBodyText(item: SwimNotamItem): string {
+  const impact = (item.impactLabel ?? '').trim();
+  const body = (item.primaryText ?? item.noteSnippet ?? item.summary).trim();
+  const impactIsCategory = !impact || CATEGORY_ONLY.has(impact);
+  if (!impactIsCategory) {
+    if (body && body !== impact && !impact.includes(body.slice(0, 12))) {
+      return `${impact} — ${body}`;
+    }
+    return impact;
+  }
+  if (body) {
+    return impact && impact !== body ? `${impact}: ${body}` : body;
+  }
+  return impact || 'デジタルノータム';
+}
+
+export function pickHighlightText(item: SwimNotamItem): string {
+  return truncateHighlight(notamItemBodyText(item));
+}
+
+export function buildNotamHighlightEntries(items: SwimNotamItem[]): NotamHighlightEntry[] {
+  return items.slice(0, HIGHLIGHT_MAX).map((item, index) => {
+    const body = notamItemBodyText(item);
+    const extras = (item.detailNotes ?? []).filter((n) => {
+      const t = n.trim();
+      return t.length > 0 && !body.includes(t.slice(0, 24));
+    });
+    const fullText = extras.length > 0 ? `${body}\n\n${extras.join('\n')}` : body;
+    return {
+      key: item.key?.trim() ? item.key : `notam-${index}`,
+      preview: truncateHighlight(body),
+      fullText,
+    };
+  });
 }
 
 export function buildAirportNotamBriefingSnapshot(
@@ -87,7 +131,7 @@ export function buildAirportNotamBriefingSnapshot(
   const current = state.data?.current ?? [];
   const future = state.data?.future ?? [];
   const combined = [...current, ...future];
-  const highlights = combined.slice(0, HIGHLIGHT_MAX).map(pickHighlightText);
+  const highlights = buildNotamHighlightEntries(combined);
 
   return {
     icao: target.icao,

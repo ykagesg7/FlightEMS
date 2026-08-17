@@ -9,6 +9,9 @@ import { awardRegistrationXp } from '../utils/awardQuizSessionXp'
 import { Database } from '../types/database.types'
 import supabase from '../utils/supabase'
 
+/** 登録 XP はセッション中 1 回だけ試行（未ログイン時の 403 連打を避ける） */
+let registrationXpAttemptedFor: string | null = null
+
 export type Profile = Database['public']['Tables']['profiles']['Row']
 export type AuthErrorResult = AuthError | Error | null
 
@@ -363,17 +366,21 @@ export const useAuthStore = create<AuthState>()(
 
             if (!error && data) {
               set({ profile: data });
-              if (data.onboarding_completed_at) {
-                void awardRegistrationXp(userId).then(async (result) => {
-                  if (!result.success) return;
-                  const { data: refreshed, error: refreshError } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', userId)
-                    .single();
-                  if (!refreshError && refreshed) {
-                    set({ profile: refreshed });
-                  }
+              if (data.onboarding_completed_at && registrationXpAttemptedFor !== userId) {
+                registrationXpAttemptedFor = userId;
+                void supabase.auth.getSession().then(({ data: sessionData }) => {
+                  if (!sessionData.session) return;
+                  void awardRegistrationXp(userId).then(async (result) => {
+                    if (!result.success) return;
+                    const { data: refreshed, error: refreshError } = await supabase
+                      .from('profiles')
+                      .select('*')
+                      .eq('id', userId)
+                      .single();
+                    if (!refreshError && refreshed) {
+                      set({ profile: refreshed });
+                    }
+                  });
                 });
               }
               return;

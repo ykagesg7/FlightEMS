@@ -104,8 +104,12 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ layout = 'full', f
       }
 
       if (!segment.speed || isNaN(segment.speed) || segment.speed <= 0) {
-        console.warn(`セグメント[${index}]の速度が無効です`, segment.speed);
-        return { ...segment, eta: '--:--:--', duration: '--:--:--' };
+        const fallback = flightPlan.speed;
+        if (!fallback || isNaN(fallback) || fallback <= 0) {
+          console.warn(`セグメント[${index}]の速度が無効です`, segment.speed);
+          return { ...segment, eta: '--:--:--', duration: '--:--:--' };
+        }
+        segment = { ...segment, speed: fallback };
       }
 
       // 高度に基づくTASを計算(高精度)
@@ -198,6 +202,7 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({ layout = 'full', f
     flightPlan.groundTempC,
     flightPlan.groundElevationFt,
     flightPlan.useOpenMeteoWind,
+    flightPlan.speed,
     formatTime,
     calculateTAS,
     calculateAirspeeds,

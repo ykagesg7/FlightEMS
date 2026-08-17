@@ -1,5 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,8 @@ import { AirspaceDataset, findAirspaceFrequency } from '../../../../utils/airspa
 import { calculateMagneticBearing } from '../../../../utils/bearing';
 import { parseFlightPlanTime } from '../../../../utils/flightTime';
 import { downloadPlanDocument, fromPlanDocument, toPlanDocument } from '../../../../utils/planDocument';
+import { persistFlightPlanDraft } from '../../flightPlanDraft';
+import { inheritSegmentPerformance } from '../../segmentPerformance';
 import { downloadTextFile } from '../../export/download';
 import { exportFlightPlanToCsv } from '../../export/exportCsv';
 import { exportFlightPlanToGpx } from '../../export/exportGpx';
@@ -66,6 +69,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   onClearLocalDraft,
   lastSavedAt = null,
 }) => {
+  const navigate = useNavigate();
   const isSplitLayout = layout === 'split';
   const [airportOptions, setAirportOptions] = React.useState<AirportGroupOption[]>([]);
   const [navaidOptions, setNavaidOptions] = React.useState<NavaidOption[]>([]);
@@ -79,6 +83,9 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   const [printRequested, setPrintRequested] = React.useState(false);
   const [clearDraftOpen, setClearDraftOpen] = useState(false);
   const summaryRunIdRef = React.useRef(0);
+  const routeSegmentsRef = React.useRef(flightPlan.routeSegments);
+  routeSegmentsRef.current = flightPlan.routeSegments;
+  const globalPerfRef = React.useRef({ speed: flightPlan.speed, altitude: flightPlan.altitude });
   const [draftNoticeVisible, setDraftNoticeVisible] = useState(() => {
     try {
       return sessionStorage.getItem(DRAFT_NOTICE_DISMISS_KEY) !== '1';
@@ -86,6 +93,15 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
       return false;
     }
   });
+
+  const openAirspace3d = () => {
+    persistFlightPlanDraft(flightPlan);
+    navigate('/explore/airspace-3d');
+  };
+
+  const preloadAirspace3d = () => {
+    void import('../../../explore/airspace3d/CesiumAirspaceViewer');
+  };
 
   const dismissDraftNotice = () => {
     try {
@@ -293,12 +309,28 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
 
     let refTime = parseFlightPlanTime(flightPlan.departureTime);
     const departureValid = !isNaN(refTime.getTime());
+    const globalsChanged =
+      globalPerfRef.current.speed !== flightPlan.speed ||
+      globalPerfRef.current.altitude !== flightPlan.altitude;
+    globalPerfRef.current = { speed: flightPlan.speed, altitude: flightPlan.altitude };
 
     // 各セグメントごとに距離、方位、到着時刻を計算
     for (let i = 0; i < allPoints.length - 1; i++) {
       const currentPoint = allPoints[i];
       const nextPoint = allPoints[i + 1];
       if (!currentPoint || !nextPoint) continue;
+
+      const fromId = getPointId(currentPoint);
+      const toId = getPointId(nextPoint);
+      const { speed: segmentSpeed, altitude: segmentAltitude } = globalsChanged
+        ? { speed: flightPlan.speed, altitude: flightPlan.altitude }
+        : inheritSegmentPerformance(
+            routeSegmentsRef.current,
+            fromId,
+            toId,
+            flightPlan.speed,
+            flightPlan.altitude,
+          );
 
       const distance = calculateDistance(
         currentPoint.latitude,
@@ -313,12 +345,12 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         nextPoint.longitude
       );
       const airspeedsResult = calculateAirspeeds(
-        flightPlan.speed,
-        flightPlan.altitude,
+        segmentSpeed,
+        segmentAltitude,
         flightPlan.groundTempC,
         flightPlan.groundElevationFt
       );
-      const tas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(flightPlan.speed, flightPlan.altitude);
+      const tas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(segmentSpeed, segmentAltitude);
 
       let segmentEteMinutes: number;
       let windFromDeg: number | undefined;
@@ -331,7 +363,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         const w = await fetchWindAtLocationTime(
           midLat,
           midLon,
-          flightPlan.altitude,
+          segmentAltitude,
           refTime,
           3
         );
@@ -355,16 +387,12 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         refTime = addMinutesUtc(refTime, segmentEteMinutes);
       }
 
-      // 型安全なID取得
-      const fromId = getPointId(currentPoint);
-      const toId = getPointId(nextPoint);
-
       const baseSeg: RouteSegment = {
         from: fromId,
         to: toId,
-        speed: flightPlan.speed,
+        speed: segmentSpeed,
         bearing,
-        altitude: flightPlan.altitude,
+        altitude: segmentAltitude,
         eta: segmentEta,
         distance,
         duration: formatTime(segmentEteMinutes),
@@ -723,6 +751,19 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
             <RouteProfilePanel flightPlan={flightPlan} />
           </div>
         </details>
+        <p className="px-1 text-2xs text-gray-400">
+          計画ルートを 3D 空域で疑似再生（参考）:{' '}
+          <button
+            type="button"
+            data-testid="planning-open-airspace3d"
+            onMouseEnter={preloadAirspace3d}
+            onFocus={preloadAirspace3d}
+            onClick={openAirspace3d}
+            className="text-brand-primary underline-offset-2 hover:underline"
+          >
+            3D空域エクスプローラ
+          </button>
+        </p>
         <details className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-950/30 p-2" open>
           <summary className="cursor-pointer px-2 py-1 text-sm font-semibold text-whiskyPapa-yellow">Debrief / 航跡</summary>
           <div className="mt-2">

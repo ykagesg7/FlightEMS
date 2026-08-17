@@ -16,6 +16,14 @@ const deploymentDomain = isProd ? window.location.origin : null;
  * Aviation Weather API エンドポイントを構築
  * 開発環境ではプロキシされるように相対パスを、本番環境では完全なURLを使用
  */
+function isBenignAviationWeatherError(error: unknown): boolean {
+  if (!axios.isAxiosError(error)) return false;
+  if (error.response?.status === 404) return true;
+  if (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') return true;
+  const status = error.response?.status;
+  return status === 429 || status === 500 || status === 502 || status === 503;
+}
+
 function getApiEndpoint(type: 'metar' | 'taf', icaoCode: string): string {
   const params = `type=${type}&icao=${icaoCode}`;
 
@@ -52,12 +60,10 @@ export async function fetchMETAR(icaoCode: string): Promise<METARData | null> {
 
     return null;
   } catch (error) {
+    if (isBenignAviationWeatherError(error)) {
+      return null;
+    }
     if (axios.isAxiosError(error)) {
-      // 404エラー（データなし）は静かに処理
-      if (error.response?.status === 404) {
-        console.log(`METAR データなし (${icaoCode})`);
-        return null;
-      }
       console.error(`METAR取得エラー (${icaoCode}):`, error.response?.data || error.message);
     } else {
       console.error(`METAR取得エラー (${icaoCode}):`, error);
@@ -89,12 +95,10 @@ export async function fetchTAF(icaoCode: string): Promise<TAFData | null> {
 
     return null;
   } catch (error) {
+    if (isBenignAviationWeatherError(error)) {
+      return null;
+    }
     if (axios.isAxiosError(error)) {
-      // 404エラー（データなし）は静かに処理
-      if (error.response?.status === 404) {
-        console.log(`TAF データなし (${icaoCode})`);
-        return null;
-      }
       console.error(`TAF取得エラー (${icaoCode}):`, error.response?.data || error.message);
     } else {
       console.error(`TAF取得エラー (${icaoCode}):`, error);

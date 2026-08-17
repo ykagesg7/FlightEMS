@@ -29,6 +29,7 @@ const Links = lazy(() => import('./pages/links/Links'));
 // App Pages (lazy)
 const HomePage = lazyWithRetry(() => import('./pages/dashboard/HomePage'));
 const PlanningMapPage = lazyWithRetry(() => import('./pages/planning/PlanningMapPage'));
+const Airspace3dPage = lazy(() => import('./pages/explore/Airspace3dPage'));
 // LearningPage is now integrated into ArticlesPage
 const ArticlesPage = lazyWithRetry(() => import('./pages/articles/ArticlesPage'));
 const ArticleDetailPage = lazyWithRetry(() => import('./pages/articles/ArticleDetailPage'));
@@ -117,6 +118,7 @@ const App: React.FC = () => {
               {/* Flight Academy Tools */}
               <Route path="dashboard" element={<Navigate to="/" replace />} />
               <Route path="planning" element={<PlanningMapPage />} />
+              <Route path="explore/airspace-3d" element={<Airspace3dPage />} />
               <Route path="learning" element={<LearningRedirect />} />
               <Route path="learning/:contentId" element={<LearningContentRedirect />} />
               <Route path="articles" element={<ArticlesPage />} />
