@@ -60,7 +60,7 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
   - `weather.ts`: 一般気象・METAR/TAF・RainViewer プロキシ（`?action=`。旧 URL は rewrite）
   - `cron.ts`: 週次 cron 3 ジョブ（`?job=`。旧 `/api/cron/...` は rewrite）
   - `swim-notam-search.ts`: **SWIM デジタルノータム検索**プロキシ（`GET`、認証はサーバのみ）
-  - `telemetry-approve.ts`: 週次テレメトリ 2c。Slack 署名検証後に `weekly-telemetry-approve` を `workflow_dispatch`（notify アプリには Event Subscriptions を付けない）
+  - `telemetry-approve.ts`: 週次テレメトリ 2c。Slack Events（`message.channels`）を署名検証し `weekly-telemetry-approve` を `workflow_dispatch`。ACK は notify の Incoming Webhook。Slash Command は使わない。notify アプリには Event Subscriptions を付けない
   - `lib/swimNotamCore.ts`: ログイン・検索・AIXM 要約・`geometry` / `rawXml` 付与の共有ロジック
   - `lib/swimNotamHttpShared.ts`: Vercel ハンドラ・Vite プラグイン・`dev-weather-server` で共有するディスパッチ
   - `lib/swimNotamGeometry.ts`: GML `posList` / `pos` から GeoJSON を推定（日本域ヒューリスティック・参考表示）

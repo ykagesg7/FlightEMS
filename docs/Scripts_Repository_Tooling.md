@@ -168,12 +168,12 @@ Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
   python scripts/telemetry/format_ga4_review.py --self-test
   python scripts/telemetry/format_ga4_review.py --in artifacts/ga4-iso-week.json
   ```
-- **フェーズ2c（L0）**: [`.github/workflows/weekly-telemetry-approve.yml`](../.github/workflows/weekly-telemetry-approve.yml)。分類 [`approve_command.py`](../scripts/telemetry/approve_command.py)。L1 は [`l1_allowlist.json`](../scripts/telemetry/l1_allowlist.json)（空）。承認者 [`approvers.json`](../scripts/telemetry/approvers.json)。Slack 受信は [`api/telemetry-approve.ts`](../api/telemetry-approve.ts)（**notify アプリに Event Subscriptions を付けない**）。
+- **フェーズ2c（L0）**: [`.github/workflows/weekly-telemetry-approve.yml`](../.github/workflows/weekly-telemetry-approve.yml)。分類 [`approve_command.py`](../scripts/telemetry/approve_command.py)。L1 は [`l1_allowlist.json`](../scripts/telemetry/l1_allowlist.json)（空）。承認者 [`approvers.json`](../scripts/telemetry/approvers.json)。Slack 受信は [`api/telemetry-approve.ts`](../api/telemetry-approve.ts)（**notify アプリに Event Subscriptions を付けない。Slash Command は使わない**）。
   ```powershell
   python scripts/telemetry/approve_command.py --self-test
   gh workflow run weekly-telemetry-approve.yml -f command=HOLD
   ```
-  Vercel 配線（一度）: Production に `SLACK_SIGNING_SECRET` と、`actions:write` のみの fine-grained PAT `GITHUB_TELEMETRY_DISPATCH_TOKEN`。Request URL は `https://flight-lms.vercel.app/api/telemetry-approve`。別 Slack アプリ `fa-telemetry-approve` で `message.channels`。承認は Facts スレッドへ `HOLD` 等を一行返信。ACK は `fa-telemetry-notify` の Incoming Webhook。Slack はスレッドで Slash Command を使えない。
+  Vercel 配線（一度）: Production に `SLACK_SIGNING_SECRET` と、`actions:write` のみの fine-grained PAT `GITHUB_TELEMETRY_DISPATCH_TOKEN`。Request URL は `https://flight-lms.vercel.app/api/telemetry-approve`。別 Slack アプリ `fa-telemetry-approve` で `message.channels`。承認は Facts スレッドへ `HOLD` 等を一行返信。ACK は `fa-telemetry-notify` の Incoming Webhook。Slash Command は使わない。
 
 ## GA4 MCP・OAuth / ADC（ローカル例）
 

@@ -2,7 +2,7 @@
 
 **正本**: 本書（別チャットの Agent はここを先に読む）  
 **作成**: 2026-08-08  
-**最終更新**: 2026-08-17（フェーズ2c L0。Slack Facts は日本語）  
+**最終更新**: 2026-08-17（フェーズ2c L0 配線済。承認は Facts スレッドへ一行返信。Slash Command は使わない）  
 **実施ペース**: **火曜 09:00 JST**（ISO 週: 月曜 00:00〜日曜 23:59、プロパティ TZ = Asia/Tokyo）。欠席週は行を飛ばさず「スキップ」理由を1行残す。**土曜に別窓で埋めない。**
 
 関連:
@@ -24,7 +24,7 @@
 - **フェーズ1（完了）**: [`.github/workflows/weekly-telemetry-ga4.yml`](../../.github/workflows/weekly-telemetry-ga4.yml) が ISO 週 JSON を artifact に置く。Secret `GA4_SA_JSON`。ドライラン W33: [run 31998682755](https://github.com/ykagesg7/FlightEMS/actions/runs/31998682755)（正本には未記入）。
 - **フェーズ2a（実装・検証済）**: [`.github/workflows/weekly-telemetry-notify.yml`](../../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ **日本語** Facts を投稿する。`@` メンションなし。Secret `SLACK_WEBHOOK_URL`。
 - **フェーズ2b（実装）**: Slack スレッドで人が Cursor をメンション → Skill [`weekly-telemetry-review`](../../.cursor/skills/weekly-telemetry-review/SKILL.md) が正本 PR を出す（merge しない）。Facts 下書きは `scripts/telemetry/format_ga4_review.py`。
-- **フェーズ2c（L0 実装）**: スレッドの一行コマンドを [`.github/workflows/weekly-telemetry-approve.yml`](../../.github/workflows/weekly-telemetry-approve.yml) が実行する。`APPROVE-DOC` は `telemetry/YYYY-Www` かつ docs のみの PR を squash merge。`APPROVE T-xx` は **許可リスト空**のため no-op。受信は Vercel [`api/telemetry-approve.ts`](../../api/telemetry-approve.ts)（Slack Events。notify アプリには付けない）。未配線でも `gh workflow run weekly-telemetry-approve.yml` で人手起動できる。
+- **フェーズ2c（L0 実装・配線済）**: スレッドの一行コマンドを [`.github/workflows/weekly-telemetry-approve.yml`](../../.github/workflows/weekly-telemetry-approve.yml) が実行する。`APPROVE-DOC` は `telemetry/YYYY-Www` かつ docs のみの PR を squash merge。`APPROVE T-xx` は **許可リスト空**のため no-op。受信は Vercel [`api/telemetry-approve.ts`](../../api/telemetry-approve.ts)（Slack Events `message.channels`。notify アプリには付けない）。ACK は `fa-telemetry-notify` の Incoming Webhook。Slash Command は使わない。未配線でも `gh workflow run weekly-telemetry-approve.yml` で人手起動できる。
 
 ### Slack 承認コマンド
 
@@ -38,14 +38,14 @@
 | `HOLD` | 今週は実行しない | — |
 | `REJECT T-xx` | 提案を否定（ボードは open のまま） | — |
 
-ボットが投稿するチャンネルを「全メッセージで発火」にしない。承認はキーワード付きスレッド返信のみ。2c の ACK はコマンド語を再掲しない。
+ボットが投稿するチャンネルを「全メッセージで発火」にしない。承認はキーワード付きスレッド返信のみ。2c の ACK はコマンド語を再掲せず、**`fa-telemetry-notify` の投稿**としてスレッドに付く。Slash Command は作らない。
 
 ### フェーズ2c の配線（一度）
 
 1. **GitHub** に workflow `weekly-telemetry-approve` がある（L0）。手動なら `gh workflow run weekly-telemetry-approve.yml -f command=HOLD`。
 2. **Slack アプリは notify と分ける。** Incoming Webhook の `fa-telemetry-notify` に Event Subscriptions を付けない。
 3. 本番 Vercel に `SLACK_SIGNING_SECRET` と `GITHUB_TELEMETRY_DISPATCH_TOKEN`（fine-grained、`actions:write` のみ。contents は付けない）。
-4. Request URL: `https://flight-lms.vercel.app/api/telemetry-approve`。Bot event は **`message.channels`**。チャンネルは `#fa-telemetry`。Facts **スレッドに** `HOLD` と一行返信する（Slack はスレッドで `/fa-approve` を使えない）。ACK は Incoming Webhook のため **`fa-telemetry-notify` の投稿**として付く。`fa-telemetry-notify` には Event Subscriptions を付けない。Socket Mode は Off。
+4. Request URL: `https://flight-lms.vercel.app/api/telemetry-approve`。Bot event は **`message.channels` のみ**。チャンネルは `#fa-telemetry`。Facts **スレッドに** `HOLD` / `APPROVE-DOC` 等を一行返信する。ACK は Incoming Webhook のため **`fa-telemetry-notify` の投稿**として付く。`fa-telemetry-notify` には Event Subscriptions を付けない。Slash Command は使わない。Socket Mode は Off。
 5. L1 を足すときは [`scripts/telemetry/l1_allowlist.json`](../../scripts/telemetry/l1_allowlist.json) を PR してから。T-03 の自動 resolve は再発中のため入れない。
 
 ---
