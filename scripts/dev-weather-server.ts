@@ -200,7 +200,7 @@ app.get('/api/aviation-weather', async (req, res) => {
   }
 });
 
-// OpenSky states（api/opensky-states.ts と同ロジック。Vite の /api プロキシ先で利用）
+// OpenSky states（api/_lib/openskyStatesCore.ts と同ロジック。本番 Vercel 関数は Hobby 枠のため無し）
 app.options('/api/opensky-states', (_req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');

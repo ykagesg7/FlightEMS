@@ -231,7 +231,7 @@
   curl -sS "https://api.airplanes.live/v2/point/35.5/139.5/100" | head -c 200
   ```
   HTTP **200** と JSON（`ac` 配列）を期待。地図側は `/planning` を開きレイヤー「航空機（参考）」を ON にして機体マーカー表示を確認。
-- **旧 OpenSky 資産**: `OPENSKY_CLIENT_ID` / `OPENSKY_CLIENT_SECRET`（Vercel env）と `api/opensky-states`・`api/_lib/openskyStatesCore.ts`・`openskyOAuthToken.ts` は **未使用**（ローカル dev のみ温存）。env は削除しても可。
+- **旧 OpenSky 資産**: `OPENSKY_CLIENT_ID` / `OPENSKY_CLIENT_SECRET`（Vercel env）と `api/_lib/openskyStatesCore.ts`・`openskyOAuthToken.ts` は **未使用**（ローカル dev のみ温存。Vercel 関数 `api/opensky-states.ts` は Hobby 12 本枠のため削除済み）。env は削除しても可。
 - **仕様・開発**: [02_System_Spec.md](02_System_Spec.md) 地図節、[03_Development_Guide.md](03_Development_Guide.md) 航空機レイヤー節、[Component_Structure_Guide.md](Component_Structure_Guide.md) `planning/components/map`。
 
 ### **GA4（Google Analytics 4）**
