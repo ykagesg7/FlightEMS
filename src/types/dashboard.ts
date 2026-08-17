@@ -33,7 +33,10 @@ export interface DashboardMetrics {
   /** 模試正答率 (0-100) - テスト問題の正確性 */
   testAccuracyPct: number;
 
-  /** 直近7日間の学習時間（分） */
+  /** 今日（JST）の学習時間（分） */
+  todayStudyMinutes: number;
+
+  /** 直近7日（JST 暦日、今日含む）の学習時間（分） */
   weeklyStudyMinutes: number;
 
   /** 連続学習日数 */
@@ -45,10 +48,11 @@ export interface DashboardMetrics {
     title: string;
   };
 
-  /** 弱点トピック（正答率が低いもの上位3件） */
+  /** 弱点トピック（正答率が低いもの。Home は先頭1件） */
   weakTopics: Array<{
     topic: string;
     accuracyPct: number;
+    attemptCount: number;
   }>;
 
   /** 学習 XP の相対位置（RPC 失敗時は未設定） */
@@ -91,7 +95,7 @@ export interface StudyTimeData {
   /** 今日の学習時間（分） */
   todayMinutes: number;
 
-  /** 今週の学習時間（分） */
+  /** 直近7日（JST）の学習時間（分） */
   weeklyMinutes: number;
 
   /** 今月の学習時間（分） */

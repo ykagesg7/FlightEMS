@@ -8,13 +8,10 @@ import { fetchDashboardMetrics } from '../../utils/dashboard';
 import { AnnouncementCard } from './components/AnnouncementCard';
 import { DailyTasks } from './components/DailyTasks';
 import { LearningHeatmap } from './components/LearningHeatmap';
-import { LearningBenchmarkCard } from './components/LearningBenchmarkCard';
 import { LearningJourneyCard } from './components/LearningJourneyCard';
-import { CohortMissionSection } from './components/CohortMissionSection';
-import { PublicLeaderboardSection } from './components/PublicLeaderboardSection';
 import { ProfileCompletionNudge } from '../../components/profile/ProfileCompletionNudge';
 import { InAppNotificationBell } from '../../components/learning/InAppNotificationBell';
-import { SubjectRadarChart } from './components/SubjectRadarChart';
+import { SubjectAccuracyChart } from './components/SubjectAccuracyChart';
 import { buildWeakSubjectHref } from '../test/testHubFilters';
 
 const useReveal = (deps?: React.DependencyList) => {
@@ -111,7 +108,7 @@ const DashboardContent: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchDashboardMetrics(user!.id);
+        const data = await fetchDashboardMetrics(user!.id, { includeSocial: false });
         setMetrics(data);
       } catch (err) {
         console.error('ダッシュボードデータ取得エラー:', err);
@@ -172,11 +169,11 @@ const DashboardContent: React.FC = () => {
   }
 
   const borderColor = 'border-brand-primary/60';
+  const weakest = metrics.weakTopics[0];
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto">
-        {/* ヘッダー + 通知 */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <Typography variant="h1" color="brand" className="mb-1">
@@ -189,42 +186,23 @@ const DashboardContent: React.FC = () => {
           <InAppNotificationBell className="sm:max-w-sm sm:shrink-0" />
         </div>
 
-        {/* Hero: 学習ジャーニー */}
         <LearningJourneyCard />
+        <div className="mb-6">
+          <DailyTasks variant="inline" limit={2} />
+        </div>
 
-        {/* サマリーカード */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Card variant="hud" padding="md" className={borderColor}>
             <CardContent>
               <Typography variant="caption" color="muted" className="mb-2">
-                学習の進捗率
+                今日の学習分（JST）
               </Typography>
               <Typography variant="h1" color="hud" className="mb-2">
-                {metrics.overallProgressPct}%
+                {metrics.todayStudyMinutes}分
               </Typography>
-              <div className="w-full bg-gray-700/30 rounded-full h-2">
-                <div
-                  className="h-2 rounded-full transition-all duration-500 bg-brand-primary"
-                  style={{ width: `${metrics.overallProgressPct}%` }}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card variant="hud" padding="md" className={borderColor}>
-            <CardContent>
-              <Typography variant="caption" color="muted" className="mb-2">
-                クイズ正答率
+              <Typography variant="caption" color="muted">
+                クイズと記事・レッスンの実測
               </Typography>
-              <Typography variant="h1" color="hud" className="mb-2">
-                {metrics.testAccuracyPct}%
-              </Typography>
-              <div className="w-full bg-gray-700/30 rounded-full h-2">
-                <div
-                  className="h-2 rounded-full transition-all duration-500 bg-brand-primary"
-                  style={{ width: `${metrics.testAccuracyPct}%` }}
-                />
-              </div>
             </CardContent>
           </Card>
 
@@ -237,15 +215,35 @@ const DashboardContent: React.FC = () => {
                 {metrics.streakDays}日
               </Typography>
               <Typography variant="caption" color="muted">
-                継続して学習を続けましょう
+                連続して学習した日
               </Typography>
             </CardContent>
           </Card>
-        </div>
 
-        {/* 今日のタスク（ヒーロー直後） */}
-        <div className="mb-6">
-          <DailyTasks />
+          <Card variant="hud" padding="md" className={borderColor}>
+            <CardContent>
+              <Typography variant="caption" color="muted" className="mb-2">
+                いちばん弱い科目
+              </Typography>
+              {weakest ? (
+                <>
+                  <Link
+                    to={buildWeakSubjectHref(weakest.topic)}
+                    className="block text-xl font-semibold text-brand-primary underline decoration-brand-primary/40 hover:decoration-brand-primary"
+                  >
+                    {weakest.topic}
+                  </Link>
+                  <Typography variant="caption" color="muted" className="mt-2 block">
+                    通算正答率 {weakest.accuracyPct}%（{weakest.attemptCount}問）
+                  </Typography>
+                </>
+              ) : (
+                <Typography variant="body" color="muted">
+                  5問以上解くと表示します
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         <ProfileCompletionNudge
@@ -253,67 +251,12 @@ const DashboardContent: React.FC = () => {
           className="mb-6 max-w-3xl"
         />
 
-        {/* コホート個人ミッション + 編隊ゲージ */}
-        <CohortMissionSection />
-
-        {/* 続きから再開 / 弱点復習 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {metrics.nextLesson && (
-            <Link to={`/articles/${metrics.nextLesson.id}`}>
-              <Card variant="hud" padding="md" className={`transition-all duration-300 hover:scale-[1.02] hover:shadow-lg ${borderColor}`}>
-                <CardContent>
-                  <Typography variant="h4" color="hud" className="mb-3">
-                    続きから再開
-                  </Typography>
-                  <Typography variant="body" color="muted" className="mb-4">
-                    {metrics.nextLesson.title}
-                  </Typography>
-                  <Typography variant="body-sm" color="hud">
-                    すぐ再開する →
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Link>
-          )}
-
-          {metrics.weakTopics.length > 0 && (
-            <Card variant="hud" padding="md" className={borderColor}>
-              <CardContent>
-                <Typography variant="h4" color="hud" className="mb-3">
-                  復習が必要なトピック
-                </Typography>
-                <div className="space-y-2">
-                  {metrics.weakTopics.map((topic, idx) => (
-                    <div key={idx} className="flex items-center justify-between gap-3">
-                      <Link
-                        to={buildWeakSubjectHref(topic.topic)}
-                        className="text-sm text-[var(--text-primary)] underline decoration-brand-primary/40 hover:text-brand-primary hover:decoration-brand-primary"
-                      >
-                        {topic.topic}
-                      </Link>
-                      <Typography variant="body-sm" color="brand" className="shrink-0">
-                        {topic.accuracyPct}%
-                      </Typography>
-                    </div>
-                  ))}
-                </div>
-                <Link to="/test?mode=review" className="inline-block mt-4">
-                  <Typography variant="body-sm" color="hud" className="underline">
-                    弱点を復習する →
-                  </Typography>
-                </Link>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* 詳しく（折りたたみ） */}
         <details className="mb-6 group rounded-xl border border-brand-primary/30 bg-[var(--panel)]/40 open:pb-4">
           <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-brand-primary marker:content-none [&::-webkit-details-marker]:hidden">
             <span className="inline-flex items-center gap-2">
               詳しく
               <span className="text-xs font-normal text-[color:var(--text-muted)] group-open:hidden">
-                （レーダー・ヒートマップ・学習時間など）
+                （直近7日・ヒートマップ・科目別正答率）
               </span>
               <span className="text-xs font-normal text-[color:var(--text-muted)] hidden group-open:inline">
                 （閉じる）
@@ -321,72 +264,23 @@ const DashboardContent: React.FC = () => {
             </span>
           </summary>
           <div className="space-y-6 px-4 pt-2">
-            <SubjectRadarChart />
-            <LearningHeatmap />
             <Card variant="hud" padding="md" className={borderColor}>
               <CardContent>
-                <Typography variant="h4" color="hud" className="mb-4">
-                  今週の学習時間
+                <Typography variant="h4" color="hud" className="mb-2">
+                  直近7日の学習時間
                 </Typography>
                 <Typography variant="h2" color="hud">
                   {metrics.weeklyStudyMinutes}分
                 </Typography>
                 <Typography variant="body-sm" color="muted" className="mt-2">
-                  今週の積み上げを継続しましょう
+                  今日を含む JST 暦日 7 日分。今日は {metrics.todayStudyMinutes}分
                 </Typography>
               </CardContent>
             </Card>
-            {metrics.xpBenchmark ? (
-              <LearningBenchmarkCard benchmark={metrics.xpBenchmark} borderColor={borderColor} />
-            ) : null}
-            <PublicLeaderboardSection entries={metrics.publicLeaderboard} borderColor={borderColor} />
+            <LearningHeatmap />
+            <SubjectAccuracyChart />
           </div>
         </details>
-
-        {/* 3本柱ナビ */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link to="/planning">
-            <Card variant="hud" padding="md" className={`text-center transition-all duration-300 hover:scale-105 hover:shadow-lg ${borderColor}`}>
-              <CardContent>
-                <div className="text-2xl mb-2">🗺️</div>
-                <Typography variant="h5" color="hud" className="font-bold">
-                  PLANNING
-                </Typography>
-                <Typography variant="body-sm" color="muted">
-                  ルートと条件を確認
-                </Typography>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/articles">
-            <Card variant="hud" padding="md" className={`text-center transition-all duration-300 hover:scale-105 hover:shadow-lg ${borderColor}`}>
-              <CardContent>
-                <div className="text-2xl mb-2">📖</div>
-                <Typography variant="h5" color="hud" className="font-bold">
-                  学習記事
-                </Typography>
-                <Typography variant="body-sm" color="muted">
-                  記事とレッスンを読む
-                </Typography>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/test">
-            <Card variant="hud" padding="md" className={`text-center transition-all duration-300 hover:scale-105 hover:shadow-lg ${borderColor}`}>
-              <CardContent>
-                <div className="text-2xl mb-2">✍️</div>
-                <Typography variant="h5" color="hud" className="font-bold">
-                  QUIZ
-                </Typography>
-                <Typography variant="body-sm" color="muted">
-                  理解度を確認する
-                </Typography>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
       </div>
     </div>
   );

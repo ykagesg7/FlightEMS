@@ -10,6 +10,12 @@ import { isArticleReleased } from './articlePublishGate';
 const articleModules = import.meta.glob<MDXModule>('../content/articles/*.mdx', { eager: false });
 const lessonModules = import.meta.glob<MDXModule>('../content/lessons/*.mdx', { eager: false });
 
+export function isLessonContentId(contentId: string): boolean {
+  if (!contentId) return false;
+  const suffix = `/${contentId}.mdx`;
+  return Object.keys(lessonModules).some((path) => path.endsWith(suffix));
+}
+
 /** Published/emailed Contact stems → CP. Route params and filenames both resolve. */
 const ARTICLE_ROUTE_ALIASES: Record<string, string> = {
   'ctx-1-1-area-and-purpose': 'cp-1-1-area-and-purpose',

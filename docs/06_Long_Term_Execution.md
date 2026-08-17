@@ -130,11 +130,11 @@
 
 ### 5.2 実装済み（2026年3月）
 
-- **学習時間記録**: `answeredAt` / `responseTimeMs` を `learning_sessions` に保存
-- **今週の学習時間**: `learning_sessions` 直近7日の `duration_minutes` 合計
-- **ヒートマップ**: 縦軸=曜日、横軸=週、`learning_sessions` を日別集計
-- **弱点トピック**: `user_test_results.subject_category` ベースで正答率が低い順
-- **科目別レーダーチャート**: `SubjectRadarChart` で `user_test_results` を集計
+- **学習時間記録**: `answeredAt` / `responseTimeMs` をクイズの `learning_sessions` に保存。記事・レッスンは滞在秒（JST）
+- **今日 / 直近7日の学習時間**: `learning_sessions` の `duration_minutes` を JST 暦日で合計
+- **ヒートマップ**: 縦軸=曜日、横軸=週、`learning_sessions` を JST 日別集計
+- **弱点トピック**: `user_test_results.subject_category` ベース、5問以上で正答率が低い順
+- **科目別正答率**: `SubjectAccuracyChart` で `user_test_results` を水平棒に集計
 - **user_learning_profiles ブートストラップ**: 初回クイズ/記事学習時に自動で行を作成
 - **復習導線**: 弱点トピックカードから `/test?mode=review` へリンク
 

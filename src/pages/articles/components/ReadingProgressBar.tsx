@@ -3,7 +3,8 @@ import { MDX_CONTENT_LOADED_EVENT } from '../../../components/mdx/MDXLoader';
 import { useArticlePrefetch } from '../../../hooks/useArticlePrefetch';
 import { useArticleProgress } from '../../../hooks/useArticleProgress';
 import { useAuth } from '../../../hooks/useAuth';
-import { getArticleBySlug } from '../../../utils/articlesIndex';
+import { useReadingDwellSession } from '../../../hooks/useReadingDwellSession';
+import { getArticleBySlug, isLessonContentId } from '../../../utils/articlesIndex';
 
 function useThrottle<T extends (...args: unknown[]) => void>(fn: T, intervalMs: number) {
   const lastCalledAtRef = useRef(0);
@@ -40,17 +41,23 @@ interface ReadingProgressBarProps {
 }
 
 /**
- * 表示は行わず、`learning_progress` へスクロール進捗を保存する。
- * `useArticleProgress.updateArticleProgress` のみ使用（95% 以上で completed）。
+ * 表示は行わず、スクロール進捗と読了滞在を保存する。
+ * 進捗は `learning_progress`、滞在は `learning_sessions`（JST 集計の元データ）。
  */
 export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentId, slug }) => {
-  const [, setHeaderOffset] = useState(0);
-  const [, setReadingTime] = useState<number>(5);
   const { updateArticleProgress } = useArticleProgress();
   const { user } = useAuth();
+  const [estimatedMinutes, setEstimatedMinutes] = useState<number | null>(null);
 
   const currentSlug = slug || contentId || '';
   useArticlePrefetch(currentSlug, true);
+  useReadingDwellSession({
+    userId: user?.id,
+    contentId: currentSlug,
+    contentType: isLessonContentId(currentSlug) ? 'lesson' : 'article',
+    estimatedMinutes,
+    enabled: Boolean(user && currentSlug),
+  });
 
   const compute = useThrottle(() => {
     if (!user || !currentSlug) return;
@@ -63,11 +70,6 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
   }, 1000);
 
   useEffect(() => {
-    const computeHeaderOffset = () => {
-      const header = document.querySelector('header');
-      const h = header instanceof HTMLElement ? header.getBoundingClientRect().height : 0;
-      setHeaderOffset(h);
-    };
     const onScroll = () => {
       compute();
     };
@@ -77,17 +79,16 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
     const onLoaded = async (event: CustomEvent) => {
       setTimeout(() => {
         compute();
-        computeHeaderOffset();
       }, 50);
 
       const { meta } = event.detail || {};
-      if (meta?.readingTime) {
-        setReadingTime(meta.readingTime);
+      if (typeof meta?.readingTime === 'number' && meta.readingTime > 0) {
+        setEstimatedMinutes(meta.readingTime);
       } else if (currentSlug) {
         try {
           const article = await getArticleBySlug(currentSlug);
           if (article?.meta.readingTime) {
-            setReadingTime(article.meta.readingTime);
+            setEstimatedMinutes(article.meta.readingTime);
           }
         } catch (error) {
           console.warn('記事情報の取得に失敗しました:', error);
@@ -95,7 +96,6 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
       }
     };
     compute();
-    computeHeaderOffset();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
     window.addEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as unknown as EventListener);

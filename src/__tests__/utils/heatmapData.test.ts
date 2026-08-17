@@ -76,4 +76,17 @@ describe('buildDailyStudyStats', () => {
     const heavy = rows.find((r) => r.minutes >= 46);
     expect(heavy?.intensity).toBe(3);
   });
+
+  it('buckets sessions after 15:00 UTC onto the next JST calendar day', async () => {
+    vi.setSystemTime(new Date('2026-08-16T16:00:00.000Z'));
+    mockGte.mockResolvedValue({
+      data: [{ duration_minutes: 12, created_at: '2026-08-16T15:30:00.000Z' }],
+      error: null,
+    });
+
+    const rows = await buildDailyStudyStats('user-jst', 3);
+    const nextJstDay = rows.find((r) => r.date === '2026-08-17');
+    expect(nextJstDay?.minutes).toBe(12);
+    expect(rows.find((r) => r.date === '2026-08-16')?.minutes).toBe(0);
+  });
 });

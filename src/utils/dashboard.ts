@@ -4,8 +4,9 @@
  */
 
 import { supabase } from './supabase';
-import type { DashboardMetrics, LearningXpBenchmark, PublicLeaderboardEntry } from '../types/dashboard';
+import type { DashboardMetrics, LearningXpBenchmark, PublicLeaderboardEntry, StudyTimeData } from '../types/dashboard';
 import type { UserRank } from '../types/gamification';
+import { formatJstYmd, startOfJstCalendarDaysAgoUtc } from './jstDate';
 
 /** この人数未満はベンチマーク数値を出さない（プライバシー・統計的無意味の緩和） */
 export const MIN_POPULATION_FOR_XP_BENCHMARK = 5;
@@ -15,7 +16,10 @@ export const MIN_POPULATION_FOR_XP_BENCHMARK = 5;
  * 既存テーブルから必要な情報を集計して返す
  * 一部指標の取得に失敗しても、他はフォールバックで返し全体を落とさない
  */
-export async function fetchDashboardMetrics(userId: string): Promise<DashboardMetrics> {
+export async function fetchDashboardMetrics(
+  userId: string,
+  options?: { includeSocial?: boolean },
+): Promise<DashboardMetrics> {
   const emptyXpBenchmark: LearningXpBenchmark = {
     xpPoints: 0,
     populationN: 0,
@@ -28,6 +32,7 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
   const defaults: DashboardMetrics = {
     overallProgressPct: 0,
     testAccuracyPct: 0,
+    todayStudyMinutes: 0,
     weeklyStudyMinutes: 0,
     streakDays: 0,
     weakTopics: [],
@@ -48,6 +53,8 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
     }
   };
 
+  const includeSocial = options?.includeSocial !== false;
+
   const [learningProgress, testResults, studyTime, streakDays, nextLesson, weakTopics, xpBenchmark, publicLeaderboard] =
     await Promise.all([
       safeGet(() => getLearningProgress(userId), { completedCount: 0, totalCount: 0, progressPct: 0 }, '学習進捗'),
@@ -61,14 +68,19 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
       safeGet(() => getStreakDays(userId), 0, '継続日数'),
       safeGet(() => getNextRecommendedLesson(userId), undefined, '推奨レッスン'),
       safeGet(() => getWeakTopics(userId), [], '弱点トピック'),
-      safeGet(() => getLearningXpBenchmark(), emptyXpBenchmark, 'XPベンチマーク'),
-      safeGet(() => getPublicLeaderboard(), undefined, '公開ランキング'),
+      includeSocial
+        ? safeGet(() => getLearningXpBenchmark(), emptyXpBenchmark, 'XPベンチマーク')
+        : Promise.resolve(emptyXpBenchmark),
+      includeSocial
+        ? safeGet(() => getPublicLeaderboard(), undefined, '公開ランキング')
+        : Promise.resolve([] as PublicLeaderboardEntry[]),
     ]);
 
   return {
     ...defaults,
     overallProgressPct: learningProgress.progressPct ?? 0,
     testAccuracyPct: testResults.accuracyPct ?? 0,
+    todayStudyMinutes: studyTime.todayMinutes ?? 0,
     weeklyStudyMinutes: studyTime.weeklyMinutes ?? 0,
     streakDays: streakDays ?? 0,
     nextLesson,
@@ -76,6 +88,36 @@ export async function fetchDashboardMetrics(userId: string): Promise<DashboardMe
     xpBenchmark: xpBenchmark ?? emptyXpBenchmark,
     publicLeaderboard: publicLeaderboard ?? [],
   };
+}
+
+export type MissionSocialMetrics = {
+  xpBenchmark: LearningXpBenchmark;
+  publicLeaderboard: PublicLeaderboardEntry[];
+};
+
+/** /mission 用。XP 相対位置と任意参加ランキング */
+export async function fetchMissionSocialMetrics(): Promise<MissionSocialMetrics> {
+  const emptyXpBenchmark: LearningXpBenchmark = {
+    xpPoints: 0,
+    populationN: 0,
+    percentile: null,
+    rankTier: null,
+    cohortN: null,
+    cohortPercentile: null,
+  };
+  try {
+    const [xpBenchmark, publicLeaderboard] = await Promise.all([
+      getLearningXpBenchmark(),
+      getPublicLeaderboard(),
+    ]);
+    return {
+      xpBenchmark: xpBenchmark ?? emptyXpBenchmark,
+      publicLeaderboard: publicLeaderboard ?? [],
+    };
+  } catch (e) {
+    console.warn('Mission social metrics 取得エラー（フォールバック使用）:', e);
+    return { xpBenchmark: emptyXpBenchmark, publicLeaderboard: [] };
+  }
 }
 
 /**
@@ -211,31 +253,47 @@ async function getTestResults(userId: string) {
   };
 }
 
+export function splitStudyMinutesJst(
+  sessions: Array<{ duration_minutes: number | null; created_at: string | null }>,
+  now: Date = new Date(),
+): Pick<StudyTimeData, 'todayMinutes' | 'weeklyMinutes'> {
+  const todayYmd = formatJstYmd(now);
+  let todayMinutes = 0;
+  let weeklyMinutes = 0;
+  for (const session of sessions) {
+    if (!session.created_at) continue;
+    const minutes = session.duration_minutes || 0;
+    weeklyMinutes += minutes;
+    if (formatJstYmd(new Date(session.created_at)) === todayYmd) {
+      todayMinutes += minutes;
+    }
+  }
+  return { todayMinutes, weeklyMinutes };
+}
+
 /**
- * 直近7日間の学習時間を計算
+ * JST 今日と直近7暦日の学習時間
  */
-async function getStudyTime(userId: string) {
-  // 直近7日間の開始時刻
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+async function getStudyTime(userId: string): Promise<StudyTimeData> {
+  const now = new Date();
+  const windowStart = startOfJstCalendarDaysAgoUtc(6, now);
 
   const { data: sessions, error } = await supabase
     .from('learning_sessions')
-    .select('duration_minutes')
+    .select('duration_minutes, created_at')
     .eq('user_id', userId)
-    .gte('created_at', sevenDaysAgo.toISOString());
+    .gte('created_at', windowStart.toISOString());
 
   if (error) {
     console.error('学習時間取得エラー:', error);
     return { todayMinutes: 0, weeklyMinutes: 0, monthlyMinutes: 0 };
   }
 
-  const weeklyMinutes = sessions?.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0;
-
+  const split = splitStudyMinutesJst(sessions ?? [], now);
   return {
-    todayMinutes: 0, // TODO: 今日の学習時間計算
-    weeklyMinutes,
-    monthlyMinutes: 0, // TODO: 今月の学習時間計算
+    todayMinutes: split.todayMinutes,
+    weeklyMinutes: split.weeklyMinutes,
+    monthlyMinutes: 0,
   };
 }
 
@@ -318,7 +376,9 @@ async function getWeakTopics(userId: string) {
     .map(([topic, stats]) => ({
       topic,
       accuracyPct: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0,
+      attemptCount: stats.total,
     }))
+    .filter((item) => item.attemptCount >= 5)
     .sort((a, b) => a.accuracyPct - b.accuracyPct)
     .slice(0, 3);
 

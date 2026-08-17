@@ -6,14 +6,28 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, Typography } from '../../../components/ui';
 import { useAuthStore } from '../../../stores/authStore';
-import type { DailyTask } from '../../../types/tasks';
+import type { DailyTask, TaskType } from '../../../types/tasks';
 import { generateDailyTasks } from '../../../utils/taskGenerator';
 
-export const DailyTasks: React.FC = () => {
+type DailyTasksProps = {
+  variant?: 'card' | 'inline';
+  types?: TaskType[];
+  limit?: number;
+};
+
+const INLINE_TASK_TYPES: TaskType[] = ['review', 'lesson'];
+
+export const DailyTasks: React.FC<DailyTasksProps> = ({
+  variant = 'card',
+  types,
+  limit = 3,
+}) => {
   const { user } = useAuthStore();
   const [tasks, setTasks] = useState<DailyTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const typeFilter = types ?? (variant === 'inline' ? INLINE_TASK_TYPES : undefined);
+  const typeKey = typeFilter?.join(',') ?? '';
 
   useEffect(() => {
     if (!user) {
@@ -29,7 +43,8 @@ export const DailyTasks: React.FC = () => {
         setLoading(true);
         setError(null);
         const data = await generateDailyTasks(user.id);
-        setTasks(data);
+        const filtered = typeFilter ? data.filter((task) => typeFilter.includes(task.type)) : data;
+        setTasks(filtered.slice(0, limit));
       } catch (err) {
         console.error('学習タスク取得エラー:', err);
         setError('タスクの取得に失敗しました');
@@ -39,16 +54,25 @@ export const DailyTasks: React.FC = () => {
     }
 
     loadTasks();
-  }, [user]);
+  }, [user, limit, typeKey]);
 
   const borderColor = 'border-green-500/50';
 
   if (loading) {
+    if (variant === 'inline') {
+      return (
+        <div className="mt-4 space-y-2">
+          {[1, 2].map((i) => (
+            <div key={i} className="h-10 bg-gray-700/30 rounded animate-pulse" />
+          ))}
+        </div>
+      );
+    }
     return (
       <Card variant="hud" padding="md" className={borderColor}>
         <CardContent>
           <Typography variant="h4" color="hud" className="mb-4">
-            📝 今日の学習タスク
+            今日の学習タスク
           </Typography>
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
@@ -61,65 +85,45 @@ export const DailyTasks: React.FC = () => {
   }
 
   if (error || tasks.length === 0) {
-    return null; // エラーまたはタスクがない場合は非表示
+    return null;
   }
 
-  const getTaskIcon = (type: DailyTask['type']) => {
-    switch (type) {
-      case 'weakness':
-        return '🎯';
-      case 'review':
-        return '🔄';
-      case 'lesson':
-        return '📚';
-      default:
-        return '✓';
-    }
-  };
+  const list = (
+    <div className="space-y-2">
+      {tasks.map((task) => (
+        <Link
+          key={task.id}
+          to={task.linkTo}
+          className={`
+            block rounded-lg border px-3 py-2 transition-all duration-300
+            hover:bg-white/5 ${borderColor}
+          `}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <Typography variant="body-sm" color="hud" className="font-semibold">
+              {task.title}
+            </Typography>
+            <Typography variant="caption" color="muted" className="shrink-0">
+              目安 {task.estimatedMinutes}分
+            </Typography>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+
+  if (variant === 'inline') {
+    return <div className="mt-4">{list}</div>;
+  }
 
   return (
     <Card variant="hud" padding="md" className={borderColor}>
       <CardContent>
         <Typography variant="h4" color="hud" className="mb-4">
-          📝 今日の学習タスク
+          今日の学習タスク
         </Typography>
-        <div className="space-y-3">
-          {tasks.map((task) => (
-            <Link
-              key={task.id}
-              to={task.linkTo}
-              className={`
-                block p-4 rounded-lg border transition-all duration-300
-                hover:scale-[1.02] hover:shadow-lg
-                ${task.completed
-                  ? 'opacity-50 cursor-default'
-                  : `${borderColor} hover:bg-white/5`
-                }
-              `}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3 flex-1">
-                  <span className="text-2xl">{getTaskIcon(task.type)}</span>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      {task.completed && (
-                        <span className="text-sm">✓</span>
-                      )}
-                      <Typography variant="body-sm" color="hud" className="font-semibold">
-                        {task.title}
-                      </Typography>
-                    </div>
-                    <Typography variant="caption" color="hud">
-                      推定 {task.estimatedMinutes}分
-                    </Typography>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {list}
       </CardContent>
     </Card>
   );
 };
-

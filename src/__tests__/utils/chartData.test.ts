@@ -24,6 +24,7 @@ describe('buildSubjectRadarData', () => {
     const errCase = await buildSubjectRadarData('u1');
     expect(errCase.labels).toHaveLength(5);
     expect(errCase.values).toEqual([0, 0, 0, 0, 0]);
+    expect(errCase.attemptCounts).toEqual([0, 0, 0, 0, 0]);
 
     mockEq.mockResolvedValueOnce({ data: [], error: null });
     const empty = await buildSubjectRadarData('u2');

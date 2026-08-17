@@ -32,6 +32,7 @@ export type SubjectName = typeof SUBJECT_ORDER[number];
 export interface SubjectRadarData {
   labels: SubjectName[];
   values: number[]; // 0-100の正答率
+  attemptCounts: number[];
 }
 
 /**
@@ -48,6 +49,7 @@ export async function buildSubjectRadarData(userId: string): Promise<SubjectRada
     return {
       labels: [...SUBJECT_ORDER],
       values: [0, 0, 0, 0, 0],
+      attemptCounts: [0, 0, 0, 0, 0],
     };
   }
 
@@ -79,10 +81,12 @@ export async function buildSubjectRadarData(userId: string): Promise<SubjectRada
     if (stats.total === 0) return 0;
     return Math.round((stats.correct / stats.total) * 100);
   });
+  const attemptCounts = SUBJECT_ORDER.map(subject => subjectMap.get(subject)!.total);
 
   return {
     labels: [...SUBJECT_ORDER],
     values,
+    attemptCounts,
   };
 }
 

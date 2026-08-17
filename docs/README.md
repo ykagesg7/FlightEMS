@@ -276,7 +276,7 @@ npm run lint         # Lintチェック
 - **profiles**: ユーザープロファイル（ランク、XP含む）
 - **learning_contents**: 学習記事メタデータ
 - **learning_progress**: 学習進捗（セクションベース）
-- **learning_sessions**: 学習セッション（クイズ・記事の学習時間、ヒートマップ・今週の学習時間の元データ）
+- **learning_sessions**: 学習セッション（クイズ・記事の学習時間、ヒートマップ・今日/直近7日の学習時間の元データ）
 - **user_learning_profiles**: 学習プロファイル（継続日数、ブートストラップ済み）
 - **unified_cpl_questions**: CPL試験問題（verified ベースで出題）。**`applicable_exams`**（`PPL` / `CPL` / `ATPL`）で `/test` の PPL 基礎フィルタ。パイロット手順は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)
 - **learning_test_mapping**: 記事と統一設問の対応（`unified_cpl_question_ids`）

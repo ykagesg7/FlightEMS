@@ -298,7 +298,8 @@ CREATE TABLE profiles (
 - **duration_minutes**: 生成列（`session_duration` から算出）
 - **session_metadata**: `questions_attempted`, `correct_count`, `mode`, `tab`, `quiz_session_id`, `wall_clock_seconds` などを格納
 - **クイズ insert（TestPage）**: `buildQuizLearningSessionInsert`（[`src/pages/test/utils/buildQuizLearningSession.ts`](../src/pages/test/utils/buildQuizLearningSession.ts)）経由。`content_id` は記事連動時は `learning_contents.id`、それ以外は `test-hub:{tab}`。`session_duration` は `responseTimeMs` 合計秒（**最低60秒**）。`metadata` / `started_at` 列は**使用しない**。
-- **用途**: 今週の学習時間、ヒートマップの元データ
+- **用途**: 今日 / 直近7日の学習時間、ヒートマップの元データ
+- **読了セッション**: `useReadingDwellSession` が `session_type: reading`、`content_type: article | lesson` で insert/update。frontmatter の読了目安は cap にのみ使う
 
 #### **question_issue_reports テーブル（問題報告）**
 
@@ -758,6 +759,7 @@ export interface TAFData {
 
 - **学習記事タブ**: ラベルは「学習記事」。クリックで `/articles` へ遷移。
 - **互換**: クエリ `?tab=blog` は `**/articles` へ `replace` リダイレクト**（旧リンクのため）。
+- **社会機能（2026-08）**: `CohortMissionSection`、学習 XP ベンチマーク、任意参加ランキング（Home からは移設）
 
 #### **/test クイズ Hub（2026年6月現行仕様）**
 
@@ -822,15 +824,14 @@ Articles Hub と同型の **URL 双方向同期 + タブ IA + GA4 カスタム�
 #### **ダッシュボード画面**
 
 - **Home/Dashboard統合**: ルートパス（`/`）でログイン状態に応じて自動切り替え
-- **Phase 2 構成（ログイン Home）**: 短いヘッダー「今日の1手」+ `InAppNotificationBell` → `LearningJourneyCard`（平易ラベル: 復習待ち 等）→ サマリー3カード → `DailyTasks` → `CohortMissionSection`（未登録は登録 CTA のみ）→ 続きから再開 / 弱点トピック（`buildWeakSubjectHref` で科目リンク）→ `<details>`「詳しく」（レーダー・ヒートマップ・学習時間・ベンチマーク・公開ランキング）→ 3本柱ナビ（PLANNING / 学習記事 / QUIZ）
-- **サマリーカード**: 全体進捗率、クイズ正答率、連続学習日数
-- **今週の学習時間**: `learning_sessions` 直近7日の `duration_minutes` 合計（「詳しく」内）
-- **ヒートマップ**: 縦軸=曜日（日〜土）、横軸=週（左=古い、右=新しい）。色強度=学習分数、ツールチップに学習分・セッション数（「詳しく」内）
-- **クイックアクション**: PLANNING、学習記事、QUIZ
-- **Phase 1機能**: 今日の学習タスク、科目別レーダーチャート、学習履歴ヒートマップ
-- **学習 XP の相対位置（参考）**: `get_learning_xp_benchmark` は **public 上 `SECURITY INVOKER`** の RPC（`authenticated` のみ `EXECUTE`）。集計本体は **private** の `get_learning_xp_benchmark_impl`（`SECURITY DEFINER`、PostgREST の Exposed schemas に `private` を含めないこと）。返却は呼び出しユーザーの XP・集計メタのみ（他者の id・メール等なし）。**母集団 `population_n`**: `profiles` のうち `coalesce(xp_points,0) > 0` の行数。`**percentile**`: その母集団のうち、呼び出しユーザーより XP が**厳密に小さい**行の割合（0–100）。`**cohort_n` / `cohort_percentile`**: 同一 `rank`（`IS NOT DISTINCT FROM`）かつ XP>0 のサブセット内で同様に算出；コホートが極小の場合は SQL 側で NULL になり得る。フロントは `**population_n` < 5** のとき数値を出さず文言のみ（`MIN_POPULATION_FOR_XP_BENCHMARK`）。取得は `fetchDashboardMetrics` 内の `safeGet`、失敗時は空ベンチマークでプレースホルダー表示。集計ロジックの歴史的説明は `scripts/database/20260324_learning_xp_benchmark.sql`。**Security Advisor 対応の現行正本**: `scripts/database/20260511_security_definer_rpc_hardening.sql`（MCP: `security_definer_rpc_hardening_20260511`）
-- **学習者ランキング（デフォルト参加・オプトアウト可）**: `profiles.leaderboard_opt_in` が true のユーザーのみ `get_public_leaderboard(p_limit)`（public は **INVOKER**、集計は `private.get_public_leaderboard_impl`）で一覧化（上限 `least(p_limit, 50)`）。返却列は **表示名**（`trim(leaderboard_display_name)` が空なら `trim(username)`、両方空なら `Learner`）、**xp_points**、**rank**、**leaderboard_position**（`position` は予約語のため列名回避）。メール・`full_name` は SELECT しない。ダッシュボードに表形式で表示。**新規ユーザー**は `/welcome` Step 2 で **デフォルト ON**（プロフィールからいつでもオフ）。列・オプトインの歴史的説明: `scripts/database/20260324_leaderboard_opt_in.sql`。**INVOKER/DEFINER 分離の現行正本**: 上記 `20260511_security_definer_rpc_hardening.sql`
-- **ランキング誘導 UI**: 学習ダッシュボードの `PublicLeaderboardSection` 内に未オプトイン時のみ「今すぐランキングに参加する」ボタン（`/profile?tab=leaderboard`）を表示。ミッションダッシュボード・テスト結果画面では `LeaderboardOptInCta` から同 URL へ誘導。**プロフィール完成度**は `ProfileCompletionNudge`（Home: 完成度 &lt; 60%、Mission: アバター未設定）で別途促進。
+- **ログイン Home（2026-08 整理）**: ヘッダー「今日の1手」+ `InAppNotificationBell` → `LearningJourneyCard`（主 CTA 1本）→ `DailyTasks` インライン（復習/続き 最大2、分数は**目安**）→ 状態3カード（**今日の学習分 JST** / 継続日数 / いちばん弱い科目1つ・5問以上）→ `ProfileCompletionNudge`（完成度 &lt; 60%）→ `<details>`「詳しく」（直近7日の学習時間、ヒートマップ、科目別正答率の水平棒）。3本柱カード・コホート・XP・ランキングは Home に置かない
+- **学習時間**: `learning_sessions.duration_minutes`（`session_duration` 秒の生成列）。日付は **Asia/Tokyo**。今日 = 当日 00:00 JST 以降、直近7日 = 今日を含む JST 暦日7日。クイズは `TestPage` の回答時間合計（最低60秒）。記事・レッスンは `useReadingDwellSession`（前面・非アイドル滞在、30秒未満は保存しない、1訪問上限 min(45分, 目安×3)）
+- **ヒートマップ**: 縦軸=曜日（日〜土）、横軸=週（左=古い、右=新しい）、JST 暦日。色強度=学習分数（0 / 1–15 / 16–45 / 46+）、セルに `aria-label`
+- **科目別正答率**: `SubjectAccuracyChart`（通算、低い順の水平棒、原点0、% と解答数）
+- **Mission Dashboard（`/mission`）**: ランク/ミッションに加え `CohortMissionSection`（未登録 CTA 含む）、`LearningBenchmarkCard`、`PublicLeaderboardSection`
+- **学習 XP の相対位置（参考）**: `get_learning_xp_benchmark` は **public 上 `SECURITY INVOKER`** の RPC（`authenticated` のみ `EXECUTE`）。集計本体は **private** の `get_learning_xp_benchmark_impl`（`SECURITY DEFINER`、PostgREST の Exposed schemas に `private` を含めないこと）。返却は呼び出しユーザーの XP・集計メタのみ（他者の id・メール等なし）。**母集団 `population_n`**: `profiles` のうち `coalesce(xp_points,0) > 0` の行数。`**percentile**`: その母集団のうち、呼び出しユーザーより XP が**厳密に小さい**行の割合（0–100）。`**cohort_n` / `cohort_percentile`**: 同一 `rank`（`IS NOT DISTINCT FROM`）かつ XP>0 のサブセット内で同様に算出；コホートが極小の場合は SQL 側で NULL になり得る。フロントは `**population_n` < 5** のとき数値を出さず文言のみ（`MIN_POPULATION_FOR_XP_BENCHMARK`）。取得は `fetchMissionSocialMetrics`（Home は `fetchDashboardMetrics(..., { includeSocial: false })`）。集計ロジックの歴史的説明は `scripts/database/20260324_learning_xp_benchmark.sql`。**Security Advisor 対応の現行正本**: `scripts/database/20260511_security_definer_rpc_hardening.sql`（MCP: `security_definer_rpc_hardening_20260511`）
+- **学習者ランキング（デフォルト参加・オプトアウト可）**: `profiles.leaderboard_opt_in` が true のユーザーのみ `get_public_leaderboard(p_limit)`（public は **INVOKER**、集計は `private.get_public_leaderboard_impl`）で一覧化（上限 `least(p_limit, 50)`）。返却列は **表示名**（`trim(leaderboard_display_name)` が空なら `trim(username)`、両方空なら `Learner`）、**xp_points**、**rank**、**leaderboard_position**（`position` は予約語のため列名回避）。メール・`full_name` は SELECT しない。**Mission** に表形式で表示。**新規ユーザー**は `/welcome` Step 2 で **デフォルト ON**（プロフィールからいつでもオフ）。列・オプトインの歴史的説明: `scripts/database/20260324_leaderboard_opt_in.sql`。**INVOKER/DEFINER 分離の現行正本**: 上記 `20260511_security_definer_rpc_hardening.sql`
+- **ランキング誘導 UI**: Mission の `PublicLeaderboardSection` 内に未オプトイン時のみ「今すぐランキングに参加する」ボタン（`/profile?tab=leaderboard`）。ミッション上部の `LeaderboardOptInCta` とテスト結果画面からも同 URL へ。**プロフィール完成度**は `ProfileCompletionNudge`（Home: 完成度 &lt; 60%、Mission: アバター未設定）で別途促進。
 
 #### **プロフィール設定画面（Profile Hub）**
 

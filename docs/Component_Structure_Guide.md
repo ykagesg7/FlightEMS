@@ -190,9 +190,10 @@ src/pages/
 │       ├── CohortCard.tsx            # コホート受験予定カード（単体利用可）
 │       ├── DailyTasks.tsx
 │       ├── LearningHeatmap.tsx
-│       ├── SubjectRadarChart.tsx
-│       ├── LearningBenchmarkCard.tsx
-│       ├── PublicLeaderboardSection.tsx
+│       ├── SubjectAccuracyChart.tsx
+│       ├── SubjectRadarChart.tsx     # SubjectAccuracyChart の互換 export
+│       ├── LearningBenchmarkCard.tsx # /mission で使用
+│       ├── PublicLeaderboardSection.tsx # /mission で使用
 │       └── AnnouncementCard.tsx
 │   # 補助: src/utils/dashboard.ts, src/utils/heatmapData.ts,
 │   #        src/utils/runMasteryLoopAfterSession.ts（クイズ完了後 SRS/弱点/遅延XP）
