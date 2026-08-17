@@ -205,6 +205,9 @@ def _result(
 
 
 def post_slack_ack(text: str, thread_ts: str = "") -> None:
+    if not thread_ts:
+        print("slack ack skipped (no thread_ts)", file=sys.stderr)
+        return
     webhook = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
     token = os.environ.get("SLACK_BOT_TOKEN", "").strip()
     channel = os.environ.get("SLACK_CHANNEL_ID", CHANNEL_ID).strip() or CHANNEL_ID
