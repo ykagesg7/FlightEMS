@@ -46,7 +46,7 @@
 
 - **2026-08-13（FMT ドリップ 1-1 から・週3本）**: W34（8/17・19・21）に 1-1〜1-3。1-4 以降はストック。正本 [FMT_Formation_2026](content_outlines/FMT_Formation_2026/README.md)。
 - **2026-08-12（9月計画）**: [September_2026_Implementation_Plan.md](September_2026_Implementation_Plan.md) 起票。A2-a 計測 W36〜W39。
-- **2026-08-17（週次テレメトリ ISO 火曜）**: レビューを **火曜 09:00 JST**（月〜日）へ切替。Slack `#fa-telemetry`。初回新窓 W34 は 8/25。フェーズ1（`weekly-telemetry-ga4` artifact）は実装・ドライラン検証済。フェーズ2（Slack 投稿）は未着手。正本 [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)。
+- **2026-08-17（週次テレメトリ ISO 火曜）**: レビューを **火曜 09:00 JST**（月〜日）へ切替。Slack `#fa-telemetry`。初回新窓 W34 は 8/25。フェーズ1（GA4 artifact）検証済。フェーズ2a は `weekly-telemetry-notify` が Facts のみ投稿（メンションなし）。2b/2c 未着手。正本 [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)。
 - **2026-08-08（週次テレメトリ・レビュー）**: GA4 + Sentry を **土曜午前**ペースで残す正本 [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)（現状・課題・解決案・オープン課題ボード）。W32 初回記入。認証は [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)。
 - **2026-07-26（地図カーソル Footer + 詳細シート）**: 地図下に **DMS 1行**（`MapCursorFooter`）。詳細は地図上オーバーレイ（DD・選択 NAVAID 1件の磁方位/距離、検索で任意選択・初期は最寄り）。近傍3件固定・ツールバー内展開は廃止。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
 - **2026-07-26（地図座標ピン固定）**: マウスはクリックで固定、タッチは中央クロスヘア＋「この位置を固定」（`useMapPinnedPosition`）。詳細/NAVAID は固定後のみ。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。

@@ -158,7 +158,12 @@ Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
   python scripts/telemetry/ga4_iso_week_report.py --week 2026-W33 --out artifacts/ga4-iso-week.json
   ```
 - **正本**: [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)
-- **フェーズ2（未着手）**: Slack 投稿・正本 PR・承認 workflow。フェーズ1の workflow には載せない。
+- **フェーズ2a**: [`.github/workflows/weekly-telemetry-notify.yml`](../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ Facts を投稿。スクリプト [`scripts/telemetry/format_ga4_slack.py`](../scripts/telemetry/format_ga4_slack.py)（`--self-test` / `--post`）。Secret は `SLACK_BOT_TOKEN`（`chat:write`）または Incoming Webhook `SLACK_WEBHOOK_URL`。本文に `@` メンションを出さない。
+  ```powershell
+  python scripts/telemetry/format_ga4_slack.py --self-test
+  python scripts/telemetry/format_ga4_slack.py --in artifacts/ga4-iso-week.json
+  ```
+- **フェーズ2b/2c（未着手）**: 要約 PR と承認実行。フェーズ1 workflow には載せない。
 
 ## GA4 MCP・OAuth / ADC（ローカル例）
 

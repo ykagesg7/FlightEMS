@@ -1,0 +1,244 @@
+"""Format GA4 ISO-week JSON as Slack mrkdwn (facts only).
+
+Does not mention users/bots (@). Does not emit approval commands as a
+standalone line. Optional --post uses SLACK_BOT_TOKEN or SLACK_WEBHOOK_URL.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import sys
+import urllib.error
+import urllib.request
+from pathlib import Path
+from typing import Any
+
+CHANNEL_ID = "C0BQ5R19QDV"
+MENTION_RE = re.compile(r"(?<![A-Za-z0-9_])@|</?@[A-Z0-9]+>")
+
+
+def _int(value: Any) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _delta(now: int, prev: int) -> str:
+    diff = now - prev
+    sign = "+" if diff > 0 else ""
+    return f"{now} (prev ISO {prev}, {sign}{diff})"
+
+
+def _dim(row: dict[str, Any], index: int = 0) -> str:
+    dims = row.get("d") or []
+    if index >= len(dims):
+        return "(none)"
+    return str(dims[index])
+
+
+def _metric(row: dict[str, Any], index: int = 0) -> int:
+    mets = row.get("m") or []
+    if index >= len(mets):
+        return 0
+    return _int(mets[index])
+
+
+def _sanitize(text: str) -> str:
+    text = MENTION_RE.sub("(at)", text)
+    text = text.replace("<@", "(at)")
+    return text
+
+
+def format_slack_mrkdwn(report: dict[str, Any], run_url: str = "") -> str:
+    week = str(report.get("week") or "unknown")
+    start = str(report.get("startDate") or "?")
+    end = str(report.get("endDate") or "?")
+    prev = str(report.get("prevWeek") or "?")
+    totals = report.get("totals") or {}
+    prev_totals = report.get("prevTotals") or {}
+    users = _int(totals.get("activeUsers"))
+    sessions = _int(totals.get("sessions"))
+    pv = _int(totals.get("screenPageViews"))
+    engaged = _int(totals.get("engagedSessions"))
+    p_users = _int(prev_totals.get("activeUsers"))
+    p_sessions = _int(prev_totals.get("sessions"))
+    p_pv = _int(prev_totals.get("screenPageViews"))
+    p_engaged = _int(prev_totals.get("engagedSessions"))
+
+    daily_bits: list[str] = []
+    for row in report.get("daily") or []:
+        day = _dim(row)
+        sess = _metric(row, 1)
+        views = _metric(row, 2)
+        if sess or views:
+            daily_bits.append(f"{day} sess {sess} / pv {views}")
+
+    pages: list[str] = []
+    for row in (report.get("pages") or [])[:3]:
+        pages.append(f"`{_sanitize(_dim(row))}` pv {_metric(row)}")
+
+    events: list[str] = []
+    for row in report.get("events") or []:
+        events.append(f"`{_sanitize(_dim(row))}` {_metric(row)}")
+
+    lines = [
+        f"*GA4 ISO {week}* `{start}`-`{end}` (Asia/Tokyo)",
+        f"id: telemetry-notify {week}",
+        f"users {_delta(users, p_users)}",
+        f"sessions {_delta(sessions, p_sessions)}",
+        f"pv {_delta(pv, p_pv)}",
+        f"engaged {_delta(engaged, p_engaged)}",
+        f"prev ISO week: {prev} (do not compare to Saturday-window W32/W33 logs)",
+    ]
+    if daily_bits:
+        lines.append("daily (nonzero): " + "; ".join(daily_bits[:7]))
+    if pages:
+        lines.append("top pages: " + " | ".join(pages))
+    if events:
+        lines.append("events: " + " | ".join(events))
+    else:
+        lines.append("events: (none)")
+    if run_url:
+        lines.append(f"Actions: <{run_url}|workflow run>")
+        lines.append("Sentry: not in phase 2a. Add it in the weekly review.")
+    lines.append(
+        "Canonical log: Tuesday review of this ISO week only. "
+        "This post is facts, not an approval command."
+    )
+    lines.append(
+        "Next: in this thread, mention the Cursor agent for the weekly review "
+        "(this post does not ping it)."
+    )
+    lines.append(
+        "Approval examples (thread reply, one line, caps): "
+        "`APPROVE-DOC` / `HOLD` / `SKIP T-xx`"
+    )
+    text = "\n".join(lines)
+    if MENTION_RE.search(text) or "<@" in text:
+        raise ValueError("formatter refused to emit a Slack mention")
+    return text
+
+
+def find_report_json(root: Path) -> Path:
+    direct = root / "ga4-iso-week.json"
+    if direct.is_file():
+        return direct
+    matches = sorted(root.rglob("ga4-iso-week.json"))
+    if not matches:
+        raise FileNotFoundError(f"ga4-iso-week.json not under {root}")
+    return matches[0]
+
+
+def post_slack(text: str) -> None:
+    webhook = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
+    token = os.environ.get("SLACK_BOT_TOKEN", "").strip()
+    channel = os.environ.get("SLACK_CHANNEL_ID", CHANNEL_ID).strip() or CHANNEL_ID
+    payload: dict[str, Any]
+    url: str
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    if webhook:
+        url = webhook
+        payload = {"text": text, "unfurl_links": False, "unfurl_media": False}
+    elif token:
+        url = "https://slack.com/api/chat.postMessage"
+        headers["Authorization"] = f"Bearer {token}"
+        payload = {
+            "channel": channel,
+            "text": text,
+            "unfurl_links": False,
+            "unfurl_media": False,
+        }
+    else:
+        raise RuntimeError("set SLACK_WEBHOOK_URL or SLACK_BOT_TOKEN")
+
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers=headers,
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            body = resp.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", "replace")[:400]
+        raise RuntimeError(f"Slack HTTP {exc.code}: {detail}") from exc
+
+    if webhook:
+        if body.strip() != "ok":
+            raise RuntimeError(f"webhook response: {body[:200]}")
+        return
+    parsed = json.loads(body)
+    if not parsed.get("ok"):
+        raise RuntimeError(f"chat.postMessage: {parsed.get('error')}")
+
+
+def self_test() -> None:
+    sample = {
+        "week": "2026-W33",
+        "startDate": "2026-08-10",
+        "endDate": "2026-08-16",
+        "prevWeek": "2026-W32",
+        "totals": {"activeUsers": 1, "sessions": 4, "screenPageViews": 25, "engagedSessions": 3},
+        "prevTotals": {
+            "activeUsers": 7,
+            "sessions": 12,
+            "screenPageViews": 62,
+            "engagedSessions": 6,
+        },
+        "daily": [{"d": ["20260810"], "m": ["1", "2", "11", "2"]}],
+        "pages": [{"d": ["/@not-a-mention"], "m": ["9", "1", "2"]}],
+        "events": [{"d": ["chunk_recovery_reload"], "m": ["1", "1"]}],
+    }
+    text = format_slack_mrkdwn(sample, run_url="https://example.invalid/run")
+    assert "telemetry-notify 2026-W33" in text
+    assert "@not-a-mention" not in text
+    assert "(at)not-a-mention" in text
+    assert "<@" not in text
+    assert not MENTION_RE.search(text)
+    assert "APPROVE-DOC" in text
+    assert not text.strip().startswith("APPROVE-DOC")
+    assert "do not ping" in text.lower() or "does not ping" in text
+    print("self-test ok")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Format/post GA4 Slack facts")
+    parser.add_argument("--in", dest="infile", help="ga4-iso-week.json")
+    parser.add_argument("--dir", help="Directory to search for ga4-iso-week.json")
+    parser.add_argument("--run-url", default="", help="GitHub Actions run URL")
+    parser.add_argument("--post", action="store_true")
+    parser.add_argument("--self-test", action="store_true")
+    args = parser.parse_args()
+
+    if args.self_test:
+        self_test()
+        return 0
+
+    if args.infile:
+        path = Path(args.infile)
+    elif args.dir:
+        path = find_report_json(Path(args.dir))
+    else:
+        raise SystemExit("need --in, --dir, or --self-test")
+
+    report = json.loads(path.read_text(encoding="utf-8"))
+    text = format_slack_mrkdwn(report, run_url=args.run_url)
+    if args.post:
+        post_slack(text)
+        print("posted", file=sys.stderr)
+    else:
+        sys.stdout.write(text + "\n")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except Exception as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        raise SystemExit(1)

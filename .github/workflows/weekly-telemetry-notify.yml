@@ -1,0 +1,87 @@
+name: weekly-telemetry-notify
+
+# Phase 2a: Slack facts after a successful GA4 fetch. No git write.
+# Does not mention Cursor. Does not listen to Slack (no loop from inbound events).
+on:
+  workflow_run:
+    workflows: ["weekly-telemetry-ga4"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "GA4 workflow run id. Empty = latest successful weekly-telemetry-ga4."
+        required: false
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: weekly-telemetry-notify
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Self-test formatter
+        run: python scripts/telemetry/format_ga4_slack.py --self-test
+
+      - name: Resolve GA4 run
+        id: src
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_FROM_EVENT: ${{ github.event.workflow_run.id }}
+          RUN_INPUT: ${{ github.event.inputs.run_id }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_run" ]; then
+            RUN_ID="$RUN_FROM_EVENT"
+          elif [ -n "${RUN_INPUT:-}" ]; then
+            RUN_ID="$RUN_INPUT"
+          else
+            RUN_ID="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow weekly-telemetry-ga4.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId')"
+          fi
+          if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
+            echo "Could not resolve a successful weekly-telemetry-ga4 run."
+            exit 1
+          fi
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "run_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}" >> "$GITHUB_OUTPUT"
+
+      - name: Download GA4 artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.src.outputs.run_id }}
+          pattern: ga4-*
+          merge-multiple: true
+          path: artifacts
+
+      - name: Post Slack facts
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL_ID: C0BQ5R19QDV
+        run: |
+          set -euo pipefail
+          if [ -z "${SLACK_BOT_TOKEN:-}" ] && [ -z "${SLACK_WEBHOOK_URL:-}" ]; then
+            echo "Missing SLACK_BOT_TOKEN or SLACK_WEBHOOK_URL."
+            exit 1
+          fi
+          python scripts/telemetry/format_ga4_slack.py \
+            --dir artifacts \
+            --run-url "${{ steps.src.outputs.run_url }}" \
+            --post
