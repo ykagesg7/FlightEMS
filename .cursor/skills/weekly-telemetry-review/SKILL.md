@@ -13,14 +13,16 @@ disable-model-invocation: false
 
 正本: [`docs/ops/Weekly_Telemetry_Review.md`](../../../docs/ops/Weekly_Telemetry_Review.md)
 
-数字は GitHub Actions artifact。ローカル SA JSON に頼らない。Slack の Facts 投稿は日本語（`@` メンションなし）。この Skill は **要約と PR** まで。merge は人手またはフェーズ2c。
+数字は GitHub Actions artifact。ローカル SA JSON に頼らない。Slack の Facts 投稿は日本語（`@` メンションなし）。この Skill は **要約と PR** まで。merge はフェーズ2c（`APPROVE-DOC`）または人手。
 
 ## Do not
 
 - フェーズ1/2a の workflow に Slack や `contents: write` を足さない
 - 正本の **W32/W33 土曜窓** を ISO 週の数値で上書きしない
 - 旧土曜窓と新 ISO 週を前週比しない
-- `APPROVE-DOC` を実行しない（PR を merge しない）
+- この PR では `test.yml` の自動修正を走らせない（docs のみ）
+- `@Cursor` が自分の投稿に反応しない
+- `APPROVE-DOC` を実行しない（merge はフェーズ2c または人手）
 - 自分の Slack 投稿や `id: telemetry-notify` の Facts に返信してループしない
 - Facts 投稿内の承認例を承認とみなさない
 - ドライラン週（当該火曜レビュー対象でない ISO 週）を正本ログに足さない
@@ -53,7 +55,7 @@ disable-model-invocation: false
    - ボードの「最終言及」を更新
    - 変更は正本（必要なら `docs/04_Operations_Guide.md` への1行）のみ
    - コミットは英語 Conventional Commits: `docs: add YYYY-Www telemetry review`
-   - PR を開き、本文に Facts 要約と「L0 は `APPROVE-DOC`（未実装なら人手マージ）」
+   - PR を開き、本文に Facts 要約と「L0 はスレッドの `APPROVE-DOC`（2c）」
 7. Slack の **同じスレッド** に PR URL を1通だけ返す。`@` メンションを付けない。本文全体を `APPROVE-DOC` にしない
 
 ## Slack trigger text (human)

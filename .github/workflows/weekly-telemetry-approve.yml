@@ -1,0 +1,140 @@
+name: weekly-telemetry-approve
+
+# Phase 2c: keyword-driven approve. L0 squash-merges a docs-only telemetry PR.
+# L1 allowlist starts empty. Does not listen to Slack (Vercel Events API does).
+# Never add this job to weekly-telemetry-ga4.yml.
+on:
+  repository_dispatch:
+    types: [telemetry-approve]
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "Exact command: APPROVE-DOC, HOLD, SKIP T-xx, REJECT T-xx, APPROVE T-xx"
+        required: true
+        type: string
+      thread_ts:
+        description: "Slack thread_ts to ACK (optional)"
+        required: false
+        type: string
+      slack_user_id:
+        description: "Slack user id. Empty = trust GitHub actor allowlist."
+        required: false
+        type: string
+      pr_number:
+        description: "Override PR number. Empty = the single open telemetry/YYYY-Www PR."
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: weekly-telemetry-approve-${{ github.event.client_payload.thread_ts || github.event.inputs.thread_ts || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      APPROVE_COMMAND: ${{ github.event.inputs.command || github.event.client_payload.command }}
+      THREAD_TS: ${{ github.event.inputs.thread_ts || github.event.client_payload.thread_ts }}
+      SLACK_USER: ${{ github.event.inputs.slack_user_id || github.event.client_payload.slack_user_id }}
+      PR_NUMBER_INPUT: ${{ github.event.inputs.pr_number || github.event.client_payload.pr_number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Self-test classifier
+        run: python scripts/telemetry/approve_command.py --self-test
+
+      - name: Resolve PR and classify
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ -z "${APPROVE_COMMAND:-}" ]; then
+            echo "Missing approval command."
+            exit 1
+          fi
+
+          BRANCH=""
+          PR_STATE=""
+          PR_NUMBER=""
+          PR_URL=""
+          FILES_JSON='[]'
+
+          if [ -n "${PR_NUMBER_INPUT:-}" ]; then
+            PR_JSON="$(gh pr view "$PR_NUMBER_INPUT" --json number,headRefName,url,state,files)"
+          else
+            PR_JSON="$(gh pr list --state open --limit 20 --json number,headRefName,url,state,files \
+              --jq '[.[] | select(.headRefName | test("^telemetry/[0-9]{4}-W[0-9]{2}$"))]')"
+            COUNT="$(printf '%s' "$PR_JSON" | jq 'length')"
+            if [ "$COUNT" = "1" ]; then
+              PR_JSON="$(printf '%s' "$PR_JSON" | jq '.[0]')"
+            else
+              PR_JSON=""
+            fi
+          fi
+
+          if [ -n "${PR_JSON:-}" ]; then
+            PR_NUMBER="$(printf '%s' "$PR_JSON" | jq -r '.number')"
+            BRANCH="$(printf '%s' "$PR_JSON" | jq -r '.headRefName')"
+            PR_STATE="$(printf '%s' "$PR_JSON" | jq -r '.state')"
+            PR_URL="$(printf '%s' "$PR_JSON" | jq -r '.url')"
+            FILES_JSON="$(printf '%s' "$PR_JSON" | jq -c '[.files[]?.path] // []')"
+          fi
+
+          RESULT="$(python scripts/telemetry/approve_command.py \
+            --command "$APPROVE_COMMAND" \
+            --slack-user "${SLACK_USER:-}" \
+            --github-actor "${GITHUB_ACTOR:-}" \
+            --branch "${BRANCH:-}" \
+            --files-json "$FILES_JSON" \
+            --pr-state "${PR_STATE:-}")"
+          echo "$RESULT"
+          ACTION="$(printf '%s' "$RESULT" | jq -r '.action')"
+          ACK="$(printf '%s' "$RESULT" | jq -r '.ack')"
+          REASON="$(printf '%s' "$RESULT" | jq -r '.reason')"
+          echo "action=$ACTION" >> "$GITHUB_OUTPUT"
+          echo "reason=$REASON" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+          {
+            echo "ack<<ACK_EOF"
+            printf '%s\n' "$ACK"
+            echo "ACK_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Squash-merge docs PR
+        if: ${{ steps.plan.outputs.action == 'merge_doc' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.plan.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PR_NUMBER:-}" ]; then
+            echo "merge_doc without a PR number."
+            exit 1
+          fi
+          gh pr merge "$PR_NUMBER" --squash --delete-branch
+
+      - name: ACK Slack thread
+        if: ${{ always() && steps.plan.outputs.ack != '' }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL_ID: C0BQ5R19QDV
+          ACK_TEXT: ${{ steps.plan.outputs.ack }}
+        run: |
+          set -euo pipefail
+          python scripts/telemetry/approve_command.py \
+            --ack-text "$ACK_TEXT" \
+            --thread-ts "${THREAD_TS:-}"

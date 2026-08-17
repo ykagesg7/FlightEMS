@@ -266,7 +266,7 @@
 
 #### **週次の読み取りレビュー（GA4 + Sentry）**
 
-タグ健常性の確認とは別に、**アクセスとエラーの判断ログ**は **火曜 09:00 JST**（ISO 週: 月〜日）に [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) へ追記する。数字は `weekly-telemetry-ga4` の artifact。Slack Facts は日本語（`weekly-telemetry-notify`、`@` なし）。要約 PR は Skill `weekly-telemetry-review`（未マージ）。承認実行は 2c（未着手）。別チャットの Agent は正本を先に読む。単発の Quiz Hub ファネルは [`artifacts/quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md)。
+タグ健常性の確認とは別に、**アクセスとエラーの判断ログ**は **火曜 09:00 JST**（ISO 週: 月〜日）に [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) へ追記する。数字は `weekly-telemetry-ga4` の artifact。Slack Facts は日本語（`weekly-telemetry-notify`、`@` なし）。要約 PR は Skill `weekly-telemetry-review`（未マージ）。L0 は `APPROVE-DOC`（`weekly-telemetry-approve`）。L1 は許可リスト空。別チャットの Agent は正本を先に読む。単発の Quiz Hub ファネルは [`artifacts/quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md)。
 
 #### **Google Analytics Data API / 公式 MCP はタグの代替ではない**
 
