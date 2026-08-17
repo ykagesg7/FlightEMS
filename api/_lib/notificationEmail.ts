@@ -55,9 +55,9 @@ export function isEmailAllowedForTemplate(
     case 'cohort_registration_reminder':
       return settings?.announcement_enabled !== false;
     case 'weekly_article_digest':
-      // Temporary broadcast (2026-W32+): only explicit email master OFF is excluded.
-      // No settings row / null email_notifications → allowed (comeback reach).
-      return settings?.email_notifications_enabled !== false;
+      // Temporary broadcast (2026-W32+): only explicit email master OFF is excluded
+      // (handled by the early return above). No settings row stays allowed.
+      return true;
     default:
       return true;
   }
