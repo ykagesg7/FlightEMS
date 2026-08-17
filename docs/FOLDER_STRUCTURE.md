@@ -32,7 +32,7 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **目的**: Cursor IDE のルール・スキル・サブエージェント。**旧ルート `.cursorrules` は廃止**し、粒度の細かい **`.cursor/rules/*.mdc`** とルート [**AGENTS.md**](../AGENTS.md) に寄せる。
 - **内容**:
   - `rules/*.mdc`: **常時は `core-project` のみ**。他は glob または Agent Decide（例: `mdx-article-guide`, `docs-sync` ポインタ, `git-conventions` ポインタ）
-  - `skills/<name>/SKILL.md`: オンデマンド手順（`docs-sync`, `git-commit-en`, 記事登録, フライトプラン棚卸し等）
+  - `skills/<name>/SKILL.md`: オンデマンド手順（`docs-sync`, `git-commit-en`, `weekly-telemetry-review`, 記事登録, フライトプラン棚卸し等）
   - `agents/*.md`: 委譲用サブエージェント（`mdx-content`, `aviation-safety-review`, `deep-analysis`, `verifier`）
   - `hooks.json` + `hooks/*.mjs`: Agent シェル実行前の最小ガード（force-push to main 等）
 - **ルート**: [AGENTS.md](../AGENTS.md)（エージェント要約・コスト運用）、[DESIGN.md](../DESIGN.md)（UI トークン）
@@ -113,7 +113,7 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **目的**: 開発・運用スクリプト（説明の正本は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)）
 - **内容**:
   - `database/`: **総索引は [INDEX.md](../../scripts/database/INDEX.md)**。マイグレーション類（例: `20260309_bootstrap_user_learning_profiles.sql`、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`、`20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`、`20260410_cpl_stub_lessons_contents_and_mapping.sql`、[05_Content_Pipeline.md](05_Content_Pipeline.md)）は直下に置く。**`docs/` 等から参照されない旧 SQL はリポジトリに残さない**（復元は Git 履歴）。ルート **`archive/`** と [.gitignore](../.gitignore) の `archive/*` はローカル用。詳細は [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)。
-  - `telemetry/`: 週次 GA4 ISO 週レポート。仕様は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) の **週次テレメトリ GA4** 節
+  - `telemetry/`: 週次 GA4 ISO 週レポート、Slack Facts、正本 Facts 下書き。仕様は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) の **週次テレメトリ GA4** 節
   - `cpl_exam/`: CPL 問題 CSV 取込。仕様は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) の **CPL Master CSV 取込仕様** 節
   - `docs-auto-update/`: ドキュメント自動更新（同ファイルの **ドキュメント自動更新** 節。Phase テスト計画は [docs/Phase_Testing_Plan.md](Phase_Testing_Plan.md)）
   - `sync-public-docs.mjs`: `docs/` から `public/docs/` へのホワイトリスト同期（`npm run sync:public-docs`。`prebuild` でも実行）

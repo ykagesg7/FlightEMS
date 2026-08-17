@@ -2,7 +2,7 @@
 
 **正本**: 本書（別チャットの Agent はここを先に読む）  
 **作成**: 2026-08-08  
-**最終更新**: 2026-08-17（フェーズ2a Slack Facts 通知）  
+**最終更新**: 2026-08-17（フェーズ2b Skill。Slack Facts は日本語）  
 **実施ペース**: **火曜 09:00 JST**（ISO 週: 月曜 00:00〜日曜 23:59、プロパティ TZ = Asia/Tokyo）。欠席週は行を飛ばさず「スキップ」理由を1行残す。**土曜に別窓で埋めない。**
 
 関連:
@@ -20,10 +20,11 @@
 - **旧窓**（W32/W33 ログ）: 土曜レビューのまま残す。数値を ISO 週で上書きしない。
 - **新窓**: 初回は **2026-W34（2026-08-17〜08-23）を 2026-08-25 火** に記入。
 - 旧窓と新窓を **前週比しない**。
-- 数字取得は GitHub Actions（クラウドはローカル SA JSON を読まない）。要約・正本追記はフェーズ2b（未着手）。承認実行はフェーズ2c（未着手）。
-- **フェーズ1（完了・2026-08-17 検証）**: [`.github/workflows/weekly-telemetry-ga4.yml`](../../.github/workflows/weekly-telemetry-ga4.yml) が ISO 週 JSON を artifact に置く。Secret `GA4_SA_JSON` はリポジトリに登録済。手順は [Scripts_Repository_Tooling.md](../Scripts_Repository_Tooling.md#週次テレメトリ-ga4iso-週github-actions)。手動ドライラン（`2026-W33`）成功: [run 31998682755](https://github.com/ykagesg7/FlightEMS/actions/runs/31998682755)。ドライラン週の数値は正本に載せない。
-- **フェーズ2a（実装）**: [`.github/workflows/weekly-telemetry-notify.yml`](../../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ Facts のみ投稿する。`@` メンションなし（Cursor を自動起動しない）。フェーズ1 workflow は未変更。Secret は `SLACK_BOT_TOKEN` または `SLACK_WEBHOOK_URL`。
-- **フェーズ2b/2c（未着手）**: 要約 PR と承認実行。2a の投稿を「全メッセージで発火」にしない。承認はキーワード付きスレッド返信のみ。
+- 数字取得は GitHub Actions（クラウドはローカル SA JSON を読まない）。要約・正本 PR はフェーズ2b。承認実行はフェーズ2c（未着手）。
+- **フェーズ1（完了）**: [`.github/workflows/weekly-telemetry-ga4.yml`](../../.github/workflows/weekly-telemetry-ga4.yml) が ISO 週 JSON を artifact に置く。Secret `GA4_SA_JSON`。ドライラン W33: [run 31998682755](https://github.com/ykagesg7/FlightEMS/actions/runs/31998682755)（正本には未記入）。
+- **フェーズ2a（実装・検証済）**: [`.github/workflows/weekly-telemetry-notify.yml`](../../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ **日本語** Facts を投稿する。`@` メンションなし。Secret `SLACK_WEBHOOK_URL`。
+- **フェーズ2b（実装）**: Slack スレッドで人が Cursor をメンション → Skill [`weekly-telemetry-review`](../../.cursor/skills/weekly-telemetry-review/SKILL.md) が正本 PR を出す（merge しない）。Facts 下書きは `scripts/telemetry/format_ga4_review.py`。
+- **フェーズ2c（未着手）**: 承認キーワードの実行。2a の投稿を「全メッセージで発火」にしない。
 
 ### Slack 承認コマンド
 
@@ -64,7 +65,7 @@
 
 1. **GA4**: Actions の artifact `ga4-<ISO週>`（なければローカル SA + Data API）。今週・前週の users / sessions / screenPageViews / engagedSessions。日次。上位 `pagePath`・記事パス・source/medium・device・landing。
 2. **Sentry**: 直近 7d の error 件数、`is:unresolved lastSeen:-7d`、チャンク系（`FLIGHT-ACADEMY-4` 等）の最終発生。
-3. **文書**: 下記テンプレで週節を追記 → オープン課題ボード更新 → 必要なら [04](../04_Operations_Guide.md) へ運用変更のみリンク。
+3. **文書**: Skill `weekly-telemetry-review` → 下記テンプレで週節を追記 → オープン課題ボード更新 → docs-only PR（未マージ）。必要なら [04](../04_Operations_Guide.md) へ運用変更のみリンク。
 
 ---
 
@@ -201,5 +202,5 @@
 
 | 日付 | 内容 |
 |------|------|
-| 2026-08-17 | ISO 週・火曜 09:00 JST へ切替。フェーズ1完了（GA4 artifact）。フェーズ2a: `weekly-telemetry-notify` が Facts のみ Slack 投稿（メンションなし）。2b/2c 未着手。 |
+| 2026-08-17 | ISO 週・火曜切替。フェーズ1 GA4 artifact。フェーズ2a 日本語 Facts（メンションなし）。フェーズ2b Skill `weekly-telemetry-review`（正本 PR・未マージ）。2c 未着手。 |
 | 2026-08-08 | 初版。土曜午前運用・テンプレ・オープン課題ボード・W32 記入。 |

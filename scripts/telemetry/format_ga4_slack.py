@@ -30,7 +30,7 @@ def _int(value: Any) -> int:
 def _delta(now: int, prev: int) -> str:
     diff = now - prev
     sign = "+" if diff > 0 else ""
-    return f"{now} (prev ISO {prev}, {sign}{diff})"
+    return f"{now}（直前ISO {prev}、差 {sign}{diff}）"
 
 
 def _dim(row: dict[str, Any], index: int = 0) -> str:
@@ -48,6 +48,7 @@ def _metric(row: dict[str, Any], index: int = 0) -> int:
 
 
 def _sanitize(text: str) -> str:
+    text = text.replace("＠", "@")
     text = MENTION_RE.sub("(at)", text)
     text = text.replace("<@", "(at)")
     return text
@@ -75,46 +76,45 @@ def format_slack_mrkdwn(report: dict[str, Any], run_url: str = "") -> str:
         sess = _metric(row, 1)
         views = _metric(row, 2)
         if sess or views:
-            daily_bits.append(f"{day} sess {sess} / pv {views}")
+            daily_bits.append(f"{day} セッション {sess} / PV {views}")
 
     pages: list[str] = []
     for row in (report.get("pages") or [])[:3]:
-        pages.append(f"`{_sanitize(_dim(row))}` pv {_metric(row)}")
+        pages.append(f"`{_sanitize(_dim(row))}` PV {_metric(row)}")
 
     events: list[str] = []
     for row in report.get("events") or []:
         events.append(f"`{_sanitize(_dim(row))}` {_metric(row)}")
 
     lines = [
-        f"*GA4 ISO {week}* `{start}`-`{end}` (Asia/Tokyo)",
+        f"*週次テレメトリ GA4 ISO {week}* `{start}`-`{end}`（Asia/Tokyo）",
         f"id: telemetry-notify {week}",
         f"users {_delta(users, p_users)}",
         f"sessions {_delta(sessions, p_sessions)}",
-        f"pv {_delta(pv, p_pv)}",
+        f"PV {_delta(pv, p_pv)}",
         f"engaged {_delta(engaged, p_engaged)}",
-        f"prev ISO week: {prev} (do not compare to Saturday-window W32/W33 logs)",
+        f"直前ISO週: {prev}（正本の土曜窓 W32/W33 とは比べない）",
     ]
     if daily_bits:
-        lines.append("daily (nonzero): " + "; ".join(daily_bits[:7]))
+        lines.append("日次（非ゼロ）: " + "; ".join(daily_bits[:7]))
     if pages:
-        lines.append("top pages: " + " | ".join(pages))
+        lines.append("上位ページ: " + " | ".join(pages))
     if events:
-        lines.append("events: " + " | ".join(events))
+        lines.append("イベント: " + " | ".join(events))
     else:
-        lines.append("events: (none)")
+        lines.append("イベント: なし")
     if run_url:
-        lines.append(f"Actions: <{run_url}|workflow run>")
-        lines.append("Sentry: not in phase 2a. Add it in the weekly review.")
+        lines.append(f"Actions: <{run_url}|実行ログ>")
+    lines.append("Sentry: 2a では未取得。週次レビューで追記する。")
     lines.append(
-        "Canonical log: Tuesday review of this ISO week only. "
-        "This post is facts, not an approval command."
+        "正本転記: 火曜レビューの当該 ISO 週のみ。この投稿は承認コマンドではない。"
     )
     lines.append(
-        "Next: in this thread, mention the Cursor agent for the weekly review "
-        "(this post does not ping it)."
+        "次: このスレッドで Cursor エージェントをメンションして週次レビュー"
+        "（この投稿ではメンションしない）。"
     )
     lines.append(
-        "Approval examples (thread reply, one line, caps): "
+        "承認例（スレッド返信・一行・大文字）: "
         "`APPROVE-DOC` / `HOLD` / `SKIP T-xx`"
     )
     text = "\n".join(lines)
@@ -196,13 +196,14 @@ def self_test() -> None:
     }
     text = format_slack_mrkdwn(sample, run_url="https://example.invalid/run")
     assert "telemetry-notify 2026-W33" in text
+    assert "週次テレメトリ" in text
+    assert "メンションしない" in text
     assert "@not-a-mention" not in text
     assert "(at)not-a-mention" in text
     assert "<@" not in text
     assert not MENTION_RE.search(text)
     assert "APPROVE-DOC" in text
     assert not text.strip().startswith("APPROVE-DOC")
-    assert "do not ping" in text.lower() or "does not ping" in text
     print("self-test ok")
 
 

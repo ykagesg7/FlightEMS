@@ -158,12 +158,17 @@ Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
   python scripts/telemetry/ga4_iso_week_report.py --week 2026-W33 --out artifacts/ga4-iso-week.json
   ```
 - **正本**: [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)
-- **フェーズ2a**: [`.github/workflows/weekly-telemetry-notify.yml`](../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ Facts を投稿。スクリプト [`scripts/telemetry/format_ga4_slack.py`](../scripts/telemetry/format_ga4_slack.py)（`--self-test` / `--post`）。Secret は `SLACK_BOT_TOKEN`（`chat:write`）または Incoming Webhook `SLACK_WEBHOOK_URL`。本文に `@` メンションを出さない。
+- **フェーズ2a**: [`.github/workflows/weekly-telemetry-notify.yml`](../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ **日本語** Facts を投稿。[`format_ga4_slack.py`](../scripts/telemetry/format_ga4_slack.py)。Secret `SLACK_WEBHOOK_URL`。`@` メンションなし。
   ```powershell
   python scripts/telemetry/format_ga4_slack.py --self-test
   python scripts/telemetry/format_ga4_slack.py --in artifacts/ga4-iso-week.json
   ```
-- **フェーズ2b/2c（未着手）**: 要約 PR と承認実行。フェーズ1 workflow には載せない。
+- **フェーズ2b**: Skill [`.cursor/skills/weekly-telemetry-review/SKILL.md`](../.cursor/skills/weekly-telemetry-review/SKILL.md)。Facts 下書き [`format_ga4_review.py`](../scripts/telemetry/format_ga4_review.py)。正本 PR まで（merge しない）。
+  ```powershell
+  python scripts/telemetry/format_ga4_review.py --self-test
+  python scripts/telemetry/format_ga4_review.py --in artifacts/ga4-iso-week.json
+  ```
+- **フェーズ2c（未着手）**: 承認キーワードの実行。フェーズ1 workflow には載せない。
 
 ## GA4 MCP・OAuth / ADC（ローカル例）
 

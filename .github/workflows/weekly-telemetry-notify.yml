@@ -1,6 +1,6 @@
 name: weekly-telemetry-notify
 
-# Phase 2a: Slack facts after a successful GA4 fetch. No git write.
+# Phase 2a: Slack facts after a successful GA4 fetch. Japanese, no git write.
 # Does not mention Cursor. Does not listen to Slack (no loop from inbound events).
 on:
   workflow_run:
