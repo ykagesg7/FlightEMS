@@ -28,7 +28,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install GA4 client
-        run: pip install "google-auth>=2.29,<3"
+        run: pip install "google-auth[requests]>=2.29,<3"
 
       - name: Self-test ISO week window
         run: python scripts/telemetry/ga4_iso_week_report.py --self-test

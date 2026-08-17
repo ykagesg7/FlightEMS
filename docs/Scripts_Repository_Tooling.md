@@ -148,7 +148,7 @@ Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
 - **Secret**: リポジトリの Actions secret **`GA4_SA_JSON`**（サービスアカウント JSON の本文）。ローカル正本は `%APPDATA%\FlightAcademy\secrets\ga-mcp-readonly.json`。
   ```powershell
   gh auth login
-  gh secret set GA4_SA_JSON --body-file "$env:APPDATA\FlightAcademy\secrets\ga-mcp-readonly.json"
+  Get-Content -Raw "$env:APPDATA\FlightAcademy\secrets\ga-mcp-readonly.json" | gh secret set GA4_SA_JSON
   ```
   または GitHub → Settings → Secrets and variables → Actions → `GA4_SA_JSON`。JSON ファイルはコミットしない。
 - **ローカル**:

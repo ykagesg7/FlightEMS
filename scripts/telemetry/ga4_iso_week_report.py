@@ -21,9 +21,6 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from google.auth.transport.requests import Request
-from google.oauth2 import service_account
-
 PROPERTY_ID = "532610432"
 SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
 # Japan has no DST; avoid zoneinfo/tzdata (missing on some Windows Pythons).
@@ -66,6 +63,8 @@ def parse_iso_week(label: str) -> tuple[date, date]:
 
 
 def load_credentials() -> Any:
+    from google.oauth2 import service_account
+
     raw = os.environ.get("GA4_SA_JSON", "").strip()
     if raw:
         info = json.loads(raw)
@@ -336,6 +335,8 @@ def main() -> int:
         week_label = f"{iso.year}-W{iso.week:02d}"
     else:
         week_label, start, end = last_completed_iso_week(today)
+
+    from google.auth.transport.requests import Request
 
     creds = load_credentials()
     creds.refresh(Request())
