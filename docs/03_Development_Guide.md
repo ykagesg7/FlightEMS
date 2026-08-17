@@ -55,7 +55,7 @@
 ## 🛠️ 開発環境セットアップ
 
 ### **必要条件**
-- Node.js **18 以上**（ルート [README.md](../README.md) と [docs/README.md](README.md) に合わせる）
+- Node.js **24.x**（ルート [README.md](../README.md) と [docs/README.md](README.md) に合わせる）
 - npm 7.x以上
 - Git
 

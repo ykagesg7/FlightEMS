@@ -4,7 +4,7 @@
 
 ## クイックスタート
 
-- **要件**: Node.js 18+、npm 9+ を推奨（古い README の 16.x 記載は廃止）。
+- **要件**: Node.js **24.x**（Vercel / CI と一致。`package.json` の `engines.node`）、npm 9+。
 - **依存関係**: `npm install`
 - **環境変数**: ルートの `.env.example` を参照し `.env.local` を作成（`VITE_SUPABASE_*`、`VITE_WEATHER_API_KEY` など）。
 - **開発**（推奨）:

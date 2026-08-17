@@ -982,7 +982,7 @@ Flight Academy へのブランド移行は [00](00_Flight_Academy_Strategy.md) �
 
 ### **前提ツール**
 
-- Node.js **18 以上**（ルート README・[docs/README.md](README.md) と一致）
+- Node.js **24.x**（ルート README・[docs/README.md](README.md) と一致）
 - npm 7.x以上
 - Git
 - Cursor IDE（推奨）

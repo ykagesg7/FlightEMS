@@ -227,7 +227,7 @@
 ## 🔧 開発環境・ツール
 
 ### 必須ツール
-- **Node.js**: **18 以上**（ルート [README.md](../README.md) と同じ。古い 16.x 記載は廃止）
+- **Node.js**: **24.x**（ルート [README.md](../README.md) および `package.json` `engines.node` と一致。Vercel 本番も 24.x）
 - **npm**: **9 以上**を推奨
 - **Git**: バージョン管理
 - **Cursor IDE**: 推奨（AI統合開発環境）

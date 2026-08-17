@@ -54,6 +54,12 @@
   - または `NEXT_PUBLIC_SENTRY_DSN` = 同じ DSN（Vercel テンプレに合わせる場合）
   - ソースマップまで欲しい場合は [Sentry Auth Token](https://docs.sentry.io/product/accounts/auth-tokens/) を発行し、`SENTRY_AUTH_TOKEN` に加え `SENTRY_ORG`・`SENTRY_PROJECT`（スラッグ）をプロジェクトの Environment Variables に追加（`vite.config.ts` の `@sentry/vite-plugin` 用）。
 
+### **Node.js ランタイム（Vercel）**
+
+- **現行**: **24.x**（ダッシュボード Build and Deployment ＋ルート `package.json` の `engines.node`。`engines` がダッシュボードより優先される）。
+- Node 20 は **2026-10-01** 以降、新規ビルド不可（既存デプロイは継続）。設定変更後は **Redeploy** が必要。
+- CI（`.github/workflows`）も **24**。
+
 ### **Supabase Auth（メール・OAuth・CAPTCHA）**
 
 - **確認メール / Magic Link / パスワードリセット**: **Brevo** を Supabase **Authentication → SMTP Settings**（Custom SMTP）に設定。アプリの `.env` には SMTP 秘密情報を置かない。
@@ -541,7 +547,7 @@ order by ordinal_position;
 
 ### **前提ツール**
 
-- Node.js **18 以上**（[docs/README.md](README.md) と一致）
+- Node.js **24.x**（[docs/README.md](README.md) と一致。Vercel 本番ランタイム）
 - npm 7.x以上
 - Git
 - Cursor IDE（推奨）
