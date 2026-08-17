@@ -144,19 +144,21 @@ Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
 
 - **目的**: 火曜レビュー用の数字を **決定論的に** 取る。クラウドエージェントはローカル SA JSON を読まない。
 - **スクリプト**: [`scripts/telemetry/ga4_iso_week_report.py`](../scripts/telemetry/ga4_iso_week_report.py)
-- **Workflow**: [`.github/workflows/weekly-telemetry-ga4.yml`](../.github/workflows/weekly-telemetry-ga4.yml) — 火曜 00:00 UTC（09:00 JST）。artifact のみ（Slack / git write なし）。
-- **Secret**: リポジトリの Actions secret **`GA4_SA_JSON`**（サービスアカウント JSON の本文）。ローカル正本は `%APPDATA%\FlightAcademy\secrets\ga-mcp-readonly.json`。
+- **Workflow**: [`.github/workflows/weekly-telemetry-ga4.yml`](../.github/workflows/weekly-telemetry-ga4.yml) — 火曜 00:00 UTC（09:00 JST）。artifact のみ（Slack / git write なし）。CI は `google-auth[requests]` を入れる。
+- **Secret**: リポジトリの Actions secret **`GA4_SA_JSON`**（サービスアカウント JSON の本文）。**2026-08-17 に `ykagesg7/FlightEMS` へ登録済**。再発行しない。ローカル正本は `%APPDATA%\FlightAcademy\secrets\ga-mcp-readonly.json`。更新が必要なときだけ:
   ```powershell
-  gh auth login
   Get-Content -Raw "$env:APPDATA\FlightAcademy\secrets\ga-mcp-readonly.json" | gh secret set GA4_SA_JSON
   ```
   または GitHub → Settings → Secrets and variables → Actions → `GA4_SA_JSON`。JSON ファイルはコミットしない。
+- **検証**: 2026-08-17 手動ドライラン `week=2026-W33` 成功。[run 31998682755](https://github.com/ykagesg7/FlightEMS/actions/runs/31998682755) / artifact `ga4-2026-W33`。ドライラン数値は正本に載せない。
+- **artifact の取り方**: Actions → `weekly-telemetry-ga4` → 該当 run → `ga4-<ISO週>` をダウンロード。保持 90 日。
 - **ローカル**:
   ```powershell
   python scripts/telemetry/ga4_iso_week_report.py --self-test
   python scripts/telemetry/ga4_iso_week_report.py --week 2026-W33 --out artifacts/ga4-iso-week.json
   ```
 - **正本**: [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)
+- **フェーズ2（未着手）**: Slack 投稿・正本 PR・承認 workflow。フェーズ1の workflow には載せない。
 
 ## GA4 MCP・OAuth / ADC（ローカル例）
 

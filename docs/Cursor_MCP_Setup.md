@@ -336,7 +336,7 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
 
 `.cursor/mcp.json` の `GOOGLE_APPLICATION_CREDENTIALS` は、上記の **絶対パス**（スラッシュ区切り可）だけを指す。アプリの `.env.local`（`VITE_*` 等）とは役割が違うので混ぜない。
 
-週次テレメトリの GitHub Actions は同じ SA JSON の本文をリポジトリ secret **`GA4_SA_JSON`** に置く（ファイルはコミットしない）。手順は [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) と [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md#週次テレメトリ-ga4iso-週github-actions)。
+週次テレメトリの GitHub Actions は同じ SA JSON の本文をリポジトリ secret **`GA4_SA_JSON`** に置く（ファイルはコミットしない）。**2026-08-17 に登録済**。手順は [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) と [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md#週次テレメトリ-ga4iso-週github-actions)。
 
 ### ADC と Analytics スコープ（403 対策）
 
