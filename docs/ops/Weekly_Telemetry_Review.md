@@ -21,6 +21,7 @@
 - **新窓**: 初回は **2026-W34（2026-08-17〜08-23）を 2026-08-25 火** に記入。
 - 旧窓と新窓を **前週比しない**。
 - 数字取得は GitHub Actions（クラウドはローカル SA JSON を読まない）。エージェントは要約・正本 PR・Slack。承認実行は許可リストのみ。
+- **フェーズ1（実装済）**: [`.github/workflows/weekly-telemetry-ga4.yml`](../../.github/workflows/weekly-telemetry-ga4.yml) が ISO 週 JSON を artifact に置く。Secret 名 `GA4_SA_JSON`（設定手順は [Scripts_Repository_Tooling.md](../Scripts_Repository_Tooling.md#週次テレメトリ-ga4iso-週github-actions)）。手動実行: Actions → weekly-telemetry-ga4 → Run workflow。ドライラン週は正本に載せない。
 
 ### Slack 承認コマンド
 
@@ -59,7 +60,7 @@
 
 ### 火曜の最小チェックリスト
 
-1. **GA4**（MCP または SA + Data API）: 今週・前週の users / sessions / screenPageViews / engagedSessions。日次。上位 `pagePath`・記事パス・source/medium・device・landing。
+1. **GA4**: CI artifact `ga4-<ISO週>.json`（なければ SA + Data API）。今週・前週の users / sessions / screenPageViews / engagedSessions。日次。上位 `pagePath`・記事パス・source/medium・device・landing。
 2. **Sentry**: 直近 7d の error 件数、`is:unresolved lastSeen:-7d`、チャンク系（`FLIGHT-ACADEMY-4` 等）の最終発生。
 3. **文書**: 下記テンプレで週節を追記 → オープン課題ボード更新 → 必要なら [04](../04_Operations_Guide.md) へ運用変更のみリンク。
 
@@ -198,5 +199,5 @@
 
 | 日付 | 内容 |
 |------|------|
-| 2026-08-17 | ISO 週・火曜 09:00 JST へ切替（A案）。初回新窓は W34（8/25 レビュー）。Slack `#fa-telemetry` と承認コマンドを追加。 |
+| 2026-08-17 | ISO 週・火曜 09:00 JST へ切替（A案）。初回新窓は W34（8/25 レビュー）。Slack `#fa-telemetry` と承認コマンドを追加。フェーズ1: ISO 週 GA4 取得スクリプトと火曜 GitHub Action（artifact のみ）。 |
 | 2026-08-08 | 初版。土曜午前運用・テンプレ・オープン課題ボード・W32 記入。 |

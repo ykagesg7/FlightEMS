@@ -1,0 +1,59 @@
+name: weekly-telemetry-ga4
+
+# Tuesday 09:00 JST = 00:00 UTC. Numbers only — no Slack, no git write.
+on:
+  schedule:
+    - cron: "0 0 * * 2"
+  workflow_dispatch:
+    inputs:
+      week:
+        description: "ISO week (e.g. 2026-W33). Empty = last completed week in Asia/Tokyo."
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install GA4 client
+        run: pip install "google-auth>=2.29,<3"
+
+      - name: Self-test ISO week window
+        run: python scripts/telemetry/ga4_iso_week_report.py --self-test
+
+      - name: Fetch GA4 ISO week
+        id: ga4
+        env:
+          GA4_SA_JSON: ${{ secrets.GA4_SA_JSON }}
+          WEEK_INPUT: ${{ github.event.inputs.week }}
+        run: |
+          if [ -z "$GA4_SA_JSON" ]; then
+            echo "Missing GitHub secret GA4_SA_JSON (service account JSON body)."
+            exit 1
+          fi
+          mkdir -p artifacts
+          if [ -n "$WEEK_INPUT" ]; then
+            python scripts/telemetry/ga4_iso_week_report.py --week "$WEEK_INPUT" --out artifacts/ga4-iso-week.json
+          else
+            python scripts/telemetry/ga4_iso_week_report.py --out artifacts/ga4-iso-week.json
+          fi
+
+      - name: Upload JSON artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ga4-${{ steps.ga4.outputs.week || 'iso-week' }}
+          path: artifacts/ga4-iso-week.json
+          if-no-files-found: error
+          retention-days: 90

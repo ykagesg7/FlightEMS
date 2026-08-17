@@ -336,6 +336,8 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
 
 `.cursor/mcp.json` の `GOOGLE_APPLICATION_CREDENTIALS` は、上記の **絶対パス**（スラッシュ区切り可）だけを指す。アプリの `.env.local`（`VITE_*` 等）とは役割が違うので混ぜない。
 
+週次テレメトリの GitHub Actions は同じ SA JSON の本文をリポジトリ secret **`GA4_SA_JSON`** に置く（ファイルはコミットしない）。手順は [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) と [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md#週次テレメトリ-ga4iso-週github-actions)。
+
 ### ADC と Analytics スコープ（403 対策）
 
 `gcloud auth application-default login` **だけ**だと、`analytics.readonly` が付かず **MCP の `get_account_summaries` が 403 `ACCESS_TOKEN_SCOPE_INSUFFICIENT`** になることがある。読み取りスコープを明示してやり直す。

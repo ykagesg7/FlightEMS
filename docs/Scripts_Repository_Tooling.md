@@ -10,6 +10,7 @@
 | MDX → Obsidian ミラー | [下記](#mdx--obsidian-参照ミラー) |
 | CPL Master CSV 取込 | [下記](#cpl-master-csv-取込仕様)（旧 `CPL_CSV_IMPORT_SPEC`） |
 | GA4 MCP・OAuth / ADC（ローカル例） | [下記](#ga4-mcp-oauth--adcローカル例) |
+| 週次テレメトリ GA4（ISO 週・CI） | [下記](#週次テレメトリ-ga4iso-週github-actions) |
 | 規約ファイル | [.cursor/skills/git-commit-en/SKILL.md](../.cursor/skills/git-commit-en/SKILL.md)（ポインタ: [.cursor/rules/git-conventions.mdc](../.cursor/rules/git-conventions.mdc)） |
 | Phase 別テスト計画（参考） | [Phase_Testing_Plan.md](Phase_Testing_Plan.md) |
 
@@ -138,6 +139,24 @@ Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
 - **検討（未実装）**: 週次 GitHub Action で audit → 閾値超えで issue 作成、`quality_score` 再計算バッチ
 
 ---
+
+## 週次テレメトリ GA4（ISO 週・GitHub Actions）
+
+- **目的**: 火曜レビュー用の数字を **決定論的に** 取る。クラウドエージェントはローカル SA JSON を読まない。
+- **スクリプト**: [`scripts/telemetry/ga4_iso_week_report.py`](../scripts/telemetry/ga4_iso_week_report.py)
+- **Workflow**: [`.github/workflows/weekly-telemetry-ga4.yml`](../.github/workflows/weekly-telemetry-ga4.yml) — 火曜 00:00 UTC（09:00 JST）。artifact のみ（Slack / git write なし）。
+- **Secret**: リポジトリの Actions secret **`GA4_SA_JSON`**（サービスアカウント JSON の本文）。ローカル正本は `%APPDATA%\FlightAcademy\secrets\ga-mcp-readonly.json`。
+  ```powershell
+  gh auth login
+  gh secret set GA4_SA_JSON --body-file "$env:APPDATA\FlightAcademy\secrets\ga-mcp-readonly.json"
+  ```
+  または GitHub → Settings → Secrets and variables → Actions → `GA4_SA_JSON`。JSON ファイルはコミットしない。
+- **ローカル**:
+  ```powershell
+  python scripts/telemetry/ga4_iso_week_report.py --self-test
+  python scripts/telemetry/ga4_iso_week_report.py --week 2026-W33 --out artifacts/ga4-iso-week.json
+  ```
+- **正本**: [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)
 
 ## GA4 MCP・OAuth / ADC（ローカル例）
 
