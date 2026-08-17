@@ -1,22 +1,18 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getDigestForIsoWeek } from '../_lib/articlePublishSchedule';
-import { getIsoWeekJst, resolveArticleDigestIsoWeek } from '../_lib/cohortWeek';
+import { getDigestForIsoWeek } from './articlePublishSchedule';
+import { getIsoWeekJst, resolveArticleDigestIsoWeek } from './cohortWeek';
 import {
   dispatchWeeklyArticleDigestEmails,
   type WeeklyArticleDigestTiming,
-} from '../_lib/notificationEmail';
-import { getServiceSupabase } from '../_lib/supabaseService';
+} from './notificationEmail';
+import { getServiceSupabase } from './supabaseService';
 
 /**
  * Weekly article digest (X-style).
  * - Sunday 17:00 JST (`0 8 * * 0`): preview next week + finishing-week reminder
  * - Monday 07:00 JST (`0 22 * * 0`): current-week catch-up if Sunday was missed
- *   (idempotent via dedupe_key; skips when already sent)
- * Audience (temporary): profiles with email, except explicit email_notifications OFF.
- *
- * Optional query: ?isoWeek=2026-W33 forces the digest week (still requires CRON_SECRET).
  */
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export async function handleArticleWeeklyDigest(req: VercelRequest, res: VercelResponse) {
   const authHeader = req.headers.authorization;
   const cronSecret = process.env.CRON_SECRET;
   if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {

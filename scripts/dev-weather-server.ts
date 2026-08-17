@@ -107,7 +107,7 @@ app.get('/api/weather', async (req, res) => {
   }
 });
 
-// Aviation Weather endpoint (mirrors api/aviation-weather.ts)
+// Aviation Weather endpoint (mirrors api/weather.ts?action=aviation)
 app.get('/api/aviation-weather', async (req, res) => {
   const type = req.query.type as string | undefined;
   const icao = req.query.icao as string | undefined;
@@ -221,7 +221,7 @@ app.get('/api/opensky-states', async (req, res) => {
   }
 });
 
-// RainViewer manifest（api/rainviewer-maps.ts と同様）
+// RainViewer manifest（api/weather.ts?action=rainviewer と同様）
 app.options('/api/rainviewer-maps', (_req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');

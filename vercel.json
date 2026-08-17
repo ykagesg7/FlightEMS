@@ -20,15 +20,7 @@
       "memory": 1024,
       "maxDuration": 30
     },
-    "api/aviation-weather.ts": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
     "api/swim-notam-search.ts": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/rainviewer-maps.ts": {
       "memory": 1024,
       "maxDuration": 30
     },
@@ -36,23 +28,7 @@
       "memory": 1024,
       "maxDuration": 30
     },
-    "api/notifications/send.ts": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/notifications/push.ts": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/cron/cohort-weekly.ts": {
-      "memory": 1024,
-      "maxDuration": 60
-    },
-    "api/cron/article-publish-sync.ts": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/cron/article-weekly-digest.ts": {
+    "api/cron.ts": {
       "memory": 1024,
       "maxDuration": 60
     },
@@ -65,6 +41,18 @@
     {
       "src": "/api/account/mfa-recovery-codes/(generate|consume|status|clear)",
       "dest": "/api/mfa-recovery-codes?action=$1"
+    },
+    {
+      "src": "/api/aviation-weather",
+      "dest": "/api/weather?action=aviation"
+    },
+    {
+      "src": "/api/rainviewer-maps",
+      "dest": "/api/weather?action=rainviewer"
+    },
+    {
+      "src": "/api/cron/(cohort-weekly|article-publish-sync|article-weekly-digest)",
+      "dest": "/api/cron?job=$1"
     },
     {
       "src": "/api/(.*)",

@@ -19,7 +19,7 @@ Articles のドリップ公開が JST カレンダーどおりか確認する。
 | MDX 日付 | `src/content/articles/*.mdx` → `meta.publishedAt` |
 | クライアント gate | [`src/utils/articlePublishGate.ts`](../../../src/utils/articlePublishGate.ts) |
 | DB | `learning_contents.is_published`（Supabase） |
-| Cron | [`api/cron/article-publish-sync.ts`](../../../api/cron/article-publish-sync.ts) — 毎日 00:10 JST |
+| Cron | [`api/cron.ts`](../../../api/cron.ts) `?job=article-publish-sync` — 毎日 00:10 JST |
 
 ## Steps
 

@@ -1,13 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getPreviousIsoWeekJst } from '../_lib/cohortWeek';
+import { getPreviousIsoWeekJst } from './cohortWeek';
 import {
   buildCohortDedupeKey,
   dispatchEmailsForInAppDedupe,
   type EmailDispatchSummary,
-} from '../_lib/notificationEmail';
-import { getServiceSupabase } from '../_lib/supabaseService';
+} from './notificationEmail';
+import { getServiceSupabase } from './supabaseService';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export async function handleCohortWeekly(req: VercelRequest, res: VercelResponse) {
   const authHeader = req.headers.authorization;
   const cronSecret = process.env.CRON_SECRET;
   if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {

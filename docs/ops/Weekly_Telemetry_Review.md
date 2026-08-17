@@ -45,7 +45,7 @@
 1. **GitHub** に workflow `weekly-telemetry-approve` がある（L0）。手動なら `gh workflow run weekly-telemetry-approve.yml -f command=HOLD`。
 2. **Slack アプリは notify と分ける。** Incoming Webhook の `fa-telemetry-notify` に Event Subscriptions を付けない。
 3. 本番 Vercel に `SLACK_SIGNING_SECRET` と `GITHUB_TELEMETRY_DISPATCH_TOKEN`（fine-grained、`actions:write` のみ。contents は付けない）。
-4. Request URL: `https://flight-lms.vercel.app/api/telemetry-approve`。Subscribe は `message.channels`。チャンネルは `#fa-telemetry` のみ。
+4. Request URL: `https://flight-lms.vercel.app/api/telemetry-approve`。Subscribe は bot event **`message.channels` のみ**。Save のあと **Install App で再インストール**する（Verified だけではメッセージが届かない）。チャンネルは `#fa-telemetry` のみ。`fa-telemetry-notify` には Event を付けない。
 5. L1 を足すときは [`scripts/telemetry/l1_allowlist.json`](../../scripts/telemetry/l1_allowlist.json) を PR してから。T-03 の自動 resolve は再発中のため入れない。
 
 ---

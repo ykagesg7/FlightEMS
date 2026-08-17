@@ -96,9 +96,9 @@
 ### **Articles 日次公開・週次案内メール**
 
 - **方針**: 週末に MDX をまとめてデプロイ。公開は **JST の `publishedAt`（MDX）+ `learning_contents.is_published`（DB）** で日次制御。毎日の git コミットは不要。既定ペースは **週 3 本（月・水・金）**。FMT は 1-1 からドリップ（W34: 8/17・19・21）。1-4 以降はストックしてから schedule に載せる（[FMT 正本](content_outlines/FMT_Formation_2026/README.md)）。
-- **日次公開同期**: Vercel Cron `10 15 * * *`（UTC）= **毎日 00:10 JST** → [`api/cron/article-publish-sync.ts`](../api/cron/article-publish-sync.ts)  
+- **日次公開同期**: Vercel Cron `10 15 * * *`（UTC）= **毎日 00:10 JST** → [`api/cron.ts`](../api/cron.ts) `?job=article-publish-sync`（URL `/api/cron/article-publish-sync` は rewrite）  
   スケジュール正本: [`api/_lib/articlePublishSchedule.ts`](../api/_lib/articlePublishSchedule.ts)
-- **週次案内メール**: [`api/cron/article-weekly-digest.ts`](../api/cron/article-weekly-digest.ts)  
+- **週次案内メール**: [`api/cron.ts`](../api/cron.ts) `?job=article-weekly-digest`（URL `/api/cron/article-weekly-digest` は rewrite）  
   - `0 8 * * 0`（UTC）= **日曜 17:00 JST** — 来週予告＋今週リマインド  
   - `0 22 * * 0`（UTC）= **月曜 07:00 JST** — 日曜抜け時の当週キャッチアップ（`dedupe_key` で二重送信回避）  
   テンプレ `weekly_article_digest`（X 文案トーン）。`?isoWeek=` で対象週を強制可。  
@@ -115,7 +115,7 @@
 
 ### **Cohort 週次 cron・通知（Phase D pilot）**
 
-- **スケジュール**: Vercel Cron `0 0 * * 0`（UTC）= **日曜 09:00 JST** → [`api/cron/cohort-weekly.ts`](../api/cron/cohort-weekly.ts)
+- **スケジュール**: Vercel Cron `0 0 * * 0`（UTC）= **日曜 09:00 JST** → [`api/cron.ts`](../api/cron.ts) `?job=cohort-weekly`（URL `/api/cron/cohort-weekly` は rewrite）
 - **処理順**: 前週スコア・達成条件集計 → 達成者20 XP → MVP（3〜9 名、追加30 XP）/ TOP3（10 名以上、追加20 XP）バッジ → アプリ内通知 enqueue → （`BREVO_API_KEY` あり時）メール配信
 - **Vercel Production 必須 env**:
   - `CRON_SECRET` — Cron 認証（`Authorization: Bearer`）
@@ -129,11 +129,11 @@
   ```bash
   curl -sS -H "Authorization: Bearer $CRON_SECRET" "https://flight-lms.vercel.app/api/cron/cohort-weekly"
   ```
-  レスポンス JSON の `missionNotifications` / `email.weeklyMission` を確認。`FUNCTION_INVOCATION_TIMEOUT` が出る場合は [`vercel.json`](../vercel.json) の `api/cron/cohort-weekly.ts` `maxDuration`（60s）とメール並列数（`api/_lib/notificationEmail.ts`）を確認し **再デプロイ**する。
+  レスポンス JSON の `missionNotifications` / `email.weeklyMission` を確認。`FUNCTION_INVOCATION_TIMEOUT` が出る場合は [`vercel.json`](../vercel.json) の `api/cron.ts` `maxDuration`（60s）とメール並列数（`api/_lib/notificationEmail.ts`）を確認し **再デプロイ**する。
 - **Supabase Auth SMTP 設定後の確認**: Supabase Dashboard → **Authentication → Email Templates** からテスト送信、または本番 `/auth` で **パスワードリセット**を自分のアドレスに送り Gmail 受信を確認（cohort メールとは別経路）。
 - **アプリ内通知**: Dashboard の「お知らせ」— 既読で非表示（`in_app_notifications.read_at`）
 - **メール opt-in**: プロフィール → 通知・公開 → 「メール通知」ON かつ「ミッション更新」ON
-- **Web Push**: 購読保存のみ。`VAPID_*` 未設定時は [`api/notifications/push.ts`](../api/notifications/push.ts) が 503 でスキップ
+- **Web Push**: 購読保存のみ（`push_subscriptions`）。配信用の Vercel 関数 `notifications/push` は未配線のため削除済み。本実装するときはそのときに 1 本足す。
 - **DB 現行正本**: [`20260720_gamification_phase1_foundation.sql`](../scripts/database/20260720_gamification_phase1_foundation.sql) + [`20260720_gamification_phase1_production_hardening.sql`](../scripts/database/20260720_gamification_phase1_production_hardening.sql) + [`20260720_gamification_phase2_mastery_loop.sql`](../scripts/database/20260720_gamification_phase2_mastery_loop.sql) + [`20260720_gamification_phase2_rpc_invoker_wrappers.sql`](../scripts/database/20260720_gamification_phase2_rpc_invoker_wrappers.sql)（2026-07-20 本番適用済み）
 - **週次達成**: テンプレートの `completion_threshold` を満たしたユーザーに20 XP。`qualification_met` と `evidence` をスコア行へ保存
 - **週次表彰**: active **3〜9 名** → 達成者内 MVP（同率 1 位可、追加30 XP）。**10 名以上** → 達成者内 TOP3（追加20 XP）。全員未達成・inactive なら表彰なし

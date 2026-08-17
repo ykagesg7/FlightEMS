@@ -1,13 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getJstDateString, isPublishDateReached } from '../_lib/articlePublishGate';
-import { listScheduledArticles } from '../_lib/articlePublishSchedule';
-import { getServiceSupabase } from '../_lib/supabaseService';
+import { getJstDateString, isPublishDateReached } from './articlePublishGate';
+import { listScheduledArticles } from './articlePublishSchedule';
+import { getServiceSupabase } from './supabaseService';
 
 /**
  * Flip learning_contents.is_published for scheduled drip articles (JST calendar day).
  * Cron: daily ~00:10 JST (15:10 UTC previous calendar day).
  */
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export async function handleArticlePublishSync(req: VercelRequest, res: VercelResponse) {
   const authHeader = req.headers.authorization;
   const cronSecret = process.env.CRON_SECRET;
   if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {

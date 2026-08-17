@@ -57,8 +57,8 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 #### `api/`
 - **目的**: Vercel Serverless Functions
 - **内容**:
-  - `weather.ts`: 一般気象情報APIプロキシ（WeatherAPI.com）
-  - `aviation-weather.ts`: 航空気象情報APIプロキシ（NOAA）
+  - `weather.ts`: 一般気象・METAR/TAF・RainViewer プロキシ（`?action=`。旧 URL は rewrite）
+  - `cron.ts`: 週次 cron 3 ジョブ（`?job=`。旧 `/api/cron/...` は rewrite）
   - `swim-notam-search.ts`: **SWIM デジタルノータム検索**プロキシ（`GET`、認証はサーバのみ）
   - `telemetry-approve.ts`: 週次テレメトリ 2c。Slack 署名検証後に `weekly-telemetry-approve` を `workflow_dispatch`（notify アプリには Event Subscriptions を付けない）
   - `lib/swimNotamCore.ts`: ログイン・検索・AIXM 要約・`geometry` / `rawXml` 付与の共有ロジック

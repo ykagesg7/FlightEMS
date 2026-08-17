@@ -99,6 +99,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const filtered = filterSlackCallback(payload);
+  console.info('[telemetry-approve]', {
+    kind: filtered.kind,
+    reason: filtered.kind === 'ignore' ? filtered.reason : undefined,
+    slackRetry: req.headers['x-slack-retry-num'] ?? null,
+  });
   if (filtered.kind === 'url_verification') {
     return res.status(200).json({ challenge: filtered.challenge });
   }
