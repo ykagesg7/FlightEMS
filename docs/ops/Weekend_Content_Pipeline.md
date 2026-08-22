@@ -99,7 +99,7 @@ flowchart LR
   SCH -->|日次 cron 00:10 JST| DB
   MDX -->|publishedAt JST| APP
   DB --> APP
-  SCH -->|月曜 08:00 JST| MAIL
+  SCH -->|日曜 17:00 JST| MAIL
   IDEAS -.->|補遺のみ| PUB
   MAIL --> APP
   X -.->|CTA| APP
@@ -117,6 +117,34 @@ flowchart LR
 | Public Wiki | T-4 へリンクしない |
 
 関連 Skill: `weekend-ingest` / `weekend-editorial` / `weekly-article-digest` / `article-publish-check` / `learning-contents-registration`
+
+### 2.2 Skill と Context（翻訳プロセスの資産化）
+
+具体 = 抽象 × (**Skill** × **Context**)。一度目の「あーでもない・こーでもない」を、次回から使い回せる形に分ける。
+
+| 層 | 役割 | 例（このプロジェクト） |
+|------|------|--------------------------|
+| **Skill（型）** | 対象が変わっても使い回す手順 | `weekend-ingest` / `weekend-editorial` / `learning-contents-registration` / Gemini 回顧プロンプト |
+| **Context（材料）** | その週・その話だけ差し替える情報 | `raw/content` クリップ、`wiki/summaries`、`Ideas/Week_*`、CP ブリーフ、T-38 該当節 |
+
+- **Skill に Context を埋めない**（今週のクリップ本文や仮タイトルを SKILL.md に書かない）
+- **Ideas に手順を再発明しない**（土日の歩験は Skill と本節に委譲）
+- 一度目の翻訳が済んだら、完成品より先に「手順」と「材料の種類」を小さく書き残す
+
+### 2.3 うちのルール vs 公式の書き方
+
+Obsidian 公式の AI スキル（例: kepano `obsidian-skills`）が教えるのは **ウィキリンク・コールアウト・プロパティの書き方**。Vault の MCP は既にある。**公式スキルをこのリポジトリに丸設置しない**。
+
+公式で埋められないのが **うちのルール**である。ここが壊れる原因の多く。
+
+| 規約 | 正本 |
+|------|------|
+| どこに何を置くか | §2 のフォルダ契約 |
+| 触ってはいけない | `Lessons/`（学科ミラー）、個人/操作クリップの削除 |
+| 完成物の出口 | Ideas `approved` → Git MDX → schedule / DB |
+| 公開 CTA | Articles or FA Public Wiki。T-4 禁止 |
+
+Vault 書きが崩れたら、まずこの節の置き場を見る。Markdown 構文の公式スキルを追加して解決しない。
 
 ---
 
@@ -218,7 +246,7 @@ ops/failure-log（関連ルールのみ）
 X（案内）→ Articles または Notion FA Public Wiki（長文）
 T-4 ハブは CTA に使わない。Public Wiki に T-4 リンクを書かない。
 
-**Articles 公開（2026-08）**: 週末に MDX 一括コミット可。日次表示は `publishedAt`（JST）+ cron `article-publish-sync`。既定は **週 3 本（月・水・金）**。FMT は 1-1 から（W34）。
+**Articles 公開（2026-08）**: 週末に MDX 一括コミット可。日次表示は `publishedAt`（JST）+ cron `article-publish-sync`。既定は **週 3 本（月・水・金）**。CP が先（W34: 1-1〜1-3、W35: 2-1〜2-3）。FMT は倉庫。
 週次メール案内（X 保留時）: cron `article-weekly-digest`（日曜 17:00 JST／来週予告＋今週リマインド、月曜 07:00 JST／抜け時キャッチアップ）。一時的に明示メールOFF以外へブロードキャスト。詳細は [04_Operations_Guide.md](../04_Operations_Guide.md)。
 
 # パターン（1つ。先週と同じなら理由）
@@ -255,3 +283,4 @@ series_hook（週あたり最大1）
 | 2026-08-01 | 連続性ロック: 過去＝同期／現在＝二人とも教官（見習い道真廃止）。詳細は Ideas/SeriesBible |
 | 2026-08-01 | Gemini回顧プロンプト正本: [Gemini_Memoir_Article_System_Prompt.md](Gemini_Memoir_Article_System_Prompt.md)。W32 Mon MDX `4.1.1_ChoresAreTheJob` |
 | 2026-08-13 | FMT ドリップは 1-1 から。週 3 本（月水金）。W34 に 1-1〜1-3 |
+| 2026-08-17 | §2.2 Skill/Context、§2.3 うちのルール（公式 Obsidian スキルは丸設置しない） |

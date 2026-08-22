@@ -142,6 +142,35 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
     ],
   },
+  '2026-W35': {
+    isoWeek: '2026-W35',
+    seriesTitle: 'CP（単機）',
+    intro:
+      '来週は機体を感じる3本。月・水・金。Deep stall、加速失速、効く面。図形を描く前の feel たい。',
+    articles: [
+      {
+        id: 'CP-2-1_DeepStall',
+        publishDate: '2026-08-24',
+        title: '第4話：引いたままは沈む ～Deep stall～',
+        slug: '/articles/cp-2-1-deep-stall',
+        hook: '引いたままは沈む。戻すのは緩めること。',
+      },
+      {
+        id: 'CP-2-2_AcceleratedStall',
+        publishDate: '2026-08-26',
+        title: '第5話：もっと引くな ～加速失速～',
+        slug: '/articles/cp-2-2-accelerated-stall',
+        hook: '曲がりきれなくてもいい。失速に入れるな。',
+      },
+      {
+        id: 'CP-2-3_RollAuthority',
+        publishDate: '2026-08-28',
+        title: '第6話：効く面でロールしろ ～ラダーとエルロン～',
+        slug: '/articles/cp-2-3-roll-authority',
+        hook: '効きが悪いから足すな。出汁はレンゲ、麺は箸。',
+      },
+    ],
+  },
 };
 
 export function getDigestForIsoWeek(isoWeek: string): WeeklyArticleDigest | null {

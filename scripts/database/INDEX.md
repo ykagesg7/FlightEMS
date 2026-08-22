@@ -94,6 +94,25 @@
 | **CP（操縦）** ep.1 ストック | [`20260816_learning_contents_ctx_area_and_purpose.sql`](20260816_learning_contents_ctx_area_and_purpose.sql)（`CP-1-1_AreaAndPurpose`、`order_index` **611**） |
 | **CP（操縦）** ep.2 W34 | [`20260816_learning_contents_ctx_energy.sql`](20260816_learning_contents_ctx_energy.sql)（`CP-1-2_Energy`、`order_index` **612**、公開 8/19） |
 | **CP（操縦）** ep.3 W34 | [`20260816_learning_contents_ctx_controls_g_pio.sql`](20260816_learning_contents_ctx_controls_g_pio.sql)（`CP-1-3_ControlsGPio`、`order_index` **613**、公開 8/21） |
+| **CP（操縦）** S2-1 ストック | [`20260817_learning_contents_cp_2_1_deep_stall.sql`](20260817_learning_contents_cp_2_1_deep_stall.sql)（`CP-2-1_DeepStall`、`order_index` **614**、`is_published: false`） |
+| **CP（操縦）** S2-2 ストック | [`20260817_learning_contents_cp_2_2_accelerated_stall.sql`](20260817_learning_contents_cp_2_2_accelerated_stall.sql)（`CP-2-2_AcceleratedStall`、`order_index` **615**、`is_published: false`） |
+| **CP（操縦）** S2-3 ストック | [`20260817_learning_contents_cp_2_3_roll_authority.sql`](20260817_learning_contents_cp_2_3_roll_authority.sql)（`CP-2-3_RollAuthority`、`order_index` **616**、`is_published: false`） |
+| **CP（操縦）** S2-4 ストック | [`20260817_learning_contents_cp_2_4_unload.sql`](20260817_learning_contents_cp_2_4_unload.sql)（`CP-2-4_Unload`、`order_index` **617**、`is_published: false`） |
+| **CP（操縦）** S2-5 ストック | [`20260817_learning_contents_cp_2_5_trim_failure.sql`](20260817_learning_contents_cp_2_5_trim_failure.sql)（`CP-2-5_TrimFailure`、`order_index` **618**、`is_published: false`） |
+| **CP（操縦）** S2-6 ストック | [`20260817_learning_contents_cp_2_6_pitchback_sliceback.sql`](20260817_learning_contents_cp_2_6_pitchback_sliceback.sql)（`CP-2-6_PitchbackSliceback`、`order_index` **619**、`is_published: false`） |
+| **CP（操縦）** S3-1 ストック | [`20260818_learning_contents_cp_3_1_configured_handling.sql`](20260818_learning_contents_cp_3_1_configured_handling.sql)（`CP-3-1_ConfiguredHandling`、`order_index` **620**、`is_published: false`） |
+| **CP（操縦）** S3-2 ストック | [`20260818_learning_contents_cp_3_2_pattern_ats.sql`](20260818_learning_contents_cp_3_2_pattern_ats.sql)（`CP-3-2_PatternATS`、`order_index` **621**、`is_published: false`） |
+| **CP（操縦）** S4-1 ストック | [`20260819_learning_contents_cp_4_1_nose_high.sql`](20260819_learning_contents_cp_4_1_nose_high.sql)（`CP-4-1_NoseHigh`、`order_index` **622**、`is_published: false`） |
+| **CP（操縦）** S4-2 ストック | [`20260819_learning_contents_cp_4_2_nose_low.sql`](20260819_learning_contents_cp_4_2_nose_low.sql)（`CP-4-2_NoseLow`、`order_index` **623**、`is_published: false`） |
+| **CP（操縦）** S5-1 ストック | [`20260820_learning_contents_cp_5_1_aerobatic_contract.sql`](20260820_learning_contents_cp_5_1_aerobatic_contract.sql)（`CP-5-1_AerobaticContract`、`order_index` **624**、`is_published: false`） |
+| **CP（操縦）** S5-2 ストック | [`20260820_learning_contents_cp_5_2_aileron_roll.sql`](20260820_learning_contents_cp_5_2_aileron_roll.sql)（`CP-5-2_AileronRoll`、`order_index` **625**、`is_published: false`） |
+| **CP（操縦）** S5-3 ストック | [`20260820_learning_contents_cp_5_3_lazy_eight.sql`](20260820_learning_contents_cp_5_3_lazy_eight.sql)（`CP-5-3_LazyEight`、`order_index` **626**、`is_published: false`） |
+| **CP（操縦）** S5-4 ストック | [`20260821_learning_contents_cp_5_4_barrel_roll.sql`](20260821_learning_contents_cp_5_4_barrel_roll.sql)（`CP-5-4_BarrelRoll`、`order_index` **627**、`is_published: false`） |
+| **CP（操縦）** S5-5 ストック | [`20260821_learning_contents_cp_5_5_loop.sql`](20260821_learning_contents_cp_5_5_loop.sql)（`CP-5-5_Loop`、`order_index` **628**、`is_published: false`） |
+| **CP（操縦）** S5-6 ストック | [`20260821_learning_contents_cp_5_6_split_s_immelmann.sql`](20260821_learning_contents_cp_5_6_split_s_immelmann.sql)（`CP-5-6_SplitSImmelmann`、`order_index` **629**、`is_published: false`） |
+| **CP（操縦）** S5-7 ストック | [`20260821_learning_contents_cp_5_7_cuban_eight.sql`](20260821_learning_contents_cp_5_7_cuban_eight.sql)（`CP-5-7_CubanEight`、`order_index` **630**、`is_published: false`） |
+| **CP（操縦）** S5-8 ストック | [`20260821_learning_contents_cp_5_8_cloverleaf.sql`](20260821_learning_contents_cp_5_8_cloverleaf.sql)（`CP-5-8_Cloverleaf`、`order_index` **631**、`is_published: false`） |
+| **CP（操縦）** S5-9 ストック | [`20260821_learning_contents_cp_5_9_chandelle.sql`](20260821_learning_contents_cp_5_9_chandelle.sql)（`CP-5-9_Chandelle`、`order_index` **632**、`is_published: false`。CP 最終話） |
 | **CP 公開面タイトル同期** | [`20260817_learning_contents_ctx_cp_titles.sql`](20260817_learning_contents_ctx_cp_titles.sql)（適用済。現行 ID は CP-*） |
 | **CTX→CP ID 改名** | [`20260817_learning_contents_ctx_to_cp.sql`](20260817_learning_contents_ctx_to_cp.sql)（`learning_contents` と progress/views の ID を CP-* へ） |
 | **cohort 週次ミッション・TOP3 バッジ** | `20260620_cohort_weekly_missions.sql`（`user_learning_profiles` cohort 列、週次 RPC、通知テーブル）。MVP tier（3〜9 名）: [`20260626_cohort_weekly_mvp_tier_awards.sql`](20260626_cohort_weekly_mvp_tier_awards.sql) |
