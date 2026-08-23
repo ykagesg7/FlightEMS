@@ -2,7 +2,6 @@ import './instrument'; // Sentry 初期化（最初のインポート）
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
-import 'katex/dist/katex.min.css';
 import { initAuthListener } from './auth/initAuthListener';
 import { primePasswordRecoveryFromUrl } from './auth/passwordRecovery';
 import { useAuthStore } from './stores/authStore';

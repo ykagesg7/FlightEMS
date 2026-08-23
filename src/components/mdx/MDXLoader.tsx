@@ -125,8 +125,9 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-40">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      <div className="space-y-4" aria-busy="true" aria-label="本文を読み込み中">
+        <div className="h-8 w-1/2 animate-pulse rounded bg-brand-surface" />
+        <div className="h-64 animate-pulse rounded-lg bg-brand-secondary-dark" />
       </div>
     );
   }

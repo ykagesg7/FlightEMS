@@ -4,8 +4,8 @@ import { filterPublishedArticleContents } from '../../../constants/articleHubCat
 import { useLearningProgress } from '../../../hooks/useLearningProgress';
 
 function prefetchMDX(id: string) {
-  import(`../../content/articles/${id}.mdx`)
-    .catch(() => import(`../../content/lessons/${id}.mdx`))
+  import(`../../../content/articles/${id}.mdx`)
+    .catch(() => import(`../../../content/lessons/${id}.mdx`))
     .catch(() => undefined);
 }
 

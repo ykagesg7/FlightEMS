@@ -10,7 +10,7 @@ import { useArticleProgress } from '../../../hooks/useArticleProgress';
 import { useArticleStats } from '../../../hooks/useArticleStats';
 import { LearningContent } from '../../../types';
 import { ArticleMeta } from '../../../types/articles';
-import { buildArticleIndex } from '../../../utils/articlesIndex';
+import { getArticleIndex } from '../../../utils/articlesIndex';
 import {
   buildArticleHubSearchParams,
   computeNextToReadIds,
@@ -125,7 +125,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   useEffect(() => {
     const loadArticleMetas = async () => {
       try {
-        const index = await buildArticleIndex();
+        const index = await getArticleIndex();
         const metaMap: Record<string, ArticleMeta> = {};
         index.forEach((entry) => {
           metaMap[entry.filename] = entry.meta;
@@ -145,9 +145,11 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   }, [articleContents, loadArticleStats]);
 
   const updateHubState = useCallback(
-    (patch: Partial<ArticleHubState>) => {
+    (patch: Partial<ArticleHubState>, options?: { replace?: boolean }) => {
       const next = { ...hubState, ...patch };
-      setSearchParams(buildArticleHubSearchParams(next));
+      setSearchParams(buildArticleHubSearchParams(next), {
+        replace: options?.replace ?? false,
+      });
     },
     [hubState, setSearchParams]
   );
@@ -255,29 +257,20 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   const activeFilterCount =
     hubState.tags.length + (hubState.status !== 'all' ? 1 : 0);
 
-  const handleArticleClick = async (articleId: string) => {
-    try {
-      await recordView({ article_id: articleId });
-      navigate(`/articles/${articleId}`);
-    } catch (error) {
+  const handleArticleClick = (articleId: string) => {
+    void recordView({ article_id: articleId }).catch((error) => {
       console.error('閲覧数の記録に失敗しました:', error);
-    }
+    });
   };
 
   const showRegistrationModal = useCallback(() => {
     navigate('/auth');
   }, [navigate]);
 
-  if (isLoading || progressLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-[var(--text-primary)]">
-        <div className="rounded-xl border border-brand-primary/20 bg-brand-secondary-dark p-8 text-center backdrop-blur-sm">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-brand-primary" />
-          <p className="text-lg font-medium">学習データを読み込み中...</p>
-        </div>
-      </div>
-    );
-  }
+  const showGridSkeleton = isLoading || progressLoading;
+
+  const clearAllFilters = () =>
+    updateHubState({ query: '', tags: [], status: 'all', tab: 'continue' }, { replace: true });
 
   return (
     <div className="relative min-h-screen bg-[var(--bg)] py-8 text-[var(--text-primary)]">
@@ -307,6 +300,18 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
           />
         )}
 
+        {stats && (
+          <div className="mb-6 xl:hidden">
+            <ProgressSidebar
+              stats={stats}
+              articleContents={articleContents}
+              isDemo={isDemo}
+              onRegisterClick={showRegistrationModal}
+              getArticleProgress={getArticleProgress}
+            />
+          </div>
+        )}
+
         {nextComprehensionArticle && (
           <NextComprehensionCTA article={nextComprehensionArticle} />
         )}
@@ -329,7 +334,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
               state={hubState}
               visibleTabs={visibleTabs}
               tabCounts={tabCounts}
-              onQueryChange={(query) => updateHubState({ query })}
+              onQueryChange={(query) => updateHubState({ query }, { replace: true })}
               onTabChange={(tab) => updateHubState({ tab })}
               onSortChange={(sort: ArticleHubSort) => updateHubState({ sort })}
               onOpenFilters={() => setFilterDrawerOpen(true)}
@@ -360,12 +365,29 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
               <ContinueReadingHero
                 article={heroArticle}
                 meta={getMetaForArticle(heroArticle, articleMetas)}
-                onRead={() => handleArticleClick(heroArticle.id)}
+                onRead={() => {
+                  handleArticleClick(heroArticle.id);
+                  navigate(`/articles/${heroArticle.id}`);
+                }}
               />
             )}
 
-            <div className="space-y-8">
-              {gridContents.length > 0 ? (
+            <div
+              className="space-y-8"
+              role="tabpanel"
+              id={`article-hub-panel-${hubState.tab}`}
+              aria-labelledby={`article-hub-tab-${hubState.tab}`}
+            >
+              {showGridSkeleton ? (
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-40 animate-pulse rounded-xl border border-brand-primary/20 bg-brand-secondary-dark"
+                    />
+                  ))}
+                </div>
+              ) : gridContents.length > 0 ? (
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   {gridContents.map((article) => {
                     const meta = getMetaForArticle(article, articleMetas);
@@ -402,27 +424,33 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                   <p className="mb-2 text-lg font-medium text-[var(--text-primary)]">
                     記事が見つかりませんでした
                   </p>
-                  <p className="text-sm">
+                  <p className="mb-4 text-sm">
                     検索条件やフィルタを変更してお試しください。
                   </p>
+                  <button
+                    type="button"
+                    onClick={clearAllFilters}
+                    className="rounded-lg border border-brand-primary/30 px-4 py-2 text-sm text-brand-primary hover:bg-brand-primary/10"
+                  >
+                    フィルタをクリア
+                  </button>
                 </div>
               )}
             </div>
 
-            {isDemo && gridContents.length > 0 && (
-              <div className="mt-12 rounded-xl border-2 border-dashed border-blue-500/60 bg-blue-900/30 p-6 text-center backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:bg-blue-900/40 hover:shadow-lg">
-                <div className="mb-4 text-3xl">🎯</div>
-                <h3 className="mb-2 bg-gradient-to-r bg-clip-text text-xl font-bold text-transparent from-white to-gray-200">
+            {isDemo && gridContents.length > 0 && !showGridSkeleton && (
+              <div className="mt-12 rounded-xl border-2 border-dashed border-brand-primary/40 bg-brand-primary/10 p-6 text-center">
+                <h3 className="mb-2 text-xl font-bold text-[var(--text-primary)]">
                   さらに詳しい学習分析を体験
                 </h3>
-                <p className="mb-4 text-gray-300">
-                  登録すると、AI による学習パターン分析、パーソナライズされた推薦、
+                <p className="mb-4 text-[var(--text-muted)]">
+                  登録すると、学習パターン分析、パーソナライズされた推薦、
                   詳細な成績レポートなどが利用できます。
                 </p>
                 <button
                   type="button"
                   onClick={showRegistrationModal}
-                  className="transform rounded-xl border border-blue-500/30 bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-3 font-medium text-white shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:from-blue-500 hover:to-purple-500 hover:shadow-xl"
+                  className="rounded-xl bg-brand-primary px-8 py-3 font-medium text-[var(--bg)] hover:bg-brand-primary-dark"
                 >
                   無料で始める
                 </button>

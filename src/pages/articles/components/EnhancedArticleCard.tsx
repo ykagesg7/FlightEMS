@@ -31,10 +31,18 @@ interface EnhancedArticleCardProps {
 }
 
 const STATUS_CHIP_CLASS: Record<ArticleComprehensionUiStatus, string> = {
-  unread: 'bg-gray-800/80 text-gray-300 border-gray-600/50',
+  unread: 'bg-brand-surface text-[var(--text-muted)] border-brand-primary/20',
   read: 'bg-brand-primary/20 text-brand-primary border-brand-primary/30',
   comprehended: 'bg-hud-green/20 text-hud-green border-hud-green/30',
 };
+
+function hashId(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i += 1) {
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
 
 export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
   article,
@@ -64,7 +72,6 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
 
   const progressPercentage = progress?.scrollProgress || 0;
   const isCompleted = progress?.completed || false;
-  const isBookmarked = progress?.bookmarked || false;
   const readingTime = articleMeta?.readingTime || 10;
   const statusLabel = ARTICLE_COMPREHENSION_STATUS_LABEL[comprehensionStatus];
 
@@ -73,34 +80,36 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
     return calculateBaseArticleXp(article.id, articleMeta);
   }, [article.id, articleMeta]);
 
-  const shouldBlur = isDemo && Math.random() > 0.6;
+  const shouldBlur = isDemo && hashId(article.id) % 10 >= 6;
 
   const highlightInProgress =
     isNextToRead &&
     (comprehensionStatus === 'unread' || articleStatus === 'in-progress');
 
   return (
-    <div className={`
-      group relative transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1
+    <div
+      className={`
+      group relative motion-safe:transition-all motion-safe:duration-300
       ${isHighlighted ? 'highlight-article' : ''}
-      ${highlightInProgress ? 'ring-2 ring-brand-primary ring-offset-2 ring-offset-[var(--bg)] shadow-lg shadow-brand-primary/50' : ''}
-    `}>
+      ${highlightInProgress ? 'ring-2 ring-brand-primary ring-offset-2 ring-offset-[var(--bg)]' : ''}
+    `}
+    >
       <div
-        className={`absolute top-3 right-3 z-10 rounded-full border px-3 py-1 text-xs font-bold ${STATUS_CHIP_CLASS[comprehensionStatus]}`}
+        className={`absolute right-3 top-3 z-10 rounded-full border px-3 py-1 text-xs font-bold ${STATUS_CHIP_CLASS[comprehensionStatus]}`}
       >
         {statusLabel}
       </div>
 
       {shouldBlur && (
-        <div className="absolute inset-0 z-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm flex items-center justify-center">
-          <div className="text-center p-4">
-            <div className="text-2xl mb-2">🔒</div>
-            <div className="text-sm font-medium mb-2 text-white">
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-brand-secondary/70 backdrop-blur-sm">
+          <div className="p-4 text-center">
+            <div className="mb-2 text-sm font-medium text-[var(--text-primary)]">
               詳細な進捗データ
             </div>
             <button
+              type="button"
               onClick={onRegisterPrompt}
-              className="px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200 bg-blue-600 hover:bg-blue-500 text-white"
+              className="rounded-lg bg-brand-primary px-4 py-2 text-xs font-medium text-[var(--bg)] hover:bg-brand-primary-dark"
             >
               登録して見る
             </button>
@@ -108,149 +117,55 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
         </div>
       )}
 
-      <div className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-xl bg-brand-secondary-dark border-brand-primary/20 shadow-brand-primary/20 hover:bg-brand-primary/5 ${shouldBlur ? 'blur-[1px]' : ''}`}>
+      <Link
+        to={`/articles/${article.id}`}
+        onClick={onArticleClick}
+        className={`relative block overflow-hidden rounded-xl border-2 border-brand-primary/20 bg-brand-secondary-dark p-5 shadow-lg motion-safe:transition-shadow hover:border-brand-primary/40 hover:shadow-xl ${shouldBlur ? 'blur-[1px]' : ''}`}
+      >
         {progress && progressPercentage > 0 && (
-          <div className="absolute top-0 left-0 right-0 h-1 z-10 bg-gray-800">
+          <div className="absolute left-0 right-0 top-0 z-10 h-1 bg-brand-surface">
             <div
-              className={`h-full transition-all duration-500 ${isCompleted || comprehensionStatus !== 'unread' ? 'bg-green-500' : 'bg-blue-500'
-                }`}
+              className={`h-full ${isCompleted || comprehensionStatus !== 'unread' ? 'bg-hud-green' : 'bg-brand-primary'}`}
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
         )}
 
-        <div className="p-5">
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex-1 pr-16">
-              <div className="flex items-center space-x-2 mb-2">
-                <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-900/50 text-blue-400 border border-blue-700/50">
-                  {article.category}
-                </span>
+        <div className="pr-16">
+          <span className="mb-2 inline-block rounded-full border border-brand-primary/30 bg-brand-primary/10 px-2 py-1 text-xs font-medium text-brand-primary">
+            {article.category}
+          </span>
 
-                {progress && comprehensionStatus === 'unread' && progressPercentage > 0 && (
-                  <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-900/50 text-yellow-400 border border-yellow-700/50">
-                    {progressPercentage}% 進行中
-                  </span>
-                )}
-              </div>
+          <h3 className="mb-2 line-clamp-2 text-lg font-bold text-[var(--text-primary)] group-hover:text-brand-primary">
+            {articleMeta?.title || article.title}
+          </h3>
 
-              <Link
-                to={`/articles/${article.id}`}
-                onClick={onArticleClick}
-                className="block text-lg font-bold mb-2 line-clamp-2 hover:underline transition-all duration-300 bg-gradient-to-r bg-clip-text text-transparent from-white to-gray-200 hover:from-blue-400 hover:to-purple-400"
-              >
-                {articleMeta?.title || article.title}
-              </Link>
-
-              {(articleMeta?.excerpt || article.description) && (
-                <p className="text-sm line-clamp-2 mb-3 text-gray-300">
-                  {articleMeta?.excerpt || article.description}
-                </p>
-              )}
-            </div>
-
-            {isBookmarked && (
-              <div className="ml-3 text-lg text-yellow-400">
-                🔖
-              </div>
-            )}
-          </div>
-
-          {articleMeta?.tags && articleMeta.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-3">
-              {articleMeta.tags.slice(0, 3).map((tag, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 text-xs rounded-md bg-gray-800 text-gray-400"
-                >
-                  #{tag}
-                </span>
-              ))}
-              {articleMeta.tags.length > 3 && (
-                <span className="px-2 py-1 text-xs rounded-md bg-gray-800 text-gray-500">
-                  +{articleMeta.tags.length - 3}
-                </span>
-              )}
-            </div>
+          {(articleMeta?.excerpt || article.description) && (
+            <p className="mb-3 line-clamp-2 text-sm text-[var(--text-muted)]">
+              {articleMeta?.excerpt || article.description}
+            </p>
           )}
+        </div>
 
-          <div className="flex items-center justify-between pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
-            <div className="flex items-center space-x-4 text-xs">
-              <div className="flex items-center space-x-1 text-gray-400">
-                <span>📖</span>
-                <span>{readingTime}分</span>
-              </div>
-
-              <div className="flex items-center space-x-1 text-yellow-400">
-                <span>⭐</span>
-                <span className="font-semibold">+{articleXp} XP</span>
-              </div>
-
-              {(articleMeta?.publishedAt || article.created_at) && (
-                <div className="flex items-center space-x-1 text-gray-400">
-                  <span>📅</span>
-                  <span>
-                    {new Date(articleMeta?.publishedAt || article.created_at).toLocaleDateString('ja-JP', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </span>
-                </div>
-              )}
-
-              {progress?.rating && (
-                <div className="flex items-center space-x-1">
-                  {[...Array(5)].map((_, i) => (
-                    <span
-                      key={i}
-                      className={`text-xs ${i < progress.rating! ? 'text-yellow-400' : 'text-gray-600'
-                        }`}
-                    >
-                      ⭐
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {stats && (
-              <div className="flex items-center space-x-3 text-xs">
-                {isLoggedIn && (
-                  <>
-                    <div className="flex items-center space-x-1 text-gray-400">
-                      <span className={stats.user_liked ? '❤️' : '🤍'}>
-                      </span>
-                      <span>{stats.likes_count}</span>
-                    </div>
-
-                    <div className="flex items-center space-x-1 text-gray-400">
-                      <span>💬</span>
-                      <span>{stats.comments_count}</span>
-                    </div>
-                  </>
-                )}
-
-                <div className="flex items-center space-x-1 text-gray-400">
-                  <span>👀</span>
-                  <span>{stats.views_count}</span>
-                </div>
-              </div>
+        <div className="flex items-center justify-between border-t border-brand-primary/10 pt-3 text-xs text-[var(--text-muted)]">
+          <div className="flex items-center gap-3">
+            <span>{readingTime}分</span>
+            {articleXp > 0 && (
+              <span className="font-semibold text-hud-warning">+{articleXp} XP</span>
             )}
           </div>
-
-          {progress && !isCompleted && progress.readAt && (
-            <div className="mt-2 pt-2 border-t border-gray-200/30 dark:border-gray-700/30 text-xs text-gray-500">
-              最後に読んだ: {new Date(progress.readAt).toLocaleDateString('ja-JP', {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
+          {stats && (
+            <div className="flex items-center gap-3">
+              {isLoggedIn && (
+                <span aria-label={stats.user_liked ? 'いいね済み' : 'いいね'}>
+                  {stats.user_liked ? '♥' : '♡'} {stats.likes_count}
+                </span>
+              )}
+              <span>{stats.views_count} 閲覧</span>
             </div>
           )}
         </div>
-      </div>
+      </Link>
     </div>
   );
 };

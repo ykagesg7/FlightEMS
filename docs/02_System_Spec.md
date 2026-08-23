@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトの詳細な設計仕様、API仕様、データベース設計、UI/UX仕様について包括的に説明します。
 
-**最終更新**: 2026年5月10日（プロダクト方針連携の将来節を追加）
-**バージョン**: Design Specification v4.0.3
+**最終更新**: 2026年8月24日（Articles インデックス仮想モジュール）
+**バージョン**: Design Specification v4.0.4
 
 ### プロダクト方針連携（将来実装・仕様の置き場）
 
@@ -51,9 +51,9 @@ export type ArticleMeta = {
 
 #### **記事インデックスシステム**
 
-- **ファイルベース管理**: `import.meta.glob`による動的記事収集
-- **型安全なインデックス**: `ArticleIndexEntry`による構造化管理
-- **キャッシュ機能**: パフォーマンス最適化のための記事インデックスキャッシュ
+- **メタ抽出**: [`virtual:articles-index`](../vite/articlesIndexPlugin.ts) が MDX の `export const meta` をビルド時に集約（約190本の直列 `await import` はしない）
+- **本文 loader**: `import.meta.glob` は MDX チャンクの遅延読み込み専用
+- **型安全なインデックス**: `ArticleIndexEntry` による構造化管理。`getArticleIndex()` は in-flight Promise キャッシュ
 - **検索・フィルタリング**: タグ、シリーズ、著者による高度な検索機能
 
 #### **記事フォーマット仕様**
@@ -144,7 +144,9 @@ CREATE TABLE learning_progress (
 - **ロジック**: [`articleHubFilters.ts`](../src/pages/articles/articleHubFilters.ts)（パース・フィルタ・次に読む選定）。UI: `ArticleHubToolbar`, `ArticleFilterDrawer`, `ArticleActiveFilterChips`, `ContinueReadingHero`。
 - **理解確認 UX（2026年7月）**: [`useArticleProgress`](../src/hooks/useArticleProgress.ts) が `learning_progress` と `learning_milestones`（`milestone_type='article_comprehension'`、`milestone_key`=content_id）をバッチ取得。カードは 未読 / 読了 / 理解確認済。一覧上部の [`NextComprehensionCTA`](../src/pages/articles/components/NextComprehensionCTA.tsx) は読了済かつ未理解確認の1件を表示（`buildContentTestHref`）。戻るリンクは `/`「学習ダッシュボードへ」。`ProgressSidebar` は `xl+` のみ。
 - **Home / Welcome**: ログイン Home に [`HomeContinueReading`](../src/pages/home/components/HomeContinueReading.tsx)。Welcome 完了で `next=/` のとき `/articles?tab=continue` へ。
-- **記事詳細**: [`SeriesNextChapterCta`](../src/pages/articles/components/SeriesNextChapterCta.tsx) でシリーズ次章 CTA（`PrevNextNav` の上）。
+- **記事詳細**: 末尾 CTA 順は **次章**（[`SeriesNextChapterCta`](../src/pages/articles/components/SeriesNextChapterCta.tsx)）→ 関連テスト → 折りたたみコメント → [`PrevNextNav`](../src/pages/articles/components/PrevNextNav.tsx)。関連記事は MDX 末尾で折りたたみ。
+- **記事インデックス（2026-08）**: [`virtual:articles-index`](../vite/articlesIndexPlugin.ts) が MDX の `export const meta` をビルド時抽出（`enforce: 'pre'`）。[`articlesIndex.ts`](../src/utils/articlesIndex.ts) はメタをこの仮想モジュールから同期構築し、`import.meta.glob` は本文 loader のみ。`getArticleIndex()` は in-flight Promise キャッシュ。Vite が設定再読込に失敗したあとはプラグイン未登録の古いプロセスが残ることがあり、その場合は `npm run dev` を再起動する。
+- **OG prerender**: [`prerenderArticlesPlugin`](../vite/prerenderArticlesPlugin.ts) が `dist/articles/<id>/index.html` に OG/Twitter タグを埋め込む。未リリースは `noindex`。オリジンは `VITE_SITE_ORIGIN`（既定 `https://flightacademy.com`）。`vercel.json` は `cleanUrls: true`。
 
 
 #### **データベース設計**
@@ -1054,6 +1056,13 @@ Flight Academy へのブランド移行は [00](00_Flight_Academy_Strategy.md) �
 ---
 
 ## 📝 変更履歴
+
+### **2026年8月24日 - Articles 初期ロードと仮想インデックス**
+
+- **メタ**: `virtual:articles-index`（`enforce: 'pre'`）で `export const meta` をビルド時抽出。`import.meta.glob` は本文 loader のみ。
+- **描画**: mermaid / KaTeX / 重い MDX コンポーネントを記事ルートへ遅延。ハブはスケルトン・検索 debounce。
+- **OG**: `prerenderArticlesPlugin` + `vercel.json` `cleanUrls`。
+- **運用**: 設定再読込失敗後は `npm run dev` 再起動（プラグイン未登録の stale プロセス対策）。
 
 ### **2026年4月10日 - /test 全モードで結果後の記事推薦（ReviewContentLink）**
 

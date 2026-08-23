@@ -7,7 +7,7 @@ import {
   isSeriesCompleteForMembers,
   resolveArticleMeta,
 } from '../utils/awardArticleReadXp';
-import { buildArticleIndex } from '../utils/articlesIndex';
+import { getArticleIndex } from '../utils/articlesIndex';
 import { syncStreakToUserLearningProfile } from '../utils/streak';
 import { supabase } from '../utils/supabase';
 import { useAuth } from './useAuth';
@@ -252,7 +252,7 @@ export const useArticleProgress = () => {
   useEffect(() => {
     const loadArticleIndex = async () => {
       try {
-        const index = await buildArticleIndex();
+        const index = await getArticleIndex();
         const indexMap: Record<string, ArticleMeta> = {};
         const indexMapByFilename: Record<string, ArticleMeta> = {};
         index.forEach(entry => {

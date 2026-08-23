@@ -81,7 +81,7 @@ export function collectionToRuntimes(
   for (const f of data.features ?? []) {
     const props = f.properties ?? {};
     const rings = polygonRings(f.geometry);
-    let band =
+    const band =
       kind === 'pending'
         ? { ...parseAltitudeBandFt(String(props.altitude ?? '')), known: true }
         : (() => {

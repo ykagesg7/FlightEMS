@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ArticleIndexEntry } from '../../../types/articles';
 import { getRelatedArticles } from '../../../utils/articlesIndex';
@@ -7,13 +7,16 @@ interface RelatedArticlesProps {
   currentSlug: string;
   limit?: number;
   showSeries?: boolean;
+  collapsed?: boolean;
 }
 
 const RelatedArticles: React.FC<RelatedArticlesProps> = ({
   currentSlug,
   limit = 3,
-  showSeries = true
+  showSeries = true,
+  collapsed = false,
 }) => {
+  const panelId = useId();
   const [relatedArticles, setRelatedArticles] = useState<ArticleIndexEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -71,95 +74,86 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({
   };
 
   return (
-    <section className="p-6 rounded-lg border border-brand-primary/20 bg-brand-secondary-dark transition-colors duration-200">
-      <div className="flex items-center gap-2 mb-6">
-        <svg className="w-5 h-5 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-        </svg>
-        <h3 className="text-lg font-semibold text-brand-primary transition-colors duration-200">
-          関連記事
-        </h3>
-      </div>
-
-      <div className="space-y-4">
-        {relatedArticles.map((article) => (
-          <article
-            key={article.meta.slug}
-            className="p-4 rounded-lg border border-brand-primary/30 bg-brand-secondary-light hover:bg-brand-secondary-dark hover:border-brand-primary/50 transition-all duration-200 hover:shadow-md"
-          >
-            <Link
-              to={`/articles/${article.filename}`}
-              className="block space-y-2 no-underline"
-            >
-              {/* タイトル */}
-              <h4 className="font-medium text-white hover:text-brand-primary transition-colors duration-200 line-clamp-2">
-                {article.meta.title}
-              </h4>
-
-              {/* 要約 */}
-              {article.meta.excerpt && (
-                <p className="text-sm text-white opacity-80 line-clamp-2">
-                  {article.meta.excerpt}
-                </p>
-              )}
-
-              {/* メタデータ */}
-              <div className="flex items-center gap-4 text-xs text-white opacity-60">
-                {/* 公開日 */}
-                {article.meta.publishedAt && (
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    {formatDate(article.meta.publishedAt)}
-                  </span>
-                )}
-
-                {/* 読了時間 */}
-                {article.meta.readingTime && (
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {article.meta.readingTime}分
-                  </span>
-                )}
-
-                {/* シリーズ */}
-                {showSeries && article.meta.series && (
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14-7l2 2m0 0l2 2m-2-2v6m-2 5.5V16a2 2 0 00-2-2h-4m-2 2.5V20a2 2 0 01-2-2v-2a2 2 0 012-2h4a2 2 0 012 2z" />
-                    </svg>
-                    {article.meta.series}
-                  </span>
-                )}
-              </div>
-
-              {/* タグ */}
-              {article.meta.tags && article.meta.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {article.meta.tags.slice(0, 3).map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-0.5 text-xs rounded-full border bg-indigo-900 bg-opacity-30 border-indigo-700 text-indigo-300"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                  {article.meta.tags.length > 3 && (
-                    <span className="text-xs text-white opacity-50">
-                      +{article.meta.tags.length - 3}
-                    </span>
-                  )}
-                </div>
-              )}
-            </Link>
-          </article>
-        ))}
-      </div>
+    <section className="rounded-lg border border-brand-primary/20 bg-brand-secondary-dark p-6 transition-colors duration-200">
+      {collapsed ? (
+        <details>
+          <summary className="flex cursor-pointer list-none items-center gap-2 text-lg font-semibold text-brand-primary">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+            関連記事
+          </summary>
+          <div id={panelId} className="mt-6">
+            <RelatedArticleList articles={relatedArticles} showSeries={showSeries} formatDate={formatDate} />
+          </div>
+        </details>
+      ) : (
+        <>
+          <div className="mb-6 flex items-center gap-2">
+            <svg className="h-5 w-5 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+            <h3 className="text-lg font-semibold text-brand-primary transition-colors duration-200">
+              関連記事
+            </h3>
+          </div>
+          <RelatedArticleList articles={relatedArticles} showSeries={showSeries} formatDate={formatDate} />
+        </>
+      )}
     </section>
   );
 };
+
+function RelatedArticleList({
+  articles,
+  showSeries,
+  formatDate,
+}: {
+  articles: ArticleIndexEntry[];
+  showSeries: boolean;
+  formatDate: (dateString?: string) => string | null;
+}) {
+  return (
+    <div className="space-y-4">
+      {articles.map((article) => (
+        <article
+          key={article.meta.slug}
+          className="rounded-lg border border-brand-primary/30 bg-brand-surface p-4 transition-all duration-200 hover:border-brand-primary/50 hover:shadow-md motion-reduce:transition-none"
+        >
+          <Link
+            to={`/articles/${article.filename}`}
+            className="block space-y-2 no-underline"
+          >
+            <h4 className="line-clamp-2 font-medium text-[var(--text-primary)] hover:text-brand-primary">
+              {article.meta.title}
+            </h4>
+            {article.meta.excerpt && (
+              <p className="line-clamp-2 text-sm text-[var(--text-muted)]">
+                {article.meta.excerpt}
+              </p>
+            )}
+            <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
+              {article.meta.publishedAt && <span>{formatDate(article.meta.publishedAt)}</span>}
+              {article.meta.readingTime && <span>{article.meta.readingTime}分</span>}
+              {showSeries && article.meta.series && <span>{article.meta.series}</span>}
+            </div>
+            {article.meta.tags && article.meta.tags.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {article.meta.tags.slice(0, 3).map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-brand-primary/30 bg-brand-primary/10 px-2 py-0.5 text-xs text-brand-primary"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </Link>
+        </article>
+      ))}
+    </div>
+  );
+}
 
 export default RelatedArticles;

@@ -1,144 +1,143 @@
+import 'katex/dist/katex.min.css';
 import { MDXProvider } from '@mdx-js/react';
-import React from 'react';
+import React, { Suspense } from 'react';
 import ArticleHeader from '../../pages/articles/components/ArticleHeader';
 import RelatedArticles from '../../pages/articles/components/RelatedArticles';
 import TableOfContents from '../../pages/articles/components/TableOfContents';
 import ArticleJsonLd from '../../pages/articles/components/seo/ArticleJsonLd';
 import ArticleMetaTags from '../../pages/articles/components/seo/ArticleMetaTags';
+import type { ArticleMeta } from '../../types/articles';
 import { Callout, Footnote, FootnoteRef } from './CalloutComponents';
+import CalloutBox from './CalloutBox';
+import CodeBlock from './CodeBlock';
+import Highlight from './Highlight';
 import ImageWithOptimization from './ImageWithOptimization';
-import * as MDXComponents from './index';
 
-// HTML要素のプロップス型定義
-interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> { }
-interface ParagraphProps extends React.HTMLAttributes<HTMLParagraphElement> { }
-interface ListProps extends React.HTMLAttributes<HTMLUListElement | HTMLOListElement> { }
-interface ListItemProps extends React.HTMLAttributes<HTMLLIElement> { }
-interface TableProps extends React.HTMLAttributes<HTMLTableElement> { }
-interface TableCellProps extends React.HTMLAttributes<HTMLTableCellElement> { }
-interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> { }
-interface AnchorProps extends React.HTMLAttributes<HTMLAnchorElement> { }
-interface BlockquoteProps extends React.HTMLAttributes<HTMLElement> { }
+const DiagramComponent = React.lazy(() => import('./DiagramComponent'));
+const QuizComponent = React.lazy(() => import('./QuizComponent'));
 
-// MDXコンポーネント型定義
-export interface CustomMDXComponents {
-  h1: React.ComponentType<HeadingProps>;
-  h2: React.ComponentType<HeadingProps>;
-  h3: React.ComponentType<HeadingProps>;
-  p: React.ComponentType<ParagraphProps>;
-  ul: React.ComponentType<ListProps>;
-  ol: React.ComponentType<ListProps>;
-  li: React.ComponentType<ListItemProps>;
-  blockquote: React.ComponentType<BlockquoteProps>;
-  table: React.ComponentType<TableProps>;
-  th: React.ComponentType<TableCellProps>;
-  td: React.ComponentType<TableCellProps>;
-  tr: React.ComponentType<TableRowProps>;
-  a: React.ComponentType<AnchorProps>;
-  strong: React.ComponentType<React.HTMLAttributes<HTMLElement>>;
-  em: React.ComponentType<React.HTMLAttributes<HTMLElement>>;
-  [key: string]: React.ComponentType<any>;
-}
+type HeadingProps = React.HTMLAttributes<HTMLHeadingElement>;
+type ParagraphProps = React.HTMLAttributes<HTMLParagraphElement>;
+type ListProps = React.HTMLAttributes<HTMLUListElement | HTMLOListElement>;
+type ListItemProps = React.HTMLAttributes<HTMLLIElement>;
+type TableProps = React.HTMLAttributes<HTMLTableElement>;
+type TableCellProps = React.HTMLAttributes<HTMLTableCellElement>;
+type TableRowProps = React.HTMLAttributes<HTMLTableRowElement>;
+type AnchorProps = React.HTMLAttributes<HTMLAnchorElement>;
+type BlockquoteProps = React.HTMLAttributes<HTMLElement>;
 
-// MDXでカスタマイズできるコンポーネント
-const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Whisky Papaテーマ用のスタイル
-  const textColor = 'text-white';
-  const headingColor = 'text-whiskyPapa-yellow';
-  const subHeadingColor = 'text-whiskyPapa-yellow';
-  const linkColor = 'text-whiskyPapa-yellow';
-  const strongColor = 'text-white';
-  const bgColor = 'bg-whiskyPapa-black-dark';
-  const borderColor = 'border-whiskyPapa-yellow/20';
-  const blockquoteBgColor = 'bg-amber-900 bg-opacity-20';
-  const blockquoteBorderColor = 'border-amber-400';
-  const blockquoteTextColor = 'text-amber-100';
+const BLOCK_TAGS = new Set([
+  'div',
+  'p',
+  'ul',
+  'ol',
+  'table',
+  'blockquote',
+  'pre',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'section',
+  'figure',
+]);
 
-  const components: CustomMDXComponents = {
-    h1: (props: HeadingProps) => <h1 className={`text-2xl sm:text-3xl font-bold ${headingColor} border-b-2 border-indigo-700 pb-2 mb-6 break-words tracking-tight`} {...props} />,
-    h2: (props: HeadingProps) => <h2 className={`text-xl sm:text-2xl font-bold mb-4 ${subHeadingColor} mt-8 break-words tracking-tight`} {...props} />,
-    h3: (props: HeadingProps) => <h3 className={`text-lg sm:text-xl font-bold mt-6 mb-3 ${subHeadingColor} break-words tracking-tight`} {...props} />,
-    p: (props: ParagraphProps) => {
-      // MDXでは子要素が関数コンポーネント経由で最終的に<p>になるケースがあり、
-      // 事前判定が難しいため段落ラッパーは常にdivを使ってネスト警告を回避する
-      return <div className={`mb-5 ${textColor} leading-7 sm:leading-8 break-words text-base tracking-wide`} {...props} />;
-    },
-    ul: (props: ListProps) => <ul className={`list-disc pl-6 space-y-2 my-4 ${textColor}`} {...props} />,
-    ol: (props: ListProps) => <ol className={`list-decimal pl-6 space-y-2 my-4 ${textColor}`} {...props} />,
-    li: (props: ListItemProps) => <li className={`${textColor} leading-7 sm:leading-8 break-words text-base mb-1`} {...props} />,
-    blockquote: (props: BlockquoteProps) => (
-      <div className={`important-box ${blockquoteBgColor} border-l-4 ${blockquoteBorderColor} p-4 my-6 ${blockquoteTextColor} rounded-r-lg shadow-sm break-words`} {...props} />
-    ),
-    table: (props: TableProps) => <table className="w-full border-collapse my-6 shadow-sm" {...props} />,
-    th: (props: TableCellProps) => <th className={`border ${borderColor} p-3 text-left bg-indigo-900 text-white break-words`} {...props} />,
-    td: (props: TableCellProps) => <td className={`border ${borderColor} p-3 break-words ${textColor}`} {...props} />,
-    tr: (props: TableRowProps) => <tr className="bg-gray-800 even:bg-gray-750" {...props} />,
-    a: (props: AnchorProps) => <a className={`${linkColor} break-all underline`} {...props} />,
-    strong: (props: React.HTMLAttributes<HTMLElement>) => <strong className={`font-bold ${strongColor}`} {...props} />,
-    em: (props: React.HTMLAttributes<HTMLElement>) => <em className={`italic ${textColor}`} {...props} />,
-
-    // カスタムコンポーネント
-    Image: ImageWithOptimization,
-    ImageOptimized: ImageWithOptimization,
-    Callout: Callout,
-    CalloutBox: MDXComponents.CalloutBox,
-    Footnote: Footnote,
-    FootnoteRef: FootnoteRef,
-    Code: MDXComponents.CodeBlock,
-    Quiz: MDXComponents.QuizComponent,
-    Diagram: MDXComponents.DiagramComponent,
-    Highlight: MDXComponents.Highlight
-  };
-
-  // フロントマターのキーワード
-  const frontmatterKeywords = ['title:', 'slug:', 'category:', 'order:'];
-
-  // テキストノードまたは要素のテキスト内容を取得するヘルパー関数
-  const getTextContent = (node: React.ReactNode): string => {
-    if (typeof node === 'string') {
-      return node;
+function hasBlockChild(children: React.ReactNode): boolean {
+  return React.Children.toArray(children).some((child) => {
+    if (!React.isValidElement(child)) return false;
+    const type = child.type;
+    if (typeof type === 'string') {
+      return BLOCK_TAGS.has(type);
     }
-    if (React.isValidElement<{ children?: React.ReactNode }>(node) && node.props.children) {
-      if (typeof node.props.children === 'string') {
-        return node.props.children;
-      }
-      if (Array.isArray(node.props.children)) {
-        // 配列内の最初の文字列を見つける
-        const firstString = node.props.children.find((child: React.ReactNode) => typeof child === 'string');
-        return typeof firstString === 'string' ? firstString : '';
-      }
-    }
-    return '';
-  };
-
-  const childrenArray = React.Children.toArray(children);
-
-  // 最初の数要素（例：5要素）をチェックしてフロントマターらしきものをフィルタリング
-  const filteredChildren = childrenArray.filter((child, index) => {
-    // 最初の5要素のみをチェック対象とする
-    if (index < 5) {
-      const text = getTextContent(child);
-      // テキストが存在し、かつキーワードのいずれかを含む場合はフィルタリング
-      if (text && frontmatterKeywords.some(keyword => text.trim().startsWith(keyword))) {
-        return false; // フィルタリング
-      }
-    }
-    // 最初の5要素以外、またはフロントマターでないと判断された要素は表示
     return true;
   });
+}
+
+const diagramFallback = (
+  <div className="my-6 h-32 animate-pulse rounded-lg bg-brand-surface" aria-hidden />
+);
+
+const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const textColor = 'text-[var(--text-primary)]';
+  const headingColor = 'text-brand-primary';
+  const linkColor = 'text-brand-primary';
+  const borderColor = 'border-brand-primary/20';
+
+  const components = {
+    h1: (props: HeadingProps) => (
+      <h1 className={`mb-6 break-words border-b-2 border-brand-primary/40 pb-2 text-2xl font-bold tracking-tight sm:text-3xl ${headingColor}`} {...props} />
+    ),
+    h2: (props: HeadingProps) => (
+      <h2 className={`mb-4 mt-8 break-words text-xl font-bold tracking-tight sm:text-2xl ${headingColor}`} {...props} />
+    ),
+    h3: (props: HeadingProps) => (
+      <h3 className={`mb-3 mt-6 break-words text-lg font-bold tracking-tight sm:text-xl ${headingColor}`} {...props} />
+    ),
+    p: (props: ParagraphProps) => {
+      const Tag = hasBlockChild(props.children) ? 'div' : 'p';
+      return (
+        <Tag
+          className={`mb-5 break-words text-base tracking-wide leading-7 sm:leading-8 ${textColor}`}
+          {...props}
+        />
+      );
+    },
+    ul: (props: ListProps) => <ul className={`my-4 list-disc space-y-2 pl-6 ${textColor}`} {...props} />,
+    ol: (props: ListProps) => <ol className={`my-4 list-decimal space-y-2 pl-6 ${textColor}`} {...props} />,
+    li: (props: ListItemProps) => (
+      <li className={`mb-1 break-words text-base leading-7 sm:leading-8 ${textColor}`} {...props} />
+    ),
+    blockquote: (props: BlockquoteProps) => (
+      <blockquote
+        className="important-box my-6 rounded-r-lg border-l-4 border-hud-warning bg-hud-warning/10 p-4 text-[var(--text-primary)] shadow-sm break-words"
+        {...props}
+      />
+    ),
+    table: (props: TableProps) => <table className="my-6 w-full border-collapse shadow-sm" {...props} />,
+    th: (props: TableCellProps) => (
+      <th className={`break-words border ${borderColor} bg-brand-surface p-3 text-left text-[var(--text-primary)]`} {...props} />
+    ),
+    td: (props: TableCellProps) => (
+      <td className={`break-words border ${borderColor} p-3 ${textColor}`} {...props} />
+    ),
+    tr: (props: TableRowProps) => <tr className="even:bg-brand-surface/50" {...props} />,
+    a: (props: AnchorProps) => <a className={`${linkColor} break-all underline`} {...props} />,
+    strong: (props: React.HTMLAttributes<HTMLElement>) => (
+      <strong className={`font-bold ${textColor}`} {...props} />
+    ),
+    em: (props: React.HTMLAttributes<HTMLElement>) => (
+      <em className={`italic ${textColor}`} {...props} />
+    ),
+    Image: ImageWithOptimization,
+    ImageOptimized: ImageWithOptimization,
+    Callout,
+    CalloutBox,
+    Footnote,
+    FootnoteRef,
+    Code: CodeBlock,
+    Quiz: (props: React.ComponentProps<typeof QuizComponent>) => (
+      <Suspense fallback={diagramFallback}>
+        <QuizComponent {...props} />
+      </Suspense>
+    ),
+    Diagram: (props: React.ComponentProps<typeof DiagramComponent>) => (
+      <Suspense fallback={diagramFallback}>
+        <DiagramComponent {...props} />
+      </Suspense>
+    ),
+    Highlight,
+  };
 
   return (
     <MDXProvider components={components}>
-      <div className={`prose prose-invert max-w-none min-w-0 w-full ${bgColor} p-2 sm:p-4 md:p-6 rounded-lg shadow-md transition-all duration-300 overflow-x-auto text-base leading-7 sm:leading-8`}>
+      <div className="prose prose-invert w-full min-w-0 max-w-none overflow-x-auto rounded-lg bg-brand-secondary p-2 text-base leading-7 shadow-md transition-all duration-300 sm:p-4 sm:leading-8 md:p-6">
         <div className="mx-auto w-full min-w-0 max-w-3xl">
-          {filteredChildren}
+          {children}
         </div>
       </div>
     </MDXProvider>
   );
 };
-
-import type { ArticleMeta } from '../../types/articles';
 
 interface MDXContentProps {
   children: React.ReactNode;
@@ -147,12 +146,10 @@ interface MDXContentProps {
 }
 
 const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId: _contentId }) => {
-  // 現在のURLを取得
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
   return (
     <>
-      {/* SEO用メタタグとJSON-LD */}
       {meta && (
         <>
           <ArticleMetaTags meta={meta} url={currentUrl} />
@@ -160,29 +157,24 @@ const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId: _con
         </>
       )}
 
-      {/* 記事ヘッダー */}
       {meta && <ArticleHeader meta={meta} />}
 
-      {/* デスクトップでは右側に目次を表示、モバイルではドロワー */}
       <div className="flex gap-8">
         <div className="min-w-0 w-full flex-1">
           <MDXContentWithTheme>{children}</MDXContentWithTheme>
 
-          {/* 記事末尾に関連記事を表示 */}
           {meta && (
             <div className="mt-12">
-              <RelatedArticles currentSlug={meta.slug} />
+              <RelatedArticles currentSlug={meta.slug} collapsed />
             </div>
           )}
         </div>
 
-        {/* デスクトップ用サイドバー目次 */}
-        <div className="hidden xl:block flex-shrink-0">
+        <div className="hidden flex-shrink-0 xl:block">
           <TableOfContents mode="sidebar" compact={true} />
         </div>
       </div>
 
-      {/* モバイル・タブレット用ドロワー目次 */}
       <div className="xl:hidden">
         <TableOfContents mode="drawer" />
       </div>

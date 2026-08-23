@@ -1,12 +1,13 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
+import { articlesIndexPlugin } from './vite/articlesIndexPlugin';
 
 const testSupabaseUrl = 'https://test.supabase.co';
 const testSupabaseAnonKey = 'test-anon-key';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), articlesIndexPlugin()],
   define: {
     'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(
       process.env.VITE_SUPABASE_URL ?? testSupabaseUrl,
@@ -20,7 +21,10 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/setupTests.ts'],
     css: true,
-    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    include: [
+      'src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      'vite/**/*.test.ts',
+    ],
     exclude: [
       'node_modules',
       'dist',

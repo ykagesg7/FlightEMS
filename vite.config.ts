@@ -10,7 +10,9 @@ import rehypeKatex from 'rehype-katex';
 import cesium from 'vite-plugin-cesium';
 import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
 import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
+import { articlesIndexPlugin } from './vite/articlesIndexPlugin';
 import { injectGoogleTagPlugin } from './vite/injectGoogleTagPlugin';
+import { prerenderArticlesPlugin } from './vite/prerenderArticlesPlugin';
 
 /** flight-lms Vercel Production 用 GA4 ストリーム（公開 ID）。環境変数が空でも本番デプロイでタグを挿す */
 const GA4_MEASUREMENT_ID_VERCEL_PRODUCTION_FALLBACK = 'G-22VFYSM69J';
@@ -110,12 +112,15 @@ export default defineConfig(({ mode }) => {
       rehypePlugins: [rehypeKatex],
     }),
     injectGoogleTagPlugin(gaMeasurementId, mode === 'production'),
+    articlesIndexPlugin(),
+    prerenderArticlesPlugin(),
   ];
-  if (mode === 'development') {
+  const analyzeBundle = process.env.ANALYZE === '1';
+  if (mode === 'development' || analyzeBundle) {
     plugins.push(
       visualizer({
         filename: 'dist/stats.html',
-        open: true,
+        open: mode === 'development' && !analyzeBundle,
         gzipSize: true,
         brotliSize: true,
       }),
@@ -152,7 +157,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       // Sentry のためソースマップを有効化（hidden: デプロイ先には公開しない）
-      sourcemap: true,
+      sourcemap: 'hidden',
       // チャンクサイズ警告を調整
       chunkSizeWarningLimit: 600,
       // 段階的ビルド設定

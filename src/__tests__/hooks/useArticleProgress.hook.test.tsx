@@ -33,6 +33,7 @@ vi.mock('../../utils/streak', () => ({
 }));
 
 vi.mock('../../utils/articlesIndex', () => ({
+  getArticleIndex: vi.fn(),
   buildArticleIndex: vi.fn(),
 }));
 
@@ -43,11 +44,11 @@ import { useAuth } from '../../hooks/useAuth';
 import { useGamification } from '../../hooks/useGamification';
 import { useArticleProgress } from '../../hooks/useArticleProgress';
 import { supabase } from '../../utils/supabase';
-import { buildArticleIndex } from '../../utils/articlesIndex';
+import { getArticleIndex } from '../../utils/articlesIndex';
 
 const mockUseAuth = vi.mocked(useAuth);
 const mockUseGamification = vi.mocked(useGamification);
-const mockBuildArticleIndex = vi.mocked(buildArticleIndex);
+const mockGetArticleIndex = vi.mocked(getArticleIndex);
 
 function baseAuth(overrides: Partial<UseAuthReturn> = {}): UseAuthReturn {
   const user = overrides.user ?? null;
@@ -116,7 +117,7 @@ describe('useArticleProgress hook', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    mockBuildArticleIndex.mockResolvedValue([
+    mockGetArticleIndex.mockResolvedValue([
       {
         filename: '3.5.1_Foo',
         meta: {

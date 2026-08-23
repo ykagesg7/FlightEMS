@@ -6,7 +6,7 @@ import { useArticleStats } from '../../hooks/useArticleStats';
 import { useAuth } from '../../hooks/useAuth';
 import { ArticleMeta } from '../../types/articles';
 import { isArticleReleased } from '../../utils/articlePublishGate';
-import { buildArticleIndex, findArticleByRouteParam } from '../../utils/articlesIndex';
+import { findArticleByRouteParam, getArticleIndex } from '../../utils/articlesIndex';
 import { getMetaForArticle } from './articleHubFilters';
 import { CommentSection } from './components/CommentSection';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
@@ -47,7 +47,7 @@ const ArticleDetailPage: React.FC = () => {
       setIsLoadingMetas(true);
       setCanonicalId(null);
       try {
-        const index = await buildArticleIndex();
+        const index = await getArticleIndex();
         if (cancelled) return;
         const metaMap: Record<string, ArticleMeta> = {};
         index.forEach((entry) => {
@@ -159,8 +159,9 @@ const ArticleDetailPage: React.FC = () => {
             <p className="text-base leading-relaxed">{WITHDRAWN_ARTICLE_MESSAGE}</p>
           </div>
         ) : isLoadingMetas || !canonicalId ? (
-          <div className="flex h-40 items-center justify-center">
-            <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-brand-primary" />
+          <div className="space-y-4" aria-busy="true" aria-label="記事を読み込み中">
+            <div className="h-8 w-2/3 animate-pulse rounded bg-brand-surface" />
+            <div className="h-40 animate-pulse rounded-lg bg-brand-secondary-dark" />
           </div>
         ) : notYetReleased ? (
           <div
@@ -178,29 +179,23 @@ const ArticleDetailPage: React.FC = () => {
           <>
             <ReadingProgressBar contentId={articleId} />
             <MDXLoader contentId={articleId} />
+            <SeriesNextChapterCta
+              next={next}
+              nextMeta={nextMeta}
+              currentMeta={resolvedCurrentMeta}
+            />
             <RelatedTestsBlock contentId={articleId} />
+            <CommentSection
+              articleId={articleId}
+              comments={articleComments}
+              isLoading={isLoading}
+              currentUserId={user?.id}
+              onAddComment={handleAddComment}
+              onEditComment={handleEditComment}
+              onDeleteComment={handleDeleteComment}
+              onLoadComments={handleLoadComments}
+            />
           </>
-        )}
-
-        {!withdrawn && !notYetReleased && canonicalId && (
-          <CommentSection
-            articleId={articleId}
-            comments={articleComments}
-            isLoading={isLoading}
-            currentUserId={user?.id}
-            onAddComment={handleAddComment}
-            onEditComment={handleEditComment}
-            onDeleteComment={handleDeleteComment}
-            onLoadComments={handleLoadComments}
-          />
-        )}
-
-        {!withdrawn && !notYetReleased && canonicalId && (
-          <SeriesNextChapterCta
-            next={next}
-            nextMeta={nextMeta}
-            currentMeta={resolvedCurrentMeta}
-          />
         )}
 
         <PrevNextNav currentId={articleId} listPath="/articles" />

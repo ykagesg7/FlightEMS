@@ -1,7 +1,7 @@
 # プロジェクトフォルダ構造ガイド
 
-**最終更新**: 2026年7月25日（`.cursor` Skills 拡充・alwaysApply 縮小。他は過去ログ参照）
-**バージョン**: Folder Structure Guide v1.10
+**最終更新**: 2026年8月24日（Articles 仮想インデックス / prerender）
+**バージョン**: Folder Structure Guide v1.11
 
 **責務**: repo 全体のフォルダ概要。プロジェクトのクイックリファレンスと AI 向け索引は [docs/README.md](README.md)。`src/` の詳細は [Component_Structure_Guide.md](Component_Structure_Guide.md) を参照。
 
@@ -130,6 +130,8 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
   - `devWeatherApiPlugin.ts`: ローカル `npm run dev` で `/api/weather`・`/api/aviation-weather`・`/api/swim-notam-search` 等を処理（[`api/lib`](../api/lib) 共有）
   - `devOpenskyApiPlugin.ts`: 開発時 OpenSky 系の同様の橋渡し
   - `injectGoogleTagPlugin.ts`: 本番ビルド時 GA4 注入（詳細は `vite.config.ts`）
+  - `articlesMeta.ts` / `articlesIndexPlugin.ts`: MDX `export const meta` 抽出と `virtual:articles-index`（`enforce: 'pre'`。設定再読込失敗後は `npm run dev` 再起動）
+  - `prerenderArticlesPlugin.ts`: 記事ごとの静的 HTML（OG カード）
 - **境界**: 本番の HTTP API 実体は [`api/`](#api)。ここは開発サーバと Rollup ビルドへのフック。
 
 ---

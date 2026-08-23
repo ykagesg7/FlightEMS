@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   readonly VITE_SENTRY_DSN?: string;
   /** GA4 の測定 ID（例: G-XXXXXXXXXX）。未設定なら送信しない */
   readonly VITE_GA_MEASUREMENT_ID?: string;
+  /** 記事 prerender / OG の絶対 URL オリジン */
+  readonly VITE_SITE_ORIGIN?: string;
   /** Cloudflare Turnstile サイトキー（Auth CAPTCHA・任意） */
   readonly VITE_TURNSTILE_SITE_KEY?: string;
   readonly VITE_APP_ENV: 'development' | 'production';

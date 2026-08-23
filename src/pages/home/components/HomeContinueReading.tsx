@@ -4,7 +4,7 @@ import { filterPublishedArticleContents } from '../../../constants/articleHubCat
 import { useArticleProgress } from '../../../hooks/useArticleProgress';
 import { useAuth } from '../../../hooks/useAuth';
 import { useLearningProgress } from '../../../hooks/useLearningProgress';
-import { buildArticleIndex } from '../../../utils/articlesIndex';
+import { getArticleIndex } from '../../../utils/articlesIndex';
 import type { ArticleMeta } from '../../../types/articles';
 import { pickNextToReadArticle, getMetaForArticle } from '../../articles/articleHubFilters';
 
@@ -15,7 +15,7 @@ export const HomeContinueReading: React.FC = () => {
   const [metas, setMetas] = useState<Record<string, ArticleMeta>>({});
 
   useEffect(() => {
-    buildArticleIndex().then((index) => {
+    getArticleIndex().then((index) => {
       const map: Record<string, ArticleMeta> = {};
       index.forEach((e) => {
         map[e.filename] = e.meta;

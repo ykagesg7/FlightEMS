@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import {
   ArticleComment,
@@ -24,15 +24,18 @@ export function useArticleStats() {
   const [isLoading, setIsLoading] = useState(false);
 
   const supabase = supabaseClient;
+  const statsRef = useRef(stats);
+  statsRef.current = stats;
 
   // 記事統計を取得
   const loadArticleStats = useCallback(async (articleIds: string[]) => {
-    const newArticleIds = articleIds.filter(id => !stats[id]);
+    const existing = statsRef.current;
+    const newArticleIds = articleIds.filter(id => !existing[id]);
     if (newArticleIds.length === 0) return;
 
     setIsLoading(true);
     try {
-      const articleStats: Record<string, ArticleStats> = { ...stats };
+      const articleStats: Record<string, ArticleStats> = {};
 
       // 各記事の統計を初期化
       newArticleIds.forEach(id => {
@@ -90,13 +93,13 @@ export function useArticleStats() {
         });
       }
 
-      setStats(articleStats);
+      setStats((prev) => ({ ...prev, ...articleStats }));
     } catch (error) {
       console.error('記事統計の取得に失敗しました:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [stats, user, supabase]);
+  }, [user, supabase]);
 
   // コメントを取得
   const loadComments = useCallback(async (articleId: string) => {

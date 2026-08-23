@@ -1,6 +1,5 @@
+import mermaid from 'mermaid';
 import React, { useRef, useEffect, useState } from 'react';
-// @ts-expect-error - external CDN module with no type declarations
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
 // MermaidのDOMコンテナタイプ
 interface MermaidContainerProps {

@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトの技術詳細、開発環境、コントリビューション方法について説明します。
 
-**最新更新**: 2026年4月12日（本番 URL の明記）
-**バージョン**: Technical Development Guide v3.5
+**最新更新**: 2026年8月24日（Articles 仮想インデックス・verify-build lint）
+**バージョン**: Technical Development Guide v3.6
 
 ---
 
@@ -125,6 +125,8 @@ npm run dev
 **Serverless Functions 上限（Hobby / 無料枠）**: `api/` 直下の各 `.ts`（`_lib/` 除く）は **1 ファイル = 1 関数**として数えられる。**デプロイあたり最大 12 本**。超えると Vite ビルドは成功しても **`Deploying outputs...` 以降で Error** になる。対策: 関連 API を **1 本のフラット `.ts`** にまとめ、**`?action=` / `?job=`** で分岐し、旧 URL は `vercel.json` rewrite で維持する（例: `api/weather.ts` が forecast / aviation / rainviewer、`api/cron.ts` が週次 3 ジョブ、`api/mfa-recovery-codes.ts` が generate / consume / status / clear）。2026-08 時点の本番関数は 6 本（mfa / weather / swim-notam / account-delete / cron / telemetry-approve）。未使用だった `notifications/send`・`notifications/push` と OpenSky の Vercel 関数は削除済み。**注意**: ネストした `api/.../[action].ts` は Vercel 上で **デプロイされない**ことがある（2026-06 本番で確認）。クライアント URL は `/api/mfa-recovery-codes?action=generate` 等。
 
 **一般気象 `/api/weather`** と **METAR/TAF `/api/aviation-weather`** は **`npm run dev` のみ**でも Vite プラグイン（`vite/devWeatherApiPlugin.ts`）で応答する。`/api/weather` は `.env` の **`WEATHER_API_KEY`** で WeatherAPI.com の実データ、未設定なら開発用モック。`/api/aviation-weather` は NOAA 直（キー不要）。**OpenSky 航空機レイヤー**も `vite/devOpenskyApiPlugin.ts` で `npm run dev` のみ可。RainViewer マニフェストプロキシ等、ほかの `/api/*` が必要なときは **`npm run dev:weather` + `npm run dev`**。
+
+**記事インデックス**: `vite/articlesIndexPlugin.ts` が `virtual:articles-index` を配信し、`vite/prerenderArticlesPlugin.ts` が本番 HTML に OG を埋め込む。`vitest.config.ts` にも同プラグインを登録する。Vite が `vite.config.ts` の再読込に失敗したあとはプラグイン未登録の古いプロセスが残ることがあり、`/articles` で `Failed to resolve import "virtual:articles-index"` になる。そのときは `npm run dev` を止めて再起動する。
 
 **航空機レイヤー（参考・ADS-B）**: データ取得先は **airplanes.live**（ADSBExchange v2 互換・`https://api.airplanes.live/v2`）で、**ブラウザから直接 fetch** する（`src/services/openskyTraffic.ts`）。API キー不要・`Access-Control-Allow-Origin: *` のため CORS 可・**サーバ側プロキシ不要**。クエリは **point+radius**（中心 + 外接円半径、**最大 250NM**）で、表示矩形 `bboxToPointRadiusNm()` から算出し、結果を矩形に `filterAircraftToBBox()` で絞り込む。レート制限 **1 req/sec**（クライアントは **3 分間隔** `TRAFFIC_POLL_MS`、**パン・ズームでは再取得しない**）。429/接続失敗時は前回マーカーを **Stale 保持**（最大 15 分・400 機 cap）。教育・非商用利用。**2026-06 に OpenSky から移行**: OpenSky は **クラウド（Vercel）IP を遮断**し、かつ CORS が自社オリジンのみのためサーバプロキシ・ブラウザ直 fetch とも不可だった（本番で恒常的に 502/504）。`api/_lib/openskyStatesCore.ts`・`openskyOAuthToken.ts` は **未使用**（ローカル dev のみ温存。Vercel 関数 `api/opensky-states.ts` は Hobby 12 本枠のため削除済み）。ポップアップ HTML は `popups/openskyTrafficPopup.ts`（`autoPan: false`）。3 分更新で開いていたポップアップは `useLiveTrafficLayer` が icao を追跡し内容更新後に再 open する。高度は ft→m、速度は kt→m/s に変換して既存マーカー型 `ParsedOpenSkyAircraft` へ写像（`parseAirplanesLiveJson`）。
 
@@ -390,7 +392,7 @@ AI から **実ブラウザ**（コンソール・ネットワーク・スナッ
   - テストカバレッジレポートを自動生成
   - プルリクエストにカバレッジコメントを自動追加
 - **`.github/workflows/verify-build.yml`**: ビルド検証ワークフロー
-  - Lint、テスト、ビルドを順次実行
+  - Lint、テスト、ビルドを順次実行（`prefer-const` 等の error ルールでジョブ全体が失敗する）
   - カバレッジレポートをアーティファクトとして保存
 
 #### **CI/CDの動作**
@@ -403,6 +405,10 @@ AI から **実ブラウザ**（コンソール・ネットワーク・スナッ
 ---
 
 ## 📝 変更履歴
+
+### **2026年8月24日 - Articles 仮想インデックス**
+- **`virtual:articles-index`**: `vite/articlesIndexPlugin.ts`（`enforce: 'pre'`）と `prerenderArticlesPlugin.ts` を追加。設定再読込失敗後は `npm run dev` 再起動。
+- **verify-build**: `prefer-const` の error でジョブ全体が失敗する（`airspaceVolumes`・`useTestSubjectFilters` を修正）。
 
 ### **2025年1月 - ゲーミフィケーションシステム拡張**
 - **ランクシステム統合**: PPL中間ランク（記事完了ベース）とXPベースランクを統合、Spectator/Trainee/Student/Apprentice/Pilotを削除

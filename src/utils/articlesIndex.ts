@@ -1,19 +1,27 @@
+import articleMetas from 'virtual:articles-index';
 import { isWithdrawnArticle } from '../constants/withdrawnArticleIds';
 import type { ArticleIndexEntry, ArticleMeta, ArticleNavigation, ArticleSearchOptions, MDXModule } from '../types/articles';
 import { isArticleReleased } from './articlePublishGate';
 
 /**
- * 全記事のMDXモジュールを取得
- * import.meta.globを使用して型安全に記事を収集
- * articlesとlessonsの両方のディレクトリから読み込む
+ * MDX 本文ローダーのみ。メタは virtual:articles-index（ビルド時抽出）から読む。
  */
 const articleModules = import.meta.glob<MDXModule>('../content/articles/*.mdx', { eager: false });
 const lessonModules = import.meta.glob<MDXModule>('../content/lessons/*.mdx', { eager: false });
+const allModules = { ...articleModules, ...lessonModules };
 
 export function isLessonContentId(contentId: string): boolean {
   if (!contentId) return false;
   const suffix = `/${contentId}.mdx`;
   return Object.keys(lessonModules).some((path) => path.endsWith(suffix));
+}
+
+function loaderFor(filename: string): (() => Promise<MDXModule>) | undefined {
+  const suffix = `/${filename}.mdx`;
+  for (const [path, loader] of Object.entries(allModules)) {
+    if (path.endsWith(suffix)) return loader;
+  }
+  return undefined;
 }
 
 /** Published/emailed Contact stems → CP. Route params and filenames both resolve. */
@@ -39,102 +47,88 @@ function generateSlugFromFilename(filename: string): string {
     .replace(/^-|-$/g, '');
 }
 
-/**
- * 記事インデックスを構築
- */
-export async function buildArticleIndex(): Promise<ArticleIndexEntry[]> {
+function buildArticleIndexSync(): ArticleIndexEntry[] {
   const entries: ArticleIndexEntry[] = [];
   const slugSet = new Set<string>();
 
-  // articlesとlessonsの両方のモジュールを処理
-  const allModules = { ...articleModules, ...lessonModules };
-
-  for (const [path, moduleLoader] of Object.entries(allModules)) {
-    const filename = path.split('/').pop()?.replace('.mdx', '') || '';
-
-    try {
-      // メタデータのみを取得（コンポーネントは読み込まない）
-      const module = await moduleLoader();
-      const meta = module.meta;
-
-      // メタデータがない場合は静かにスキップ（UUID形式のファイルや未完成のファイルを除外）
-      if (!meta) {
-        // UUID形式のファイル名は明らかにMDXファイルではないので、警告を出さない
-        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(filename);
-        if (!isUUID) {
-          // 開発環境でのみデバッグログを出力（本番環境では警告を出さない）
-          if (import.meta.env.DEV) {
-            console.debug(`記事 ${filename} にメタデータが見つかりません（スキップします）`);
-          }
-        }
-        continue;
-      }
-
-      // 必須フィールドの検証
-      if (!meta.title) {
-        // 開発環境でのみ警告を出力
-        if (import.meta.env.DEV) {
-          console.warn(`記事 ${filename} にtitleが設定されていません（スキップします）`);
-        }
-        continue;
-      }
-
-      // slugの設定（未設定の場合はファイル名から生成）
-      const slug = meta.slug || generateSlugFromFilename(filename);
-
-      // slug重複チェック
-      if (slugSet.has(slug)) {
-        console.error(`重複するslugが検出されました: ${slug} (ファイル: ${filename})`);
-        continue;
-      }
-      slugSet.add(slug);
-
-      if (isWithdrawnArticle(filename)) {
-        continue;
-      }
-
-      // デフォルト値の設定
-      const normalizedMeta: ArticleMeta = {
-        ...meta,
-        slug,
-        tags: meta.tags || [],
-        type: meta.type || 'article',
-        readingTime: meta.readingTime || 5, // デフォルト5分
-      };
-
-      entries.push({
-        filename,
-        meta: normalizedMeta,
-        loader: moduleLoader,
-      });
-    } catch (error) {
-      // 開発環境でのみエラーをログ出力（本番環境では静かにスキップ）
+  for (const [filename, meta] of Object.entries(articleMetas)) {
+    if (!meta?.title) {
       if (import.meta.env.DEV) {
-        // ファイルが存在しない場合は警告を出さない（UUID形式や削除されたファイル）
-        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(filename);
-        if (!isUUID && !filename.includes('PPL-1-1-1')) {
-          console.warn(`記事 ${filename} の読み込み中にエラーが発生しました:`, error);
-        }
+        console.warn(`記事 ${filename} にtitleが設定されていません（スキップします）`);
       }
+      continue;
     }
+
+    if (isWithdrawnArticle(filename)) {
+      continue;
+    }
+
+    const loader = loaderFor(filename);
+    if (!loader) {
+      continue;
+    }
+
+    const slug = meta.slug || generateSlugFromFilename(filename);
+    if (slugSet.has(slug)) {
+      console.error(`重複するslugが検出されました: ${slug} (ファイル: ${filename})`);
+      continue;
+    }
+    slugSet.add(slug);
+
+    const normalizedMeta: ArticleMeta = {
+      ...meta,
+      slug,
+      tags: meta.tags || [],
+      type: meta.type || 'article',
+      readingTime: meta.readingTime || 5,
+    };
+
+    entries.push({
+      filename,
+      meta: normalizedMeta,
+      loader,
+    });
   }
 
   return entries;
 }
 
+/** 呼び出し元互換のため async。中身は仮想モジュールからの同期構築。 */
+export async function buildArticleIndex(): Promise<ArticleIndexEntry[]> {
+  return buildArticleIndexSync();
+}
+
 /**
- * 記事インデックスのキャッシュ
+ * 記事インデックスのキャッシュ（結果 + 同時呼び出し用 in-flight Promise）
  */
 let cachedIndex: ArticleIndexEntry[] | null = null;
+let indexInFlight: Promise<ArticleIndexEntry[]> | null = null;
 
 /**
  * 記事インデックスを取得（キャッシュ付き）
  */
 export async function getArticleIndex(): Promise<ArticleIndexEntry[]> {
-  if (!cachedIndex) {
-    cachedIndex = await buildArticleIndex();
+  if (cachedIndex) {
+    return cachedIndex;
   }
-  return cachedIndex;
+  if (!indexInFlight) {
+    indexInFlight = buildArticleIndex()
+      .then((index) => {
+        cachedIndex = index;
+        return index;
+      })
+      .finally(() => {
+        indexInFlight = null;
+      });
+  }
+  return indexInFlight;
+}
+
+if (import.meta.hot) {
+  import.meta.hot.accept('virtual:articles-index', () => {
+    cachedIndex = null;
+    indexInFlight = null;
+  });
 }
 
 /** Strip `/articles/` (or leading `/`) so route params match meta.slug. */

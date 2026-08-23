@@ -15,7 +15,7 @@ import {
   type FilterSortOrder,
   type SubSubjectOption,
 } from '../testFilterOptionUtils';
-import { PLACEHOLDER_SUBJECT, type TestHubTab } from '../testHubFilters';
+import { PLACEHOLDER_SUBJECT, buildSubjectQuestionCountOptions, type TestHubTab } from '../testHubFilters';
 import { normalizeSubSubjectLabel } from '../utils/normalizeSubSubject';
 import supabase from '../../../utils/supabase';
 
@@ -42,7 +42,7 @@ export function useTestSubjectFilters(params: {
   const [subSubjects, setSubSubjects] = useState<SubSubjectOption[]>([]);
   const [subSubjectSearch, setSubSubjectSearch] = useState('');
   const [subSubjectLoading, setSubSubjectLoading] = useState(false);
-  const [questionCountOptions, setQuestionCountOptions] = useState<number[]>([10]);
+  const [questionCountOptions, setQuestionCountOptions] = useState<number[]>([5]);
   const [pplVerifiedExactCount, setPplVerifiedExactCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -293,15 +293,7 @@ export function useTestSubjectFilters(params: {
         return;
       }
 
-      let options: number[] = [];
-      if (maxCount < 10) {
-        options = [maxCount];
-      } else {
-        for (let i = 10; i <= maxCount; i += 5) {
-          options.push(i);
-        }
-        if (options[options.length - 1] !== maxCount) options.push(maxCount);
-      }
+      const options: number[] = buildSubjectQuestionCountOptions(maxCount);
       setQuestionCountOptions(options);
       if (!options.includes(questionCount)) {
         updateHubState({ count: options[0] });

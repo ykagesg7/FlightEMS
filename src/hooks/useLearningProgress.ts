@@ -30,7 +30,9 @@ export const useLearningProgress = () => {
     try {
       const { data, error } = await supabase
         .from('learning_contents')
-        .select('*')
+        .select(
+          'id, title, category, sub_category, description, order_index, parent_id, content_type, created_at, updated_at, is_published',
+        )
         .eq('is_published', true)
         .order('category')
         .order('order_index');
@@ -91,8 +93,7 @@ export const useLearningProgress = () => {
   useEffect(() => {
     const loadInitialData = async () => {
       setIsLoading(true);
-      await loadLearningContents();
-      await loadUserProgress();
+      await Promise.all([loadLearningContents(), loadUserProgress()]);
       setIsLoading(false);
     };
 

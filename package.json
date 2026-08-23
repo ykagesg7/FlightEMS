@@ -13,6 +13,7 @@
     "sync:public-docs": "node scripts/sync-public-docs.mjs",
     "prebuild": "npm run sync:public-docs",
     "build": "vite build",
+    "analyze": "cross-env ANALYZE=1 vite build --mode production",
     "build:prod": "vite build --mode production",
     "vercel-build": "vite build --mode production",
     "build:dev": "vite build --mode development",

@@ -33,23 +33,17 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   }, [onLoadComments]);
 
   return (
-    <div
-      className="mt-12 p-6 rounded-xl border bg-white/5 border-[#39FF14]/30 backdrop-blur-sm"
-    >
-      {/* タイトル */}
-      <h2
-        className="text-2xl font-bold mb-6 flex items-center gap-2 text-[color:var(--text-primary)]"
-      >
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <details className="mt-12 rounded-xl border border-hud-green/30 bg-brand-secondary-dark p-6">
+      <summary className="flex cursor-pointer list-none items-center gap-2 text-2xl font-bold text-[color:var(--text-primary)]">
+        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
         </svg>
         コメント
-        <span
-          className="text-sm px-2 py-1 rounded-full bg-[#39FF14]/20 text-[#39FF14]"
-        >
+        <span className="rounded-full bg-hud-green/20 px-2 py-1 text-sm text-hud-green">
           {comments.length}
         </span>
-      </h2>
+      </summary>
+      <div className="mt-6">
 
       {/* ログインユーザー向けのコメント投稿フォーム */}
       {currentUserId ? (
@@ -62,17 +56,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         </div>
       ) : (
         /* ゲストユーザー向けのログイン誘導メッセージ */
-        <div
-          className="mb-6 p-4 rounded-lg border-2 border-dashed text-center border-[#39FF14]/30 bg-[#39FF14]/5"
-        >
-          <p
-            className="mb-3 text-[color:var(--text-primary)]"
-          >
+        <div className="mb-6 rounded-lg border-2 border-dashed border-hud-green/30 bg-hud-green/5 p-4 text-center">
+          <p className="mb-3 text-[color:var(--text-primary)]">
             コメントを投稿するにはログインが必要です。
           </p>
           <button
+            type="button"
             onClick={() => navigate('/auth')}
-            className="px-6 py-2 rounded-lg transition-all bg-gradient-to-r from-[#39FF14] to-green-500 text-[#0b1d3a] hover:from-green-400 hover:to-[#39FF14] font-bold hover:shadow-lg transform hover:scale-105"
+            className="rounded-lg bg-hud-green px-6 py-2 font-bold text-[var(--bg)] hover:opacity-90"
           >
             ログイン / 新規登録
           </button>
@@ -83,7 +74,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       {isLoading && comments.length === 0 && (
         <div className="flex justify-center py-8">
           <div
-            className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#39FF14]"
+            className="h-8 w-8 animate-spin rounded-full border-b-2 border-hud-green"
           />
         </div>
       )}
@@ -112,7 +103,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </details>
   );
 };
 
