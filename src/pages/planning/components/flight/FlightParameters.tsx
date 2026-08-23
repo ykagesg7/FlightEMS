@@ -18,6 +18,8 @@ interface FlightParametersProps {
   layout?: PlanningPanelLayout;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
+  /** setup: 時刻と地上気象 / route: 巡航 CAS・高度 / full: 両方 */
+  variant?: 'setup' | 'route' | 'full';
 }
 
 /**
@@ -29,8 +31,11 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   layout = 'full',
   flightPlan,
   setFlightPlan,
+  variant = 'full',
 }) => {
   const isSplitLayout = layout === 'split';
+  const showRoute = variant === 'route' || variant === 'full';
+  const showSetup = variant === 'setup' || variant === 'full';
   const { weatherCache, setWeatherCache } = useWeatherCache(); // Contextから取得
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -215,10 +220,14 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
   }, [flightPlan.departure]);
 
   return (
-    <div className="bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-lg p-3 sm:p-4 md:p-6">
-      <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 text-white">フライトパラメータ</h2>
+    <div className={variant === 'full' ? 'bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-lg p-3 sm:p-4 md:p-6' : ''}>
+      {variant === 'full' ? (
+        <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3 md:mb-4 text-white">
+          フライトパラメータ
+        </h2>
+      ) : null}
       <div className={flightParametersGridClass(layout)}>
-        {/* 左側: 速度計関連のパラメータ */}
+        {showRoute ? (
         <div className="space-y-2 sm:space-y-3">
           <div className="mb-1">
             <label htmlFor="speed" className="block text-xs sm:text-sm font-medium text-white mb-1">
@@ -280,8 +289,9 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
             </div>
           </div>
         </div>
+        ) : null}
 
-        {/* 中央: 高度と時間パラメータ */}
+        {showRoute ? (
         <div className="space-y-2 sm:space-y-3">
           <div className="mb-1">
             <label htmlFor="altitude" className="block text-xs sm:text-sm font-medium text-white mb-1">
@@ -317,7 +327,11 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
               気温(高度): {displayAltitudeTemp}℃
             </div>
           </div>
+        </div>
+        ) : null}
 
+        {showSetup ? (
+        <div className="space-y-2 sm:space-y-3">
           <div className="mb-1">
             <label htmlFor="departureTime" className="block text-xs sm:text-sm font-medium text-white mb-1">
               <Clock size={14} className="inline-block mr-1" /> 出発時刻（JST/UTC）
@@ -334,10 +348,6 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
               <span className="text-xs sm:text-sm text-white">{utcTime}Z</span>
             </div>
           </div>
-        </div>
-
-        {/* 右側: 地上気象パラメータ */}
-        <div className="space-y-2 sm:space-y-3">
           <div className="mb-1">
             <div className="flex items-center justify-between mb-1">
               <label htmlFor="groundTemp" className="block text-xs sm:text-sm font-medium hud-text">
@@ -358,7 +368,6 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
               />
             </div>
           </div>
-
           <div className="mb-1">
             <label htmlFor="groundElevation" className="block text-xs sm:text-sm font-medium hud-text mb-1">
               <BarChart size={14} className="inline-block mr-1" /> 地上標高 (ft)
@@ -378,7 +387,9 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
             </div>
           </div>
         </div>
+        ) : null}
 
+        {showSetup ? (
         <div className={isSplitLayout ? 'sm:col-span-2 mt-1 pt-3 border-t border-whiskyPapa-yellow/20' : 'sm:col-span-2 lg:col-span-3 mt-1 pt-3 border-t border-whiskyPapa-yellow/20'}>
           <label className="flex items-start gap-2 text-xs sm:text-sm text-gray-200 cursor-pointer select-none">
             <input
@@ -392,9 +403,10 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
             </span>
           </label>
           <p className="mt-1 text-2xs text-gray-400 pl-6 leading-relaxed">
-            ルート中点の予報風を使用。磁方位と真風向の偏角は補正していません。取得失敗時は従来どおり TAS を地速として計算します。
+            ルート中点の予報風（真方位）と真コースで風三角形を解きます。取得失敗時は TAS を地速として計算します。
           </p>
         </div>
+        ) : null}
       </div>
     </div>
   );

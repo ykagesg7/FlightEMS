@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseFlightPlanTime } from '../../utils/flightTime';
+import { flightPlanTimeJstToUtc, parseFlightPlanTime } from '../../utils/flightTime';
 
 describe('parseFlightPlanTime', () => {
   it('parses hh:mm using today date', () => {
@@ -24,5 +24,13 @@ describe('parseFlightPlanTime', () => {
   it('returns invalid Date for bad format', () => {
     expect(Number.isNaN(parseFlightPlanTime('abc').getTime())).toBe(true);
     expect(Number.isNaN(parseFlightPlanTime('12').getTime())).toBe(true);
+  });
+});
+
+describe('flightPlanTimeJstToUtc', () => {
+  it('treats 10:00 as 01:00 UTC', () => {
+    const d = flightPlanTimeJstToUtc('10:00', new Date('2026-08-23T12:00:00Z'));
+    expect(d.getUTCHours()).toBe(1);
+    expect(d.getUTCMinutes()).toBe(0);
   });
 });

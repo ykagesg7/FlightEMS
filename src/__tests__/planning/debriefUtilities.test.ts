@@ -68,7 +68,8 @@ describe('debrief utilities', () => {
     const briefing = buildPreflightBriefing(createPlan());
 
     expect(briefing.routeSummary.some((item) => item.label === '出発地' && item.value.includes('RJTT'))).toBe(true);
-    expect(briefing.navLog[0].value).toContain('118.1');
+    expect(briefing.navLog[0].value).toContain('1 レグ');
+    expect(briefing.navLog[0].value).toContain('NavLog');
   });
 
   it('downsamples large tracks while preserving endpoints', () => {

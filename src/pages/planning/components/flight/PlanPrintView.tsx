@@ -60,7 +60,8 @@ export const PlanPrintView: React.FC<PlanPrintViewProps> = ({ flightPlan }) => {
                   <th>From</th>
                   <th>To</th>
                   <th>CAS</th>
-                  <th>BRG</th>
+                  <th>MC</th>
+                  <th>MH</th>
                   <th>ALT</th>
                   <th>DIST</th>
                   <th>ETA</th>
@@ -79,6 +80,7 @@ export const PlanPrintView: React.FC<PlanPrintViewProps> = ({ flightPlan }) => {
                       <td>{seg.to}</td>
                       <td className="num">{seg.speed}</td>
                       <td className="num">{seg.bearing.toFixed(0)}</td>
+                      <td className="num">{seg.magneticHeadingDeg != null ? seg.magneticHeadingDeg.toFixed(0) : '--'}</td>
                       <td className="num">{seg.altitude}</td>
                       <td className="num">{seg.distance.toFixed(1)}</td>
                       <td className="num">{seg.eta}</td>
@@ -90,7 +92,7 @@ export const PlanPrintView: React.FC<PlanPrintViewProps> = ({ flightPlan }) => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={12} className="print-placeholder">
+                    <td colSpan={13} className="print-placeholder">
                       ルートセグメントがありません（出発/到着/ウェイポイントを設定してください）
                     </td>
                   </tr>

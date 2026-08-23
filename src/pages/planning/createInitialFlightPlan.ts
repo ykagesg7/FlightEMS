@@ -1,5 +1,5 @@
 import type { FlightPlan } from '../../types/index';
-import { calculateAirspeeds, calculateMach, calculateTAS, formatTime } from '../../utils';
+import { calculateAirspeeds, formatTime } from '../../utils';
 
 /**
  * /planning の FlightPlan 初期状態（単一ソース）。
@@ -19,8 +19,8 @@ export function createInitialFlightPlan(): FlightPlan {
     initialGroundTempC,
     initialGroundElevationFt
   );
-  const initialTas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(initialSpeed, initialAltitude);
-  const initialMach = airspeedsResult ? airspeedsResult.mach : calculateMach(initialTas, initialAltitude);
+  const initialTas = airspeedsResult?.tasKt ?? 0;
+  const initialMach = airspeedsResult?.mach ?? 0;
   const departureTime = formatTime(new Date().getHours() * 60 + new Date().getMinutes());
   return {
     departure: undefined,

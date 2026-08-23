@@ -9,29 +9,24 @@ import {
   DropdownMenuTrigger,
 } from '../../../../components/ui/DropdownMenu';
 import { aircraftPresets, getAircraftPreset } from '../../../../data/aircraftPresets';
-import { AircraftPreset, Airport, AirportGroupOption, AirportOption, FlightPlan, NavaidOption, RouteSegment, Waypoint, WaypointOption } from '../../../../types/index';
-import { calculateAirspeeds, calculateDistance, calculateETA, calculateETE, calculateMach, calculateTAS, formatTime, groupBy } from '../../../../utils';
+import { AircraftPreset, AirportGroupOption, AirportOption, FlightPlan, NavaidOption, WaypointOption } from '../../../../types/index';
+import { groupBy } from '../../../../utils';
 import { AirspaceDataset, findAirspaceFrequency } from '../../../../utils/airspace';
-import { calculateMagneticBearing } from '../../../../utils/bearing';
-import { parseFlightPlanTime } from '../../../../utils/flightTime';
 import { downloadPlanDocument, fromPlanDocument, toPlanDocument } from '../../../../utils/planDocument';
 import { persistFlightPlanDraft } from '../../flightPlanDraft';
-import { inheritSegmentPerformance } from '../../segmentPerformance';
 import { downloadTextFile } from '../../export/download';
 import { exportFlightPlanToCsv } from '../../export/exportCsv';
 import { exportFlightPlanToGpx } from '../../export/exportGpx';
 import { exportFlightPlanToKml } from '../../export/exportKml';
 import type { FlightTrack } from '../../tracks/types';
-import {
-  addMinutesUtc,
-  fetchWindAtLocationTime,
-  groundSpeedKtFromWind,
-} from '../../../../utils/routeOpenMeteoWind';
-import { DebriefPanel } from '../debrief/DebriefPanel';
+import { applyNavLogToPlan, computeNavLog } from '../../nav/computeNavLog';
+import { collectNavPoints, segmentOverrideKey } from '../../nav/navPoints';
+import { useRouteWinds } from '../../nav/useRouteWinds';
 import { PreflightBriefingPanel } from '../briefing/PreflightBriefingPanel';
-import { RouteProfilePanel } from '../profile/RouteProfilePanel';
+import { AircraftPerformancePanel } from './AircraftPerformancePanel';
 import FlightParameters from './FlightParameters';
 import { FlightSummary } from './FlightSummary';
+import { PlanningCard } from './PlanningCard';
 import PlanPrintView from './PlanPrintView';
 import RoutePlanning from './RoutePlanning';
 import {
@@ -62,10 +57,10 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   layout = 'full',
   flightPlan,
   setFlightPlan,
-  tracks,
-  setTracks,
-  currentTrackTime,
-  setCurrentTrackTime,
+  tracks: _tracks,
+  setTracks: _setTracks,
+  currentTrackTime: _currentTrackTime,
+  setCurrentTrackTime: _setCurrentTrackTime,
   onClearLocalDraft,
   lastSavedAt = null,
 }) => {
@@ -82,10 +77,6 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [printRequested, setPrintRequested] = React.useState(false);
   const [clearDraftOpen, setClearDraftOpen] = useState(false);
-  const summaryRunIdRef = React.useRef(0);
-  const routeSegmentsRef = React.useRef(flightPlan.routeSegments);
-  routeSegmentsRef.current = flightPlan.routeSegments;
-  const globalPerfRef = React.useRef({ speed: flightPlan.speed, altitude: flightPlan.altitude });
   const [draftNoticeVisible, setDraftNoticeVisible] = useState(() => {
     try {
       return sessionStorage.getItem(DRAFT_NOTICE_DISMISS_KEY) !== '1';
@@ -125,6 +116,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         taxiFuelLb: preset.taxiFuelLb,
         reserveFuelLb: preset.reserveFuelLb,
         initialFuelLb: prev.initialFuelLb ?? preset.defaultInitialFuelLb,
+        alternateFuelLb: preset.alternateFuelLb,
       }));
     } else {
       setFlightPlan((prev: FlightPlan) => ({ ...prev, aircraftId: undefined }));
@@ -182,9 +174,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   };
 
   const handlePrint = () => {
-    // 先に再計算を促し、描画反映後に印刷を開く（NavLog空対策）
     setPrintRequested(true);
-    void updateFlightSummary();
   };
 
   // 空港データを取得するuseEffect
@@ -281,237 +271,109 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
     });
   }, []);
 
-  // ポイントのIDを取得するヘルパー関数
-  const getPointId = (point: Airport | Waypoint): string => {
-    if ('id' in point) {
-      // Waypointの場合
-      return (point as Waypoint).id;
-    } else {
-      // Airportの場合
-      const airport = point as Airport;
-      const propertiesId = airport.properties?.id;
-      return (typeof propertiesId === 'string' ? propertiesId : '') || airport.value || '';
-    }
-  };
+  const navPoints = React.useMemo(
+    () =>
+      collectNavPoints({
+        departure: flightPlan.departure,
+        arrival: flightPlan.arrival,
+        waypoints: flightPlan.waypoints,
+        groundElevationFt: flightPlan.groundElevationFt,
+      }),
+    [flightPlan.departure, flightPlan.arrival, flightPlan.waypoints, flightPlan.groundElevationFt],
+  );
+  const { winds } = useRouteWinds(flightPlan, navPoints);
 
-  // Flight Summaryを更新する関数（Open-Meteo 風はセグメント逐次・中点・累積時刻で取得）
-  const updateFlightSummary = React.useCallback(async () => {
-    const runId = ++summaryRunIdRef.current;
-    let totalDistance = 0;
-    const routeSegments: RouteSegment[] = [];
-    let cumulativeEte = 0;
-    const segmentEteMinutesList: number[] = [];
+  const frequencies = React.useMemo(() => {
+    return navPoints.slice(0, -1).map((from, i) => {
+      const to = navPoints[i + 1];
+      const midLat = (from.latitude + to.latitude) / 2;
+      const midLon = (from.longitude + to.longitude) / 2;
+      const hit = findAirspaceFrequency([midLon, midLat], airspaceDatasets);
+      return { frequency: hit?.frequency, frequencySourceId: hit?.sourceId };
+    });
+  }, [navPoints, airspaceDatasets]);
 
-    // 出発地、経由地点、到着地を含む配列を作成
-    const allPoints = flightPlan.departure
-      ? [flightPlan.departure, ...flightPlan.waypoints, flightPlan.arrival].filter(Boolean)
-      : [];
-
-    let refTime = parseFlightPlanTime(flightPlan.departureTime);
-    const departureValid = !isNaN(refTime.getTime());
-    const globalsChanged =
-      globalPerfRef.current.speed !== flightPlan.speed ||
-      globalPerfRef.current.altitude !== flightPlan.altitude;
-    globalPerfRef.current = { speed: flightPlan.speed, altitude: flightPlan.altitude };
-
-    // 各セグメントごとに距離、方位、到着時刻を計算
-    for (let i = 0; i < allPoints.length - 1; i++) {
-      const currentPoint = allPoints[i];
-      const nextPoint = allPoints[i + 1];
-      if (!currentPoint || !nextPoint) continue;
-
-      const fromId = getPointId(currentPoint);
-      const toId = getPointId(nextPoint);
-      const { speed: segmentSpeed, altitude: segmentAltitude } = globalsChanged
-        ? { speed: flightPlan.speed, altitude: flightPlan.altitude }
-        : inheritSegmentPerformance(
-            routeSegmentsRef.current,
-            fromId,
-            toId,
-            flightPlan.speed,
-            flightPlan.altitude,
-          );
-
-      const distance = calculateDistance(
-        currentPoint.latitude,
-        currentPoint.longitude,
-        nextPoint.latitude,
-        nextPoint.longitude
-      );
-      const bearing = calculateMagneticBearing(
-        currentPoint.latitude,
-        currentPoint.longitude,
-        nextPoint.latitude,
-        nextPoint.longitude
-      );
-      const airspeedsResult = calculateAirspeeds(
-        segmentSpeed,
-        segmentAltitude,
-        flightPlan.groundTempC,
-        flightPlan.groundElevationFt
-      );
-      const tas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(segmentSpeed, segmentAltitude);
-
-      let segmentEteMinutes: number;
-      let windFromDeg: number | undefined;
-      let windSpeedKt: number | undefined;
-      let groundSpeedKt: number | undefined;
-
-      if (flightPlan.useOpenMeteoWind && departureValid) {
-        const midLat = (currentPoint.latitude + nextPoint.latitude) / 2;
-        const midLon = (currentPoint.longitude + nextPoint.longitude) / 2;
-        const w = await fetchWindAtLocationTime(
-          midLat,
-          midLon,
-          segmentAltitude,
-          refTime,
-          3
-        );
-        if (runId !== summaryRunIdRef.current) return;
-        if (w) {
-          windFromDeg = w.windFromDeg;
-          windSpeedKt = w.windSpeedKt;
-          groundSpeedKt = groundSpeedKtFromWind(tas, w.windFromDeg, w.windSpeedKt, bearing);
-          segmentEteMinutes = (distance / groundSpeedKt) * 60;
-        } else {
-          segmentEteMinutes = calculateETE(distance, tas);
-        }
-      } else {
-        segmentEteMinutes = calculateETE(distance, tas);
-      }
-
-      cumulativeEte += segmentEteMinutes;
-      const segmentEta = departureValid ? calculateETA(flightPlan.departureTime, cumulativeEte) : '--:--:--';
-      segmentEteMinutesList.push(segmentEteMinutes);
-      if (departureValid) {
-        refTime = addMinutesUtc(refTime, segmentEteMinutes);
-      }
-
-      const baseSeg: RouteSegment = {
-        from: fromId,
-        to: toId,
-        speed: segmentSpeed,
-        bearing,
-        altitude: segmentAltitude,
-        eta: segmentEta,
-        distance,
-        duration: formatTime(segmentEteMinutes),
-      };
-      if (flightPlan.useOpenMeteoWind && windFromDeg != null && windSpeedKt != null && groundSpeedKt != null) {
-        routeSegments.push({
-          ...baseSeg,
-          windFromDeg,
-          windSpeedKt,
-          groundSpeedKt,
-        });
-      } else {
-        routeSegments.push(baseSeg);
-      }
-      totalDistance += distance;
-    }
-
-    if (runId !== summaryRunIdRef.current) return;
-
-    // 全体TAS、Mach計算
-    const airspeedsResult = calculateAirspeeds(
+  const navLog = React.useMemo(
+    () =>
+      computeNavLog({
+        plan: {
+          speed: flightPlan.speed,
+          altitude: flightPlan.altitude,
+          departureTime: flightPlan.departureTime,
+          groundTempC: flightPlan.groundTempC,
+          groundElevationFt: flightPlan.groundElevationFt,
+          segmentOverrides: flightPlan.segmentOverrides,
+          aircraftId: flightPlan.aircraftId,
+          initialFuelLb: flightPlan.initialFuelLb,
+          taxiFuelLb: flightPlan.taxiFuelLb,
+          reserveFuelLb: flightPlan.reserveFuelLb,
+          cruiseFuelFlowLbPerHr: flightPlan.cruiseFuelFlowLbPerHr,
+          alternateFuelLb: flightPlan.alternateFuelLb,
+          performanceOverrides: flightPlan.performanceOverrides,
+          descentMode: flightPlan.descentMode,
+        },
+        points: navPoints,
+        winds,
+        frequencies,
+        preset: selectedPreset,
+        includeVerticalProfile: true,
+      }),
+    [
+      navPoints,
+      winds,
+      frequencies,
+      selectedPreset,
       flightPlan.speed,
       flightPlan.altitude,
+      flightPlan.departureTime,
       flightPlan.groundTempC,
-      flightPlan.groundElevationFt
-    );
-    // 高精度計算が失敗した場合、従来の計算方法で代替
-    const tas = airspeedsResult ? airspeedsResult.tasKt : calculateTAS(flightPlan.speed, flightPlan.altitude);
-    const mach = airspeedsResult ? airspeedsResult.mach : calculateMach(tas, flightPlan.altitude);
+      flightPlan.groundElevationFt,
+      flightPlan.segmentOverrides,
+      flightPlan.aircraftId,
+      flightPlan.initialFuelLb,
+      flightPlan.taxiFuelLb,
+      flightPlan.reserveFuelLb,
+      flightPlan.cruiseFuelFlowLbPerHr,
+      flightPlan.alternateFuelLb,
+      flightPlan.performanceOverrides,
+      flightPlan.descentMode,
+    ],
+  );
 
-    // 全体ETE、ETA（セグメント合計。風あり時は cumulativeEte を使用）
-    const eteMinutes =
-      routeSegments.length > 0 ? cumulativeEte : calculateETE(totalDistance, tas);
-    const eteFormatted = formatTime(eteMinutes);
-    const etaFormatted = departureValid ? calculateETA(flightPlan.departureTime, eteMinutes) : '--:--:--';
-
-    // 周波数付与（中点 + 高度で判定）
-    const enrichedSegments = routeSegments.map((segment, idx) => {
-      const currentPoint = allPoints[idx];
-      const nextPoint = allPoints[idx + 1];
-      let frequency: string | undefined;
-      let frequencySourceId: string | undefined;
-      if (currentPoint && nextPoint) {
-        const midLat = (currentPoint.latitude + nextPoint.latitude) / 2;
-        const midLon = (currentPoint.longitude + nextPoint.longitude) / 2;
-        const hit = findAirspaceFrequency([midLon, midLat], airspaceDatasets);
-        frequency = hit?.frequency;
-        frequencySourceId = hit?.sourceId;
-      }
-      return { ...segment, frequency, frequencySourceId };
-    });
-
-    // 燃料計算
-    const preset = getAircraftPreset(flightPlan.aircraftId) || aircraftPresets[0];
-    const cruiseFuelFlow = flightPlan.cruiseFuelFlowLbPerHr ?? preset?.cruiseFuelFlowLbPerHr ?? 0;
-    const taxiFuel = flightPlan.taxiFuelLb ?? preset?.taxiFuelLb ?? 0;
-    const reserveFuel = flightPlan.reserveFuelLb ?? preset?.reserveFuelLb ?? 0;
-    let remainingFuel = (flightPlan.initialFuelLb ?? preset?.defaultInitialFuelLb ?? 0) - taxiFuel;
-    let totalFuelUsed = taxiFuel;
-
-    const fuelSegments = enrichedSegments.map((segment, idx) => {
-      const minutes = segmentEteMinutesList[idx] ?? 0;
-      const hours = minutes / 60;
-      const fuelUsed = cruiseFuelFlow * hours;
-      remainingFuel = Math.max(0, remainingFuel - fuelUsed);
-      totalFuelUsed += fuelUsed;
-      return {
-        ...segment,
-        fuelUsedLb: fuelUsed,
-        fuelRemainingLb: remainingFuel,
-      };
-    });
-
-    // FlightPlanステートを更新
-    setFlightPlan((prevFlightPlan: FlightPlan) => ({
-      ...prevFlightPlan,
-      totalDistance: totalDistance,
-      ete: eteFormatted,
-      eta: etaFormatted,
-      tas: tas,
-      mach: mach,
-      routeSegments: fuelSegments,
-      totalFuelUsedLb: totalFuelUsed + reserveFuel,
-      totalFuelRemainingLb: remainingFuel,
-    }));
-  }, [
-    flightPlan.departure,
-    flightPlan.arrival,
-    flightPlan.waypoints,
-    flightPlan.speed,
-    flightPlan.altitude,
-    flightPlan.departureTime,
-    flightPlan.groundTempC,
-    flightPlan.groundElevationFt,
-    flightPlan.aircraftId,
-    flightPlan.initialFuelLb,
-    flightPlan.reserveFuelLb,
-    flightPlan.taxiFuelLb,
-    flightPlan.cruiseFuelFlowLbPerHr,
-    flightPlan.useOpenMeteoWind,
-    setFlightPlan,
-    airspaceDatasets
-  ]);
-
-  // Flight Summaryを更新するuseEffect
   React.useEffect(() => {
-    void updateFlightSummary();
-  }, [
-    updateFlightSummary,
-    flightPlan.departure,
-    flightPlan.arrival,
-    flightPlan.waypoints,
-    flightPlan.speed,
-    flightPlan.altitude,
-    flightPlan.departureTime,
-    flightPlan.groundTempC,
-    flightPlan.groundElevationFt,
-    flightPlan.useOpenMeteoWind,
-  ]);
+    setFlightPlan((prev) => {
+      const next = applyNavLogToPlan(prev, navLog);
+      if (
+        prev.ete === next.ete &&
+        prev.eta === next.eta &&
+        prev.totalDistance === next.totalDistance &&
+        prev.tas === next.tas &&
+        prev.totalFuelUsedLb === next.totalFuelUsedLb &&
+        prev.routeSegments.length === next.routeSegments.length &&
+        prev.routeSegments.every((s, i) => {
+          const n = next.routeSegments[i];
+          return s.from === n.from && s.to === n.to && s.eta === n.eta && s.speed === n.speed && s.altitude === n.altitude;
+        })
+      ) {
+        return prev;
+      }
+      return next;
+    });
+  }, [navLog, setFlightPlan]);
+
+  const handleSegmentOverrideChange = React.useCallback(
+    (from: string, to: string, patch: { casKt?: number; altitudeFt?: number }) => {
+      const key = segmentOverrideKey(from, to);
+      setFlightPlan((prev) => ({
+        ...prev,
+        segmentOverrides: {
+          ...prev.segmentOverrides,
+          [key]: { ...prev.segmentOverrides?.[key], ...patch },
+        },
+      }));
+    },
+    [setFlightPlan],
+  );
 
   // 印刷要求があれば、ルートセグメントが揃った後に印刷を開始
   React.useEffect(() => {
@@ -534,7 +396,8 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   return (
     <div className={planningTabRootGridClass(layout)}>
       <div className={isSplitLayout ? 'space-y-3 sm:space-y-4 md:space-y-6' : 'lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6'}>
-        <div className="bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-lg p-3 sm:p-4 md:p-5 flex flex-col gap-3 print-hide">
+        <PlanningCard title="Setup">
+        <div className="flex flex-col gap-3 print-hide">
           {draftNoticeVisible && (
             <div
               className="flex flex-wrap items-start gap-2 rounded-md border border-whiskyPapa-yellow/30 bg-whiskyPapa-black/80 px-3 py-2 text-2xs sm:text-xs text-gray-200"
@@ -645,7 +508,21 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
               />
             </div>
           </div>
+          <FlightParameters layout={layout} flightPlan={flightPlan} setFlightPlan={setFlightPlan} variant="setup" />
+          <details className="mt-4 rounded border border-whiskyPapa-yellow/20">
+            <summary className="min-h-[44px] cursor-pointer list-none px-3 py-2 text-xs font-medium text-whiskyPapa-yellow sm:text-sm">
+              機体性能（上昇・降下・巡航）
+            </summary>
+            <div className="border-t border-whiskyPapa-yellow/10 p-3">
+              <AircraftPerformancePanel
+                flightPlan={flightPlan}
+                setFlightPlan={setFlightPlan}
+                preset={selectedPreset}
+              />
+            </div>
+          </details>
         </div>
+        </PlanningCard>
 
         <Transition appear show={clearDraftOpen} as={Fragment}>
           <Dialog as="div" className="relative z-[300]" onClose={() => setClearDraftOpen(false)}>
@@ -705,77 +582,35 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         </Transition>
       </div>
 
-      <div
-        className={
-          isSplitLayout
-            ? 'space-y-3 sm:space-y-4 md:space-y-6 min-w-0'
-            : 'lg:col-span-2 space-y-3 sm:space-y-4 md:space-y-6'
-        }
-      >
-        <FlightParameters
-          layout={layout}
-          flightPlan={flightPlan}
-          setFlightPlan={setFlightPlan}
-        />
-
-        <RoutePlanning
-          layout={layout}
-          flightPlan={flightPlan}
-          setFlightPlan={setFlightPlan}
-          airportOptions={airportOptions}
-          navaidOptions={navaidOptions}
-          waypointOptions={waypointOptions}
-        />
-
-        {isSplitLayout && (
-          <FlightSummary layout={layout} flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
-        )}
-      </div>
-
-      {!isSplitLayout && (
-        <div className="space-y-3 sm:space-y-4 md:space-y-6">
-          <FlightSummary layout={layout} flightPlan={flightPlan} setFlightPlan={setFlightPlan} />
-        </div>
-      )}
-
-      <div className={isSplitLayout ? 'space-y-3 sm:space-y-4 md:space-y-6' : 'lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6'}>
-        <details className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-950/30 p-2" open>
-          <summary className="cursor-pointer px-2 py-1 text-sm font-semibold text-whiskyPapa-yellow">Preflight Briefing</summary>
-          <div className="mt-2">
-            <PreflightBriefingPanel flightPlan={flightPlan} layout={layout} />
-          </div>
-        </details>
-        <details className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-950/30 p-2">
-          <summary className="cursor-pointer px-2 py-1 text-sm font-semibold text-whiskyPapa-yellow">Route Profile</summary>
-          <div className="mt-2">
-            <RouteProfilePanel flightPlan={flightPlan} />
-          </div>
-        </details>
-        <p className="px-1 text-2xs text-gray-400">
-          計画ルートを 3D 空域で疑似再生（参考）:{' '}
-          <button
-            type="button"
-            data-testid="planning-open-airspace3d"
-            onMouseEnter={preloadAirspace3d}
-            onFocus={preloadAirspace3d}
-            onClick={openAirspace3d}
-            className="text-brand-primary underline-offset-2 hover:underline"
-          >
-            3D空域エクスプローラ
-          </button>
-        </p>
-        <details className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-950/30 p-2" open>
-          <summary className="cursor-pointer px-2 py-1 text-sm font-semibold text-whiskyPapa-yellow">Debrief / 航跡</summary>
-          <div className="mt-2">
-            <DebriefPanel
+      <div className={isSplitLayout ? 'space-y-3 min-w-0' : 'lg:col-span-3 space-y-3'}>
+        <PlanningCard title="Route">
+          <FlightParameters layout={layout} flightPlan={flightPlan} setFlightPlan={setFlightPlan} variant="route" />
+          <div className="mt-4">
+            <RoutePlanning
+              layout={layout}
               flightPlan={flightPlan}
-              tracks={tracks}
-              setTracks={setTracks}
-              currentTime={currentTrackTime}
-              setCurrentTime={setCurrentTrackTime}
+              setFlightPlan={setFlightPlan}
+              airportOptions={airportOptions}
+              navaidOptions={navaidOptions}
+              waypointOptions={waypointOptions}
             />
           </div>
-        </details>
+        </PlanningCard>
+        <PlanningCard title="NavLog">
+          <FlightSummary
+            layout={layout}
+            flightPlan={flightPlan}
+            fuelBelowReserve={navLog.fuelBelowReserve}
+            aboveServiceCeiling={navLog.aboveServiceCeiling}
+            aboveMaxFuel={navLog.aboveMaxFuel}
+            onSegmentOverrideChange={handleSegmentOverrideChange}
+            onOpenAirspace3d={openAirspace3d}
+            onPreloadAirspace3d={preloadAirspace3d}
+          />
+        </PlanningCard>
+        <PlanningCard title="Briefing" defaultOpen={false}>
+          <PreflightBriefingPanel flightPlan={flightPlan} layout={layout} embedded />
+        </PlanningCard>
       </div>
 
       {/* 印刷専用ビュー（画面では非表示、印刷時のみ表示） */}

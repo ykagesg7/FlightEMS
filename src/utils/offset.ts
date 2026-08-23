@@ -7,14 +7,14 @@
  * @returns {{lat: number, lon: number} | null} オフセット地点の緯度経度、計算エラー時はnull
  */
 const EARTH_RADIUS = 6371000; // 地球半径 (メートル)
-const MAGNETIC_DECLINATION = 8; // 日本の平均磁気偏差 (度)
+import { interpolateJapanMagneticVariationWestDeg } from './japanMagneticVariation';
 
 export function calculateOffsetPoint(lat: number, lon: number, magneticBearing: number, distanceNM: number) {
     // 海里 (NM) をメートルに変換: 1 NM = 1852 m
     const distanceMeters = distanceNM * 1852;
 
     // 真方位は地図上の基準になるため、磁気方位から磁気偏差を引いて算出
-    const trueBearing = (magneticBearing - MAGNETIC_DECLINATION + 360) % 360;
+    const trueBearing = (magneticBearing - interpolateJapanMagneticVariationWestDeg(lat, lon) + 360) % 360;
     const bearingRad = trueBearing * Math.PI / 180;
 
     const latRad = lat * Math.PI / 180;

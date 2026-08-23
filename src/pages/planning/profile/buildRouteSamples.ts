@@ -6,25 +6,34 @@ export interface RouteProfileSample {
   altitudeFt: number;
   windLabel?: string;
   frequency?: string;
+  marker?: 'toc' | 'tod';
 }
 
 export function buildRouteProfileSamples(plan: FlightPlan): RouteProfileSample[] {
   let cumulative = 0;
   const samples: RouteProfileSample[] = [];
+  const depElev = Number(plan.departure?.properties?.['Elev(ft)']);
   if (plan.departure) {
-    samples.push({ label: plan.departure.value || plan.departure.name, distanceNm: 0, altitudeFt: plan.altitude });
+    samples.push({
+      label: plan.departure.value || plan.departure.name,
+      distanceNm: 0,
+      altitudeFt: Number.isFinite(depElev) ? depElev : (plan.groundElevationFt || 0),
+    });
   }
 
   plan.routeSegments.forEach((segment) => {
     cumulative += segment.distance;
+    const marker = segment.to === 'TOC' ? 'toc' : segment.to === 'TOD' ? 'tod' : undefined;
     samples.push({
       label: segment.to,
       distanceNm: cumulative,
-      altitudeFt: segment.altitude,
-      windLabel: typeof segment.windFromDeg === 'number' && typeof segment.windSpeedKt === 'number'
-        ? `${segment.windFromDeg.toFixed(0)}°/${segment.windSpeedKt.toFixed(0)}kt`
-        : undefined,
+      altitudeFt: segment.endAltitudeFt ?? segment.altitude,
+      windLabel:
+        typeof segment.windFromDeg === 'number' && typeof segment.windSpeedKt === 'number'
+          ? `${segment.windFromDeg.toFixed(0)}°/${segment.windSpeedKt.toFixed(0)}kt`
+          : undefined,
       frequency: segment.frequency,
+      marker,
     });
   });
 

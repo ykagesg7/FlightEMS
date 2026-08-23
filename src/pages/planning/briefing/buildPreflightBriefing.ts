@@ -15,19 +15,26 @@ export function buildPreflightBriefing(plan: FlightPlan): PreflightBriefing {
     { label: '計画高度', value: numberLabel(plan.altitude, 'ft', 0), status: 'info' as const },
   ];
 
-  const navLog = plan.routeSegments.length
-    ? plan.routeSegments.map((segment, index) => ({
-      label: `${index + 1}. ${segment.from} -> ${segment.to}`,
-      value: `${segment.bearing.toFixed(0)}° / ${segment.distance.toFixed(1)}nm / ${segment.duration || '--'} / ${segment.frequency || 'Freq --'}`,
-      status: 'ok' as const,
-    }))
-    : [{ label: 'NavLog', value: '出発地・到着地・ウェイポイント設定後に生成されます', status: 'warning' as const }];
+  const remaining = plan.totalFuelRemainingLb;
+  const reserve = plan.reserveFuelLb ?? 0;
+  const alternate = plan.alternateFuelLb ?? 0;
+  const fuelShort = typeof remaining === 'number' && remaining < reserve + alternate;
+
+  const navLog = [
+    {
+      label: 'NavLog',
+      value: plan.routeSegments.length
+        ? `${plan.routeSegments.length} レグ（詳細は NavLog カード）`
+        : '出発地・到着地設定後に生成',
+      status: plan.routeSegments.length ? 'ok' as const : 'warning' as const,
+    },
+  ];
 
   const fuel = [
     { label: '初期燃料', value: numberLabel(plan.initialFuelLb, 'lb', 0), status: 'info' as const },
-    { label: 'Taxi / Reserve', value: `${numberLabel(plan.taxiFuelLb, 'lb', 0)} / ${numberLabel(plan.reserveFuelLb, 'lb', 0)}`, status: 'info' as const },
+    { label: 'Taxi / Reserve / Alternate', value: `${numberLabel(plan.taxiFuelLb, 'lb', 0)} / ${numberLabel(plan.reserveFuelLb, 'lb', 0)} / ${numberLabel(plan.alternateFuelLb, 'lb', 0)}`, status: 'info' as const },
     { label: '巡航FF', value: numberLabel(plan.cruiseFuelFlowLbPerHr, 'lb/hr', 0), status: 'info' as const },
-    { label: '使用量 / 残量', value: `${numberLabel(plan.totalFuelUsedLb, 'lb', 0)} / ${numberLabel(plan.totalFuelRemainingLb, 'lb', 0)}`, status: 'info' as const },
+    { label: '使用量 / 残量', value: `${numberLabel(plan.totalFuelUsedLb, 'lb', 0)} / ${numberLabel(plan.totalFuelRemainingLb, 'lb', 0)}`, status: fuelShort ? 'warning' as const : 'info' as const },
   ];
 
   const weatherAndNotam = [

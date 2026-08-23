@@ -202,7 +202,7 @@ export const DebriefPanel: React.FC<DebriefPanelProps> = ({
   const gpsRecording = gpsWatchIdRef.current !== null;
 
   return (
-    <section className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-900/70 p-4">
+    <section className="rounded-lg border border-whiskyPapa-yellow/20 bg-whiskyPapa-black-dark p-4">
       <TrackImportPanel
         message={message}
         gpsRecording={gpsRecording}

@@ -30,11 +30,10 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
 }) => {
   const isSplitLayout = layout === 'split';
   return (
-    <div className="bg-whiskyPapa-black-dark border border-whiskyPapa-yellow/20 rounded-lg p-3 sm:p-4 md:p-6">
+    <div>
       <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 text-white">経路計画</h2>
       <p className="text-2xs sm:text-xs text-gray-400 mb-2 sm:mb-3 md:mb-4 leading-relaxed">
-        磁気方位は教育用モデルとして固定の磁気偏差（{MAGNETIC_DECLINATION}°、
-        <code className="text-gray-500">bearing.ts</code>）を用いています。実運航の計画には使用しないでください。
+        磁気方位は教育用モデルです。レグ中点の偏差は日本付近の補間値、未取得時は既定 {MAGNETIC_DECLINATION}°（西偏）です。実運航の計画には使用しないでください。
       </p>
 
       {/* 空港選択部 */}

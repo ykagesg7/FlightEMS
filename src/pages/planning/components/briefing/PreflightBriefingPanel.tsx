@@ -13,6 +13,7 @@ import type { PlanningPanelLayout } from '../../planningPanelLayout';
 interface PreflightBriefingPanelProps {
   flightPlan: FlightPlan;
   layout?: PlanningPanelLayout;
+  embedded?: boolean;
 }
 
 function ItemList({ items }: { items: BriefingItem[] }) {
@@ -184,14 +185,15 @@ function PreflightNotamSection({ flightPlan }: { flightPlan: FlightPlan }) {
 export const PreflightBriefingPanel: React.FC<PreflightBriefingPanelProps> = ({
   flightPlan,
   layout = 'full',
+  embedded = false,
 }) => {
   const isSplitLayout = layout === 'split';
   const briefing = useMemo(() => buildPreflightBriefing(flightPlan), [flightPlan]);
 
   return (
-    <section className="rounded-lg border border-whiskyPapa-yellow/20 bg-gray-900/70 p-4 min-w-0">
-      <h3 className="text-lg font-semibold text-whiskyPapa-yellow">Preflight Briefing</h3>
-      <p className="mt-1 text-xs text-gray-400">計画・NavLog・燃料・気象/NOTAM確認導線を一箇所に集約します。</p>
+    <section className={embedded ? 'min-w-0' : 'rounded-lg border border-whiskyPapa-yellow/20 bg-gray-900/70 p-4 min-w-0'}>
+      {embedded ? null : <h3 className="text-lg font-semibold text-whiskyPapa-yellow">Preflight Briefing</h3>}
+      <p className={embedded ? 'text-xs text-gray-400' : 'mt-1 text-xs text-gray-400'}>燃料・気象/NOTAM。NavLog は上のカードを参照。</p>
 
       <div
         className={
@@ -217,7 +219,7 @@ export const PreflightBriefingPanel: React.FC<PreflightBriefingPanelProps> = ({
           <PreflightNotamSection flightPlan={flightPlan} />
         </div>
         <div>
-          <h4 className="text-sm font-semibold text-gray-200">NavLog</h4>
+          <h4 className="text-sm font-semibold text-gray-200">注意</h4>
           <ItemList items={briefing.navLog} />
         </div>
       </div>

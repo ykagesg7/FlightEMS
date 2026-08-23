@@ -84,6 +84,21 @@ describe('planDocument', () => {
     expect(restored!.departureTime).toBe('10:58');
   });
 
+  it('round-trips aircraft performance overrides and descent mode', () => {
+    const plan: FlightPlan = {
+      ...createInitialFlightPlan(),
+      performanceOverrides: { climbRateFpm: 2500, descentIdleRateFpm: 5500 },
+      descentMode: 'idle',
+    };
+
+    const restored = fromPlanDocument(toPlanDocument(plan));
+    expect(restored!.performanceOverrides).toEqual({
+      climbRateFpm: 2500,
+      descentIdleRateFpm: 5500,
+    });
+    expect(restored!.descentMode).toBe('idle');
+  });
+
   it('fromPlanDocument returns null for invalid input', () => {
     expect(fromPlanDocument(null)).toBeNull();
     expect(fromPlanDocument({})).toBeNull();

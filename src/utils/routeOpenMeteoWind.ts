@@ -2,7 +2,7 @@
  * 経路セグメント向け Open-Meteo 風（教育・参考）。磁方位と真風向の偏角は未補正。
  */
 import { DEFAULT_PRESSURE_LEVELS_HPA, fetchHourlyWindAloft } from '../services/openMeteo';
-import { tailwindComponentKt } from './windComponents';
+import { solveWindTriangle } from './windTriangle';
 
 export const ROUTE_GS_MIN_KT = 20;
 
@@ -55,9 +55,7 @@ export function groundSpeedKtFromWind(
   windSpeedKt: number,
   trackDeg: number
 ): number {
-  const tw = tailwindComponentKt(windFromDeg, windSpeedKt, trackDeg);
-  if (Number.isNaN(tw)) return Math.max(ROUTE_GS_MIN_KT, tasKt);
-  return Math.max(ROUTE_GS_MIN_KT, tasKt + tw);
+  return solveWindTriangle(tasKt, trackDeg, windFromDeg, windSpeedKt, ROUTE_GS_MIN_KT).groundSpeedKt;
 }
 
 export type RouteWindSample = {

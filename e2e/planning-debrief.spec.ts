@@ -16,12 +16,16 @@ test.describe('Planning debrief tools', () => {
     );
 
     await page.goto('/planning');
-    await expect(page.getByRole('heading', { name: 'Debrief / 航跡' })).toBeVisible({ timeout: 60_000 });
+    const debriefTab = page.getByRole('tab', { name: 'Debrief' });
+    await expect(debriefTab).toBeVisible({ timeout: 60_000 });
+    await debriefTab.click();
+    await expect(page.getByRole('heading', { name: 'Debrief / 航跡' })).toBeVisible();
     await page.locator('input[type="file"][accept=".gpx,.kml,.csv"]').setInputFiles(gpxPath);
 
     await expect(page.locator('input[value="E2E Track"]')).toBeVisible();
     await expect(page.getByRole('button', { name: '再生' })).toBeVisible();
     await expect(page.getByText('2 points')).toBeVisible();
+    await page.getByRole('tab', { name: '計画' }).click();
     await page.getByRole('button', { name: /ファイル/ }).click();
     await expect(page.getByRole('menuitem', { name: '計画ルートを GPX 出力' })).toBeVisible();
   });

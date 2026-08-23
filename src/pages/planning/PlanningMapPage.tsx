@@ -8,6 +8,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { FlightPlan } from '../../types/index';
 import { importWithChunkRetry } from '../../utils/lazyWithRetry';
 import type { FlightTrack } from './tracks/types';
+import { DebriefPanel } from './components/debrief/DebriefPanel';
 import PlanningTab from './components/flight/PlanningTab';
 import { PlanningNotamSheetProvider } from './components/map/PlanningNotamSheetProvider';
 import { createInitialFlightPlan } from './createInitialFlightPlan';
@@ -57,7 +58,7 @@ function PlanningMapPageInner({
   lastSavedAt,
 }: PlanningMapPageInnerProps) {
   const isXl = useMediaQuery('(min-width: 1280px)');
-  const [mobileTab, setMobileTab] = useState<'planning' | 'map'>('planning');
+  const [mobileTab, setMobileTab] = useState<'planning' | 'map' | 'debrief'>('planning');
   const focusMapTab = useCallback(() => {
     if (!isXl) setMobileTab('map');
   }, [isXl]);
@@ -77,16 +78,38 @@ function PlanningMapPageInner({
           </div>
           <div className="mb-2 flex-1 grid grid-cols-[minmax(28rem,1.05fr)_minmax(0,1fr)] gap-0 items-stretch min-h-[calc(100vh-5rem)] min-w-0">
             <div className="overflow-y-auto overflow-x-hidden border-r border-whiskyPapa-yellow/20 p-2 sm:p-4 md:p-6 min-h-0 min-w-0">
-              <PlanningTab
-                layout="split"
-                flightPlan={flightPlan}
-                setFlightPlan={setFlightPlan}
-                tracks={tracks}
-                setTracks={setTracks}
-                currentTrackTime={currentTrackTime}
-                setCurrentTrackTime={setCurrentTrackTime}
-                onClearLocalDraft={onClearLocalDraft}
-              />
+              <Tabs defaultValue="planning">
+                <TabsList className="mb-3 bg-transparent border-b border-whiskyPapa-yellow/20 w-full flex">
+                  <TabsTrigger value="planning" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
+                    計画
+                  </TabsTrigger>
+                  <TabsTrigger value="debrief" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
+                    Debrief
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="planning" className="mt-0">
+                  <PlanningTab
+                    layout="split"
+                    flightPlan={flightPlan}
+                    setFlightPlan={setFlightPlan}
+                    tracks={tracks}
+                    setTracks={setTracks}
+                    currentTrackTime={currentTrackTime}
+                    setCurrentTrackTime={setCurrentTrackTime}
+                    onClearLocalDraft={onClearLocalDraft}
+                  />
+                </TabsContent>
+                <TabsContent value="debrief" className="mt-0">
+                  <h2 className="mb-3 text-lg font-semibold text-whiskyPapa-yellow">Debrief / 航跡</h2>
+                  <DebriefPanel
+                    flightPlan={flightPlan}
+                    tracks={tracks}
+                    setTracks={setTracks}
+                    currentTime={currentTrackTime}
+                    setCurrentTime={setCurrentTrackTime}
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
             <div className="h-full min-h-[calc(100vh-5rem)] min-w-0">
               <Suspense fallback={<MapTabFallback />}>
@@ -119,7 +142,7 @@ function PlanningMapPageInner({
         </div>
 
         <div className="mb-2">
-          <Tabs value={mobileTab} onValueChange={(v) => setMobileTab(v as 'planning' | 'map')}>
+          <Tabs value={mobileTab} onValueChange={(v) => setMobileTab(v as 'planning' | 'map' | 'debrief')}>
             <TabsList className="bg-transparent border-b border-whiskyPapa-yellow/20 w-full flex">
               <TabsTrigger value="planning" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
                 <span className="flex items-center justify-center">
@@ -128,6 +151,9 @@ function PlanningMapPageInner({
                   </svg>
                   計画
                 </span>
+              </TabsTrigger>
+              <TabsTrigger value="debrief" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
+                <span>Debrief</span>
               </TabsTrigger>
               <TabsTrigger value="map" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
                 <span className="flex items-center justify-center">
@@ -149,6 +175,18 @@ function PlanningMapPageInner({
                   setCurrentTrackTime={setCurrentTrackTime}
                   onClearLocalDraft={onClearLocalDraft}
                   lastSavedAt={lastSavedAt}
+                />
+              </div>
+            </TabsContent>
+            <TabsContent value="debrief" className="mt-0">
+              <div className="p-2 sm:p-4 md:p-6 container mx-auto">
+                <h2 className="mb-3 text-lg font-semibold text-whiskyPapa-yellow">Debrief / 航跡</h2>
+                <DebriefPanel
+                  flightPlan={flightPlan}
+                  tracks={tracks}
+                  setTracks={setTracks}
+                  currentTime={currentTrackTime}
+                  setCurrentTime={setCurrentTrackTime}
                 />
               </div>
             </TabsContent>

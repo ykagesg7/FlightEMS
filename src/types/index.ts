@@ -35,6 +35,8 @@ export interface Waypoint {
   metadata?: WaypointMetadata;
 }
 
+export type RouteSegmentPhase = 'climb' | 'cruise' | 'descent';
+
 export interface RouteSegment {
   from: string;
   to: string;
@@ -53,6 +55,20 @@ export interface RouteSegment {
   windSpeedKt?: number;
   /** 地速 kt（風補正後。未設定時は TAS を地速扱い） */
   groundSpeedKt?: number;
+  phase?: RouteSegmentPhase;
+  trueCourseDeg?: number;
+  magneticCourseDeg?: number;
+  magneticVariationDeg?: number;
+  windCorrectionAngleDeg?: number;
+  trueHeadingDeg?: number;
+  magneticHeadingDeg?: number;
+  startAltitudeFt?: number;
+  endAltitudeFt?: number;
+  verticalSpeedFpm?: number;
+  fuelFlowLbPerHr?: number;
+  windUnsolvable?: boolean;
+  /** 幾何レグの override キー（TOC/TOD 分割後も元レグを指す） */
+  overrideKey?: string;
 }
 
 export interface FlightPlan {
@@ -79,6 +95,13 @@ export interface FlightPlan {
   totalFuelRemainingLb?: number;
   /** true のとき経路 ETE/燃料に Open-Meteo の上層風を反映（参考・非商用枠） */
   useOpenMeteoWind?: boolean;
+  /** 幾何レグ `${from}->${to}` ごとの CAS/高度上書き */
+  segmentOverrides?: Record<string, { casKt?: number; altitudeFt?: number }>;
+  alternateFuelLb?: number;
+  /** 機体プリセットの性能値を計画単位で上書き */
+  performanceOverrides?: AircraftPerformanceOverrides;
+  /** 降下率の選択（既定は標準） */
+  descentMode?: DescentMode;
 }
 
 export interface Navaid {
@@ -228,6 +251,45 @@ export interface ExternalWeatherData {
 }
 
 // 機体プリセット・燃料計算
+export interface VerticalRatePoint {
+  altitudeFt: number;
+  fpm: number;
+}
+
+export interface VerticalSegmentProfile {
+  targetCasKt: number;
+  targetMach?: number;
+  ratesFpm: VerticalRatePoint[];
+  /** アイドル降下など、標準と別の率を選ぶ場合に使う */
+  idleRatesFpm?: VerticalRatePoint[];
+  fuelFlowLbPerHr: number;
+}
+
+export type DescentMode = 'standard' | 'idle';
+
+/**
+ * 機体プリセットの性能値を計画単位で上書きする。
+ * プリセットは教育用モックのため、教官・学生が現場値へ差し替えられるようにする。
+ */
+export interface AircraftPerformanceOverrides {
+  climbCasKt?: number;
+  climbMach?: number;
+  climbRateFpm?: number;
+  climbFuelFlowLbPerHr?: number;
+  descentCasKt?: number;
+  descentRateFpm?: number;
+  descentIdleRateFpm?: number;
+  descentFuelFlowLbPerHr?: number;
+  cruiseFuelFlowLbPerHr?: number;
+  serviceCeilingFt?: number;
+  maxFuelLb?: number;
+}
+
+export interface CruiseFuelFlowPoint {
+  altitudeFt: number;
+  lbPerHr: number;
+}
+
 export interface AircraftPreset {
   id: string;
   name: string;
@@ -235,6 +297,12 @@ export interface AircraftPreset {
   taxiFuelLb: number;
   reserveFuelLb: number;
   defaultInitialFuelLb: number;
+  climb?: VerticalSegmentProfile;
+  descent?: VerticalSegmentProfile;
+  cruiseFuelFlowByAltitude?: CruiseFuelFlowPoint[];
+  serviceCeilingFt?: number;
+  maxFuelLb?: number;
+  alternateFuelLb?: number;
 }
 
 // 計画データの正本(JSON)スキーマ

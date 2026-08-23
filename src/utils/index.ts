@@ -5,40 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function calculateTAS(speed: number, altitude: number): number {
-  // 高度をフィートからメートルに変換
-  const altitudeMeters = altitude * 0.3048;
-
-  // ISA標準に基づく高度における温度（ケルビン）
-  const temperature = 288.15 - 0.0065 * altitudeMeters;
-
-  // TASを計算：TAS = IAS * sqrt(T0 / T)
-  const tas = speed * Math.sqrt(288.15 / temperature);
-
-  return tas;
-}
-
-export function calculateMach(tas: number, altitude: number): number {
-  // 高度をフィートからメートルに変換
-  const altitudeMeters = altitude * 0.3048;
-
-  // ISA標準に基づく高度における温度（ケルビン）
-  const temperature = 288.15 - 0.0065 * altitudeMeters;
-
-  // 音速を計算（m/s）：a = sqrt(gamma * R * T)
-  const gamma = 1.4; // 比熱比
-  const R = 287.05; // 空気の比気体定数 (J/(kg·K))
-  const speedOfSound = Math.sqrt(gamma * R * temperature);
-
-  // TASをknotsからm/sに変換
-  const tasMs = tas * 0.514444;
-
-  // Mach数を計算
-  const mach = tasMs / speedOfSound;
-
-  return mach;
-}
-
 export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 3440.069; // 地球の半径（海里）
   const rad = (deg: number) => deg * Math.PI / 180;
@@ -65,8 +31,9 @@ export function calculateETE(totalDistance: number, tas: number | undefined): nu
 export function calculateETA(departureTime: string | null | undefined, eteMinutes: number): string {
   if (departureTime && eteMinutes > 0) {
     const [hours, minutes] = departureTime.split(':').map(Number);
+    if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return '--:--';
     const departureTimeInMinutes = hours * 60 + minutes;
-    const etaMinutes = departureTimeInMinutes + eteMinutes;
+    const etaMinutes = ((departureTimeInMinutes + eteMinutes) % 1440 + 1440) % 1440;
     return formatTime(etaMinutes);
   }
   return '--:--';
