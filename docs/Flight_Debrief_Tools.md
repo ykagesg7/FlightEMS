@@ -1,6 +1,6 @@
 # Flight Debrief Tools
 
-Flight Academy の Planning には、飛行後デブリーフィング用の航跡表示機能があります。
+Flight Academy の Planning には、飛行後デブリーフィング用の航跡表示機能があります。UI は計画タブ内ではなく、`PlanningMapPage` の **Debrief タブ**（xl は左カラム、モバイルは計画／Debrief／地図の第 2 タブ）に置きます。
 
 ## 対応形式
 
@@ -20,7 +20,7 @@ CSV の列名は `latitude` / `longitude`、`ground_speed_kt` など一部の別
 
 ## 3D空域エクスプローラ（教育用 MVP）
 
-- ルート: [`/explore/airspace-3d`](/explore/airspace-3d)。Planning の Debrief 付近から同リンク。
+- ルート: [`/explore/airspace-3d`](/explore/airspace-3d)。導線は計画タブ **NavLog カード**のヘッダー。
 - CesiumJS。Planning / Leaflet とはバンドル分離（`vendor-cesium`）
 - **再生**: `/planning` のローカル下書き（`flight-academy-plan-draft-v1`）があれば、レグの高度・地速（なければ TAS/CAS）で計画ルートを疑似再生する。無ければ九州沖のデモ航跡。計画再生は運動モデルであり実飛行記録ではない。
 - **空域**: 変更予定空域に加え、航跡 bbox 付近の RAPCON / ACC Low / ACC High を立体表示。Floor/Ceiling が空の RAPCON は立体にしない（SFC–UNL を捏造しない）。既定表示は変更予定 + RAPCON。ACC は重いのでオフ。

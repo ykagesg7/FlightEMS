@@ -879,11 +879,42 @@ Articles Hub と同型の **URL 双方向同期 + タブ IA + GA4 カスタム�
 
 ### **主要コンポーネント**
 
-- **PlanningTab**: 機体プリセット・初期燃料・印刷・巡航FF/予備の一行要約。ツールバーは **ファイル**（Radix `DropdownMenu`）に JSON 書き出し／読み込み／下書き消去（下書き消去は Headless UI `Dialog` で確認）。タップ領域は概ね 44px 相当。自動保存成功時刻を **最終保存 HH:MM:SS** で表示。初回セッション向けに下書き自動保存の短い注意バナー（`sessionStorage` で閉じたら非表示）
-- **RoutePlanning**: 出発空港・到着空港の選択、**WaypointAddPanel**（単一枠・3モード）、ウェイポイントリスト
+計画タブは作業順の **4 カード**（共通ラッパ `PlanningCard`）に集約する。
+
+- **Setup**: 機体プリセット・初期燃料・ファイル／印刷・出発時刻・地上気温／標高・Open-Meteo 風の反映。折りたたみ **機体性能**（`AircraftPerformancePanel`）で上昇・降下・巡航 FF・実用上昇限度・最大搭載量を計画単位で上書き（`FlightPlan.performanceOverrides`）。降下率は標準／アイドル切替（`descentMode`）
+- **Route**: 巡航 CAS／高度（`FlightParameters` `variant="route"`）＋ **RoutePlanning**（出発／到着、**WaypointAddPanel**、ウェイポイントリスト）
+- **NavLog**: 表示専用の `FlightSummary`（総距離・ETE／ETA、セグメント表、MH 列、断面タブ）。CAS／高度の編集は `onSegmentOverrideChange` → `segmentOverrides`（キー `${from}->${to}`）。3D 空域エクスプローラへの導線は NavLog ヘッダー
+- **Briefing**: `PreflightBriefingPanel`（既定は閉）。NavLog の重複表は出さず、レグ件数の要約のみ
+- **PlanningTab**: 上記 4 カードのシェル。ファイルメニュー（JSON／GPX／KML／CSV・下書き消去は Headless UI `Dialog`）、最終保存時刻、下書き注意バナー。航法計算は呼ばず、`computeNavLog` の結果を `applyNavLogToPlan` で書き戻すだけ
 - **WaypointAddPanel**: 追加モード **NAVAID / 公開 Waypoint / 座標** のセグメント切替と、共通の **ルートに追加** ボタン。NAVAID オフセットは `buildWaypointFromNavaid`、磁方位・距離のペア検証は `magneticOffsetValidation` と **WaypointForm**（座標＋オフセット）で共有
 - **WaypointForm**: DMS／10 進座標入力（単独利用時は従来どおりカード表示）。埋め込み時は `embedded` / `hideSubmitButton` と `ref.tryBuildWaypoint()` で親パネルから追加
 - **NavaidSelector** / **WaypointSelector**: 現状 **RoutePlanning からは未使用**（ロジックは **WaypointAddPanel** 側に集約）。ファイルは後方互換・参照用として残置可能
+
+### **航法計算（一本化）**
+
+`PlanningTab.updateFlightSummary` と `FlightSummary.recalculateETAs` の二重 `setFlightPlan` は廃止。派生値は React 非依存の純関数 [`computeNavLog`](../src/pages/planning/nav/computeNavLog.ts) が同期で返す。
+
+- **入力**: 巡航 CAS／高度、出発時刻（JST 文字列）、地上気温／標高、点列、任意の上層風、機体プリセット、`segmentOverrides`、`performanceOverrides`、`descentMode`
+- **風**: [`useRouteWinds`](../src/pages/planning/nav/useRouteWinds.ts) がレグ中点を `Promise.all` で取得。風三角形は [`solveWindTriangle`](../src/utils/windTriangle.ts)（`WCA = asin(Xw/TAS)`）。`|Xw| >= TAS` は `unsolvable` で NavLog に警告
+- **垂直プロファイル**: [`computeVerticalProfile`](../src/pages/planning/nav/computeVerticalProfile.ts)。上昇・降下とも高度帯積分。TOC／TOD でレグ分割（合成点 ID は `TOC` / `TOD`）。降下距離の 3:1 固定は使わない（標準 3000 fpm とアイドル 6000 fpm を区別するため）
+- **燃料**: タキシー＋レグ消費のみを使用量に計上。予備は残量判定にだけ使う（二重計上しない）。`初期搭載 ≈ 使用量 + 残量`
+- **ETA**: `calculateETA` は `etaMinutes % 1440` で日付跨ぎ。`formatTime` は持続時間フォーマッタのまま
+- **TAS／Mach**: `calculateAirspeeds` のみ。誤った温度比フォールバック（`calculateTAS` / `calculateMach`）は削除
+- **警告**: 残燃料 < 予備＋代替、巡航高度 > 実用上昇限度、初期燃料 > 最大搭載量
+
+### **機体プリセット（T-4 教育用モック）**
+
+正本は [`src/data/aircraftPresets.ts`](../src/data/aircraftPresets.ts)。Dash-1 ではない。教官提供値を既定とし、公開二次情報との差分はコメントに併記。計画ごとの上書きは `performanceOverrides`（正の有限値のみ採用）。
+
+| 項目 | 既定 | 出典 |
+|------|------|------|
+| 上昇 CAS / クロスオーバー | 300 kt / M0.65 | 教官提供 |
+| 上昇率 / 上昇 FF | 3000 fpm / 4000 PPH | 教官提供（公開 SL 上昇率は約 10,000 fpm） |
+| 降下 CAS / FF | 300 kt / 2000 PPH | 教官提供 |
+| 降下率 | 標準 3000 / アイドル 6000 fpm | 教官提供 |
+| 巡航 FF | 2200 PPH 一律 | 教官提供 |
+| 実用上昇限度 | 40,000 ft | 教官提供（公開値は 50,000 ft） |
+| タキシー / 予備 / 最大搭載 | 200 / 800 / 5500 lb | **要確認**（公開内部燃料 2,241 L ＋増槽 2 本が約 5,550 lb） |
 
 ### **将来検討（保留）**
 
@@ -892,7 +923,7 @@ Articles Hub と同型の **URL 双方向同期 + タブ IA + GA4 カスタム�
 ### **測地線計算システム**
 
 - **calculateOffsetPoint関数**: 磁方位と距離でオフセットした地点の緯度経度を計算
-- **磁気偏差補正**: 教育用モデルとして `src/utils/constants.ts` の固定磁気偏差（度）を `bearing.ts` で真方位に加算。実運航向けではない（UI に注記あり）
+- **磁気偏差補正**: 教育用モデル。レグ中点は [`interpolateJapanMagneticVariationWestDeg`](../src/utils/japanMagneticVariation.ts)（主要空港テーブル＋逆距離加重）。未取得時は `MAGNETIC_DECLINATION = 8`（西偏）。真コースは `calculateTrueBearing`、磁コース／磁針路は `trueToMagneticDeg`。実運航向けではない（UI に注記あり）
 - **測地線計算**: Haversine Formulaを使用
 
 ### **データ型定義**（正は `src/types/index.ts` の `FlightPlan` / `Waypoint`）
@@ -933,20 +964,27 @@ export interface FlightPlan {
   cruiseFuelFlowLbPerHr?: number;
   totalFuelUsedLb?: number;
   totalFuelRemainingLb?: number;
+  useOpenMeteoWind?: boolean;
+  segmentOverrides?: Record<string, { casKt?: number; altitudeFt?: number }>;
+  alternateFuelLb?: number;
+  performanceOverrides?: AircraftPerformanceOverrides;
+  descentMode?: 'standard' | 'idle';
 }
 ```
+
+`RouteSegment` は後方互換のため追加フィールドは optional（`phase`、真／磁コース、WCA、MH、始終高度、`overrideKey` 等）。既存 `PlanDocumentV1` JSON はそのまま読める。
 
 ### **主要機能**
 
 - **データ永続化**: JSON形式で飛行計画を保存・共有（PlanDocumentV1スキーマ）。ブラウザ内下書きは `localStorage` キー `flight-academy-plan-draft-v1`（デバウンス保存・ファイルメニューの下書き消去で初期化）。`persistFlightPlanDraft` は成功時 `true`（UI の最終保存時刻更新用）
-- **レイアウト**: `WeatherCacheProvider` は `PlanningMapPage` で1つだけ（計画タブ／地図タブで気象キャッシュ共有）。`xl`（1280px）以上は計画＋地図の2カラム（左列 `minmax(28rem,1.05fr)`・`PlanningTab` に `layout="split"`）、未満はタブ切替（タブラベルは **計画／地図**）。**split 時**は左パネル内を **flex 縦積み**（Parameters → Route → Summary → Briefing 等）とし、viewport 向けの `lg:grid-cols-3` / `lg:col-span-*` は使わない（印刷用 `PlanPrintView` ラッパーの `col-span` が暗黙3列を作るのを防ぐ）。`xl` 未満の split では地図レイヤーは右固定幅サイドバーではなくボトムシート。`useMediaQuery` はクライアント初回から `matchMedia` の同期初期値を使い、ブレークポイント切替のチラつきを抑える
-- **地図モジュール**: `MapTab`（`MapToolbar`（操作のみ）・座標は **地図下 `MapCursorFooter` に DMS 1行**・マウスは地図クリックで固定・タッチは **中央クロスヘア**＋「この位置を固定」（`useMapPinnedPosition`）・「詳細」で DD＋選択 NAVAID 1件の磁方位/距離を **地図上オーバーレイシート**（`MapCursorDetailSheet`・地図 flex 高さは不変・固定後のみ）・初期 NAVAID は最寄り・検索で任意選択可・**レイヤー**右ドロワー／モバイルボトムシート（max 85vh・単一スクロール・地図タップで閉じる・`useCloseLayersOnMapClick`）・**地図の使い方** Headless `Dialog`）＋ `MapTabContent`（Leaflet レイヤー本体・`usePlanningMapLayerController`）＋ `MapLayersPanel` / `mapLayerCatalog` / `planningMapLayerPreferences`（localStorage キー `planning-map-layer-preferences-v1`）＋ `FlightPlanRouteLayer`（ルート線・マーカー）＋ `map/hooks/*`（リージョン・NAVAID取得、ピン位置、ダブルクリック追加）。Leaflet 標準 `groupedLayers` は廃止。**レイヤー表示同期**: Common/Local の Leaflet 実体は `MapTabContent` 内 ref で安定化。`regions_index.json` 到着などで Waypoints グループが差し替わった際、`usePlanningMapLayerController` が旧インスタンスをマップから除去し、`enabledOverlayIds`（localStorage 復元含む）を新世代へ再適用する（計画タブ操作後も ON/OFF がマップ表示と一致）。**航空機（参考・ADS-B）オーバーレイ**は表示範囲と日本域 BBOX の積集合を中心+半径（最大 250NM）に変換し [airplanes.live](https://airplanes.live)（ADSBExchange v2 互換）を **ブラウザから直接** **3 分間隔**ポーリング（`useLiveTrafficLayer`・`src/services/openskyTraffic.ts`）。**手動更新**はツールバー（`LiveTrafficRefreshButton`）とレイヤーパネル（`LiveTrafficRefreshPanel`）の「更新」ボタンから即時再取得（2.5s クールダウン・取得中は disabled）。取得後は表示矩形に絞り込み。**パン・ズームでは再取得せず**、429/失敗時は前回マーカーを **Stale 保持**（最大 15 分・400 機 cap）。**2026-06 に OpenSky から移行**（OpenSky はクラウド IP 遮断・CORS 制限で Vercel から利用不可）。マーカーは `public/airplane.png`（上視シルエット・透過）を `true_track`（真方位）で回転した divIcon（地上機はグレースケール、Stale 時 opacity 低下）。クリック時のカードは HUD 系ポップアップ（`popups/openskyTrafficPopup.ts`・`opensky-traffic-popup`・`autoPan: false`）で他レイヤーと統一し footer に取得時刻（○分前）を表示。**3 分 poll 更新**でマーカー位置・内容を差し替えても、開いていた icao を `useLiveTrafficLayer` が追跡し `setPopupContent` 後に再 open する（更新だけでポップアップが閉じない）。利用者の API キー設定は不要（airplanes.live は CORS `*`・キー不要）。教育・非商用・参考のみ。降水レーダー（参考・RainViewer）は [RainViewer Weather Maps API](https://www.rainviewer.com/api/weather-maps-api.html) のマニフェスト＋タイル（`useRainViewerRadarLayer`、専用 `rainViewerPane`、タイル `maxNativeZoom: 7`）。マニフェスト直 fetch のほか、CORS 時は `VITE_RAINVIEWER_USE_MANIFEST_PROXY=true` で `/api/rainviewer-maps`（`api/rainviewer-maps.ts`・`dev-weather-server`）を利用。Open-Meteo（非商用・CC BY 4.0 帰属）: `src/services/openMeteo.ts`、`src/utils/routeOpenMeteoWind.ts`、`src/utils/windGridOpenMeteo.ts`**、`**src/utils/windComponents.ts**`。地図の格子風は `**usePlanningMapWindGrid**` が取得し `**useWindBarbLayer**` で表示（粒子アニメは負荷回避のため廃止）。`**WindGridLegendPanel**`（風バーブ ON 時・レイヤーパネル内）に FL・気圧面・代表風・予報参照（UTC／JST）を簡潔表示。バーブ矢印は **流れの向き**（吹いてくる方位＋180°）で CSS 回転を補正（`**src/utils/windBarbHtml.ts**`）。`**src/utils/pressureAltitudeIsa.ts**` で FL 用の ISA 近似。計画は `**FlightPlan.useOpenMeteoWind**` と `FlightParameters` のチェックでセグメント ETE/燃料に反映（磁方位と真風向は未補正・中点逐次取得）。**空港マーカーの気象ポップアップ**（`popups/weatherPopup.ts`・`mapStyles.css`）は要約気象を**1列の縦型**とし、**METAR/TAF は `<details>` 折りたたみ**（既定は閉、展開で生報と解説）で地図の占有面積を抑える。METAR/TAF が両方未取得のときは **METAR/TAF：No-Data** の一行のみ。参考レイヤー **ラジアル／DME網**（`navaid_radial_grid`・`useNavaidRadialGridLayer`）は選択 NAVAID（初期 AHT）から磁方位 10°・DME 10 nm（最大 100 nm）の網を表示（教育用固定磁気偏差・実運航用ではない）。方位ラベルは主要方位 10 nm 刻み・その他 50/100 nm。参考レイヤー **変更予定空域**（`pending_airspace`）は今後変更予定の形状を現行の制限空域・高高度訓練空域と分離表示。地図上のキーボードショートカットはなし（座標のキーボード入力は計画タブの座標モード）
+- **レイアウト**: `WeatherCacheProvider` は `PlanningMapPage` で1つだけ（計画／Debrief／地図で気象キャッシュ共有）。`xl`（1280px）以上は計画＋地図の2カラム（左列 `minmax(28rem,1.05fr)`・左は **計画 | Debrief** タブ・`PlanningTab` に `layout="split"`）、未満はタブ切替（**計画 / Debrief / 地図**）。**split 時**は左パネル内を **flex 縦積み**（Setup → Route → NavLog → Briefing）とし、viewport 向けの `lg:grid-cols-3` / `lg:col-span-*` は使わない（印刷用 `PlanPrintView` ラッパーの `col-span` が暗黙3列を作るのを防ぐ）。`xl` 未満の split では地図レイヤーは右固定幅サイドバーではなくボトムシート。`useMediaQuery` はクライアント初回から `matchMedia` の同期初期値を使い、ブレークポイント切替のチラつきを抑える
+- **地図モジュール**: `MapTab`（`MapToolbar`（操作のみ）・座標は **地図下 `MapCursorFooter` に DMS 1行**・マウスは地図クリックで固定・タッチは **中央クロスヘア**＋「この位置を固定」（`useMapPinnedPosition`）・「詳細」で DD＋選択 NAVAID 1件の磁方位/距離を **地図上オーバーレイシート**（`MapCursorDetailSheet`・地図 flex 高さは不変・固定後のみ）・初期 NAVAID は最寄り・検索で任意選択可・**レイヤー**右ドロワー／モバイルボトムシート（max 85vh・単一スクロール・地図タップで閉じる・`useCloseLayersOnMapClick`）・**地図の使い方** Headless `Dialog`）＋ `MapTabContent`（Leaflet レイヤー本体・`usePlanningMapLayerController`）＋ `MapLayersPanel` / `mapLayerCatalog` / `planningMapLayerPreferences`（localStorage キー `planning-map-layer-preferences-v1`）＋ `FlightPlanRouteLayer`（ルート線・マーカー）＋ `map/hooks/*`（リージョン・NAVAID取得、ピン位置、ダブルクリック追加）。Leaflet 標準 `groupedLayers` は廃止。**レイヤー表示同期**: Common/Local の Leaflet 実体は `MapTabContent` 内 ref で安定化。`regions_index.json` 到着などで Waypoints グループが差し替わった際、`usePlanningMapLayerController` が旧インスタンスをマップから除去し、`enabledOverlayIds`（localStorage 復元含む）を新世代へ再適用する（計画タブ操作後も ON/OFF がマップ表示と一致）。**航空機（参考・ADS-B）オーバーレイ**は表示範囲と日本域 BBOX の積集合を中心+半径（最大 250NM）に変換し [airplanes.live](https://airplanes.live)（ADSBExchange v2 互換）を **ブラウザから直接** **3 分間隔**ポーリング（`useLiveTrafficLayer`・`src/services/openskyTraffic.ts`）。**手動更新**はツールバー（`LiveTrafficRefreshButton`）とレイヤーパネル（`LiveTrafficRefreshPanel`）の「更新」ボタンから即時再取得（2.5s クールダウン・取得中は disabled）。取得後は表示矩形に絞り込み。**パン・ズームでは再取得せず**、429/失敗時は前回マーカーを **Stale 保持**（最大 15 分・400 機 cap）。**2026-06 に OpenSky から移行**（OpenSky はクラウド IP 遮断・CORS 制限で Vercel から利用不可）。マーカーは `public/airplane.png`（上視シルエット・透過）を `true_track`（真方位）で回転した divIcon（地上機はグレースケール、Stale 時 opacity 低下）。クリック時のカードは HUD 系ポップアップ（`popups/openskyTrafficPopup.ts`・`opensky-traffic-popup`・`autoPan: false`）で他レイヤーと統一し footer に取得時刻（○分前）を表示。**3 分 poll 更新**でマーカー位置・内容を差し替えても、開いていた icao を `useLiveTrafficLayer` が追跡し `setPopupContent` 後に再 open する（更新だけでポップアップが閉じない）。利用者の API キー設定は不要（airplanes.live は CORS `*`・キー不要）。教育・非商用・参考のみ。降水レーダー（参考・RainViewer）は [RainViewer Weather Maps API](https://www.rainviewer.com/api/weather-maps-api.html) のマニフェスト＋タイル（`useRainViewerRadarLayer`、専用 `rainViewerPane`、タイル `maxNativeZoom: 7`）。マニフェスト直 fetch のほか、CORS 時は `VITE_RAINVIEWER_USE_MANIFEST_PROXY=true` で `/api/rainviewer-maps`（`api/rainviewer-maps.ts`・`dev-weather-server`）を利用。Open-Meteo（非商用・CC BY 4.0 帰属）: `src/services/openMeteo.ts`、`src/utils/routeOpenMeteoWind.ts`、`src/utils/windGridOpenMeteo.ts`**、`**src/utils/windComponents.ts**`。地図の格子風は `**usePlanningMapWindGrid**` が取得し `**useWindBarbLayer**` で表示（粒子アニメは負荷回避のため廃止）。`**WindGridLegendPanel**`（風バーブ ON 時・レイヤーパネル内）に FL・気圧面・代表風・予報参照（UTC／JST）を簡潔表示。バーブ矢印は **流れの向き**（吹いてくる方位＋180°）で CSS 回転を補正（`**src/utils/windBarbHtml.ts**`）。`**src/utils/pressureAltitudeIsa.ts**` で FL 用の ISA 近似。計画は `**FlightPlan.useOpenMeteoWind**` と Setup のチェックでセグメント ETE/燃料に反映（レグ中点の予報風・真方位と真コースで風三角形。取得は `useRouteWinds` で並列。参照時刻は JST `departureTime` を UTC に変換）。**空港マーカーの気象ポップアップ**（`popups/weatherPopup.ts`・`mapStyles.css`）は要約気象を**1列の縦型**とし、**METAR/TAF は `<details>` 折りたたみ**（既定は閉、展開で生報と解説）で地図の占有面積を抑える。METAR/TAF が両方未取得のときは **METAR/TAF：No-Data** の一行のみ。参考レイヤー **ラジアル／DME網**（`navaid_radial_grid`・`useNavaidRadialGridLayer`）は選択 NAVAID（初期 AHT）から磁方位 10°・DME 10 nm（最大 100 nm）の網を表示（教育用磁気偏差・実運航用ではない）。方位ラベルは主要方位 10 nm 刻み・その他 50/100 nm。参考レイヤー **変更予定空域**（`pending_airspace`）は今後変更予定の形状を現行の制限空域・高高度訓練空域と分離表示。地図上のキーボードショートカットはなし（座標のキーボード入力は計画タブの座標モード）
 - **NOTAM（SWIM・デジタルノータム）**: **実装済み（Planning 地図）**。ブラウザは `**/api/swim-notam-search**`（Vercel `api/swim-notam-search.ts`・本体ロジック `api/lib/swimNotamCore.ts`）のみ呼び出し。サーバが SWIM にログイン後、付録04検索 API で AIXM XML を取得し、`fast-xml-parser` で **`primaryText` / `impactLabel` / `category` / `sortPriority`**（パイロット向け要約）および `headline`・`geometry`・有効期間等を抽出。クライアント既定は `**includeRawXml=0**`（原文 XML は詳細展開時のみ `includeRawXml=1`）。`**geometry**` は GML から GeoJSON を推定（参考表示）。`gml:beginPosition` / `endPosition` から **現在有效** / **将来有效** に分類し `sortPriority` 順に返す。**UI**: 空港・NAVAID・気象ポップアップは **1 行チップ**（`swimNotamOpenChip`）。タップで **`MapNotamSheet`** ボトムシート（`PlanningNotamSheetProvider` がページレベルで表示・`NotamSheetBody`）を開き、カード一覧・JST 期間・「地図で強調」（複数幾何・`swimNotamMapOverlay`）を提供。**Preflight Briefing**（`PreflightBriefingPanel`）は出発/到着 ICAO から NOTAM を **自動取得**（`usePreflightNotamBriefing`・同一 ICAO **3 分 TTL** キャッシュ・600ms デバウンス）。件数サマリと上位3件の `impactLabel`/`primaryText` を表示し、「地図で確認」で NOTAM シートを開く（モバイルは地図タブへ自動切替）。技術メタ（イベント ID・AIXM 型・XML）は `<details>` 内。空域シートと **相互排他**（`planningNotamSheetContext`）。空港は `location`（ICAO）、NAVAID は ICAO 形式なら `location`、それ以外 `keyword`。フロントは `src/services/swimNotam.ts`・`notamDisplayUtils.ts`。**免責**: 参考表示（公式ノータムで必ず確認）。参照 `docs/SWIM_Portal/README.md`
 - **ローカル API**: `/api/swim-notam-search` は Vercel の `api/swim-notam-search.ts`（上記 NOTAM）と `**api/lib/swimNotamHttpShared.ts` を共有**。`npm run dev` では `vite/devWeatherApiPlugin.ts` が同エンドポイントを処理し、`npm run dev:weather`（3001）でも `scripts/dev-weather-server.ts` が提供する。航空機レイヤーは **airplanes.live をブラウザ直 fetch** するため **サーバ API 不要**。`api/opensky-states`（`api/_lib/openskyStatesCore.ts`・`openskyOAuthToken.ts`）は OpenSky 時代の名残で **未使用**（ローカル dev のみ温存）。`**npm run dev`（Vite のみ）**でも `vite/devOpenskyApiPlugin.ts` が `/api/opensky-states` を Vite 上で処理するため、OpenSky レイヤーは dev:weather なしで表示可能。`**/api/weather`（一般気象・WeatherAPI.com プロキシ）**および `**/api/aviation-weather`（NOAA・METAR/TAF）は `vite/devWeatherApiPlugin.ts` が Vite 上で処理する（本体は `api/lib/weatherApiCore.ts` / `api/lib/aviationWeatherApiCore.ts`。`lib/*` は re-export。`api/weather.ts` が forecast / aviation / rainviewer を処理）。`/api/weather` は `.env` の `WEATHER_API_KEY` があれば本番同等、未設定時は開発用モック JSON。RainViewer 等その他の `/api/*` は引き続き `VITE_API_PROXY_TARGET`（既定 `http://localhost:3001`）＋ `npm run dev:weather` が必要な場合あり。`api/lib/openskyStatesCore.ts` を本体とし、`lib/openskyStatesCore.ts` は re-export。Vite プラグイン・`api`・dev-weather で共有。または `npm run dev:full`（`vercel dev` + `VITE_VERCEL_DEV_API_ORIGIN`）でもよい。`/api/rainviewer-maps`** は RainViewer マニフェストの任意プロキシ（`api/rainviewer-maps.ts`・dev-weather）。Open-Meteo はブラウザ直叩き（キー不要）だが利用規約・非商用枠に従う。格子風はセルごと逐次取得＋短間隔、`fetchHourlyWindAloft` は同一 URL 結合・約 45 分の応答キャッシュ・HTTP 429 時のグローバルバックオフで過剰リクエストを抑える。格子全体は表示域を約 0.2° 量子化＋3 時間バケット＋約 45 分 TTL・最大 24 キーで再利用し、微小パンでも API を増やさない
-- **機体プリセットシステム**: T-4練習機モック、燃料計算ロジック
+- **機体プリセットシステム**: T-4 教育用モック（教官提供の上昇／降下／巡航＋要確認の燃料）。計画単位の上書きは Setup の機体性能パネル。実効値は `resolveAircraftPreset`
 - **空域→周波数の自動紐づけ**: レグの中点座標＋高度帯で該当ポリゴンを判定
-- **3D空域エクスプローラ（教育用）**: 隔離ルート `/explore/airspace-3d`（Cesium・`vendor-cesium`）。Planning 下書きがあればレグ高度・速度で疑似再生、無ければデモ航跡。航跡付近の RAPCON/ACC を立体表示（高度未収録は省略）。Planning 地図は Leaflet のまま。詳細は [Flight_Debrief_Tools.md](Flight_Debrief_Tools.md)
-- **印刷機能**: A4縦、2ページ構成（NavLog + Route Sketch）
+- **3D空域エクスプローラ（教育用）**: 隔離ルート `/explore/airspace-3d`（Cesium・`vendor-cesium`）。導線は **NavLog カードヘッダー**。Planning 下書きがあればレグ高度・速度で疑似再生、無ければデモ航跡。航跡付近の RAPCON/ACC を立体表示（高度未収録は省略）。Planning 地図は Leaflet のまま。詳細は [Flight_Debrief_Tools.md](Flight_Debrief_Tools.md)
+- **印刷機能**: A4縦、2ページ構成（NavLog + Route Sketch）。NavLog に **MC / MH** 列
 
 ---
 

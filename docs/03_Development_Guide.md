@@ -294,18 +294,27 @@ AI から **実ブラウザ**（コンソール・ネットワーク・スナッ
 ### **Flight Planning機能**
 
 #### **主要コンポーネント**
-- **PlanningTab**: 計画入力のシェル（ファイルメニュー・下書き確認・最終保存表示）
+- **PlanningTab**: 計画タブのシェル（Setup / Route / NavLog / Briefing の 4 カード）。計算はせず `computeNavLog` の結果を書き戻す
+- **PlanningCard**: `<details>` ラッパ。Setup / Route / NavLog は開、Briefing は閉
+- **AircraftPerformancePanel**: 上昇・降下・巡航の計画単位上書きと降下モード切替
+- **FlightParameters**: `variant` で Setup（時刻・地上気象・風）と Route（巡航 CAS／高度）に分割
+- **FlightSummary**: NavLog 表示専用。レグ編集は `segmentOverrides` へ通知するだけ
 - **RoutePlanning**: 経路計画（空港選択＋**WaypointAddPanel**）
 - **WaypointAddPanel**: NAVAID／公開 Waypoint／座標の単一追加 UI
 - **NavaidSelector** / **WaypointSelector**: ファイル残置（UI はパネルに集約）
-- **PlanPrintView**: 印刷専用ビュー
+- **PlanPrintView**: 印刷専用ビュー（MC / MH 列）
+- **DebriefPanel**: `PlanningMapPage` の **Debrief タブ**（計画タブ内には置かない）
 - **MapTab**: インタラクティブ地図タブ（2026年1月6日改善、2026年5月 React レイヤーパネル化）
   - `worldCopyJump={true}`設定により、地球を一周してもレイヤーが正しく表示される
   - ツールバーは操作のみ。座標は地図下 `MapCursorFooter`（DMS 1行）。マウスはクリック固定、タッチは中央クロスヘア＋「この位置を固定」（`useMapPinnedPosition`）。「詳細」で `MapCursorDetailSheet`（DD・選択 NAVAID 1件・固定後のみ）。レイヤーパネル（右ドロワー／モバイルボトムシート）。選択状態は `planning-map-layer-preferences-v1` に永続化
 
 #### **主要ユーティリティ**
-- **calculateOffsetPoint**: 測地線計算（磁方位と距離でオフセット）
-- **planDocument**: JSON正本のシリアライズ/デシリアライズ
+- **computeNavLog** / **computeVerticalProfile** / **navPoints** / **useRouteWinds**: 航法計算の正本（`src/pages/planning/nav/`）。React 非依存の純関数＋風の並列取得
+- **solveWindTriangle**: 真コースと真風で WCA / GS / TH を解く
+- **interpolateJapanMagneticVariationWestDeg**: 日本付近の西偏補間（空港テーブル＋逆距離加重）
+- **resolveAircraftPreset**: プリセットに `performanceOverrides` と `descentMode` を適用
+- **calculateOffsetPoint**: 測地線計算（磁方位と距離でオフセット。偏差は上記補間、未取得時 8°W）
+- **planDocument**: JSON正本のシリアライズ/デシリアライズ（`performanceOverrides` / `descentMode` を含む `planInput` をラウンドトリップ）
 - **airspace**: 空域判定と周波数取得
 
 #### **地図レイヤー表示（2026年1月6日改善）**
@@ -315,7 +324,7 @@ AI から **実ブラウザ**（コンソール・ネットワーク・スナッ
 
 #### **ACC Sector / RAPCON 地図オーバーレイ（2026年2月追加、2026年5月 multi-hit + HUD/スナップシート）**
 - **空域クリック時の詳細表示**: ACC Sector High/Low、RAPCON レイヤーをクリックすると、クリック座標に重なる **全 feature** を point-in-polygon で検索し、地図上の **MapAirspaceSheet**（非モーダル・スナップ可能ボトムシート）に表示（Leaflet ポップアップは使用しない）
-- **レイアウト**: 地図 canvas 高さは固定。位置表示は **MapCursorFooter**（DMS 1行・地図下・ピン固定）。タッチは **MapCenterCrosshair**。詳細（DD・選択 NAVAID の磁方位/距離）は **MapCursorDetailSheet**（地図上オーバーレイ・展開しても地図 flex 高さは不変・固定後のみ）。近傍3件固定表示は廃止し任意 NAVAID 選択（初期は最寄り）。参考レイヤー **ラジアル／DME網**（`navaid_radial_grid`）は選択 NAVAID から磁方位 10°・DME 10 nm（最大 100 nm）の網を表示（初期局 AHT・教育用固定磁気偏差）。方位ラベルは 000/090/180/270 が 10 nm 刻み、その他は 50/100 nm。参考レイヤー **変更予定空域**（`pending_airspace`・`PendingAirspaceChanges.geojson`）は今後変更予定の形状（R-134・N-1・N-21S 等）を現行レイヤーと分離して表示
+- **レイアウト**: 地図 canvas 高さは固定。位置表示は **MapCursorFooter**（DMS 1行・地図下・ピン固定）。タッチは **MapCenterCrosshair**。詳細（DD・選択 NAVAID の磁方位/距離）は **MapCursorDetailSheet**（地図上オーバーレイ・展開しても地図 flex 高さは不変・固定後のみ）。近傍3件固定表示は廃止し任意 NAVAID 選択（初期は最寄り）。参考レイヤー **ラジアル／DME網**（`navaid_radial_grid`）は選択 NAVAID から磁方位 10°・DME 10 nm（最大 100 nm）の網を表示（初期局 AHT・教育用磁気偏差）。方位ラベルは 000/090/180/270 が 10 nm 刻み、その他は 50/100 nm。参考レイヤー **変更予定空域**（`pending_airspace`・`PendingAirspaceChanges.geojson`）は今後変更予定の形状（R-134・N-1・N-21S 等）を現行レイヤーと分離して表示
 - **スナップシート**: peek（1行サマリー）/ half / full。初期表示は常に **peek**（件数に関わらず）。モバイルはドラッグ、**デスクトップ（lg+）は「展開」「格納」ボタン**で snap 切替。シート展開時は `useMapSelectionPan` でクリック地点の視認性を panBy 確保
 - **表示 UI**: 単一ヒットはコンパクト詳細。複数ヒットはアコーディオン一覧。巡航高度（`flightPlan.altitude`）に一致するセクターに「巡航高度」バッジ、初期展開
 - **GeoJSONプロパティ構造**（`public/geojson/` の ACC_Sector_*.geojson、RAPCON.geojson）:

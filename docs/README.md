@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年8月13日（FMT ドリップ 1-1 から・週3本）
-**バージョン**: Documentation Index v4.68
+**最終更新**: 2026年8月24日（Planning 航法一本化・4カード）
+**バージョン**: Documentation Index v4.69
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -44,6 +44,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-08-24（Planning 航法一本化・4カード）**: `computeNavLog` で ETE／ETA／燃料／垂直プロファイルを一本化。UI は Setup / Route / NavLog / Briefing。Debrief は第 3 タブ。T-4 は教官提供値＋計画単位上書き。正本 [02](02_System_Spec.md) Flight Planning · [03](03_Development_Guide.md) · [Component_Structure_Guide](Component_Structure_Guide.md) · [Flight_Debrief_Tools](Flight_Debrief_Tools.md)。
 - **2026-08-13（FMT ドリップ 1-1 から・週3本）**: W34（8/17・19・21）に 1-1〜1-3。1-4 以降はストック。正本 [FMT_Formation_2026](content_outlines/FMT_Formation_2026/README.md)。
 - **2026-08-12（9月計画）**: [September_2026_Implementation_Plan.md](September_2026_Implementation_Plan.md) 起票。A2-a 計測 W36〜W39。
 - **2026-08-17（週次テレメトリ ISO 火曜）**: レビューを **火曜 09:00 JST**（月〜日）へ切替。Slack `#fa-telemetry` の Facts は日本語（`@` なし）。フェーズ2b は Skill `weekly-telemetry-review` で正本 PR。フェーズ2c L0 は Facts スレッドへ `APPROVE-DOC` / `HOLD`（Slash Command なし。ACK は `fa-telemetry-notify`）。初回新窓 W34 は 8/25。正本 [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)。
@@ -203,7 +204,7 @@
 - ✅ 管理者ページ（ランク条件・XP設定編集）
 - ✅ デュアルテーマ、MarketingLayout統合、リポジトリ整理
 - ✅ 進捗管理（セクションベース）、進捗可視化、学習ダッシュボード（XP 相対位置 RPC・任意参加ランキングは [02](02_System_Spec.md) ダッシュボード節）
-- ✅ Flight Planning（Waypoint 単一パネル3モード、ツールバー JSON/下書き確認、最終保存表示、地図ヘルプ、経路・燃料、A4印刷）
+- ✅ Flight Planning（4 カード、`computeNavLog`、TOC/TOD、MH、Waypoint 単一パネル3モード、JSON/下書き、A4印刷、Debrief タブ）
 - ✅ 記事システム（MDX、全記事閲覧可、テスト結果からの推奨記事＋ゲスト向け登録 CTA、KaTeX、コメント）
 - ✅ CI/CD（GitHub Actions: test、verify-build）
 

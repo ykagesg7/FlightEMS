@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
-**最終更新**: 2026年7月10日  
-**バージョン**: Roadmap v4.0.40（7月 Callout 8/8 完走・W29 Tier B 2 本）
+**最終更新**: 2026年8月24日  
+**バージョン**: Roadmap v4.0.45（Planning 航法一本化・4カード）
 
 ---
 
@@ -50,16 +50,25 @@
   CI `test` / `verify-build` 通過確認済み。
   実技・ウイングマーク等の後続フェーズは未実装。
 
+### 2026年8月期スプリント（完了）
+
+- **正本**: [**August_2026_Implementation_Plan.md**](August_2026_Implementation_Plan.md) — W31〜W35。**DONE**: CBT 暫定束ね **104/104**、PPL-2-3-3、Action2/3 方針、**A2-a 実装**、coverage **21.17%**。
+
+### 2026年9月期スプリント（実行中）
+
+- **正本**: [**September_2026_Implementation_Plan.md**](September_2026_Implementation_Plan.md) — W36〜W40。重点: **A2-a 効果測定**、CBT Phase B、PPL Subject 2 Phase 2、Articles 次シリーズ。
+
 | 優先 | タスク | 詳細 | 目安 |
 |------|--------|------|------|
-| **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md) Tier A/B。MCP 再集計 **月 1 回**。verified 未マッピング **12 件**（2026-07-10、**17→12**） | 週 2〜4 着手単位 |
-| **2** | **C-7 PPL Subject 4 Phase 1** | [PPL_Navigation_Communication_2026 §Subject 4](content_outlines/PPL_Navigation_Communication_2026/README.md) — **`4-1-1`〜`4-3-2` 公開済・Phase 1 完走** ✅ | W29〜W30 |
-| **3** | CPL↔PPL Callout | 気象 `3.3.3/4/7/9/12` **2026-06-30 済**。法規 **`3.1.1`〜`3.1.8` 8/8 完走** ✅（2026-07-10） | W27〜W29 **完了** |
-| **4** | GA4 ファネル | Quiz Hub 投入（2026-06-06）から **4 週以降**の計測レビュー（`artifacts/` メモ） | W27 初旬 |
-| **5** | B-4 テスト | `src` 実効 **18.07% 維持**（Phase C 15% 主目標は六月達成済） | 月次記録 |
-| **6** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**コード着手。未承認時は A11y/Lighthouse **監査メモ**のみ | 随時 |
+| **1** | **C-6 CPL Phase 2・マッピング** | [14 §6–§7](Article_Coverage_Backlog.md)。CBT 暫定束ね **104/104 完走** ✅。未マッピング **10**（レガシーのみ、2026-08-12 W35） | 9月: Phase B 再分類 |
+| **2** | **C-7 PPL Subject 1〜5** | PPL **64/150**。Subject 2 Phase 2 継続（`PPL-2-3-3` 済） | 9月: `2-3-4` 候補 |
+| **7** | **Action2 A2-a 計測** | 科目 default 5問 — GA4 **2週連続**完走率（W37–W39） | [September §4](September_2026_Implementation_Plan.md) |
+| **3** | CPL↔PPL Callout | 法規 **`3.1.1`〜`3.1.8` 8/8 完走** ✅ | W27〜W29 **完了** |
+| **4** | GA4 ファネル | [`quiz_hub_funnel_memo_2026-07-08.md`](../artifacts/quiz_hub_funnel_memo_2026-07-08.md) ✅ | W27 **完了** |
+| **5** | B-4 テスト | `src` 実効 **21.17%**（2026-08-12 W35、7728/36505。七月 21.18% から src 増で -0.01pt） | 八月末ゲート **実施済** |
+| **6** | Phase C プロダクト | C-1〜C-5 は **承認後のみ**（7月は監査メモのみ） | 8月継続 |
 
-**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2/3/4 Phase 1 完走。Subject 4 Phase 1 **8/8**（`PPL-4-1-1`〜`4-3-2`、2026-07-22）。PPL 登録済 **63/150**。次: Subject 4 Phase 2 または Subject 3 Phase 2。
+**PPL KPI**: Phase C 合算 **25/150** — **達成済**。Subject 2/3/4 Phase 1 完走。**PPL 登録済 64/150**（+ `PPL-2-3-3`）。次: Subject 2 Phase 2（`PPL-2-3-4` 等）。
 
 ---
 
@@ -76,7 +85,7 @@
 | Phase 4.5-4.7             | デュアルテーマ、リポジトリ整理、MarketingLayout統合          | 完了  |
 | 旧PPLランクシステム               | DB互換用に保持。学習者向け表示と自動昇格は習熟ジャーニーへ移行       | 非推奨  |
 | CI/CD                     | GitHub Actions（test.yml、verify-build.yml）  | 完了  |
-| Flight Planning 拡張        | エクスポート/インポート、燃料計算、A4印刷                     | 完了  |
+| Flight Planning 拡張        | 航法一本化（`computeNavLog`）、4 カード、TOC/TOD、MH、Debrief タブ、A4印刷 | 完了  |
 | 記事システム                    | MDX、進捗管理、シリーズメタ（推奨順）、KaTeX                 | 完了  |
 
 
@@ -100,7 +109,7 @@
 
 | 項目                | 現状                                                                                                            | 目標                            |
 | ----------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| テストカバレッジ          | **最新実測**（`npm run test:coverage` 直後、v8 `coverage-final.json`）: パスに **`FlightAcademyTsx/src/`** を含むファイルのみ（**`.vercel` は自動的に除外**）を集計すると **Statements 約 13.99%**。**2026-05-06** — `api/lib` の検証分岐（`openskyStatesCore`、`aviationWeatherApiCore`、`createDevMockFilteredWeather`）を Vitest（`src/__tests__/api/*`）で追加。**`api/` は `src` 外のため src 実効 % は据え置き**。前回ロードマップ記載 **約 11.89%（2026-05-06）** からの上昇は既存 B-4 追補によるもの。**B-4** で `useArticleProgress` フック、[`mdxContentParsing`](../src/utils/mdxContentParsing.ts)、構造化データ、[`planDocument`](../src/utils/planDocument.ts)、[`swimNotamGeometry`](../api/lib/swimNotamGeometry.ts) 等へテスト拡張。レポート先頭の **All files** は依存混入のため **単一指標にしない**（[06](06_Long_Term_Execution.md)）。**Functions** の **Funcs 約 19.31%（2026-04-13）**・**global `functions` 閾値 19%** は従来どおり。**ロードマップ上の主目標**: **Phase C で `src` 実効 15%**（ストレッチ 18%・任意）。Phase B での **一発 30% は不採用**。`vitest.config.ts` の **statements 等の低い thresholds は CI 安定用として据え置き**（数値が安定するまで引き上げない） | **Phase C 末 15%**（主目標）・**Phase D 末 50%**（北極星。[00](00_Flight_Academy_Strategy.md) と整合）          |
+| テストカバレッジ          | **最新実測**（`npm run test:coverage` 直後、v8 `coverage-final.json`）: パスに **`FlightAcademyTsx/src/`** を含むファイルのみ（**`.vercel` は自動的に除外**）を集計すると **Statements 約 21.17%（2026-08-12 W35・398ファイル・7728/36505。七月末 21.18% から src 増により -0.01pt。507 tests 緑。ヘルパ artifacts/compute-src-coverage.mjs）**。**2026-05-06** — `api/lib` の検証分岐（`openskyStatesCore`、`aviationWeatherApiCore`、`createDevMockFilteredWeather`）を Vitest（`src/__tests__/api/*`）で追加。**`api/` は `src` 外のため src 実効 % は据え置き**。前回ロードマップ記載 **約 11.89%（2026-05-06）** からの上昇は既存 B-4 追補によるもの。**B-4** で `useArticleProgress` フック、[`mdxContentParsing`](../src/utils/mdxContentParsing.ts)、構造化データ、[`planDocument`](../src/utils/planDocument.ts)、[`swimNotamGeometry`](../api/lib/swimNotamGeometry.ts) 等へテスト拡張。レポート先頭の **All files** は依存混入のため **単一指標にしない**（[06](06_Long_Term_Execution.md)）。**Functions** の **Funcs 約 19.31%（2026-04-13）**・**global `functions` 閾値 19%** は従来どおり。**ロードマップ上の主目標**: **Phase C で `src` 実効 15%**（ストレッチ 18%・任意）。Phase B での **一発 30% は不採用**。`vitest.config.ts` の **statements 等の低い thresholds は CI 安定用として据え置き**（数値が安定するまで引き上げない） | **Phase C 15% 達成済**・**Phase D 末 50%**（北極星。[00](00_Flight_Academy_Strategy.md) と整合）          |
 | エラー監視             | Sentry 導入済み（DSN設定で有効化）                                                                                        | ✅ Phase A で導入済み               |
 | アクセス解析            | **GA4 本番受信確認済**（2026-05-06）：リアルタイムで計測 ID `G-22VFYSM69J`・プロパティ FlightAcademy を確認。[04](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」表が正 | 継続監視・変数変更時は Redeploy＋ログ追記 |
 | パフォーマンス監視         | なし                                                                                                            | Lighthouse CI — Phase C       |
@@ -324,6 +333,12 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-08-24 | **v4.0.45 / Planning 航法一本化**: `computeNavLog` で二重書き込みを解消。風三角形・日本付近磁気偏差補間・上昇降下積分（TOC/TOD）・T-4 教官値＋`performanceOverrides`。UI は Setup / Route / NavLog / Briefing、Debrief は第 3 タブ。コミット `67fc038`。[02](02_System_Spec.md) · [03](03_Development_Guide.md) · [Flight_Debrief_Tools](Flight_Debrief_Tools.md)。 |
+| 2026-08-12 | **9月計画起票**: [September_2026_Implementation_Plan.md](September_2026_Implementation_Plan.md) — A2-a 計測 W36–W39、CBT Phase B、W36–W40 週次。 |
+| 2026-08-12 | **v4.0.44 / W35 八月末ゲート**: CBT 工学 **26** + 法規 **31**→ハブ。CBT 暫定束ね **104/104** 完走。`test:coverage` → `src` **21.17%**（507 tests 緑）。MCP: 未マッピング **10**（レガシー）、mapping **147**。 **A2-a** 実装（科目 default 5問）。 |
+| 2026-08-12 | **v4.0.43 / W34**: CBT 気象+航法 **各18**→ハブ、**PPL-2-3-3** + mapping **12**、[Action2/3 方針](Post_Exam_Action2_Action3_Policy_Memo.md)。MCP: 未マッピング **67**、mapping **145**、PPL **64/150**。 |
+| 2026-08-12 | **v4.0.42 / W33 CBT + Articles**: [CBT 方針メモ](CBT_Example_Reclassification_Memo.md) + 航空通信 CBT **11**→`CPL-Hub-Communication`。MCP: 未マッピング総 **103**（CBT **93** + レガシー **10**）、mapping **141 行**、`learning_contents` **152**。Articles「訓練の当たり前」W32/W33 ドリップ進行。[August](August_2026_Implementation_Plan.md)・[05](05_Content_Pipeline.md) 再整理。 |
+| 2026-07-25 | **v4.0.41 / W30 七月末ゲート + Phase C クローズ**: Tier B 着陸装置 **2 問**→`engineering_basics`。MCP: 未マッピング総 **112**（CBT例題除外 **10**・`CBT例題/未分類` **102**＝MLIT 例題取込）、mapping **140 行**。`src` Statements **21.18%**（7509/35445）。`test:run` **481** 緑。PPL **63/150**・Subject 3/4 Phase 1 完走。C-1〜C-5 は未着手継続。[August_2026_Implementation_Plan](August_2026_Implementation_Plan.md) 起票。 |
 | 2026-07-10 | **v4.0.40 / 7月 Callout + Tier B 完走**: 法規 Callout **`3.1.6`〜`3.1.8`** ← PPL-5-*（**8/8**）。Tier B **2 本** — トランスポンダ→`3.5.3`、電波の伝播→`engineering_basics`。MCP: 未マッピング **12**、mapping **122 行**。 |
 | 2026-07-09 | **v4.0.39 / PPL Subject 3 Phase 1 完走**: [`PPL-3-3-2`](../src/content/lessons/PPL-3-3-2_SpatialDisorientationBasics.mdx) 深文化 + mapping **22 問**（空間識失調11+適合性11）。Phase 1 **9/9 本**完走。SQL: [`20260709_*ppl332*`](../scripts/database/INDEX.md)。同日 v4.0.38 [`PPL-3-3-1`](../src/content/lessons/PPL-3-3-1_VfrOperationsAndAirspace.mdx) 公開。 |
 | 2026-07-09 | **v4.0.38 / PPL Subject 3 +1 本**: [`PPL-3-3-1`](../src/content/lessons/PPL-3-3-1_VfrOperationsAndAirspace.mdx) 深文化（VFR/VMC/空域・航法視点）。Subject 3 Phase 1 **8/10**（残 `PPL-3-3-2`）。`learning_contents` **308** — mapping は [`PPL-5-4-1`](../src/content/lessons/PPL-5-4-1_AirspaceAndFacilitiesOverview.mdx) に分担。SQL: [`20260709_learning_contents_ppl331_vfr_operations.sql`](../scripts/database/20260709_learning_contents_ppl331_vfr_operations.sql)。 |

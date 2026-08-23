@@ -202,18 +202,25 @@ src/pages/
 │   ├── PlanningMapPage.tsx
 │   ├── createInitialFlightPlan.ts
 │   ├── flightPlanDraft.ts          # localStorage 下書き（PlanDocumentV1）、persist は成功時 boolean
+│   ├── nav/                        # 航法計算の正本（React 非依存）
+│   │   ├── computeNavLog.ts
+│   │   ├── computeVerticalProfile.ts
+│   │   ├── navPoints.ts
+│   │   └── useRouteWinds.ts
 │   ├── utils/
 │   │   ├── buildWaypointFromNavaid.ts
 │   │   └── magneticOffsetValidation.ts
-│   # 補助: src/utils/openskyTraffic.ts、src/services/openskyTraffic.ts、api/opensky-states.ts（Vercel プロキシ）、api/_lib/openskyStatesCore.ts・api/_lib/openskyOAuthToken.ts（本番バンドル本体。lib/ は re-export）、vite/devOpenskyApiPlugin.ts；api/weather.ts、api/lib/weatherApiCore.ts・api/lib/aviationWeatherApiCore.ts（本番バンドル本体。lib/ は re-export）、vite/devWeatherApiPlugin.ts（npm run dev 時の /api/weather・/api/aviation-weather・/api/swim-notam-search）；api/swim-notam-search.ts、api/lib/swimNotamCore.ts、api/lib/swimNotamHttpShared.ts、api/lib/swimNotamGeometry.ts；src/services/swimNotam.ts；src/services/weather.ts、src/services/aviationWeather.ts；src/utils/rainViewerRadar.ts、api/weather.ts（RainViewer は `?action=rainviewer`）；src/services/openMeteo.ts、src/utils/windComponents.ts、src/utils/routeOpenMeteoWind.ts、src/utils/windGridOpenMeteo.ts、src/utils/windBarbHtml.ts、src/utils/pressureAltitudeIsa.ts；scripts/transparent_public_png.py（F2favicon / airplane 等の透過）
+│   # 補助: src/utils/openskyTraffic.ts、src/services/openskyTraffic.ts、api/opensky-states.ts（Vercel プロキシ）、api/_lib/openskyStatesCore.ts・api/_lib/openskyOAuthToken.ts（本番バンドル本体。lib/ は re-export）、vite/devOpenskyApiPlugin.ts；api/weather.ts、api/lib/weatherApiCore.ts・api/lib/aviationWeatherApiCore.ts（本番バンドル本体。lib/ は re-export）、vite/devWeatherApiPlugin.ts（npm run dev 時の /api/weather・/api/aviation-weather・/api/swim-notam-search）；api/swim-notam-search.ts、api/lib/swimNotamCore.ts、api/lib/swimNotamHttpShared.ts、api/lib/swimNotamGeometry.ts；src/services/swimNotam.ts；src/services/weather.ts、src/services/aviationWeather.ts；src/utils/rainViewerRadar.ts、api/weather.ts（RainViewer は `?action=rainviewer`）；src/services/openMeteo.ts、src/utils/windComponents.ts、src/utils/routeOpenMeteoWind.ts、src/utils/windTriangle.ts、src/utils/japanMagneticVariation.ts、src/utils/windGridOpenMeteo.ts、src/utils/windBarbHtml.ts、src/utils/pressureAltitudeIsa.ts；scripts/transparent_public_png.py（F2favicon / airplane 等の透過）
 │   └── components/
 │       ├── flight/
 │       │   ├── AirportSelect.tsx
 │       │   ├── ExamTab.tsx
-│       │   ├── FlightParameters.tsx
-│       │   ├── FlightSummary.tsx
+│       │   ├── AircraftPerformancePanel.tsx  # 上昇・降下・巡航の計画単位上書き
+│       │   ├── FlightParameters.tsx     # variant: setup | route | full
+│       │   ├── FlightSummary.tsx        # NavLog 表示専用
 │       │   ├── NavaidSelector.tsx      # WaypointAddPanel 集約後は未接続可
 │       │   ├── PlanPrintView.tsx
+│       │   ├── PlanningCard.tsx         # 4 カードの共通 details ラッパ
 │       │   ├── PlanningTab.tsx
 │       │   ├── RoutePlanning.tsx
 │       │   ├── WaypointAddPanel.tsx    # NAVAID / WP / 座標の単一パネル
@@ -364,15 +371,16 @@ src/pages/
 
 | パス | 責務 |
 |------|------|
-| **`PlanningMapPage.tsx`** | ルートページ・タブ（計画 / 地図 / 試験対策等）の統合 |
+| **`PlanningMapPage.tsx`** | ルートページ。xl は左 **計画 | Debrief**＋右地図、未満は **計画 / Debrief / 地図** |
 | **`createInitialFlightPlan.ts`** | 初期フライトプラン状態の生成 |
 | **`flightPlanDraft.ts`** | `localStorage` 下書き（`PlanDocumentV1`）、永続化フラグ |
+| **`nav/`** | `computeNavLog`（純関数）・垂直プロファイル・点列・風の並列取得 |
 | **`utils/`** | NAVAID からウェイポイント組み立て、磁気偏角まわりの検証など小粒ロジック |
-| **`briefing/`** | `briefingTypes`、`buildPreflightBriefing`、`preflightNotamBriefing`、`usePreflightNotamBriefing` — プリフライト・ブリーフ（出発/到着 NOTAM 自動取得・3分 TTL キャッシュ） |
+| **`briefing/`** | `briefingTypes`、`buildPreflightBriefing`、`preflightNotamBriefing`、`usePreflightNotamBriefing` — プリフライト・ブリーフ（出発/到着 NOTAM 自動取得・3分 TTL キャッシュ）。NavLog 表は出さずレグ件数要約 |
 | **`components/briefing/`** | `PreflightBriefingPanel` 等、ブリーフ UI |
-| **`components/flight/`** | 「計画」タブ本体（経路、WP、空港・NAVAID/WP セレクタ、要約、印刷ビューなど） |
+| **`components/flight/`** | 計画タブの 4 カード（Setup / Route / NavLog / Briefing）。計算は `nav/` に委譲 |
 | **`components/map/`** | 「地図」タブ：`MapTab` / `MapTabContent`、レイヤ（`layers/`）、フック（`hooks/`）、ポップアップ（`popups/`）、軌跡レイヤ |
-| **`components/debrief/`** | フライト後：トラック取込 UI、一覧、リプレイタイムライン、サマリー |
+| **`components/debrief/`** | Debrief タブ：トラック取込 UI、一覧、リプレイタイムライン、サマリー |
 | **`components/profile/`** | 経路断面・プロファイルパネル（`RouteProfilePanel` 等） |
 | **`tracks/`** | GPX/KML/CSV の取込、`parseTrackFile`、補間・間引き、`supabaseDebrief`、計画線からの偏差分析、型定義 |
 | **`export/`** | KML/GPX/CSV 書き出しとダウンロード補助 |
