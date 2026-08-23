@@ -46,50 +46,6 @@ const supabase = createBrowserSupabaseClient();
 // 名前付きエクスポートとしても提供（互換性のため）
 export { supabase };
 
-// 開発環境用の認証検証バイパス
-// 注意: 本番環境では使用しないでください！
-export const bypassEmailVerification = async (email: string) => {
-  if (!isDevelopment) {
-    console.warn('この関数は開発環境専用です。本番環境では使用しないでください。');
-    return { success: false, error: new Error('本番環境では使用できません') };
-  }
-
-  try {
-    console.log('開発環境: メール検証をバイパスします', { email });
-
-    // メール検証リンク取得 (開発環境のみ)
-    const { data, error } = await supabase.auth.admin.generateLink({
-      type: 'magiclink',
-      email: email,
-    });
-
-    if (error) {
-      console.error('メール検証リンク生成エラー:', error);
-      return { success: false, error };
-    }
-
-    // 開発環境では、生成されたリンクをコンソールに表示
-    if (data && data.properties && data.properties.action_link) {
-      return {
-        success: true,
-        verificationLink: data.properties.action_link,
-        message: '開発環境用のメール検証リンクがコンソールに表示されました'
-      };
-    }
-
-    return {
-      success: false,
-      error: new Error('検証リンクの生成に失敗しました')
-    };
-  } catch (err) {
-    console.error('メール検証バイパスエラー:', err);
-    return {
-      success: false,
-      error: err instanceof Error ? err : new Error('不明なエラー')
-    };
-  }
-};
-
 // プロフィール取得のヘルパー関数（エラーハンドリング強化版）
 export const getProfileWithRetry = async (userId: string) => {
   if (!userId) {

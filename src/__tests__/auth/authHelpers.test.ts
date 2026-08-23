@@ -5,7 +5,9 @@ import { deriveOAuthAvatarUrl, deriveOAuthDisplayName } from '@/auth/deriveOAuth
 import { mapAuthErrorToMessage } from '@/auth/authErrorMessages';
 import {
   PASSWORD_RECOVERY_STORAGE_KEY,
+  PASSWORD_RECOVERY_TTL_MS,
   clearPasswordRecoveryPending,
+  isPasswordRecoveryActive,
   isPasswordRecoveryStored,
   markPasswordRecoveryPending,
   primePasswordRecoveryFromUrl,
@@ -112,6 +114,33 @@ describe('passwordRecovery helpers', () => {
   it('detects recovery type from URL hash on boot', () => {
     window.history.replaceState({}, '', '/#access_token=test&type=recovery');
     expect(primePasswordRecoveryFromUrl()).toBe(true);
-    expect(sessionStorage.getItem(PASSWORD_RECOVERY_STORAGE_KEY)).toBe('1');
+    expect(Number(sessionStorage.getItem(PASSWORD_RECOVERY_STORAGE_KEY))).toBeGreaterThan(0);
+  });
+
+  it('does not treat a non-recovery token callback as recovery', () => {
+    window.history.replaceState({}, '', '/auth#access_token=test&type=magiclink');
+    expect(primePasswordRecoveryFromUrl()).toBe(false);
+    expect(sessionStorage.getItem(PASSWORD_RECOVERY_STORAGE_KEY)).toBeNull();
+  });
+
+  it('does not treat a bare access_token hash as recovery', () => {
+    window.history.replaceState({}, '', '/auth#access_token=test&refresh_token=r');
+    expect(primePasswordRecoveryFromUrl()).toBe(false);
+    expect(useAuthStore.getState().passwordRecoveryPending).toBe(false);
+  });
+
+  it('expires a stale pending flag', () => {
+    const staleIssuedAt = Date.now() - PASSWORD_RECOVERY_TTL_MS - 1000;
+    sessionStorage.setItem(PASSWORD_RECOVERY_STORAGE_KEY, String(staleIssuedAt));
+    useAuthStore.getState().setPasswordRecoveryPending(true);
+
+    expect(isPasswordRecoveryStored()).toBe(false);
+    expect(isPasswordRecoveryActive()).toBe(false);
+    expect(sessionStorage.getItem(PASSWORD_RECOVERY_STORAGE_KEY)).toBeNull();
+  });
+
+  it('discards the legacy "1" flag value', () => {
+    sessionStorage.setItem(PASSWORD_RECOVERY_STORAGE_KEY, '1');
+    expect(isPasswordRecoveryStored()).toBe(false);
   });
 });

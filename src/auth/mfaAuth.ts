@@ -35,15 +35,39 @@ export function profileRequiresLoginMfa(profile: Profile | null): boolean {
   return profile.mfa_required_at_login === true;
 }
 
-export async function shouldPromptLoginMfa(profile: Profile | null): Promise<{
+export interface LoginMfaDecision {
   required: boolean;
   factorId: string | null;
   error: string | null;
-}> {
+}
+
+/** ルート遷移ごとに listFactors / AAL を叩かないための短期キャッシュ */
+const LOGIN_MFA_CACHE_TTL_MS = 60_000;
+let loginMfaCache: { userId: string; decision: LoginMfaDecision; expiresAt: number } | null = null;
+
+/** AAL やファクター構成が変わったとき（検証・解除・サインイン/アウト）に呼ぶ */
+export function clearLoginMfaCache(): void {
+  loginMfaCache = null;
+}
+
+export async function shouldPromptLoginMfa(profile: Profile | null): Promise<LoginMfaDecision> {
   if (!profileRequiresLoginMfa(profile)) {
     return { required: false, factorId: null, error: null };
   }
 
+  const userId = profile!.id;
+  if (loginMfaCache && loginMfaCache.userId === userId && loginMfaCache.expiresAt > Date.now()) {
+    return loginMfaCache.decision;
+  }
+
+  const decision = await resolveLoginMfaDecision();
+  if (!decision.error) {
+    loginMfaCache = { userId, decision, expiresAt: Date.now() + LOGIN_MFA_CACHE_TTL_MS };
+  }
+  return decision;
+}
+
+async function resolveLoginMfaDecision(): Promise<LoginMfaDecision> {
   const { data: aalData, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
   if (aalError) {
     return { required: false, factorId: null, error: aalError.message };
@@ -71,6 +95,7 @@ export async function verifyMfaFactorCode(factorId: string, code: string) {
     return { error: challengeError };
   }
 
+  clearLoginMfaCache();
   return supabase.auth.mfa.verify({
     factorId,
     challengeId: challenge.id,
@@ -120,6 +145,7 @@ export async function unenrollVerifiedMfaFactor(factorId: string, code: string) 
     return { error: unenrollError };
   }
 
+  clearLoginMfaCache();
   await supabase.auth.refreshSession();
   return { error: null };
 }

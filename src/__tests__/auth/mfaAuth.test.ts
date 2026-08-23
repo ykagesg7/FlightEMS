@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  clearLoginMfaCache,
   profileRequiresLoginMfa,
   shouldPromptLoginMfa,
   unenrollVerifiedMfaFactor,
@@ -42,6 +43,7 @@ describe('mfaAuth', () => {
     verifyMock.mockReset();
     unenrollMock.mockReset();
     refreshSessionMock.mockReset();
+    clearLoginMfaCache();
   });
 
   describe('profileRequiresLoginMfa', () => {
@@ -96,6 +98,36 @@ describe('mfaAuth', () => {
 
       const result = await shouldPromptLoginMfa(baseProfile);
       expect(result).toEqual({ required: true, factorId: 'factor-1', error: null });
+    });
+
+    it('reuses the cached decision instead of re-querying per navigation', async () => {
+      getAalMock.mockResolvedValue({
+        data: { currentLevel: 'aal1', nextLevel: 'aal2' },
+        error: null,
+      });
+      listFactorsMock.mockResolvedValue({
+        data: {
+          all: [{ id: 'factor-1', factor_type: 'totp', status: 'verified' }],
+          totp: [],
+        },
+        error: null,
+      });
+
+      await shouldPromptLoginMfa(baseProfile);
+      await shouldPromptLoginMfa(baseProfile);
+
+      expect(getAalMock).toHaveBeenCalledTimes(1);
+      expect(listFactorsMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not cache a failed lookup', async () => {
+      getAalMock.mockResolvedValue({ data: null, error: { message: 'network' } });
+
+      const first = await shouldPromptLoginMfa(baseProfile);
+      await shouldPromptLoginMfa(baseProfile);
+
+      expect(first.error).toBe('network');
+      expect(getAalMock).toHaveBeenCalledTimes(2);
     });
   });
 

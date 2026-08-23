@@ -3,21 +3,43 @@ import { useAuthStore } from '../stores/authStore';
 
 export const PASSWORD_RECOVERY_STORAGE_KEY = 'flightacademy.auth.recovery-pending';
 
-/** sessionStorage にリカバリー中フラグを保持（URL クリーンアップ後も維持） */
-export function isPasswordRecoveryStored(): boolean {
-  if (typeof window === 'undefined') return false;
+/** リセットリンクの有効期限に合わせてフラグ自体も失効させる（取り残されたフラグが通常ログインを塞ぐのを防ぐ） */
+export const PASSWORD_RECOVERY_TTL_MS = 15 * 60 * 1000;
+
+function readIssuedAt(): number | null {
+  if (typeof window === 'undefined') return null;
   try {
-    return sessionStorage.getItem(PASSWORD_RECOVERY_STORAGE_KEY) === '1';
+    const raw = sessionStorage.getItem(PASSWORD_RECOVERY_STORAGE_KEY);
+    if (!raw) return null;
+    const issuedAt = Number(raw);
+    return Number.isFinite(issuedAt) && issuedAt > 0 ? issuedAt : null;
   } catch {
-    return false;
+    return null;
   }
 }
 
+function syncStoreFlag(pending: boolean): void {
+  useAuthStore.getState()?.setPasswordRecoveryPending(pending);
+}
+
+/** sessionStorage 上のリカバリー中フラグ（URL クリーンアップ後も維持。TTL 超過分はここで破棄） */
+export function isPasswordRecoveryStored(): boolean {
+  const issuedAt = readIssuedAt();
+  if (issuedAt === null) {
+    return false;
+  }
+  if (Date.now() - issuedAt > PASSWORD_RECOVERY_TTL_MS) {
+    clearPasswordRecoveryPending();
+    return false;
+  }
+  return true;
+}
+
 export function markPasswordRecoveryPending(): void {
-  useAuthStore.getState()?.setPasswordRecoveryPending(true);
+  syncStoreFlag(true);
   if (typeof window !== 'undefined') {
     try {
-      sessionStorage.setItem(PASSWORD_RECOVERY_STORAGE_KEY, '1');
+      sessionStorage.setItem(PASSWORD_RECOVERY_STORAGE_KEY, String(Date.now()));
     } catch {
       // sessionStorage unavailable
     }
@@ -25,7 +47,7 @@ export function markPasswordRecoveryPending(): void {
 }
 
 export function clearPasswordRecoveryPending(): void {
-  useAuthStore.getState()?.setPasswordRecoveryPending(false);
+  syncStoreFlag(false);
   if (typeof window !== 'undefined') {
     try {
       sessionStorage.removeItem(PASSWORD_RECOVERY_STORAGE_KEY);
@@ -37,19 +59,27 @@ export function clearPasswordRecoveryPending(): void {
 
 /** ストアまたは sessionStorage 上でリカバリー UI を表示すべきか */
 export function isPasswordRecoveryActive(): boolean {
-  const state = useAuthStore.getState();
-  return (state?.passwordRecoveryPending ?? false) || isPasswordRecoveryStored();
+  // sessionStorage を先に見る（期限切れならここでストアも落ちる）
+  if (isPasswordRecoveryStored()) {
+    return true;
+  }
+  return useAuthStore.getState()?.passwordRecoveryPending ?? false;
 }
 
 function isRecoveryPathname(pathname: string): boolean {
   return pathname === '/auth/recovery' || pathname.endsWith('/auth/recovery');
 }
 
-/** アプリ起動直後（React 描画前）に URL からリカバリー状態を確定する */
+/**
+ * アプリ起動直後（React 描画前）に URL からリカバリー状態を確定する。
+ * `type=recovery` / `/auth/recovery` / `mode=recovery` のみを根拠にする。
+ * ハッシュに `access_token` があるだけでは判定しない（Magic Link や Google OAuth も
+ * implicit flow では同じ形で戻るため、通常ログインを誤ってリセット扱いにしてしまう）。
+ */
 export function primePasswordRecoveryFromUrl(): boolean {
   if (typeof window === 'undefined') return false;
 
-  const { pathname, hash, search } = window.location;
+  const { pathname, search } = window.location;
   const isRecovery =
     getAuthCallbackType() === 'recovery'
     || isRecoveryPathname(pathname)
@@ -60,14 +90,9 @@ export function primePasswordRecoveryFromUrl(): boolean {
     return true;
   }
 
+  // 同一タブのリロード時は保存済みフラグを引き継ぐ（TTL は延長しない）
   if (isPasswordRecoveryStored()) {
-    markPasswordRecoveryPending();
-    return true;
-  }
-
-  // ハッシュにトークンがあるが type 未確認の間はリダイレクトを抑止（コールバック処理待ち）
-  if (hash.includes('access_token') && pathname !== '/auth/recovery') {
-    markPasswordRecoveryPending();
+    syncStoreFlag(true);
     return true;
   }
 

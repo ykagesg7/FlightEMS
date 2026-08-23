@@ -1,7 +1,7 @@
 # Flight Academy 開発ロードマップ
 
 **最終更新**: 2026年8月24日  
-**バージョン**: Roadmap v4.0.47（Articles 初期ロード安定化・verify-build lint）
+**バージョン**: Roadmap v4.0.48（パスワードリセット誤判定の修正・認証 UX）
 
 ---
 
@@ -333,6 +333,7 @@
 
 | 日付         | 更新内容                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-08-24 | **v4.0.48 / ログイン誤リセットの修正**: リカバリー判定を `type=recovery` / `/auth/recovery` / `mode=recovery` に限定（implicit flow の `access_token` ハッシュだけでは判定しない）。フラグは TTL 15 分・非 recovery コールバックと `signIn` 成功でクリア。`/auth/recovery` に再送・中断導線、ハッシュ側エラーも表示。Zustand 永続化から `session` 除外、`shouldPromptLoginMfa` を 60 秒キャッシュ、動作しない `bypassEmailVerification` を撤去。[02](02_System_Spec.md)。 |
 | 2026-08-24 | **v4.0.47 / Articles 安定化**: `articlesIndexPlugin` を `enforce: 'pre'` に。Vite 設定再読込失敗後は dev 再起動。`verify-build` の `prefer-const`（`airspaceVolumes`・`useTestSubjectFilters`）を解消。[02](02_System_Spec.md) · [03](03_Development_Guide.md)。 |
 | 2026-08-24 | **v4.0.46 / Articles 初期ロード**: `virtual:articles-index` で MDX メタをビルド時抽出（約190本直列 import を廃止）。mermaid/KaTeX を記事ルートへ遅延。ハブはスケルトン・検索 debounce。記事 HTML prerender（OG）。[02](02_System_Spec.md)。 |
 | 2026-08-24 | **v4.0.45 / Planning 航法一本化**: `computeNavLog` で二重書き込みを解消。風三角形・日本付近磁気偏差補間・上昇降下積分（TOC/TOD）・T-4 教官値＋`performanceOverrides`。UI は Setup / Route / NavLog / Briefing、Debrief は第 3 タブ。コミット `67fc038`。[02](02_System_Spec.md) · [03](03_Development_Guide.md) · [Flight_Debrief_Tools](Flight_Debrief_Tools.md)。 |

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   buildProfileSearchParams,
@@ -38,6 +38,29 @@ const ProfilePage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [hasNotificationSettings, setHasNotificationSettings] = useState(false);
   const [dirtyFlags, setDirtyFlags] = useState<Record<string, boolean>>({});
+  const feedbackTimerRef = useRef<number | null>(null);
+  const feedbackRef = useRef<HTMLDivElement | null>(null);
+
+  const resetFeedbackTimer = useCallback((onExpire: () => void, delayMs: number) => {
+    if (feedbackTimerRef.current !== null) {
+      window.clearTimeout(feedbackTimerRef.current);
+    }
+    feedbackTimerRef.current = window.setTimeout(() => {
+      feedbackTimerRef.current = null;
+      onExpire();
+    }, delayMs);
+  }, []);
+
+  useEffect(() => () => {
+    if (feedbackTimerRef.current !== null) {
+      window.clearTimeout(feedbackTimerRef.current);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!error && !success) return;
+    feedbackRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [error, success]);
 
   const setSectionDirty = useCallback((key: string, dirty: boolean) => {
     setDirtyFlags((prev) => {
@@ -82,14 +105,16 @@ const ProfilePage: React.FC = () => {
   );
 
   const showError = useCallback((message: string) => {
+    setSuccess(null);
     setError(message);
-    setTimeout(() => setError(null), 5000);
-  }, []);
+    resetFeedbackTimer(() => setError(null), 8000);
+  }, [resetFeedbackTimer]);
 
   const showSuccess = useCallback((message: string) => {
+    setError(null);
     setSuccess(message);
-    setTimeout(() => setSuccess(null), 3000);
-  }, []);
+    resetFeedbackTimer(() => setSuccess(null), 4000);
+  }, [resetFeedbackTimer]);
 
   const handleNotificationSettingsSaved = useCallback(() => {
     setHasNotificationSettings(true);
@@ -143,7 +168,8 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  if (loading) {
+  // 初回のプロフィール取得中だけ全面ローディング。保存や再認証で loading が立っても画面を消さない
+  if (loading && !profile) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] py-8">
         <div className="flex flex-col items-center space-y-4">
@@ -168,22 +194,6 @@ const ProfilePage: React.FC = () => {
           </Typography>
         </div>
 
-        {success && (
-          <div className="mb-6 rounded-lg border border-green-500/20 bg-green-500/10 p-4">
-            <Typography variant="body-sm" className="text-green-400">
-              {success}
-            </Typography>
-          </div>
-        )}
-
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-500/20 bg-red-500/10 p-4">
-            <Typography variant="body-sm" className="text-red-400">
-              {error}
-            </Typography>
-          </div>
-        )}
-
         <ProfileIdentityHeader profile={profile} email={user?.email} />
 
         <div className="mb-6 md:hidden">
@@ -198,6 +208,25 @@ const ProfilePage: React.FC = () => {
           />
 
           <div className="min-w-0 flex-1">
+            {/* 保存結果は編集中のセクションの近くに出す（ページ最上部だと画面外になりやすい） */}
+            <div ref={feedbackRef} aria-live="polite">
+              {success && (
+                <div className="mb-6 rounded-lg border border-green-500/20 bg-green-500/10 p-4" role="status">
+                  <Typography variant="body-sm" className="text-green-400">
+                    {success}
+                  </Typography>
+                </div>
+              )}
+
+              {error && (
+                <div className="mb-6 rounded-lg border border-red-500/20 bg-red-500/10 p-4" role="alert">
+                  <Typography variant="body-sm" className="text-red-400">
+                    {error}
+                  </Typography>
+                </div>
+              )}
+            </div>
+
             {showMobileList ? (
               <ProfileHubSectionList onSelect={navigateSection} />
             ) : null}

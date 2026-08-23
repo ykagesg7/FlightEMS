@@ -14,8 +14,8 @@
 
 このドキュメントは、FlightAcademyTsxプロジェクトの詳細な設計仕様、API仕様、データベース設計、UI/UX仕様について包括的に説明します。
 
-**最終更新**: 2026年8月24日（Articles インデックス仮想モジュール）
-**バージョン**: Design Specification v4.0.4
+**最終更新**: 2026年8月24日（リカバリー誤判定の修正・認証 UX）
+**バージョン**: Design Specification v4.0.5
 
 ### プロダクト方針連携（将来実装・仕様の置き場）
 
@@ -611,7 +611,14 @@ export interface TAFData {
 - **Google OAuth**（`signInWithOAuth` → `/auth` コールバック、ダーク調 OAuth 専用ボタン）。初回ログイン時 `ensureProfileAfterOAuth` で **username**（`deriveOAuthUsername`）と **avatar**（`importOAuthAvatarIfAvailable` → `avatars` Storage）を取り込み
 - **Magic Link（メールリンク）ログイン**（`signInWithOtp`、Brevo SMTP 経由。Auth ページではリンク展開式）
 - パスワードリセット（`/auth/recovery` 専用ページ、`passwordRecovery.ts` で sessionStorage 同期）
+  - **リカバリー判定の根拠は `type=recovery` / `/auth/recovery` / `mode=recovery` のみ**。ハッシュに `access_token` があるだけでは判定しない（implicit flow では Magic Link・Google も同じ形で戻るため、通常ログインをリセット扱いにしてしまう）
+  - フラグは **発行時刻付き・TTL 15 分**（`PASSWORD_RECOVERY_TTL_MS`）。期限切れは読み取り時に自動破棄し、取り残されたフラグがログインを塞がない
+  - `useAuthCallback` は type 確定時に recovery でなければフラグを**クリア**。`signIn` 成功時もクリア
+  - `/auth/recovery` に「リセットメールを再送する」「リセットをやめてログインする」の離脱導線あり。リンク検証が 8 秒で終わらない場合は期限切れの可能性を明示
 - セッション管理（JWTベース、`onAuthStateChange` で Zustand と同期）
+  - `session` の正本は Supabase（GoTrue の localStorage）。Zustand の永続化は `user` / `profile` のみで、復元は `refreshSession()` に一本化
+  - `SIGNED_IN` / `USER_UPDATED` 以外（`INITIAL_SESSION` / `TOKEN_REFRESHED`）は、同一ユーザーのプロフィール保持時に再取得しない
+- ログイン方法のヒント: 前回成功した方法（パスワード / Google / メールリンク）を localStorage に記録し `/auth` に表示（方法を忘れて不要なリセットに走るのを防ぐ）
 - **ProtectedRoute**（`/mission`・`/profile`・`/welcome` は要ログイン、`/admin/*` は `profiles.roll = admin`）
 - **Cloudflare Turnstile**（任意・`VITE_TURNSTILE_SITE_KEY` + Supabase Dashboard secret）
 - 確認メール送信: **Brevo Custom SMTP**（Supabase Dashboard 設定、詳細は [04_Operations_Guide.md](04_Operations_Guide.md)）
@@ -623,6 +630,8 @@ export interface TAFData {
 - 共通コンポーネント: `AuthLayout` / `AuthInput` / `AuthDivider` / `AuthAlert` / `GoogleSignInButton`（`brand.*` トークン）
 - レイアウト: **Google で続ける** → 区切り → メール+パスワード（タブ廃止、Magic Link は補助リンクで展開）
 - レガシー `whiskyPapa-*` クラスは認証ページ群では使用しない
+- プロフィール取得が 8 秒返らない場合は「再読み込み / ログアウトしてやり直す」を提示（`リダイレクトします...` のまま固まらせない）
+- 期限切れリンク等の implicit flow エラーは**ハッシュ側**にも載るため、`?error_description` と `#error_description` の両方を読む
 
 #### **新規ユーザーセットアップ（`/welcome`）**
 
@@ -1056,6 +1065,14 @@ Flight Academy へのブランド移行は [00](00_Flight_Academy_Strategy.md) �
 ---
 
 ## 📝 変更履歴
+
+### **2026年8月24日 - パスワードリセット誤判定の修正と認証 UX**
+
+- **原因**: `primePasswordRecoveryFromUrl()` がハッシュの `access_token` だけでリカバリーと判定していた。implicit flow では Magic Link・Google OAuth も同形で戻るため、通常ログインが `/auth/recovery` に送られていた。sessionStorage のフラグに期限がなく、一度立つとタブを閉じるまで解けなかった。
+- **修正**: 判定根拠を `type=recovery` / `/auth/recovery` / `mode=recovery` に限定。フラグは発行時刻付き・TTL 15 分。`useAuthCallback` は非 recovery と判明した時点でクリアし、`signIn` 成功時もクリア。
+- **導線**: `/auth/recovery` に再送・中断リンク。リンク検証 8 秒超で期限切れを明示。ハッシュ側の `error_description` も表示。
+- **セッション**: Zustand の永続化から `session` を除外（正本は GoTrue）。`INITIAL_SESSION` / `TOKEN_REFRESHED` でのプロフィール再取得を抑止。`shouldPromptLoginMfa` に 60 秒キャッシュ。
+- **撤去**: 匿名キーでは動作しない `bypassEmailVerification`（`auth.admin.generateLink`）と `/auth` の開発用ボタンを削除。
 
 ### **2026年8月24日 - Articles 初期ロードと仮想インデックス**
 

@@ -2,6 +2,7 @@ import { AuthError, Session, User } from '@supabase/supabase-js'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { getAuthRedirectUrl, getPasswordRecoveryRedirectUrl } from '../auth/authRedirectUrl'
+import { rememberLastAuthMethod } from '../auth/lastAuthMethod'
 import { clearPasswordRecoveryPending } from '../auth/passwordRecovery'
 import { deriveOAuthUsername } from '../auth/deriveOAuthUsername'
 import { importOAuthAvatarIfAvailable } from '../utils/importOAuthAvatar'
@@ -72,14 +73,17 @@ export const useAuthStore = create<AuthState>()(
           const response = await supabase.auth.signInWithPassword({ email, password });
 
           if (!response.error && response.data.session) {
+            // パスワード認証が通った時点でリカバリー待ちは成立しない
+            clearPasswordRecoveryPending();
+            rememberLastAuthMethod('password');
             set({
               session: response.data.session,
               user: response.data.user
             });
 
-            // ユーザープロファイルを取得
+            // プロフィールが揃う前に遷移判定させない
             if (response.data.user) {
-              get().fetchProfile(response.data.user.id);
+              await get().fetchProfile(response.data.user.id);
             }
           }
 
@@ -190,7 +194,9 @@ export const useAuthStore = create<AuthState>()(
       },
 
       ensureProfileAfterOAuth: async (user) => {
-        await get().fetchProfile(user.id);
+        if (get().profile?.id !== user.id) {
+          await get().fetchProfile(user.id);
+        }
 
         if (!get().profile) {
           const username = deriveOAuthUsername(user);
@@ -204,8 +210,10 @@ export const useAuthStore = create<AuthState>()(
 
         const profile = get().profile;
         if (profile && !profile.avatar_url) {
-          await importOAuthAvatarIfAvailable(user, profile.avatar_url);
-          await get().fetchProfile(user.id);
+          const { avatarUrl } = await importOAuthAvatarIfAvailable(user, profile.avatar_url);
+          if (avatarUrl) {
+            set({ profile: { ...profile, avatar_url: avatarUrl } });
+          }
         }
       },
 
@@ -444,10 +452,11 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => sessionStorage),
+      // session は Supabase 側（localStorage の GoTrue ストレージ）が正本。
+      // ここに複製すると refreshSession 前の古いトークンで描画してしまう。
       partialize: (state) => ({
         user: state.user,
-        profile: state.profile,
-        session: state.session
+        profile: state.profile
       }),
     }
   )

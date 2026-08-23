@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { mapAuthErrorToMessage } from '../../auth/authErrorMessages';
+import { describeLastAuthMethod, getLastAuthMethod } from '../../auth/lastAuthMethod';
 import { shouldPromptLoginMfa } from '../../auth/mfaAuth';
 import { isPasswordRecoveryActive } from '../../auth/passwordRecovery';
 import { getPostAuthPath } from '../../auth/profileSetup';
@@ -9,8 +10,6 @@ import { LoginMfaChallenge } from '../../components/auth/LoginMfaChallenge';
 import { TurnstileWidget } from '../../components/auth/TurnstileWidget';
 import { Button } from '../../components/ui';
 import { useAuthStore } from '../../stores/authStore';
-import { toAppError } from '../../types/error';
-import { bypassEmailVerification } from '../../utils/supabase';
 import { AuthAlert } from './components/AuthAlert';
 import { AuthDivider } from './components/AuthDivider';
 import { AuthInput } from './components/AuthInput';
@@ -38,7 +37,6 @@ const AuthPage: React.FC = () => {
   const signUp = useAuthStore((state) => state.signUp);
   const resetPassword = useAuthStore((state) => state.resetPassword);
   const session = useAuthStore((state) => state.session);
-  const setLoading = useAuthStore((state) => state.setLoading);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,10 +57,10 @@ const AuthPage: React.FC = () => {
   const [resetCaptchaToken, setResetCaptchaToken] = useState<string | null>(null);
 
   const [pendingEmailKind, setPendingEmailKind] = useState<PendingEmailKind | null>(null);
-  const [verificationLink, setVerificationLink] = useState<string | null>(null);
-  const [isDevelopment] = useState(process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost');
   const [loginMfaFactorId, setLoginMfaFactorId] = useState<string | null>(null);
   const [loginMfaCheckDone, setLoginMfaCheckDone] = useState(false);
+  const [profileFetchStalled, setProfileFetchStalled] = useState(false);
+  const [lastAuthMethod] = useState(() => getLastAuthMethod());
 
   const showTimeoutBanner = state?.timeout || params.get('timeout') === '1';
   const mfaRequiredFromQuery = params.get('mfa') === 'required';
@@ -125,6 +123,22 @@ const AuthPage: React.FC = () => {
     };
   }, [user, session, profile, initialized, navigate, state]);
 
+  // プロフィール取得が返ってこないと「リダイレクトします...」のまま固まるため、手動の逃げ道を出す
+  useEffect(() => {
+    if (!user || !session || profile || isPasswordRecoveryActive()) {
+      setProfileFetchStalled(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setProfileFetchStalled(true), 8000);
+    return () => window.clearTimeout(timer);
+  }, [user, session, profile]);
+
+  const retryProfileFetch = useCallback(() => {
+    if (!user) return;
+    setProfileFetchStalled(false);
+    void useAuthStore.getState().fetchProfile(user.id);
+  }, [user]);
+
   const completeLoginAfterMfa = useCallback(() => {
     if (!profile) return;
     const from = state?.from?.pathname || '/';
@@ -138,7 +152,6 @@ const AuthPage: React.FC = () => {
     setError(null);
     setSuccess(null);
     setPendingEmailKind(null);
-    setVerificationLink(null);
   };
 
   const toggleForgotPassword = () => {
@@ -147,30 +160,6 @@ const AuthPage: React.FC = () => {
     setError(null);
     setSuccess(null);
   };
-
-  const handleVerificationBypass = useCallback(async () => {
-    if (!email) {
-      setError('メールアドレスが指定されていません');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const result = await bypassEmailVerification(email);
-      setLoading(false);
-
-      if (result.success && result.verificationLink) {
-        setVerificationLink(result.verificationLink);
-        setSuccess('開発環境の検証リンクが生成されました。下記リンクをクリックするか、コンソールに表示されたリンクを使用してください。');
-      } else {
-        setError(`検証リンクの生成に失敗しました: ${result.error?.message || '不明なエラー'}`);
-      }
-    } catch (err: unknown) {
-      setLoading(false);
-      const appError = toAppError(err);
-      setError(`検証バイパス中にエラーが発生しました: ${appError.message || '不明なエラー'}`);
-    }
-  }, [email, setLoading]);
 
   const handleLoginSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,7 +188,6 @@ const AuthPage: React.FC = () => {
     setError(null);
     setSuccess(null);
     setPendingEmailKind(null);
-    setVerificationLink(null);
 
     if (!email || !password || !username) {
       setError('すべての必須項目を入力してください');
@@ -319,34 +307,6 @@ const AuthPage: React.FC = () => {
           <EmailDeliveryHint showSearchHint={isPasswordReset} />
         </div>
 
-        {!isMagicLink && isDevelopment && (
-          <div className="mt-4">
-            <Button
-              variant="brand"
-              size="md"
-              onClick={handleVerificationBypass}
-              disabled={loading}
-              className="w-full mb-3"
-            >
-              {loading ? '処理中...' : '開発環境: 検証リンクを生成'}
-            </Button>
-
-            {verificationLink && (
-              <div className="mt-2 p-3 bg-brand-primary/10 border border-brand-primary/30 text-brand-primary-light rounded text-sm">
-                <p className="mb-2 font-bold">開発環境検証リンク:</p>
-                <a
-                  href={verificationLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-brand-primary underline break-all hover:text-brand-primary-light"
-                >
-                  {verificationLink}
-                </a>
-              </div>
-            )}
-          </div>
-        )}
-
         <div className="mt-4 text-center">
           <AuthTextLink onClick={toggleForm}>ログインページに戻る</AuthTextLink>
         </div>
@@ -395,6 +355,25 @@ const AuthPage: React.FC = () => {
       )}
       {error && <AuthAlert variant="error">{error}</AuthAlert>}
       {success && <AuthAlert variant="success">{success}</AuthAlert>}
+      {profileFetchStalled && (
+        <AuthAlert variant="timeout">
+          <p className="mb-2">
+            ログインは完了していますが、プロフィールの読み込みが終わりません。
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <AuthTextLink onClick={retryProfileFetch}>再読み込み</AuthTextLink>
+            <AuthTextLink onClick={() => void useAuthStore.getState().signOut()}>
+              ログアウトしてやり直す
+            </AuthTextLink>
+          </div>
+        </AuthAlert>
+      )}
+
+      {isLogin && lastAuthMethod && (
+        <p className="mb-4 text-center text-xs text-[var(--text-muted)]">
+          前回は「{describeLastAuthMethod(lastAuthMethod)}」でログインしました
+        </p>
+      )}
 
       <div className="mb-4">
         <GoogleSignInButton onError={setError} />

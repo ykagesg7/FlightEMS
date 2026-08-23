@@ -1,5 +1,6 @@
 import supabase from '../utils/supabase';
 import { useAuthStore } from '../stores/authStore';
+import { clearLoginMfaCache } from './mfaAuth';
 import {
   clearPasswordRecoveryPending,
   isPasswordRecoveryActive,
@@ -23,6 +24,7 @@ export function initAuthListener(): void {
     if (event === 'SIGNED_OUT') {
       store.setProfile(null);
       clearPasswordRecoveryPending();
+      clearLoginMfaCache();
       return;
     }
 
@@ -30,18 +32,25 @@ export function initAuthListener(): void {
       markPasswordRecoveryPending();
     }
 
-    if (event === 'SIGNED_IN' && isPasswordRecoveryActive()) {
-      markPasswordRecoveryPending();
+    const user = session?.user;
+    if (!user) {
+      return;
     }
 
-    if (session?.user) {
-      if (isPasswordRecoveryActive()) {
-        void store.fetchProfile(session.user.id);
-      } else if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-        void store.ensureProfileAfterOAuth(session.user);
-      } else {
-        void store.fetchProfile(session.user.id);
-      }
+    if (isPasswordRecoveryActive()) {
+      void store.fetchProfile(user.id);
+      return;
+    }
+
+    if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+      clearLoginMfaCache();
+      void store.ensureProfileAfterOAuth(user);
+      return;
+    }
+
+    // INITIAL_SESSION / TOKEN_REFRESHED: 同じユーザーのプロフィールを持っていれば取り直さない
+    if (store.profile?.id !== user.id) {
+      void store.fetchProfile(user.id);
     }
   });
 }

@@ -8,7 +8,11 @@ import { toAppError } from '../../types/error';
 import { AuthAlert } from './components/AuthAlert';
 import { AuthInput } from './components/AuthInput';
 import { AuthLayout } from './components/AuthLayout';
+import { AuthTextLink } from './components/AuthTextLink';
 import { useAuthCallback } from './hooks/useAuthCallback';
+
+/** リンク検証がこの時間内に終わらなければ、再送・中断の導線を出す */
+const LINK_VERIFY_TIMEOUT_MS = 8000;
 
 const PasswordRecoveryPage: React.FC = () => {
   const loading = useAuthStore((state) => state.loading);
@@ -20,6 +24,7 @@ const PasswordRecoveryPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [linkVerifyTimedOut, setLinkVerifyTimedOut] = useState(false);
 
   useAuthCallback({
     onError: (message) => setError(message),
@@ -30,6 +35,26 @@ const PasswordRecoveryPage: React.FC = () => {
       navigate('/auth?mode=reset', { replace: true });
     }
   }, [navigate, session]);
+
+  useEffect(() => {
+    if (session) {
+      setLinkVerifyTimedOut(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setLinkVerifyTimedOut(true), LINK_VERIFY_TIMEOUT_MS);
+    return () => window.clearTimeout(timer);
+  }, [session]);
+
+  /** リセットをやめて通常のログインに戻る（フラグを残すとログイン画面に入れない） */
+  const cancelRecovery = useCallback(() => {
+    clearPasswordRecoveryPending();
+    navigate('/auth', { replace: true });
+  }, [navigate]);
+
+  const requestNewLink = useCallback(() => {
+    clearPasswordRecoveryPending();
+    navigate('/auth?mode=reset', { replace: true });
+  }, [navigate]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,12 +133,23 @@ const PasswordRecoveryPage: React.FC = () => {
           {loading ? '更新中...' : 'パスワードを保存'}
         </Button>
 
-        {!session && !loading && (
+        {!session && !loading && !linkVerifyTimedOut && (
           <p className="mt-4 text-sm text-center text-yellow-300">
             リンクを検証しています。表示が変わらない場合は、メールのリンクを再度開いてください。
           </p>
         )}
+
+        {!session && !loading && linkVerifyTimedOut && (
+          <AuthAlert variant="timeout" className="mt-4">
+            リンクを検証できませんでした。有効期限（既定 1 時間）が切れているか、リンクが一度使用済みの可能性があります。
+          </AuthAlert>
+        )}
       </form>
+
+      <div className="mt-4 flex flex-wrap justify-center gap-4 text-sm text-[var(--text-muted)]">
+        <AuthTextLink onClick={requestNewLink}>リセットメールを再送する</AuthTextLink>
+        <AuthTextLink onClick={cancelRecovery}>リセットをやめてログインする</AuthTextLink>
+      </div>
     </AuthLayout>
   );
 };

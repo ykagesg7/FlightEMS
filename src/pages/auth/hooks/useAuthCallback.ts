@@ -1,7 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAuthCallbackType } from '../../../auth/authRedirectUrl';
-import { markPasswordRecoveryPending } from '../../../auth/passwordRecovery';
+import { rememberLastAuthMethod } from '../../../auth/lastAuthMethod';
+import {
+  clearPasswordRecoveryPending,
+  markPasswordRecoveryPending,
+} from '../../../auth/passwordRecovery';
 import supabase from '../../../utils/supabase';
 import { useAuthStore } from '../../../stores/authStore';
 
@@ -16,6 +20,19 @@ function hasAuthCallbackParams(): boolean {
   if (hash.includes('access_token') || hash.includes('error=')) return true;
   const params = new URLSearchParams(search);
   return params.has('code') || params.has('error') || params.has('error_description');
+}
+
+/** implicit flow ではエラーもハッシュ側に載る（期限切れリンク等） */
+function readCallbackError(): string | null {
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const searchParams = new URLSearchParams(window.location.search);
+  const raw =
+    searchParams.get('error_description')
+    ?? searchParams.get('error')
+    ?? hashParams.get('error_description')
+    ?? hashParams.get('error');
+  if (!raw) return null;
+  return decodeURIComponent(raw.replace(/\+/g, ' '));
 }
 
 function cleanAuthCallbackUrl(): void {
@@ -55,20 +72,22 @@ export function useAuthCallback({ onError, onSessionReady }: UseAuthCallbackOpti
 
     const completeCallback = async () => {
       try {
-        const params = new URLSearchParams(window.location.search);
-        const errorDescription = params.get('error_description') ?? params.get('error');
-        if (errorDescription) {
-          onErrorRef.current?.(decodeURIComponent(errorDescription.replace(/\+/g, ' ')));
+        // type が確定したこの時点でリカバリー状態を決め切る（推量で持ち越さない）
+        const isPasswordRecovery = getAuthCallbackType() === 'recovery';
+        if (isPasswordRecovery) {
+          markPasswordRecoveryPending();
+        } else {
+          clearPasswordRecoveryPending();
+        }
+
+        const callbackError = readCallbackError();
+        if (callbackError) {
+          onErrorRef.current?.(callbackError);
           cleanAuthCallbackUrl();
           return;
         }
 
-        const isPasswordRecovery = getAuthCallbackType() === 'recovery';
         const store = useAuthStore.getState();
-        if (isPasswordRecovery) {
-          markPasswordRecoveryPending();
-        }
-
         const { data, error } = await supabase.auth.getSession();
         if (cancelled) return;
 
@@ -85,8 +104,11 @@ export function useAuthCallback({ onError, onSessionReady }: UseAuthCallbackOpti
         store.setUser(user);
 
         if (user && !isPasswordRecovery) {
+          // パスワードログインはこのコールバックを通らないので、provider で判別できる
+          rememberLastAuthMethod(
+            user.app_metadata?.provider === 'google' ? 'google' : 'magic-link',
+          );
           await store.ensureProfileAfterOAuth(user);
-          await store.fetchProfile(user.id);
           onSessionReadyRef.current?.();
         } else if (user && isPasswordRecovery) {
           await store.fetchProfile(user.id);
