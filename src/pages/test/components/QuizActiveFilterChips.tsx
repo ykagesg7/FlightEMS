@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TestHubState } from '../testHubFilters';
+import { getDefaultQuestionCountForTab, type TestHubState } from '../testHubFilters';
 
 interface QuizActiveFilterChipsProps {
   state: TestHubState;
@@ -29,7 +29,7 @@ export const QuizActiveFilterChips: React.FC<QuizActiveFilterChipsProps> = ({
   if (state.sub !== 'all') {
     chips.push({ key: 'sub', label: `サブ: ${state.sub}`, onClear: onClearSub });
   }
-  if (state.count !== 10) {
+  if (state.count !== getDefaultQuestionCountForTab(state.tab)) {
     chips.push({ key: 'count', label: `${state.count}問`, onClear: onClearCount });
   }
   if (state.sort === 'syllabus') {

@@ -8,6 +8,26 @@ export type TestHubMode = 'practice' | 'exam' | 'review';
 export const PLACEHOLDER_SUBJECT = '__placeholder__';
 export const ALL_SUBJECT_VALUE = 'all';
 export const DIAGNOSTIC_DEFAULT_COUNT = 10;
+/** Action2 A2-a: subject tab default (short set for completion rate experiment). */
+export const SUBJECT_DEFAULT_COUNT = 5;
+
+export function getDefaultQuestionCountForTab(tab: TestHubTab): number {
+  return tab === 'subject' ? SUBJECT_DEFAULT_COUNT : DIAGNOSTIC_DEFAULT_COUNT;
+}
+
+/** Subject-tab count picker: 5 first, then 10, 15, … up to pool size. */
+export function buildSubjectQuestionCountOptions(maxCount: number): number[] {
+  if (maxCount <= 0) return [];
+  if (maxCount < SUBJECT_DEFAULT_COUNT) return [maxCount];
+  const options: number[] = [SUBJECT_DEFAULT_COUNT];
+  for (let i = 10; i <= maxCount; i += 5) {
+    options.push(i);
+  }
+  if (options[options.length - 1] !== maxCount) {
+    options.push(maxCount);
+  }
+  return options;
+}
 
 export interface TestHubState {
   tab: TestHubTab;
@@ -104,8 +124,11 @@ export function parseTestHubSearchParams(params: URLSearchParams): TestHubState 
     visibleTabs
   );
 
-  const countRaw = Number(params.get('count') ?? legacy.count ?? DIAGNOSTIC_DEFAULT_COUNT);
-  const count = Number.isFinite(countRaw) && countRaw > 0 ? countRaw : DIAGNOSTIC_DEFAULT_COUNT;
+  const countRaw = Number(
+    params.get('count') ?? legacy.count ?? getDefaultQuestionCountForTab(tab),
+  );
+  const tabDefaultCount = getDefaultQuestionCountForTab(tab);
+  const count = Number.isFinite(countRaw) && countRaw > 0 ? countRaw : tabDefaultCount;
 
   let mode: TestHubMode =
     legacy.mode ??
@@ -142,8 +165,13 @@ export function applyPartialTestHubState(
   } else if (partial.tab === 'diagnostic') {
     next.mode = 'practice';
     next.subject = PLACEHOLDER_SUBJECT;
-  } else if (partial.tab === 'subject' && next.subject === PLACEHOLDER_SUBJECT) {
-    next.mode = next.mode === 'review' ? 'practice' : next.mode;
+  } else if (partial.tab === 'subject') {
+    if (partial.count === undefined && state.tab !== 'subject') {
+      next.count = SUBJECT_DEFAULT_COUNT;
+    }
+    if (next.subject === PLACEHOLDER_SUBJECT) {
+      next.mode = next.mode === 'review' ? 'practice' : next.mode;
+    }
   }
   return next;
 }
@@ -169,7 +197,9 @@ export function buildTestHubSearchParams(state: TestHubState): URLSearchParams {
   }
 
   if (state.sub !== ALL_SUBJECT_VALUE) params.set('sub', state.sub);
-  if (state.count !== DIAGNOSTIC_DEFAULT_COUNT) params.set('count', String(state.count));
+  if (state.count !== getDefaultQuestionCountForTab(state.tab)) {
+    params.set('count', String(state.count));
+  }
 
   const effectiveMode =
     state.tab === 'review' ? 'review' : state.tab === 'diagnostic' ? 'practice' : state.mode;
@@ -196,7 +226,7 @@ export function countActiveTestFilters(state: TestHubState): number {
   if (state.exam !== 'all') n += 1;
   if (state.mode === 'exam') n += 1;
   if (state.sub !== ALL_SUBJECT_VALUE) n += 1;
-  if (state.count !== DIAGNOSTIC_DEFAULT_COUNT) n += 1;
+  if (state.count !== getDefaultQuestionCountForTab(state.tab)) n += 1;
   if (state.sort !== 'priority') n += 1;
   return n;
 }
@@ -235,12 +265,12 @@ export function buildReviewHref(count = DIAGNOSTIC_DEFAULT_COUNT): string {
   return `/test?${params.toString()}`;
 }
 
-export function buildWeakSubjectHref(subject: string, count = DIAGNOSTIC_DEFAULT_COUNT): string {
+export function buildWeakSubjectHref(subject: string, count = SUBJECT_DEFAULT_COUNT): string {
   const params = new URLSearchParams();
   params.set('tab', 'subject');
   params.set('subject', subject);
   params.set('sub', ALL_SUBJECT_VALUE);
-  params.set('count', String(count));
   params.set('mode', 'practice');
+  if (count !== SUBJECT_DEFAULT_COUNT) params.set('count', String(count));
   return `/test?${params.toString()}`;
 }

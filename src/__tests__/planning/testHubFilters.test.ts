@@ -6,17 +6,20 @@ import {
   buildReviewHref,
   applyPartialTestHubState,
   areTestHubSearchParamsEqual,
+  buildSubjectQuestionCountOptions,
   buildTestHubSearchParams,
   buildWeakSubjectHref,
   countActiveTestFilters,
   DEFAULT_TEST_HUB_STATE,
   DIAGNOSTIC_DEFAULT_COUNT,
+  getDefaultQuestionCountForTab,
   getVisibleTestHubTabs,
   hubStateToFetchMode,
   isTestFiltersLocked,
   parseLegacyTestHubParams,
   parseTestHubSearchParams,
   PLACEHOLDER_SUBJECT,
+  SUBJECT_DEFAULT_COUNT,
 } from '../../pages/test/testHubFilters';
 
 describe('testHubFilters', () => {
@@ -25,6 +28,27 @@ describe('testHubFilters', () => {
     expect(state.tab).toBe('diagnostic');
     expect(state.count).toBe(DIAGNOSTIC_DEFAULT_COUNT);
     expect(state.mode).toBe('practice');
+  });
+
+  it('defaults subject tab to 5 questions (A2-a)', () => {
+    const state = parseTestHubSearchParams(
+      new URLSearchParams('tab=subject&subject=航空工学'),
+    );
+    expect(state.tab).toBe('subject');
+    expect(state.count).toBe(SUBJECT_DEFAULT_COUNT);
+    expect(getDefaultQuestionCountForTab('subject')).toBe(SUBJECT_DEFAULT_COUNT);
+  });
+
+  it('applyPartialTestHubState switches subject tab to default 5 questions', () => {
+    const next = applyPartialTestHubState(DEFAULT_TEST_HUB_STATE, { tab: 'subject' });
+    expect(next.tab).toBe('subject');
+    expect(next.count).toBe(SUBJECT_DEFAULT_COUNT);
+  });
+
+  it('buildSubjectQuestionCountOptions puts 5 first then 10-step increments', () => {
+    expect(buildSubjectQuestionCountOptions(3)).toEqual([3]);
+    expect(buildSubjectQuestionCountOptions(7)).toEqual([5, 7]);
+    expect(buildSubjectQuestionCountOptions(12)).toEqual([5, 10, 12]);
   });
 
   it('maps legacy mode=review to review tab', () => {
@@ -135,10 +159,12 @@ describe('testHubFilters', () => {
     expect(href).toContain('mode=review');
   });
 
-  it('buildWeakSubjectHref sets subject tab', () => {
+  it('buildWeakSubjectHref sets subject tab with default 5 questions', () => {
     const href = buildWeakSubjectHref('航空気象');
     expect(href).toContain('tab=subject');
     expect(href).toContain('subject=');
+    expect(href).not.toContain('count=');
+    expect(buildWeakSubjectHref('航空気象', 15)).toContain('count=15');
   });
 
   it('parseTestHubSearchParams handles exam=ppl', () => {

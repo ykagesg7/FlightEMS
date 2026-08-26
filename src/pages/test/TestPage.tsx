@@ -41,6 +41,7 @@ import {
   areTestHubSearchParamsEqual,
   buildTestHubSearchParams,
   countActiveTestFilters,
+  getDefaultQuestionCountForTab,
   getVisibleTestHubTabs,
   hubStateToFetchMode,
   isTestFiltersLocked,
@@ -513,7 +514,7 @@ const TestPage: React.FC = () => {
         onClearExam={() => updateHubState({ exam: 'all' })}
         onClearMode={() => updateHubState({ mode: 'practice' })}
         onClearSub={() => updateHubState({ sub: ALL_OPTION_VALUE })}
-        onClearCount={() => updateHubState({ count: 10 })}
+        onClearCount={() => updateHubState({ count: getDefaultQuestionCountForTab(hubState.tab) })}
         onClearSort={() => updateHubState({ sort: 'priority' })}
       />
 
