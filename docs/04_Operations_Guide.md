@@ -95,7 +95,7 @@
 
 ### **Articles 日次公開・週次案内メール**
 
-- **方針**: 週末に MDX をまとめてデプロイ。公開は **JST の `publishedAt`（MDX）+ `learning_contents.is_published`（DB）** で日次制御。毎日の git コミットは不要。既定ペースは **週 3 本（月・水・金）**。ドリップは CP が先（W34: 1-1〜1-3／8/17・19・21。W35: 2-1〜2-3／8/24・26・28）。FMT 1-4 以降はストックしてから schedule に載せる（[FMT 正本](content_outlines/FMT_Formation_2026/README.md)）。
+- **方針**: 週末に MDX をまとめてデプロイ。公開は **JST の `publishedAt`（MDX）+ `learning_contents.is_published`（DB）** で日次制御。毎日の git コミットは不要。既定ペースは **週 3 本（月・水・金）**。ドリップは CP が先（W34: 1-1〜1-3／8/17・19・21。W35: 2-1〜2-3／8/24・26・28。W36: 2-4〜2-6／8/31・9/2・9/4）。FMT 1-4 以降はストックしてから schedule に載せる（[FMT 正本](content_outlines/FMT_Formation_2026/README.md)）。
 - **日次公開同期**: Vercel Cron `10 15 * * *`（UTC）= **毎日 00:10 JST** → [`api/cron.ts`](../api/cron.ts) `?job=article-publish-sync`（URL `/api/cron/article-publish-sync` は rewrite）  
   スケジュール正本: [`api/_lib/articlePublishSchedule.ts`](../api/_lib/articlePublishSchedule.ts)
 - **週次案内メール**: [`api/cron.ts`](../api/cron.ts) `?job=article-weekly-digest`（URL `/api/cron/article-weekly-digest` は rewrite）  

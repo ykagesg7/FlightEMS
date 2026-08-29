@@ -7,7 +7,7 @@ VALUES (
   '【操縦】第9話：向きを返せ ～PitchbackとSliceback～',
   '操縦',
   '曲技飛行',
-  '向きを返す。Pitchbackはバンク<90°、Slicebackは>90°。Immelmann/Split-Sではない。mechanicsに集中。数字はT-38枠。',
+  'Pitchbackはバンク<90°、Slicebackは>90°。Immelmann/Split-Sではない。エルロン中立で引く。数字はT-38枠。学習記事であり実機手順ではない。',
   619,
   NULL,
   'text',

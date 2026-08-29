@@ -3,7 +3,7 @@
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
 **呼称**: 公開面は **CP**（空自）。USAF 教範の章名 Contact は出典参照に残す。  
 **位置**: 読む順は **CP → FMT**（単機の飛行Envelopeのあと編隊）。FMT Season 2（BFM 幾何）はそのさらに後。  
-**既存公開**: **W34 ドリップ** 1-1 月 8/17、1-2 水 8/19、1-3 金 8/21。**W35 ドリップ**: 2-1 月 8/24、2-2 水 8/26、2-3 金 8/28。`is_published` は cron が schedule の日付で反転。当日までは `false`。  
+**既存公開**: **W34 ドリップ** 1-1 月 8/17、1-2 水 8/19、1-3 金 8/21。**W35 ドリップ**: 2-1 月 8/24、2-2 水 8/26、2-3 金 8/28。**W36 ドリップ**: 2-4 月 8/31、2-5 水 9/2、2-6 金 9/4。`is_published` は cron が schedule の日付で反転。当日までは `false`。  
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
 **MDX 規則**: [`.cursor/rules/mdx-article-guide.mdc`](../../../.cursor/rules/mdx-article-guide.mdc)  
 **登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **曲技飛行**、`series`: **USAF-Contact-Phase**  
@@ -28,7 +28,7 @@ Heat-to-Guns、CAS 9-Line、FMT の HCA / CZ は載せない。Pitchback / Slice
 
 FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通過後だけ MDX。ストック登録。**全話を一括起票しない。**
 
-**Season 1（1-1〜1-3）は MDX 済（W34 月水金）。** Season 2 の 2-1〜2-3 は精緻化済（W35 月水金）。2-4 以降〜Season 5 はストック。CP シリーズ完（最終話 5-9 Chandelle）。次の CP ブリーフは作らない。
+**Season 1（1-1〜1-3）は MDX 済（W34 月水金）。** Season 2 の 2-1〜2-6 は精緻化済（W35: 2-1〜2-3、W36: 2-4〜2-6）。Season 3 以降はストック。CP シリーズ完（最終話 5-9 Chandelle）。次の CP ブリーフは作らない。
 
 ---
 
@@ -50,7 +50,7 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 
 ### 公開本文の契約（2026-08-22〜・2-1 精緻化から）
 
-精緻化済みは **2-1・2-2・2-3**。以降の CP もこれに従う。エージェントは MDX 規則と本節の両方を見る。
+精緻化済みは **2-1〜2-6**。以降の CP もこれに従う。エージェントは MDX 規則と本節の両方を見る。
 
 - **実施禁止:** 学習目標直下の「立場の明確化」に、AFMAN 非代替に加えて次を書く。「本記事は飛行規程（AFM/POH）・教官ブリーフィング・実機手順の代替ではない。記載の操作を、有資格教官と当該機の承認なしに実施してはならない。」
 - **数字:** 許可表の値は **T-38 教範枠**と明示する。「T-4 は自機に読み替え」「米空軍もまったく同じ物理」で手順を移植するな。自機値は飛行規程と教官。
@@ -85,9 +85,9 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 | 2-1 | `CP-2-1_DeepStall` | `cp-2-1-deep-stall` | 1 | Deep stall | **5.7–5.8** | **精緻化済・W35 月 8/24** |
 | 2-2 | `CP-2-2_AcceleratedStall` | `cp-2-2-accelerated-stall` | 2 | Accelerated stall | **5.14** | **精緻化済・W35 水 8/26** |
 | 2-3 | `CP-2-3_RollAuthority` | `cp-2-3-roll-authority` | 3 | Rudder / aileron / reversal | **5.10, 5.12, 5.15** | **精緻化済・W35 金 8/28** |
-| 2-4 | `CP-2-4_Unload` | `cp-2-4-unload` | 4 | Acceleration / stab demo | **5.13, 5.18** | **ストック** |
-| 2-5 | `CP-2-5_TrimFailure` | `cp-2-5-trim-failure` | 5 | Simulated trim failure | **5.9** | **ストック** |
-| 2-6 | `CP-2-6_PitchbackSliceback` | `cp-2-6-pitchback-sliceback` | 6 | Pitchback / Sliceback（handling） | **5.16–5.17**。Immelmann / Split-S ではない | **ストック** |
+| 2-4 | `CP-2-4_Unload` | `cp-2-4-unload` | 4 | Acceleration / stab demo | **5.13, 5.18** | **精緻化済・W36 月 8/31** |
+| 2-5 | `CP-2-5_TrimFailure` | `cp-2-5-trim-failure` | 5 | Simulated trim failure | **5.9** | **精緻化済・W36 水 9/2** |
+| 2-6 | `CP-2-6_PitchbackSliceback` | `cp-2-6-pitchback-sliceback` | 6 | Pitchback / Sliceback（handling） | **5.16–5.17**。Immelmann / Split-S ではない | **精緻化済・W36 金 9/4** |
 
 `order_index`: **614–619**。
 
@@ -336,3 +336,4 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 | 2026-08-21 | `CP-5-8` ストック登録（`order_index` 631、`is_published: false`）。5-8 ブリーフ削除。5-9 Chandelle ブリーフ起票。許可数字（400 KIAS / 60° bank / ≈200 KIAS）を本表へ。 |
 | 2026-08-21 | `CP-5-9` ストック登録（`order_index` 632、`is_published: false`）。5-9 ブリーフ削除。CP シリーズ完。次の CP ブリーフは作らない。 |
 | 2026-08-22 | 「公開本文の契約」を 1 話の型へ。2-1・2-2 精緻化。2-2 はオーバーシュートより失速に入れない。以降の CP もこれに従う。 |
+| 2026-08-30 | 2-4〜2-6 精緻化。W36 ドリップ（8/31・9/2・9/4）。Season 2 完結。 |

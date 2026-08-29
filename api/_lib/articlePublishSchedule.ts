@@ -171,6 +171,35 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
     ],
   },
+  '2026-W36': {
+    isoWeek: '2026-W36',
+    seriesTitle: 'CP（単機）',
+    intro:
+      '来週は Season 2 の締め。月・水・金の3本。unload、トリム、向きを返す。図形の前の feel たい。',
+    articles: [
+      {
+        id: 'CP-2-4_Unload',
+        publishDate: '2026-08-31',
+        title: '第7話：抜いて増やせ ～Unloadと加速～',
+        slug: '/articles/cp-2-4-unload',
+        hook: '加速したければ G を抜け。サイドブレーキは引くな。',
+      },
+      {
+        id: 'CP-2-5_TrimFailure',
+        publishDate: '2026-09-02',
+        title: '第8話：手放すな、retrimしろ ～模擬トリム故障～',
+        slug: '/articles/cp-2-5-trim-failure',
+        hook: '手放すな。終わったら retrim。',
+      },
+      {
+        id: 'CP-2-6_PitchbackSliceback',
+        publishDate: '2026-09-04',
+        title: '第9話：向きを返せ ～PitchbackとSliceback～',
+        slug: '/articles/cp-2-6-pitchback-sliceback',
+        hook: '向きは坂で返せ。Immelmann じゃない。',
+      },
+    ],
+  },
 };
 
 export function getDigestForIsoWeek(isoWeek: string): WeeklyArticleDigest | null {
