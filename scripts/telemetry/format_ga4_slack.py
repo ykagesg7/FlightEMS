@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 CHANNEL_ID = "C0BQ5R19QDV"
+SLACK_WORKSPACE = "flightacademyhq"
 MENTION_RE = re.compile(r"(?<![A-Za-z0-9_])@|</?@[A-Z0-9]+>")
 
 
@@ -54,7 +55,20 @@ def _sanitize(text: str) -> str:
     return text
 
 
-def format_slack_mrkdwn(report: dict[str, Any], run_url: str = "") -> str:
+def slack_permalink(channel_id: str, message_ts: str, workspace: str = SLACK_WORKSPACE) -> str:
+    ts_for_url = message_ts.replace(".", "")
+    return f"https://{workspace}.slack.com/archives/{channel_id}/p{ts_for_url}"
+
+
+def thread_reply_hint(permalink: str) -> str:
+    return f"スレッド: <{permalink}|この投稿へ返信（週次レビュー・承認）>"
+
+
+def format_slack_mrkdwn(
+    report: dict[str, Any],
+    run_url: str = "",
+    thread_permalink: str = "",
+) -> str:
     week = str(report.get("week") or "unknown")
     start = str(report.get("startDate") or "?")
     end = str(report.get("endDate") or "?")
@@ -105,6 +119,8 @@ def format_slack_mrkdwn(report: dict[str, Any], run_url: str = "") -> str:
         lines.append("イベント: なし")
     if run_url:
         lines.append(f"Actions: <{run_url}|実行ログ>")
+    if thread_permalink:
+        lines.append(thread_reply_hint(thread_permalink))
     lines.append("Sentry: 2a では未取得。週次レビューで追記する。")
     lines.append(
         "正本転記: 火曜レビューの当該 ISO 週のみ。この投稿は承認コマンドではない。"
@@ -133,17 +149,16 @@ def find_report_json(root: Path) -> Path:
     return matches[0]
 
 
-def post_slack(text: str) -> None:
+def post_slack(text: str) -> str | None:
+    """Post facts. Returns message_ts when using chat.postMessage."""
     webhook = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
     token = os.environ.get("SLACK_BOT_TOKEN", "").strip()
     channel = os.environ.get("SLACK_CHANNEL_ID", CHANNEL_ID).strip() or CHANNEL_ID
+    workspace = os.environ.get("SLACK_WORKSPACE", SLACK_WORKSPACE).strip() or SLACK_WORKSPACE
     payload: dict[str, Any]
     url: str
     headers = {"Content-Type": "application/json; charset=utf-8"}
-    if webhook:
-        url = webhook
-        payload = {"text": text, "unfurl_links": False, "unfurl_media": False}
-    elif token:
+    if token:
         url = "https://slack.com/api/chat.postMessage"
         headers["Authorization"] = f"Bearer {token}"
         payload = {
@@ -152,6 +167,9 @@ def post_slack(text: str) -> None:
             "unfurl_links": False,
             "unfurl_media": False,
         }
+    elif webhook:
+        url = webhook
+        payload = {"text": text, "unfurl_links": False, "unfurl_media": False}
     else:
         raise RuntimeError("set SLACK_WEBHOOK_URL or SLACK_BOT_TOKEN")
 
@@ -171,10 +189,43 @@ def post_slack(text: str) -> None:
     if webhook:
         if body.strip() != "ok":
             raise RuntimeError(f"webhook response: {body[:200]}")
-        return
+        return None
+
     parsed = json.loads(body)
     if not parsed.get("ok"):
         raise RuntimeError(f"chat.postMessage: {parsed.get('error')}")
+    message_ts = str(parsed.get("ts") or "")
+    if not message_ts:
+        return None
+
+    permalink = slack_permalink(channel, message_ts, workspace=workspace)
+    updated = text + "\n" + thread_reply_hint(permalink)
+    update_payload = {
+        "channel": channel,
+        "ts": message_ts,
+        "text": updated,
+        "unfurl_links": False,
+        "unfurl_media": False,
+    }
+    update_req = urllib.request.Request(
+        "https://slack.com/api/chat.update",
+        data=json.dumps(update_payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": f"Bearer {token}",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(update_req, timeout=30) as resp:
+            update_body = resp.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", "replace")[:400]
+        raise RuntimeError(f"Slack update HTTP {exc.code}: {detail}") from exc
+    update_parsed = json.loads(update_body)
+    if not update_parsed.get("ok"):
+        raise RuntimeError(f"chat.update: {update_parsed.get('error')}")
+    return message_ts
 
 
 def self_test() -> None:
@@ -198,6 +249,14 @@ def self_test() -> None:
     assert "telemetry-notify 2026-W33" in text
     assert "週次テレメトリ" in text
     assert "メンションしない" in text
+    link = slack_permalink(CHANNEL_ID, "1787621958.649089")
+    assert link.endswith("/p1787621958649089")
+    with_link = format_slack_mrkdwn(
+        sample,
+        run_url="https://example.invalid/run",
+        thread_permalink=link,
+    )
+    assert "この投稿へ返信" in with_link
     assert "@not-a-mention" not in text
     assert "(at)not-a-mention" in text
     assert "<@" not in text
@@ -212,6 +271,7 @@ def main() -> int:
     parser.add_argument("--in", dest="infile", help="ga4-iso-week.json")
     parser.add_argument("--dir", help="Directory to search for ga4-iso-week.json")
     parser.add_argument("--run-url", default="", help="GitHub Actions run URL")
+    parser.add_argument("--thread-permalink", default="", help="Optional Slack thread permalink")
     parser.add_argument("--post", action="store_true")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
@@ -228,7 +288,11 @@ def main() -> int:
         raise SystemExit("need --in, --dir, or --self-test")
 
     report = json.loads(path.read_text(encoding="utf-8"))
-    text = format_slack_mrkdwn(report, run_url=args.run_url)
+    text = format_slack_mrkdwn(
+        report,
+        run_url=args.run_url,
+        thread_permalink=args.thread_permalink,
+    )
     if args.post:
         post_slack(text)
         print("posted", file=sys.stderr)
