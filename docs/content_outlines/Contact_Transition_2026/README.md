@@ -1,4 +1,4 @@
-# CP — 執筆正本（Season 1–5）
+﻿# CP — 執筆正本（Season 1–5）
 
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
 **呼称**: 公開面は **CP**（空自）。USAF 教範の章名 Contact は出典参照に残す。  
@@ -16,8 +16,8 @@
 
 1. Season は Fund **5A / 5B / 5C / 5D / 5E** に一致させる。
 2. 節 **5.1–5.41** は「1 話が所有する / 他話へ折り込む / シリーズ外」のどれか一つ。
-3. 横断知識（エネルギー、unload）は最初に所有した Season が公理を持ち、後続はリンクするだけ。
-4. 1 話 = 公理 1・サイトピクチャ 1。例外は **S5-6** のみ（教程が loop の前後半と定義）。
+3. 横断知識（エネルギー、unload）は最初に所有した Season が原則を持ち、後続はリンクするだけ。
+4. 1 話 = 原則 1・サイトピクチャ 1。例外は **S5-6** のみ（教程が loop の前後半と定義）。
 5. 書く順は **S1 → S2 → S3 → S4 → S5**。S5 を S4 より先に書かない。
 
 Heat-to-Guns、CAS 9-Line、FMT の HCA / CZ は載せない。Pitchback / Sliceback の **mechanics は S2-6**、戦術用法は FMT Season 2。
@@ -34,7 +34,8 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 
 ## 1 話の型
 
-- 公理 1 つ
+- 原則 1 つ（英文 principal。訳は「原理」ではなく **原則**。「公理」禁止）
+- 対気速度は **kt**（例: `300 kt`）。`KIAS` は使わない
 - サイトピクチャ 1 つ
 - **不合格要件**を日本語で 1 つ（読者は原本を見ない。本文・見出し・口頭試問・excerpt に **Area / Fund / Att / Vol.2 のカタログ番号を出すな**。番号は本 README の所有者表だけ）
 - Joe の口頭クイズ 1 つ
@@ -54,7 +55,7 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 
 - **実施禁止:** 学習目標直下の「立場の明確化」に、AFMAN 非代替に加えて次を書く。「本記事は飛行規程（AFM/POH）・教官ブリーフィング・実機手順の代替ではない。記載の操作を、有資格教官と当該機の承認なしに実施してはならない。」
 - **数字:** 許可表の値は **T-38 教範枠**と明示する。「T-4 は自機に読み替え」「米空軍もまったく同じ物理」で手順を移植するな。自機値は飛行規程と教官。
-- **用語切断:** USAF の演示名が民間用語と衝突する話（例: Deep stall）は、公理の直後で別物だと書く。出典なしに T-4／民事機の制限値を足すな。
+- **用語切断:** USAF の演示名が民間用語と衝突する話（例: Deep stall）は、原則の直後で別物だと書く。出典なしに T-4／民事機の制限値を足すな。
 - **2つの回復:** 演習の戻しと、意図しない実戦の回復を分ける。後者は操作を発明せず、「まず迎え角を下げる。その先はその機の手順」。引きを持ったまま出力だけ足すな。
 - **中止:** 「通常の失速回復」の中身を書くな。演習をやめ、当該機の承認手順へ切り替え。高度の床は教官と規程。
 - **口頭試問は今の場面だけ。** 二つの回復の講義は詳細解説へ。話者は `学生：` / `学生（白目）：`。
@@ -182,9 +183,9 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 |------|-----|------|----|
 | Center Radial vs Pie-in-the-Sky | 狭いエリア **20 radials 以下** / 広い **20 radials 以上** | Fund 5.2 | 1-1 |
 | 高度↔速度の目安 | **1,000 ft ≈ 50 kt** | Fund 5.3.2 | 1-2 |
-| working の目安 | 作業空域の中間高度で **300 KIAS** ならほぼ全機動可（T-38） | Fund 5.3.3 | 1-2 |
-| Speed brake | **250 KIAS 以下** 効果 minimal。超えると extend で slight pitch up | Fund 5.4 | 1-3 |
-| G-awareness | **MIL、420–450 KIAS**。最低 **90° @ 4 G**、**180° @ 5 G**。T-4 の合格 G にしない | Fund 5.6 | 1-3 |
+| working の目安 | 作業空域の中間高度で **300 kt** ならほぼ全機動可（T-38） | Fund 5.3.3 | 1-2 |
+| Speed brake | **250 kt 以下** 効果 minimal。超えると extend で slight pitch up | Fund 5.4 | 1-3 |
+| G-awareness | **MIL、420–450 kt**。最低 **90° @ 4 G**、**180° @ 5 G**。T-4 の合格 G にしない | Fund 5.6 | 1-3 |
 | Vol.2 | S1-3 の主は **32 Aircraft Handling**（erratic / control 一時喪失） | Vol.2 Table 3.1 | 1-3 |
 
 ### Season 2
@@ -194,24 +195,24 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 | Handling の性質 | 精密 maneuver ではない。feel が先、specific parameter は後 | Fund 5.7 | 2-1 |
 | 開始条件 | **FL200 以下** level、**80% rpm 以上**（T-38） | Fund 5.8.3 | 2-1 |
 | バフェット / AOA | **0.8** 付近でバフェット増、**1.0** full stall、**1.1** fully developed（T-38） | Fund 5.8.5 | 2-1 |
-| 完成失速 | わずかに **nose-low**、**≈140 KIAS**、VVI **6,000 fpm**（T-38） | Fund 5.8.5 | 2-1 |
+| 完成失速 | わずかに **nose-low**、**≈140 kt**、VVI **6,000 fpm**（T-38） | Fund 5.8.5 | 2-1 |
 | 回復（演習） | パワーそのまま、**back stick relax**。速度復帰後に back stick と必要パワー | Fund 5.8.6 | 2-1 |
 | 意図しない失速 | **パワー増** で高度ロス最小化を検討 | Fund 5.8.2 | 2-1 |
 | 中止 | **bank >90°** または **>60° で安定** → stall recovery | Fund 5.8.7 | 2-1 |
 | Vol.2 | 主は **32 Aircraft Handling**（erratic / control 一時喪失）。29 / 33 は出さない | Vol.2 Table 3.1 | 2-1 |
-| 進入 | **≈300 KIAS**（G と到達時間を減らす。T-38） | Fund 5.14.1 | 2-2 |
-| 開始 | **2–3 G turn**、**MIL**、**≈300 KIAS**（T-38） | Fund 5.14.2 | 2-2 |
+| 進入 | **≈300 kt**（G と到達時間を減らす。T-38） | Fund 5.14.1 | 2-2 |
+| 開始 | **2–3 G turn**、**MIL**、**≈300 kt**（T-38） | Fund 5.14.2 | 2-2 |
 | 最適旋回 | **light buffet の level turn** = T-38 optimum turn | Fund 5.14.2 | 2-2 |
 | 行き過ぎ | bank / back stick を急増 → increased buffet または mild wing rock。turn rate は一瞬増のあと減、速度ロス増 | Fund 5.14.3 | 2-2 |
 | 戻し | 計器なしで useful point 超えを感じ、**back stick relax**、light buffet で turn 継続 | Fund 5.14.4 | 2-2 |
-| Rudder clean | **20° nose-high / 300 KIAS / ≈90% rpm**、light buffet で full rudder はロール。**≈½ G** ではほとんどロールせず。AOA **1.0+** に入るな。gear up **6°** / down **30°**（T-38） | Fund 5.10 | 2-3 |
-| Aileron | **20° nose-high / ≈90% rpm → 150 KIAS**、moderate buffet。同じ舵角で **≈½ G unload** すると roll rate 増。AOA 減で効く（速度に無関係） | Fund 5.12 | 2-3 |
-| Reversal | **350–400 KIAS**、MIL 以上、**≈90° / ≈4 G**。エルロン reversal は速く速度ロス少。ラダーは遅い（top は速度、bottom は高度） | Fund 5.15 | 2-3 |
-| 加速比較 | **250→350 KIAS**：1 G より **≈0 G** が速い。**300→400**：2–3 G のままは遅い、unload すると速い。以降は任意速度・バンクで **≈0 G + MIL 以上**（T-38。MAX は T-4 の正解にしない） | Fund 5.13 | 2-4 |
-| Stab demo | **60° nose-high**、**85% rpm 以上**。**170 KIAS** で **≈½ G**。引いて level を試すと直ちに失速兆候。**175–200 KIAS** で level。常時 **≥½ G**（油系統、T-38） | Fund 5.18 | 2-4 |
-| Trim failure | **FL200 以下**、**300 KIAS 超** で level trim。retrim せず通常の最終進入速度まで減速。**240 KIAS 以下** で **gear & full flaps**（stick force 増）。go-around 模擬は retrim 後に再 trim せず gear/flaps up、**300 KIAS 超** へ（前圧）。演習後は必ず retrim。ATS なら stall recovery と同時 retrim（T-38） | Fund 5.9 | 2-5 |
-| Pitchback | **level 450–500 KIAS**、パワー **550° EGT–MIL**（T-38。EGT は T-4 の正解にしない）。desired bank（**0°超〜90°未満**）→ ailerons neutral → **4–5 G** または light buffet。straight nose track **≈180°**。Immelmann ではない | Fund 5.16 | 2-6 |
-| Sliceback | **200–300 KIAS**、**90%–MIL**。desired bank（**90°超〜180°未満**）→ ailerons neutral → light buffet。straight nose track **≈180°**。進入速度が高いほど底の G。rolling input は asymmetrical over-G。Split-S ではない | Fund 5.17 | 2-6 |
+| Rudder clean | **20° nose-high / 300 kt / ≈90% rpm**、light buffet で full rudder はロール。**≈½ G** ではほとんどロールせず。AOA **1.0+** に入るな。gear up **6°** / down **30°**（T-38） | Fund 5.10 | 2-3 |
+| Aileron | **20° nose-high / ≈90% rpm → 150 kt**、moderate buffet。同じ舵角で **≈½ G unload** すると roll rate 増。AOA 減で効く（速度に無関係） | Fund 5.12 | 2-3 |
+| Reversal | **350–400 kt**、MIL 以上、**≈90° / ≈4 G**。エルロン reversal は速く速度ロス少。ラダーは遅い（top は速度、bottom は高度） | Fund 5.15 | 2-3 |
+| 加速比較 | **250→350 kt**：1 G より **≈0 G** が速い。**300→400**：2–3 G のままは遅い、unload すると速い。以降は任意速度・バンクで **≈0 G + MIL 以上**（T-38。MAX は T-4 の正解にしない） | Fund 5.13 | 2-4 |
+| Stab demo | **60° nose-high**、**85% rpm 以上**。**170 kt** で **≈½ G**。引いて level を試すと直ちに失速兆候。**175–200 kt** で level。常時 **≥½ G**（油系統、T-38） | Fund 5.18 | 2-4 |
+| Trim failure | **FL200 以下**、**300 kt 超** で level trim。retrim せず通常の最終進入速度まで減速。**240 kt 以下** で **gear & full flaps**（stick force 増）。go-around 模擬は retrim 後に再 trim せず gear/flaps up、**300 kt 超** へ（前圧）。演習後は必ず retrim。ATS なら stall recovery と同時 retrim（T-38） | Fund 5.9 | 2-5 |
+| Pitchback | **level 450–500 kt**、パワー **550° EGT–MIL**（T-38。EGT は T-4 の正解にしない）。desired bank（**0°超〜90°未満**）→ ailerons neutral → **4–5 G** または light buffet。straight nose track **≈180°**。Immelmann ではない | Fund 5.16 | 2-6 |
+| Sliceback | **200–300 kt**、**90%–MIL**。desired bank（**90°超〜180°未満**）→ ailerons neutral → light buffet。straight nose track **≈180°**。進入速度が高いほど底の G。rolling input は asymmetrical over-G。Split-S ではない | Fund 5.17 | 2-6 |
 
 ### Season 3
 
@@ -226,7 +227,7 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 
 | 項目 | 値 | 出典 | 話 |
 |------|-----|------|----|
-| Nose-high recovery | 軽く：引きを緩めて slight G。極端：近い地平線へロールして機首を下げる。低速：unload。T-38 **約 230–265 KIAS**（燃料重量による）。足りなければ機首が明らかに地平線以下になるまでロールアウトを遅らせ、浅い降下で加速。パワー増は滑らかに（コンプレッサストール／フレームアウト） | Fund 5.26–5.27 | 4-1 |
+| Nose-high recovery | 軽く：引きを緩めて slight G。極端：近い地平線へロールして機首を下げる。低速：unload。T-38 **約 230–265 kt**（燃料重量による）。足りなければ機首が明らかに地平線以下になるまでロールアウトを遅らせ、浅い降下で加速。パワー増は滑らかに（コンプレッサストール／フレームアウト） | Fund 5.26–5.27 | 4-1 |
 | Nose-low recovery | 最短旋回半径で level または slight climb。近い地平線へすばやくロール。**moderate buffet または desired recovery G**（早い方）。作業空域は通常 **4–5 G**。速度はパワーとスピードブレーキで **約 250–400 kt**（コーナー約 400 kt、T-38）。目標 G で buffet なし → 減速して半径最小化。目標 G 前に buffet → **MIL 以上**を desired G で buffet 消失まで。地上接近は空力／G 限界まで躊躇しない。**S5 の Loop 数字は先出し禁止** | Fund 5.28 | 4-2 |
 
 ### Season 5（表 5.1 / 5.2。各話ブリーフでのみ再掲）
@@ -234,28 +235,28 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 | Maneuver | Proficiency | 空域（表 5.2） | 話 |
 |----------|-------------|---------------|----|
 | Aileron roll | 任意速度 / pitch | — | 5-2 |
-| Lazy Eight | **350 KIAS / 95% rpm** | 前方 2 nm、turn 方向 6 nm、上方 4–6 kft | 5-3 |
-| Barrel Roll | **400 KIAS / 95% rpm** | 前方 3 nm、上方 4–8 kft | 5-4 |
-| Loop | **500 KIAS / MIL** | 前方 1–2 nm、上方 8–10 kft | 5-5 |
-| Split-S | **200 KIAS / MIL** | 前方 1 nm、後方 1 nm、下方 7–10 kft | 5-6 |
-| Immelmann | **500 KIAS / MIL** | 前方 1 nm、上方 8–10 kft | 5-6 |
-| Cuban Eight | **500 KIAS / MIL** | 前方 1 nm、後方 2 nm、上方 8–10 kft | 5-7 |
-| Cloverleaf | **450 KIAS / MIL** | 前方 3 nm、第1 turn 方向 2 nm、反対 3 nm、上方 8–10 kft | 5-8 |
-| Chandelle | **400 KIAS / 95% rpm** | 前方 1 nm、turn 方向 1 nm、上方 6–7 kft | 5-9 |
+| Lazy Eight | **350 kt / 95% rpm** | 前方 2 nm、turn 方向 6 nm、上方 4–6 kft | 5-3 |
+| Barrel Roll | **400 kt / 95% rpm** | 前方 3 nm、上方 4–8 kft | 5-4 |
+| Loop | **500 kt / MIL** | 前方 1–2 nm、上方 8–10 kft | 5-5 |
+| Split-S | **200 kt / MIL** | 前方 1 nm、後方 1 nm、下方 7–10 kft | 5-6 |
+| Immelmann | **500 kt / MIL** | 前方 1 nm、上方 8–10 kft | 5-6 |
+| Cuban Eight | **500 kt / MIL** | 前方 1 nm、後方 2 nm、上方 8–10 kft | 5-7 |
+| Cloverleaf | **450 kt / MIL** | 前方 3 nm、第1 turn 方向 2 nm、反対 3 nm、上方 8–10 kft | 5-8 |
+| Chandelle | **400 kt / 95% rpm** | 前方 1 nm、turn 方向 1 nm、上方 6–7 kft | 5-9 |
 
 垂直面の計画 **≥10,000 ft**、descent からのリード **10° nose-low ごとに 10 kt および/または 500 ft** は **S5-1**（Fund 5.31–5.32）。S1-2 で先出ししない。
 
 Barrel の **30–45° オフセット**、4 チェックポイント（真上 90° bank / inverted 180° / 真下 90° bank / 正立）、**positive G 全行程**、終了速度は symmetry 優先は **S5-4**（Fund 5.35）。
 
-Loop の pull **4.5–5 G**、inverted horizon で **wings-level**、下半分 **4–5 G**、完了は **entry parameters**、進入速度に対し **≈10,000 ft 上方**（機動余裕）、over-the-top **150 KIAS** 超（5.31 再掲）、tickle / **green donut**（T-38）は **S5-5**（Fund 5.36）。
+Loop の pull **4.5–5 G**、inverted horizon で **wings-level**、下半分 **4–5 G**、完了は **entry parameters**、進入速度に対し **≈10,000 ft 上方**（機動余裕）、over-the-top **150 kt** 超（5.31 再掲）、tickle / **green donut**（T-38）は **S5-5**（Fund 5.36）。
 
-Split-S 進入 **200 KIAS / MIL**、inverted wings-level を horizon 前に確立 → ailerons neutral → **light buffet** straight pull、完了は進入方位から **≈180°**、空域 前方/後方 1 nm・下方 7–10 kft。Immelmann 進入 **500 KIAS / MIL**、loop 前半 + 頂点 **half roll**（inverted 直前に back stick relax）、完了は original heading から **180°**、空域 前方 1 nm・上方 8–10 kft。canopy bow on horizon は T-38。これらは **S5-6**（Fund 5.37–5.38）。
+Split-S 進入 **200 kt / MIL**、inverted wings-level を horizon 前に確立 → ailerons neutral → **light buffet** straight pull、完了は進入方位から **≈180°**、空域 前方/後方 1 nm・下方 7–10 kft。Immelmann 進入 **500 kt / MIL**、loop 前半 + 頂点 **half roll**（inverted 直前に back stick relax）、完了は original heading から **180°**、空域 前方 1 nm・上方 8–10 kft。canopy bow on horizon は T-38。これらは **S5-6**（Fund 5.37–5.38）。
 
-Cuban Eight 進入 **500 KIAS / MIL**、**45° nose-low inverted** で half roll、機首 **≈45° below horizon** 維持、その後 **4.5–5 G pullup**、第2 half は **≈50 kt リード**、2 回目のロールは反対、完了は entry speed / original heading、空域 前方 1 nm・後方 2 nm・上方 8–10 kft は **S5-7**（Fund 5.39）。
+Cuban Eight 進入 **500 kt / MIL**、**45° nose-low inverted** で half roll、機首 **≈45° below horizon** 維持、その後 **4.5–5 G pullup**、第2 half は **≈50 kt リード**、2 回目のロールは反対、完了は entry speed / original heading、空域 前方 1 nm・後方 2 nm・上方 8–10 kft は **S5-7**（Fund 5.39）。
 
-Cloverleaf 進入 **450 KIAS / MIL**、4 leaf 同方向、各 heading **90°**、**2–3 G pullup**、**≈45° pitch** rolling pull、inverted level **175–200 KIAS**、pullout は Split-S 類似（light buffet）、第1 leaf は最寄り border へ、空域 前方 3 nm・第1 turn 2 nm・反対 3 nm・上方 8–10 kft は **S5-8**（Fund 5.40）。
+Cloverleaf 進入 **450 kt / MIL**、4 leaf 同方向、各 heading **90°**、**2–3 G pullup**、**≈45° pitch** rolling pull、inverted level **175–200 kt**、pullout は Split-S 類似（light buffet）、第1 leaf は最寄り border へ、空域 前方 3 nm・第1 turn 2 nm・反対 3 nm・上方 8–10 kft は **S5-8**（Fund 5.40）。
 
-Chandelle 進入 **400 KIAS / 95% rpm**、**≈180°** climbing turn で maximum altitude gain、**30–45° turn** で horizon（**≈60° bank**）、**≈135–150°** で bank 減、**≈180°** で wings-level（level flight ではない）**≈200 KIAS**、開始 nose が低いほど終了 nose は高い、空域 前方 1 nm・turn 1 nm・上方 6–7 kft は **S5-9**（Fund 5.41）。
+Chandelle 進入 **400 kt / 95% rpm**、**≈180°** climbing turn で maximum altitude gain、**30–45° turn** で horizon（**≈60° bank**）、**≈135–150°** で bank 減、**≈180°** で wings-level（level flight ではない）**≈200 kt**、開始 nose が低いほど終了 nose は高い、空域 前方 1 nm・turn 1 nm・上方 6–7 kft は **S5-9**（Fund 5.41）。
 
 S5 の T-38 数字は各話ブリーフ起票時に本表へ足す（表 5.1 / 5.2 の再掲を除く）。先に発明しない。
 
@@ -264,7 +265,7 @@ S5 の T-38 数字は各話ブリーフ起票時に本表へ足す（表 5.1 / 5
 ## 禁止
 
 - YAML フロントマター
-- ブリーフに無い数字の発明（とくに T-4 の「正しい KIAS / G」）
+- ブリーフに無い数字の発明（とくに T-4 の「正しい kt / G」）
 - T-4 にアフターバーナーがある記述。MAX AB を T-4 の正解にする
 - T-38 の EGT / canopy bow / green donut を T-4 の正解にする
 - Area 名の新造（シャンデル専用 Area など）
@@ -319,21 +320,21 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 | 2026-08-17 | 公開呼称を **CP** に統一。1-1 計器は T-38 CSW/CDI を読み替え（T-4 の正解にしない）。見出しはエリア維持。 |
 | 2026-08-17 | ファイル名・slug・DB id を `CP-*` に改名（旧 `ctx-*` URL は alias）。詳細解説は PREP（P/R/E/P）見出しに FMT と統一。 |
 | 2026-08-17 | 公開本文から Area / Fund / Att / Vol.2 番号を外す。不合格は「不合格要件」だけ。 |
-| 2026-08-17 | Season 2-1 Deep stall ブリーフ起票。許可数字（FL200 / 80% rpm / AOA 0.8–1.1 / 140 KIAS / 6,000 fpm）を本表へ。 |
+| 2026-08-17 | Season 2-1 Deep stall ブリーフ起票。許可数字（FL200 / 80% rpm / AOA 0.8–1.1 / 140 kt / 6,000 fpm）を本表へ。 |
 | 2026-08-17 | `CP-2-1` ストック登録（`order_index` 614、`is_published: false`）。2-1 ブリーフ削除。2-2 加速失速ブリーフ起票。 |
 | 2026-08-17 | `CP-2-2` ストック登録（`order_index` 615、`is_published: false`）。2-2 ブリーフ削除。2-3 ラダー／エルロン／reversal ブリーフ起票。 |
 | 2026-08-17 | `CP-2-3` ストック登録（`order_index` 616、`is_published: false`）。2-3 ブリーフ削除。2-4 Unload／加速ブリーフ起票。 |
-| 2026-08-18 | `CP-3-2` ストック登録（`order_index` 621、`is_published: false`）。3-2 ブリーフ削除。4-1 Nose-high ブリーフ起票。許可数字（230–265 KIAS）を本表へ。 |
+| 2026-08-18 | `CP-3-2` ストック登録（`order_index` 621、`is_published: false`）。3-2 ブリーフ削除。4-1 Nose-high ブリーフ起票。許可数字（230–265 kt）を本表へ。 |
 | 2026-08-19 | `CP-4-1` ストック登録（`order_index` 622、`is_published: false`）。4-1 ブリーフ削除。4-2 Nose-low ブリーフ起票。許可数字（250–400 kt / 4–5 G）を本表へ。 |
 | 2026-08-19 | `CP-4-2` ストック登録（`order_index` 623、`is_published: false`）。4-2 ブリーフ削除。5-1 Aerobatic contract ブリーフ起票。 |
 | 2026-08-20 | `CP-5-1` ストック登録（`order_index` 624、`is_published: false`）。5-1 ブリーフ削除。5-2 Aileron roll ブリーフ起票。 |
 | 2026-08-20 | `CP-5-2` ストック登録（`order_index` 625、`is_published: false`）。5-2 ブリーフ削除。5-3 Lazy Eight ブリーフ起票。 |
 | 2026-08-20 | `CP-5-3` ストック登録（`order_index` 626、`is_published: false`）。5-3 ブリーフ削除。5-4 Barrel Roll ブリーフ起票。許可数字（30–45° オフセット / 4 チェックポイント / positive G）を本表へ。 |
-| 2026-08-21 | `CP-5-4` ストック登録（`order_index` 627、`is_published: false`）。5-4 ブリーフ削除。5-5 Loop ブリーフ起票。許可数字（4.5–5 G / wings-level at inverted / 150 KIAS 超）を本表へ。 |
-| 2026-08-21 | `CP-5-5` ストック登録（`order_index` 628、`is_published: false`）。5-5 ブリーフ削除。5-6 Split-S / Immelmann ブリーフ起票。許可数字（200 KIAS / 500 KIAS / half roll）を本表へ。 |
+| 2026-08-21 | `CP-5-4` ストック登録（`order_index` 627、`is_published: false`）。5-4 ブリーフ削除。5-5 Loop ブリーフ起票。許可数字（4.5–5 G / wings-level at inverted / 150 kt 超）を本表へ。 |
+| 2026-08-21 | `CP-5-5` ストック登録（`order_index` 628、`is_published: false`）。5-5 ブリーフ削除。5-6 Split-S / Immelmann ブリーフ起票。許可数字（200 kt / 500 kt / half roll）を本表へ。 |
 | 2026-08-21 | `CP-5-6` ストック登録（`order_index` 629、`is_published: false`）。5-6 ブリーフ削除。5-7 Cuban Eight ブリーフ起票。許可数字（45° nose-low / 4.5–5 G pullup / ≈50 kt リード）を本表へ。 |
-| 2026-08-21 | `CP-5-7` ストック登録（`order_index` 630、`is_published: false`）。5-7 ブリーフ削除。5-8 Cloverleaf ブリーフ起票。許可数字（4 leaf / 90° / 2–3 G / 175–200 KIAS）を本表へ。 |
-| 2026-08-21 | `CP-5-8` ストック登録（`order_index` 631、`is_published: false`）。5-8 ブリーフ削除。5-9 Chandelle ブリーフ起票。許可数字（400 KIAS / 60° bank / ≈200 KIAS）を本表へ。 |
+| 2026-08-21 | `CP-5-7` ストック登録（`order_index` 630、`is_published: false`）。5-7 ブリーフ削除。5-8 Cloverleaf ブリーフ起票。許可数字（4 leaf / 90° / 2–3 G / 175–200 kt）を本表へ。 |
+| 2026-08-21 | `CP-5-8` ストック登録（`order_index` 631、`is_published: false`）。5-8 ブリーフ削除。5-9 Chandelle ブリーフ起票。許可数字（400 kt / 60° bank / ≈200 kt）を本表へ。 |
 | 2026-08-21 | `CP-5-9` ストック登録（`order_index` 632、`is_published: false`）。5-9 ブリーフ削除。CP シリーズ完。次の CP ブリーフは作らない。 |
 | 2026-08-22 | 「公開本文の契約」を 1 話の型へ。2-1・2-2 精緻化。2-2 はオーバーシュートより失速に入れない。以降の CP もこれに従う。 |
 | 2026-08-30 | 2-4〜2-6 精緻化。W36 ドリップ（8/31・9/2・9/4）。Season 2 完結。 |

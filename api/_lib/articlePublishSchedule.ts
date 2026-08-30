@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Shared schedule for drip publish (learning_contents) and weekly digest email.
  * Keep in sync with MDX meta.publishedAt.
  * One series per ISO week (訓練の当たり前 / Contact / FMT).
@@ -131,7 +131,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         publishDate: '2026-08-19',
         title: '第2話：足りんなら換えろ ～高度と速度の交換～',
         slug: '/articles/cp-1-2-energy',
-        hook: '1,000 ft ≈ 50 kt。AB で買うな。作業空域の真ん中で 300 KIAS が目安たい。',
+        hook: '1,000 ft ≈ 50 kt。AB で買うな。作業空域の真ん中で 300 kt が目安たい。',
       },
       {
         id: 'CP-1-3_ControlsGPio',
@@ -194,7 +194,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       {
         id: 'CP-2-6_PitchbackSliceback',
         publishDate: '2026-09-04',
-        title: '第9話：向きを返せ ～PitchbackとSliceback～',
+        title: '第9話：最短で向きを返せ ～PitchbackとSliceback～',
         slug: '/articles/cp-2-6-pitchback-sliceback',
         hook: '向きは坂で返せ。Immelmann じゃない。',
       },

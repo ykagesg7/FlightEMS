@@ -1,7 +1,7 @@
 import articleMetas from 'virtual:articles-index';
 import { isWithdrawnArticle } from '../constants/withdrawnArticleIds';
 import type { ArticleIndexEntry, ArticleMeta, ArticleNavigation, ArticleSearchOptions, MDXModule } from '../types/articles';
-import { isArticleReleased } from './articlePublishGate';
+import { isArticleReadable } from './articlePublishGate';
 
 /**
  * MDX 本文ローダーのみ。メタは virtual:articles-index（ビルド時抽出）から読む。
@@ -171,7 +171,7 @@ export async function findArticleByRouteParam(
 export async function getArticleBySlug(slug: string): Promise<ArticleIndexEntry | null> {
   const entry = await findArticleByRouteParam(slug);
   if (!entry) return null;
-  if (entry.meta.publishedAt && !isArticleReleased(entry.meta.publishedAt)) {
+  if (entry.meta.publishedAt && !isArticleReadable(entry.meta.publishedAt, entry.filename)) {
     return null;
   }
   return entry;
@@ -195,7 +195,9 @@ export async function getArticles(options: ArticleSearchOptions = {}): Promise<A
   // 公開済みフィルタ（publishedAt があり、かつ JST 当日以前）
   if (publishedOnly) {
     articles = articles.filter(
-      (article) => article.meta.publishedAt && isArticleReleased(article.meta.publishedAt),
+      (article) =>
+        article.meta.publishedAt &&
+        isArticleReadable(article.meta.publishedAt, article.filename),
     );
   }
 

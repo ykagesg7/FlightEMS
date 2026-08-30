@@ -5,7 +5,7 @@ import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/w
 import { useArticleStats } from '../../hooks/useArticleStats';
 import { useAuth } from '../../hooks/useAuth';
 import { ArticleMeta } from '../../types/articles';
-import { isArticleReleased } from '../../utils/articlePublishGate';
+import { isArticlePreviewAllowed, isArticleReadable, isArticleReleased } from '../../utils/articlePublishGate';
 import { findArticleByRouteParam, getArticleIndex } from '../../utils/articlesIndex';
 import { getMetaForArticle } from './articleHubFilters';
 import { CommentSection } from './components/CommentSection';
@@ -141,6 +141,12 @@ const ArticleDetailPage: React.FC = () => {
     !withdrawn &&
     !isLoadingMetas &&
     Boolean(resolvedCurrentMeta?.publishedAt) &&
+    !isArticleReadable(resolvedCurrentMeta?.publishedAt, articleId);
+  const isPreviewingUnreleased =
+    !withdrawn &&
+    !notYetReleased &&
+    isArticlePreviewAllowed(articleId) &&
+    Boolean(resolvedCurrentMeta?.publishedAt) &&
     !isArticleReleased(resolvedCurrentMeta?.publishedAt);
 
   return (
@@ -177,6 +183,15 @@ const ArticleDetailPage: React.FC = () => {
           </div>
         ) : (
           <>
+            {isPreviewingUnreleased && (
+              <div
+                className="mb-4 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-[color:var(--text-primary)]"
+                role="status"
+              >
+                ローカルプレビュー（公開予定: {resolvedCurrentMeta?.publishedAt?.slice(0, 10)}）。
+                本番ではこの日まで表示されません。
+              </div>
+            )}
             <ReadingProgressBar contentId={articleId} />
             <MDXLoader contentId={articleId} />
             <SeriesNextChapterCta

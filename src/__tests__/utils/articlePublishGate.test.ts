@@ -1,5 +1,9 @@
-import { describe, expect, it } from 'vitest';
-import { getJstDateString, isArticleReleased } from '../../utils/articlePublishGate';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  getJstDateString,
+  isArticleReadable,
+  isArticleReleased,
+} from '../../utils/articlePublishGate';
 
 describe('articlePublishGate', () => {
   it('compares JST calendar dates', () => {
@@ -14,5 +18,12 @@ describe('articlePublishGate', () => {
   it('rejects missing or invalid publishedAt', () => {
     expect(isArticleReleased(undefined)).toBe(false);
     expect(isArticleReleased('not-a-date')).toBe(false);
+  });
+
+  it('allows preview ids when VITE_ARTICLE_PREVIEW_IDS is set in dev', () => {
+    vi.stubEnv('VITE_ARTICLE_PREVIEW_IDS', 'CP-2-4_Unload,CP-2-5_TrimFailure');
+    expect(isArticleReadable('2099-01-01', 'CP-2-4_Unload')).toBe(true);
+    expect(isArticleReadable('2099-01-01', 'CP-2-1_DeepStall')).toBe(false);
+    vi.unstubAllEnvs();
   });
 });

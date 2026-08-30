@@ -1,4 +1,4 @@
--- CP series Season 2 ep.1: CP-2-1_DeepStall
+﻿-- CP series Season 2 ep.1: CP-2-1_DeepStall
 -- Stock: is_published false until articlePublishSchedule.
 
 INSERT INTO learning_contents (id, title, category, sub_category, description, order_index, parent_id, content_type, is_published, updated_at)
@@ -7,7 +7,7 @@ VALUES (
   '【操縦】第4話：引いたままは沈む ～Deep stall～',
   '操縦',
   '曲技飛行',
-  'Deep stallはfeelの演習。エルロン中立・aft to stop、回復はrelax。演習は開始パワー維持。意図しない失速はまず迎え角、その先はその機の手順。140 KIAS / 6,000 fpmはT-38枠。学習記事であり実機手順ではない。',
+  'Deep stallはfeelの演習。エルロン中立でaft to stop、回復は引きを緩める。演習は開始パワー維持。意図しない失速はまず迎え角、その先はその機の手順。140 kt / 6,000 fpmはT-38枠。学習記事であり実機手順ではない。',
   614,
   NULL,
   'text',
