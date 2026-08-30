@@ -158,7 +158,7 @@ Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
   python scripts/telemetry/ga4_iso_week_report.py --week 2026-W33 --out artifacts/ga4-iso-week.json
   ```
 - **正本**: [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)
-- **フェーズ2a**: [`.github/workflows/weekly-telemetry-notify.yml`](../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ **日本語** Facts を投稿。[`format_ga4_slack.py`](../scripts/telemetry/format_ga4_slack.py)。Secret `SLACK_WEBHOOK_URL`。`@` メンションなし。
+- **フェーズ2a**: [`.github/workflows/weekly-telemetry-notify.yml`](../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ **日本語** Facts を投稿。[`format_ga4_slack.py`](../scripts/telemetry/format_ga4_slack.py)。Secret `SLACK_WEBHOOK_URL`（必須）。任意 `SLACK_BOT_TOKEN` があると投稿末尾に **スレッド Permalink** を付与（`chat.postMessage` + `chat.update`）。`@` メンションなし。
   ```powershell
   python scripts/telemetry/format_ga4_slack.py --self-test
   python scripts/telemetry/format_ga4_slack.py --in artifacts/ga4-iso-week.json
@@ -168,7 +168,7 @@ Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
   python scripts/telemetry/format_ga4_review.py --self-test
   python scripts/telemetry/format_ga4_review.py --in artifacts/ga4-iso-week.json
   ```
-- **フェーズ2c（L0）**: [`.github/workflows/weekly-telemetry-approve.yml`](../.github/workflows/weekly-telemetry-approve.yml)。分類 [`approve_command.py`](../scripts/telemetry/approve_command.py)。L1 は [`l1_allowlist.json`](../scripts/telemetry/l1_allowlist.json)（空）。承認者 [`approvers.json`](../scripts/telemetry/approvers.json)。Slack 受信は [`api/telemetry-approve.ts`](../api/telemetry-approve.ts)（**notify アプリに Event Subscriptions を付けない。Slash Command は使わない**）。
+- **フェーズ2c（L0）**: [`.github/workflows/weekly-telemetry-approve.yml`](../.github/workflows/weekly-telemetry-approve.yml)。分類 [`approve_command.py`](../scripts/telemetry/approve_command.py)。L1 は [`l1_allowlist.json`](../scripts/telemetry/l1_allowlist.json)（空）。承認者 [`approvers.json`](../scripts/telemetry/approvers.json)。Slack 受信は [`api/telemetry-approve.ts`](../api/telemetry-approve.ts)（**notify アプリに Event Subscriptions を付けない。Slash Command は使わない**）。`APPROVE-DOC` は Draft PR を自動 Ready 後 squash merge。**成功 ACK はマージ後のみ**。
   ```powershell
   python scripts/telemetry/approve_command.py --self-test
   gh workflow run weekly-telemetry-approve.yml -f command=HOLD

@@ -55,8 +55,9 @@ disable-model-invocation: false
    - ボードの「最終言及」を更新
    - 変更は正本（必要なら `docs/04_Operations_Guide.md` への1行）のみ
    - コミットは英語 Conventional Commits: `docs: add YYYY-Www telemetry review`
-   - PR を開き、本文に Facts 要約と「L0 はスレッドの `APPROVE-DOC`（2c）」
-7. Slack の **同じスレッド** に PR URL を1通だけ返す。`@` メンションを付けない。本文全体を `APPROVE-DOC` にしない
+   - PR を開く。**Draft PR にしない**（`gh pr create` に `--draft` を付けない。Cloud Agent が Draft で作った場合は直後に `gh pr ready`）
+   - 本文に Facts 要約と「L0 はスレッドの `APPROVE-DOC`（2c）」
+7. Slack の **同じスレッド**（Facts 投稿の Permalink 行から辿れる）に PR URL を1通だけ返す。`@` メンションを付けない。本文全体を `APPROVE-DOC` にしない
 
 ## Slack trigger text (human)
 

@@ -75,11 +75,17 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_CHANNEL_ID: C0BQ5R19QDV
+          SLACK_WORKSPACE: flightacademyhq
         run: |
           set -euo pipefail
           if [ -z "${SLACK_BOT_TOKEN:-}" ] && [ -z "${SLACK_WEBHOOK_URL:-}" ]; then
             echo "Missing SLACK_BOT_TOKEN or SLACK_WEBHOOK_URL."
             exit 1
+          fi
+          if [ -n "${SLACK_BOT_TOKEN:-}" ]; then
+            echo "Using SLACK_BOT_TOKEN (thread permalink appended after post)."
+          else
+            echo "Using SLACK_WEBHOOK_URL only (no thread permalink)."
           fi
           python scripts/telemetry/format_ga4_slack.py \
             --dir artifacts \

@@ -119,6 +119,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Squash-merge docs PR
+        id: merge
         if: ${{ steps.plan.outputs.action == 'merge_doc' }}
         env:
           GH_TOKEN: ${{ github.token }}
@@ -129,10 +130,48 @@ jobs:
             echo "merge_doc without a PR number."
             exit 1
           fi
+          if gh pr view "$PR_NUMBER" --json isDraft --jq '.isDraft' | grep -q true; then
+            gh pr ready "$PR_NUMBER"
+          fi
           gh pr merge "$PR_NUMBER" --squash --delete-branch
 
-      - name: ACK Slack thread
-        if: ${{ always() && steps.plan.outputs.ack != '' && github.event.inputs.skip_ack != 'true' }}
+      - name: ACK Slack (merge succeeded)
+        if: >-
+          ${{ steps.plan.outputs.action == 'merge_doc'
+          && steps.merge.outcome == 'success'
+          && github.event.inputs.skip_ack != 'true' }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL_ID: C0BQ5R19QDV
+        run: |
+          set -euo pipefail
+          ACK_TEXT="$(python scripts/telemetry/approve_command.py --print-ack merge_doc)"
+          python scripts/telemetry/approve_command.py \
+            --ack-text "$ACK_TEXT" \
+            --thread-ts "${THREAD_TS:-}"
+
+      - name: ACK Slack (merge failed)
+        if: >-
+          ${{ steps.plan.outputs.action == 'merge_doc'
+          && steps.merge.outcome == 'failure'
+          && github.event.inputs.skip_ack != 'true' }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL_ID: C0BQ5R19QDV
+        run: |
+          set -euo pipefail
+          ACK_TEXT="$(python scripts/telemetry/approve_command.py --print-ack merge_failed)"
+          python scripts/telemetry/approve_command.py \
+            --ack-text "$ACK_TEXT" \
+            --thread-ts "${THREAD_TS:-}"
+
+      - name: ACK Slack (no merge)
+        if: >-
+          ${{ steps.plan.outputs.action != 'merge_doc'
+          && steps.plan.outputs.ack != ''
+          && github.event.inputs.skip_ack != 'true' }}
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

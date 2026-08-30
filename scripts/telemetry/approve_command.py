@@ -109,6 +109,10 @@ def files_are_docs_only(files: list[str]) -> bool:
 def ack_text(action: str) -> str:
     messages = {
         "merge_doc": "記録: 正本PRをマージしました。",
+        "merge_failed": (
+            "記録: 正本PRをマージできませんでした。"
+            "GitHubでPRを確認し、Ready for review 後に APPROVE-DOC を再送してください。"
+        ),
         "already_merged": "記録: 対象PRは既にマージ済みです。",
         "record_hold": "記録: 今週は実行しません。",
         "record_skip": "記録: スキップとして残します。",
@@ -174,7 +178,7 @@ def classify(
         return _result("refuse", f"pr_state_{state.lower()}", command=parsed, week=week)
     if not files_are_docs_only(files or []):
         return _result("refuse", "not_docs_only", command=parsed, week=week)
-    return _result("merge_doc", "docs_pr_ok", command=parsed, week=week)
+    return _result("merge_doc", "docs_pr_ok", command=parsed, week=week, ack="")
 
 
 def _result(
@@ -184,7 +188,9 @@ def _result(
     command: str,
     week: str | None = None,
     task_id: str | None = None,
+    ack: str | None = None,
 ) -> dict[str, Any]:
+    ack_message = ack_text(action) if ack is None else ack
     return {
         "ok": action
         in {
@@ -197,7 +203,7 @@ def _result(
         },
         "action": action,
         "reason": reason,
-        "ack": ack_text(action),
+        "ack": ack_message,
         "command": command,
         "week": week,
         "task_id": task_id,
@@ -350,8 +356,11 @@ def self_test() -> None:
     assert parse_command("APPROVE-DOC please") is None
     assert parse_command("APPROVE-DOC") == "APPROVE-DOC"
     ack = ack_text("merge_doc")
+    failed = ack_text("merge_failed")
     assert "APPROVE-DOC" not in ack
+    assert "APPROVE-DOC" not in failed
     assert "@" not in ack
+    assert merge["ack"] == ""
     start, end = approval_window("2026-W34")
     assert start == datetime(2026, 8, 25, tzinfo=timezone.utc)
     assert end == datetime(2026, 9, 1, tzinfo=timezone.utc)
@@ -373,12 +382,16 @@ def main() -> int:
     parser.add_argument("--now", default="")
     parser.add_argument("--post-ack", action="store_true")
     parser.add_argument("--ack-text", default="")
+    parser.add_argument("--print-ack", choices=["merge_doc", "merge_failed"], default="")
     parser.add_argument("--thread-ts", default="")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
 
     if args.self_test:
         self_test()
+        return 0
+    if args.print_ack:
+        sys.stdout.write(ack_text(args.print_ack) + "\n")
         return 0
     if args.ack_text:
         post_slack_ack(args.ack_text, thread_ts=args.thread_ts)
