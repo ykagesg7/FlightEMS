@@ -1,4 +1,4 @@
-# FMT 編隊シリーズ — 執筆正本（Season 1 + 2）
+﻿# FMT 編隊シリーズ — 執筆正本（Season 1 + 2）
 
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
 **既存公開**: W34 ドリップは **取消**（CP Season 1 に差し替え）。**ストック**: 1-1〜1-10（601–610）。Season 1 完。次は Season 2（未起票）。  
@@ -23,7 +23,7 @@
 
 **W34（2026-08-17 / 19 / 21）**: CP 1-1 → 1-2 → 1-3。FMT はこの週に出さない。日曜（8/16）17:00 案内の対象。本番デプロイが前提。  
 **W35（2026-08-24 / 26 / 28）**: CP 2-1 → 2-2 → 2-3。FMT はこの週も出さない。日曜（8/23）17:00 案内の対象。  
-**W36（2026-08-31 / 9/2 / 9/4）**: CP 2-4 → 2-5 → 2-6（Season 2 完結）。FMT はこの週も出さない。日曜（8/30）17:00 案内の対象。
+**W36（2026-08-30 / 9/2 / 9/4）**: CP 2-4 → 2-5 → 2-6（Season 2 完結）。1 話目は日曜案内と同時。FMT はこの週も出さない。日曜（8/30）17:00 案内の対象。
 
 ### ストックの載せ方（1-4 以降）
 
@@ -53,7 +53,8 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**。W34 は CP。FMT のド
 
 ## 1 話の型
 
-- 公理 1 つ
+- 原則 1 つ（英文 principal。訳は **原則**。「公理」禁止）
+- 対気速度は **kt**（例: `300 kt`）。`KIAS` は使わない
 - サイトピクチャ 1 つ
 - Vol.2 不合格基準 1 つ（該当 Area）
 - Joe の口頭クイズ 1 つ
@@ -138,12 +139,12 @@ Season 1 の編隊話が数本できてからブリーフを書く。Heat-to-Gun
 | 項目 | 値 | 出典 |
 |------|-----|------|
 | Tactical LAB | **4,000–6,000 ft**、**0°–10° aft**（strive **0°**）。stack **最大 2,000 ft** | Fund 6.27、IFF §3.6.1 |
-| 標準速度（T-38） | 10,000 ft MSL 以上 **350 KIAS**、以下 **300 KIAS**。corner 付近 **350–400 KIAS** | Fund 6.26 |
+| 標準速度（T-38） | 10,000 ft MSL 以上 **350 kt**、以下 **300 kt**。corner 付近 **350–400 kt** | Fund 6.26 |
 | Delayed 幅 | ≤30° **check** / 30–60° **delayed 45** / >60° **delayed 90**。180° は **hook** または **cross** | Fund 6.31 |
 | Delayed 90 timing | lead が **約 45°** 回った頃が目安 | Fund 6.29 |
 | Cross turn | **60–90°** で cross。横 **2–3 nm** | Fund 6.31 |
 | Fluid turn | **≈45° bank**、**90° increment**。**Fluid formation（1-7）でも FM / Area 83 でもない** | Fund 6.31 |
-| Tactical rejoin 初動 | **350 KIAS / 45° bank / level**。admin の 300/30 は **1-8** | Fund 6.38 |
+| Tactical rejoin 初動 | **350 kt / 45° bank / level**。admin の 300/30 は **1-8** | Fund 6.38 |
 | Wedge（注記） | **4,000–6,000 ft**、6 時から **30–45°** | Fund 6.37、IFF §3.6 |
 | Vol.2 | 主 **81** Tactical Wing（位置喪失 / deconflict 重大 / support なし）。合流 **82**。Lead 側 **67**。**83 は FM**。**79 は 1-8** | Vol.2 Table 3.1 |
 | Contract G | Fund **4 G or light tickle** / IFF 約 **80° / 3 G** は T-38 枠。**T-4 の正解にしない** | Fund 6.28、IFF §3.6.2 |
@@ -152,8 +153,8 @@ Season 1 の編隊話が数本できてからブリーフを書く。Heat-to-Gun
 
 | 項目 | 値 | 出典 |
 |------|-----|------|
-| Pitchout | **300 KIAS**、約 **180°**。wing **5 s delay ≈ 1 nm**（T-38。T-4 読み替え） | Fund 6.17 |
-| Admin rejoin | **300 KIAS / 30° bank**。tactical 初動 350/45° は **1-9** | Fund 6.20 |
+| Pitchout | **300 kt**、約 **180°**。wing **5 s delay ≈ 1 nm**（T-38。T-4 読み替え） | Fund 6.17 |
+| Admin rejoin | **300 kt / 30° bank**。tactical 初動 350/45° は **1-9** | Fund 6.20 |
 | Straight overtake | 1 nm から **50 kt** が目安 | Fund 6.20.2 |
 | Turning | POM 下 **約 50 ft**（route まで）。overtake 目安 **30 kt**。3,000 ft 内: low **<50** / med **<30** / high **<10** kt | Fund 6.20.3 |
 | Overshoot | low 6 を **≥約 2 ship lengths**。save するな | Fund 6.21 |
@@ -188,7 +189,7 @@ Season 1 の編隊話が数本できてからブリーフを書く。Heat-to-Gun
 | Fingertip 間隔の目安 | helmet abeam **slab bolt** ≈ **3 ft** | Fund 6.11 |
 | Route 間隔 | **2 ship widths〜500 ft**。extended fingertip line より aft 不可、line abreast より forward 不可 | Fund 6.12 |
 | Route 中 lead bank | **60° max** | Fund 6.12 |
-| Fingertip exercise | 最大 **3 G**、**90° bank**、**200–400 KIAS**（T-38。T-4 は同思想・数字は自機制限に読み替え） | Fund 6.11 |
+| Fingertip exercise | 最大 **3 G**、**90° bank**、**200–400 kt**（T-38。T-4 は同思想・数字は自機制限に読み替え） | Fund 6.11 |
 | Vol.2 Area 72 Fingertip (Wing) Q | wingtip **±7 ft**、vertical **±4 ft**、longitudinal **±4 ft** | Vol.2 Table 3.1 Area 72 |
 | Vol.2 Area 74 Route (Wing) U | 衝突 hazard | Vol.2 Area 74 |
 | Echelon turn（Tips） | gentle 以外は echelon から離れる方向、**bank 60° max**、**unloading 回避** | Fund 6.15 |

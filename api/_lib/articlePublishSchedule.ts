@@ -2,7 +2,9 @@
  * Shared schedule for drip publish (learning_contents) and weekly digest email.
  * Keep in sync with MDX meta.publishedAt.
  * One series per ISO week (訓練の当たり前 / Contact / FMT).
- * Default drip: 3/week (Mon/Wed/Fri) when writing capacity is tight.
+ * Default drip: 3/week when writing capacity is tight.
+ * Cadence: **1st article Sunday** (digest day, readable at 17:00 JST email),
+ * **2nd Wednesday, 3rd Friday**. First publishDate = Sunday before ISO-week Monday.
  * Stock unpublished IDs until listed here; cron only flips IDs in this file.
  */
 
@@ -179,7 +181,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     articles: [
       {
         id: 'CP-2-4_Unload',
-        publishDate: '2026-08-31',
+        publishDate: '2026-08-30',
         title: '第7話：抜いて増やせ ～Unloadと加速～',
         slug: '/articles/cp-2-4-unload',
         hook: '加速したければ G を抜け。サイドブレーキは引くな。',

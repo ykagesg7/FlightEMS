@@ -127,8 +127,8 @@ export function getWeeklyArticleDigestEmailContent(
 ): { subject: string; htmlContent: string } {
   const renderItems = (articles: WeeklyArticleDigest['articles']) =>
     articles
-      .map((a) => {
-        const day = weekdayLabelJst(a.publishDate);
+      .map((a, index) => {
+        const day = index === 0 ? '今すぐ' : weekdayLabelJst(a.publishDate);
         const href = `${baseUrl}${a.slug.startsWith('/') ? a.slug : `/${a.slug}`}`;
         return `<li style="margin-bottom:12px;">
         <strong>${day}</strong> <a href="${href}">${a.title}</a><br/>
@@ -165,7 +165,7 @@ export function getWeeklyArticleDigestEmailContent(
       ${reminderBlock}
       <h2 style="font-size:16px;margin:24px 0 8px;">${primaryLabel}（${digest.isoWeek}）— ${digest.seriesTitle}</h2>
       <p>${digest.intro}</p>
-      <p><strong>月〜金、毎日1本。</strong>読み終わったら、明日の一手だけ試してみてほしい。</p>
+      <p><strong>週3本。</strong>1本目は案内と同時（今すぐ）。水・金に続く。読み終わったら、明日の一手だけ試してみてほしい。</p>
       <ul style="padding-left:18px;list-style:disc;">
         ${upcomingItems}
       </ul>

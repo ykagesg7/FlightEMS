@@ -33,6 +33,8 @@ DB is_published == (publishDate <= jstToday)   // after sync
 Hub/Detail: future publishedAt must not show as readable
 ```
 
+**週次ドリップ（2026-08-30〜）**: 1 話目は **日曜**（digest 17:00 JST と同時に読める）。2 話目水・3 話目金。schedule の `publishDate` と MDX `publishedAt` を同じ日曜に揃える。
+
 4. Supabase MCP `execute_sql` 例:
 
 ```sql

@@ -139,6 +139,8 @@ describe('api/lib/notificationEmail', () => {
     expect(content.htmlContent).toContain('今週の振り返り');
     expect(content.htmlContent).toContain('前回フック');
     expect(content.htmlContent).toContain('新着コンテンツ');
+    expect(content.htmlContent).toContain('<strong>今すぐ</strong>');
+    expect(content.htmlContent).toContain('週3本。');
 
     const monday = getWeeklyArticleDigestEmailContent(
       digest,

@@ -17,6 +17,7 @@ disable-model-invocation: false
 2. Read target week Ideas: Obsidian `FlightAcademy/Ideas/Week_YYYY-Www.md`（なければ schedule のみ）
 3. Tone: 訓練回顧・ワシ口調に寄せた **短いフック**（X 投稿と同じ核）。です・ます連発禁止
 4. Contract: CTA は **Articles or FA Public Wiki のみ**。T-4 URL 禁止
+5. **1 話目は日曜 `publishDate`**（digest 送信日と同じ。メールでは **「今すぐ」** ラベル）。2・3 話目は水・金
 
 ## Audience（現行）
 
@@ -44,7 +45,8 @@ disable-model-invocation: false
 
 | 曜 | タイトル | hook（X核） | slug |
 |----|----------|-------------|------|
-| 月 | … | … | /articles/… |
+| 今すぐ（1本目） | … | … | /articles/… |
+| 水 | … | … | /articles/… |
 
 **Checklist note:** （任意・Public Wiki 言及可。T-4禁止）
 
@@ -52,7 +54,7 @@ disable-model-invocation: false
 
 ### Code sync checklist
 - [ ] `articlePublishSchedule.ts` の hook/intro をこの文案に合わせる？
-- [ ] MDX `publishedAt` と publishDate 一致？
+- [ ] MDX `publishedAt` と publishDate 一致？（**1 話目は日曜**＝digest 送信日）
 - [ ] `learning_contents` id と schedule id 一致？
 - [ ] cron は日曜 17:00 JST（`0 8 * * 0` UTC）？
 ```
