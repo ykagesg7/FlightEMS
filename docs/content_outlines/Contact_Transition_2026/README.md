@@ -211,7 +211,7 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 | 加速比較 | **250→350 kt**：1 G より **≈0 G** が速い。**300→400**：2–3 G のままは遅い、unload すると速い。以降は任意速度・バンクで **≈0 G + MIL 以上**（T-38。MAX は T-4 の正解にしない） | Fund 5.13 | 2-4 |
 | Stab demo | **60° nose-high**、**85% rpm 以上**。**170 kt** で **≈½ G**。引いて level を試すと直ちに失速兆候。**175–200 kt** で level。常時 **≥½ G**（油系統、T-38） | Fund 5.18 | 2-4 |
 | Trim failure | **FL200 以下**、**300 kt 超** で level trim。retrim せず通常の最終進入速度まで減速。**240 kt 以下** で **gear & full flaps**（stick force 増）。go-around 模擬は retrim 後に再 trim せず gear/flaps up、**300 kt 超** へ（前圧）。演習後は必ず retrim。ATS なら stall recovery と同時 retrim（T-38） | Fund 5.9 | 2-5 |
-| Pitchback | **level 450–500 kt**、パワー **550° EGT–MIL**（T-38。EGT は T-4 の正解にしない）。desired bank（**0°超〜90°未満**）→ ailerons neutral → **4–5 G** または light buffet。straight nose track **≈180°**。Immelmann ではない | Fund 5.16 | 2-6 |
+| Pitchback | **level 450–500 kt**、パワー **550℃ EGT–MIL**（T-38。EGT は T-4 の正解にしない）。desired bank（**0°超〜90°未満**）→ ailerons neutral → **4–5 G** または light buffet。straight nose track **≈180°**。Immelmann ではない | Fund 5.16 | 2-6 |
 | Sliceback | **200–300 kt**、**90%–MIL**。desired bank（**90°超〜180°未満**）→ ailerons neutral → light buffet。straight nose track **≈180°**。進入速度が高いほど底の G。rolling input は asymmetrical over-G。Split-S ではない | Fund 5.17 | 2-6 |
 
 ### Season 3
