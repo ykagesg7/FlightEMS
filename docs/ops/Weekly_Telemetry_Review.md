@@ -2,7 +2,7 @@
 
 **正本**: 本書（別チャットの Agent はここを先に読む）  
 **作成**: 2026-08-08  
-**最終更新**: 2026-08-30（2c: Draft PR 自動 Ready + マージ成功後のみ ACK。2a: Bot token 時スレッド Permalink）  
+**最終更新**: 2026-08-30（2026-W34 正本 L0 マージ待ち。2c: Draft 自動 Ready + マージ成功後 ACK）  
 **実施ペース**: **火曜 09:00 JST**（ISO 週: 月曜 00:00〜日曜 23:59、プロパティ TZ = Asia/Tokyo）。欠席週は行を飛ばさず「スキップ」理由を1行残す。**土曜に別窓で埋めない。**
 
 関連:
@@ -81,11 +81,11 @@
 
 | ID | 課題 | 優先 | 状態 | 次アクション | 最終言及 |
 |----|------|------|------|--------------|----------|
-| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に `utm_source=brevo&utm_medium=email&utm_campaign=wNN` を検討。W33 は source が referral のみで切り出し不可 | W33 |
-| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | W33 は **users 1**。配信・ドリップ継続しつつ質を見る。ALPM は別途 | W33 |
-| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W33 で **再発**（Issues lastSeen 約 8/13）＋ GA `chunk_recovery_reload`×1。resolve 見送り・再監視 | W33 |
-| T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W32 確認。W33 でも `turn-feedback-into-action` 着地あり | W33 |
-| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。イベント `quiz_session_start` / `complete` + `tab`。W33 に quiz イベント無し | W36 計画 |
+| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に `utm_source=brevo&utm_medium=email&utm_campaign=wNN` を検討。W34 も referral 主体（5/6 sess）でメール切り出し困難 | W34 |
+| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | W34 は **users 3**（W33: 1）。回復傾向だが依然一桁。週次比較はノイズ大 | W34 |
+| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W34 は GA `chunk_recovery_reload` **0**。Sentry MCP 未取得のため lastSeen 未確認 → Desktop MCP または次回再確認 | W34 |
+| T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W34 でも `turn-feedback-into-action` / `cp-2-1-deep-stall` 着地あり。リダイレクト継続確認 | W34 |
+| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。W34 にも quiz_* イベント **0** | W36 計画 |
 
 ---
 
@@ -122,6 +122,49 @@
 ---
 
 ## 週次ログ（新しい週が上）
+
+### 2026-W34（2026-08-17〜08-23 / レビュー 2026-08-30）
+
+**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 32798351523](https://github.com/ykagesg7/FlightEMS/actions/runs/32798351523) / Sentry MCP（未取得）  
+**比較**: 直前 ISO 週 2026-W33 のみ（旧土曜窓とは比べない）  
+**文脈**: 初回 ISO 火曜窓の正本記入。08/17（日）と 08/22（金）に PV スパイク。記事一覧と CP 系・4.x 系の回遊が中心。
+
+#### 現状（Facts）
+
+| 指標 | W34 | W33 |
+|------|----:|----:|
+| activeUsers | **3** | 1 |
+| sessions | **6** | 4 |
+| screenPageViews | **81** | 25 |
+| engagedSessions | **5** | 3 |
+
+- **日次**: 08/17 users 1 / sess 3 / PV 51。08/22 users 2 / sess 3 / PV 30。他日は行なし。
+- **記事**: `/articles` PV 46（一覧回遊が大半）。正規 `CP-1-1_AreaAndPurpose` PV 4。4.x 系（`4.1.4`〜`4.2.5`）と CP 系が各 PV 1–2。kebab `turn-feedback-into-action` / `cp-2-1-deep-stall` 各 PV 1（ランディングあり）。
+- **流入**: `accounts.google.com / referral`（5 sessions / 2 users / PV 78）、`(direct)/(none)`（1 session / 1 user / PV 3）→ メール効果の切り出しは依然困難（T-01）。
+- **端末**: desktop 3 sessions / mobile 3 sessions（W33 の mobile 一色から分散）。
+- **ランディング**: `/articles`×2、`turn-feedback-into-action`×1、`cp-2-1-deep-stall`×1、`/`×1。
+- **カスタムイベント**: **0**（`chunk_recovery_reload`・quiz_* 含めなし）。
+- **Sentry**: MCP 認証不可（クラウド環境）のため 7d 件数・`FLIGHT-ACADEMY-4` lastSeen は未取得。W33 時点の未解決 issue は [FLIGHT-ACADEMY-4](https://yusuke-kage.sentry.io/issues/FLIGHT-ACADEMY-4)（lastSeen 約 08/13）。GA 上は W34 中のチャンクリカバリ兆候なし。
+
+#### 課題（Issues）
+
+1. トラフィックは W33 比で回復（users 3 / PV 81）だが依然サンプル極小（T-02）。
+2. 流入が Google ログイン referral 主体でメール効果が見えない（T-01）。
+3. planning チャンク issue の W34 中の活動は GA では検出せず。Sentry lastSeen は未確認（T-03）。
+4. quiz 計測がこの週もゼロ — A2-a（T-05）ベースラインにはまだ使えない。
+
+#### 解決案（Actions）
+
+- [ ] T-01: 次のダイジェスト送信前に UTM 付与を実装検討（承認後）。
+- [ ] T-03: Desktop Sentry MCP または Issues UI で `FLIGHT-ACADEMY-4` lastSeen を確認。7 日無イベントなら resolve 検討。
+- [ ] T-05: W36 までボード維持。W34 は quiz ゼロのためベースライン対象外。
+- [x] T-04: W34 でも kebab 着地を再確認 → closed 維持。
+
+#### メモ / 生データ
+
+- Actions artifact `ga4-2026-W34`（正本には生 JSON を貼らない）
+
+---
 
 ### 2026-W33（2026-08-09〜08-15 / レビュー 2026-08-17）
 
@@ -210,6 +253,6 @@
 
 | 日付 | 内容 |
 |------|------|
-| 2026-08-30 | 2c: Draft PR 自動 Ready、`APPROVE-DOC` ACK をマージ成功後のみ。2a: `SLACK_BOT_TOKEN` 時 Facts にスレッド Permalink。2b Skill: Draft PR 禁止を明記。 |
+| 2026-08-30 | 初回 ISO 正本 **2026-W34** を追記（フェーズ2b PR #6）。Sentry MCP はクラウド未認証のため GA のみ。2c: Draft 自動 Ready + マージ成功後 ACK。2a: Bot token 時 Permalink。 |
 | 2026-08-17 | ISO 週・火曜切替。フェーズ1 GA4 artifact。フェーズ2a 日本語 Facts（メンションなし）。フェーズ2b Skill `weekly-telemetry-review`（正本 PR・未マージ）。フェーズ2c L0（`APPROVE-DOC` squash merge、L1 リスト空）。 |
 | 2026-08-08 | 初版。土曜午前運用・テンプレ・オープン課題ボード・W32 記入。 |
