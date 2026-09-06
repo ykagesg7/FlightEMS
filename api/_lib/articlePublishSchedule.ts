@@ -202,6 +202,35 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
     ],
   },
+  '2026-W37': {
+    isoWeek: '2026-W37',
+    seriesTitle: 'CP（単機）',
+    intro:
+      '来週は Season 3 と回復の入口。1本目は今すぐ読める。configured、場周 ATS、nose-high。図形の前に、形態と戻しの feel たい。',
+    articles: [
+      {
+        id: 'CP-3-1_ConfiguredHandling',
+        publishDate: '2026-09-06',
+        title: '第10話：足を出したら遅れろ ～Configured handling～',
+        slug: '/articles/cp-3-1-configured-handling',
+        hook: '足を出したら昨日の感覚で踏むな。ラダーは遅れて来る。',
+      },
+      {
+        id: 'CP-3-2_PatternATS',
+        publishDate: '2026-09-09',
+        title: '第11話：兆候を見たら切れ ～Pattern ATS～',
+        slug: '/articles/cp-3-2-pattern-ats',
+        hook: 'buffet が増えたら即回復。図形じゃなか。',
+      },
+      {
+        id: 'CP-4-1_NoseHigh',
+        publishDate: '2026-09-11',
+        title: '第12話：鼻を上げすぎたら戻せ ～Nose-high recovery～',
+        slug: '/articles/cp-4-1-nose-high',
+        hook: 'Nose-high はひどさに合わせて戻せ。力任せに引くな。',
+      },
+    ],
+  },
 };
 
 export function getDigestForIsoWeek(isoWeek: string): WeeklyArticleDigest | null {

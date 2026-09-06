@@ -3,7 +3,7 @@
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
 **呼称**: 公開面は **CP**（空自）。USAF 教範の章名 Contact は出典参照に残す。  
 **位置**: 読む順は **CP → FMT**（単機の飛行Envelopeのあと編隊）。FMT Season 2（BFM 幾何）はそのさらに後。  
-**既存公開**: **W34 ドリップ** 1-1 月 8/17、1-2 水 8/19、1-3 金 8/21。**W35 ドリップ**: 2-1 月 8/24、2-2 水 8/26、2-3 金 8/28。**W36 ドリップ**: 2-4 **日 8/30**（案内と同時）、2-5 水 9/2、2-6 金 9/4。`is_published` は cron が schedule の日付で反転。当日までは `false`。**以降の週も 1 話目は日曜 `publishDate`（digest 送信日）**。  
+**既存公開**: **W34** 1-1〜1-3（8/17・19・21）。**W35** 2-1〜2-3（8/24・26・28）。**W36** 2-4〜2-6（**8/30**・9/2・9/4）。**W37** 3-1 **日 9/6**、3-2 水 9/9、4-1 金 9/11（Season 4 前倒し）。`is_published` は cron が schedule の日付で反転。**1 話目は日曜 `publishDate`（digest 送信日）**。  
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
 **MDX 規則**: [`.cursor/rules/mdx-article-guide.mdc`](../../../.cursor/rules/mdx-article-guide.mdc)  
 **登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **曲技飛行**、`series`: **USAF-Contact-Phase**  
@@ -100,8 +100,8 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 
 | # | stem | slug | order | 主題 | 所有 | Vol.2 | 状態 |
 |---|------|------|-------|------|------|-------|------|
-| 3-1 | `CP-3-1_ConfiguredHandling` | `cp-3-1-configured-handling` | 1 | Configured rudder / slow flight | **5.11, 5.20–5.21** | **32** Slow flight −3 / +5 | **ストック** |
-| 3-2 | `CP-3-2_PatternATS` | `cp-3-2-pattern-ats` | 2 | Pattern approach-to-stall | **5.22–5.25** | **29** | **ストック** |
+| 3-1 | `CP-3-1_ConfiguredHandling` | `cp-3-1-configured-handling` | 1 | Configured rudder / slow flight | **5.11, 5.20–5.21** | **32** Slow flight −3 / +5 | **W37 日 9/6** |
+| 3-2 | `CP-3-2_PatternATS` | `cp-3-2-pattern-ats` | 2 | Pattern approach-to-stall | **5.22–5.25** | **29** | **W37 水 9/9** |
 
 `order_index`: **620–621**。
 
@@ -113,7 +113,7 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 
 | # | stem | slug | order | 主題 | 所有 | Vol.2 | 状態 |
 |---|------|------|-------|------|------|-------|------|
-| 4-1 | `CP-4-1_NoseHigh` | `cp-4-1-nose-high` | 1 | Nose-high recovery | **5.26–5.27** | **31** | **ストック** |
+| 4-1 | `CP-4-1_NoseHigh` | `cp-4-1-nose-high` | 1 | Nose-high recovery | **5.26–5.27** | **31** | **W37 金 9/11（前倒し）** |
 | 4-2 | `CP-4-2_NoseLow` | `cp-4-2-nose-low` | 2 | Nose-low recovery | **5.28** | **30** | **ストック** |
 
 `order_index`: **622–623**。
@@ -338,3 +338,4 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 | 2026-08-21 | `CP-5-9` ストック登録（`order_index` 632、`is_published: false`）。5-9 ブリーフ削除。CP シリーズ完。次の CP ブリーフは作らない。 |
 | 2026-08-22 | 「公開本文の契約」を 1 話の型へ。2-1・2-2 精緻化。2-2 はオーバーシュートより失速に入れない。以降の CP もこれに従う。 |
 | 2026-08-30 | 2-4〜2-6 精緻化。W36 ドリップ（**8/30**・9/2・9/4）。1 話目は日曜案内と同時公開。Season 2 完結。 |
+| 2026-09-06 | W37 ドリップ（**9/6**・9/9・9/11）: 3-1 / 3-2 / 4-1（Season 4 Nose-high 前倒し）。契約ブロッカ（全国のT-4・血の掟等）を除去。 |
