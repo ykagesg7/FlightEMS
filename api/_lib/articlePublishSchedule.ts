@@ -225,7 +225,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       {
         id: 'CP-4-1_NoseHigh',
         publishDate: '2026-09-11',
-        title: '第12話：鼻を上げすぎたら戻せ ～Nose-high recovery～',
+        title: '第12話：Noseを上げすぎたら戻せ ～Nose-high recovery～',
         slug: '/articles/cp-4-1-nose-high',
         hook: 'Nose-high はひどさに合わせて戻せ。力任せに引くな。',
       },
