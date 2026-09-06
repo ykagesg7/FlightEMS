@@ -4,10 +4,10 @@
 INSERT INTO learning_contents (id, title, category, sub_category, description, order_index, parent_id, content_type, is_published, updated_at)
 VALUES (
   'CP-3-2_PatternATS',
-  '【操縦】第11話：兆候を見たら切れ ～Pattern ATS～',
+  '【操縦】第11話：兆候を見たらリカバリー ～Pattern ATS～',
   '操縦',
   '曲技飛行',
-  'Pattern ATSは図形ではない。buffetの明らかな増加で即回復。完了は降下停止・上昇（高度計とVVI反転）・継続できる速度。数字はT-38枠。学習記事であり実機手順ではない。',
+  'Pattern ATSは形ではない。buffetの明らかな増加で即リカバリー。完了は降下停止・上昇（高度計とVVI反転）・継続できる速度。学習記事であり実機手順ではない。',
   621,
   NULL,
   'text',
