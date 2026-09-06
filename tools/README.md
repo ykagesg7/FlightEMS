@@ -5,7 +5,7 @@
 ## natural-japanese（脱AI臭の検査官）
 
 - **Upstream:** [coji/natural-japanese](https://github.com/coji/natural-japanese)（MIT）
-- **Vendored:** `tools/natural-japanese/`（`UPSTREAM.txt` に commit）
+- **Vendored:** `tools/natural-japanese/`（`UPSTREAM.md` に commit）
 - **Cursor Skill:** [`.cursor/skills/mdx-ai-smell-inspect/SKILL.md`](../.cursor/skills/mdx-ai-smell-inspect/SKILL.md)
 
 用途は **MDX の診断（lint / score）のみ**。道真・博多弁・口頭試問の全文リライトには使わない。

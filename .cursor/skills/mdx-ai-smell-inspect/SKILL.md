@@ -12,7 +12,7 @@ disable-model-invocation: false
 [coji/natural-japanese](https://github.com/coji/natural-japanese) を **診断専用** で使う。  
 FlightAcademy の声（道真・博多弁・教官ジョー）や航空安全契約の **全文リライトはしない**。
 
-Vendored upstream: [`tools/natural-japanese/`](../../../tools/natural-japanese/)（`UPSTREAM.txt` に commit）。
+Vendored upstream: [`tools/natural-japanese/`](../../../tools/natural-japanese/)（`UPSTREAM.md` に commit）。
 
 ## When to use
 
