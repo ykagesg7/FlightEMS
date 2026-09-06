@@ -100,7 +100,7 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 
 | # | stem | slug | order | 主題 | 所有 | Vol.2 | 状態 |
 |---|------|------|-------|------|------|-------|------|
-| 3-1 | `CP-3-1_ConfiguredHandling` | `cp-3-1-configured-handling` | 1 | Configured rudder / slow flight | **5.11, 5.20–5.21** | **32** Slow flight −3 / +5 | **W37 日 9/6** |
+| 3-1 | `CP-3-1_ConfiguredHandling` | `cp-3-1-configured-handling` | 1 | Configured rudder / slow flight | **5.11, 5.20–5.21** | **32** Slow flight −3 / +5 | **精緻化済・W37 日 9/6** |
 | 3-2 | `CP-3-2_PatternATS` | `cp-3-2-pattern-ats` | 2 | Pattern approach-to-stall | **5.22–5.25** | **29** | **W37 水 9/9** |
 
 `order_index`: **620–621**。
@@ -339,3 +339,4 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 | 2026-08-22 | 「公開本文の契約」を 1 話の型へ。2-1・2-2 精緻化。2-2 はオーバーシュートより失速に入れない。以降の CP もこれに従う。 |
 | 2026-08-30 | 2-4〜2-6 精緻化。W36 ドリップ（**8/30**・9/2・9/4）。1 話目は日曜案内と同時公開。Season 2 完結。 |
 | 2026-09-06 | W37 ドリップ（**9/6**・9/9・9/11）: 3-1 / 3-2 / 4-1（Season 4 Nose-high 前倒し）。契約ブロッカ（全国のT-4・血の掟等）を除去。 |
+| 2026-09-06 | `CP-3-1` 精緻化（口頭試問を 2-x 型へ。瓶バン／ひぇぇっ除去。学習目標を原則 1 へ）。 |
