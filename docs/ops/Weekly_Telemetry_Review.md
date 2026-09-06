@@ -2,7 +2,7 @@
 
 **正本**: 本書（別チャットの Agent はここを先に読む）  
 **作成**: 2026-08-08  
-**最終更新**: 2026-08-30（2026-W34 正本 L0 マージ待ち。2c: Draft 自動 Ready + マージ成功後 ACK）  
+**最終更新**: 2026-09-06（2026-W35 正本 L0 マージ待ち。2c: self-test 修正済）  
 **実施ペース**: **火曜 09:00 JST**（ISO 週: 月曜 00:00〜日曜 23:59、プロパティ TZ = Asia/Tokyo）。欠席週は行を飛ばさず「スキップ」理由を1行残す。**土曜に別窓で埋めない。**
 
 関連:
@@ -81,11 +81,11 @@
 
 | ID | 課題 | 優先 | 状態 | 次アクション | 最終言及 |
 |----|------|------|------|--------------|----------|
-| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に `utm_source=brevo&utm_medium=email&utm_campaign=wNN` を検討。W34 も referral 主体（5/6 sess）でメール切り出し困難 | W34 |
-| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | W34 は **users 3**（W33: 1）。回復傾向だが依然一桁。週次比較はノイズ大 | W34 |
-| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W34 は GA `chunk_recovery_reload` **0**。Sentry MCP 未取得のため lastSeen 未確認 → Desktop MCP または次回再確認 | W34 |
+| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に `utm_source=brevo&utm_medium=email&utm_campaign=wNN` を検討。W35 も referral 一色（7/7 sess）でメール切り出し困難 | W35 |
+| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | W35 は **users 1**（W34: 3）。PV は 15 に急減。週次比較はノイズ大 | W35 |
+| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W35 は `/planning` PV 4（W34: なし）。`chunk_recovery_reload` **0**。Sentry MCP 未取得のため lastSeen 未確認 | W35 |
 | T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W34 でも `turn-feedback-into-action` / `cp-2-1-deep-stall` 着地あり。リダイレクト継続確認 | W34 |
-| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。W34 にも quiz_* イベント **0** | W36 計画 |
+| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。W35 にも quiz_* イベント **0** | W36 計画 |
 
 ---
 
@@ -122,6 +122,49 @@
 ---
 
 ## 週次ログ（新しい週が上）
+
+### 2026-W35（2026-08-24〜08-30 / レビュー 2026-09-06）
+
+**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 33470547714](https://github.com/ykagesg7/FlightEMS/actions/runs/33470547714) / Sentry MCP（未取得）  
+**比較**: 直前 ISO 週 2026-W34 のみ（旧土曜窓とは比べない）  
+**文脈**: W34 の記事回遊スパイク後の静穏週。トップは `/` と `/planning`。`/explore/airspace-3d` が初めて上位に入る。
+
+#### 現状（Facts）
+
+| 指標 | W35 | W34 |
+|------|----:|----:|
+| activeUsers | **1** | 3 |
+| sessions | **7** | 6 |
+| screenPageViews | **15** | 81 |
+| engagedSessions | **2** | 5 |
+
+- **日次**: 08/24 users 1 / sess 2 / PV 8。08/26 users 1 / sess 1 / PV 3。08/27 sess 1 / PV 1。08/28 sess 2 / PV 2。08/29 sess 1 / PV 1。他日は行なし。
+- **ページ**: `/` PV 9、`/planning` PV 4、`/explore/airspace-3d` PV 2。記事パスは上位に出ず（W34 の `/articles` 46 からの急減）。
+- **流入**: `accounts.google.com / referral` のみ（7 sessions / 1 user / PV 15）→ メール効果の切り出しは依然困難（T-01）。
+- **端末**: mobile のみ（7 sessions）。
+- **ランディング**: `/`×2（7 sessions / 1 user）。
+- **カスタムイベント**: **0**（`chunk_recovery_reload`・quiz_* 含めなし）。
+- **Sentry**: MCP 認証不可（クラウド環境）のため 7d 件数・`FLIGHT-ACADEMY-4` lastSeen は未取得。GA 上は W35 中のチャンクリカバリ兆候なし。
+
+#### 課題（Issues）
+
+1. users が W34 の 3 から **1** に減少。PV も 81→15 に急減（T-02）。
+2. 流入が Google ログイン referral 一色でメール効果が見えない（T-01）。
+3. `/planning` が再び上位（PV 4）。チャンク issue の lastSeen は未確認（T-03）。
+4. quiz 計測がこの週もゼロ — A2-a（T-05）ベースラインにはまだ使えない。
+
+#### 解決案（Actions）
+
+- [ ] T-01: 次のダイジェスト送信前に UTM 付与を実装検討（承認後）。
+- [ ] T-03: Desktop Sentry MCP または Issues UI で `FLIGHT-ACADEMY-4` lastSeen を確認。7 日無イベントなら resolve 検討。
+- [ ] T-05: W36 までボード維持。W35 は quiz ゼロのためベースライン対象外。
+- [x] T-04: W35 でも kebab 着地なし → closed 維持。
+
+#### メモ / 生データ
+
+- Actions artifact `ga4-2026-W35`（正本には生 JSON を貼らない）
+
+---
 
 ### 2026-W34（2026-08-17〜08-23 / レビュー 2026-08-30）
 
@@ -253,6 +296,7 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-09-06 | **2026-W35** を追記（フェーズ2b）。W34 記事スパイク後の静穏週。2c self-test を `merge_failed` ACK 文言と整合。 |
 | 2026-08-30 | 初回 ISO 正本 **2026-W34** を追記（フェーズ2b PR #6）。Sentry MCP はクラウド未認証のため GA のみ。2c: Draft 自動 Ready + マージ成功後 ACK。2a: Bot token 時 Permalink。 |
 | 2026-08-17 | ISO 週・火曜切替。フェーズ1 GA4 artifact。フェーズ2a 日本語 Facts（メンションなし）。フェーズ2b Skill `weekly-telemetry-review`（正本 PR・未マージ）。フェーズ2c L0（`APPROVE-DOC` squash merge、L1 リスト空）。 |
 | 2026-08-08 | 初版。土曜午前運用・テンプレ・オープン課題ボード・W32 記入。 |
