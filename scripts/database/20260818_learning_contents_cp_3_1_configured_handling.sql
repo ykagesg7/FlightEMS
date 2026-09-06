@@ -4,10 +4,10 @@
 INSERT INTO learning_contents (id, title, category, sub_category, description, order_index, parent_id, content_type, is_published, updated_at)
 VALUES (
   'CP-3-1_ConfiguredHandling',
-  '【操縦】第10話：足を出したら遅れろ ～Configured handling～',
+  '【操縦】第10話：脚を出したら遅らせろ ～Configured handling～',
   '操縦',
   '曲技飛行',
-  '形態が出たらcleanの感覚で踏むな。configuredのラダーは1–2秒遅れる。slow flightは滑らかに。60%は加速、フルアップは失速接近。数字はT-38枠。学習記事であり実機手順ではない。',
+  '着陸形態になったらcleanの感覚で踏むな。configuredのラダーは1–2秒遅れる。slow flightは滑らかに。フラップ60%は加速、フルアップは失速接近。学習記事であり実機手順ではない。',
   620,
   NULL,
   'text',

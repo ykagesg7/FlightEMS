@@ -211,9 +211,9 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       {
         id: 'CP-3-1_ConfiguredHandling',
         publishDate: '2026-09-06',
-        title: '第10話：足を出したら遅れろ ～Configured handling～',
+        title: '第10話：脚を出したら遅らせろ ～Configured handling～',
         slug: '/articles/cp-3-1-configured-handling',
-        hook: '足を出したら昨日の感覚で踏むな。ラダーは遅れて来る。',
+        hook: '脚を出したら昨日の感覚で踏むな。ラダーは遅れて来る。',
       },
       {
         id: 'CP-3-2_PatternATS',
