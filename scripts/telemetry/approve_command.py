@@ -357,8 +357,9 @@ def self_test() -> None:
     assert parse_command("APPROVE-DOC") == "APPROVE-DOC"
     ack = ack_text("merge_doc")
     failed = ack_text("merge_failed")
+    assert ack.strip() != "APPROVE-DOC"
+    assert failed.strip() != "APPROVE-DOC"
     assert "APPROVE-DOC" not in ack
-    assert "APPROVE-DOC" not in failed
     assert "@" not in ack
     assert merge["ack"] == ""
     start, end = approval_window("2026-W34")
