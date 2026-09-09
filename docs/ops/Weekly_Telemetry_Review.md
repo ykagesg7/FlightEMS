@@ -2,7 +2,7 @@
 
 **正本**: 本書（別チャットの Agent はここを先に読む）  
 **作成**: 2026-08-08  
-**最終更新**: 2026-09-06（2026-W35 正本 L0 マージ待ち。2c: self-test 修正済）  
+**最終更新**: 2026-09-09（2026-W36 正本 L0 マージ待ち）  
 **実施ペース**: **火曜 09:00 JST**（ISO 週: 月曜 00:00〜日曜 23:59、プロパティ TZ = Asia/Tokyo）。欠席週は行を飛ばさず「スキップ」理由を1行残す。**土曜に別窓で埋めない。**
 
 関連:
@@ -81,11 +81,11 @@
 
 | ID | 課題 | 優先 | 状態 | 次アクション | 最終言及 |
 |----|------|------|------|--------------|----------|
-| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に `utm_source=brevo&utm_medium=email&utm_campaign=wNN` を検討。W35 も referral 一色（7/7 sess）でメール切り出し困難 | W35 |
-| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | W35 は **users 1**（W34: 3）。PV は 15 に急減。週次比較はノイズ大 | W35 |
-| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W35 は `/planning` PV 4（W34: なし）。`chunk_recovery_reload` **0**。Sentry MCP 未取得のため lastSeen 未確認 | W35 |
+| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に `utm_source=brevo&utm_medium=email&utm_campaign=wNN` を検討。W36 は `(direct)` 2 sess が初登場だが UTM なしのまま | W36 |
+| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | W36 は **users 2**（W35: 1）だが sess 3 / PV **2** と極小。週次比較はノイズ大 | W36 |
+| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W36 は `/planning` 上位外。`chunk_recovery_reload` **0**。Sentry MCP 未取得のため lastSeen 未確認 | W36 |
 | T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W34 でも `turn-feedback-into-action` / `cp-2-1-deep-stall` 着地あり。リダイレクト継続確認 | W34 |
-| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。W35 にも quiz_* イベント **0** | W36 計画 |
+| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン週だが quiz_* イベント **0** のまま。W37–W38 計測 → W39 判定 | W36 |
 
 ---
 
@@ -122,6 +122,49 @@
 ---
 
 ## 週次ログ（新しい週が上）
+
+### 2026-W36（2026-08-31〜2026-09-06 / レビュー 2026-09-09）
+
+**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 34185730754](https://github.com/ykagesg7/FlightEMS/actions/runs/34185730754) / Sentry MCP（未取得）  
+**比較**: 直前 ISO 週 2026-W35 のみ（旧土曜窓とは比べない）  
+**文脈**: W35 の静穏週からさらに PV が落ち込み。トップ `/` のみ。記事・planning 上位なし。users は 2 に微増。
+
+#### 現状（Facts）
+
+| 指標 | W36 | W35 |
+|------|----:|----:|
+| activeUsers | **2** | 1 |
+| sessions | **3** | 7 |
+| screenPageViews | **2** | 15 |
+| engagedSessions | **0** | 2 |
+
+- **日次**: 08/31 users 1 / sess 1 / PV 1。09/01 sess 1 / PV 0。09/02 users 1 / sess 1 / PV 1。他日は行なし。
+- **ページ**: `/` PV 2 のみ。記事パス・`/planning` は上位に出ず。
+- **流入**: `(direct)/(none)` 2 sessions / 2 users / PV 2、`accounts.google.com / referral` 1 session（users 0 / PV 0）→ UTM なしのまま（T-01）。
+- **端末**: mobile のみ（3 sessions）。
+- **ランディング**: `/`×2（2 sessions / 2 users）。
+- **カスタムイベント**: **0**（`chunk_recovery_reload`・quiz_* 含めなし）。
+- **Sentry**: MCP 認証不可（クラウド環境）のため 7d 件数・`FLIGHT-ACADEMY-4` lastSeen は未取得。GA 上は W36 中のチャンクリカバリ兆候なし。
+
+#### 課題（Issues）
+
+1. sessions / PV が W35 比で **3 / 2** とさらに縮小。users 2 だが engaged **0**（T-02）。
+2. 流入は `(direct)` が初登場するも UTM なしでメール効果は切り出せない（T-01）。
+3. `/planning` が上位外。チャンク issue の lastSeen は未確認（T-03）。
+4. W36 は A2-a ベースライン週だが quiz 計測が **0** のまま — ベースライン取得不可（T-05）。
+
+#### 解決案（Actions）
+
+- [ ] T-01: 次のダイジェスト送信前に UTM 付与を実装検討（承認後）。
+- [ ] T-03: Desktop Sentry MCP または Issues UI で `FLIGHT-ACADEMY-4` lastSeen を確認。7 日無イベントなら resolve 検討。
+- [ ] T-05: quiz イベントが W37 以降も 0 なら計測配線を別途確認。W36 はベースライン対象外として扱う。
+- [x] T-04: W36 でも kebab 着地なし → closed 維持。
+
+#### メモ / 生データ
+
+- Actions artifact `ga4-2026-W36`（正本には生 JSON を貼らない）
+
+---
 
 ### 2026-W35（2026-08-24〜08-30 / レビュー 2026-09-06）
 
@@ -296,6 +339,7 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-09-09 | **2026-W36** を追記（フェーズ2b）。PV 2 の極小週。A2-a ベースライン週だが quiz イベント 0。 |
 | 2026-09-06 | **2026-W35** を追記（フェーズ2b）。W34 記事スパイク後の静穏週。2c self-test を `merge_failed` ACK 文言と整合。 |
 | 2026-08-30 | 初回 ISO 正本 **2026-W34** を追記（フェーズ2b PR #6）。Sentry MCP はクラウド未認証のため GA のみ。2c: Draft 自動 Ready + マージ成功後 ACK。2a: Bot token 時 Permalink。 |
 | 2026-08-17 | ISO 週・火曜切替。フェーズ1 GA4 artifact。フェーズ2a 日本語 Facts（メンションなし）。フェーズ2b Skill `weekly-telemetry-review`（正本 PR・未マージ）。フェーズ2c L0（`APPROVE-DOC` squash merge、L1 リスト空）。 |
