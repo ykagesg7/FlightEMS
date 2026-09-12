@@ -120,6 +120,9 @@ def ack_text(action: str) -> str:
         "l1_denied": "記録: 許可リストに無いため実行しません。",
         "stale": "記録: 火曜を跨いだため無効です。",
         "refuse": "記録: 条件を満たさないため実行しません。",
+        "missing_telemetry_branch": (
+            "記録: 正本PRがまだありません。自動作成完了後に APPROVE-DOC を再送してください。"
+        ),
     }
     text = messages.get(action, messages["refuse"])
     if MENTION_RE.search(text) or "<@" in text:
@@ -167,7 +170,12 @@ def classify(
 
     # APPROVE-DOC
     if not week:
-        return _result("refuse", "missing_telemetry_branch", command=parsed)
+        return _result(
+            "refuse",
+            "missing_telemetry_branch",
+            command=parsed,
+            ack=ack_text("missing_telemetry_branch"),
+        )
     start, end = approval_window(week)
     if not (start <= now < end):
         return _result("stale", "outside_review_window", command=parsed, week=week)
@@ -351,6 +359,21 @@ def self_test() -> None:
         l1_allow=allow,
     )
     assert bot["action"] == "refuse"
+
+    missing = classify(
+        command="APPROVE-DOC",
+        now=review,
+        slack_user="U0928GWP3AA",
+        branch="",
+        files=[],
+        pr_state="",
+        approvers=approvers,
+        l1_allow=allow,
+    )
+    assert missing["action"] == "refuse"
+    assert missing["reason"] == "missing_telemetry_branch"
+    assert "正本PRがまだありません" in missing["ack"]
+    assert missing["ack"].strip() != "APPROVE-DOC"
 
     assert parse_command("approve-doc") is None
     assert parse_command("APPROVE-DOC please") is None

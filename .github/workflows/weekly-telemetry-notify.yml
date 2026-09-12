@@ -90,4 +90,14 @@ jobs:
           python scripts/telemetry/format_ga4_slack.py \
             --dir artifacts \
             --run-url "${{ steps.src.outputs.run_url }}" \
-            --post
+            --post \
+            --meta-out artifacts/notify-meta.json \
+            --ga4-run-id "${{ steps.src.outputs.run_id }}"
+
+      - name: Upload notify meta
+        uses: actions/upload-artifact@v4
+        with:
+          name: notify-meta
+          path: artifacts/notify-meta.json
+          if-no-files-found: error
+          retention-days: 30

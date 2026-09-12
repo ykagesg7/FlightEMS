@@ -61,7 +61,7 @@ def slack_permalink(channel_id: str, message_ts: str, workspace: str = SLACK_WOR
 
 
 def thread_reply_hint(permalink: str) -> str:
-    return f"スレッド: <{permalink}|この投稿へ返信（週次レビュー・承認）>"
+    return f"スレッド: <{permalink}|この投稿へ返信（承認）>"
 
 
 def format_slack_mrkdwn(
@@ -121,13 +121,12 @@ def format_slack_mrkdwn(
         lines.append(f"Actions: <{run_url}|実行ログ>")
     if thread_permalink:
         lines.append(thread_reply_hint(thread_permalink))
-    lines.append("Sentry: 2a では未取得。週次レビューで追記する。")
+    lines.append("Sentry: 2a では未取得。必要なら任意で追記。")
     lines.append(
         "正本転記: 火曜レビューの当該 ISO 週のみ。この投稿は承認コマンドではない。"
     )
     lines.append(
-        "次: このスレッドで Cursor エージェントをメンションして週次レビュー"
-        "（この投稿ではメンションしない）。"
+        "次: 正本PRは自動作成。スレッドに PR URL が付いたら確認し、一行 `APPROVE-DOC`"
     )
     lines.append(
         "承認例（スレッド返信・一行・大文字）: "
@@ -228,6 +227,24 @@ def post_slack(text: str) -> str | None:
     return message_ts
 
 
+def write_notify_meta(
+    path: Path,
+    *,
+    week: str,
+    thread_ts: str,
+    ga4_run_id: str,
+    channel_id: str,
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "week": week,
+        "thread_ts": thread_ts,
+        "ga4_run_id": ga4_run_id,
+        "channel_id": channel_id,
+    }
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
 def self_test() -> None:
     sample = {
         "week": "2026-W33",
@@ -248,7 +265,8 @@ def self_test() -> None:
     text = format_slack_mrkdwn(sample, run_url="https://example.invalid/run")
     assert "telemetry-notify 2026-W33" in text
     assert "週次テレメトリ" in text
-    assert "メンションしない" in text
+    assert "正本PRは自動作成" in text
+    assert "Cursor エージェントをメンション" not in text
     link = slack_permalink(CHANNEL_ID, "1787621958.649089")
     assert link.endswith("/p1787621958649089")
     with_link = format_slack_mrkdwn(
@@ -256,13 +274,26 @@ def self_test() -> None:
         run_url="https://example.invalid/run",
         thread_permalink=link,
     )
-    assert "この投稿へ返信" in with_link
+    assert "この投稿へ返信（承認）" in with_link
     assert "@not-a-mention" not in text
     assert "(at)not-a-mention" in text
     assert "<@" not in text
     assert not MENTION_RE.search(text)
     assert "APPROVE-DOC" in text
     assert not text.strip().startswith("APPROVE-DOC")
+    meta_path = Path(os.environ.get("TEMP") or "/tmp") / "notify-meta-self-test.json"
+    write_notify_meta(
+        meta_path,
+        week="2026-W33",
+        thread_ts="1788840334.986649",
+        ga4_run_id="34185730754",
+        channel_id=CHANNEL_ID,
+    )
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    assert meta["week"] == "2026-W33"
+    assert meta["thread_ts"] == "1788840334.986649"
+    assert meta["ga4_run_id"] == "34185730754"
+    meta_path.unlink(missing_ok=True)
     print("self-test ok")
 
 
@@ -273,6 +304,8 @@ def main() -> int:
     parser.add_argument("--run-url", default="", help="GitHub Actions run URL")
     parser.add_argument("--thread-permalink", default="", help="Optional Slack thread permalink")
     parser.add_argument("--post", action="store_true")
+    parser.add_argument("--meta-out", default="", help="Write notify-meta.json after --post")
+    parser.add_argument("--ga4-run-id", default="", help="GA4 workflow run id for notify-meta")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
 
@@ -294,8 +327,17 @@ def main() -> int:
         thread_permalink=args.thread_permalink,
     )
     if args.post:
-        post_slack(text)
+        thread_ts = post_slack(text) or ""
         print("posted", file=sys.stderr)
+        if args.meta_out:
+            channel = os.environ.get("SLACK_CHANNEL_ID", CHANNEL_ID).strip() or CHANNEL_ID
+            write_notify_meta(
+                Path(args.meta_out),
+                week=str(report.get("week") or ""),
+                thread_ts=thread_ts,
+                ga4_run_id=args.ga4_run_id,
+                channel_id=channel,
+            )
     else:
         sys.stdout.write(text + "\n")
     return 0

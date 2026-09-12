@@ -65,7 +65,7 @@ npm exec -- tsc -b   # 型チェック
 5. 週末クリップ整理／週次発信弧 → Skill [`weekend-ingest`](.cursor/skills/weekend-ingest/SKILL.md) / [`weekend-editorial`](.cursor/skills/weekend-editorial/SKILL.md)（正本 [`docs/ops/Weekend_Content_Pipeline.md`](docs/ops/Weekend_Content_Pipeline.md)）。**Skill＝手順、Context＝その週の材料**。公式 Obsidian スキルの丸設置はしない（うちのルールはフォルダ契約）
 6. 週次記事メール文案 → Skill [`weekly-article-digest`](.cursor/skills/weekly-article-digest/SKILL.md)（送信は明示時のみ）
 7. 記事ドリップ公開確認 → Skill [`article-publish-check`](.cursor/skills/article-publish-check/SKILL.md)
-8. 火曜・GA4+Sentry 週次レビュー（ISO 週） → 正本 [`docs/ops/Weekly_Telemetry_Review.md`](docs/ops/Weekly_Telemetry_Review.md)。数字は `weekly-telemetry-ga4` の artifact。Facts 通知は `weekly-telemetry-notify`（日本語・`@` なし）。要約 PR は Skill [`weekly-telemetry-review`](.cursor/skills/weekly-telemetry-review/SKILL.md)（merge しない）。L0 マージは `weekly-telemetry-approve`（`APPROVE-DOC`）。L1 許可リストは空。認証は [`docs/Cursor_MCP_Setup.md`](docs/Cursor_MCP_Setup.md)
+8. 火曜・GA4+Sentry 週次レビュー（ISO 週） → 正本 [`docs/ops/Weekly_Telemetry_Review.md`](docs/ops/Weekly_Telemetry_Review.md)。数字は `weekly-telemetry-ga4` の artifact。Facts 通知は `weekly-telemetry-notify`（日本語・`@` なし）。正本 PR は `weekly-telemetry-draft-pr`（自動）。Skill [`weekly-telemetry-review`](.cursor/skills/weekly-telemetry-review/SKILL.md) は任意（Sentry 追記）。L0 マージは `weekly-telemetry-approve`（`APPROVE-DOC`）。L1 許可リストは空。認証は [`docs/Cursor_MCP_Setup.md`](docs/Cursor_MCP_Setup.md)
 
 ## サブエージェント / Skills
 
@@ -79,7 +79,7 @@ npm exec -- tsc -b   # 型チェック
 | 完了検証（テスト・抜け漏れ） | agent `verifier` |
 | 土曜 Ingest / 日曜 Editorial | `weekend-ingest` / `weekend-editorial` |
 | 週次 digest 文案 / 公開確認 | `weekly-article-digest` / `article-publish-check` |
-| 火曜テレメトリ正本 PR | `weekly-telemetry-review` |
+| 火曜テレメトリ Sentry 追記（任意） | `weekly-telemetry-review` |
 
 組み込み Explore / Bash / Browser は設定不要（ノイズ隔離用）。
 
