@@ -44,6 +44,8 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-09-12（W38 配信準備）**: CP-4-2 / 5-1 / 5-2 を **9/13・16・18** でドリップ。schedule と `publishedAt` 済み。`is_published` は cron 待ち。正本 [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)。
+- **2026-09-12（CP/FN 執筆カード）**: 操縦 Gemini 正本 [ops/Gemini_CP_FN_System_Prompt.md](ops/Gemini_CP_FN_System_Prompt.md)。W38 カード [Contact_Transition_2026/W38_episode_cards.md](content_outlines/Contact_Transition_2026/W38_episode_cards.md)。見習い道真プロンプトは使わない。
 - **2026-08-24（ログインがパスワード再設定になる不具合）**: リカバリー判定を `type=recovery` / `/auth/recovery` / `mode=recovery` に限定（ハッシュの `access_token` だけでは判定しない）。フラグは TTL 15 分で自動失効し、非 recovery コールバックと `signIn` 成功でクリア。`/auth/recovery` に再送・中断導線。動作しない `bypassEmailVerification` を撤去。正本 [02](02_System_Spec.md) · [01](01_Current_Status_and_Roadmap.md) v4.0.48。
 - **2026-08-24（Articles 初期ロード安定化）**: `virtual:articles-index` で MDX メタをビルド時抽出。プラグインは `enforce: 'pre'`。設定再読込失敗後は `npm run dev` の再起動が必要。`verify-build` の `prefer-const` を解消。正本 [02](02_System_Spec.md) · [01](01_Current_Status_and_Roadmap.md) v4.0.47 · [FOLDER_STRUCTURE](FOLDER_STRUCTURE.md) · [03](03_Development_Guide.md)。
 - **2026-08-24（Planning 航法一本化・4カード）**: `computeNavLog` で ETE／ETA／燃料／垂直プロファイルを一本化。UI は Setup / Route / NavLog / Briefing。Debrief は第 3 タブ。T-4 は教官提供値＋計画単位上書き。正本 [02](02_System_Spec.md) Flight Planning · [03](03_Development_Guide.md) · [Component_Structure_Guide](Component_Structure_Guide.md) · [Flight_Debrief_Tools](Flight_Debrief_Tools.md)。

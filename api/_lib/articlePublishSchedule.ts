@@ -231,6 +231,35 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
     ],
   },
+  '2026-W38': {
+    isoWeek: '2026-W38',
+    seriesTitle: 'CP（単機）',
+    intro:
+      '来週は Nose-low から曲技の入口。1本目は今すぐ読める。最短半径で起こす、Contract と Box、エルロンロールの終盤。図形の前に決まりを置く週たい。',
+    articles: [
+      {
+        id: 'CP-4-2_NoseLow',
+        publishDate: '2026-09-13',
+        title: '第13話：突っ込んだNoseは最短で引き起こせ ～Nose-low recovery～',
+        slug: '/articles/cp-4-2-nose-low',
+        hook: '近い地平線へ回せ。最短半径で起こせ。',
+      },
+      {
+        id: 'CP-5-1_AerobaticContract',
+        publishDate: '2026-09-16',
+        title: '第14話：図形の前に Contract を決めろ ～Aerobatic contract～',
+        slug: '/articles/cp-5-1-aerobatic-contract',
+        hook: '図形の前に Contract。進入と Box を先に決めろ。',
+      },
+      {
+        id: 'CP-5-2_AileronRoll',
+        publishDate: '2026-09-18',
+        title: '第15話：Nose を一点に釘付けするな ～Aileron roll～',
+        slug: '/articles/cp-5-2-aileron-roll',
+        hook: 'Nose を釘付けするな。終盤は力を抜け。',
+      },
+    ],
+  },
 };
 
 export function getDigestForIsoWeek(isoWeek: string): WeeklyArticleDigest | null {

@@ -106,6 +106,7 @@
 | **CP（操縦）** S4-2 ストック | [`20260819_learning_contents_cp_4_2_nose_low.sql`](20260819_learning_contents_cp_4_2_nose_low.sql)（`CP-4-2_NoseLow`、`order_index` **623**、`is_published: false`） |
 | **CP（操縦）** S5-1 ストック | [`20260820_learning_contents_cp_5_1_aerobatic_contract.sql`](20260820_learning_contents_cp_5_1_aerobatic_contract.sql)（`CP-5-1_AerobaticContract`、`order_index` **624**、`is_published: false`） |
 | **CP（操縦）** S5-2 ストック | [`20260820_learning_contents_cp_5_2_aileron_roll.sql`](20260820_learning_contents_cp_5_2_aileron_roll.sql)（`CP-5-2_AileronRoll`、`order_index` **625**、`is_published: false`） |
+| **CP（操縦）** W38 メタ同期 | [`20260912_learning_contents_cp_w38_meta.sql`](20260912_learning_contents_cp_w38_meta.sql)（4-2 / 5-1 / 5-2 の title・description のみ。`is_published` は触らない） |
 | **CP（操縦）** S5-3 ストック | [`20260820_learning_contents_cp_5_3_lazy_eight.sql`](20260820_learning_contents_cp_5_3_lazy_eight.sql)（`CP-5-3_LazyEight`、`order_index` **626**、`is_published: false`） |
 | **CP（操縦）** S5-4 ストック | [`20260821_learning_contents_cp_5_4_barrel_roll.sql`](20260821_learning_contents_cp_5_4_barrel_roll.sql)（`CP-5-4_BarrelRoll`、`order_index` **627**、`is_published: false`） |
 | **CP（操縦）** S5-5 ストック | [`20260821_learning_contents_cp_5_5_loop.sql`](20260821_learning_contents_cp_5_5_loop.sql)（`CP-5-5_Loop`、`order_index` **628**、`is_published: false`） |
