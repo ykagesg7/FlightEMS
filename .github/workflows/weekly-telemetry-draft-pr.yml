@@ -1,0 +1,181 @@
+name: weekly-telemetry-draft-pr
+
+# Phase 2b: after Slack facts, open a docs-only telemetry PR. Does not merge.
+# Human L0 is a one-line APPROVE-DOC in the Facts thread.
+on:
+  workflow_run:
+    workflows: ["weekly-telemetry-notify"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      notify_run_id:
+        description: "notify workflow run id. Empty = latest successful weekly-telemetry-notify."
+        required: false
+        type: string
+      ga4_run_id:
+        description: "Override GA4 run id from notify-meta."
+        required: false
+        type: string
+
+permissions:
+  actions: read
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: weekly-telemetry-draft-pr
+  cancel-in-progress: false
+
+jobs:
+  draft:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Self-test scripts
+        run: |
+          python scripts/telemetry/format_ga4_slack.py --self-test
+          python scripts/telemetry/format_ga4_review.py --self-test
+          python scripts/telemetry/apply_week_review.py --self-test
+          python scripts/telemetry/approve_command.py --self-test
+
+      - name: Resolve notify run
+        id: src
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_FROM_EVENT: ${{ github.event.workflow_run.id }}
+          RUN_INPUT: ${{ github.event.inputs.notify_run_id }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_run" ]; then
+            RUN_ID="$RUN_FROM_EVENT"
+          elif [ -n "${RUN_INPUT:-}" ]; then
+            RUN_ID="$RUN_INPUT"
+          else
+            RUN_ID="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow weekly-telemetry-notify.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId')"
+          fi
+          if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
+            echo "Could not resolve a successful weekly-telemetry-notify run."
+            exit 1
+          fi
+          echo "notify_run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Download notify meta
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.src.outputs.notify_run_id }}
+          name: notify-meta
+          path: artifacts
+
+      - name: Read notify meta
+        id: meta
+        env:
+          GA4_OVERRIDE: ${{ github.event.inputs.ga4_run_id }}
+        run: |
+          set -euo pipefail
+          WEEK="$(python -c "import json; print(json.load(open('artifacts/notify-meta.json', encoding='utf-8')).get('week') or '')")"
+          THREAD_TS="$(python -c "import json; print(json.load(open('artifacts/notify-meta.json', encoding='utf-8')).get('thread_ts') or '')")"
+          GA4_RUN="$(python -c "import json; print(json.load(open('artifacts/notify-meta.json', encoding='utf-8')).get('ga4_run_id') or '')")"
+          if [ -n "${GA4_OVERRIDE:-}" ]; then
+            GA4_RUN="$GA4_OVERRIDE"
+          fi
+          if [ -z "$WEEK" ] || [ -z "$GA4_RUN" ]; then
+            echo "notify-meta.json missing week or ga4_run_id."
+            exit 1
+          fi
+          echo "week=$WEEK" >> "$GITHUB_OUTPUT"
+          echo "thread_ts=$THREAD_TS" >> "$GITHUB_OUTPUT"
+          echo "ga4_run_id=$GA4_RUN" >> "$GITHUB_OUTPUT"
+          echo "run_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GA4_RUN}" >> "$GITHUB_OUTPUT"
+
+      - name: Download GA4 artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.meta.outputs.ga4_run_id }}
+          pattern: ga4-*
+          merge-multiple: true
+          path: artifacts
+
+      - name: Open or reuse docs PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WEEK: ${{ steps.meta.outputs.week }}
+          RUN_URL: ${{ steps.meta.outputs.run_url }}
+        run: |
+          set -euo pipefail
+          BRANCH="telemetry/${WEEK}"
+          EXISTING="$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --head "$BRANCH" --json url --jq '.[0].url // empty')"
+          if [ -n "$EXISTING" ]; then
+            echo "pr_url=$EXISTING" >> "$GITHUB_OUTPUT"
+            echo "created=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B "$BRANCH" origin/main
+
+          python scripts/telemetry/apply_week_review.py \
+            --in artifacts/ga4-iso-week.json \
+            --doc docs/ops/Weekly_Telemetry_Review.md \
+            --run-url "$RUN_URL"
+          if git diff --quiet -- docs/ops/Weekly_Telemetry_Review.md; then
+            echo "Week ${WEEK} already on main. No PR."
+            echo "pr_url=" >> "$GITHUB_OUTPUT"
+            echo "created=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git add docs/ops/Weekly_Telemetry_Review.md
+          git commit -m "docs: add ${WEEK} telemetry review"
+          git push -u origin "$BRANCH"
+          PR_URL="$(gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$BRANCH" \
+            --title "docs: add ${WEEK} telemetry review" \
+            --body "$(printf '%s\n' \
+              "## Summary" \
+              "" \
+              "Adds the **${WEEK}** weekly telemetry review section (phase 2b CI)." \
+              "Sentry is not fetched in CI." \
+              "" \
+              "## L0 approval" \
+              "" \
+              "Merge via the Facts thread one-line \`APPROVE-DOC\` (phase 2c)." \
+            )")"
+          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+          echo "created=true" >> "$GITHUB_OUTPUT"
+
+      - name: ACK Slack with PR URL
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL_ID: C0BQ5R19QDV
+          THREAD_TS: ${{ steps.meta.outputs.thread_ts }}
+          PR_URL: ${{ steps.pr.outputs.pr_url }}
+          WEEK: ${{ steps.meta.outputs.week }}
+        run: |
+          set -euo pipefail
+          if [ -z "${THREAD_TS:-}" ]; then
+            echo "No thread_ts in notify-meta. Skip Slack (Bot token on notify is required for permalink/thread)."
+            exit 0
+          fi
+          if [ -z "${PR_URL:-}" ]; then
+            ACK_TEXT="記録: ${WEEK} は正本に既にあります。APPROVE-DOC は不要です。"
+          else
+            ACK_TEXT="記録: 正本PRを用意しました: ${PR_URL} 。確認後に一行 APPROVE-DOC"
+          fi
+          python scripts/telemetry/approve_command.py \
+            --ack-text "$ACK_TEXT" \
+            --thread-ts "$THREAD_TS"

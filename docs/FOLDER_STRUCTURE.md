@@ -43,7 +43,7 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **内容**:
   - `workflows/test.yml`: テスト専用ワークフロー
   - `workflows/verify-build.yml`: ビルド検証ワークフロー
-  - `workflows/weekly-telemetry-ga4.yml` / `weekly-telemetry-notify.yml` / `weekly-telemetry-approve.yml`: 火曜 ISO 週の数字取得・Slack Facts・L0 承認（フェーズ1 に Slack を足さない）
+  - `workflows/weekly-telemetry-ga4.yml` / `weekly-telemetry-notify.yml` / `weekly-telemetry-draft-pr.yml` / `weekly-telemetry-approve.yml`: 火曜 ISO 週の数字取得・Slack Facts・正本 PR 自動作成・L0 承認（フェーズ1 に Slack を足さない）
 - **削除済み**: `cursor-cli.yml`（使用頻度が低いため削除）
 
 #### `.vercel/` / `.vscode/`

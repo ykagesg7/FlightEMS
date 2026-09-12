@@ -20,15 +20,15 @@
 - **旧窓**（W32/W33 ログ）: 土曜レビューのまま残す。数値を ISO 週で上書きしない。
 - **新窓**: 初回は **2026-W34（2026-08-17〜08-23）を 2026-08-25 火** に記入。
 - 旧窓と新窓を **前週比しない**。
-- 数字取得は GitHub Actions（クラウドはローカル SA JSON を読まない）。要約・正本 PR はフェーズ2b。承認実行はフェーズ2c（L0 のみ。L1 許可リストは空）。
+- 数字取得は GitHub Actions（クラウドはローカル SA JSON を読まない）。要約・正本 PR はフェーズ2b（**CI 自動が必須**。Cursor は任意）。承認実行はフェーズ2c（L0 のみ。L1 許可リストは空）。人の L0 は Facts スレッドへの **`APPROVE-DOC` のみ**。
 - **フェーズ1（完了）**: [`.github/workflows/weekly-telemetry-ga4.yml`](../../.github/workflows/weekly-telemetry-ga4.yml) が ISO 週 JSON を artifact に置く。Secret `GA4_SA_JSON`。ドライラン W33: [run 31998682755](https://github.com/ykagesg7/FlightEMS/actions/runs/31998682755)（正本には未記入）。
 - **フェーズ2a（実装・検証済）**: [`.github/workflows/weekly-telemetry-notify.yml`](../../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ **日本語** Facts を投稿する。`@` メンションなし。Secret `SLACK_WEBHOOK_URL`（必須）。`SLACK_BOT_TOKEN` があると投稿末尾に **スレッド Permalink** を付ける。
-- **フェーズ2b（実装）**: Slack スレッドで人が Cursor をメンション → Skill [`weekly-telemetry-review`](../../.cursor/skills/weekly-telemetry-review/SKILL.md) が正本 PR を出す（merge しない）。Facts 下書きは `scripts/telemetry/format_ga4_review.py`。
+- **フェーズ2b（実装）**: [`.github/workflows/weekly-telemetry-draft-pr.yml`](../../.github/workflows/weekly-telemetry-draft-pr.yml) が Facts 成功後に docs-only PR を自動作成する（merge しない。**非 Draft**）。適用は [`apply_week_review.py`](../../scripts/telemetry/apply_week_review.py)。Cursor Skill [`weekly-telemetry-review`](../../.cursor/skills/weekly-telemetry-review/SKILL.md) は任意（Sentry 追記）。Facts 下書きは `scripts/telemetry/format_ga4_review.py`。
 - **フェーズ2c（L0 実装・配線済）**: スレッドの一行コマンドを [`.github/workflows/weekly-telemetry-approve.yml`](../../.github/workflows/weekly-telemetry-approve.yml) が実行する。`APPROVE-DOC` は `telemetry/YYYY-Www` かつ docs のみの PR を squash merge（**Draft なら自動で Ready**）。`APPROVE T-xx` は **許可リスト空**のため no-op。受信は Vercel [`api/telemetry-approve.ts`](../../api/telemetry-approve.ts)（Slack Events `message.channels`。notify アプリには付けない）。ACK は `fa-telemetry-notify` の Incoming Webhook。**マージ成功後のみ**成功 ACK。失敗時は再送を促す ACK。Slash Command は使わない。未配線でも `gh workflow run weekly-telemetry-approve.yml` で人手起動できる。
 
 ### Slack 承認コマンド
 
-レポート投稿の **スレッドに返信**する。一行・大文字。絵文字だけでは判定しない。未承認のまま次の火曜が来たら **実行しない**（fail-closed）。
+レポート投稿の **スレッドに返信**する。一行・大文字。絵文字だけでは判定しない。人の必須操作は **`APPROVE-DOC` のみ**（正本 PR は CI が用意する）。未承認のまま次の火曜が来たら **実行しない**（fail-closed）。
 
 | コマンド | 意味 | 段階 |
 |----------|------|------|
@@ -73,7 +73,7 @@
 
 1. **GA4**: Actions の artifact `ga4-<ISO週>`（なければローカル SA + Data API）。今週・前週の users / sessions / screenPageViews / engagedSessions。日次。上位 `pagePath`・記事パス・source/medium・device・landing。
 2. **Sentry**: 直近 7d の error 件数、`is:unresolved lastSeen:-7d`、チャンク系（`FLIGHT-ACADEMY-4` 等）の最終発生。
-3. **文書**: Skill `weekly-telemetry-review` → 下記テンプレで週節を追記 → オープン課題ボード更新 → docs-only PR（未マージ）。L0 はスレッドの `APPROVE-DOC`（2c）または人手マージ。必要なら [04](../04_Operations_Guide.md) へ運用変更のみリンク。
+3. **文書**: CI `weekly-telemetry-draft-pr` が週節・ボードを自動追記して docs-only PR を出す。任意で Skill `weekly-telemetry-review` が Sentry 等を追記。L0 はスレッドの `APPROVE-DOC`（2c）のみ。必要なら [04](../04_Operations_Guide.md) へ運用変更のみリンク。
 
 ---
 
@@ -296,6 +296,7 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-09-12 | フェーズ2b を CI 自動 PR（`weekly-telemetry-draft-pr`）に変更。人の L0 は `APPROVE-DOC` のみ。Cursor Skill は任意。 |
 | 2026-09-06 | **2026-W35** を追記（フェーズ2b）。W34 記事スパイク後の静穏週。2c self-test を `merge_failed` ACK 文言と整合。 |
 | 2026-08-30 | 初回 ISO 正本 **2026-W34** を追記（フェーズ2b PR #6）。Sentry MCP はクラウド未認証のため GA のみ。2c: Draft 自動 Ready + マージ成功後 ACK。2a: Bot token 時 Permalink。 |
 | 2026-08-17 | ISO 週・火曜切替。フェーズ1 GA4 artifact。フェーズ2a 日本語 Facts（メンションなし）。フェーズ2b Skill `weekly-telemetry-review`（正本 PR・未マージ）。フェーズ2c L0（`APPROVE-DOC` squash merge、L1 リスト空）。 |
