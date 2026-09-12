@@ -3,8 +3,10 @@
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
 **呼称**: 公開面は **CP**（空自）。USAF 教範の章名 Contact は出典参照に残す。  
 **位置**: 読む順は **CP → FMT**（単機の飛行Envelopeのあと編隊）。FMT Season 2（BFM 幾何）はそのさらに後。  
-**既存公開**: **W34** 1-1〜1-3（8/17・19・21）。**W35** 2-1〜2-3（8/24・26・28）。**W36** 2-4〜2-6（**8/30**・9/2・9/4）。**W37** 3-1 **日 9/6**、3-2 水 9/9、4-1 金 9/11（Season 4 前倒し）。`is_published` は cron が schedule の日付で反転。**1 話目は日曜 `publishDate`（digest 送信日）**。  
+**既存公開**: **W34** 1-1〜1-3（8/17・19・21）。**W35** 2-1〜2-3（8/24・26・28）。**W36** 2-4〜2-6（**8/30**・9/2・9/4）。**W37** 3-1 **日 9/6**、3-2 水 9/9、4-1 金 9/11（Season 4 前倒し）。**W38** 4-2 **日 9/13**、5-1 水 9/16、5-2 金 9/18。`is_published` は cron が schedule の日付で反転。**1 話目は日曜 `publishDate`（digest 送信日）**。  
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
+**操縦プロンプト**: [Gemini_CP_FN_System_Prompt.md](../../ops/Gemini_CP_FN_System_Prompt.md)  
+**W38 カード**: [W38_episode_cards.md](W38_episode_cards.md)（4-2 / 5-1 / 5-2。精緻化済・schedule 済）  
 **MDX 規則**: [`.cursor/rules/mdx-article-guide.mdc`](../../../.cursor/rules/mdx-article-guide.mdc)  
 **登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **曲技飛行**、`series`: **USAF-Contact-Phase**  
 **公開**: [articlePublishSchedule.ts](../../../api/_lib/articlePublishSchedule.ts)  
@@ -43,7 +45,8 @@ FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通
 - 数字は本 README「許可数字」と当該ブリーフに書いたものだけ
 - T-38 の EGT / canopy bow / shark fin / green donut / CSW・CDI を T-4 の正解にしない（読み替え。CDW/CDB は使わない）
 - 太字は `「**…**」`（カギ括弧の内側）
-- 詳細解説の `###` は PREP（P / R / E / 締めの P）
+- 詳細解説の論理は PREP（P / R / E / 締めの P）。読者に見せる `###` は結論見出し。`### 1. P（Point）` ラベルは出さない（W38〜）
+- 入口（問題 / 観察 / 結果）と主笑いの置き場は話ごとに変える。直前2話と同じ入口禁止。Holding は必須ではない
 - 口頭試問の話者は **学生：** / **学生（白目）：**（`学生（あんさん）` も `お前（学生）` も使わない。ジョー台詞内の「お前」は二人称として残す）
 - 道真の語尾はひらがな **ばい**（`バイ！` は使わない）
 - 飛行包線・エンベロープ・envelope は **飛行Envelope** に統一
@@ -125,7 +128,7 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 | # | stem | slug | order | 主題 | 所有 | Vol.2 | 状態 |
 |---|------|------|-------|------|------|-------|------|
 | 4-1 | `CP-4-1_NoseHigh` | `cp-4-1-nose-high` | 1 | Nose-high recovery | **5.26–5.27** | **31** | **精緻化済・W37 金 9/11（前倒し）** |
-| 4-2 | `CP-4-2_NoseLow` | `cp-4-2-nose-low` | 2 | Nose-low recovery | **5.28** | **30** | **ストック** |
+| 4-2 | `CP-4-2_NoseLow` | `cp-4-2-nose-low` | 2 | Nose-low recovery | **5.28** | **30** | **精緻化済・W38 日 9/13** |
 
 `order_index`: **622–623**。
 
@@ -137,8 +140,8 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 
 | # | stem | slug | order | 主題 | 所有 | 状態 |
 |---|------|------|-------|------|------|------|
-| 5-1 | `CP-5-1_AerobaticContract` | `cp-5-1-aerobatic-contract` | 1 | 曲技の契約・表 5.1/5.2 | **5.29–5.32**（5.3 を再講義しない） | **ストック** |
-| 5-2 | `CP-5-2_AileronRoll` | `cp-5-2-aileron-roll` | 2 | Aileron roll | **5.33** | **ストック** |
+| 5-1 | `CP-5-1_AerobaticContract` | `cp-5-1-aerobatic-contract` | 1 | 曲技の契約・表 5.1/5.2 | **5.29–5.32**（5.3 を再講義しない） | **精緻化済・W38 水 9/16** |
+| 5-2 | `CP-5-2_AileronRoll` | `cp-5-2-aileron-roll` | 2 | Aileron roll | **5.33** | **精緻化済・W38 金 9/18** |
 | 5-3 | `CP-5-3_LazyEight` | `cp-5-3-lazy-eight` | 3 | Lazy Eight | **5.34** | **ストック** |
 | 5-4 | `CP-5-4_BarrelRoll` | `cp-5-4-barrel-roll` | 4 | Barrel roll | **5.35** | **ストック** |
 | 5-5 | `CP-5-5_Loop` | `cp-5-5-loop` | 5 | Loop | **5.36** | **ストック** |
@@ -356,3 +359,5 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 | 2026-09-06 | `CP-3-1` ユーザーリライト反映（タイトル「脚を出したら遅らせろ」。口頭試問にフラップ誤操作を統合）。 |
 | 2026-09-06 | `CP-3-2` ユーザーリライト反映（タイトル「兆候を見たらリカバリー」。形／リカバリー用語統一）。 |
 | 2026-09-06 | `CP-4-1` ユーザーリライト反映（タイトル Nose 表記。型E維持・連続瓶バン回避。KIAS→kt）。 |
+| 2026-09-12 | W38 カード（4-2 / 5-1 / 5-2）。入口回転・PREP は論理のみ。操縦 Gemini 正本を分離。 |
+| 2026-09-12 | W38 ドリップ準備（**9/13**・9/16・9/18）: 4-2 / 5-1 / 5-2。Contract / Box / Nose。`is_published` は cron 待ち。 |

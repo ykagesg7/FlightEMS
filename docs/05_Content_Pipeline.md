@@ -222,7 +222,7 @@ Phase 2 計画リスト上の **新規本文化** が一段落したフェーズ
 | **2026-W35**（〜2026-08-31） | **5** | ① **八月末ゲート**: `test:coverage` → `src` **21.17%**（7728/36505・507 tests 緑）。② **CBT 第3バッチ**: 工学 **26** + 法規 **31** → 各ハブ（[`20260812_learning_test_mapping_cbt_eng_legal_hub.sql`](../scripts/database/20260812_learning_test_mapping_cbt_eng_legal_hub.sql)）。③ MCP: 未マッピング **10**（レガシーのみ）、mapping **147 行**、CBT 暫定束ね **104/104 完走**。④ **A2-a** 実装（科目 default 5問）。⑤ 9月計画: [September_2026_Implementation_Plan.md](September_2026_Implementation_Plan.md)。 |
 | **2026-W36**（〜2026-09-07） | **3**（予定） | ① **A2-a ベースライン** GA4（`tab=subject` start→complete）。② Articles **週 3 本**（FMT ドリップ継続。1-4 以降はストック投入）。③ CBT **Phase B** 第1対象選定。④ [September 計画](September_2026_Implementation_Plan.md) §5。 |
 | **2026-W37**（〜2026-09-14） | **4**（予定） | ① **A2-a 計測 W1**。② **PPL-2-3-4** 深文化 + mapping。③ レガシー空力 **3**→`3.2.7` SQL。④ A3-a メタ 1 件。 |
-| **2026-W38**（〜2026-09-21） | **4**（予定） | ① **A2-a 計測 W2**（連続改善判定用）。② **CBT Phase B 第1バッチ**（通信推奨）。③ Articles 平日ドリップ継続（FMT または他シリーズ）。④ MCP 再集計。 |
+| **2026-W38**（〜2026-09-21） | **4**（予定） | ① **A2-a 計測 W2**（連続改善判定用）。② **CBT Phase B 第1バッチ**（通信推奨）。③ Articles **CP 4-2 / 5-1 / 5-2**（9/13・16・18）。④ MCP 再集計。 |
 | **2026-W39**（〜2026-09-28） | **3**（予定） | ① **A2-a 判定** + A2-b Go/No-Go。② Articles ドリップ継続。③ CBT Phase B 第2バッチ（余力）。 |
 | **2026-W40**（〜2026-10-05） | **5**（予定） | ① **九月末ゲート**: coverage ≥21%・MCP・01。② A2-a 判定を 01 へ 1 行。③ 10月計画起票。 |
 
