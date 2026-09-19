@@ -32,7 +32,7 @@
 
 ### 月次実行計画
 
-- **[May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)** — **2026年5月後半**（W20〜W22）。**§6 完了ログ**。**現在週素案**: [content_outlines/W22_2026/README.md](content_outlines/W22_2026/README.md)。一覧: [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。
+- **[May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)** — **2026年5月後半**（W20〜W22）。**§6 完了ログ**（現行週の正本ではない）。一覧: [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。
 - **[June_2026_Content_Sprint.md](June_2026_Content_Sprint.md)** — **2026年6月**（**W23〜W26**）の**週次実行メモ**（ブロック D〜G、六月末ゲート **§7**）。週次表の正本は [05](05_Content_Pipeline.md)。
 - **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — **2026年6月期**の DONE 条件、[05](05_Content_Pipeline.md) 週次（W23〜W26）・CPL/PPL 拡充の優先、マッピング監査／B-4／Phase C 準備（UI は承認制）を定義する。**週別一覧**は §2.1。
 - **[July_2026_Implementation_Plan.md](July_2026_Implementation_Plan.md)** — **2026年7月期**（W27〜W30）Phase C 後半。C-6 マッピング・C-7 PPL・法規 Callout・GA4・B-4。
@@ -44,6 +44,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-09-19（docs スリム）**: W22 Gemini 素案を実装後削除（W20/W21 と同じ）。欠ファイル `Phase_Testing_Plan.md` へのリンクを [Phase_C_Quality_Preparation](Phase_C_Quality_Preparation.md) へ。`docs-auto-update` は `ROADMAP.md` 前提のため実行禁止を正本に明記。
 - **2026-09-19（W39 配信準備）**: CP-5-3 / 5-4 / 5-5 を **9/20・23・25** でドリップ。schedule と `publishedAt` 済み。`is_published` は cron 待ち。正本 [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)。カード [W39_episode_cards.md](content_outlines/Contact_Transition_2026/W39_episode_cards.md)。
 - **2026-09-12（W38 配信準備）**: CP-4-2 / 5-1 / 5-2 を **9/13・16・18** でドリップ。schedule と `publishedAt` 済み。`is_published` は cron 待ち。正本 [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)。
 - **2026-09-12（CP/FN 執筆カード）**: 操縦 Gemini 正本 [ops/Gemini_CP_FN_System_Prompt.md](ops/Gemini_CP_FN_System_Prompt.md)。W38 カード [Contact_Transition_2026/W38_episode_cards.md](content_outlines/Contact_Transition_2026/W38_episode_cards.md)。見習い道真プロンプトは使わない。

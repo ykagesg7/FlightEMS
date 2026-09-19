@@ -314,13 +314,6 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 | `meta.series` | `USAF-Contact-Phase` |
 | `meta.order` | Season 内 1–N（S1 は 1–3、S5 は 1–9） |
 | 詳細解説 | **PREP**（`P（Point）` / `R（Reason）` / `E（Example）` / 締めの `P（Point）`）。FMT と同じ |
-| `category` | 操縦 |
-| `sub_category` | 曲技飛行（シリーズ統一。Season で割らない） |
-| `content_type` | text |
-| `is_published` | **ストックは `false`** |
-| `order_index` | 1-1 = **611**、以降連番（FMT 610 の次）。最終 5-9 = **632** |
-| `meta.series` | `USAF-Contact-Phase` |
-| `meta.order` | Season 内 1–N（S1 は 1–3、S5 は 1–9） |
 
 ---
 
