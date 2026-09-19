@@ -1,10 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { lazy } from 'react';
-import { Link, MemoryRouter, Route, Routes } from 'react-router-dom';
+import { createMemoryRouter, Link, RouterProvider } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { LocationKeyedOutlet } from '@/layouts/LocationKeyedOutlet';
-import { withRouteSuspense } from '@/layouts/withRouteSuspense';
 
 function PlanningStub() {
   return (
@@ -17,9 +15,17 @@ function PlanningStub() {
   );
 }
 
-const NeverHome = withRouteSuspense(
-  lazy(() => new Promise<{ default: typeof PlanningStub }>(() => {})),
-);
+function AuthPage() {
+  return <div>AUTH_PAGE</div>;
+}
+
+function MissionPage() {
+  return <div>MISSION_PAGE</div>;
+}
+
+function HomePage() {
+  return <div>HOME_PAGE</div>;
+}
 
 function Shell() {
   return (
@@ -29,63 +35,79 @@ function Shell() {
   );
 }
 
+/**
+ * Same data-router path as production: createBrowserRouter + route.lazy.
+ * createMemoryRouter shares that implementation without touching window.history.
+ */
+function renderPlanningRouter(options?: {
+  homeLazyNever?: boolean;
+}) {
+  const homeRoute = options?.homeLazyNever
+    ? {
+        index: true,
+        lazy: () => new Promise<{ Component: typeof HomePage }>(() => {}),
+      }
+    : {
+        index: true,
+        lazy: async () => ({ Component: HomePage }),
+      };
+
+  const router = createMemoryRouter(
+    [
+      {
+        element: <Shell />,
+        children: [
+          homeRoute,
+          { path: 'planning', element: <PlanningStub /> },
+          { path: 'auth', lazy: async () => ({ Component: AuthPage }) },
+          { path: 'mission', lazy: async () => ({ Component: MissionPage }) },
+        ],
+      },
+    ],
+    { initialEntries: ['/planning'] },
+  );
+
+  return render(<RouterProvider router={router} />);
+}
+
 describe('LocationKeyedOutlet', () => {
-  it('unmounts Planning when the path changes even if the next route suspends', async () => {
+  it('constructs Request with AbortSignal the way the data router does', () => {
+    expect(() => {
+      void new Request('http://localhost/', { signal: new AbortController().signal });
+    }).not.toThrow();
+  });
+
+  it('unmounts Planning when the path changes even if the next route is still loading', async () => {
     const user = userEvent.setup();
-    render(
-      <MemoryRouter initialEntries={['/planning']}>
-        <Routes>
-          <Route element={<Shell />}>
-            <Route path="/" element={<NeverHome />} />
-            <Route path="planning" element={<PlanningStub />} />
-            <Route path="auth" element={<div>AUTH_PAGE</div>} />
-            <Route path="mission" element={<div>MISSION_PAGE</div>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
-    );
+    renderPlanningRouter({ homeLazyNever: true });
 
     expect(screen.getByText('PLANNING_STAY')).toBeInTheDocument();
     await user.click(screen.getByRole('link', { name: 'HOME' }));
-    expect(screen.queryByText('PLANNING_STAY')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText('PLANNING_STAY')).not.toBeInTheDocument();
+    });
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   it('shows LOGIN and Mission Dashboard destinations instead of Planning', async () => {
     const user = userEvent.setup();
-    const { unmount } = render(
-      <MemoryRouter initialEntries={['/planning']}>
-        <Routes>
-          <Route element={<Shell />}>
-            <Route path="/" element={<div>HOME_PAGE</div>} />
-            <Route path="planning" element={<PlanningStub />} />
-            <Route path="auth" element={<div>AUTH_PAGE</div>} />
-            <Route path="mission" element={<div>MISSION_PAGE</div>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
-    );
+    const { unmount } = renderPlanningRouter();
 
+    expect(screen.getByText('PLANNING_STAY')).toBeInTheDocument();
     await user.click(screen.getByRole('link', { name: 'LOGIN' }));
-    expect(screen.queryByText('PLANNING_STAY')).not.toBeInTheDocument();
-    expect(screen.getByText('AUTH_PAGE')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText('PLANNING_STAY')).not.toBeInTheDocument();
+    });
+    expect(await screen.findByText('AUTH_PAGE')).toBeInTheDocument();
     unmount();
 
-    render(
-      <MemoryRouter initialEntries={['/planning']}>
-        <Routes>
-          <Route element={<Shell />}>
-            <Route path="/" element={<div>HOME_PAGE</div>} />
-            <Route path="planning" element={<PlanningStub />} />
-            <Route path="auth" element={<div>AUTH_PAGE</div>} />
-            <Route path="mission" element={<div>MISSION_PAGE</div>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
-    );
+    renderPlanningRouter();
 
+    expect(screen.getByText('PLANNING_STAY')).toBeInTheDocument();
     await user.click(screen.getByRole('link', { name: 'Mission Dashboard' }));
-    expect(screen.queryByText('PLANNING_STAY')).not.toBeInTheDocument();
-    expect(screen.getByText('MISSION_PAGE')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText('PLANNING_STAY')).not.toBeInTheDocument();
+    });
+    expect(await screen.findByText('MISSION_PAGE')).toBeInTheDocument();
   });
 });

@@ -1,6 +1,58 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+/**
+ * Node 24 undici `Request` rejects jsdom's AbortSignal (different realm).
+ * React Router's data router builds `new Request(url, { signal })` during
+ * `startNavigation`; that TypeError aborts the transition and leaves the
+ * previous page mounted. Drop an incompatible signal so tests still navigate.
+ */
+function installJsdomAbortSignalRequestCompat(): void {
+  const OriginalRequest = globalThis.Request;
+  if (typeof OriginalRequest !== 'function') {
+    return;
+  }
+
+  try {
+    void new OriginalRequest('http://127.0.0.1/', {
+      signal: new AbortController().signal,
+    });
+    return;
+  } catch (error) {
+    if (!(error instanceof TypeError) || !error.message.includes('AbortSignal')) {
+      throw error;
+    }
+  }
+
+  const CompatibleRequest = function Request(
+    input: RequestInfo | URL,
+    init?: RequestInit,
+  ): globalThis.Request {
+    try {
+      return new OriginalRequest(input, init);
+    } catch (error) {
+      if (
+        init?.signal &&
+        error instanceof TypeError &&
+        error.message.includes('AbortSignal')
+      ) {
+        const { signal: _ignored, ...rest } = init;
+        return new OriginalRequest(input, rest);
+      }
+      throw error;
+    }
+  };
+  CompatibleRequest.prototype = OriginalRequest.prototype;
+  Object.setPrototypeOf(CompatibleRequest, OriginalRequest);
+  Object.defineProperty(globalThis, 'Request', {
+    configurable: true,
+    writable: true,
+    value: CompatibleRequest,
+  });
+}
+
+installJsdomAbortSignalRequestCompat();
+
 // 環境変数のモック設定（テスト環境用）
 Object.defineProperty(import.meta, 'env', {
   value: {

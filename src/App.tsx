@@ -1,8 +1,14 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { Navigate, Route, BrowserRouter as Router, Routes, useParams } from 'react-router-dom';
+import {
+  Navigate,
+  Outlet,
+  RouterProvider,
+  createBrowserRouter,
+  useParams,
+} from 'react-router-dom';
 
 // Contexts
 import { ProgressProvider } from './contexts/ProgressContext';
@@ -11,47 +17,11 @@ import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
 // Enhanced Error Boundary and Layout
 import { GoogleAnalyticsTracker } from './components/GoogleAnalyticsTracker';
 import { PasswordRecoveryGuard } from './components/auth/PasswordRecoveryGuard';
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import ScrollManager from './components/ScrollManager';
 import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 import { MarketingLayout } from './layouts/MarketingLayout';
-import { lazyPage, lazyPageWithRetry, withRouteSuspense } from './layouts/withRouteSuspense';
+import { lazyProtectedRoute, lazyRoute } from './layouts/routeLazy';
 
-// Marketing Pages (lazy)
-const About = lazyPage(() => import('./pages/about/About'));
-const MissionDashboard = withRouteSuspense(lazy(() => {
-  return import('./pages/mission/Dashboard').catch((err) => {
-    throw err;
-  });
-}));
-const Schedule = lazyPage(() => import('./pages/schedule/Schedule'));
-const Links = lazyPage(() => import('./pages/links/Links'));
-// App Pages (lazy)
-const HomePage = lazyPageWithRetry(() => import('./pages/dashboard/HomePage'));
-const PlanningMapPage = lazyPageWithRetry(() => import('./pages/planning/PlanningMapPage'));
-const Airspace3dPage = lazyPage(() => import('./pages/explore/Airspace3dPage'));
-// LearningPage is now integrated into ArticlesPage
-const ArticlesPage = lazyPageWithRetry(() => import('./pages/articles/ArticlesPage'));
-const ArticleDetailPage = lazyPageWithRetry(() => import('./pages/articles/ArticleDetailPage'));
-const ProfilePage = lazyPage(() => import('./pages/profile/ProfilePage'));
-const AuthPage = lazyPage(() => import('./pages/auth/AuthPage'));
-const PasswordRecoveryPage = lazyPage(() => import('./pages/auth/PasswordRecoveryPage'));
-const WelcomeSetupPage = lazyPage(() => import('./pages/welcome/WelcomeSetupPage'));
-const TestPage = lazyPageWithRetry(() => import('./pages/test/TestPage'));
-// Admin Pages
-const RankConfigPage = lazyPage(() => import('./pages/admin/RankConfigPage'));
-const XpConfigPage = lazyPage(() => import('./pages/admin/XpConfigPage'));
-const QuestionReportsPage = lazyPage(() => import('./pages/admin/QuestionReportsPage'));
-const AdminHubPage = lazyPage(() => import('./pages/admin/AdminHubPage'));
-// Rank Benefits Page
-const RankBenefitsPage = lazyPage(() => import('./pages/mission/components/RankBenefitsPage'));
-
-// 必要に応じて他のページも追加
-
-// NotFoundPageの簡易実装
-const NotFoundPage = () => <div className="text-center text-red-500 py-12">ページが見つかりません</div>;
-
-// LearningPageのリダイレクトコンポーネント（動的パラメータ対応）
 const LearningRedirect: React.FC = () => {
   return <Navigate to="/articles" replace />;
 };
@@ -61,7 +31,8 @@ const LearningContentRedirect: React.FC = () => {
   return <Navigate to={`/articles/${contentId}`} replace />;
 };
 
-// React Query Client設定
+const NotFoundPage = () => <div className="text-center text-red-500 py-12">ページが見つかりません</div>;
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -73,7 +44,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// アプリケーション全体のプロバイダーをラップ
 const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -94,56 +64,66 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   );
 };
 
+function AppShell() {
+  return (
+    <>
+      {import.meta.env.PROD && import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ? (
+        <GoogleAnalyticsTracker />
+      ) : null}
+      <ScrollManager />
+      <PasswordRecoveryGuard />
+      <Outlet />
+    </>
+  );
+}
+
+const router = createBrowserRouter([
+  {
+    element: <AppShell />,
+    children: [
+      {
+        element: <MarketingLayout />,
+        children: [
+          { index: true, ...lazyRoute(() => import('./pages/dashboard/HomePage'), true) },
+          { path: 'about', ...lazyRoute(() => import('./pages/about/About')) },
+          { path: 'mission', ...lazyProtectedRoute(() => import('./pages/mission/Dashboard')) },
+          { path: 'schedule', ...lazyRoute(() => import('./pages/schedule/Schedule')) },
+          { path: 'links', ...lazyRoute(() => import('./pages/links/Links')) },
+          { path: 'auth/recovery', ...lazyRoute(() => import('./pages/auth/PasswordRecoveryPage')) },
+          { path: 'auth', ...lazyRoute(() => import('./pages/auth/AuthPage')) },
+          { path: 'welcome', ...lazyProtectedRoute(() => import('./pages/welcome/WelcomeSetupPage')) },
+          { path: 'profile', ...lazyProtectedRoute(() => import('./pages/profile/ProfilePage')) },
+          { path: 'blog', element: <Navigate to="/articles" replace /> },
+          { path: 'blog/:slug', element: <Navigate to="/articles" replace /> },
+          { path: 'dashboard', element: <Navigate to="/" replace /> },
+          { path: 'planning', ...lazyRoute(() => import('./pages/planning/PlanningMapPage'), true) },
+          { path: 'explore/airspace-3d', ...lazyRoute(() => import('./pages/explore/Airspace3dPage')) },
+          { path: 'learning', element: <LearningRedirect /> },
+          { path: 'learning/:contentId', element: <LearningContentRedirect /> },
+          { path: 'articles', ...lazyRoute(() => import('./pages/articles/ArticlesPage'), true) },
+          { path: 'articles/:contentId', ...lazyRoute(() => import('./pages/articles/ArticleDetailPage'), true) },
+          { path: 'account', element: <Navigate to="/profile" replace /> },
+          { path: 'test', ...lazyRoute(() => import('./pages/test/TestPage'), true) },
+          { path: 'ranks', ...lazyRoute(() => import('./pages/mission/components/RankBenefitsPage')) },
+          { path: 'admin', ...lazyProtectedRoute(() => import('./pages/admin/AdminHubPage'), { requireAdmin: true }) },
+          { path: 'admin/ranks', ...lazyProtectedRoute(() => import('./pages/admin/RankConfigPage'), { requireAdmin: true }) },
+          { path: 'admin/xp', ...lazyProtectedRoute(() => import('./pages/admin/XpConfigPage'), { requireAdmin: true }) },
+          {
+            path: 'admin/question-reports',
+            ...lazyProtectedRoute(() => import('./pages/admin/QuestionReportsPage'), { requireAdmin: true }),
+          },
+        ],
+      },
+      { path: '*', element: <NotFoundPage /> },
+    ],
+  },
+]);
+
 const App: React.FC = () => {
   return (
-    <Router>
-      <AppProviders>
-        {import.meta.env.PROD && import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ? (
-          <GoogleAnalyticsTracker />
-        ) : null}
-        <ScrollManager />
-        <PasswordRecoveryGuard />
-        <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
-          <Routes>
-            {/* Flight Academy (primary) + Whisky Papa routes kept for restoration */}
-            <Route element={<MarketingLayout />}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="about" element={<About />} />
-              <Route path="mission" element={<ProtectedRoute><MissionDashboard /></ProtectedRoute>} />
-              <Route path="schedule" element={<Schedule />} />
-              <Route path="links" element={<Links />} />
-              <Route path="auth/recovery" element={<PasswordRecoveryPage />} />
-              <Route path="auth" element={<AuthPage />} />
-              <Route path="welcome" element={<ProtectedRoute><WelcomeSetupPage /></ProtectedRoute>} />
-              <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-              {/* Legacy /blog URLs: always drop path slug and send users to the article hub */}
-              <Route path="blog" element={<Navigate to="/articles" replace />} />
-              <Route path="blog/:slug" element={<Navigate to="/articles" replace />} />
-              {/* Flight Academy Tools */}
-              <Route path="dashboard" element={<Navigate to="/" replace />} />
-              <Route path="planning" element={<PlanningMapPage />} />
-              <Route path="explore/airspace-3d" element={<Airspace3dPage />} />
-              <Route path="learning" element={<LearningRedirect />} />
-              <Route path="learning/:contentId" element={<LearningContentRedirect />} />
-              <Route path="articles" element={<ArticlesPage />} />
-              <Route path="articles/:contentId" element={<ArticleDetailPage />} />
-              <Route path="account" element={<Navigate to="/profile" replace />} />
-              <Route path="test" element={<TestPage />} />
-              {/* Rank Benefits */}
-              <Route path="ranks" element={<RankBenefitsPage />} />
-              {/* Admin Pages */}
-              <Route path="admin" element={<ProtectedRoute requireAdmin><AdminHubPage /></ProtectedRoute>} />
-              <Route path="admin/ranks" element={<ProtectedRoute requireAdmin><RankConfigPage /></ProtectedRoute>} />
-              <Route path="admin/xp" element={<ProtectedRoute requireAdmin><XpConfigPage /></ProtectedRoute>} />
-              <Route path="admin/question-reports" element={<ProtectedRoute requireAdmin><QuestionReportsPage /></ProtectedRoute>} />
-            </Route>
-
-            {/* Fallback */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
-      </AppProviders>
-    </Router>
+    <AppProviders>
+      <RouterProvider router={router} />
+    </AppProviders>
   );
 };
 

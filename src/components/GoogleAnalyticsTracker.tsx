@@ -5,7 +5,7 @@ import { sendGa4PageView } from '../lib/googleAnalytics';
 const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ?? '';
 
 /**
- * BrowserRouter 配下でマウントすること。ルート（pathname + search）が変わるたびに GA4 に page_view を送る。
+ * RouterProvider 配下でマウントすること。ルート（pathname + search）が変わるたびに GA4 に page_view を送る。
  */
 export function GoogleAnalyticsTracker() {
   const location = useLocation();

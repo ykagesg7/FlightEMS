@@ -24,11 +24,12 @@ describe('vercel.json SPA fallback', () => {
     expect(Array.isArray(config.rewrites)).toBe(true);
   });
 
-  it('rewrites unknown client paths to index.html and keeps /api/* out of the SPA fallback', () => {
+  it('rewrites unknown client paths to / so cleanUrls can serve the SPA shell', () => {
     const rewrites = config.rewrites ?? [];
-    const spa = rewrites.filter((rule) => rule.destination === '/index.html');
+    const spa = rewrites.filter((rule) => rule.destination === '/');
     expect(spa).toHaveLength(1);
-    expect(spa[0]?.source).toContain('?!api/');
+    expect(spa[0]?.source).toBe('/(.*)');
+    expect(spa[0]?.source).not.toContain('?!api/');
 
     const destinations = rewrites.map((rule) => rule.destination);
     expect(destinations).toContain('/api/mfa-recovery-codes?action=:action');
@@ -36,7 +37,7 @@ describe('vercel.json SPA fallback', () => {
     expect(destinations).toContain('/api/weather?action=rainviewer');
     expect(destinations).toContain('/api/cron?job=:job');
 
-    const spaIndex = rewrites.findIndex((rule) => rule.destination === '/index.html');
+    const spaIndex = rewrites.findIndex((rule) => rule.destination === '/');
     const aviationIndex = rewrites.findIndex((rule) => rule.source === '/api/aviation-weather');
     expect(aviationIndex).toBeGreaterThanOrEqual(0);
     expect(aviationIndex).toBeLessThan(spaIndex);

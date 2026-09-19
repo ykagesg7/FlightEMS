@@ -1,17 +1,28 @@
 import React, { Suspense } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigation } from 'react-router-dom';
 import { ROUTE_SUSPENSE_FALLBACK } from './withRouteSuspense';
 
 /**
- * Keying Outlet by pathname unmounts the outgoing page as soon as the URL
- * changes (Leaflet map / Helmet title). Combined with withRouteSuspense on
- * each lazy page, the visible tree matches location.
+ * Data-router navigations update the URL bar before the committed location
+ * swaps. While a destination is loading, unmount Outlet so Leaflet / HUD
+ * (Planning) cannot remain on top of HOME / LOGIN / Mission.
  */
 export const LocationKeyedOutlet: React.FC = () => {
-  const { pathname } = useLocation();
+  const { pathname, key } = useLocation();
+  const navigation = useNavigation();
+  const pendingPath = navigation.location?.pathname;
+  const leaving =
+    navigation.state !== 'idle' &&
+    pendingPath != null &&
+    pendingPath !== pathname;
+
+  if (leaving) {
+    return ROUTE_SUSPENSE_FALLBACK;
+  }
+
   return (
-    <Suspense fallback={ROUTE_SUSPENSE_FALLBACK}>
-      <Outlet key={pathname} />
+    <Suspense key={key} fallback={ROUTE_SUSPENSE_FALLBACK}>
+      <Outlet />
     </Suspense>
   );
 };
