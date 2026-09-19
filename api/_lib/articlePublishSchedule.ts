@@ -260,6 +260,35 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
     ],
   },
+  '2026-W39': {
+    isoWeek: '2026-W39',
+    seriesTitle: 'CP（単機）',
+    intro:
+      '来週は Season 5 の図形3本。1本目は今すぐ読める。レイジーエイト、バレルロール、ループ。パラメータを止めず、円で回し、頂点は水平。',
+    articles: [
+      {
+        id: 'CP-5-3_LazyEight',
+        publishDate: '2026-09-20',
+        title: '第16話：パラメータを止めるな ～Lazy Eight～',
+        slug: '/articles/cp-5-3-lazy-eight',
+        hook: 'パラメータを止めるな。左右対称につなげ。',
+      },
+      {
+        id: 'CP-5-4_BarrelRoll',
+        publishDate: '2026-09-23',
+        title: '第17話：機首は円で回せ、Gは抜くな ～Barrel Roll～',
+        slug: '/articles/cp-5-4-barrel-roll',
+        hook: '機首は円で回せ。4点を通れ。Gは抜くな。',
+      },
+      {
+        id: 'CP-5-5_Loop',
+        publishDate: '2026-09-25',
+        title: '第18話：頂点は水平、完了は進入に戻せ ～Loop～',
+        slug: '/articles/cp-5-5-loop',
+        hook: '頂点は水平。150を切るな。完了は進入に戻せ。',
+      },
+    ],
+  },
 };
 
 export function getDigestForIsoWeek(isoWeek: string): WeeklyArticleDigest | null {

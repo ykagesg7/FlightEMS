@@ -110,6 +110,7 @@
 | **CP（操縦）** S5-3 ストック | [`20260820_learning_contents_cp_5_3_lazy_eight.sql`](20260820_learning_contents_cp_5_3_lazy_eight.sql)（`CP-5-3_LazyEight`、`order_index` **626**、`is_published: false`） |
 | **CP（操縦）** S5-4 ストック | [`20260821_learning_contents_cp_5_4_barrel_roll.sql`](20260821_learning_contents_cp_5_4_barrel_roll.sql)（`CP-5-4_BarrelRoll`、`order_index` **627**、`is_published: false`） |
 | **CP（操縦）** S5-5 ストック | [`20260821_learning_contents_cp_5_5_loop.sql`](20260821_learning_contents_cp_5_5_loop.sql)（`CP-5-5_Loop`、`order_index` **628**、`is_published: false`） |
+| **CP（操縦）** W39 メタ同期 | [`20260919_learning_contents_cp_w39_meta.sql`](20260919_learning_contents_cp_w39_meta.sql)（5-3 / 5-4 / 5-5 の title・description のみ。`is_published` は触らない） |
 | **CP（操縦）** S5-6 ストック | [`20260821_learning_contents_cp_5_6_split_s_immelmann.sql`](20260821_learning_contents_cp_5_6_split_s_immelmann.sql)（`CP-5-6_SplitSImmelmann`、`order_index` **629**、`is_published: false`） |
 | **CP（操縦）** S5-7 ストック | [`20260821_learning_contents_cp_5_7_cuban_eight.sql`](20260821_learning_contents_cp_5_7_cuban_eight.sql)（`CP-5-7_CubanEight`、`order_index` **630**、`is_published: false`） |
 | **CP（操縦）** S5-8 ストック | [`20260821_learning_contents_cp_5_8_cloverleaf.sql`](20260821_learning_contents_cp_5_8_cloverleaf.sql)（`CP-5-8_Cloverleaf`、`order_index` **631**、`is_published: false`） |
