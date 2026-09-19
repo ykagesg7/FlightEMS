@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
 import { collectArticleMetas, type ExtractedArticleMeta } from './articlesMeta';
@@ -18,6 +18,28 @@ function isArticleReleased(publishedAt?: string): boolean {
 
 const SITE_NAME = 'FlightAcademy';
 const DEFAULT_ORIGIN = 'https://flightacademy.com';
+
+/** Client hubs with no prerendered index. `dist/articles/` exists for OG pages, so `/articles` 404s without this. */
+export const SPA_HUB_FALLBACK_PATHS = [
+  'articles',
+  'planning',
+  'test',
+  'auth',
+  'profile',
+] as const;
+
+export function writeSpaHubFallbacks(distDir: string, template: string): number {
+  let count = 0;
+  for (const hub of SPA_HUB_FALLBACK_PATHS) {
+    const outDir = join(distDir, hub);
+    mkdirSync(outDir, { recursive: true });
+    const hubIndex = join(outDir, 'index.html');
+    if (existsSync(hubIndex)) continue;
+    writeFileSync(hubIndex, template);
+    count += 1;
+  }
+  return count;
+}
 
 function resolveSiteOrigin(): string {
   const fromEnv = String(process.env.VITE_SITE_ORIGIN ?? '').trim().replace(/\/$/, '');
@@ -114,6 +136,8 @@ export function prerenderArticlesPlugin(): Plugin {
       }
 
       console.log(`[prerender-articles] wrote ${count} article HTML files`);
+      const hubs = writeSpaHubFallbacks(distDir, template);
+      console.log(`[prerender-articles] wrote ${hubs} SPA hub fallback HTML files`);
     },
   };
 }

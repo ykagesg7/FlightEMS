@@ -56,8 +56,8 @@
       "destination": "/api/cron?job=:job"
     },
     {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "source": "/(.*)",
+      "destination": "/"
     }
   ],
   "devCommand": "vite --port 5173 --strictPort",

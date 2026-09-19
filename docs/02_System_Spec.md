@@ -146,7 +146,7 @@ CREATE TABLE learning_progress (
 - **Home / Welcome**: ログイン Home に [`HomeContinueReading`](../src/pages/home/components/HomeContinueReading.tsx)。Welcome 完了で `next=/` のとき `/articles?tab=continue` へ。
 - **記事詳細**: 末尾 CTA 順は **次章**（[`SeriesNextChapterCta`](../src/pages/articles/components/SeriesNextChapterCta.tsx)）→ 関連テスト → 折りたたみコメント → [`PrevNextNav`](../src/pages/articles/components/PrevNextNav.tsx)。関連記事は MDX 末尾で折りたたみ。
 - **記事インデックス（2026-08）**: [`virtual:articles-index`](../vite/articlesIndexPlugin.ts) が MDX の `export const meta` をビルド時抽出（`enforce: 'pre'`）。[`articlesIndex.ts`](../src/utils/articlesIndex.ts) はメタをこの仮想モジュールから同期構築し、`import.meta.glob` は本文 loader のみ。`getArticleIndex()` は in-flight Promise キャッシュ。Vite が設定再読込に失敗したあとはプラグイン未登録の古いプロセスが残ることがあり、その場合は `npm run dev` を再起動する。
-- **OG prerender**: [`prerenderArticlesPlugin`](../vite/prerenderArticlesPlugin.ts) が `dist/articles/<id>/index.html` に OG/Twitter タグを埋め込む。未リリースは `noindex`。オリジンは `VITE_SITE_ORIGIN`（既定 `https://flightacademy.com`）。`vercel.json` は `cleanUrls: true`。クライアントルート（`/articles` `/planning` `/test` `/auth` `/profile` など、ファイルが無いパス）は `rewrites` で `/index.html` にフォールバックする。`/api/*` は SPA 対象外。レガシー `routes` と `cleanUrls` / `headers` の併用ではこのフォールバックが効かず、直打ち・リロードが 404 になる。
+- **OG prerender**: [`prerenderArticlesPlugin`](../vite/prerenderArticlesPlugin.ts) が `dist/articles/<id>/index.html` に OG/Twitter タグを埋め込む。未リリースは `noindex`。オリジンは `VITE_SITE_ORIGIN`（既定 `https://flightacademy.com`）。`vercel.json` は `cleanUrls: true`。クライアントルート（`/articles` `/planning` `/test` `/auth` `/profile` など、ファイルが無いパス）は `rewrites` の `/(.*)` → `/` で SPA シェルへフォールバックする（`cleanUrls` 下では dest `/index.html` は `check` に失敗して 404 になる）。ハブ `/articles` は `dist/articles/` が記事 OG 用に存在するため、プラグインが `dist/articles/index.html` も書く。`/api/*` は filesystem の関数が先に当たる。
 
 
 #### **データベース設計**
@@ -1078,7 +1078,7 @@ Flight Academy へのブランド移行は [00](00_Flight_Academy_Strategy.md) �
 
 - **メタ**: `virtual:articles-index`（`enforce: 'pre'`）で `export const meta` をビルド時抽出。`import.meta.glob` は本文 loader のみ。
 - **描画**: mermaid / KaTeX / 重い MDX コンポーネントを記事ルートへ遅延。ハブはスケルトン・検索 debounce。
-- **OG**: `prerenderArticlesPlugin` + `vercel.json` `cleanUrls`。ハブ `/articles` 自体は prerender せず、SPA rewrite で `index.html` を返す。
+- **OG**: `prerenderArticlesPlugin` + `vercel.json` `cleanUrls`。ハブ `/articles` は SPA シェルの `dist/articles/index.html`。その他のクライアントパスは rewrite `/(.*)` → `/`。
 - **運用**: 設定再読込失敗後は `npm run dev` 再起動（プラグイン未登録の stale プロセス対策）。
 
 ### **2026年4月10日 - /test 全モードで結果後の記事推薦（ReviewContentLink）**

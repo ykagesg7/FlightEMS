@@ -4,7 +4,7 @@ const DEFAULT_MESSAGE = '変更が保存されていません。ページを離�
 
 /**
  * Guards explicit-save profile forms on tab close / refresh.
- * In-app route blocking requires a data router (createBrowserRouter); not used with BrowserRouter.
+ * In-app route blocking (useBlocker) is not wired.
  */
 export function useUnsavedFormGuard(
   isDirty: boolean,
