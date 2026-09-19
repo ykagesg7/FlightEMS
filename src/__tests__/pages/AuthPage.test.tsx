@@ -51,6 +51,30 @@ describe('AuthPage', () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('未入力でログインするとアラートを表示してスクロールする', async () => {
+    const scrollIntoView = vi.fn();
+    HTMLElement.prototype.scrollIntoView = scrollIntoView;
+    const signIn = vi.fn().mockResolvedValue({ error: null });
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState({ signIn })),
+    );
+    render(
+      <BrowserRouter>
+        <AuthPage />
+      </BrowserRouter>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'ログイン' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'メールアドレスとパスワードを入力してください',
+    );
+    expect(signIn).not.toHaveBeenCalled();
+    expect(scrollIntoView).toHaveBeenCalled();
+  });
+
   it('ログインフォームのバリデーションとsignIn呼び出し', async () => {
     const signIn = vi.fn().mockResolvedValue({ error: null });
     vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>

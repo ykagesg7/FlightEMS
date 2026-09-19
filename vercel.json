@@ -38,33 +38,26 @@
       "maxDuration": 15
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/account/mfa-recovery-codes/(generate|consume|status|clear)",
-      "dest": "/api/mfa-recovery-codes?action=$1"
+      "source": "/api/account/mfa-recovery-codes/:action",
+      "destination": "/api/mfa-recovery-codes?action=:action"
     },
     {
-      "src": "/api/aviation-weather",
-      "dest": "/api/weather?action=aviation"
+      "source": "/api/aviation-weather",
+      "destination": "/api/weather?action=aviation"
     },
     {
-      "src": "/api/rainviewer-maps",
-      "dest": "/api/weather?action=rainviewer"
+      "source": "/api/rainviewer-maps",
+      "destination": "/api/weather?action=rainviewer"
     },
     {
-      "src": "/api/cron/(cohort-weekly|article-publish-sync|article-weekly-digest)",
-      "dest": "/api/cron?job=$1"
+      "source": "/api/cron/:job",
+      "destination": "/api/cron?job=:job"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(?!assets/)(.*)",
-      "dest": "/index.html"
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
     }
   ],
   "devCommand": "vite --port 5173 --strictPort",

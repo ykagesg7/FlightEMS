@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useRef, useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { UserMenu } from '../components/marketing/UserMenu';
+import { LocationKeyedOutlet } from './LocationKeyedOutlet';
 import { Typography } from '../components/ui';
 import { HUDTimeDisplay } from '../components/ui/HUDDashboard';
 import { useMobileNavFocusTrap } from '../hooks/useMobileNavFocusTrap';
@@ -256,7 +257,7 @@ export const MarketingLayout: React.FC = () => {
 
       {/* Main Content */}
       <main className="flex-1">
-        <Outlet />
+        <LocationKeyedOutlet />
       </main>
 
       {/* Footer */}
