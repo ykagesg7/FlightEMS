@@ -13,3 +13,4 @@
 | [FMT_Formation_2026/README.md](FMT_Formation_2026/README.md) | **USAF 編隊 FMT** — 読む順は Contact のあと。Season 1（1-1〜1-10）ストック済。Season 2 は未起票 |
 | [Contact_Transition_2026/README.md](Contact_Transition_2026/README.md) | **USAF Contact / トランジション** — **W34 ドリップ** 1-1〜1-3。S2〜S5 全話ストック。CP シリーズ完（最終話 5-9 Chandelle） |
 | [Contact_Transition_2026/W38_episode_cards.md](Contact_Transition_2026/W38_episode_cards.md) | **W38** CP-4-2 / 5-1 / 5-2 の Episode card（精緻化済・9/13・16・18） |
+| [Contact_Transition_2026/W39_episode_cards.md](Contact_Transition_2026/W39_episode_cards.md) | **W39** CP-5-3 / 5-4 / 5-5 の Episode card（精緻化済・9/20・23・25） |

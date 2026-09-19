@@ -44,6 +44,7 @@
 
 **方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
 
+- **2026-09-19（W39 配信準備）**: CP-5-3 / 5-4 / 5-5 を **9/20・23・25** でドリップ。schedule と `publishedAt` 済み。`is_published` は cron 待ち。正本 [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)。カード [W39_episode_cards.md](content_outlines/Contact_Transition_2026/W39_episode_cards.md)。
 - **2026-09-12（W38 配信準備）**: CP-4-2 / 5-1 / 5-2 を **9/13・16・18** でドリップ。schedule と `publishedAt` 済み。`is_published` は cron 待ち。正本 [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)。
 - **2026-09-12（CP/FN 執筆カード）**: 操縦 Gemini 正本 [ops/Gemini_CP_FN_System_Prompt.md](ops/Gemini_CP_FN_System_Prompt.md)。W38 カード [Contact_Transition_2026/W38_episode_cards.md](content_outlines/Contact_Transition_2026/W38_episode_cards.md)。見習い道真プロンプトは使わない。
 - **2026-08-24（ログインがパスワード再設定になる不具合）**: リカバリー判定を `type=recovery` / `/auth/recovery` / `mode=recovery` に限定（ハッシュの `access_token` だけでは判定しない）。フラグは TTL 15 分で自動失効し、非 recovery コールバックと `signIn` 成功でクリア。`/auth/recovery` に再送・中断導線。動作しない `bypassEmailVerification` を撤去。正本 [02](02_System_Spec.md) · [01](01_Current_Status_and_Roadmap.md) v4.0.48。

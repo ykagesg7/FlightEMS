@@ -3,10 +3,11 @@
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
 **呼称**: 公開面は **CP**（空自）。USAF 教範の章名 Contact は出典参照に残す。  
 **位置**: 読む順は **CP → FMT**（単機の飛行Envelopeのあと編隊）。FMT Season 2（BFM 幾何）はそのさらに後。  
-**既存公開**: **W34** 1-1〜1-3（8/17・19・21）。**W35** 2-1〜2-3（8/24・26・28）。**W36** 2-4〜2-6（**8/30**・9/2・9/4）。**W37** 3-1 **日 9/6**、3-2 水 9/9、4-1 金 9/11（Season 4 前倒し）。**W38** 4-2 **日 9/13**、5-1 水 9/16、5-2 金 9/18。`is_published` は cron が schedule の日付で反転。**1 話目は日曜 `publishDate`（digest 送信日）**。  
+**既存公開**: **W34** 1-1〜1-3（8/17・19・21）。**W35** 2-1〜2-3（8/24・26・28）。**W36** 2-4〜2-6（**8/30**・9/2・9/4）。**W37** 3-1 **日 9/6**、3-2 水 9/9、4-1 金 9/11（Season 4 前倒し）。**W38** 4-2 **日 9/13**、5-1 水 9/16、5-2 金 9/18。**W39** 5-3 **日 9/20**、5-4 水 9/23（秋分の日）、5-5 金 9/25。`is_published` は cron が schedule の日付で反転。**1 話目は日曜 `publishDate`（digest 送信日）**。  
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
 **操縦プロンプト**: [Gemini_CP_FN_System_Prompt.md](../../ops/Gemini_CP_FN_System_Prompt.md)  
 **W38 カード**: [W38_episode_cards.md](W38_episode_cards.md)（4-2 / 5-1 / 5-2。精緻化済・schedule 済）  
+**W39 カード**: [W39_episode_cards.md](W39_episode_cards.md)（5-3 / 5-4 / 5-5。精緻化済・schedule 済）  
 **MDX 規則**: [`.cursor/rules/mdx-article-guide.mdc`](../../../.cursor/rules/mdx-article-guide.mdc)  
 **登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **曲技飛行**、`series`: **USAF-Contact-Phase**  
 **公開**: [articlePublishSchedule.ts](../../../api/_lib/articlePublishSchedule.ts)  
@@ -142,9 +143,9 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 |---|------|------|-------|------|------|------|
 | 5-1 | `CP-5-1_AerobaticContract` | `cp-5-1-aerobatic-contract` | 1 | 曲技の契約・表 5.1/5.2 | **5.29–5.32**（5.3 を再講義しない） | **精緻化済・W38 水 9/16** |
 | 5-2 | `CP-5-2_AileronRoll` | `cp-5-2-aileron-roll` | 2 | Aileron roll | **5.33** | **精緻化済・W38 金 9/18** |
-| 5-3 | `CP-5-3_LazyEight` | `cp-5-3-lazy-eight` | 3 | Lazy Eight | **5.34** | **ストック** |
-| 5-4 | `CP-5-4_BarrelRoll` | `cp-5-4-barrel-roll` | 4 | Barrel roll | **5.35** | **ストック** |
-| 5-5 | `CP-5-5_Loop` | `cp-5-5-loop` | 5 | Loop | **5.36** | **ストック** |
+| 5-3 | `CP-5-3_LazyEight` | `cp-5-3-lazy-eight` | 3 | Lazy Eight | **5.34** | **精緻化済・W39 日 9/20** |
+| 5-4 | `CP-5-4_BarrelRoll` | `cp-5-4-barrel-roll` | 4 | Barrel roll | **5.35** | **精緻化済・W39 水 9/23** |
+| 5-5 | `CP-5-5_Loop` | `cp-5-5-loop` | 5 | Loop | **5.36** | **精緻化済・W39 金 9/25** |
 | 5-6 | `CP-5-6_SplitSImmelmann` | `cp-5-6-split-s-immelmann` | 6 | Split-S / Immelmann | **5.37–5.38** | **ストック** |
 | 5-7 | `CP-5-7_CubanEight` | `cp-5-7-cuban-eight` | 7 | Cuban Eight | **5.39** | **ストック** |
 | 5-8 | `CP-5-8_Cloverleaf` | `cp-5-8-cloverleaf` | 8 | Cloverleaf | **5.40** | **ストック** |
@@ -260,6 +261,8 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 
 垂直面の計画 **≥10,000 ft**、descent からのリード **10° nose-low ごとに 10 kt および/または 500 ft** は **S5-1**（Fund 5.31–5.32）。S1-2 で先出ししない。
 
+Lazy Eight の **45° 最大ピッチ、90° 地平線通過、180° 水平かつ進入速度**は **S5-3**（Fund 5.34。ストック登録由来。W39 で本表へ再掲）。
+
 Barrel の **30–45° オフセット**、4 チェックポイント（真上 90° bank / inverted 180° / 真下 90° bank / 正立）、**positive G 全行程**、終了速度は symmetry 優先は **S5-4**（Fund 5.35）。
 
 Loop の pull **4.5–5 G**、inverted horizon で **wings-level**、下半分 **4–5 G**、完了は **entry parameters**、進入速度に対し **≈10,000 ft 上方**（機動余裕）、over-the-top **150 kt** 超（5.31 再掲）、tickle / **green donut**（T-38）は **S5-5**（Fund 5.36）。
@@ -361,3 +364,5 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 | 2026-09-06 | `CP-4-1` ユーザーリライト反映（タイトル Nose 表記。型E維持・連続瓶バン回避。KIAS→kt）。 |
 | 2026-09-12 | W38 カード（4-2 / 5-1 / 5-2）。入口回転・PREP は論理のみ。操縦 Gemini 正本を分離。 |
 | 2026-09-12 | W38 ドリップ準備（**9/13**・9/16・9/18）: 4-2 / 5-1 / 5-2。Contract / Box / Nose。`is_published` は cron 待ち。 |
+| 2026-09-19 | W39 カード（5-3 / 5-4 / 5-5）。入口 観察→問題→結果。ジョー A→E→C。 |
+| 2026-09-19 | W39 ドリップ準備（**9/20**・9/23・9/25）: 5-3 / 5-4 / 5-5。MDX 新規。`is_published` は cron 待ち。 |
