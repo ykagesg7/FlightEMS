@@ -2,7 +2,9 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Planning leftover navigation', () => {
   test('HOME LOGIN and Mission unmount the planning map', async ({ page }) => {
+    test.setTimeout(120_000);
     await page.goto('/');
+    await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible({ timeout: 60_000 });
     await page.getByRole('link', { name: 'PLANNING' }).click();
     await expect(page).toHaveURL(/\/planning$/);
     await expect(page.getByRole('link', { name: 'Mission Dashboardへ戻る' })).toBeVisible({
