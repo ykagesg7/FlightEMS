@@ -18,7 +18,10 @@ export const AuthAlert: React.FC<AuthAlertProps> = ({ variant, children, classNa
   const alertRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    alertRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const el = alertRef.current;
+    if (typeof el?.scrollIntoView === 'function') {
+      el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
   }, [children, variant]);
 
   return (
