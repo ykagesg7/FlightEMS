@@ -5,6 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs';
 import { WeatherCacheProvider } from '../../contexts/WeatherCacheContext';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { useUrgentRouterView } from '../../layouts/useUrgentRouterView';
 import { FlightPlan } from '../../types/index';
 import { importWithChunkRetry } from '../../utils/lazyWithRetry';
 import type { FlightTrack } from './tracks/types';
@@ -210,6 +211,7 @@ function PlanningMapPageInner({
 }
 
 function PlanningMapPage() {
+  const { leaving } = useUrgentRouterView();
   const [flightPlan, setFlightPlan] = React.useState<FlightPlan>(() => {
     const draft = loadFlightPlanDraft();
     return draft ?? createInitialFlightPlan();
@@ -232,6 +234,10 @@ function PlanningMapPage() {
     clearFlightPlanDraft();
     setFlightPlan(createInitialFlightPlan());
   }, []);
+
+  if (leaving) {
+    return null;
+  }
 
   return (
     <WeatherCacheProvider>

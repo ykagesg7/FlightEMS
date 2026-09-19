@@ -1,27 +1,23 @@
 import React, { Suspense } from 'react';
-import { Outlet, useLocation, useNavigation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import { useUrgentRouterView } from './useUrgentRouterView';
 import { ROUTE_SUSPENSE_FALLBACK } from './withRouteSuspense';
 
 /**
- * Data-router navigations update the URL bar before the committed location
- * swaps. While a destination is loading, unmount Outlet so Leaflet / HUD
+ * Data-router navigations update the URL bar before React commits the new
+ * location (RouterProvider wraps updates in startTransition). While the
+ * destination is pending or still uncommitted, drop Outlet so Leaflet / HUD
  * (Planning) cannot remain on top of HOME / LOGIN / Mission.
  */
 export const LocationKeyedOutlet: React.FC = () => {
-  const { pathname, key } = useLocation();
-  const navigation = useNavigation();
-  const pendingPath = navigation.location?.pathname;
-  const leaving =
-    navigation.state !== 'idle' &&
-    pendingPath != null &&
-    pendingPath !== pathname;
+  const { leaving, locationKey } = useUrgentRouterView();
 
   if (leaving) {
     return ROUTE_SUSPENSE_FALLBACK;
   }
 
   return (
-    <Suspense key={key} fallback={ROUTE_SUSPENSE_FALLBACK}>
+    <Suspense key={locationKey} fallback={ROUTE_SUSPENSE_FALLBACK}>
       <Outlet />
     </Suspense>
   );
