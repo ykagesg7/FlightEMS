@@ -29,13 +29,13 @@
 
 ## Cursor Marketplace と手動 `mcp.json` の関係（2026-04）
 
-**Cursor → Settings → MCP → Marketplace** から追加した統合は、Cursor が **`plugin-*` 形式のサーバー**として別途登録することが多く、**`.cursor/mcp.json` に同じ名前のエントリを書かなくても**ツール一覧に出ます（このワークスペースで検出された例: `plugin-supabase-supabase`、`plugin-vercel-vercel`、`plugin-context7-plugin-context7`、`plugin-sentry-sentry` など）。
+**Cursor → Settings → MCP → Marketplace**（または **Settings → Plugins**）から追加した統合は、Cursor が **`plugin-*` 形式のサーバー**として別途登録することが多く、**`.cursor/mcp.json` に同じ名前のエントリを書かなくても**ツール一覧に出ます（このワークスペースで検出された例: `plugin-github-github`、`plugin-supabase-supabase`、`plugin-vercel-vercel`、`plugin-context7-plugin-context7`、`plugin-sentry-sentry` など）。
 
 | 状況 | 推奨 |
 |------|------|
-| Marketplace で **Supabase / Vercel / Context7 / Sentry** を入れた | `.cursor/mcp.json` から **同機能の手動ブロックを削除**し、二重起動・認証の食い違いを防ぐ。 |
-| まだ `mcp.json` に `context7` や `vercel` の URL がある | Marketplace 版と **重複しないか** Cursor の MCP 一覧で確認。重複なら片方を外す。 |
-| エージェント指示文で古いサーバー名が出る | ツール呼び出しは **Cursor が表示しているサーバー識別子**に合わせる（例: 旧 `project-0-…-vercel` → Marketplace の `plugin-vercel-vercel`）。 |
+| Marketplace / Plugins で **GitHub / Supabase / Vercel / Context7 / Sentry** を入れた | `.cursor/mcp.json` から **同機能の手動ブロックを削除**し、二重起動・認証の食い違いを防ぐ。GitHub は **`plugin-github-github` を正**とし、手動の `github` URL エントリは置かない。 |
+| まだ `mcp.json` に `github`・`context7` や `vercel` の URL がある | Marketplace 版と **重複しないか** Cursor の MCP 一覧で確認。重複なら片方を外す。 |
+| エージェント指示文で古いサーバー名が出る | ツール呼び出しは **Cursor が表示しているサーバー識別子**に合わせる（例: 旧 `project-0-…-github` → Marketplace の `plugin-github-github`）。 |
 
 `.cursor/mcp.json.example` は **Marketplace を使わない／補完したいときの手動例**（Windows では `npx` を `cmd /c` でラップ）です。`stripe` 等、Marketplace だけで足りるものは例に含めていない場合があります。
 
@@ -89,12 +89,13 @@ winget install --id Anysphere.Cursor -e
 
 ## 配置方針（Global とプロジェクト）
 
-複数リポジトリで同じ GitHub アカウントを使う場合、**ブラウザ系など汎用サーバーは Global**、**Vercel / Supabase などアプリ単位のものは各リポジトリの `.cursor/mcp.json`** に分けると取り違えが減ります。**GitHub MCP は Global とプロジェクトのどちらか一方だけ**に置く（両方に同じ `github` エントリを重複させない）。
+複数リポジトリで同じ GitHub アカウントを使う場合、**ブラウザ系など汎用サーバーは Global**、**Vercel / Supabase などアプリ単位のものは各リポジトリの `.cursor/mcp.json`** に分けると取り違えが減ります。**GitHub MCP は経路を 1 つだけ**にする。推奨は Cursor 公式プラグイン **`plugin-github-github`**（Settings のトークン欄）。使わない場合のみ、Global かプロジェクトの **どちらか一方**に手動 `github` を書く（両方に同じエントリを重複させない。プラグインと手動も併用しない）。
 
 | 置き場所 | 対象の例 |
 |----------|-----------|
-| **Global**（`%USERPROFILE%\.cursor\mcp.json`） | （任意）全リポジトリ共通の `github`（PAT）、**Obsidian**（個人 Vault）など |
-| **プロジェクト**（`.cursor/mcp.json`） | `chrome-devtools`、`hourei`（法令検索）、`vercel`、Supabase MCP、[Serena](https://oraios.github.io/serena/)、`github`（このリポジトリ専用）など |
+| **Cursor Plugins**（推奨） | 公式 **GitHub** プラグイン（`plugin-github-github`）。PAT はプラグイン変数 **GitHub personal access token** のみ |
+| **Global**（`%USERPROFILE%\.cursor\mcp.json`） | **Obsidian**（個人 Vault）など。手動 `github` はプラグイン未使用時のみ |
+| **プロジェクト**（`.cursor/mcp.json`） | `chrome-devtools`、`hourei`（法令検索）、[Serena](https://oraios.github.io/serena/) など。Marketplace 済みの GitHub / Vercel / Supabase は書かない |
 
 ---
 
@@ -473,10 +474,10 @@ GA4 を [BigQuery にリンクする](https://support.google.com/analytics/answe
 
 ## 初回手順（このリポジトリ）
 
-1. **プロジェクト**: **Marketplace で Supabase / Vercel / Context7 / Sentry を入れた場合**は、`.cursor/mcp.json` に同系統の手動エントリが残っていないか確認する（重複は削除）。手動のみの場合は `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。例には **`chrome-devtools`**・**任意の `hourei`（法令検索）**・**任意の `google-analytics-mcp`（GA4 読み取り・pipx 要）**が含まれる（不要なら削除）。GitHub MCP を使う場合は [Personal Access Token](https://github.com/settings/personal-access-tokens/new) を `Authorization: Bearer …` に設定する（スコープは最小限）。**PAT はリポジトリにコミットしない。**
-2. **Global（任意）**: 全リポジトリ共通の MCP だけ `%USERPROFILE%\.cursor\mcp.json` に置く。GitHub を **プロジェクトの `.cursor/mcp.json` にだけ**書く場合は、Global に `github` を重複させない。
-3. Cursor を再起動する（GitHub リモート MCP は [Cursor v0.48.0+](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) 推奨）。
-4. **Settings → Tools & Integrations → MCP** で接続を確認。`chrome-devtools`・`hourei`（追加した場合）・**`google-analytics-mcp`（pipx と認証済み GCP を追加した場合）**が利用可能か、Vercel は `Needs login` から OAuth で認可する。
+1. **プロジェクト**: **Marketplace / Plugins で GitHub / Supabase / Vercel / Context7 / Sentry を入れた場合**は、`.cursor/mcp.json` に同系統の手動エントリが残っていないか確認する（重複は削除）。手動のみの場合は `.cursor/mcp.json.example` を `.cursor/mcp.json` にコピーし、`SUPABASE_ACCESS_TOKEN`・`SUPABASE_PROJECT_ID`・Vercel の URL を埋める。例には **`chrome-devtools`**・**任意の `hourei`（法令検索）**・**任意の `google-analytics-mcp`（GA4 読み取り・pipx 要）**が含まれる（不要なら削除）。GitHub は下記 **公式プラグイン**を先に使う。**PAT はリポジトリにコミットしない。**
+2. **Global（任意）**: 全リポジトリ共通の MCP だけ `%USERPROFILE%\.cursor\mcp.json` に置く。公式 GitHub プラグインを使っているときは、Global / プロジェクトのどちらにも手動 `github` を書かない。
+3. Cursor を再起動する（GitHub リモート MCP は [Cursor v0.48.0+](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) 推奨。公式プラグインは Cursor **3.13.0+**）。
+4. **Settings → Tools & Integrations → MCP** で接続を確認。`plugin-github-github` が緑であること、`chrome-devtools`・`hourei`（追加した場合）・**`google-analytics-mcp`（pipx と認証済み GCP を追加した場合）**が利用可能か。Vercel は `Needs login` から OAuth で認可する。
 
 ### Vercel の URL
 
@@ -486,28 +487,60 @@ GA4 を [BigQuery にリンクする](https://support.google.com/analytics/answe
 ### リモート MCP（GitHub / Vercel）でツールが 0 件のとき
 
 - **Vercel（Marketplace の `plugin-vercel-vercel`）**: **Settings → MCP** でサーバーが有効か確認する。エージェントに `list_projects` 等が出てこない場合は **Cursor を再起動**するか、Marketplace で Vercel の **再接続 / ログイン**をやり直す（OAuth の期限切れがよくある）。
-- **GitHub（Copilot API）**: `Authorization: Bearer <PAT>` の形式、PAT の期限・スコープ、組織の Copilot / MCP ポリシーを確認する。
+- **GitHub（公式プラグイン `plugin-github-github`）**: プラグイン変数 **GitHub personal access token** が **トークン本体だけ**か確認する（下記）。ログが `Authorization header is badly formatted` なら、ほぼこの欄の書式が原因である。
+
+### GitHub MCP（推奨: 公式プラグイン `plugin-github-github`）
+
+Cursor 公式 GitHub プラグイン（plugin id **`plugin-github-github`**）は、リモート MCP `https://api.githubcopilot.com/mcp/` に対して次のヘッダを組み立てる。
+
+```json
+"Authorization": "Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}"
+```
+
+プラグインが **すでに `Bearer ` を付ける**。設定欄に入れるのは **PAT 本体だけ**である。手動 `.cursor/mcp.json` の `"Authorization": "Bearer …"` 例を、この欄へコピーしてはいけない。
+
+#### トークン欄に入れてよい値 / いけない値
+
+| 入れてよい | いけない（`badly formatted` になる） |
+|------------|--------------------------------------|
+| `ghp_` で始まる Classic PAT（1 行、前後空白なし、引用符なし） | `Bearer ghp_…`（`Bearer` が二重になる） |
+| `github_pat_` で始まる Fine-grained PAT（`github_pat_` は **1 回だけ**） | `"ghp_…"` や `'github_pat_…'`（引用符がヘッダに入る） |
+| | JSON 全体（`"Authorization": "Bearer …"` や `mcp.json` ブロック） |
+| | プレースホルダ `YOUR_GITHUB_PAT`、空欄、改行・末尾スペース |
+| | `${env:…}` や `${GITHUB_PERSONAL_ACCESS_TOKEN}` のリテラル |
+
+GitHub Copilot MCP は、ヘッダが HTTP の `Authorization: Bearer <token>` としてパースできないと **401 ではなく** Streamable HTTP で `bad request: Authorization header is badly formatted` を返し、SSE フォールバックも **400**、FSM は `conn=failed, auth=unknown` のままになる。
+
+#### ユーザーが Cursor で直す手順（トークンはチャットに貼らない）
+
+1. [GitHub → Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens) で **Classic**（`ghp_`）または **Fine-grained**（`github_pat_`）を発行する。スコープは最小限（多くの場合 Contents / Issues / Pull requests と Fine-grained の Metadata）。
+2. Cursor で **Settings → Plugins → GitHub**（または **Dashboard → Plugins → GitHub → Configure** / **Settings → Tools & Integrations → MCP** の `plugin-github-github`）を開く。
+3. フィールド名 **GitHub personal access token**（変数 `GITHUB_PERSONAL_ACCESS_TOKEN`）を一度クリアする。
+4. 発行したトークンを **そのまま**貼る。先頭は `ghp_` または `github_pat_`。`Bearer ` も `"` も JSON も付けない。1 行・改行なし。
+5. **`.cursor/mcp.json` と `%USERPROFILE%\.cursor\mcp.json` から手動 `github` ブロックを削除**する（プラグインと二重になるとヘッダが食い違う）。
+6. Cursor を再起動し、**Settings → MCP** で `plugin-github-github` が緑か確認する。エージェント識別子は **`plugin-github-github`**（旧 `project-…-github` ではない）。
+7. 動作確認はエージェントから **`get_me`**（`login` が返れば可）。トークンをチャットやスクリーンショットに出さない。流出時は GitHub で即 **revoke** して再発行する。
+
+Cloud Agent も同じプラグイン変数を使う。欄が空・引用符付き・`Bearer ` 付きだと、このランの GitHub 名前空間も `error`（ツール発見失敗）のままになる。OAuth の `mcp_auth` では直らない（プラグインは PAT ヘッダ方式）。
 
 ### トラブルシューティング（GitHub）
 
-- `Authorization header is badly formatted`: プレースホルダのままの PAT、または改行・余分なスペースが入っていないか確認する。**Fine-grained PAT** は先頭が `github_pat_` で **1 回だけ**である。コピペの誤りで `Bearer github_pat_github_pat_…` と **語頭が二重になると認証失敗する**ので、トークン先頭が **一度だけ `github_pat_`** になるよう直す。**PAT をチャットやスクリーンショットに載せず**、流出時は GitHub で即 **revoke** して再発行する。
-- **ログに「`Incompatible auth server: does not support dynamic client registration`」がある**: Cursor が **OAuth の動的クライアント登録**で接続しようとして失敗していることがある。このリポジトリでは **`https://api.githubcopilot.com/mcp/` ＋ `streamableHttp` ＋ `headers.Authorization: Bearer <PAT>`** の手動 `mcp.json` 方式を正とする（下記「GitHub MCP を接続する（最短チェックリスト）」）。
+- `Authorization header is badly formatted`（Streamable HTTP）→ SSE フォールバック 400 → `conn=failed, auth=unknown`: **まず公式プラグインのトークン欄**を上表どおり直す。手動 `mcp.json` を使っている場合だけ、ヘッダ値が 1 行の `Bearer <PAT>` か、プレースホルダ／改行／余分なスペースが無いか見る。**Fine-grained** の語頭 `github_pat_` が二重（`github_pat_github_pat_…`）になっていないことも確認する。
+- **ログに「`Incompatible auth server: does not support dynamic client registration`」がある**: Cursor が **OAuth の動的クライアント登録**に落ちている。公式プラグインでは PAT 欄を埋め直す。手動経路では **`https://api.githubcopilot.com/mcp/` ＋ `headers.Authorization: Bearer <PAT>`**（下記フォールバック）。
 - **Fine-grained PAT 作成時に「パスキーがありません」**: GitHub の本人確認がパスキーに寄っているだけで、ブラウザで **パスワードや「別の方法」** があればそちらに切り替える。または [Password and authentication](https://github.com/settings/security) で **パスキーをこのデバイスに登録**してからやり直す。
-- **Settings → MCP が緑でもエージェントにツールが出ない場合**: Cursor を再起動したうえで、GitHub MCP サーバー識別子（例: `project-…-github`）を **Cursor が表示している名前**で呼ぶ。**動作確認**はエージェントから MCP ツール **`get_me`** を実行し、`login` が返るか見る。
+- **Settings → MCP が緑でもエージェントにツールが出ない場合**: Cursor を再起動したうえで、サーバー識別子を **Cursor が表示している名前**（通常 `plugin-github-github`）で呼ぶ。**動作確認**は **`get_me`**。
 - 組織で Copilot Business/Enterprise の場合、[About MCP](https://docs.github.com/en/copilot/concepts/about-mcp) のポリシー制約あり。
 
-### GitHub MCP を接続する（最短チェックリスト）
+### GitHub MCP 手動 `mcp.json`（プラグインを使わないときだけ）
 
-1. **PAT を発行する**  
-   [GitHub → Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens) で **Classic** または **Fine-grained** を作成する。用途に応じて `repo`（リポジトリ読み取り・操作）や `read:org` など**必要最小限のスコープ**にとどめる。
-2. **`.cursor/mcp.json` にブロックを書く**（正本はローカルのみ。[`.cursor/mcp.json.example`](../.cursor/mcp.json.example) の `github` をコピー）。**`YOUR_GITHUB_PAT` のプレースホルダを実トークンに差し替える**（`ghp_…` / `github_pat_…` など）。
-3. **`Authorization` ヘッダ**は次の形にする（**値は 1 行・前後の空白なし**）。  
-   `"Authorization": "Bearer ghp_xxxxxxxx"` または Fine-grained の `"Authorization": "Bearer github_pat_xxxxxxxx"`（**`github_pat_` はトークン先頭につく 1 回だけ**。`Bearer` の後は**半角スペース 1 つ**＋トークン本体）
-4. **重複登録を避ける**  
-   [配置方針（Global とプロジェクト）](#配置方針global-とプロジェクト) のとおり、**Global の `%USERPROFILE%\.cursor\mcp.json` とプロジェクトの `.cursor/mcp.json` の両方に `github` を書かない**（片方だけ）。
-5. **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** で GitHub サーバーが緑／ツール一覧が表示されるか確認する。
-6. **動作確認（任意）**  
-   エージェントから GitHub MCP の **`get_me`** を実行し、**認証ユーザー**（`login` 等）が返ればトークンとゲートウェイは有効。**Fine-grained PAT** でも同様に動作する（2026-04 本リポジトリで確認済み）。
+公式プラグインを入れているときは **この節は使わない**（`.cursor/mcp.json.example` の `github` をコピーしない）。
+
+1. **PAT を発行する**（上記と同じ。`ghp_…` / `github_pat_…`）。
+2. ローカルの `.cursor/mcp.json` に [`.cursor/mcp.json.example`](../.cursor/mcp.json.example) の `github` をコピーし、プレースホルダを **トークン本体だけ**に差し替える。
+3. **手動 `mcp.json` の `Authorization` ヘッダ**は次の形（**1 行・前後空白なし**）。ここだけ **`Bearer ` が必要**（プラグイン欄とは逆）。  
+   `"Authorization": "Bearer ghp_xxxxxxxx"` または `"Authorization": "Bearer github_pat_xxxxxxxx"`
+4. Global とプロジェクトの両方に `github` を書かない。
+5. Cursor を再起動し、MCP 一覧が緑か確認する。任意で **`get_me`**。
 
 **リモート URL 型**（例: `https://api.githubcopilot.com/mcp/`）は **GitHub Copilot の MCP ゲートウェイ**向け。組織ポリシーや Copilot 契約でブロックされる場合は、[GitHub MCP Server のローカルインストール（Cursor）](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) を検討する。
 

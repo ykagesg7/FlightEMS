@@ -31,12 +31,14 @@ ORDER BY learning_content_id;
 | `list_projects` | 対象プロジェクト（例: `flight-lms`）の ID を確認する |
 | `get_runtime_logs` / `get_deployment_build_logs` | 直近デプロイで API やビルドに異常がないか確認する |
 
-## 3. GitHub（`github`）
+## 3. GitHub（`plugin-github-github`、未使用時のみ手動 `github`）
 
 | 手順 | 内容 |
 |------|------|
 | `git remote -v` | `owner/repo` を確定する（MCP の `search_repositories` が使えない環境がある） |
-| `list_issues` / `list_pull_requests` | 未解決のブロッカーがないか確認する |
+| `list_issues` / `list_pull_requests` | 未解決のブロッカーがないか確認する。サーバー名は Cursor の MCP 一覧に合わせる（公式プラグインは `plugin-github-github`） |
+
+接続失敗（`Authorization header is badly formatted`）の切り分けは [Cursor_MCP_Setup.md](../Cursor_MCP_Setup.md) の GitHub 節。プラグイン欄には **PAT 本体だけ**（`Bearer ` も引用符も付けない）。
 
 ## 4. アプリ（ローカルまたはプレビュー URL）
 

@@ -27,7 +27,7 @@
       "url": "https://api.githubcopilot.com/mcp/",
       "transport": "streamableHttp",
       "headers": {
-        "Authorization": "Bearer YOUR_GITHUB_PAT"
+        "Authorization": "Bearer ghp_or_github_pat_TOKEN_ONLY"
       }
     },
     "context7": {
