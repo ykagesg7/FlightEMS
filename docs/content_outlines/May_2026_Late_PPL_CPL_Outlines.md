@@ -2,7 +2,7 @@
 
 **用途**: 本文執筆前のブリーフ、または **Gemini 等への入力**。完成 MDX のフォーマットは [PPL_Article_Template.mdx](../templates/PPL_Article_Template.mdx) および既存 CPL の `export const meta` に合わせること。
 
-**進行ウィークの実行素案**: [W22_2026/README.md](W22_2026/README.md)（現在 **W22**）。
+**進行ウィークの実行素案**: なし（W22 は完了。索引 [W22_2026/README.md](W22_2026/README.md) はアーカイブ）。
 
 ---
 

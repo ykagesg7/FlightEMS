@@ -12,7 +12,7 @@
 | GA4 MCP・OAuth / ADC（ローカル例） | [下記](#ga4-mcp-oauth--adcローカル例) |
 | 週次テレメトリ GA4（ISO 週・CI） | [下記](#週次テレメトリ-ga4iso-週github-actions) |
 | 規約ファイル | [.cursor/skills/git-commit-en/SKILL.md](../.cursor/skills/git-commit-en/SKILL.md)（ポインタ: [.cursor/rules/git-conventions.mdc](../.cursor/rules/git-conventions.mdc)） |
-| Phase 別テスト計画（参考） | [Phase_Testing_Plan.md](Phase_Testing_Plan.md) |
+| Phase 別テスト計画（参考） | [Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)（旧 `Phase_Testing_Plan.md` はリポジトリに無い） |
 
 ルートの npm: `npm run cpl:import`、`npm run docs:update`、`npm run sync:public-docs` 等。
 
@@ -24,7 +24,7 @@
 
 本リポジトリでは **コミットメッセージは英語のみ**（[.cursor/skills/git-commit-en/SKILL.md](../.cursor/skills/git-commit-en/SKILL.md)）を推奨し、PowerShell の文字化けを避けます。
 
-日本語をどうしても使う場合の UTF-8 設定・`git-commit-utf8.ps1` の使い方などは、従来 `scripts/README-git-commit.md` にあった内容を以下に要約します。
+日本語をどうしても使う場合の UTF-8 設定・`git-commit-utf8.ps1` の使い方は以下。
 
 ### Git 設定（任意）
 
@@ -76,6 +76,8 @@ node setup-git-hooks.js
 - **ログ**: `scripts/docs-auto-update/logs/`
 
 詳細なトラブルシューティング・設定一覧は、必要に応じて `scripts/docs-auto-update/` 内の各 `.js` を直接参照してください。
+
+**稼働注意（2026-09-19）**: このサブパッケージはまだ `docs/ROADMAP.md` を前提にしている。当該ファイルは [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) へ改名済みのため、`npm run docs:update` / `docs:validate` / git hook は **走らせない**（欠ファイルを再生成するか、検査が落ちる）。修復か撤去は未実施。
 
 ### 文字エンコーディング・改行の補助（任意）
 
