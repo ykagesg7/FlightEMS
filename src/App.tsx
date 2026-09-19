@@ -1,9 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React, { lazy, Suspense } from 'react';
-import { HelmetProvider } from 'react-helmet-async';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Navigate, Route, BrowserRouter as Router, Routes, useParams } from 'react-router-dom';
-import { lazyWithRetry } from './utils/lazyWithRetry';
 
 // Contexts
 import { ProgressProvider } from './contexts/ProgressContext';
@@ -16,35 +15,37 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import ScrollManager from './components/ScrollManager';
 import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 import { MarketingLayout } from './layouts/MarketingLayout';
+import { lazyPage, lazyPageWithRetry, withRouteSuspense } from './layouts/withRouteSuspense';
 
 // Marketing Pages (lazy)
-const About = lazy(() => import('./pages/about/About'));
-const MissionDashboard = lazy(() => {
+const About = lazyPage(() => import('./pages/about/About'));
+const MissionDashboard = withRouteSuspense(lazy(() => {
   return import('./pages/mission/Dashboard').catch((err) => {
     throw err;
   });
-});
-const Schedule = lazy(() => import('./pages/schedule/Schedule'));
-const Links = lazy(() => import('./pages/links/Links'));
+}));
+const Schedule = lazyPage(() => import('./pages/schedule/Schedule'));
+const Links = lazyPage(() => import('./pages/links/Links'));
 // App Pages (lazy)
-const HomePage = lazyWithRetry(() => import('./pages/dashboard/HomePage'));
-const PlanningMapPage = lazyWithRetry(() => import('./pages/planning/PlanningMapPage'));
-const Airspace3dPage = lazy(() => import('./pages/explore/Airspace3dPage'));
+const HomePage = lazyPageWithRetry(() => import('./pages/dashboard/HomePage'));
+const PlanningMapPage = lazyPageWithRetry(() => import('./pages/planning/PlanningMapPage'));
+const Airspace3dPage = lazyPage(() => import('./pages/explore/Airspace3dPage'));
 // LearningPage is now integrated into ArticlesPage
-const ArticlesPage = lazyWithRetry(() => import('./pages/articles/ArticlesPage'));
-const ArticleDetailPage = lazyWithRetry(() => import('./pages/articles/ArticleDetailPage'));
-const ProfilePage = lazy(() => import('./pages/profile/ProfilePage'));
-const AuthPage = lazy(() => import('./pages/auth/AuthPage')); // AuthPageを追加
-const PasswordRecoveryPage = lazy(() => import('./pages/auth/PasswordRecoveryPage'));
-const WelcomeSetupPage = lazy(() => import('./pages/welcome/WelcomeSetupPage'));
-const TestPage = lazyWithRetry(() => import('./pages/test/TestPage')); // Testページを追加
+const ArticlesPage = lazyPageWithRetry(() => import('./pages/articles/ArticlesPage'));
+const ArticleDetailPage = lazyPageWithRetry(() => import('./pages/articles/ArticleDetailPage'));
+const ProfilePage = lazyPage(() => import('./pages/profile/ProfilePage'));
+const AuthPage = lazyPage(() => import('./pages/auth/AuthPage'));
+const PasswordRecoveryPage = lazyPage(() => import('./pages/auth/PasswordRecoveryPage'));
+const WelcomeSetupPage = lazyPage(() => import('./pages/welcome/WelcomeSetupPage'));
+const TestPage = lazyPageWithRetry(() => import('./pages/test/TestPage'));
 // Admin Pages
-const RankConfigPage = lazy(() => import('./pages/admin/RankConfigPage'));
-const XpConfigPage = lazy(() => import('./pages/admin/XpConfigPage'));
-const QuestionReportsPage = lazy(() => import('./pages/admin/QuestionReportsPage'));
-const AdminHubPage = lazy(() => import('./pages/admin/AdminHubPage'));
+const RankConfigPage = lazyPage(() => import('./pages/admin/RankConfigPage'));
+const XpConfigPage = lazyPage(() => import('./pages/admin/XpConfigPage'));
+const QuestionReportsPage = lazyPage(() => import('./pages/admin/QuestionReportsPage'));
+const AdminHubPage = lazyPage(() => import('./pages/admin/AdminHubPage'));
 // Rank Benefits Page
-const RankBenefitsPage = lazy(() => import('./pages/mission/components/RankBenefitsPage'));
+const RankBenefitsPage = lazyPage(() => import('./pages/mission/components/RankBenefitsPage'));
+
 // 必要に応じて他のページも追加
 
 // NotFoundPageの簡易実装
@@ -77,6 +78,9 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   return (
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
+        <Helmet defaultTitle="Flight Academy">
+          <title>Flight Academy</title>
+        </Helmet>
         <EnhancedErrorBoundary>
           <ProgressProvider>
             <WeatherCacheProvider>

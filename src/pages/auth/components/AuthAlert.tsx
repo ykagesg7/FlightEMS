@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 type AuthAlertVariant = 'error' | 'success' | 'timeout';
 
@@ -14,11 +14,20 @@ interface AuthAlertProps {
   className?: string;
 }
 
-export const AuthAlert: React.FC<AuthAlertProps> = ({ variant, children, className = '' }) => (
-  <div
-    className={`mb-4 p-3 border rounded ${variantStyles[variant]} ${className}`}
-    role={variant === 'error' ? 'alert' : 'status'}
-  >
-    {children}
-  </div>
-);
+export const AuthAlert: React.FC<AuthAlertProps> = ({ variant, children, className = '' }) => {
+  const alertRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    alertRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [children, variant]);
+
+  return (
+    <div
+      ref={alertRef}
+      className={`mb-4 p-3 border rounded ${variantStyles[variant]} ${className}`}
+      role={variant === 'error' ? 'alert' : 'status'}
+    >
+      {children}
+    </div>
+  );
+};
