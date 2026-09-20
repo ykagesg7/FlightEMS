@@ -400,6 +400,11 @@ XP額はクライアントから渡しません。`private.apply_xp_reward` が
 
 #### 公開 RPC と権限
 
+公開 XP RPC は **public 上 `SECURITY INVOKER`**（PostgREST 表面）。付与本体は
+**`private.*_impl`（`SECURITY DEFINER`）** が `private.apply_xp_reward` を呼ぶ。
+`apply_xp_reward` の `EXECUTE` は postgres のみ。INVOKER のまま呼ぶと PostgREST **403**
+（`42501 permission denied for function apply_xp_reward`）。
+
 | RPC | 呼び出し元 | 入力 |
 |---|---|---|
 | `award_registration_xp` | authenticated | なし |
@@ -432,7 +437,8 @@ SELECT/INSERT/UPDATE（`learning_progress` は DELETE も）のみにします�
 
 **実装マイグレーション**:
 [`20260720_gamification_phase1_foundation.sql`](../scripts/database/20260720_gamification_phase1_foundation.sql)、
-[`20260920_quiz_review_progress_consistency.sql`](../scripts/database/20260920_quiz_review_progress_consistency.sql)（SRS lapse 即 due、`award_registration_xp` INVOKER ラッパー）
+[`20260920_quiz_review_progress_consistency.sql`](../scripts/database/20260920_quiz_review_progress_consistency.sql)（SRS lapse 即 due、`award_registration_xp` INVOKER ラッパー）、
+[`20260920_award_article_quiz_xp_invoker_wrappers.sql`](../scripts/database/20260920_award_article_quiz_xp_invoker_wrappers.sql)（記事読了 / Quiz / 理解 XP の INVOKER ラッパー）
 
 ### **旧ゲーミフィケーション仕様（2025年1月実装・履歴）**
 
