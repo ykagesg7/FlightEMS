@@ -55,4 +55,19 @@ describe('buildQuizLearningSessionInsert', () => {
     expect(payload.session_metadata.correct_count).toBe(1);
     expect(payload.session_metadata.tab).toBe('diagnostic');
   });
+
+  it('maps exam mode to session_type exam and content_type quiz', () => {
+    const payload = buildQuizLearningSessionInsert({
+      userId: 'user-1',
+      answers: sampleAnswers,
+      mode: 'exam',
+      tab: 'subject',
+      contentId: '3.2.2_WingTheory',
+      quizSessionId: 'session-exam',
+      endedAtIso: '2026-06-07T00:00:00.000Z',
+    });
+    expect(payload.content_type).toBe('quiz');
+    expect(payload.session_type).toBe('exam');
+    expect(payload.content_id).toBe('3.2.2_WingTheory');
+  });
 });

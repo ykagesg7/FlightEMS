@@ -104,6 +104,8 @@ export function useArticleStats() {
   // コメントを取得
   const loadComments = useCallback(async (articleId: string) => {
     try {
+      // Do not embed `profiles` — anon has no GRANT on profiles, so the
+      // whole comments GET became 401 (42501) even after comments SELECT.
       const { data: commentsData, error: commentsError } = await supabase
         .from('learning_content_comments')
         .select(`
@@ -112,13 +114,7 @@ export function useArticleStats() {
           user_id,
           content,
           created_at,
-          updated_at,
-          profiles (
-            id,
-            username,
-            full_name,
-            avatar_url
-          )
+          updated_at
         `)
         .eq('content_id', articleId)
         .order('created_at', { ascending: true });
@@ -129,7 +125,7 @@ export function useArticleStats() {
       }
 
       const transformedComments: ArticleComment[] = (commentsData || []).map(comment => {
-        const profile = Array.isArray(comment.profiles) ? comment.profiles[0] : comment.profiles;
+        const ownComment = Boolean(user && comment.user_id === user.id);
         return {
           id: comment.id,
           article_id: comment.content_id,
@@ -140,8 +136,10 @@ export function useArticleStats() {
           user: {
             id: comment.user_id,
             email: '', // プライバシー保護のため空
-            display_name: profile?.username || '名無しさん',
-            avatar_url: profile?.avatar_url
+            display_name: ownComment
+              ? (user?.email?.split('@')[0] || '名無しさん')
+              : '名無しさん',
+            avatar_url: undefined
           }
         };
       });
@@ -153,7 +151,7 @@ export function useArticleStats() {
     } catch (error) {
       console.error('コメントの取得に失敗しました:', error);
     }
-  }, [supabase]);
+  }, [supabase, user]);
 
   // いいねを切り替え（ログインユーザーのみ）
   const toggleLike = useCallback(async (request: ToggleLikeRequest) => {
