@@ -169,12 +169,10 @@ export default defineConfig(({ mode }) => {
           stagewise: true,
         },
         output: {
-          // より詳細なチャンク分割戦略（stagewise対応）
-          // 本番は循環依存回避のため全面 manualChunks を避け、leaflet のみ分離（Planning 巨大チャンク緩和）
+          // 本番は循環依存回避のため全面 manualChunks を避け、leaflet のみ分離（Planning 巨大チャンク緩和）。
+          // Cesium は named chunk にすると index.html が modulepreload し学習画面で WASM する。
+          // Airspace3d の dynamic import 配下に残す。
           manualChunks: (id) => {
-            if (id.includes('node_modules/cesium')) {
-              return 'vendor-cesium';
-            }
             if (id.includes('node_modules/leaflet') || id.includes('node_modules/react-leaflet')) {
               return 'vendor-leaflet';
             }
