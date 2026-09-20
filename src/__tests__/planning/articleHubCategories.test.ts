@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { WITHDRAWN_ARTICLE_IDS } from '../../constants/withdrawnArticleIds';
+import {
+  isWithdrawnArticle,
+  WITHDRAWN_ARTICLE_IDS,
+} from '../../constants/withdrawnArticleIds';
 import {
   countMindsetArticles,
   filterPublishedArticleContents,
@@ -26,6 +29,18 @@ function mockContent(
 }
 
 describe('articleHubCategories', () => {
+  it('allows rewritten Unconscious Success while habit 2 stays withdrawn', () => {
+    expect(isWithdrawnArticle('1.1.1_UnconsciousSuccess')).toBe(false);
+    expect(isWithdrawnArticle('1.1.2_EndWithFuture')).toBe(true);
+    const contents = [
+      mockContent('1.1.1_UnconsciousSuccess', 'メンタリティー', true),
+      mockContent('1.1.2_EndWithFuture', 'メンタリティー', true),
+    ];
+    expect(filterPublishedArticleContents(contents).map((c) => c.id)).toEqual([
+      '1.1.1_UnconsciousSuccess',
+    ]);
+  });
+
   it('excludes withdrawn article ids even when is_published is true', () => {
     const withdrawnId = WITHDRAWN_ARTICLE_IDS[0];
     const contents = [
