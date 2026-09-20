@@ -3,8 +3,9 @@ import { getStreakMultiplier } from '../../utils/streak';
 
 // Supabase モック — streak.ts が import する supabase インスタンスを差し替える
 const mockSingle = vi.fn();
+const mockLimit = vi.fn();
 const mockSelect = vi.fn(() => ({ single: mockSingle }));
-const mockEq = vi.fn(() => ({ single: mockSingle, select: mockSelect }));
+const mockEq = vi.fn(() => ({ single: mockSingle, select: mockSelect, limit: mockLimit }));
 const mockUpdate = vi.fn(() => ({ eq: mockEq }));
 const mockInsert = vi.fn(() => ({ select: mockSelect }));
 const mockSelectChain = vi.fn(() => ({ eq: mockEq }));
@@ -107,11 +108,11 @@ describe('Streak Utils', () => {
     });
 
     /**
-     * ヘルパー: from('streak_records').select('*').eq('user_id', userId).single() のチェーンを設定
+     * ヘルパー: from('streak_records').select('*').eq('user_id', userId).limit(1)
      */
-    function setupSelectChain(result: { data: StreakRecord | null; error: { code: string; message: string } | null }) {
-      mockSingle.mockResolvedValueOnce(result);
-      mockEq.mockReturnValueOnce({ single: mockSingle });
+    function setupSelectChain(result: { data: StreakRecord[] | null; error: { code: string; message: string } | null }) {
+      mockLimit.mockResolvedValueOnce(result);
+      mockEq.mockReturnValueOnce({ limit: mockLimit });
       mockSelectChain.mockReturnValueOnce({ eq: mockEq });
       mockFrom.mockReturnValueOnce({
         select: mockSelectChain,
@@ -135,7 +136,7 @@ describe('Streak Utils', () => {
     }
 
     it('should return existing streak record', async () => {
-      setupSelectChain({ data: sampleRecord, error: null });
+      setupSelectChain({ data: [sampleRecord], error: null });
 
       const result = await getOrCreateStreakRecord('user-1');
 
@@ -143,9 +144,8 @@ describe('Streak Utils', () => {
       expect(mockFrom).toHaveBeenCalledWith('streak_records');
     });
 
-    it('should create new record when not found (PGRST116)', async () => {
-      // 1回目: レコードが見つからない（PGRST116）
-      setupSelectChain({ data: null, error: { code: 'PGRST116', message: 'Not found' } });
+    it('should create new record when none exist', async () => {
+      setupSelectChain({ data: [], error: null });
       // 2回目: insert チェーン
       const newRecord = {
         ...sampleRecord,
@@ -161,7 +161,7 @@ describe('Streak Utils', () => {
       expect(result).toEqual(newRecord);
     });
 
-    it('should return null on database error (non-PGRST116)', async () => {
+    it('should return null on database error', async () => {
       setupSelectChain({ data: null, error: { code: 'PGRST500', message: 'DB Error' } });
 
       const result = await getOrCreateStreakRecord('user-1');
@@ -170,8 +170,7 @@ describe('Streak Utils', () => {
     });
 
     it('should return null on insert error', async () => {
-      // 1回目: レコードが見つからない
-      setupSelectChain({ data: null, error: { code: 'PGRST116', message: 'Not found' } });
+      setupSelectChain({ data: [], error: null });
       // 2回目: insert がエラー
       setupInsertChain({ data: null, error: { message: 'Insert failed' } });
 
@@ -197,8 +196,8 @@ describe('Streak Utils', () => {
      * ヘルパー: getOrCreateStreakRecord の select チェーンを設定
      */
     function setupGetRecord(record: StreakRecord | null, error: { code: string; message: string } | null = null) {
-      mockSingle.mockResolvedValueOnce({ data: record, error });
-      mockEq.mockReturnValueOnce({ single: mockSingle });
+      mockLimit.mockResolvedValueOnce({ data: record ? [record] : [], error });
+      mockEq.mockReturnValueOnce({ limit: mockLimit });
       mockSelectChain.mockReturnValueOnce({ eq: mockEq });
       mockFrom.mockReturnValueOnce({
         select: mockSelectChain,
@@ -363,8 +362,8 @@ describe('Streak Utils', () => {
      * ヘルパー: getOrCreateStreakRecord の select チェーンを設定
      */
     function setupGetRecord(record: StreakRecord | null, error: { code: string; message: string } | null = null) {
-      mockSingle.mockResolvedValueOnce({ data: record, error });
-      mockEq.mockReturnValueOnce({ single: mockSingle });
+      mockLimit.mockResolvedValueOnce({ data: record ? [record] : [], error });
+      mockEq.mockReturnValueOnce({ limit: mockLimit });
       mockSelectChain.mockReturnValueOnce({ eq: mockEq });
       mockFrom.mockReturnValueOnce({
         select: mockSelectChain,
@@ -465,8 +464,8 @@ describe('Streak Utils', () => {
         current_streak: 4,
         longest_streak: 10,
       };
-      mockSingle.mockResolvedValueOnce({ data: todayRecord, error: null });
-      mockEq.mockReturnValueOnce({ single: mockSingle });
+      mockLimit.mockResolvedValueOnce({ data: [todayRecord], error: null });
+      mockEq.mockReturnValueOnce({ limit: mockLimit });
       mockSelectChain.mockReturnValueOnce({ eq: mockEq });
 
       await syncStreakToUserLearningProfile('user-1');
@@ -482,8 +481,8 @@ describe('Streak Utils', () => {
     });
 
     it('does not upsert when updateStreak returns null', async () => {
-      mockSingle.mockResolvedValueOnce({ data: null, error: { code: 'PGRST500', message: 'fail' } });
-      mockEq.mockReturnValueOnce({ single: mockSingle });
+      mockLimit.mockResolvedValueOnce({ data: null, error: { code: 'PGRST500', message: 'fail' } });
+      mockEq.mockReturnValueOnce({ limit: mockLimit });
       mockSelectChain.mockReturnValueOnce({ eq: mockEq });
 
       await syncStreakToUserLearningProfile('user-1');

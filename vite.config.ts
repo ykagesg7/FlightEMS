@@ -7,7 +7,7 @@ import { defineConfig, loadEnv, type PluginOption } from 'vite';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import cesium from 'vite-plugin-cesium';
+import { cesiumStaticAssetsPlugin } from './vite/cesiumStaticAssetsPlugin';
 import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
 import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
 import { articlesIndexPlugin } from './vite/articlesIndexPlugin';
@@ -101,7 +101,9 @@ export default defineConfig(({ mode }) => {
   }
 
   const plugins: PluginOption[] = [
-    cesium(),
+    // Assets/Workers only. Do not inject Cesium.js into every HTML shell
+    // (vite-plugin-cesium did, which WASM-initialized Articles/Quiz).
+    cesiumStaticAssetsPlugin(),
     ...(mode === 'development' ? [devOpenskyApiPlugin(), devWeatherApiPlugin()] : []),
     react({
       jsxRuntime: 'automatic',

@@ -40,21 +40,21 @@ export function getStreakMultiplier(streakDays: number): number {
  */
 export async function getOrCreateStreakRecord(userId: string): Promise<StreakRecord | null> {
   try {
-    // 既存のレコードを取得
+    // Avoid .single() — 0 rows is HTTP 406 (PGRST116) in Network.
     const { data, error } = await supabase
       .from('streak_records')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .limit(1);
 
-    if (error && error.code !== 'PGRST116') {
-      // PGRST116はレコードが見つからないエラー（正常）
+    if (error) {
       console.error('ストリークレコード取得エラー:', error);
       return null;
     }
 
-    if (data) {
-      return data as StreakRecord;
+    const existing = data?.[0];
+    if (existing) {
+      return existing as StreakRecord;
     }
 
     // レコードが存在しない場合、新規作成
