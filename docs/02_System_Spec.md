@@ -114,7 +114,7 @@ CREATE TABLE learning_progress (
 
 #### **進捗追跡機能（2025年12月28日更新、2026年1月5日改善、2026年4月13日更新）**
 
-- **ReadingProgressBar**: `ArticleDetailPage`（`/articles/:contentId`）および `LearningTabMDX` で `MDXLoader` とともにマウント。ドキュメント全体のスクロール率（`scrollY / (scrollHeight - innerHeight)`、スクロール不可時は 100%）を算出し、約 1 秒スロットルで **`useArticleProgress.updateArticleProgress`** により `learning_progress` に upsert。**95% 以上で `completed: true`**（従来の `useLearningProgress.updateProgress` による二重保存は廃止）。
+- **ReadingProgressBar**: `ArticleDetailPage`（`/articles/:contentId`）および `LearningTabMDX` で `MDXLoader` とともにマウント。ドキュメント全体のスクロール率（`scrollY / (scrollHeight - innerHeight)`、末尾 64px 以内は 100%、スクロール不可時は 100%）を算出し、約 1 秒スロットル（**trailing flush**）で **`useArticleProgress.updateArticleProgress`** により `learning_progress` に upsert。**95% 以上、または本文末尾センチネルが見えたとき `completed: true`**（従来の `useLearningProgress.updateProgress` による二重保存は廃止）。
 - **useArticleProgress Hook**: 上記 upsert、一覧・統計、初回読了時のミッション連携（例: `article_read`）を担う。
 - **TableOfContents**: 目次の下に進捗表示（円形メーターとパーセンテージ）。**表示上の進捗**は見出しベースの計算を継続（関連記事ブロックは目次に出すが進捗計算から除外する等、従来どおり）。
 - **ProgressSidebar**: カテゴリー別進捗の集計と表示
@@ -122,7 +122,7 @@ CREATE TABLE learning_progress (
 
 #### **完了判定ロジック**
 
-- **永続化（DB）**: `ReadingProgressBar` → `updateArticleProgress` により、**ビューポート基準のスクロール率が 95% 以上**のとき `learning_progress.completed = true`（`progress_percentage` も同値で保存）。
+- **永続化（DB）**: `ReadingProgressBar` → `updateArticleProgress` により、**ビューポート基準のスクロール率が 95% 以上**、または **MDX 本文末尾のセンチネルが交差**したとき `learning_progress.completed = true`（`progress_percentage` も同値で保存）。コメント欄までスクロールしなくても読了になる。
 - **ダッシュボード集計**: `fetchDashboardMetrics` 内 `getLearningProgress` は、**`completed === true` または `progress_percentage >= 95`** を完了として数える（過去データの取りこぼし防止）。
 - **95% 未満**: `completed` は false のまま `progress_percentage` のみ更新。連続スクロールでは `updateArticleProgress` 内の丸め・有意差判定で upsert が抑止される場合がある。
 
@@ -431,7 +431,8 @@ SELECT/INSERT/UPDATE（`learning_progress` は DELETE も）のみにします�
 完了条件を自動付与しません。
 
 **実装マイグレーション**:
-[`20260720_gamification_phase1_foundation.sql`](../scripts/database/20260720_gamification_phase1_foundation.sql)
+[`20260720_gamification_phase1_foundation.sql`](../scripts/database/20260720_gamification_phase1_foundation.sql)、
+[`20260920_quiz_review_progress_consistency.sql`](../scripts/database/20260920_quiz_review_progress_consistency.sql)（SRS lapse 即 due、`award_registration_xp` INVOKER ラッパー）
 
 ### **旧ゲーミフィケーション仕様（2025年1月実装・履歴）**
 
@@ -781,7 +782,7 @@ Articles Hub と同型の **URL 双方向同期 + タブ IA + GA4 カスタム�
 | タブ | 用途 | デフォルト |
 |------|------|------------|
 | `diagnostic` | 全科目・重要度上位 N 問の実力診断（Practice） | **初回デフォルト** |
-| `review` | 弱点復習（SRS 期限 → なければ `user_weak_areas` fallback） | ログイン必須 |
+| `review` | 弱点復習（SRS 期限 **または lapse（repetitions=0）** → なければ `user_weak_areas` fallback） | ログイン必須 |
 | `subject` | 科目 → サブ科目 → 問題数（Listbox + 検索） | — |
 | `content` | 記事連動（`contentId` あり時・フィルタロック） | 暗黙 |
 
@@ -791,7 +792,7 @@ Articles Hub と同型の **URL 双方向同期 + タブ IA + GA4 カスタム�
 
 - **Practice**: 即時フィードバック
 - **Exam**: 解説非表示、最終問で結果画面
-- **Review**: ログイン必須。SRS 0 件時は弱点科目から出題
+- **Review**: ログイン必須。期限到来カードと **不正解でリセットされたカード（`repetitions=0`）** を出題。どちらも無いとき弱点科目から出題。診断直後に「復習スケジュール更新 N件」と出ても Review が空になる不整合を防ぐ（失敗カードは due を `now()` にする）。
 
 **UI 構成**: [`QuizHubToolbar`](../src/pages/test/components/QuizHubToolbar.tsx)、[`QuizFilterDrawer`](../src/pages/test/components/QuizFilterDrawer.tsx)（モバイル Bottom Sheet）、[`QuizActiveFilterChips`](../src/pages/test/components/QuizActiveFilterChips.tsx)、[`WeakAreasHero`](../src/pages/test/components/WeakAreasHero.tsx)（ログイン時弱点要約）、[`TestSubjectFilterSection`](../src/pages/test/components/TestSubjectFilterSection.tsx)。[`TestPage.tsx`](../src/pages/test/TestPage.tsx) はオーケストレータ（fetch は [`testQuizFetch.ts`](../src/pages/test/testQuizFetch.ts)、科目フィルタは [`useTestSubjectFilters`](../src/pages/test/hooks/useTestSubjectFilters.ts)）。
 

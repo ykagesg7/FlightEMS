@@ -1,53 +1,73 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { MDX_CONTENT_LOADED_EVENT } from '../../../components/mdx/MDXLoader';
 import { useArticlePrefetch } from '../../../hooks/useArticlePrefetch';
 import { useArticleProgress } from '../../../hooks/useArticleProgress';
 import { useAuth } from '../../../hooks/useAuth';
 import { useReadingDwellSession } from '../../../hooks/useReadingDwellSession';
 import { getArticleBySlug, isLessonContentId } from '../../../utils/articlesIndex';
+import {
+  ARTICLE_READ_COMPLETE_PERCENT,
+  computeWindowScrollMetrics,
+} from '../utils/computeScrollMetrics';
 
-function useThrottle<T extends (...args: unknown[]) => void>(fn: T, intervalMs: number) {
+function useTrailingThrottle(fn: () => void, intervalMs: number): () => void {
+  const fnRef = useRef(fn);
+  fnRef.current = fn;
   const lastCalledAtRef = useRef(0);
-  return (...args: Parameters<T>) => {
-    const now = Date.now();
-    if (now - lastCalledAtRef.current >= intervalMs) {
-      lastCalledAtRef.current = now;
-      fn(...args);
-    }
-  };
-}
+  const timeoutRef = useRef<number | null>(null);
 
-/** ビューポートスクロールから 0–100% を算出。異常時は null */
-function computeScrollMetrics(): { scrollY: number; scrollProgress: number } | null {
-  const scrollY = Math.max(0, window.scrollY);
-  const doc = document.documentElement;
-  const totalScrollable = Math.max(0, doc.scrollHeight - window.innerHeight);
-  let scrollProgress: number;
-  if (totalScrollable <= 0) {
-    scrollProgress = 100;
-  } else {
-    const raw = (scrollY / totalScrollable) * 100;
-    if (!Number.isFinite(raw)) {
-      return null;
+  useEffect(() => () => {
+    if (timeoutRef.current != null) {
+      window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
-    scrollProgress = Math.min(100, Math.max(0, Math.round(raw)));
-  }
-  return { scrollY: Math.floor(scrollY), scrollProgress };
+  }, []);
+
+  return useCallback(() => {
+    const invoke = () => {
+      lastCalledAtRef.current = Date.now();
+      fnRef.current();
+    };
+    const now = Date.now();
+    const wait = intervalMs - (now - lastCalledAtRef.current);
+    if (wait <= 0) {
+      if (timeoutRef.current != null) {
+        window.clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      invoke();
+      return;
+    }
+    if (timeoutRef.current != null) return;
+    timeoutRef.current = window.setTimeout(() => {
+      timeoutRef.current = null;
+      invoke();
+    }, wait);
+  }, [intervalMs]);
 }
 
 interface ReadingProgressBarProps {
   contentId?: string;
   slug?: string;
+  /** Placed after article body so reaching the MDX end counts as read. */
+  endSentinelRef?: React.RefObject<Element | null>;
 }
 
 /**
  * 表示は行わず、スクロール進捗と読了滞在を保存する。
  * 進捗は `learning_progress`、滞在は `learning_sessions`（JST 集計の元データ）。
+ * 完了は (1) ビューポート末尾 (2) 本文末尾センチネル のいずれか。
  */
-export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentId, slug }) => {
+export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
+  contentId,
+  slug,
+  endSentinelRef,
+}) => {
   const { updateArticleProgress } = useArticleProgress();
   const { user } = useAuth();
   const [estimatedMinutes, setEstimatedMinutes] = useState<number | null>(null);
+
+  const [articleBodyReady, setArticleBodyReady] = useState(false);
 
   const currentSlug = slug || contentId || '';
   useArticlePrefetch(currentSlug, true);
@@ -59,15 +79,23 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
     enabled: Boolean(user && currentSlug),
   });
 
-  const compute = useThrottle(() => {
+  const persistViewportProgress = useCallback(() => {
     if (!user || !currentSlug) return;
-    const metrics = computeScrollMetrics();
+    const metrics = computeWindowScrollMetrics();
     if (!metrics) return;
+    const completed = metrics.scrollProgress >= ARTICLE_READ_COMPLETE_PERCENT;
     void updateArticleProgress(currentSlug, {
       scrollProgress: metrics.scrollProgress,
       lastPosition: metrics.scrollY,
+      ...(completed ? { completed: true } : {}),
     });
-  }, 1000);
+  }, [currentSlug, updateArticleProgress, user]);
+
+  const compute = useTrailingThrottle(persistViewportProgress, 1000);
+
+  useEffect(() => {
+    setArticleBodyReady(false);
+  }, [currentSlug]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -76,12 +104,14 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
     const onResize = () => {
       compute();
     };
-    const onLoaded = async (event: CustomEvent) => {
+    const onLoaded = async (event: Event) => {
+      setArticleBodyReady(true);
       setTimeout(() => {
         compute();
       }, 50);
 
-      const { meta } = event.detail || {};
+      const custom = event as CustomEvent<{ meta?: { readingTime?: number } }>;
+      const { meta } = custom.detail || {};
       if (typeof meta?.readingTime === 'number' && meta.readingTime > 0) {
         setEstimatedMinutes(meta.readingTime);
       } else if (currentSlug) {
@@ -95,16 +125,42 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({ contentI
         }
       }
     };
-    compute();
+    const onPageHide = () => {
+      persistViewportProgress();
+    };
+    persistViewportProgress();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
-    window.addEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as unknown as EventListener);
+    window.addEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as EventListener);
+    window.addEventListener('pagehide', onPageHide);
+    document.addEventListener('visibilitychange', onPageHide);
     return () => {
+      persistViewportProgress();
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
-      window.removeEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as unknown as EventListener);
+      window.removeEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as EventListener);
+      window.removeEventListener('pagehide', onPageHide);
+      document.removeEventListener('visibilitychange', onPageHide);
     };
-  }, [compute, user, currentSlug, updateArticleProgress]);
+  }, [compute, persistViewportProgress, user, currentSlug]);
+
+  useEffect(() => {
+    const sentinel = endSentinelRef?.current;
+    if (!user || !currentSlug || !articleBodyReady || !sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        void updateArticleProgress(currentSlug, {
+          scrollProgress: 100,
+          completed: true,
+        });
+      },
+      { threshold: 0.01 },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [articleBodyReady, currentSlug, endSentinelRef, updateArticleProgress, user]);
 
   return null;
 };

@@ -90,10 +90,6 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
     navigate('/explore/airspace-3d');
   };
 
-  const preloadAirspace3d = () => {
-    void import('../../../explore/airspace3d/CesiumAirspaceViewer');
-  };
-
   const dismissDraftNotice = () => {
     try {
       sessionStorage.setItem(DRAFT_NOTICE_DISMISS_KEY, '1');
@@ -605,7 +601,6 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
             aboveMaxFuel={navLog.aboveMaxFuel}
             onSegmentOverrideChange={handleSegmentOverrideChange}
             onOpenAirspace3d={openAirspace3d}
-            onPreloadAirspace3d={preloadAirspace3d}
           />
         </PlanningCard>
         <PlanningCard title="Briefing" defaultOpen={false}>
