@@ -31,7 +31,7 @@ Heat-to-Guns、CAS 9-Line、FMT の HCA / CZ は載せない。Pitchback / Slice
 
 FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通過後だけ MDX。ストック登録。**全話を一括起票しない。**
 
-**Season 1（1-1〜1-3）は MDX 済（W34 月水金）。** Season 2 の 2-1〜2-6 は精緻化済（W35: 2-1〜2-3、W36: 2-4〜2-6）。Season 3 以降はストック。CP シリーズ完（最終話 5-9 Chandelle）。次の CP ブリーフは作らない。
+**Season 1（1-1〜1-3）は MDX 済（W34 月水金）。** Season 2 の 2-1〜2-6 は精緻化済（W35: 2-1〜2-3、W36: 2-4〜2-6）。**git の MDX は 5-5 まで**（W39）。5-6〜5-9 は SQL ストック行があるが **MDX は無い**。「シリーズ完」は DB 行の話であり git 正本ではない。
 
 ---
 

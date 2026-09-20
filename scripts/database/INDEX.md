@@ -17,10 +17,7 @@
 | 目的 | ファイル |
 |------|----------|
 | **Articles W33 学び編** `4.2.1`〜`4.2.5` | [`20260808_learning_contents_w33_training_basics.sql`](20260808_learning_contents_w33_training_basics.sql)（ドリップ開始時 `is_published=false` — **2026-08-08 本番 upsert 済**） |
-| **CBT 暫定束ね 第1バッチ** 航空通信 11→`CPL-Hub-Communication` | [`20260812_learning_test_mapping_cbt_comm_hub.sql`](20260812_learning_test_mapping_cbt_comm_hub.sql) |
-| **CBT 暫定束ね 第2バッチ** 気象 18 + 航法 18 | [`20260812_learning_test_mapping_cbt_meteo_nav_hub.sql`](20260812_learning_test_mapping_cbt_meteo_nav_hub.sql) |
-| **CBT 暫定束ね 第3バッチ** 工学 26 + 法規 31 | [`20260812_learning_test_mapping_cbt_eng_legal_hub.sql`](20260812_learning_test_mapping_cbt_eng_legal_hub.sql) |
-| **PPL-2-3-3** Phase 2 第1本 + mapping | [`20260812_learning_contents_ppl233_wind_shear_volcanic_ash.sql`](20260812_learning_contents_ppl233_wind_shear_volcanic_ash.sql)・[`20260812_learning_test_mapping_ppl233_wind_shear_volcanic_ash.sql`](20260812_learning_test_mapping_ppl233_wind_shear_volcanic_ash.sql) |
+| **CBT 暫定束ね / PPL-2-3-3（2026-08-12 記録）** | **git に SQL ファイルが無い**。05 W33〜W35 と [Closed_Sprints.md](../../docs/Closed_Sprints.md) を正とする。ファイル名を捏造して置かない。 |
 | PPL／CPL 出題区分・バッチ適用の起点 | `20260324_add_unified_cpl_applicable_exams.sql`、[db/CPL_KPI_and_Database_Operations.md](../../docs/db/CPL_KPI_and_Database_Operations.md) の手順表 |
 | **MLIT 例題集（CPL飛行機）** 2026-06 / 2024-08 | [`20260720_unified_cpl_questions_mlit_sample_202606.sql`](20260720_unified_cpl_questions_mlit_sample_202606.sql)、[`20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql`](20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql)（**2026-07-20 本番適用・ファクトチェック済**。要図除外後 **104問 verified**。手順は [Scripts_Repository_Tooling.md](../../docs/Scripts_Repository_Tooling.md)「MLIT 例題集取込」） |
 | CPL 工学・気象・航法 `learning_contents` メタ同期 | `20260412_learning_contents_cpl_engineering_*_meta.sql`、`20260424_learning_contents_cpl_meteo_331_3312_meta.sql`、`20260430_learning_contents_cpl_navigation_341_347_meta.sql` |

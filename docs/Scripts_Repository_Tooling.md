@@ -5,8 +5,8 @@
 | トピック | 節 |
 |----------|-----|
 | Git コミット（英語・Windows 文字化け補足） | [下記](#git-コミットメッセージの文字化け対策windows-補足) |
-| **Supabase / database SQL** | [Indexing](#supabase-database-sql-scripts) と [scripts/database/INDEX.md](../../scripts/database/INDEX.md) |
-| ドキュメント自動更新 | [下記](#ドキュメント自動更新システム) |
+| **Supabase / database SQL** | [Indexing](#supabase-database-sql-scripts) と [scripts/database/INDEX.md](../scripts/database/INDEX.md) |
+| ドキュメント同期 | [下記](#ドキュメント自動更新システム)（`docs-auto-update` は **実行しない**） |
 | MDX → Obsidian ミラー | [下記](#mdx--obsidian-参照ミラー) |
 | CPL Master CSV 取込 | [下記](#cpl-master-csv-取込仕様)（旧 `CPL_CSV_IMPORT_SPEC`） |
 | GA4 MCP・OAuth / ADC（ローカル例） | [下記](#ga4-mcp-oauth--adcローカル例) |
@@ -14,7 +14,7 @@
 | 規約ファイル | [.cursor/skills/git-commit-en/SKILL.md](../.cursor/skills/git-commit-en/SKILL.md)（ポインタ: [.cursor/rules/git-conventions.mdc](../.cursor/rules/git-conventions.mdc)） |
 | Phase 別テスト計画（参考） | [Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)（旧 `Phase_Testing_Plan.md` はリポジトリに無い） |
 
-ルートの npm: `npm run cpl:import`、`npm run docs:update`、`npm run sync:public-docs` 等。
+ルートの npm: `npm run cpl:import`、`npm run sync:public-docs` 等。`docs:update` / `docs:validate` / `docs:setup` は **実行しない**。
 
 **ディレクトリ索引（実装）**: `scripts/README.md`（短いポインタ） → 本ドキュメント。**補足**: `scripts/` 直下に単発ツールが混在する現状と、`scripts/repo/`／`scripts/dev/` 等へのグルーピング案は運用変更チャーンがあるため、[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)・[AGENTS.md](../AGENTS.md) と同趣旨で **任意の後付けリファクタ**として検討（未実施）。
 
@@ -50,34 +50,9 @@ chcp 65001
 
 ## ドキュメント自動更新システム
 
-**実装ディレクトリ**: `scripts/docs-auto-update/`（`package.json` は当該サブパッケージ内）
+正本の更新手順は Skill [`docs-sync`](../.cursor/skills/docs-sync/SKILL.md)。公開コピーは `npm run sync:public-docs`。
 
-### ルートからのコマンド
-
-```bash
-npm run docs:watch    # scripts/docs-auto-update で watch
-npm run docs:update   # 手動更新
-npm run docs:validate # 品質チェック
-npm run docs:setup    # npm install + setup-git-hooks
-```
-
-### 初回セットアップ（Git Hooks）
-
-```bash
-cd scripts/docs-auto-update
-npm install
-node setup-git-hooks.js
-```
-
-### 監視・更新の詳細
-
-- **監視対象**: `src/**/*.{ts,tsx}`, `package.json`, `vite.config.ts`, `docs/**/*.md` 等（`watch-changes.js` 参照）
-- **品質チェック**: `validate-docs.js`（必須ファイル、リンク、構造）
-- **ログ**: `scripts/docs-auto-update/logs/`
-
-詳細なトラブルシューティング・設定一覧は、必要に応じて `scripts/docs-auto-update/` 内の各 `.js` を直接参照してください。
-
-**稼働注意（2026-09-19）**: このサブパッケージはまだ `docs/ROADMAP.md` を前提にしている。当該ファイルは [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) へ改名済みのため、`npm run docs:update` / `docs:validate` / git hook は **走らせない**（欠ファイルを再生成するか、検査が落ちる）。修復か撤去は未実施。
+**実行しない**: `scripts/docs-auto-update/` は欠ファイル `docs/ROADMAP.md` をまだ前提にする（改名先は [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)）。`npm run docs:update` / `docs:validate` / `docs:setup` と git hook は走らせない。本環境の `.git/hooks` は sample のみ（`docs:setup` 未適用）。コード本体の撤去はこの docs パッチの範囲外。
 
 ### 文字エンコーディング・改行の補助（任意）
 
@@ -120,7 +95,7 @@ Vault 側の案内: Obsidian 内 `FlightAcademy/Articles/_Index.md`。
 
 | ソース | 内容 |
 |--------|------|
-| **[scripts/database/INDEX.md](../../scripts/database/INDEX.md)** | ディレクトリの役割、よく使うファイルへのショートカット、**不要な旧 SQL はコミットしない**方針。**AI・初動調査からここを開く**。 |
+| **[scripts/database/INDEX.md](../scripts/database/INDEX.md)** | ディレクトリの役割、よく使うファイルへのショートカット、**不要な旧 SQL はコミットしない**方針。**AI・初動調査からここを開く**。 |
 | `scripts/database/` 直下 (`*.sql`) | ドキュメント・Skill から **相対リンクされている**運用／冪正 SQL が主。名前は **`YYYYMMDD_*`** または明確な `*_migration.sql` 等で揃える。 |
 | **参照ゼロの過去 SQL** | **リポジトリに保持しない**。`scripts/database/` 直下にアーカイブ用サブフォルダは置かない。復元は Git 履歴。ルート `.gitignore` の **`archive/*`** はローカル用スタジングのみ。 |
 

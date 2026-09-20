@@ -94,7 +94,7 @@
 3. **経路の混在** — `quiz_session_start` の方がユーザー数が多く、Hub 以外からのクイズ開始が主因と推定。記事→クイズ導線の効果測定は `article_to_quiz_click` を別 KPI にするとよい。
 4. **次の計測改善（コード不要・Admin のみ）**: `exam` / `content_id` をカスタムディメンション登録 → 次回 MCP で偏りを数値化。
 
-**UI 改善案**: 本メモでは **着手しない**（[July_2026_Implementation_Plan.md](../docs/July_2026_Implementation_Plan.md) — C-1〜C-5 承認待ち）。
+**UI 改善案**: 本メモでは **着手しない**（[Closed_Sprints.md](../docs/Closed_Sprints.md) — C-1〜C-5 承認待ち）。
 
 ---
 
@@ -102,4 +102,4 @@
 
 - [x] ADC 再ログイン → MCP 再取得（2026-05-28）
 - [ ] （任意）GA4 Admin で `exam` / `content_id` カスタムディメンション登録
-- [ ] W30 七月末ゲートでファネル再確認（[July_2026_Content_Sprint.md](../docs/July_2026_Content_Sprint.md) §6）
+- [ ] W30 七月末ゲートでファネル再確認（[Closed_Sprints.md](../docs/Closed_Sprints.md) §6）

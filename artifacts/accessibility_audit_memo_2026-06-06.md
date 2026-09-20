@@ -46,4 +46,4 @@
 ## GA4 ファネル（観測）
 
 カスタムイベント投入日: **2026-06-06**（`quiz_filter_open`, `quiz_session_start`, `quiz_session_complete`, `article_to_quiz_click`, `review_article_click`）。  
-**4 週後**に GA4 で `/test` PV → `quiz_session_start` → `quiz_session_complete` を再取得（目標 ≥40% start/PV — [June 計画](../docs/June_2026_Implementation_Plan.md)）。
+**4 週後**に GA4 で `/test` PV → `quiz_session_start` → `quiz_session_complete` を再取得（目標 ≥40% start/PV — [June 計画](../docs/Closed_Sprints.md)）。

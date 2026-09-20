@@ -33,7 +33,7 @@ Confirm docs update when you:
 | Specification | `docs/02_System_Spec.md` | /test, Dashboard, DB, data flows |
 | Structure | `docs/Component_Structure_Guide.md` | `src/` layout, components |
 | Repo folders | `docs/FOLDER_STRUCTURE.md` | Top-level dirs (non-`src/`) |
-| Scripts & tooling | `docs/Scripts_Repository_Tooling.md` | CPL CSV, docs:watch, Git encoding |
+| Scripts & tooling | `docs/Scripts_Repository_Tooling.md` | CPL CSV, `sync:public-docs`, Git encoding |
 | Cursor MCP | `docs/Cursor_MCP_Setup.md` | MCP, Serena, rules/agents notes |
 
 ## Before finishing

@@ -1,7 +1,7 @@
 # プロダクト北極星・GTM・PMF（経営方針の正本）
 
-**最終更新**: 2026年5月10日  
-**バージョン**: Product North Star v1.0.0
+**最終更新**: 2026年9月20日（現状注記。合意本文は 2026-05-10）  
+**バージョン**: Product North Star v1.0.1
 
 ---
 
@@ -13,6 +13,8 @@ NotebookLM 上の **第1回 Flight Academy 経営会議（2026-05-10）** で整
 **推奨読み順**: [docs/README.md](README.md) → [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) → **本書** → [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)
 
 本書は **法的助言ではない**。条文・契約の確定は所管および専門家への確認が前提。
+
+**現状（2026-09-20）**: ALPM の計測契約（§1.2）は **未決定のまま**。週次テレメトリは ALPM を出していない。いま毎週出荷しているのは T-4 向け CP ドリップであり、気象・通信 PMF スライスでも二重オンボーディングでもない。実行状態は [01](01_Current_Status_and_Roadmap.md)。この段落は合意を置き換えない。
 
 ---
 
