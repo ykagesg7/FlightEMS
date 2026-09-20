@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { lazy } from 'react';
 import { createMemoryRouter, Link, RouterProvider } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { LocationKeyedOutlet } from '@/layouts/LocationKeyedOutlet';
@@ -109,5 +110,35 @@ describe('LocationKeyedOutlet', () => {
       expect(screen.queryByText('PLANNING_STAY')).not.toBeInTheDocument();
     });
     expect(await screen.findByText('MISSION_PAGE')).toBeInTheDocument();
+  });
+
+  it('unmounts Planning when the next page suspends after its route module loaded', async () => {
+    const NeverReadyHome = lazy(() => new Promise<{ default: typeof HomePage }>(() => {}));
+    function SuspendingHomePage() {
+      return <NeverReadyHome />;
+    }
+
+    const router = createMemoryRouter(
+      [
+        {
+          element: <Shell />,
+          children: [
+            { index: true, lazy: async () => ({ Component: SuspendingHomePage }) },
+            { path: 'planning', element: <PlanningStub /> },
+          ],
+        },
+      ],
+      { initialEntries: ['/planning'] },
+    );
+
+    const user = userEvent.setup();
+    render(<RouterProvider router={router} />);
+
+    expect(screen.getByText('PLANNING_STAY')).toBeInTheDocument();
+    await user.click(screen.getByRole('link', { name: 'HOME' }));
+    await waitFor(() => {
+      expect(screen.queryByText('PLANNING_STAY')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 });
