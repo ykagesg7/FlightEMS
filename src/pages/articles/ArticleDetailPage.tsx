@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import MDXLoader from '../../components/mdx/MDXLoader';
 import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
@@ -35,6 +35,7 @@ const ArticleDetailPage: React.FC = () => {
   const [isLoadingMetas, setIsLoadingMetas] = useState(true);
   /** Filename id after resolving pretty email/marketing slugs. */
   const [canonicalId, setCanonicalId] = useState<string | null>(null);
+  const articleReadEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -192,8 +193,14 @@ const ArticleDetailPage: React.FC = () => {
                 本番ではこの日まで表示されません。
               </div>
             )}
-            <ReadingProgressBar contentId={articleId} />
+            <ReadingProgressBar contentId={articleId} endSentinelRef={articleReadEndRef} />
             <MDXLoader contentId={articleId} />
+            <div
+              ref={articleReadEndRef}
+              data-testid="article-read-end"
+              className="h-px w-full"
+              aria-hidden
+            />
             <SeriesNextChapterCta
               next={next}
               nextMeta={nextMeta}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLearningProgress } from '../../hooks/useLearningProgress';
 // import { useAuthStore } from '../../stores/authStore';
@@ -60,6 +60,7 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
   });
 
   const [selectedContent, setSelectedContent] = useState<string | null>(contentId && contentId.trim() !== '' ? contentId : null);
+  const articleReadEndRef = useRef<HTMLDivElement>(null);
 
   // Legacy dashboard removed; user is no longer needed here
   // const { user } = useAuthStore();
@@ -345,8 +346,14 @@ const LearningTabMDX: React.FC<LearningTabMDXProps> = ({
             </span>
           </div>
 
-          <ReadingProgressBar contentId={selectedContent} />
+          <ReadingProgressBar contentId={selectedContent} endSentinelRef={articleReadEndRef} />
           <MDXLoader contentId={selectedContent} />
+          <div
+            ref={articleReadEndRef}
+            data-testid="article-read-end"
+            className="h-px w-full"
+            aria-hidden
+          />
           <PrevNextNav currentId={selectedContent} listPath="/articles" />
           <ScrollToButtons />
           <KeyboardShortcuts prevId={prev?.id} nextId={next?.id} />

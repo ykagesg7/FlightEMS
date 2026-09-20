@@ -22,29 +22,34 @@ export const ProfilePublicSection: React.FC<ProfilePublicSectionProps> = ({
   onSuccess,
   onDirtyChange,
 }) => {
-  const [username, setUsername] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [bio, setBio] = useState('');
-  const [website, setWebsite] = useState('');
+  const [username, setUsername] = useState(profile?.username || '');
+  const [fullName, setFullName] = useState(profile?.full_name || '');
+  const [bio, setBio] = useState(profile?.bio || '');
+  const [website, setWebsite] = useState(profile?.website || '');
+  const [seeded, setSeeded] = useState(() => Boolean(profile));
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!profile) return;
+    if (!profile) {
+      setSeeded(false);
+      return;
+    }
     setUsername(profile.username || '');
     setFullName(profile.full_name || '');
     setBio(profile.bio || '');
     setWebsite(profile.website || '');
+    setSeeded(true);
   }, [profile]);
 
   const isDirty = useMemo(() => {
-    if (!profile) return false;
+    if (!seeded || !profile) return false;
     return (
       username !== (profile.username || '')
       || fullName !== (profile.full_name || '')
       || bio !== (profile.bio || '')
       || website !== (profile.website || '')
     );
-  }, [bio, fullName, profile, username, website]);
+  }, [bio, fullName, profile, seeded, username, website]);
 
   useEffect(() => {
     onDirtyChange?.(isDirty);

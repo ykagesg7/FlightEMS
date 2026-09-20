@@ -87,6 +87,15 @@ export async function fetchMappedQuestionsPool(
   return { questions: shuffled.map((q) => parseUnifiedCplQuestion(q as Record<string, unknown>)), error: null };
 }
 
+function uniqueQuestionIds(rows: Array<{ question_id: string } | null> | null | undefined): string[] {
+  const seen = new Set<string>();
+  for (const row of rows ?? []) {
+    const id = row?.question_id;
+    if (id && !seen.has(id)) seen.add(id);
+  }
+  return [...seen];
+}
+
 export async function fetchReviewQuestionsPool(
   count: number,
   examLevel: ExamLevelFilter,
@@ -96,14 +105,25 @@ export async function fetchReviewQuestionsPool(
   if (!uid) {
     return { questions: [], error: '弱点復習にはログインが必須です' };
   }
-  const { data: dueList, error: dueErr } = await supabase
-    .from('user_unified_srs_status')
-    .select('question_id')
-    .lte('next_review_date', new Date().toISOString())
-    .eq('user_id', uid)
-    .limit(200);
+  const [{ data: dueList, error: dueErr }, { data: lapsedList, error: lapsedErr }] = await Promise.all([
+    supabase
+      .from('user_unified_srs_status')
+      .select('question_id')
+      .lte('next_review_date', new Date().toISOString())
+      .eq('user_id', uid)
+      .limit(200),
+    // Failed / reset cards are written with repetitions=0. Older syncs also
+    // scheduled them for +1 day, so due-date-only Review looked empty.
+    supabase
+      .from('user_unified_srs_status')
+      .select('question_id')
+      .eq('user_id', uid)
+      .eq('repetitions', 0)
+      .limit(200),
+  ]);
   if (dueErr) throw dueErr;
-  let ids = (dueList || []).map((r: { question_id: string }) => r.question_id).filter(Boolean);
+  if (lapsedErr) throw lapsedErr;
+  let ids = uniqueQuestionIds([...(dueList ?? []), ...(lapsedList ?? [])]);
 
   if (ids.length === 0) {
     const { data: weakAreas, error: weakErr } = await supabase
