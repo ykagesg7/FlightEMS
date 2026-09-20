@@ -1,12 +1,12 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年9月20日（記事/Quiz XP RPC 403）
-**バージョン**: Documentation Index v4.73
+**最終更新**: 2026年9月20日（第2波: ポインタ重複の統合。README/DESIGN はルートに残す）
+**バージョン**: Documentation Index v4.75
 
 ## AI向けのドキュメント番号（読み方）
 
 - **番号付き `00`〜`06`（`01_Current_Status` … 形式）**は **初動の読み順**を表す。数値正本・詳細手順の一部は、番号外の **Reference**（`08`〜`14` や `PPL_Master`、**`Product_North_Star_and_GTM`** 等、ファイル名に旧番号が残るもの含む）に分かれている。
-- **詳細資料・方針メモ**は、英名ファイル（例: `Project_Overview.md`、`Product_North_Star_and_GTM.md`、`Docs_Consistency_Decisions.md`）や **旧番号付き**の `08`/`10`/`14`（Web 向け `public/docs` 同期用）に置く。
+- **詳細資料・方針メモ**は、英名ファイル（例: `Product_North_Star_and_GTM.md`）や **旧番号付き**の `08`/`10`/`14`（Web 向け `public/docs` 同期用）に置く。記事 ID 対照は [08](08_Syllabus_Management_Guide.md)。
 - 迷ったら本 README の **テーマ別ハブ**または **推奨読み順**だけで現在地を掴み、必要に応じて本文内リンクで深掘りする。
 
 ## テーマ別ハブ（迷わない導線）
@@ -14,10 +14,10 @@
 | ハブ | 主なドキュメント |
 |------|------------------|
 | **Strategy & Product（戦略・プロダクト成長）** | [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)、**[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)**（NSM・ALPM・オンボーディング・PMF スライス・AI コンシェルジュ・データ・法務 UX）、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) |
-| **Content & Curriculum（コンテンツ・シラバス）** | [05_Content_Pipeline.md](05_Content_Pipeline.md)、**[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)**（週末 Ingest／Editorial・Notion Public Wiki 一方通行）、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)、[CBT_Example_Reclassification_Memo.md](CBT_Example_Reclassification_Memo.md)、[Post_Exam_Action2_Action3_Policy_Memo.md](Post_Exam_Action2_Action3_Policy_Memo.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)、[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) |
+| **Content & Curriculum（コンテンツ・シラバス）** | [05_Content_Pipeline.md](05_Content_Pipeline.md)、**[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)**（週末 Ingest／Editorial）、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)（記事 ID 対照含む）、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md) |
 | **Engineering & Spec（実装・仕様）** | [02_System_Spec.md](02_System_Spec.md)、[03_Development_Guide.md](03_Development_Guide.md)、[Component_Structure_Guide.md](Component_Structure_Guide.md)、[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)、[GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md) |
-| **Operations & Quality（運用・品質）** | [04_Operations_Guide.md](04_Operations_Guide.md)、[06_Long_Term_Execution.md](06_Long_Term_Execution.md)、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、[ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md)、[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)、**[ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)**（火曜・ISO週・GA4+Sentry 週次レビュー正本）、[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) |
-| **Reference & Portal（参考・外部仕様転記）** | [Project_Overview.md](Project_Overview.md)、[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)、[SWIM_Portal/README.md](SWIM_Portal/README.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[content_outlines/README.md](content_outlines/README.md)、[templates/README.md](templates/README.md) |
+| **Operations & Quality（運用・品質）** | [04_Operations_Guide.md](04_Operations_Guide.md)、[06_Long_Term_Execution.md](06_Long_Term_Execution.md)（カバレッジ・Lighthouse 運用含む）、[ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md)、[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)、**[ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)**（火曜・ISO週・GA4+Sentry 週次レビュー正本）、[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) |
+| **Reference & Portal（参考・外部仕様転記）** | [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)、[SWIM_Portal/README.md](SWIM_Portal/README.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[content_outlines/README.md](content_outlines/README.md)、[templates/README.md](templates/README.md) |
 
 ---
 
@@ -25,100 +25,22 @@
 
 このドキュメントは、**AIアシスタントがプロジェクトのコンテキストを迅速に理解できるよう**設計された包括的なガイドです。プロジェクトの全体像、技術スタック、現在の実装状況、開発方針を一箇所にまとめています。
 
-### 長期実行計画
+### 長期実行計画と完了スプリント
 
-- **[06_Long_Term_Execution.md](06_Long_Term_Execution.md)** — 品質（テスト・Sentry/GA4/Lighthouse/A11y）・MDX/DB 整合・**クイズ分析（旧 12、§5）**・成長/コスト/プライバシーを**1 本**に集約。詳細 KPI は [01](01_Current_Status_and_Roadmap.md) を正とする（旧 12・16–18 を統合済み）。
-- **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — 2026年6月（W23〜W26）の **Quiz Hub UX + コンテンツ・品質** 実行計画（2026-06-06 Lane A 完了・`src` 18.07%）。
-
-### 月次実行計画
-
-- **[May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)** — **2026年5月後半**（W20〜W22）。**§6 完了ログ**（現行週の正本ではない）。一覧: [May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。
-- **[June_2026_Content_Sprint.md](June_2026_Content_Sprint.md)** — **2026年6月**（**W23〜W26**）の**週次実行メモ**（ブロック D〜G、六月末ゲート **§7**）。週次表の正本は [05](05_Content_Pipeline.md)。
-- **[June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md)** — **2026年6月期**の DONE 条件、[05](05_Content_Pipeline.md) 週次（W23〜W26）・CPL/PPL 拡充の優先、マッピング監査／B-4／Phase C 準備（UI は承認制）を定義する。**週別一覧**は §2.1。
-- **[July_2026_Implementation_Plan.md](July_2026_Implementation_Plan.md)** — **2026年7月期**（W27〜W30）Phase C 後半。C-6 マッピング・C-7 PPL・法規 Callout・GA4・B-4。
-- **[July_2026_Content_Sprint.md](July_2026_Content_Sprint.md)** — **2026年7月**週次実行メモ（ブロック H〜K）— **W30 ゲート完了**。
-- **[August_2026_Implementation_Plan.md](August_2026_Implementation_Plan.md)** — **2026年8月期** Phase D 入口（2026-08-12 再整理: Articles ドリップ優先・CBT 暫定束ね・Action2/3）。
-- **[September_2026_Implementation_Plan.md](September_2026_Implementation_Plan.md)** — **2026年9月期** Phase D 第2ヶ月（A2-a 計測・CBT Phase B・PPL 二次・W36〜W40）。
+- **[06_Long_Term_Execution.md](06_Long_Term_Execution.md)** — 品質・MDX/DB 整合・クイズ分析・成長/コスト/プライバシー。数値 KPI は [01](01_Current_Status_and_Roadmap.md) を正とする。
+- **実行中**: [01](01_Current_Status_and_Roadmap.md) の「2026年9月期」＋ [05](05_Content_Pipeline.md) 週次表。月次計画ファイルは増やさない。
+- **完了分（5〜9月）**: [Closed_Sprints.md](Closed_Sprints.md)（全文は Git 履歴）。
 
 ### 更新履歴（抜粋）
 
-**方針**: 直近の目安。古い作業日ごとの箇条書きは削減。細目は `git log -- docs/` または [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) 更新履歴を参照。
+**方針**: 直近だけ。細目は `git log -- docs/` または [01](01_Current_Status_and_Roadmap.md) 更新履歴。完了スプリントは [Closed_Sprints.md](Closed_Sprints.md)。
 
-- **2026-09-19（docs スリム）**: W22 Gemini 素案を実装後削除（W20/W21 と同じ）。欠ファイル `Phase_Testing_Plan.md` へのリンクを [Phase_C_Quality_Preparation](Phase_C_Quality_Preparation.md) へ。`docs-auto-update` は `ROADMAP.md` 前提のため実行禁止を正本に明記。
-- **2026-09-19（W39 配信準備）**: CP-5-3 / 5-4 / 5-5 を **9/20・23・25** でドリップ。schedule と `publishedAt` 済み。`is_published` は cron 待ち。正本 [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)。カード [W39_episode_cards.md](content_outlines/Contact_Transition_2026/W39_episode_cards.md)。
-- **2026-09-12（W38 配信準備）**: CP-4-2 / 5-1 / 5-2 を **9/13・16・18** でドリップ。schedule と `publishedAt` 済み。`is_published` は cron 待ち。正本 [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)。
-- **2026-09-12（CP/FN 執筆カード）**: 操縦 Gemini 正本 [ops/Gemini_CP_FN_System_Prompt.md](ops/Gemini_CP_FN_System_Prompt.md)。W38 カード [Contact_Transition_2026/W38_episode_cards.md](content_outlines/Contact_Transition_2026/W38_episode_cards.md)。見習い道真プロンプトは使わない。
-- **2026-08-24（ログインがパスワード再設定になる不具合）**: リカバリー判定を `type=recovery` / `/auth/recovery` / `mode=recovery` に限定（ハッシュの `access_token` だけでは判定しない）。フラグは TTL 15 分で自動失効し、非 recovery コールバックと `signIn` 成功でクリア。`/auth/recovery` に再送・中断導線。動作しない `bypassEmailVerification` を撤去。正本 [02](02_System_Spec.md) · [01](01_Current_Status_and_Roadmap.md) v4.0.48。
-- **2026-08-24（Articles 初期ロード安定化）**: `virtual:articles-index` で MDX メタをビルド時抽出。プラグインは `enforce: 'pre'`。設定再読込失敗後は `npm run dev` の再起動が必要。`verify-build` の `prefer-const` を解消。正本 [02](02_System_Spec.md) · [01](01_Current_Status_and_Roadmap.md) v4.0.47 · [FOLDER_STRUCTURE](FOLDER_STRUCTURE.md) · [03](03_Development_Guide.md)。
-- **2026-08-24（Planning 航法一本化・4カード）**: `computeNavLog` で ETE／ETA／燃料／垂直プロファイルを一本化。UI は Setup / Route / NavLog / Briefing。Debrief は第 3 タブ。T-4 は教官提供値＋計画単位上書き。正本 [02](02_System_Spec.md) Flight Planning · [03](03_Development_Guide.md) · [Component_Structure_Guide](Component_Structure_Guide.md) · [Flight_Debrief_Tools](Flight_Debrief_Tools.md)。
-- **2026-08-13（FMT ドリップ 1-1 から・週3本）**: W34（8/17・19・21）に 1-1〜1-3。1-4 以降はストック。正本 [FMT_Formation_2026](content_outlines/FMT_Formation_2026/README.md)。
-- **2026-09-20（記事/Quiz XP 403）**: `award_article_read_xp` / `award_quiz_session_xp` が INVOKER のまま `private.apply_xp_reward` を呼び PostgREST 403（`42501`）。理解 XP も同欠陥。登録 XP と同じ DEFINER impl + INVOKER ラッパー。正本: [02](02_System_Spec.md)。SQL: [`20260920_award_article_quiz_xp_invoker_wrappers.sql`](../scripts/database/20260920_award_article_quiz_xp_invoker_wrappers.sql)。
-- **2026-09-20（Quiz Review / 記事読了）**: 診断後の SRS 失敗カードを Review が読めるようにした（`repetitions=0` と due の和集合。SQL は lapse を `now()`）。記事は本文末尾センチネル＋末尾 64px で読了。登録 XP は Welcome 完了時のみ（ログイン fetch の 403 を止める）。正本: [02](02_System_Spec.md)。SQL: [`20260920_quiz_review_progress_consistency.sql`](../scripts/database/20260920_quiz_review_progress_consistency.sql)。
-- **2026-08-12（9月計画）**: [September_2026_Implementation_Plan.md](September_2026_Implementation_Plan.md) 起票。A2-a 計測 W36〜W39。
-- **2026-08-17（週次テレメトリ ISO 火曜）**: レビューを **火曜 09:00 JST**（月〜日）へ切替。Slack `#fa-telemetry` の Facts は日本語（`@` なし）。フェーズ2b は CI `weekly-telemetry-draft-pr` が正本 PR（Skill `weekly-telemetry-review` は任意）。フェーズ2c L0 は Facts スレッドへ `APPROVE-DOC` / `HOLD`（Slash Command なし。ACK は `fa-telemetry-notify`）。初回新窓 W34 は 8/25。正本 [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)。
-- **2026-08-08（週次テレメトリ・レビュー）**: GA4 + Sentry を **土曜午前**ペースで残す正本 [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)（現状・課題・解決案・オープン課題ボード）。W32 初回記入。認証は [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)。
-- **2026-07-26（地図カーソル Footer + 詳細シート）**: 地図下に **DMS 1行**（`MapCursorFooter`）。詳細は地図上オーバーレイ（DD・選択 NAVAID 1件の磁方位/距離、検索で任意選択・初期は最寄り）。近傍3件固定・ツールバー内展開は廃止。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
-- **2026-07-26（地図座標ピン固定）**: マウスはクリックで固定、タッチは中央クロスヘア＋「この位置を固定」（`useMapPinnedPosition`）。詳細/NAVAID は固定後のみ。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
-- **2026-07-27（NAVAID ラジアル／DME 網）**: 参考レイヤー `navaid_radial_grid`。選択 NAVAID（初期 AHT）から磁方位 10°・距離 10 nm・最大 100 nm。方位ラベルは主要方位 10 nm 刻み・その他 50/100 nm。正本: [02](02_System_Spec.md)・[03](03_Development_Guide.md)・[Component_Structure_Guide](Component_Structure_Guide.md)。
-- **2026-07-27（変更予定空域レイヤー）**: 参考レイヤー `pending_airspace`（`PendingAirspaceChanges.geojson`）。R-134・N-1・N-21S の今後変更予定形状。現行の制限空域・高高度訓練空域は未変更。
-- **2026-07-25（W30 七月末ゲート）**: 着陸装置 Tier B、`src` Statements **21.18%**、未マッピング総 **112**（CBT除外 **10**）。[August 実装計画](August_2026_Implementation_Plan.md) 初版。Phase C クローズ。
-- **2026-07-14（チャンク v4 本番・試験明け UX 検討）**: Planning チャンク再発対策を本番投入（SW `v4`・MapTab 分割・`vendor-leaflet`）。**科目完走 UX / 流入回復（Action2/3）は試験明けに検討深化**（試験週は UI 凍結）— [July_2026_Implementation_Plan §7](July_2026_Implementation_Plan.md)、[01 将来保留](01_Current_Status_and_Roadmap.md)、[July Content Sprint §6](July_2026_Content_Sprint.md)。
-- **2026-07-20（HOME/Articles/Quiz UX）**: 結果画面に学習成果（XP・理解確認・復習更新）を表示。
-  HOME は「今日の1手」中心に再構成、Articles に次の理解チェックと読了状態チップ。
-  正本: [02](02_System_Spec.md)。
-- **2026-07-20（ゲーミフィケーション第2期・習熟ループ）**: クイズ後 SRS 書き込み、
-  遅延再テスト/弱点改善 XP、協力型編隊クエスト。SQL
-  [`20260720_gamification_phase2_mastery_loop.sql`](../scripts/database/20260720_gamification_phase2_mastery_loop.sql)。
-  技術正本: [02](02_System_Spec.md)。**本番適用済み**。
-- **2026-07-20（ゲーミフィケーション第1期）**: 学科試験完了までの学習ジャーニー、
-  記事読了5 XP + 理解チェック10 XP、週次達成/MVP/TOP3報酬、ALPM台帳、
-  XP/RLS hardening を実装。技術正本: [02](02_System_Spec.md)、運用:
-  [04](04_Operations_Guide.md)、SQL:
-  [`20260720_gamification_phase1_foundation.sql`](../scripts/database/20260720_gamification_phase1_foundation.sql)。
-  **本番 migration・型再生成は適用済み**。旧XPランク更新を停止し、習熟ジャーニーを学習者向け進行表示に変更。
-- **2026-07-09（PPL Subject 3 Phase 1 完走）**: 空中航法 **9/9** 完走。PPL 登録 **55/150**。次: Subject 4 [`PPL-4-1-1`](../src/content/lessons/PPL-4-1-1_AirTrafficServicesOverview.mdx)。[July_2026_Content_Sprint](July_2026_Content_Sprint.md) W29 着手。
-- **2026-07-08（チャンク監視・Quiz 完了計測）**: SW `flight-academy-shell-v3`。`lazyWithRetry` を Home・Planning に拡張。GA4 `chunk_recovery_reload`。`quiz_session_complete` に `tab`/`exam`/`content_id`/`subject` 追加。GA4 カスタムディメンション手順: [04](04_Operations_Guide.md)。
-- **2026-06-03（Supabase Security Advisor）**: cohort ユーザー RPC 5 件を **INVOKER ラッパー + private DEFINER 実装**へ移行 — WARN **7→2**（残: Leaked Password / Postgres 版）。SQL: [`20260603_cohort_rpc_security_invoker_wrappers.sql`](../scripts/database/20260603_cohort_rpc_security_invoker_wrappers.sql)。[04](04_Operations_Guide.md)・[02](02_System_Spec.md) cohort 節。
-- **2026-06-03（Quiz Hub 安定化・GA4・チャンクリカバリ）**: `/test` の `history.replaceState` ループ修正（`count=0` と URL 正規化、`areTestHubSearchParamsEqual`）。GA4 に `quiz_hub_view`・`quiz_start`（`content_id` / `exam` 付き）。デプロイ後チャンク失敗対策: `lazyWithRetry`・`chunkLoadRecovery`・SW `v2`（script/style network-first）。詳細: [02 §/test](02_System_Spec.md)、[04](04_Operations_Guide.md)「デプロイ後のチャンクエラー」。
-- **2026-06-30（PPL Subject 2 ブロックA 完結）**: MDX **41/150**（気象 **7**）。[`PPL-2-1-7`](../src/content/lessons/PPL-2-1-7_FogTypesAndFormation.mdx)。`learning_contents` **207** + mapping 11 問。[01](01_Current_Status_and_Roadmap.md) v4.0.33、[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.9。
-- **2026-06-29（PPL Subject 2 Phase 1 +1 本）**: MDX **40/150**（気象 **6**）。[`PPL-2-1-6`](../src/content/lessons/PPL-2-1-6_CloudTypesAndFormation.mdx)。[01](01_Current_Status_and_Roadmap.md) v4.0.32、[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.8。
-- **2026-06-28（PPL Subject 2 Phase 1 +1 本）**: MDX **39/150**（工学 20 + 法規 14 + 気象 **5**）。[`PPL-2-1-5`](../src/content/lessons/PPL-2-1-5_AtmosphericStabilityBasics.mdx)。`learning_contents` **205** + mapping 大気の基礎/安定度。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.7、[01](01_Current_Status_and_Roadmap.md) v4.0.31、[14](Article_Coverage_Backlog.md) MDX **89**。
-- **2026-06-27（PPL Subject 2 Phase 1 +1 本）**: MDX **38/150**（工学 20 + 法規 14 + 気象 **4**）。[`PPL-2-1-4`](../src/content/lessons/PPL-2-1-4_MoistureHumidityDewpoint.mdx)。`learning_contents` **204**。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.6、[01](01_Current_Status_and_Roadmap.md) v4.0.30、[14](Article_Coverage_Backlog.md) MDX **88**。
-- **2026-06-25（PPL Subject 2 Phase 1 +2 本）**: MDX **37/150**（工学 20 + 法規 14 + 気象 **3**）。[`PPL-2-1-2`](../src/content/lessons/PPL-2-1-2_TemperatureLapseAndInversion.mdx)・[`PPL-2-1-3`](../src/content/lessons/PPL-2-1-3_PressureAltimeterSettings.mdx)。`learning_contents` **202〜203**。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.5、[01](01_Current_Status_and_Roadmap.md) v4.0.29、[14](Article_Coverage_Backlog.md) MDX **87**。
-- **2026-06-24（PPL 進捗・Subject 2 気象構造化）**: MDX **35/150**（工学 20 + 法規 14 + 気象 1）。[PPL_Master_Syllabus](PPL_Master_Syllabus.md) v1.4、[01](01_Current_Status_and_Roadmap.md) v4.0.28（**§2026年7月期**短期プラン）、[PPL_Subject2 構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)、Gemini 索引 [PPL_Meteorology_2026](content_outlines/PPL_Meteorology_2026/README.md)（ブロック A ブリーフ 4 本）。 [14](Article_Coverage_Backlog.md) MDX **85** 反映。
-- **2026-06-24（航空機レイヤーを airplanes.live へ移行）**: OpenSky が **クラウド（Vercel）IP を遮断**し CORS も自社オリジンのみ（本番で恒常的 502/504）と判明。データ取得先を **airplanes.live**（ADSBExchange v2 互換・CORS `*`）へ変更し、**ブラウザ直 fetch**（サーバプロキシ廃止）。point+radius（最大 250NM）クエリ・3 分 poll・Stale 保持は維持。`src/services/openskyTraffic.ts`・`src/utils/openskyTraffic.ts`（`parseAirplanesLiveJson` 等）。詳細: [02](02_System_Spec.md) 地図節 · [03](03_Development_Guide.md) · [04](04_Operations_Guide.md) OpenSky 運用。
-- **2026-06-23（OpenSky 航空機レイヤー 本番安定化）**: Planning 地図の **航空機（参考・OpenSky）** を OAuth2 プロキシ・3 分 poll・Stale 保持で本番稼働（`9a7ee0b`〜`707a003`）。Vercel: `OPENSKY_CLIENT_ID` / `OPENSKY_CLIENT_SECRET`（Production + Preview）、upstream **fetch-only**（502 ETIMEDOUT / 504 回避）、`regions: fra1`。ポップアップ維持: `openskyTrafficPopup.ts` + `useLiveTrafficLayer` 追跡再 open。Vercel から未使用 env 削除（`NEXT_PUBLIC_SUPABASE_*`・`POSTGRES_*`）。詳細: [02](02_System_Spec.md) 地図節 · [03](03_Development_Guide.md) OpenSky · [04](04_Operations_Guide.md) OpenSky 運用。
-- **2026-06-21（MFA リカバリーコード 本番確認）**: Profile で **10 件のリカバリーコード再発行成功**（`3648940`）。Vercel はネスト `[action].ts` 非デプロイ → **`api/mfa-recovery-codes.ts` + `?action=`**。サーバー AAL2 は JWT `aal` クレーム（`getAuthenticatorAssuranceLevel()` はステートレス client で不可）。ログイン MFA デフォルト OFF（`20260624`）。コミット: `d1c6ec9`〜`3648940`。詳細: [04](04_Operations_Guide.md) MFA 運用 · [02](02_System_Spec.md) Profile Hub 節。
-- **2026-06-21（Profile Hub + MFA 本番）**: Profile Hub 4 セクション・TOTP ログインゲート・リカバリーコード・アカウント削除を **本番デプロイ済**（`54b2a27`〜`99401d3`）。Vercel: API 13 本→統合で 12 本上限内。CI verify: 通知 auto-save 後の未使用 prop 修正。詳細: [02](02_System_Spec.md) Profile Hub 節・[04](04_Operations_Guide.md) MFA 運用・[03](03_Development_Guide.md) Serverless 上限。
-- **2026-06-21（Phase D cohort pilot・Supabase 運用）**: D-3 **pilot 本番** — cohort 週次 cron（日曜 09:00 JST）、Welcome cohort 必須、in-app + Brevo メール、RPC hardening（[`20260621_cohort_rpc_hardening.sql`](../scripts/database/20260621_cohort_rpc_hardening.sql)）。Supabase Free: Leaked Password OFF（Pro 制限）、Postgres **Pause/Restore** 実施、Security Advisor 7 WARN は許容/監視（[04_Operations_Guide.md](04_Operations_Guide.md)）。[01](01_Current_Status_and_Roadmap.md) v4.0.23。
-- **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の **`PPL-5-4-1`〜`PPL-5-4-7`** を **`learning_contents`** の **508〜514** に追加 [`20260512_learning_contents_ppl_subject5_508_514.sql`](../scripts/database/20260512_learning_contents_ppl_subject5_508_514.sql)（同日 MCP `execute_sql`）。
-- **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の **`PPL-5-3-1`〜`PPL-5-3-3`** を **`learning_contents`** の **505〜507** に追加 [`20260512_learning_contents_ppl_subject5_505_507.sql`](../scripts/database/20260512_learning_contents_ppl_subject5_505_507.sql)（同日 MCP `execute_sql`）。
-- **2026-05-12（PPL 航空法規・DB）**: Master Subject 5 の本文化済み **4 記事**（`PPL-5-1-1`〜`PPL-5-2-2`）を Supabase **`learning_contents`** に冪等登録 [`20260512_learning_contents_ppl_aviation_law_four.sql`](../scripts/database/20260512_learning_contents_ppl_aviation_law_four.sql)。構造・変更履歴: [content_outlines/PPL_Subject5_Aviation_Law_Structure.md](content_outlines/PPL_Subject5_Aviation_Law_Structure.md)。統計サマリー表は [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) 冒頭ログのみ更新（§1 MCP 未再実行）。
-- **2026-05-10（戦略方針の docs 再編）**: 新規 **[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)**（ALPM・二重オンボーディング・気象/通信 PMF・AI ナビ・データ・法務 UX・アクション一覧）。本 README **テーマ別ハブ**、[00](00_Flight_Academy_Strategy.md) §3.4 ほか、[01](01_Current_Status_and_Roadmap.md)、[02](02_System_Spec.md)、[06](06_Long_Term_Execution.md)、[Project_Overview.md](Project_Overview.md)、[AGENTS.md](../AGENTS.md) を連携。
-- **2026-05-09（May 後半 W21 完了・W22 素案）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §2・§6、[05_Content_Pipeline.md](05_Content_Pipeline.md) W21/W22、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、新規 [content_outlines/W22_2026/](content_outlines/W22_2026/README.md)。**W21** `content_outlines/W21_2026/` 撤去。**[01](01_Current_Status_and_Roadmap.md) v4.0.20**。[content_outlines/README.md](content_outlines/README.md) 現在週行を更新。
-- **2026-05-08（May 後半 W20 完了・W21 計画）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md) §6、[05](05_Content_Pipeline.md) W20/W21、[May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、一時ワーク `content_outlines/W21_2026/`（**2026-05-09 に実装完了後削除**）。W20 用 Gemini 素案ファイル削除。[01](01_Current_Status_and_Roadmap.md) v4.0.19。
-- **2026-08-01（週末コンテンツ・パイプライン）**: [ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)。Skills `weekend-ingest` / `weekend-editorial`。Notion **FA Public Wiki**（公開）と **T-4 学習ホーム**（受け持ち学生専用）の一方通行。Obsidian `raw/`・`wiki/`・`ops/failure-log/`。
-- **2026-07-25（Cursor 設定見直し）**: `alwaysApply` を `core-project` のみに縮小。`docs-sync` / `git-commit-en` を Skills 化。`deep-thinking.mdc` 削除。[AGENTS.md](../AGENTS.md) にコスト運用（Composer/Grok 日常）。`verifier` エージェントと最小 Hooks（危険シェル拒否）。詳細は [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)。
-- **2026-05-07（5月後半スプリント・アウトライン）**: [May_2026_Late_Content_Sprint.md](May_2026_Late_Content_Sprint.md)、[content_outlines/May_2026_Late_PPL_CPL_Outlines.md](content_outlines/May_2026_Late_PPL_CPL_Outlines.md)、[templates/External_LLM_Article_Brief.md](templates/External_LLM_Article_Brief.md)。[01](01_Current_Status_and_Roadmap.md) v4.0.18、`---##` 改行修正。
-- **2026-05-07（6月期計画書）**: [June_2026_Implementation_Plan.md](June_2026_Implementation_Plan.md) を追加。[01](01_Current_Status_and_Roadmap.md) に **2026年6月期スプリント** の参照、[05](05_Content_Pipeline.md) で追う **2026-W23〜W26** の目安を明示。
-- **2026-05-06（B-4 実装拡張・カバレッジ再計測）**: `useArticleProgress` フック、[`structuredData.ts`](../src/utils/structuredData.ts)、[`mdxContentParsing.ts`](../src/utils/mdxContentParsing.ts)／[`mdxToSupabase.ts`](../src/utils/mdxToSupabase.ts)、[`swimNotamGeometry`](../api/lib/swimNotamGeometry.ts)、[`planDocument.ts`](../src/utils/planDocument.ts) にユニットテスト追加。`src` 実効 Statements **約 13.99%**（[01](01_Current_Status_and_Roadmap.md) 技術的負債表、`FlightAcademyTsx/src/` のみ）。Roadmap **v4.0.15**。
-- **2026-05-06（カバレッジ KPI 再定義）**: [01](01_Current_Status_and_Roadmap.md) で `src` 実効 Statements の**主目標を Phase C で 15%**（ストレッチ 18%・任意）へ変更。Phase D の **50%** は北極星のまま注記で整合。**2026-05-06** `npm run test:coverage` 再集計で **約 11.89%**（パス **`FlightAcademyTsx/src/`** のみ）。[06](06_Long_Term_Execution.md) §1.1、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、[00](00_Flight_Academy_Strategy.md) を追随。`vitest.config.ts` の閾値は据え置き。
-- **2026-05-06（GA4 B-5）**: GA4 リアルタイム（FlightAcademy）で本番トラフィック受信を確認。[04_Operations_Guide.md](04_Operations_Guide.md) Post-Phase-B 表、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) v4.0.11・下記「クイックリファレンス」の GA4 行を整合。
-- **2026-05-06（Cursor AI 指示）**: [`.cursor/rules/deep-analysis.mdc`](../.cursor/rules/deep-analysis.mdc) を当時 `alwaysApply: true` で追加（**2026-07-25 に Agent Decide へ変更**）。履歴は [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)。
-- **2026-05-05（Phase B 並行）**: Phase 2 リスト 8 単元の MDX 体裁（科目ハブ・`/articles`）と [`20260505_learning_contents_phase2_eight_meta.sql`](../scripts/database/20260505_learning_contents_phase2_eight_meta.sql)。§5.2 上位クラスタ追補 [`20260505_learning_test_mapping_unmapped_top_clusters.sql`](../scripts/database/20260505_learning_test_mapping_unmapped_top_clusters.sql)。[05](05_Content_Pipeline.md)・[14](Article_Coverage_Backlog.md)・[01](01_Current_Status_and_Roadmap.md)・[04](04_Operations_Guide.md)（GA4 補助メモ）。カバレッジ指標は [01](01_Current_Status_and_Roadmap.md) 技術的負債表。**最新**再計測は src Statements **約 13.99%**（パス **`FlightAcademyTsx/src/`** のみ、`npm run test:coverage` と同集計）。主目標は Phase C で **15%**（[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)）。
-- **2026-05-06（CPL 通信 3.5.5）**: [3.5.5_ATCPhraseology.mdx](../src/content/lessons/3.5.5_ATCPhraseology.mdx) をスタブから本文化（`CPL-Communication`）。`learning_contents` 冪等 `scripts/database/20260506_learning_contents_comm_355_meta_finalize.sql`。[05_Content_Pipeline.md](05_Content_Pipeline.md)・[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) 更新。
-- **2026-05-05（GA4 MCP 完了）**: **OAuth デスクトップクライアント + ADC**（`analytics.readonly`）、**同意画面のテストユーザー**、`get_account_summaries` / `run_report` による疎通、[Cloud Resource Manager API](https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com) と `set-quota-project` の注意を [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) に反映。例: [`scripts/ga4-mcp-oauth-adc-login.example.ps1`](../scripts/ga4-mcp-oauth-adc-login.example.ps1)。索引: [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md#ga4-mcp-oauth--adcローカル例)。
-- **2026-05-05（GA4 MCP）**: [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) に公式 `analytics-mcp`（pipx・ルート A）と任意 `npx`（ルート B）の比較、プロパティ ID と測定 ID（`G-…`）の整理、ローカル `.cursor/mcp.json` のチェックリスト、BigQuery は別フェーズとして明記。[04_Operations_Guide.md](04_Operations_Guide.md) にタグ側と Data API / MCP 側の二段確認および BigQuery 任意の脚注。
-- **2026-05-05（May sprint）**: Phase 2 級 **3.5.4 緊急通信** の本文化与 `scripts/database/20260505_*.sql`、[Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)、[04](04_Operations_Guide.md) の GA4 ログ表運用明示。[01](01_Current_Status_and_Roadmap.md) v4.0.10 にスプリント記録節。
-- **2026-05-05（フォルダ・AI読みやすさ）**: [AGENTS](../AGENTS.md) にトップレベル7本柱表。[FOLDER_STRUCTURE](FOLDER_STRUCTURE.md) に同表・`vite/`・`e2e` 節および「その他」内の並び順整理。[Component_Structure_Guide](Component_Structure_Guide.md) に `src/pages/planning` **機能マップ**節。[public/geojson README](../public/geojson/README.md) 等を 1 行スタブへ。
-- **2026-05-05（一括同期）**: ルート [**AGENTS.md**](../AGENTS.md) / [**DESIGN.md**](../DESIGN.md)。**`.cursor/agents`**・**`.cursor/skills`**・追加 **`.cursor/rules`**（`core-project`・`generated-and-binary-assets`・`ui-design` 等）。旧 **`.cursorrules` 削除**（内容は `.cursor/rules` と AGENTS に分散）。[**Serena**](../.serena/project.yml) 設定の更新。`cpl_exam_data/`（README・分析レポート・converted_md・structured_*）、`public/geojson/waypoints/`（インデックス・字句別・地方別）、`scripts/docs-auto-update/`・`scripts/utils/check-encoding.js` / `fix-encoding.js`・`scripts/database/reset-article-stats.js`・各種 **`src/`**（型・フック・MDX 部品・テスト・講義 MDX）、[**Michizane1.png**](../public/images/ContentImages/Michizane1.png)、`postcss.config.js`・`api/package.json` の整理。多くのファイルで **改行（LF）統一** を含む。**索引**: [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)、[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)、[Component_Structure_Guide.md](Component_Structure_Guide.md)。
-- **2026-05-05**: [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) を拡充（Windows: PowerShell 実行ポリシーと `npm.ps1`、Cursor の winget ID `Anysphere.Cursor`、GitHub MCP: OAuth「dynamic client registration」失敗時の PAT 手動設定、Fine-grained の `github_pat_` 二重貼り付け防止、パスキー不可時の回避、`get_me` での疎通確認）。`.cursor/mcp.json` は引き続き `.gitignore`（PAT はコミットしない）。
-- **2026-04-30**: 空中航法 **3.4.1〜3.4.7** の `meta.series`（`CPL-Navigation`）・リンク・アフィ枠・フィクション注記を統一。冪等 SQL [20260430_learning_contents_cpl_navigation_341_347_meta.sql](../scripts/database/20260430_learning_contents_cpl_navigation_341_347_meta.sql) を追加し、Supabase MCP `execute_sql`（`fstynltdfdetpyvbrswr`）で本番反映・検証済み。詳細は [09](09_CPL_Learning_Stub.md)。関連して [05](05_Content_Pipeline.md)、[14](Article_Coverage_Backlog.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[01](01_Current_Status_and_Roadmap.md) を整合。
-- **2026-04-25**: 長期方針を [06](06_Long_Term_Execution.md) に一本化。`12_Quiz_Analytics_Phase_Design` を **§5** に取り込み、ファイル削除（番号付き整理）。引き続き旧 16–18 は [06](06_Long_Term_Execution.md) 統合済み。[01](01_Current_Status_and_Roadmap.md) v4.0.8 整合。
-- **2026-04-12〜25（要約）**: CPL Phase1 本文化 19/19、航空気象 3.3.x / 航空工学 3.2.x、GA4・MCP、ブログ 28 本ゲート、Supabase セキュリティ linter、旧 `/shop` 撤去。SQL: [scripts/database/](scripts/database/)。手順: [04](04_Operations_Guide.md)、[09](09_CPL_Learning_Stub.md)。
-- **2026-04-11 前**: 法規 3.1.x・DB スリム化・記事ロック廃止等。仕様は [02](02_System_Spec.md) 各節。
-
----
+- **2026-09-20（docs スリム 第2波）**: `Project_Overview` / `Sustainability_API_Memo` / `Phase_C_Quality_Preparation` / `Docs_Consistency_Decisions` と実装済 W38/W39 カードを削除。ルート README・DESIGN は契約どおりルートに残す。
+- **2026-09-20（docs スリム）**: 月次計画 7 本と実装済み Gemini ブリーフを削除。欠ファイルへのリンクを `Closed_Sprints.md` へ。`docs-auto-update` は実行しない（正本は Skill `docs-sync`）。
+- **2026-09-20（記事/Quiz XP 403）**: `award_article_read_xp` / `award_quiz_session_xp` を DEFINER impl + INVOKER ラッパー。正本 [02](02_System_Spec.md)。
+- **2026-09-20（Quiz Review / 記事読了）**: Review が lapse カードを読める。記事は本文末尾センチネル。正本 [02](02_System_Spec.md)。
+- **2026-09-19（W39 配信準備）**: CP-5-3 / 5-4 / 5-5 を **9/20・23・25**。正本 [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)。
+- **2026-09-12（W38 配信準備）**: CP-4-2 / 5-1 / 5-2。正本 同上。
 
 ## 📋 プロジェクト概要（クイックリファレンス）
 
@@ -146,7 +68,7 @@
 
 旧 **Shop / アプリ内ギャラリー / 体験搭乗** ルートとミッション UI、About のコメントアウト紹介ブロックは **2026-04-12 削除**。詳細は [00](00_Flight_Academy_Strategy.md) §6。
 
-### 技術スタック（2026年2月現在）
+### 技術スタック
 
 #### フロントエンド
 - **React 18**: Concurrent Mode、Suspense、useTransition
@@ -159,7 +81,7 @@
 - **Vercel**: デプロイメント、Serverless Functions（APIプロキシ）
 
 #### テスト・CI/CD
-- **Vitest**: テストフレームワーク（**228 テスト前後**、`npm run test:run`・多くの utils / hooks / API 純粋関数を含む）
+- **Vitest**: テストフレームワーク（`npm run test:run`。本数はここに固定しない）
 - **Testing Library**: Reactコンポーネントテスト
 - **GitHub Actions**: CI/CDパイプライン（Lint、テスト、ビルド、カバレッジ）
 
@@ -189,6 +111,7 @@
 
 | 関心事 | 正本 |
 |--------|------|
+| UI トークン・Profile Hub | ルート **[DESIGN.md](../DESIGN.md)**（`docs/` へ移さない。AGENTS.md 優先順位 1） |
 | アプリ挙動・DB・`/test` 等 | **[02_System_Spec.md](02_System_Spec.md)** |
 | トップレベル 7 本柱・`vite/`・`e2e`/Playwright の位置付け | **[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)**、[AGENTS.md](../AGENTS.md) |
 | `src/` に置くべき粒度・配置・`pages/planning` の機能マップ | **[Component_Structure_Guide.md](Component_Structure_Guide.md)** |
@@ -197,40 +120,11 @@
 
 ---
 
-## 📊 現在の実装状況（2026年6月）
+## 📊 現在の実装状況
 
-**KPI・Phase 表の単一ソース**: 優先度・未完了項目の詳細は **[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)** を正とする。CPL Phase 1 の **本文化 x/19** の正本は **[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)**。
+**KPI・Phase 表の単一ソース**: **[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)**。CPL Phase 1 本文化は **[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)**。完了スプリントは [Closed_Sprints.md](Closed_Sprints.md)。仕様の詳細は [02](02_System_Spec.md)。
 
-### ✅ 完了済み機能
-
-- ✅ レイアウト基盤（MarketingLayout、AppLayout）。MarketingLayout: ヘッダー `NavLink` アクティブ表示・ロゴコントラスト・モバイルフォーカス管理・`UserMenu` をパネルトークンに統一、`/profile?tab=` 連携（2026-03）
-- ✅ ゲーミフィケーション（統合ランクシステム、XP、ミッション、ストリーク、達成通知）
-- ~~Gallery~~ — **2026年4月撤去**（DB・ルート削除。外部ギャラリーのみリンク）
-- ✅ ランクシステム統合（PPL中間ランク + XPベースランク）
-- ✅ 経験値（XP）システム（記事読了時のXP付与、カテゴリ別設定）
-- ✅ エンゲージメント追跡（ストリーク、達成）
-- ✅ 管理者ページ（ランク条件・XP設定編集）
-- ✅ デュアルテーマ、MarketingLayout統合、リポジトリ整理
-- ✅ 進捗管理（セクションベース）、進捗可視化、学習ダッシュボード（XP 相対位置 RPC・任意参加ランキングは [02](02_System_Spec.md) ダッシュボード節）
-- ✅ Flight Planning（4 カード、`computeNavLog`、TOC/TOD、MH、Waypoint 単一パネル3モード、JSON/下書き、A4印刷、Debrief タブ）
-- ✅ 記事システム（MDX、全記事閲覧可、テスト結果からの推奨記事＋ゲスト向け登録 CTA、KaTeX、コメント）
-- ✅ CI/CD（GitHub Actions: test、verify-build）
-
-### 📝 今後の開発（[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) v4.0）
-
-**直近のフォーカス**: **CPL Phase 2 / マッピング精緻化**（[05](05_Content_Pipeline.md)・[14](Article_Coverage_Backlog.md)）、**PPL Subject 2 気象 Phase 1**（[構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)）。CPL Phase 1（19 本）は **本文化 19/19 完了**。
-
-- ✅ **CPL 記事 Phase 1**: **本文化 19/19**（正本 [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)）。以降は Phase 2・科目横断の拡張と `learning_test_mapping` の精緻化（[01](01_Current_Status_and_Roadmap.md)）
-- ⏳ **PPL 記事**: **41/150（27.3%）** — Subject 2 Phase 1 **7/12**（**ブロックA 7/7 完結**）（[構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)）
-- ⏳ テストカバレッジ: **Phase C** で **`src` 実効 約 15%**（長期では Phase D **50%**）。**最新実測**（`coverage-final.json`・パス **`FlightAcademyTsx/src/`** のみ）は **約 13.99%** — 詳細は [01](01_Current_Status_and_Roadmap.md)。実測は `npm run test:coverage` と [vitest.config.ts](../vitest.config.ts) を正とする
-- ✅ エラー監視: Sentry 導入済み（DSN設定で有効化）
-- ✅ **GA4（アクセス解析）**: **本番受信確認済**（2026-05-06・GA4 リアルタイム）— [04_Operations_Guide.md](04_Operations_Guide.md)「Post-Phase-B 本番確認ログ」表・`G-22VFYSM69J`
-- ✅ **Phase D cohort pilot（D-3）**: 週次ミッション・MVP（3+）/ TOP3（10+）バッジ・in-app/Brevo 通知 — **本番稼働**（2026-06-21）。運用: [04_Operations_Guide.md](04_Operations_Guide.md)「Cohort 週次 cron・通知」
-- ✅ **Profile Hub + MFA（2026-06）**: 4 セクション IA、通知 auto-save、TOTP ログインゲート・`mfa_required_at_login`（デフォルト OFF）、リカバリーコード API、**本番で 10 件発行確認済** — [02](02_System_Spec.md) Profile Hub 節・[04](04_Operations_Guide.md) MFA 運用
-- ⏳ Flight Academy ブランド移行（Phase C: 2026年6月〜）
-- ⏸️ ランキング機能（Phase D）
-- ⏸️ LMS 目標設定・弱点分析（Phase D / E）
-- ⏸️ PWA 最適化（Phase C）
+**直近のフォーカス**: **週3本の Articles ドリップ**（[05](05_Content_Pipeline.md)・[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)）。ここへチェックリストを写経しない。
 
 ---
 
@@ -313,7 +207,7 @@ npm run lint         # Lintチェック
 
 ### 🎯 AIアシスタント向け推奨読み順（コア＋プロダクト成長）
 
-初動は **下記の順**で足りることが多い。補助入口に **[Project_Overview.md](Project_Overview.md)**。品質・分析の長期枠は **[06_Long_Term_Execution.md](06_Long_Term_Execution.md)**。
+初動は **下記の順**で足りることが多い。品質・分析の長期枠は **[06_Long_Term_Execution.md](06_Long_Term_Execution.md)**。ルートの入口は [README.md](../README.md)（GitHub）と [DESIGN.md](../DESIGN.md)（UI 正本）。
 
 1. **この README.md** — 全体像・テーマ別ハブ
 2. **[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)** — 戦略・3 本柱・ターゲット
@@ -332,11 +226,10 @@ npm run lint         # Lintチェック
 - **[04_Operations_Guide.md](04_Operations_Guide.md)** - 運用時の手順、トラブルシューティング
 - **[05_Content_Pipeline.md](05_Content_Pipeline.md)** - MDX記事の作成計画とガイドライン
 - **[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)** - PPL学科試験対策記事のMaster Syllabus
-- **[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)** - PPL/CPL統合Syllabus管理ガイド（**分類ツリーの正本は CPL クラスタ**、**問題–記事連携**・`learning_test_mapping` テンプレは同文書内。記事 ID 対照は [Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) §2.4。PPL 工学マッピング投入例: `scripts/database/20260329_learning_test_mapping_incremental_ppl_clusters.sql`。**気象・航法・通信の科目ハブと CPL 系 `learning_contents` 補完**: `scripts/database/20260330_learning_test_mapping_cpl_clusters_by_subject.sql`）
+- **[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)** - PPL/CPL統合Syllabus管理ガイド（**分類ツリーの正本は CPL クラスタ**、**問題–記事連携**・記事 ID / `aero-*` 対照は同文書。PPL 工学マッピング投入例: `scripts/database/20260329_learning_test_mapping_incremental_ppl_clusters.sql`。**気象・航法・通信の科目ハブと CPL 系 `learning_contents` 補完**: `scripts/database/20260330_learning_test_mapping_cpl_clusters_by_subject.sql`）
 - **[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)** - CPL-Learning-Stub シリーズの索引・クイズ連携の要約（Web からは `/docs/09_CPL_Learning_Stub.md`。`sync:public-docs` 対象）
 - **[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)** - verified クラスタ数・マッピング済み記事・リポジトリ MDX 突合・未マッピング優先度（`sync:public-docs` 対象）
 - **[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)** - 航空工学（AD）科目別ロードマップ
-- **[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md)** - 06/07/08/10 の役割と相互参照方針
 - **[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)** - Cursor MCP・Serena・コミットメッセージ関連リンク
 - **[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)** - リポジトリ直下のフォルダ索引
 
@@ -508,13 +401,9 @@ npm run lint         # Lintチェック
 
 ## 📝 ドキュメント更新について
 
-このプロジェクトでは、`scripts/docs-auto-update/`による自動ドキュメント更新システムが統合されています。
+正本は `docs/`。公開コピーは `npm run sync:public-docs`（`prebuild` でも実行。`public/docs` は手編集しない）。
 
-- **自動更新**: Git Hooks経由で自動実行
-- **手動更新**: `npm run docs:update`
-- **品質チェック**: `npm run docs:validate`
-
-詳細は [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)（ドキュメント自動更新・CPL CSV・Git 補足）を参照。旧 `docs/scripts/*` および `scripts/docs-auto-update/README` は本ファイルに集約。
+手順の正本は Skill [`docs-sync`](../.cursor/skills/docs-sync/SKILL.md)。`scripts/docs-auto-update/` と `npm run docs:update` / `docs:validate` / `docs:setup` は欠ファイル `docs/ROADMAP.md` 前提のため **実行しない**。
 
 ---
 
@@ -527,15 +416,12 @@ npm run lint         # Lintチェック
 
 ---
 
-## 📊 プロジェクト統計（2026年4月）
+## 📊 プロジェクト統計
 
-- **テスト**: **38 ファイル・228 テスト前後**（カバレッジ目標は [01](01_Current_Status_and_Roadmap.md)・`vitest.config.ts`）
-- **記事 MDX**: `src/content/lessons` 66 ファイル前後（PPL 17 本・CPL スタブ含む）
-- **CPL Phase 1 KPI**: 本文化 **19/19**（[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)）
-- **現在の Phase**: **Phase B**（2026年4〜5月 — [01](01_Current_Status_and_Roadmap.md)）
+数値の正本は [01](01_Current_Status_and_Roadmap.md)。CPL Phase 1 は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)。テスト本数は `npm run test:run`。
 
 ---
 
-**最終更新**: 2026年4月25日（Node 18+、長期計画 [06](06_Long_Term_Execution.md) 一本化、ロードマップ v4.0.8 整合）  
-**バージョン**: Documentation Index v4.28（冒頭ヘッダーと一致）  
+**最終更新**: 2026年9月20日（docs スリム）  
+**バージョン**: Documentation Index v4.74  
 **管理者**: Flight Academy 開発チーム

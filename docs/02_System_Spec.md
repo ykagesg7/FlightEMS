@@ -280,7 +280,7 @@ CREATE TABLE profiles (
 #### **learning_test_mapping テーブル（記事と問題の対応）**
 
 - **主要カラム**: `learning_content_id`（`learning_contents.id` と一致）, `topic_category`, `**test_question_ids`（`text[]`）**, `**unified_cpl_question_ids`（`uuid[]`）**
-- **運用規約（自然キー・列の揃え方）**: [docs/08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)「問題–記事連携契約」。記事 ID と 10 の `aero-*` 対照は [docs/Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) §2.4。
+- **運用規約（自然キー・列の揃え方）**: [docs/08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)「問題–記事連携契約」。記事 ID と 10 の `aero-*` 対照は [08](08_Syllabus_Management_Guide.md)「記事 ID の正本とエイリアス」。
 - **推奨記事表示**: [ReviewContentLink](src/pages/articles/components/learning/ReviewContentLink.tsx) は、解答後の推奨で **両列の `overlaps`** を試行（どちらかに問題 UUID が含まれればヒット）。複数行がヒットする場合は、セッションの設問 ID 集合との **重なり件数（同一 UUID は二重に数えない）が多い** `learning_test_mapping` 行を優先し、最大 5 件を表示する。
 - **記事詳細からテストへ**: [RelatedTestsBlock](src/pages/articles/components/RelatedTestsBlock.tsx) が同一 `learning_content_id` のマッピング行を列挙し、`/test` へ遷移させる。
 - **テスト→記事のラベル統一**: 定数 `LEARNING_ARTICLE_CTA_LABEL`（`src/constants/learningArticleNav.ts`、文言「単元記事を読む」）を [QuizResultsView](src/pages/test/components/QuizResultsView.tsx) の `contentId` 戻りリンクと [ReviewContentLink](src/pages/articles/components/learning/ReviewContentLink.tsx) の見出し・補足で共有する。記事 URL は常に `/articles/{learning_contents.id}`。
@@ -1101,7 +1101,7 @@ Flight Academy へのブランド移行は [00](00_Flight_Academy_Strategy.md) �
 - **テスト結果→記事**: `LEARNING_ARTICLE_CTA_LABEL`（「単元記事を読む」）で `QuizResultsView` と `ReviewContentLink` を揃える。
 - **型**: `src/types/engagement.ts` は Shop/Gallery 廃止に伴い削除。
 - **マーケページ**: About / Home の CTA を `/articles` 中心に更新。
-- **ルート**: `/blog`・`/blog/:slug` → `/articles`（slug は破棄）。仕様は [Project_Overview.md](Project_Overview.md) に記載。
+- **ルート**: `/blog`・`/blog/:slug` → `/articles`（slug は破棄）。仕様は本項（changelog）とルーティング表。
 
 ### **2026年1月5日 - テスト環境の修正とlintエラー対応**
 

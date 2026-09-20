@@ -1,7 +1,7 @@
 # Phase C 準備 — 自動検出メモ（監査のみ）
 
 **日付**: 2026-05-06  
-**方針**: [Phase_C_Quality_Preparation.md](../docs/Phase_C_Quality_Preparation.md) §2–§3。**UI 修正は行わない**。
+**方針**: [06_Long_Term_Execution.md](../docs/06_Long_Term_Execution.md) §1.3。**UI 修正は行わない**。
 
 ## 実行内容（このターン）
 
@@ -12,4 +12,4 @@
 
 ## 備考
 
-- Lighthouse HTML はローカルに `lighthouse-YYYYMMDD.html` 形式で溜める運用が [Phase_C](../docs/Phase_C_Quality_Preparation.md) §2。本環境では**ファイル未添付**。再実行時は同パスへ追記。
+- Lighthouse HTML はローカルに `lighthouse-YYYYMMDD.html` 形式で溜める運用が [06](../docs/06_Long_Term_Execution.md) §1.3。本環境では**ファイル未添付**。再実行時は同パスへ追記。

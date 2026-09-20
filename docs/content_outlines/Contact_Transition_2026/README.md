@@ -6,8 +6,7 @@
 **既存公開**: **W34** 1-1〜1-3（8/17・19・21）。**W35** 2-1〜2-3（8/24・26・28）。**W36** 2-4〜2-6（**8/30**・9/2・9/4）。**W37** 3-1 **日 9/6**、3-2 水 9/9、4-1 金 9/11（Season 4 前倒し）。**W38** 4-2 **日 9/13**、5-1 水 9/16、5-2 金 9/18。**W39** 5-3 **日 9/20**、5-4 水 9/23（秋分の日）、5-5 金 9/25。`is_published` は cron が schedule の日付で反転。**1 話目は日曜 `publishDate`（digest 送信日）**。  
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
 **操縦プロンプト**: [Gemini_CP_FN_System_Prompt.md](../../ops/Gemini_CP_FN_System_Prompt.md)  
-**W38 カード**: [W38_episode_cards.md](W38_episode_cards.md)（4-2 / 5-1 / 5-2。精緻化済・schedule 済）  
-**W39 カード**: [W39_episode_cards.md](W39_episode_cards.md)（5-3 / 5-4 / 5-5。精緻化済・schedule 済）  
+**カード**: 週次 Episode card は実装後削除。W38/W39 は MDX 済（git 履歴）。次週は本 README と schedule が正本。  
 **MDX 規則**: [`.cursor/rules/mdx-article-guide.mdc`](../../../.cursor/rules/mdx-article-guide.mdc)  
 **登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **曲技飛行**、`series`: **USAF-Contact-Phase**  
 **公開**: [articlePublishSchedule.ts](../../../api/_lib/articlePublishSchedule.ts)  
@@ -31,7 +30,7 @@ Heat-to-Guns、CAS 9-Line、FMT の HCA / CZ は載せない。Pitchback / Slice
 
 FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通過後だけ MDX。ストック登録。**全話を一括起票しない。**
 
-**Season 1（1-1〜1-3）は MDX 済（W34 月水金）。** Season 2 の 2-1〜2-6 は精緻化済（W35: 2-1〜2-3、W36: 2-4〜2-6）。Season 3 以降はストック。CP シリーズ完（最終話 5-9 Chandelle）。次の CP ブリーフは作らない。
+**Season 1（1-1〜1-3）は MDX 済（W34 月水金）。** Season 2 の 2-1〜2-6 は精緻化済（W35: 2-1〜2-3、W36: 2-4〜2-6）。**git の MDX は 5-5 まで**（W39）。5-6〜5-9 は SQL ストック行があるが **MDX は無い**。「シリーズ完」は DB 行の話であり git 正本ではない。
 
 ---
 

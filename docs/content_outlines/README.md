@@ -1,16 +1,18 @@
 # 記事概略（アウトライン）置き場
 
-**用途**: 執筆前の **箇条書きブリーフ**や、外部 LLM（Gemini 等）に渡す **入力原文**を置く。正本の MDX は常に `src/content/lessons/`。
+**用途**: 執筆前の **箇条書きブリーフ**や、外部 LLM（Gemini 等）に渡す **入力原文**を置く。正本の MDX は常に `src/content/lessons/`。実装後の素案は削除する（W20/W21/W22 と同じ）。
 
 | ファイル | 内容 |
 |----------|------|
-| [May_2026_Late_PPL_CPL_Outlines.md](May_2026_Late_PPL_CPL_Outlines.md) | 2026年5月後半スプリント用 CPL/PPL ペアの概略 |
-| [W22_2026/README.md](W22_2026/README.md) | **2026-W22（完了アーカイブ）** — 3.2.9 × PPL-1-2-2。Gemini 素案は実装後削除 |
-| [PPL_Subject5_Aviation_Law_Structure.md](PPL_Subject5_Aviation_Law_Structure.md) | **Subject 5 航空法規** — CPL `3.1.1`〜`3.1.8` と [PPL_Master_Syllabus.md](../PPL_Master_Syllabus.md) §5 を対応させる構成案 |
-| [PPL_Subject2_Aviation_Meteorology_Structure.md](PPL_Subject2_Aviation_Meteorology_Structure.md) | **Subject 2 航空気象** — CPL `3.3.1`〜`3.3.12` と §2 を対応。Gemini: [PPL_Meteorology_2026/README.md](PPL_Meteorology_2026/README.md) |
-| [PPL_Subject3_Aerial_Navigation_Structure.md](PPL_Subject3_Aerial_Navigation_Structure.md) | **Subject 3 空中航法** — CPL `3.4.1`〜`3.4.7` と §3。Gemini: [PPL_Navigation_Communication_2026/README.md](PPL_Navigation_Communication_2026/README.md) |
-| [PPL_Subject4_Aviation_Communication_Structure.md](PPL_Subject4_Aviation_Communication_Structure.md) | **Subject 4 航空通信** — CPL `3.5.1`〜`3.5.5` と §4。Gemini: 同上 |
-| [FMT_Formation_2026/README.md](FMT_Formation_2026/README.md) | **USAF 編隊 FMT** — 読む順は Contact のあと。Season 1（1-1〜1-10）ストック済。Season 2 は未起票 |
-| [Contact_Transition_2026/README.md](Contact_Transition_2026/README.md) | **USAF Contact / トランジション** — **W34 ドリップ** 1-1〜1-3。S2〜S5 全話ストック。CP シリーズ完（最終話 5-9 Chandelle） |
-| [Contact_Transition_2026/W38_episode_cards.md](Contact_Transition_2026/W38_episode_cards.md) | **W38** CP-4-2 / 5-1 / 5-2 の Episode card（精緻化済・9/13・16・18） |
-| [Contact_Transition_2026/W39_episode_cards.md](Contact_Transition_2026/W39_episode_cards.md) | **W39** CP-5-3 / 5-4 / 5-5 の Episode card（精緻化済・9/20・23・25） |
+| [PPL_Subject5_Aviation_Law_Structure.md](PPL_Subject5_Aviation_Law_Structure.md) | **Subject 5 航空法規** — CPL `3.1.1`〜`3.1.8` と [PPL_Master_Syllabus.md](../PPL_Master_Syllabus.md) §5 |
+| [PPL_Subject2_Aviation_Meteorology_Structure.md](PPL_Subject2_Aviation_Meteorology_Structure.md) | **Subject 2 航空気象**。残ブリーフ: [PPL_Meteorology_2026/README.md](PPL_Meteorology_2026/README.md) |
+| [PPL_Subject3_Aerial_Navigation_Structure.md](PPL_Subject3_Aerial_Navigation_Structure.md) | **Subject 3 空中航法**。索引: [PPL_Navigation_Communication_2026/README.md](PPL_Navigation_Communication_2026/README.md) |
+| [PPL_Subject4_Aviation_Communication_Structure.md](PPL_Subject4_Aviation_Communication_Structure.md) | **Subject 4 航空通信**。索引: 同上 |
+| [FMT_Formation_2026/README.md](FMT_Formation_2026/README.md) | **USAF 編隊 FMT** — Season 1（1-1〜1-10）ストック済 |
+| [Contact_Transition_2026/README.md](Contact_Transition_2026/README.md) | **USAF Contact / トランジション** — CP ドリップ正本 |
+
+完了アーカイブ（ファイルは置かない。Git 履歴）:
+
+- 2026-W22: `3.2.9_PitotStaticSystem` × `PPL-1-2-2_PitotStatic`
+- 2026-05 後半アウトライン: 実装済みのため削除
+- W38 / W39 Episode cards: 対応 MDX あり（CP-4-2〜5-5）

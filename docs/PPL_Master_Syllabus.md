@@ -10,9 +10,9 @@
 - ✅ **コンテンツ作成者**: PPL学習記事を作成する場合
 - ✅ **プロジェクトマネージャー**: PPL記事作成の進捗を確認したい場合
 
-**推奨読み順**: [docs/README.md](README.md) → [Project_Overview.md](Project_Overview.md) → [05_Content_Pipeline.md](05_Content_Pipeline.md) → このドキュメント
+**推奨読み順**: [docs/README.md](README.md) → [05_Content_Pipeline.md](05_Content_Pipeline.md) → このドキュメント
 
-**関連（記事パイプライン）**: [05_Content_Pipeline.md](05_Content_Pipeline.md)（CPL全体）、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)（技術管理）、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)（航空工学執筆順）、[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md)（4文書の役割）
+**関連（記事パイプライン）**: [05_Content_Pipeline.md](05_Content_Pipeline.md)（CPL全体）、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)（技術管理）、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)（航空工学執筆順）。記事 ID 対照は [08](08_Syllabus_Management_Guide.md)「記事 ID の正本とエイリアス」
 
 ---
 

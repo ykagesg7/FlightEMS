@@ -1,8 +1,8 @@
 # PPL/CPL統合Syllabus管理ガイド
 
 **作成日**: 2025年1月
-**最終更新**: 2026年3月
-**バージョン**: v1.2
+**最終更新**: 2026年9月20日（記事 ID 対照表を本書へ統合。旧 Docs_Consistency_Decisions は廃止）
+**バージョン**: v1.3
 
 ## 📖 このドキュメントを読むべき人
 
@@ -12,7 +12,7 @@
 
 **推奨読み順**: [docs/README.md](README.md) → [05_Content_Pipeline.md](05_Content_Pipeline.md) → [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md) → このドキュメント
 
-**関連（記事パイプライン）**: [05_Content_Pipeline.md](05_Content_Pipeline.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)、[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md)
+**関連（記事パイプライン）**: [05_Content_Pipeline.md](05_Content_Pipeline.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)。05 / PPL_Master / 08 / 10 は責務が違うので**ファイル統合しない**（ID 対照は下節）。
 
 ---
 
@@ -261,7 +261,38 @@ PPL 工学・計器まとめて追加する例: [scripts/database/20260329_learn
 
 #### 記事 ID の正本とエイリアス
 
-`3.x.x_*`（CPL シリーズ）、`PPL-*`（PPL シラバス）、[10](10_航空工学_学科試験攻略ブログ_ロードマップ.md) の `aero-*` / `inst-*` の関係は [Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) **§2.4** を正とする。
+運用・DB 登録で迷わないよう、次を正とする（旧 `Docs_Consistency_Decisions.md` §2.4）。
+
+| 役割 | 正本（DB・ルーティング） | 補足 |
+|------|--------------------------|------|
+| **分類ツリー（単元の木）** | Supabase の **`(main_subject, sub_subject 全文)`**（CPL 学科クラスタ） | PPL は `applicable_exams` に `PPL` を含む行による**同一ツリー上の部分集合** |
+| **ファイル名・`learning_contents.id`** | MDX の stem（例: `PPL-1-1-2_AirspeedBasics`, `3.2.1_PropellerTheory`） | アプリと Supabase の単一キー |
+| **PPL シラバス上の位置づけ** | [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md) のトピック ID | 進捗・順序の正 |
+| **CPL 全体ロードマップ上の見出し** | [05](05_Content_Pipeline.md) の `3.x.x_TopicName` | Phase・科目横断の計画の正 |
+| **10 の `aero-*` / `inst-*` / `stru-*` 等** | 執筆計画・誘導設計用スラッグ | **DB には入れない**。実体は下記いずれかの MDX id に寄せる |
+
+**10 のスラッグ → 実記事（代表例）**
+
+| 10（計画 slug） | 寄せ先（正本 id） |
+|-----------------|-------------------|
+| aero-1-1 | `PPL-1-1-1_TemperatureBasics` |
+| aero-1-2 | `PPL-1-1-2_AirspeedBasics` |
+| aero-1-3 | `PPL-1-1-3_BernoulliPrinciple` / `PPL-1-1-4_DragBasics`（二次元翼系） |
+| aero-1-5, aero-1-9 | `PPL-1-1-6_StallSpin` |
+| aero-1-6 | `PPL-1-1-5_AxesStability` |
+| aero-1-8 | `PPL-1-1-8_PropellerBasics` |
+| aero-2-1 | `PPL-1-1-9_FlightPerformance` |
+| aero-2-2 | `PPL-1-1-7_VnDiagram` |
+| aero-2-3 | `PPL-1-1-10_TakeoffLandingPerformance` |
+| inst-1-1〜1-3 | `PPL-1-2-2_PitotStatic` |
+| inst-2-1 | `PPL-1-2-1_GyroBasics` |
+| inst-3-1, inst-3-2（VOR 追記時） | `PPL-1-2-3_MagneticCompass` |
+| eng-1-1 | `PPL-1-2-4_ReciprocatingEngine` |
+| eng-1-2 | `PPL-1-2-5_CarburetorMixture` |
+| eng-1-3 | `PPL-1-2-6_IgnitionMagneto` |
+| eng-1-5 | `PPL-1-2-7_LubricationCooling` |
+
+**05 の `3.2.x`（CPL 航空工学シリーズ）**は、CPL カテゴリ記事として **`learning_contents` にその id で登録された MDX** が正本。PPL 記事と内容が重なる場合は [05](05_Content_Pipeline.md) の「PPL 基礎記事」方針どおり **重複 ID で書かず**、`learning_test_mapping` のみ PPL 側 id に寄せる。
 
 ---
 

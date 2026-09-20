@@ -94,6 +94,7 @@ AI アシスタント・開発者が最初に読むべきドキュメントで�
 - 運営は**個人開発**を前提とし、当初の経済目標を **開発ツール・外部 API・インフラ等の固定費・変動費を賄えるキャッシュフロー** に置く。
 - **収益が固定費を上回った段階**で、API 利用枠の拡大、監視・品質、コンテンツ制作、テスト拡充など**プロダクト強化へ再投資**する。
 - 具体的な課金モデル・実装は [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) および将来の別紙に委ね、本書では**原則のみ**を定義する。
+- **外部 API 運用（旧 `Sustainability_API_Memo`）**: 課金・高コスト呼び出しは**認証済み画面**に寄せ、匿名は静的・ハブ中心。気象・NOTAM は既存 TTL / プロキシで同一クエリのぶん回しを避ける（[02](02_System_Spec.md)）。キーは **Vercel 環境変数のみ**（[03](03_Development_Guide.md)）。数値・契約の正本は提供元ダッシュボード。障害は Sentry / Vercel / Supabase。
 
 ### 3.2 運営者の専門性と公開の粒度
 
@@ -149,8 +150,8 @@ Flight Academy
 | 項目       | 現状（目安）     | 目標（詳細 KPI は [01](01_Current_Status_and_Roadmap.md)） |
 | -------- | ------------ | ------------------------------------------------ |
 | **CPL 記事** | **Phase 1 本文化 19/19 完了**（2026-04-12。正本 [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)）。計測の補助: [14](Article_Coverage_Backlog.md) | **以降の最優先**は [05](05_Content_Pipeline.md) **Phase 2** および**マッピング精緻化**（[01](01_Current_Status_and_Roadmap.md) 整合） |
-| **PPL 記事** | **34/150（22.7%）** — MDX 実数（[07](PPL_Master_Syllabus.md) v1.4）。Phase C KPI **25/150 達成** | Master Syllabus に沿って**継続整備**。**7月主軸**: Subject 2 気象 Phase 1（[構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)）。2026年末 50%（75/150）は**二次目標** |
-| MDX 記事合計 | **85** ファイル（`src/content/lessons`・2026-06-24） | 100+ ファイル — 2026年末 |
+| **PPL 記事** | 本数の正本は [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)（写経しない）。Phase C KPI **25/150 は達成済** | Master Syllabus に沿って**継続整備**。気象 Phase 1 構造は [構造案](content_outlines/PPL_Subject2_Aviation_Meteorology_Structure.md)。2026年末 50%（75/150）は**二次目標** |
+| MDX 記事合計 | glob 実数は `src/content/lessons`（2026-06-24 時点の 85 は古い） | 学科本数は 01 / PPL_Master を正とする |
 
 **方針**:
 
@@ -350,7 +351,6 @@ src/
 | ------------------------------------------------------ | -------------------------- |
 | [README.md](README.md)                                 | ドキュメントインデックス、テーマ別ハブ、クイックリファレンス    |
 | [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) | NSM（ALPM）・オンボーディング・気象/通信 PMF・AI・データ・法務 UX |
-| [Project_Overview.md](Project_Overview.md)                 | 機能一覧と技術スタック詳細              |
 | [03_Development_Guide.md](03_Development_Guide.md)                         | 開発環境、コーディング規約              |
 | [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)                   | Phase A-E の実行計画と KPI       |
 | [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md) | PPL 150記事の Master Syllabus |

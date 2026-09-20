@@ -2,7 +2,7 @@
 
 **日付**: 2026-06-06  
 **対象**: `/test` Quiz Hub 刷新後（Lane A PR-Q0〜Q5）  
-**方針**: [Phase_C_Quality_Preparation.md](../docs/Phase_C_Quality_Preparation.md) §2–§3 — **修正コミットは DESIGN 承認後**。本ファイルは観測メモのみ。
+**方針**: [06_Long_Term_Execution.md](../docs/06_Long_Term_Execution.md) §1.3 — **修正コミットは DESIGN 承認後**。本ファイルは観測メモのみ。
 
 ---
 
@@ -46,4 +46,4 @@
 ## GA4 ファネル（観測）
 
 カスタムイベント投入日: **2026-06-06**（`quiz_filter_open`, `quiz_session_start`, `quiz_session_complete`, `article_to_quiz_click`, `review_article_click`）。  
-**4 週後**に GA4 で `/test` PV → `quiz_session_start` → `quiz_session_complete` を再取得（目標 ≥40% start/PV — [June 計画](../docs/June_2026_Implementation_Plan.md)）。
+**4 週後**に GA4 で `/test` PV → `quiz_session_start` → `quiz_session_complete` を再取得（目標 ≥40% start/PV — [June 計画](../docs/Closed_Sprints.md)）。

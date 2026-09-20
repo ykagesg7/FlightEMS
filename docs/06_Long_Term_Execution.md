@@ -1,8 +1,8 @@
 # 長期実行計画（品質・コンテンツ・分析・成長）
 
-**最終更新**: 2026年5月10日（§3 適応学習・教師データと Product 正本の接続）
+**最終更新**: 2026年9月20日（Phase C 品質メモを本書 §1 へ統合）
 
-**位置づけ**: [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)・[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) の補助。執筆方針と記事 ID の**原則**は [Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md) を正とし、本書は実装・運用の**長期バックログ**に絞る。
+**位置づけ**: [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)・[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) の補助。執筆方針と記事 ID の**原則**は [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)「記事 ID の正本とエイリアス」を正とし、本書は実装・運用の**長期バックログ**に絞る。
 
 ---
 
@@ -15,6 +15,14 @@
 - **正本**: [vitest.config.ts](../vitest.config.ts) の `coverage.thresholds` と `npm run test:coverage`。
 - **解釈**: レポート先頭の **All files** は `node_modules` 等を含みうる。ロードマップ上の指標は `src` の **Statements 実効**（パスに **`FlightAcademyTsx/src/`** を含むファイルのみ集計）を判断材料にする（[01](01_Current_Status_and_Roadmap.md) 技術的負債表・更新履歴）。
 - **方針**: 閾値は CI 安定用の下限。未達分は B-4（フック・ユーティリティ拡充）で段階的に。**Phase C 末**の主目標は **`src` 実効 15%**（ストレッチ 18%・任意）、**Phase D 末**は **50%**（北極星。中間再定義は [01](01_Current_Status_and_Roadmap.md)・[00](00_Flight_Academy_Strategy.md) と整合）。`vitest.config.ts` の coverage thresholds は実測が安定するまで無理に引き上げない。
+
+月末スナップショット（旧 `Phase_C_Quality_Preparation.md`）。**2026-07 以降は [Closed_Sprints.md](Closed_Sprints.md) / [01](01_Current_Status_and_Roadmap.md) 更新履歴を正**とする（ここで再計測しない）。
+
+| 締め | `src` Statements 実効（概算） | メモ |
+|------|------------------------------|------|
+| 2026-05 月中 / 末 | 約 13.99% | B-4 後。`coverage-final.json`・パス `FlightAcademyTsx/src/` のみ |
+| 2026-06 末 | 約 18.07% | 325 ファイル・5302/29341。Phase C 主目標 15% を超過 |
+| 2026-07 / 08 | 約 21.18% / 21.17% | Closed_Sprints。以降の追記は 01 |
 
 ### 1.2 優先テスト層
 
@@ -32,8 +40,8 @@
 |------|------|----------------|
 | Sentry | 導入済 | 本番 DSN・ソースマップ・`Issues` をリリースチェックに含める（[04_Operations_Guide.md](04_Operations_Guide.md)） |
 | GA4 | 実装済 | 本番受信は [04](04_Operations_Guide.md) ログ表。タグ未送信は Data API では解決しない |
-| Lighthouse CI | 未 | Phase C（[01](01_Current_Status_and_Roadmap.md) C-5） |
-| A11y | 未 | Phase C（C-4）WCAG 2.1 A |
+| Lighthouse CI | 未 | Phase C（[01](01_Current_Status_and_Roadmap.md) C-5）。手元例: `lighthouse <url> --only-categories=performance,accessibility --output html`。優先画面: `/`・`/articles`・`/test`、次いで `/planning`・`/dashboard`・`/profile`。**同一ウィンドウ幅**で取る |
+| A11y | 未 | Phase C（C-4）WCAG 2.1 A。axe / DevTools の自動検出のみ週次。**即修正しない**（DESIGN 承認と 01 の優先順） |
 
 **製品側の学習指標の詳細**: [本書 §5](#5-クイズ分析ランキング詳細)（旧 `12_Quiz_Analytics_Phase_Design.md` を統合）
 
@@ -51,13 +59,13 @@
 
 ## 2. コンテンツ（MDX）と Supabase の整合
 
-**根拠**: [Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md)（データソース二重化・記事 ID 正本）。
+**根拠**: [08](08_Syllabus_Management_Guide.md)「記事 ID の正本とエイリアス」（データソース二重化・記事 ID 正本）。
 
 ### 2.1 正本
 
 | 概念 | 正本 | 補足 |
 |------|------|------|
-| ルーティング・DB キー | MDX ファイル名 stem = `learning_contents.id` | [11](Docs_Consistency_Decisions.md) §2.4 |
+| ルーティング・DB キー | MDX ファイル名 stem = `learning_contents.id` | [08](08_Syllabus_Management_Guide.md)「記事 ID の正本とエイリアス」 |
 | 分類 | `unified_cpl_questions` の `(main_subject, sub_subject)` | PPL は `applicable_exams` |
 | 記事–問題 | `learning_test_mapping`（[08](08_Syllabus_Management_Guide.md)「問題–記事連携契約」） | |
 | 計画用スラッグ | [10](10_航空工学_学科試験攻略ブログ_ロードマップ.md) の `aero-*` 等 | **DB に入れない** |
@@ -77,7 +85,7 @@
 | B | [14](Article_Coverage_Backlog.md) スナップショットを MCP 等で本番と同期（[04](04_Operations_Guide.md)） |
 | C | 必要に応じ CI へ整合スクリプト（コストと相談） |
 
-4ChoiceQuiz CSV は当面別リポジトリ。[11](Docs_Consistency_Decisions.md) の**対照表**で橋渡し。記事登録は [.cursor/rules/supabase-article-registration.mdc](../.cursor/rules/supabase-article-registration.mdc)。`public/docs/` は [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) のとおり **手編集禁止**（`npm run sync:public-docs`）。
+4ChoiceQuiz CSV は当面別リポジトリ。[08](08_Syllabus_Management_Guide.md) の**対照表**で橋渡し。記事登録は [.cursor/rules/supabase-article-registration.mdc](../.cursor/rules/supabase-article-registration.mdc)。`public/docs/` は [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) のとおり **手編集禁止**（`npm run sync:public-docs`）。
 
 ---
 
@@ -235,6 +243,6 @@
 |------|------|
 | Phase・KPI | [01](01_Current_Status_and_Roadmap.md) |
 | 戦略 | [00](00_Flight_Academy_Strategy.md) |
-| 記事 ID・06/10 関係 | [11](Docs_Consistency_Decisions.md) |
+| 記事 ID・05/08/10 関係 | [08](08_Syllabus_Management_Guide.md)「記事 ID の正本とエイリアス」 |
 | 分析機能の中身 | [本書 §5](#5-クイズ分析ランキング詳細)（旧 12 統合） |
 | 現行仕様 | [02](02_System_Spec.md) |
