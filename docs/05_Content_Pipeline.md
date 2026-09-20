@@ -10,9 +10,9 @@
 - ✅ **コンテンツ作成者**: 学習記事やブログ記事を作成する場合
 - ✅ **プロジェクトマネージャー**: 記事作成の進捗を確認したい場合
 
-**推奨読み順**: [docs/README.md](README.md) → [Project_Overview.md](Project_Overview.md) → このドキュメント
+**推奨読み順**: [docs/README.md](README.md) → このドキュメント
 
-**関連（記事パイプライン）**: [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)（PPLシラバス）、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)（命名・DB）、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)（航空工学詳細）、[Docs_Consistency_Decisions.md](Docs_Consistency_Decisions.md)（4文書の役割）
+**関連（記事パイプライン）**: [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)（PPLシラバス）、[08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)（命名・DB）、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)（航空工学詳細）。記事 ID 対照は [08](08_Syllabus_Management_Guide.md)「記事 ID の正本とエイリアス」
 
 ---
 
@@ -206,7 +206,7 @@ Phase 2 計画リスト上の **新規本文化** が一段落したフェーズ
 | **2026-W19**（〜2026-05-13） | **3** | CPL→PPL 復習 **Callout 3 記事**（`3.2.10` 重量・重心、`3.2.12` エンジン系統、`3.4.4` 飛行計画）。§5 監査 MCP 先行のため **新規 SQL 適用なし**。 |
 | **2026-W20**（〜2026-05-20） | **4** | ① **[May 後半ブロック A](Closed_Sprints.md) 完了** — [`3.2.7_LiftAndDrag`](../src/content/lessons/3.2.7_LiftAndDrag.mdx) 深文化、[PPL `1-1-3`/`1-1-4`](../src/content/lessons/PPL-1-1-3_BernoulliPrinciple.mdx) 「CPLへの扉」、[14 §1](Article_Coverage_Backlog.md) MCP 備考・未マッピング表確認。② **W20 用 Gemini 素案**は実装済みにつき削除（本文はコミット履歴参照）。|
 | **2026-W21**（〜2026-05-27） | **4** | ① **[May ブロック B — 完了](Closed_Sprints.md)** — [`3.2.8_PowerAndPerformance`](../src/content/lessons/3.2.8_PowerAndPerformance.mdx) 深文化（$HP_R$/$HP_A$・Vx/Vy 等）、[`PPL-1-1-9`](../src/content/lessons/PPL-1-1-9_FlightPerformance.mdx) 「CPL への扉」。**W21 Gemini 素案**は実装済みにつき削除（本文はコミット履歴参照）。② **[06 §1.2](06_Long_Term_Execution.md)** に沿ったユニットテスト追補など（方針どおり継続）。 |
-| **2026-W22**（〜2026-06-03） | **3**（目安） | ① **[May ブロック C](Closed_Sprints.md)** — **`3.2.9_PitotStaticSystem` 深文化**＋**`PPL-1-2-2_PitotStatic`** 橋渡し。**素案**: [content_outlines/README.md](content_outlines/README.md)。※余力で法規 `3.1.1`〜`3.1.3`。**② 月末ゲート**: `npm run test:coverage` → `FlightAcademyTsx/src/` の Statements 実効 を [Phase_C §4](Phase_C_Quality_Preparation.md)・[01 更新履歴](01_Current_Status_and_Roadmap.md) に転記。**Lighthouse/A11y** は自動検出のメモのみ（UI 変更なし）。 |
+| **2026-W22**（〜2026-06-03） | **3**（目安） | ① **[May ブロック C](Closed_Sprints.md)** — **`3.2.9_PitotStaticSystem` 深文化**＋**`PPL-1-2-2_PitotStatic`** 橋渡し。**素案**: [content_outlines/README.md](content_outlines/README.md)。※余力で法規 `3.1.1`〜`3.1.3`。**② 月末ゲート**: `npm run test:coverage` → `FlightAcademyTsx/src/` の Statements 実効 を [06 §1](06_Long_Term_Execution.md)・[01 更新履歴](01_Current_Status_and_Roadmap.md) に転記。**Lighthouse/A11y** は自動検出のメモのみ（UI 変更なし）。 |
 | **2026-W23**（〜2026-06-10） | **4** | ① 法規 **`3.1.1_AviationLegal0`〜`3.1.3`** — シリーズ **Callout** ・`3.1.1` の tags から「スタブ」除去。② 工学 **`3.2.9`** に **`3.2.7`**／**`3.2.8`** の関連リンク追記。③ **マッピング**: **[`20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql`](../scripts/database/20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql)** — 航空法規 **`総則/目的`**（verified **14** 問）→`3.1.1`。**MCP 本番適用済み**（[14 §9](Article_Coverage_Backlog.md) 記録）。④ **B-4**: **`pressureAltitudeIsa.test.ts`** 拡張。 |
 | **2026-W24**（〜2026-06-17） | **3** | ① **Tier A マッピング**: 空力の基礎理論 3 クラスタ → **`3.2.7_LiftAndDrag`**（[`20260606_learning_test_mapping_aero_lift_drag_clusters.sql`](../scripts/database/20260606_learning_test_mapping_aero_lift_drag_clusters.sql)）— MCP 本番適用済み。② **PPL Callout**: `3.2.7` に PPL-1-1-3/4 復習リンク。③ **Lane A**: Quiz Hub UI（PR-Q2〜Q3）。 |
 | **2026-W25**（〜2026-06-24） | **2** | ① **マッピング 1 サイクル**: MCP 再集計 — verified 未マッピング **47→36**、mapping **74 行 / 64 記事**（2026-06-06）→ [14](Article_Coverage_Backlog.md) ヘッダ。② **B-4**: `testHubFilters.test.ts`（14 ケース）、`testQuizFetch` / `testFilterOptionUtils` 抽出。③ **Lane A**: 学習ループ PR-Q4。 |

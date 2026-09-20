@@ -98,7 +98,7 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **番号付き `00`〜`06`**: AI 初動の**読み順**（[README「AI向けのドキュメント番号」](README.md#ai向けのドキュメント番号読み方)）。それ以外（[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)、旧 `08`–`14`、方針メモ等）は**参照**。
 - **長期バックログ**: [06_Long_Term_Execution.md](06_Long_Term_Execution.md)（リネーム後。旧 15＋旧 12 §5）。`public/docs/` 配信は [sync-public-docs.mjs](../scripts/sync-public-docs.mjs) ホワイトリストのみ
 
-- **スクリプト系ドキュメント（統合）**: [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)（CPL CSV・Git 補足。`docs-auto-update` は実行しない）。**Phase 別テスト計画**: [Phase_C_Quality_Preparation.md](Phase_C_Quality_Preparation.md)（旧 `Phase_Testing_Plan.md` は無い）。**GeoJSON 資産手順**: [GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)。**完了スプリント**: [Closed_Sprints.md](Closed_Sprints.md)
+- **スクリプト系ドキュメント（統合）**: [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)（CPL CSV・Git 補足。`docs-auto-update` は実行しない）。**品質・カバレッジ運用**: [06_Long_Term_Execution.md](06_Long_Term_Execution.md) §1（旧 Phase_C メモを統合。旧 `Phase_Testing_Plan.md` は無い）。**GeoJSON 資産手順**: [GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)。**完了スプリント**: [Closed_Sprints.md](Closed_Sprints.md)
 
 ##### `docs/SWIM_Portal/`
 - **目的**: 国土交通省航空局 **SWIM**・**デジタルノータムリクエストサービス**の仕様・手続きの参照用 Markdown（共通編、付録 04、サービス説明書、ユーザーズガイド、情報サービス概要）

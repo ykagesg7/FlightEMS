@@ -19,6 +19,21 @@
 
 復元: `git log -- docs/<filename>.md`。
 
+## 第2波（2026-09-20）— ポインタ重複と実装済カード
+
+| ファイル（削除） | 最終更新（本文） | 根拠 |
+|------------------|------------------|------|
+| Project_Overview.md | 2026-05-10 | docs/README の薄型ポインタ。独自仕様なし |
+| Sustainability_API_Memo.md | 2026-05-06 | 00 §3.1 へ折込。ドラフト1ページ |
+| Phase_C_Quality_Preparation.md | 2026-05-07（6月末行のみ追記） | 06 §1 へ折込。カバレッジ表は 7月以降 Closed_Sprints が新しい |
+| Docs_Consistency_Decisions.md | 2026-03/04 決定ログ | 生きているのは §2.4 ID 表のみ → 08 へ。05/07/08/10 は統合しない判断は 08 に1行残す |
+| W38_episode_cards.md / W39_episode_cards.md | 対応 MDX が git にある | W20/W21/W22 と同じ実装後削除 |
+
+## ルート文書（動かさない）
+
+- **DESIGN.md**: AGENTS.md 優先順位 1 と `.cursor/rules`（`core-project` / `ui-design`）がルート `DESIGN.md` を UI 正本とする。中途半端な移動はエージェント入口を壊す。
+- **README.md**: GitHub 入口。短いクイックスタート＋ docs 索引のままルートに残す。詳細は `docs/README.md`。
+
 ## 月次 DONE（01 / 05 と一致する範囲だけ）
 
 | 月 | ISO 週 | 残してよい事実 |
