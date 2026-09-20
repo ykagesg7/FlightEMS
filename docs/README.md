@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント - AI向けプロジェクトコンテキストガイド
 
-**最終更新**: 2026年9月20日（Quiz Review 反映・記事読了）
-**バージョン**: Documentation Index v4.72
+**最終更新**: 2026年9月20日（記事/Quiz XP RPC 403）
+**バージョン**: Documentation Index v4.73
 
 ## AI向けのドキュメント番号（読み方）
 
@@ -52,6 +52,7 @@
 - **2026-08-24（Articles 初期ロード安定化）**: `virtual:articles-index` で MDX メタをビルド時抽出。プラグインは `enforce: 'pre'`。設定再読込失敗後は `npm run dev` の再起動が必要。`verify-build` の `prefer-const` を解消。正本 [02](02_System_Spec.md) · [01](01_Current_Status_and_Roadmap.md) v4.0.47 · [FOLDER_STRUCTURE](FOLDER_STRUCTURE.md) · [03](03_Development_Guide.md)。
 - **2026-08-24（Planning 航法一本化・4カード）**: `computeNavLog` で ETE／ETA／燃料／垂直プロファイルを一本化。UI は Setup / Route / NavLog / Briefing。Debrief は第 3 タブ。T-4 は教官提供値＋計画単位上書き。正本 [02](02_System_Spec.md) Flight Planning · [03](03_Development_Guide.md) · [Component_Structure_Guide](Component_Structure_Guide.md) · [Flight_Debrief_Tools](Flight_Debrief_Tools.md)。
 - **2026-08-13（FMT ドリップ 1-1 から・週3本）**: W34（8/17・19・21）に 1-1〜1-3。1-4 以降はストック。正本 [FMT_Formation_2026](content_outlines/FMT_Formation_2026/README.md)。
+- **2026-09-20（記事/Quiz XP 403）**: `award_article_read_xp` / `award_quiz_session_xp` が INVOKER のまま `private.apply_xp_reward` を呼び PostgREST 403（`42501`）。理解 XP も同欠陥。登録 XP と同じ DEFINER impl + INVOKER ラッパー。正本: [02](02_System_Spec.md)。SQL: [`20260920_award_article_quiz_xp_invoker_wrappers.sql`](../scripts/database/20260920_award_article_quiz_xp_invoker_wrappers.sql)。
 - **2026-09-20（Quiz Review / 記事読了）**: 診断後の SRS 失敗カードを Review が読めるようにした（`repetitions=0` と due の和集合。SQL は lapse を `now()`）。記事は本文末尾センチネル＋末尾 64px で読了。登録 XP は Welcome 完了時のみ（ログイン fetch の 403 を止める）。正本: [02](02_System_Spec.md)。SQL: [`20260920_quiz_review_progress_consistency.sql`](../scripts/database/20260920_quiz_review_progress_consistency.sql)。
 - **2026-08-12（9月計画）**: [September_2026_Implementation_Plan.md](September_2026_Implementation_Plan.md) 起票。A2-a 計測 W36〜W39。
 - **2026-08-17（週次テレメトリ ISO 火曜）**: レビューを **火曜 09:00 JST**（月〜日）へ切替。Slack `#fa-telemetry` の Facts は日本語（`@` なし）。フェーズ2b は CI `weekly-telemetry-draft-pr` が正本 PR（Skill `weekly-telemetry-review` は任意）。フェーズ2c L0 は Facts スレッドへ `APPROVE-DOC` / `HOLD`（Slash Command なし。ACK は `fa-telemetry-notify`）。初回新窓 W34 は 8/25。正本 [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)。
