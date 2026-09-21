@@ -476,7 +476,7 @@ Data API / MCP で `exam`・`tab`・`content_id`・`subject` をディメンシ�
 
 ### **ブログ記事（`src/content/articles`）の精査・非公開・再公開**
 
-自己啓発・思考法系 MDX **28 本**（ファイル名＝`learning_contents.id`＝URL の `contentId`）を内容精査するため、サイトから外す／戻す手順。仕様の正本は [02_System_Spec.md](02_System_Spec.md) の「ブログ記事の一時非表示」。
+自己啓発・思考法系 MDX **当初 28 本**（ファイル名＝`learning_contents.id`＝URL の `contentId`）を内容精査するため、サイトから外す／戻す手順。2026-09-20 以降、`1.1.1_UnconsciousSuccess` は個別再公開済みでゲート残は **27 本**。仕様の正本は [02_System_Spec.md](02_System_Spec.md) の「ブログ記事の一時非表示」。
 
 #### 二段構成（どちらも必要）
 
@@ -520,6 +520,14 @@ DB だけでは直 URL で MDX が読める。アプリゲートだけでは一�
 3. Supabase で [`scripts/database/20260414_blog_articles_republish_learning_contents.sql`](../scripts/database/20260414_blog_articles_republish_learning_contents.sql) を実行し、該当行の `is_published` を **`true`** に戻す（MCP `execute_sql` 可）。
 4. **メンタリティタブ**: `mindset` タブは公開中のメンタリティ／思考法記事が 1 件以上あると自動表示（[`getVisibleTabs`](../src/pages/articles/articleHubFilters.ts)）。
 5. **齟齬防止**: 「DB は公開・ゲートだけ残っている」と「ゲートは外したが DB が未公開」の状態を避ける。再公開は **SQL（true）とゲート削除デプロイを同じメンテナンス枠で連続実施**する（数分の逆順は許容し、完了後に `/articles` と直リンクの両方を確認）。
+
+#### 個別再公開（2026-09-20・その１のみ）
+
+ユーザー明示で `1.1.1_UnconsciousSuccess` だけ差し替え・公開 ON。残 27 ID はゲートと `is_published = false` のまま。28 本一括の republish SQL は使わない。
+
+1. MDX を確定稿へ置換（YAML 禁止、`publishedAt` は既存 `2025-04-29` を維持）。
+2. [`withdrawnArticleIds.ts`](../src/constants/withdrawnArticleIds.ts) から **当該 ID のみ**外す。
+3. [`scripts/database/20260920_learning_contents_unconscious_success_publish.sql`](../scripts/database/20260920_learning_contents_unconscious_success_publish.sql) で当該行の `is_published = true`（MCP `execute_sql`、DELETE なし）。
 
 #### 確認観点
 

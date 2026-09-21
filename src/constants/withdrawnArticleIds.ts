@@ -2,10 +2,10 @@
  * Blog / self-help MDX under src/content/articles — temporarily withheld from the site
  * while content is reviewed (legal: 夢をかなえるゾウ character usage).
  * After legal clearance: clear this list and run republish SQL (see docs/04_Operations_Guide.md).
+ * 1.1.1_UnconsciousSuccess was rewritten (no 夢ゾウ / Top Gun stills) and republished 2026-09-20.
  * mindset tab auto-appears when published mindset articles exist (getVisibleTabs).
  */
 export const WITHDRAWN_ARTICLE_IDS: readonly string[] = [
-  '1.1.1_UnconsciousSuccess',
   '1.1.2_EndWithFuture',
   '1.1.3_PrioritizingMostImportant',
   '1.1.4_WinWinThinking',
