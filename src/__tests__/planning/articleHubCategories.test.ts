@@ -29,17 +29,20 @@ function mockContent(
 }
 
 describe('articleHubCategories', () => {
-  it('allows rewritten habits 1 and 3 while habit 2 stays withdrawn', () => {
+  it('allows rewritten habits 1, 2, and 3 while habit 4 stays withdrawn', () => {
     expect(isWithdrawnArticle('1.1.1_UnconsciousSuccess')).toBe(false);
-    expect(isWithdrawnArticle('1.1.2_EndWithFuture')).toBe(true);
+    expect(isWithdrawnArticle('1.1.2_EndWithFuture')).toBe(false);
     expect(isWithdrawnArticle('1.1.3_PrioritizingMostImportant')).toBe(false);
+    expect(isWithdrawnArticle('1.1.4_WinWinThinking')).toBe(true);
     const contents = [
       mockContent('1.1.1_UnconsciousSuccess', 'メンタリティー', true),
       mockContent('1.1.2_EndWithFuture', 'メンタリティー', true),
       mockContent('1.1.3_PrioritizingMostImportant', 'メンタリティー', true),
+      mockContent('1.1.4_WinWinThinking', 'メンタリティー', true),
     ];
     expect(filterPublishedArticleContents(contents).map((c) => c.id)).toEqual([
       '1.1.1_UnconsciousSuccess',
+      '1.1.2_EndWithFuture',
       '1.1.3_PrioritizingMostImportant',
     ]);
   });
