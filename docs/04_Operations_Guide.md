@@ -476,7 +476,7 @@ Data API / MCP で `exam`・`tab`・`content_id`・`subject` をディメンシ�
 
 ### **ブログ記事（`src/content/articles`）の精査・非公開・再公開**
 
-自己啓発・思考法系 MDX **当初 28 本**（ファイル名＝`learning_contents.id`＝URL の `contentId`）を内容精査するため、サイトから外す／戻す手順。2026-09-20 以降、`1.1.1_UnconsciousSuccess` は個別再公開済みでゲート残は **27 本**。仕様の正本は [02_System_Spec.md](02_System_Spec.md) の「ブログ記事の一時非表示」。
+自己啓発・思考法系 MDX **当初 28 本**（ファイル名＝`learning_contents.id`＝URL の `contentId`）を内容精査するため、サイトから外す／戻す手順。2026-09-22 以降、`1.1.1`〜`1.1.4` は個別再公開済みでゲート残は **24 本**。仕様の正本は [02_System_Spec.md](02_System_Spec.md) の「ブログ記事の一時非表示」。
 
 #### 二段構成（どちらも必要）
 
@@ -521,13 +521,17 @@ DB だけでは直 URL で MDX が読める。アプリゲートだけでは一�
 4. **メンタリティタブ**: `mindset` タブは公開中のメンタリティ／思考法記事が 1 件以上あると自動表示（[`getVisibleTabs`](../src/pages/articles/articleHubFilters.ts)）。
 5. **齟齬防止**: 「DB は公開・ゲートだけ残っている」と「ゲートは外したが DB が未公開」の状態を避ける。再公開は **SQL（true）とゲート削除デプロイを同じメンテナンス枠で連続実施**する（数分の逆順は許容し、完了後に `/articles` と直リンクの両方を確認）。
 
-#### 個別再公開（2026-09-20・その１のみ）
+#### 個別再公開（2026-09-20〜22・その１〜４）
 
-ユーザー明示で `1.1.1_UnconsciousSuccess` だけ差し替え・公開 ON。残 27 ID はゲートと `is_published = false` のまま。28 本一括の republish SQL は使わない。
+ユーザー明示で `1.1.1`〜`1.1.4` を道真稿へ差し替え・公開 ON。残 24 ID はゲートと `is_published = false` のまま。28 本一括の republish SQL は使わない。`1.1.5` 以降は withdrawn のまま。
 
-1. MDX を確定稿へ置換（YAML 禁止、`publishedAt` は既存 `2025-04-29` を維持）。
+1. MDX を確定稿へ置換（YAML 禁止、`publishedAt` は既存日付を維持）。
 2. [`withdrawnArticleIds.ts`](../src/constants/withdrawnArticleIds.ts) から **当該 ID のみ**外す。
-3. [`scripts/database/20260920_learning_contents_unconscious_success_publish.sql`](../scripts/database/20260920_learning_contents_unconscious_success_publish.sql) で当該行の `is_published = true`（MCP `execute_sql`、DELETE なし）。
+3. 個別 SQL で当該行の `is_published = true`（MCP `execute_sql`、DELETE なし）。
+   - その１: [`20260920_learning_contents_unconscious_success_publish.sql`](../scripts/database/20260920_learning_contents_unconscious_success_publish.sql)
+   - その２: [`20260921_learning_contents_end_with_future_publish.sql`](../scripts/database/20260921_learning_contents_end_with_future_publish.sql)
+   - その３: [`20260921_learning_contents_prioritizing_most_important_publish.sql`](../scripts/database/20260921_learning_contents_prioritizing_most_important_publish.sql)
+   - その４: [`20260922_learning_contents_win_win_thinking_publish.sql`](../scripts/database/20260922_learning_contents_win_win_thinking_publish.sql)
 
 #### 確認観点
 
