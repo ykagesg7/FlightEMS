@@ -2,7 +2,7 @@
 
 **正本**: 本書（別チャットの Agent はここを先に読む）  
 **作成**: 2026-08-08  
-**最終更新**: 2026-09-15（2026-W37 正本 L0 マージ待ち）  
+**最終更新**: 2026-09-22（2026-W38 正本 L0 マージ待ち）  
 **実施ペース**: **火曜 09:00 JST**（ISO 週: 月曜 00:00〜日曜 23:59、プロパティ TZ = Asia/Tokyo）。欠席週は行を飛ばさず「スキップ」理由を1行残す。**土曜に別窓で埋めない。**
 
 関連:
@@ -81,11 +81,11 @@
 
 | ID | 課題 | 優先 | 状態 | 次アクション | 最終言及 |
 |----|------|------|------|--------------|----------|
-| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に UTM を検討。W37 も referral 主体（2/3 sess）でメール切り出し困難 | W37 |
-| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | W37 は **users 3**（W36: 2）。週次比較はノイズ大 | W37 |
-| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W37 は `/planning` PV 0。`chunk_recovery_reload` **0**。Sentry は CI 未取得 | W37 |
-| T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W37 は kebab 着地なし → closed 維持 | W37 |
-| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。W37 にも quiz_* イベント **0** | W36 |
+| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に UTM を検討。W38 も referral 主体（1/33 sess）でメール切り出し困難 | W38 |
+| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | W38 は **users 24**（W37: 3）。週次比較はノイズ大 | W38 |
+| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W38 は `/planning` PV 36。`chunk_recovery_reload` **2**。Sentry は CI 未取得 | W38 |
+| T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W38 でも kebab 着地あり（`CPL-Hub-Meteorology` / `unconscious-success`）。リダイレクト継続確認 | W38 |
+| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。W38 にも quiz_* イベント **35** | W36 |
 
 ---
 
@@ -122,6 +122,47 @@
 ---
 
 ## 週次ログ（新しい週が上）
+
+### 2026-W38（2026-09-14〜2026-09-20 / レビュー 2026-09-22）
+
+**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 35686630776](https://github.com/ykagesg7/FlightEMS/actions/runs/35686630776) / Sentry MCP（未取得）
+**比較**: 直前 ISO 週 2026-W37 のみ（旧土曜窓とは比べない）
+
+#### 現状（Facts）
+
+| 指標 | 今週 | 直前 ISO 週 |
+|------|-----:|------------:|
+| activeUsers | **24** | 3 |
+| sessions | **33** | 3 |
+| screenPageViews | **312** | 3 |
+| engagedSessions | **14** | 1 |
+
+- **日次**: 20260916: users 1 / sess 1 / PV 3、20260918: users 5 / sess 5 / PV 22、20260919: users 9 / sess 11 / PV 65、20260920: users 10 / sess 16 / PV 222
+- **上位ページ**: `/` PV 89、`/profile` PV 44、`/auth` PV 43、`/planning` PV 36、`/articles` PV 33、`/welcome` PV 20、`/test` PV 17、`/mission` PV 14
+- **流入**: (direct) / (none) sess 26、bing / organic sess 6、accounts.google.com / referral sess 1
+- **端末**: desktop sess 22、mobile sess 11
+- **イベント**: `quiz_hub_view` 14、`quiz_session_start` 8、`quiz_start` 8、`quiz_session_complete` 5、`chunk_recovery_reload` 2
+- **Sentry**: CI 未取得。7d unresolved / `FLIGHT-ACADEMY-4` lastSeen は未確認。
+
+#### 課題（Issues）
+
+1. users は直前 ISO 比で増加（24 / 前週 3）。PV 312（前週 3）（T-02）。
+2. 流入は referral 主体（1/33 sess）でメール効果が見えない（T-01）。
+3. Sentry は CI 未取得。GA 上の `chunk_recovery_reload` は 2（T-03）。
+4. quiz_* イベント 35（T-05）。
+
+#### 解決案（Actions）
+
+- [ ] T-01: 次のダイジェスト送信前に UTM 付与を実装検討（承認後）。
+- [ ] T-03: Desktop Sentry MCP または Issues UI で `FLIGHT-ACADEMY-4` lastSeen を確認。
+- [ ] T-05: W38 の quiz 計測をベースラインに残す。
+- [x] T-04: W38 でも kebab 着地を再確認 → closed 維持。
+
+#### メモ / 生データ
+
+- Actions artifact `ga4-2026-W38`（正本には生 JSON を貼らない）
+
+---
 
 ### 2026-W37（2026-09-07〜2026-09-13 / レビュー 2026-09-15）
 
@@ -380,6 +421,7 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-09-22 | 自動追記 **2026-W38**（フェーズ2b CI）。Sentry は CI 未取得。 |
 | 2026-09-15 | 自動追記 **2026-W37**（フェーズ2b CI）。Sentry は CI 未取得。 |
 | 2026-09-12 | フェーズ2b を CI 自動 PR（`weekly-telemetry-draft-pr`）に変更。人の L0 は `APPROVE-DOC` のみ。Cursor Skill は任意。 |
 | 2026-09-09 | **2026-W36** を追記（フェーズ2b）。PV 2 の極小週。A2-a ベースライン週だが quiz イベント 0。 |
