@@ -121,6 +121,7 @@
 | **７つの習慣その１ 個別再公開** | [`20260920_learning_contents_unconscious_success_publish.sql`](20260920_learning_contents_unconscious_success_publish.sql) — `1.1.1_UnconsciousSuccess` のみ `is_published=true`。残 withdrawn 27 本は触らない。**2026-09-20 MCP 本番適用** |
 | **７つの習慣その３ 個別再公開** | [`20260921_learning_contents_prioritizing_most_important_publish.sql`](20260921_learning_contents_prioritizing_most_important_publish.sql) — `1.1.3_PrioritizingMostImportant` のみ `is_published=true`。残 withdrawn 26 本は触らない。**2026-09-21 MCP 本番適用** |
 | **７つの習慣その２ 個別再公開** | [`20260921_learning_contents_end_with_future_publish.sql`](20260921_learning_contents_end_with_future_publish.sql) — `1.1.2_EndWithFuture` のみ `is_published=true`。残 withdrawn 25 本は触らない。**2026-09-21 MCP 本番適用** |
+| **７つの習慣その４ 個別再公開** | [`20260922_learning_contents_win_win_thinking_publish.sql`](20260922_learning_contents_win_win_thinking_publish.sql) — `1.1.4_WinWinThinking` のみ `is_published=true`。残 withdrawn 24 本は触らない。**2026-09-22 MCP 本番適用** |
 | **cohort RPC 権限 hardening** | `20260621_cohort_rpc_hardening.sql`（cron RPC を service_role のみ、anon EXECUTE revoke、`notification_deliveries` SELECT-own RLS） |
 | **cohort RPC INVOKER ラッパー（Security Advisor 0029 解消）** | `20260603_cohort_rpc_security_invoker_wrappers.sql` — 本番適用済（MCP `cohort_rpc_security_invoker_wrappers_20260603`） |
 | **profiles ログイン時 MFA 設定** | `20260622_profiles_mfa_required_at_login.sql`（`mfa_required_at_login` 列） / `20260624_profiles_mfa_required_at_login_default_off.sql`（デフォルト **false**・opt-in） |

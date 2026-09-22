@@ -80,7 +80,7 @@ export type ArticleMeta = {
 
 #### **ブログ記事（`src/content/articles`）の一時非表示（2026年4月）**
 
-- **対象**: 自己啓発・思考法系 MDX。2026-09-20 時点でゲート残は **27 本**（`1.1.1_UnconsciousSuccess` は道真稿へ差し替え後に個別再公開。ファイル名＝`learning_contents.id`＝URL の `contentId`）。
+- **対象**: 自己啓発・思考法系 MDX。2026-09-22 時点でゲート残は **24 本**（`1.1.1`〜`1.1.4` は道真稿へ差し替え後に個別再公開。ファイル名＝`learning_contents.id`＝URL の `contentId`）。
 - **アプリ**: [`src/constants/withdrawnArticleIds.ts`](../src/constants/withdrawnArticleIds.ts) に ID を列挙。[`ArticleDetailPage`](../src/pages/articles/ArticleDetailPage.tsx) で本文・コメント・関連テストを出さず精査中メッセージを表示。[`MDXLoader`](../src/components/mdx/MDXLoader.tsx) でも同 ID の直読み込みをブロック。[`articlesIndex`](../src/utils/articlesIndex.ts) から除外し関連記事に載せない。
 - **DB**: [`scripts/database/20260414_blog_articles_unpublish_learning_contents.sql`](../scripts/database/20260414_blog_articles_unpublish_learning_contents.sql) で `is_published = false`。再公開時は定数を空にしたうえで [`20260414_blog_articles_republish_learning_contents.sql`](../scripts/database/20260414_blog_articles_republish_learning_contents.sql) で `true` に戻す。運用手順・MCP 実行記録は [04_Operations_Guide.md](04_Operations_Guide.md)「ブログ記事の精査・非公開・再公開」。
 
