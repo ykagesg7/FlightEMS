@@ -52,6 +52,19 @@ chcp 65001
 
 正本の更新手順は Skill [`docs-sync`](../.cursor/skills/docs-sync/SKILL.md)。公開コピーは `npm run sync:public-docs`。
 
+### Vercel Ignored Build Step（docs 専用で本番を焼かない）
+
+Hobby Deployment Storage 対策。週次テレメトリ稿など **docs だけの push** で Cesium 込みの Vite 本番を増やさない。
+
+| 項目 | 内容 |
+|------|------|
+| コマンド | `vercel.json` の **`ignoreCommand`**: `node scripts/vercel-ignore-build.mjs` |
+| skip（exit 0） | 変更がすべて `docs/`、`public/docs/`、`.cursor/`、`.github/`、`artifacts/`、`e2e/`、`scripts/telemetry/`、ルートの `AGENTS.md` / `DESIGN.md` / `README.md` |
+| build（exit 1） | `src/`（記事 MDX）、`api/`、`vercel.json`、`public/`（`public/docs` 以外）、`index.html`、package ファイル、その他スキップ対象外 |
+| 安全側 | 前回デプロイ SHA が無い / `git diff` 失敗 → **ビルドする** |
+
+rewrite・ハブ HTML・article drip cron は触らない。テスト: `src/__tests__/config/vercelIgnoreBuild.test.ts`。
+
 **実行しない**: `scripts/docs-auto-update/` は欠ファイル `docs/ROADMAP.md` をまだ前提にする（改名先は [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)）。`npm run docs:update` / `docs:validate` / `docs:setup` と git hook は走らせない。本環境の `.git/hooks` は sample のみ（`docs:setup` 未適用）。コード本体の撤去はこの docs パッチの範囲外。
 
 ### 文字エンコーディング・改行の補助（任意）

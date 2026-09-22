@@ -11,6 +11,8 @@ type VercelConfig = {
   routes?: unknown;
   rewrites?: VercelRewrite[];
   cleanUrls?: boolean;
+  ignoreCommand?: string;
+  crons?: unknown;
 };
 
 const config = JSON.parse(
@@ -41,5 +43,10 @@ describe('vercel.json SPA fallback', () => {
     const aviationIndex = rewrites.findIndex((rule) => rule.source === '/api/aviation-weather');
     expect(aviationIndex).toBeGreaterThanOrEqual(0);
     expect(aviationIndex).toBeLessThan(spaIndex);
+  });
+
+  it('skips docs-only git deploys without changing SPA fallback or crons', () => {
+    expect(config.ignoreCommand).toBe('node scripts/vercel-ignore-build.mjs');
+    expect(Array.isArray(config.crons)).toBe(true);
   });
 });

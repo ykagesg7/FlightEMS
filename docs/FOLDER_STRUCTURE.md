@@ -119,6 +119,7 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
   - `cpl_exam/`: CPL 問題 CSV 取込。仕様は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) の **CPL Master CSV 取込仕様** 節
   - `docs-auto-update/`: **実行しない**（欠ファイル `ROADMAP.md` 前提。手順は Skill `docs-sync`）
   - `sync-public-docs.mjs`: `docs/` から `public/docs/` へのホワイトリスト同期（`npm run sync:public-docs`。`prebuild` でも実行）
+  - `vercel-ignore-build.mjs`: Vercel Ignored Build Step（docs 専用コミットで本番デプロイを作らない。詳細は [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)）
 
 #### `e2e/`
 - **目的**: **Playwright** によるエンドツーエンドテスト（`npm run test:e2e`）

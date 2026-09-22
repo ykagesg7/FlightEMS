@@ -113,6 +113,7 @@ npm run dev
 
 - チーム slug: **`flight-lms-projects`**
 - プロジェクト名: **`flight-lms`**（フレームワーク Vite）
+- **Ignored Build Step**: `vercel.json` の **`ignoreCommand`** が [`scripts/vercel-ignore-build.mjs`](../scripts/vercel-ignore-build.mjs) を呼ぶ。`docs/`・`public/docs/`・週次テレメトリ稿などだけが変わったコミットは Vite 本番を焼かない。**`src/`（記事 MDX 含む）・`api/`・`vercel.json`・`public/`（`public/docs` 以外）・`index.html`・package ファイルが変わったら必ずビルド**する。rewrite / ハブ HTML / article drip cron は別設定。
 - **本番 URL（Production）**: **`https://flight-lms.vercel.app/`** — GA4 データストリームのサイト URL・計測確認の基準とする（運用・トラブルシュートは [04_Operations_Guide.md](04_Operations_Guide.md)）
 - ローカル修復: `.vercel/project.json` が**存在しない／別プロジェクトを指している**と上記エラーになる。`npx vercel link` でチーム **`flight-lms-projects`** → プロジェクト **`flight-lms`** を選ぶか、次の JSON に差し替える（`orgId` / `projectId` は Vercel 上の値と一致していること）:
 

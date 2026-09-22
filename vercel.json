@@ -63,6 +63,7 @@
   "devCommand": "vite --port 5173 --strictPort",
   "buildCommand": "npm run vercel-build",
   "installCommand": "npm install",
+  "ignoreCommand": "node scripts/vercel-ignore-build.mjs",
   "outputDirectory": "dist",
   "crons": [
     {
