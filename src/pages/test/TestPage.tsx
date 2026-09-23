@@ -13,6 +13,7 @@ import { syncStreakToUserLearningProfile } from '../../utils/streak';
 import { QuizActiveFilterChips } from './components/QuizActiveFilterChips';
 import { QuizComponent } from './components/QuizComponent';
 import { QuizFilterDrawer } from './components/QuizFilterDrawer';
+import { QuizHubStatusPanel } from './components/QuizHubStatusPanel';
 import { QuizHubToolbar } from './components/QuizHubToolbar';
 import { QuizResultsView } from './components/QuizResultsView';
 import { TestSubjectFilterSection } from './components/TestSubjectFilterSection';
@@ -52,6 +53,7 @@ import {
 } from './testHubFilters';
 import { scrollToQuizAnchor } from './utils/scrollToQuizAnchor';
 import { buildQuizLearningSessionInsert } from './utils/buildQuizLearningSession';
+import { buildQuizSessionTitle } from './utils/quizSessionTitle';
 
 /** Supabase / PostgREST エラーをユーザー向け文言に変換 */
 function formatQuizSaveError(err: unknown): string {
@@ -78,6 +80,7 @@ const TestPage: React.FC = () => {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fetchFailure, setFetchFailure] = useState(false);
   const [quizFinished, setQuizFinished] = useState(false);
   const [userAnswers, setUserAnswers] = useState<UserQuizAnswer[]>([]);
   const [saving, setSaving] = useState(false);
@@ -181,6 +184,7 @@ const TestPage: React.FC = () => {
   const runFetch = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setFetchFailure(false);
     try {
       let result: { questions: QuizQuestion[]; error: string | null };
       if (previewQuestionId) {
@@ -206,9 +210,11 @@ const TestPage: React.FC = () => {
       }
       setQuestions(result.questions);
       setError(result.error);
+      setFetchFailure(false);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '問題の取得に失敗しました';
       setError(message);
+      setFetchFailure(true);
       setQuestions([]);
     } finally {
       setLoading(false);
@@ -586,8 +592,6 @@ const TestPage: React.FC = () => {
       <div ref={quizContentAnchorRef} className="scroll-mt-20 md:scroll-mt-24">
       {loading ? (
         <div className="p-8 text-center text-lg">問題を取得中...</div>
-      ) : error ? (
-        <div className="p-8 text-center text-red-500">{error}</div>
       ) : quizFinished ? (
         <div ref={quizResultsAnchorRef} className="scroll-mt-20 md:scroll-mt-24">
           <QuizResultsView
@@ -651,31 +655,29 @@ const TestPage: React.FC = () => {
           ) : null}
         </div>
       ) : questions.length === 0 ? (
-        <div className="rounded-2xl border border-brand-primary/15 bg-[var(--panel)]/80 p-10 text-center shadow-lg">
-          <p className="text-lg font-semibold text-[var(--text-primary)]">
-            {hubState.tab === 'diagnostic' && !diagnosticStarted
-              ? '上の「10問診断を開始」をタップしてください'
-              : hubState.tab === 'subject' && !subjectSelected
-                ? '科目を選択してください'
-                : '出題できる問題が見つかりませんでした。'}
-          </p>
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
-            {hubState.tab === 'diagnostic'
-              ? '診断は全科目から重要度の高い問題を出題します。'
-              : hubState.tab === 'subject' && !subjectSelected
-                ? '科目を選ぶと、サブ科目と問題数で出題条件を絞り込めます。'
-                : 'タブ・フィルタを変更して再度お試しください。'}
-          </p>
-        </div>
+        <QuizHubStatusPanel
+          tab={hubState.tab}
+          diagnosticStarted={diagnosticStarted}
+          subjectSelected={subjectSelected}
+          message={error}
+          isFetchFailure={fetchFailure}
+          onStartDiagnostic={() => {
+            requestScrollToQuiz();
+            setDiagnosticStarted(true);
+          }}
+          onGoToDiagnosticTab={() => updateHubState({ tab: 'diagnostic' })}
+          onGoToSubjectTab={() => updateHubState({ tab: 'subject' })}
+          onRetry={() => void runFetch()}
+        />
       ) : (
         <QuizComponent
-          quizTitle={
-            retryIncorrectMode
-              ? `不正解復習 (${questions.length}問)`
-              : hubState.tab === 'diagnostic'
-                ? `実力診断 (${questions.length}問)`
-                : `${selectedSubject} 4択テスト`
-          }
+          quizTitle={buildQuizSessionTitle({
+            tab: hubState.tab,
+            questionCount: questions.length,
+            subject: selectedSubject,
+            subjectSelected,
+            retryIncorrectMode,
+          })}
           questions={questions}
           onSubmitQuiz={handleSubmitQuiz}
           onBackToContents={() => {}}
