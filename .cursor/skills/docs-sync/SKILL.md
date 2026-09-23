@@ -28,8 +28,11 @@ Confirm docs update when you:
 
 | Role | File | Content |
 |------|------|---------|
-| Entry & summary | `docs/README.md` | Overview, recent changes, links |
-| Product growth & NSM | `docs/Product_North_Star_and_GTM.md` | ALPM, onboarding, PMF, AI, legal UX |
+| Entry | `docs/README.md` | Reading order and hubs only (no change log) |
+| Product stages | `docs/Product_North_Star_and_GTM.md` | §0 current stage and on-hold items; §1–§7 are May history |
+| Current work | `docs/01_Current_Status_and_Roadmap.md` | Stage-2 workstreams and current state |
+| Completed work | `docs/Closed_Sprints.md` | What exists, invariants, final numbers |
+| Work allocation | `docs/ops/Work_Allocation.md` | Cloud / local / GrokBot / Actions / Cron |
 | Specification | `docs/02_System_Spec.md` | /test, Dashboard, DB, data flows |
 | Structure | `docs/Component_Structure_Guide.md` | `src/` layout, components |
 | Repo folders | `docs/FOLDER_STRUCTURE.md` | Top-level dirs (non-`src/`) |

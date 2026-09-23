@@ -1,59 +1,78 @@
-# 完了スプリント索引（2026-05〜09）
+# 完了サマリ（段階1 と 2026-02〜09 の実装）
 
-**最終更新**: 2026-09-20  
-**ライブ正本**: 実行中の状態は [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)。週次の着手行は [05_Content_Pipeline.md](05_Content_Pipeline.md) Phase 2 表。Articles 運用は [ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)。
+**最終更新**: 2026-09-23  
+**役割**: 完了した仕事について「何があるか・どこが正本か・壊してはいけないこと・最終数値」だけを置く。経緯と週次ログは git 履歴（`git log -- docs/`）。現行の計画は [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)。
 
-月次 Implementation / Content Sprint ファイル（May Late〜September、計 7 本）は **完了ログの重複**だったため削除した。全文は Git 履歴。10月以降の月次ファイルは起票しない。
+月次 Implementation / Content Sprint ファイル、旧 Phase A〜E 表、週次 W18〜W35 の着手行、README の変更日報は削除した。復元は `git log -- docs/<filename>.md`。
 
-## 畳み込んだファイル
+---
 
-| ファイル（削除） | 最終 git | 根拠 |
-|------------------|----------|------|
-| May_2026_Late_Content_Sprint | 2026-09-19 | W20〜W22 完了。週次は 05。 |
-| June_2026_Implementation_Plan | 2026-06-21 | W23〜W26 完了。01 v4.0.34。 |
-| June_2026_Content_Sprint | 2026-07-01 | 同上の週次メモ重複。 |
-| July_2026_Implementation_Plan | 2026-07-16 | W27〜W30・Phase C クローズ。01 v4.0.41。 |
-| July_2026_Content_Sprint | 2026-07-22 | 同上の週次メモ重複。 |
-| August_2026_Implementation_Plan | 2026-08-13 | W31〜W35 完了と自己申告。週次は 05。 |
-| September_2026_Implementation_Plan | 2026-08-13 | 作成後 **一度も週次状態を更新していない**（W36〜W40 が全て「予定」のまま）。 |
+## 1. 何があるか（正本リンク）
 
-復元: `git log -- docs/<filename>.md`。
+| 領域 | あるもの | 正本 |
+|------|----------|------|
+| CPL 記事 | Phase 1 **19/19** 本文化。Phase 2 単元（`3.1.7`〜`8`・`3.2.7`〜`12`・`3.3.10`〜`12`・`3.4.5`〜`7`・`3.5.4`〜`5`）も MDX あり | [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md) |
+| PPL 記事 | Subject 1〜5 の Phase 1 MDX。`PPL-2-3-3` / `2-3-4` は **骨子のみ（MDX なし）** | [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[content_outlines/PPL_Meteorology_2026/README.md](content_outlines/PPL_Meteorology_2026/README.md) |
+| 記事↔Quiz 連携 | `learning_test_mapping`、Callout（CPL→PPL 復習）、Quiz 結果からの関連記事 | [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)「問題–記事連携契約」 |
+| Quiz Hub `/test` | 科目選択・PPL/CPL 範囲フィルタ・SRS・Review・A2-a（科目 default 5問） | [02_System_Spec.md](02_System_Spec.md) |
+| ゲーミフィケーション | 第1〜2期（習熟ジャーニー、SRS・遅延再テスト・弱点改善・編隊クエスト）、XP RPC、`learning_milestones` 台帳 | [02_System_Spec.md](02_System_Spec.md) |
+| cohort 週次 | 週次ミッション・MVP/TOP3・in-app/Brevo 通知（cron 日曜 09:00 JST） | [02_System_Spec.md](02_System_Spec.md)、[04_Operations_Guide.md](04_Operations_Guide.md) |
+| Profile Hub / MFA | 4 セクション IA、TOTP、リカバリーコード、アカウント削除 | [02_System_Spec.md](02_System_Spec.md)、ルート `DESIGN.md` |
+| Planning | `computeNavLog` 一本化、Setup / Route / NavLog / Briefing、Debrief、SWIM NOTAM、航空機レイヤー（airplanes.live） | [02_System_Spec.md](02_System_Spec.md)、[Flight_Debrief_Tools.md](Flight_Debrief_Tools.md) |
+| 3D 空域エクスプローラ | 隔離ルート `/explore/airspace-3d`（Cesium）。導線は NavLog カードヘッダー | [02_System_Spec.md](02_System_Spec.md) Flight Planning |
+| Articles 基盤 | `virtual:articles-index`、記事 HTML prerender（OG）、日次公開 cron、週次 digest メール | [02_System_Spec.md](02_System_Spec.md)、[04_Operations_Guide.md](04_Operations_Guide.md) |
+| CP シリーズ | `CP-1-1`〜`CP-5-5` の MDX。`CP-5-6`〜`5-9` は DB 行のみで **MDX なし** | [content_outlines/Contact_Transition_2026/README.md](content_outlines/Contact_Transition_2026/README.md) |
+| FN（旧 FMT Season 1） | 1-1〜1-10 の MDX がストック（ファイル名・id は `FMT-1-*` のまま） | [content_outlines/FN_Formation_2026/README.md](content_outlines/FN_Formation_2026/README.md) |
+| 週次テレメトリ | GA4 artifact → Slack Facts → docs PR → `APPROVE-DOC` | [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) |
+| 監視 | Sentry（DSN）、GA4 `G-22VFYSM69J` 本番受信 | [04_Operations_Guide.md](04_Operations_Guide.md) |
 
-## 第2波（2026-09-20）— ポインタ重複と実装済カード
+撤去済み: Shop・アプリ内ギャラリー・体験搭乗（2026-04-12）。戦略上の扱いは [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) §6。
 
-| ファイル（削除） | 最終更新（本文） | 根拠 |
-|------------------|------------------|------|
-| Project_Overview.md | 2026-05-10 | docs/README の薄型ポインタ。独自仕様なし |
-| Sustainability_API_Memo.md | 2026-05-06 | 00 §3.1 へ折込。ドラフト1ページ |
-| Phase_C_Quality_Preparation.md | 2026-05-07（6月末行のみ追記） | 06 §1 へ折込。カバレッジ表は 7月以降 Closed_Sprints が新しい |
-| Docs_Consistency_Decisions.md | 2026-03/04 決定ログ | 生きているのは §2.4 ID 表のみ → 08 へ。05/07/08/10 は統合しない判断は 08 に1行残す |
-| W38_episode_cards.md / W39_episode_cards.md | 対応 MDX が git にある | W20/W21/W22 と同じ実装後削除 |
+## 2. 壊してはいけないこと
 
-## ルート文書（動かさない）
+| 不変条件 | 確認の仕方 |
+|----------|------------|
+| SPA 直打ち6パス（`/articles` `/planning` `/test` `/auth` `/auth?mode=signup` `/profile`）が Vercel `NOT_FOUND` にならない | `vercel.json` の rewrite を触らない。直打ちで `#root` |
+| ハブ HTML に Cesium（`Cesium.js` / `vendor-cesium`）を全ページ注入しない | 3D は `/explore/airspace-3d` に隔離 |
+| Planning 離脱後に Leaflet が残らない（unmount） | `/planning` → HOME・LOGIN・Mission |
+| `award_article_read_xp` / `award_quiz_session_xp` が 403 に戻らない（2xx または `already_awarded`） | DEFINER impl + INVOKER ラッパー（[02](02_System_Spec.md)） |
+| 学習カタログ（stats / comments / mapping / views）の 401、`learning_sessions` の CHECK 400 が戻らない | GRANT と CHECK を消さない |
+| Quiz → Review が空に戻らない。記事の読了は本文末センチネル | [02](02_System_Spec.md) |
+| 記事の日次公開 cron `10 15 * * *`（UTC＝00:10 JST）と `articlePublishSchedule` | cron と schedule を無断で変えない |
+| MDX のメタは ESM `export const meta`。YAML frontmatter 禁止 | `.cursor/rules/mdx-article-guide.mdc` |
+| `public/docs` は `npm run sync:public-docs` の出力。手編集しない | `prebuild` で上書きされる |
+| Vercel Hobby の Deployment Storage 10 GB、Serverless 関数数の上限 | API は統合エンドポイント（`?action=` / `?job=`）で増やさない |
+| UI 変更は承認後。パッケージ版は変えない | ルート `DESIGN.md`、`.cursor/rules/core-project.mdc` |
 
-- **DESIGN.md**: AGENTS.md 優先順位 1 と `.cursor/rules`（`core-project` / `ui-design`）がルート `DESIGN.md` を UI 正本とする。中途半端な移動はエージェント入口を壊す。
-- **README.md**: GitHub 入口。短いクイックスタート＋ docs 索引のままルートに残す。詳細は `docs/README.md`。
+## 3. 最終数値（最後に実測した値）
 
-## 月次 DONE（01 / 05 と一致する範囲だけ）
+| 指標 | 値 | 時点・出典 |
+|------|----|-----------|
+| CPL Phase 1 本文化 | **19/19** | 2026-04-12 |
+| PPL MDX（git 実数） | **63/150** | 2026-09-23 `src/content/lessons/PPL-*`。旧記録の 64 は MDX の無い `PPL-2-3-3` を含む |
+| `learning_test_mapping` | **147 行**、verified 未マッピング **10**（レガシー） | 2026-08-12 W35 MCP |
+| verified 設問 | **2,129** | 2026-05-28 Quiz 品質整理 |
+| CBT 暫定束ね | **104/104**（記録のみ。当該 SQL は git に無い） | 2026-08-12 |
+| `src` 実効 Statements | **21.17%**（507 tests 緑） | 2026-08-12 W35 |
+| 法規 Callout（CPL→PPL） | **8/8** | 2026-07-10 |
+| 週間 GA4 users | 一桁（W36: 2、W37: 3）。`quiz_*` は W34〜W37 連続 **0** | [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) |
 
-| 月 | ISO 週 | 残してよい事実 |
-|----|--------|----------------|
-| 5月後半 | W20〜W22 | `3.2.7`〜`3.2.9` 深文化と対応 PPL。Gemini 素案は実装後削除済み。 |
-| 6月 | W23〜W26 | PPL Subject 2 Phase 1 **12/12**。`src` **18.07%**（当時）。 |
-| 7月 | W27〜W30 | Subject 3/4 Phase 1 完走。Callout 法規 8/8。`src` **21.18%**。C-1〜C-5 未承認。 |
-| 8月 | W31〜W35 | Articles ドリップ継続。CBT 暫定束ね **104/104** は 05 の記録。A2-a 実装（科目 default 5問）。coverage **21.17%**。 |
-| 9月 | W36〜W40 | **守れたのは週3本の CP ドリップだけ。** A2-a は GA4 `quiz_*` が連続 0 のため判定不能。CBT Phase B・PPL-2-3-4 は未着手。10月計画ファイルは作らない。 |
+A2-a（科目 default 5問）の効果は、母数不足のため **判定不能で閉じた**。CBT Phase B、Quiz Hub UX 追加、C-1〜C-5（ブランド・SEO・PWA・A11y・Lighthouse CI）は未着手のまま段階2の対象外。
 
-## 欠ファイルだったメモ（作らない）
+## 4. 欠ファイル（作らない）
 
-次のリンク先は **git に一度も存在しない**（`git log -- <path>` が空）。本文を捏造しない。
+次のリンク先は git に一度も存在しない。本文を捏造しない。
 
 | 欠ファイル | 代わりに読む場所 |
 |------------|------------------|
-| CBT_Example_Reclassification_Memo | 05 の **W33〜W35** 行（暫定束ねの記録）。SQL `20260812_learning_test_mapping_cbt_*` も **リポジトリに無い**。 |
-| Post_Exam_Action2_Action3_Policy_Memo | 01 の A2-a 行、[02_System_Spec.md](02_System_Spec.md) の Quiz 節。成功指標の「2週連続改善」は母数不足で未判定。 |
+| CBT_Example_Reclassification_Memo | 本書 §3 の CBT 行。`20260812_learning_test_mapping_cbt_*` もリポジトリに無い |
+| Post_Exam_Action2_Action3_Policy_Memo | [02_System_Spec.md](02_System_Spec.md) の Quiz 節。「2週連続改善」は未判定で閉じた |
 
-## PPL-2-3-3 / 2-3-4
+## 5. 参考として残した旧文書
 
-- **2-3-3**: 01 / 05 は W34 で「深文化 + mapping」と書く。`src/content/lessons/` に MDX は無い。`20260812_*ppl233*.sql` も git に無い。残っているのは [骨子](content_outlines/PPL_Meteorology_2026/PPL-2-3-3_gemini_brief.md) のみ。
-- **2-3-4**: 未執筆。骨子のみ [PPL-2-3-4_gemini_brief.md](content_outlines/PPL_Meteorology_2026/PPL-2-3-4_gemini_brief.md)。
+| 文書 | 扱い |
+|------|------|
+| [Article_Coverage_Backlog.md](Article_Coverage_Backlog.md) | 2026-07 のマッピング・スナップショット。現行の数値は本書 §3 |
+| [09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md) | CPL シリーズ索引。MDX から `/docs/` リンクされるため残す |
+| [10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md) | 航空工学の単元対照。新規執筆計画ではない |
+| [06_Long_Term_Execution.md](06_Long_Term_Execution.md) | 品質・分析の長期メモ。カバレッジ 50% などの数値目標は保留 |

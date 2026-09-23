@@ -1,22 +1,46 @@
 # プロダクト北極星・GTM・PMF（経営方針の正本）
 
-**最終更新**: 2026年9月20日（現状注記。合意本文は 2026-05-10）  
-**バージョン**: Product North Star v1.0.1
+**最終更新**: 2026年9月23日（§0 段階1〜2 と保留を追加。§1〜§7 は 2026-05-10 合意の履歴）  
+**バージョン**: Product North Star v2.0.0
 
 ---
 
 ## このドキュメントの目的
 
-NotebookLM 上の **第1回 Flight Academy 経営会議（2026-05-10）** で整理した **プロダクト成長上の合意** を、リポジトリ内の **単一の正本**として固定する。  
-独立運営の根幹・3本柱・CPL 主軸は引き続き **[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)**。本書は **成長指標・最初の価値（PMF）・オンボーディング・AI 役割・データ・法務 UX** に特化する。
+プロダクト成長の方針（北極星・段階・指標）の正本。独立運営の根幹・3本柱は **[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)**。実行状態は [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)。
 
-**推奨読み順**: [docs/README.md](README.md) → [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) → **本書** → [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)
+**現行の方針は §0 だけ**。§1〜§7 は 2026-05-10 の第1回経営会議の合意を **履歴として残したもの**で、現行の計画ではない。
 
 本書は **法的助言ではない**。条文・契約の確定は所管および専門家への確認が前提。
 
-**現状（2026-09-20）**: ALPM の計測契約（§1.2）は **未決定のまま**。週次テレメトリは ALPM を出していない。いま毎週出荷しているのは T-4 向け CP ドリップであり、気象・通信 PMF スライスでも二重オンボーディングでもない。実行状態は [01](01_Current_Status_and_Roadmap.md)。この段落は合意を置き換えない。
+---
+
+## 0. 段階と現在地（2026-09-23 承認・現行）
+
+### 段階1（完了）
+
+PPL/CPL 記事の本文化と、記事↔Quiz 連携。今後は穴埋めのみ。何があるかと最終数値は [Closed_Sprints.md](Closed_Sprints.md)。
+
+### 段階2（いま）
+
+| 柱 | 内容 |
+|----|------|
+| 記事 | CP / **FN**（旧 FMT Season 1。以後 FN に統一）と、メンタリティの道真稿改稿（非公開 24 本）を **週3本** でドリップ |
+| 体験 | Planning を用途別にシンプルに整理。記事ページは LMS 型のパッケージ（コース）として提供 |
+| ツール | 3D GIS（空域・Waypoint の立体表示）。差別化と理解促進。**無料枠で運用できる方式**が前提 |
+| 指標 | 週次 users、記事→Quiz 遷移、Planning 利用。ALPM は保留 |
+
+ワークストリームと次の一手は [01](01_Current_Status_and_Roadmap.md) §2。
+
+### 保留
+
+二重オンボーディング（§2）、気象・通信 PMF（§3）、アプリ内 AI ナビ（§4）、10代同意 UX（§6）、テストカバレッジ 50%、PPL 75/150。再開するときは本節を更新してから着手する。
 
 ---
+
+## 履歴: 2026-05-10 合意（現行ではない）
+
+以下 §1〜§7 は、NotebookLM 上の第1回経営会議で整理した合意の記録。ALPM の計測契約（§1.2）は未決定のまま保留に入った。
 
 ## 1. 北極星指標（NSM）：ALPM
 
@@ -104,7 +128,7 @@ NotebookLM 上の **第1回 Flight Academy 経営会議（2026-05-10）** で整
 ### 5.1 方針
 
 - 初期段階から **興味関心** と **学習ログ**（記事進捗、クイズ、セッション等）を蓄積し、将来の **推奨付き選択モデル（アダプティブ・ラーニング）** への移行に備える。
-- **既存基盤**（概念レベル）: `learning_progress`、`learning_sessions`、`user_learning_profiles`、`user_test_results`、`quiz_sessions` 等。詳細表は [docs/README.md](README.md) の DB 節。
+- **既存基盤**（概念レベル）: `learning_progress`、`learning_sessions`、`user_learning_profiles`、`user_test_results`、`quiz_sessions` 等。詳細表は [02_System_Spec.md](02_System_Spec.md)。
 
 ### 5.2 実装の正本
 
@@ -128,7 +152,7 @@ NotebookLM 上の **第1回 Flight Academy 経営会議（2026-05-10）** で整
 
 ---
 
-## 7. 次のアクション（議事録ベース・チェックリスト）
+## 7. 次のアクション（2026-05 議事録。すべて保留）
 
 | # | アクション | 担当（ロール） | 成果物の行き先（目安） |
 |---|------------|----------------|------------------------|
@@ -145,7 +169,8 @@ NotebookLM 上の **第1回 Flight Academy 経営会議（2026-05-10）** で整
 | ドキュメント | 内容 |
 |--------------|------|
 | [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) | 独立運営・3本柱・ターゲット・コンプライアンス原則 |
-| [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) | Phase・エンジニアリング KPI（本書の ALPM と役割分担） |
+| [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) | 段階2 のワークストリームと現在地 |
+| [Closed_Sprints.md](Closed_Sprints.md) | 段階1 の完了サマリ・不変条件・最終数値 |
 | [02_System_Spec.md](02_System_Spec.md) | アプリ・DB・API の現行仕様と将来のイベント設計先 |
-| [05_Content_Pipeline.md](05_Content_Pipeline.md) | CPL 記事パイプライン・週次計画 |
+| [05_Content_Pipeline.md](05_Content_Pipeline.md) | CP / FN / メンタリティの配信表と記事パイプライン |
 | [06_Long_Term_Execution.md](06_Long_Term_Execution.md) | 品質・分析・長期バックログ |

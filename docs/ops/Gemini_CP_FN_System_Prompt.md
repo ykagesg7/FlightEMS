@@ -1,6 +1,6 @@
 # Gemini システムプロンプト — CP / FN（操縦 Lessons）
 
-**用途**: Contact（CP）・編隊（リポジトリ上は FMT。通称 FN 可）の Lessons 本文。  
+**用途**: Contact（CP）・編隊 FN（旧 FMT。ファイル名・id は `FMT-*` のまま）の Lessons 本文。  
 **連続性**: Obsidian `Ideas/SeriesBible_ZaneShadow`（現在は二人とも教官。**見習い道真禁止**）  
 **契約**: [Contact_Transition_2026/README.md](../content_outlines/Contact_Transition_2026/README.md)「公開本文の契約」  
 **カード**: 執筆前の Episode card は当該週の `content_outlines/` に置く。**実装後削除**（W38/W39 は MDX 済のため削除）。正本は [Contact README](../content_outlines/Contact_Transition_2026/README.md)。  
