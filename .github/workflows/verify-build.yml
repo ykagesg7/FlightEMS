@@ -32,6 +32,9 @@ jobs:
       - name: Run tests
         run: npm run test:run
 
+      - name: Check Cesium CDN version pin
+        run: node scripts/check-cesium-cdn-version.mjs
+
       - name: Generate test coverage
         run: npm run test:coverage
         continue-on-error: true

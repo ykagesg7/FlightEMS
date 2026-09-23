@@ -57,9 +57,15 @@ function contentTypeFor(filePath: string): string {
  * Does NOT inject Cesium.js into index.html (vite-plugin-cesium did, which
  * initialized WASM on every SPA hub including Articles/Quiz).
  */
-export function cesiumStaticAssetsPlugin(): Plugin {
+export type CesiumStaticAssetsOptions = {
+  /** When true, skip copying to dist (Preview CDN spike). */
+  skipCopy?: boolean;
+};
+
+export function cesiumStaticAssetsPlugin(options: CesiumStaticAssetsOptions = {}): Plugin {
   let outDir = 'dist';
   const cesiumRoot = resolveCesiumBuildRoot();
+  const skipCopy = options.skipCopy ?? false;
 
   return {
     name: 'cesium-static-assets',
@@ -98,6 +104,10 @@ export function cesiumStaticAssetsPlugin(): Plugin {
       });
     },
     async closeBundle() {
+      if (skipCopy) {
+        console.log('[cesium-static-assets] skip copy: CESIUM_BASE_URL points at CDN');
+        return;
+      }
       if (!existsSync(cesiumRoot)) {
         console.warn(
           `[cesium-static-assets] skip copy: missing ${cesiumRoot}. 3D airspace workers will 404.`,
