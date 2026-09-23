@@ -30,7 +30,7 @@ Heat-to-Guns、CAS 9-Line、FN の HCA / CZ は載せない。Pitchback / Sliceb
 
 FN と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通過後だけ MDX。ストック登録。**全話を一括起票しない。**
 
-**Season 1（1-1〜1-3）は MDX 済（W34 月水金）。** Season 2 の 2-1〜2-6 は精緻化済（W35: 2-1〜2-3、W36: 2-4〜2-6）。**git の MDX は 5-5 まで**（W39）。5-6〜5-9 は SQL ストック行があるが **MDX は無い**。「シリーズ完」は DB 行の話であり git 正本ではない。
+**Season 1（1-1〜1-3）は MDX 済（W34 月水金）。** Season 2 の 2-1〜2-6 は精緻化済（W35: 2-1〜2-3、W36: 2-4〜2-6）。**git の MDX は 5-9 まで完結**（W40〜W41 に schedule 済・週2本 cadence）。CP シリーズ完。
 
 ---
 
@@ -145,10 +145,10 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 | 5-3 | `CP-5-3_LazyEight` | `cp-5-3-lazy-eight` | 3 | Lazy Eight | **5.34** | **精緻化済・W39 日 9/20** |
 | 5-4 | `CP-5-4_BarrelRoll` | `cp-5-4-barrel-roll` | 4 | Barrel roll | **5.35** | **精緻化済・W39 水 9/23** |
 | 5-5 | `CP-5-5_Loop` | `cp-5-5-loop` | 5 | Loop | **5.36** | **精緻化済・W39 金 9/25** |
-| 5-6 | `CP-5-6_SplitSImmelmann` | `cp-5-6-split-s-immelmann` | 6 | Split-S / Immelmann | **5.37–5.38** | **ストック** |
-| 5-7 | `CP-5-7_CubanEight` | `cp-5-7-cuban-eight` | 7 | Cuban Eight | **5.39** | **ストック** |
-| 5-8 | `CP-5-8_Cloverleaf` | `cp-5-8-cloverleaf` | 8 | Cloverleaf | **5.40** | **ストック** |
-| 5-9 | `CP-5-9_Chandelle` | `cp-5-9-chandelle` | 9 | Chandelle | **5.41** | **ストック** |
+| 5-6 | `CP-5-6_SplitSImmelmann` | `cp-5-6-split-s-immelmann` | 6 | Split-S / Immelmann | **5.37–5.38** | **精緻化済・W40 日 9/28** |
+| 5-7 | `CP-5-7_CubanEight` | `cp-5-7-cuban-eight` | 7 | Cuban Eight | **5.39** | **精緻化済・W40 水 10/1** |
+| 5-8 | `CP-5-8_Cloverleaf` | `cp-5-8-cloverleaf` | 8 | Cloverleaf | **5.40** | **精緻化済・W41 日 10/5** |
+| 5-9 | `CP-5-9_Chandelle` | `cp-5-9-chandelle` | 9 | Chandelle | **5.41** | **精緻化済・W41 水 10/8** |
 
 `order_index`: **624–632**。
 
