@@ -105,6 +105,7 @@ const router = createBrowserRouter([
           { path: 'courses/:courseId', ...lazyRoute(() => import('./pages/courses/CourseRedirectPage')) },
           { path: 'account', element: <Navigate to="/profile" replace /> },
           { path: 'test', ...lazyRoute(() => import('./pages/test/TestPage'), true) },
+          { path: 'quiz', ...lazyRoute(() => import('./pages/test/TestPage'), true) },
           { path: 'ranks', ...lazyRoute(() => import('./pages/mission/components/RankBenefitsPage')) },
           { path: 'admin', ...lazyProtectedRoute(() => import('./pages/admin/AdminHubPage'), { requireAdmin: true }) },
           { path: 'admin/ranks', ...lazyProtectedRoute(() => import('./pages/admin/RankConfigPage'), { requireAdmin: true }) },

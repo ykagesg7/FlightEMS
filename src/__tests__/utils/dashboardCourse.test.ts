@@ -32,8 +32,8 @@ describe('dashboardCourse', () => {
   };
 
   const contents = [
-    mockContent({ id: 'a', category: 'PPL', sub_category: '工学', order_index: 2, title: '記事A' }),
-    mockContent({ id: 'b', category: 'PPL', sub_category: '工学', order_index: 1, title: '記事B' }),
+    mockContent({ id: 'a', category: 'PPL', sub_category: '航空工学', order_index: 2, title: '記事A' }),
+    mockContent({ id: 'b', category: 'PPL', sub_category: '航空工学', order_index: 1, title: '記事B' }),
   ];
 
   it('resolvePrimaryCourseId prefers profile license_target', () => {

@@ -390,8 +390,14 @@ const GuestHomeContent: React.FC = () => {
 
               <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
                 <Link
-                  to="/auth?mode=signup"
+                  to="/articles?course=ppl"
                   className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/60 bg-brand-primary px-8 py-4 text-sm font-semibold text-[var(--bg)] shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-brand-primary-dark"
+                >
+                  PPL 学科コースを始める
+                </Link>
+                <Link
+                  to="/auth?mode=signup"
+                  className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/40 bg-[var(--panel)] px-8 py-4 text-sm font-semibold text-[var(--text-primary)] transition-all duration-300 hover:scale-[1.02] hover:border-brand-primary/60 hover:bg-brand-primary/10"
                 >
                   アカウントを作成する
                 </Link>
@@ -400,12 +406,6 @@ const GuestHomeContent: React.FC = () => {
                   className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/40 bg-[var(--panel)] px-8 py-4 text-sm font-semibold text-[var(--text-primary)] transition-all duration-300 hover:scale-[1.02] hover:border-brand-primary/60 hover:bg-brand-primary/10"
                 >
                   Flight Planning を体験する
-                </Link>
-                <Link
-                  to="/articles"
-                  className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/40 bg-[var(--panel)] px-8 py-4 text-sm font-semibold text-[var(--text-primary)] transition-all duration-300 hover:scale-[1.02] hover:border-brand-primary/60 hover:bg-brand-primary/10"
-                >
-                  記事から始める（登録不要）
                 </Link>
               </div>
 

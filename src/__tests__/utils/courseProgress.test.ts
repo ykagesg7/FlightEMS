@@ -34,9 +34,9 @@ describe('courseProgress', () => {
   };
 
   const contents = [
-    mockContent({ id: 'a', category: 'PPL', sub_category: '工学', order_index: 2 }),
-    mockContent({ id: 'b', category: 'PPL', sub_category: '工学', order_index: 1 }),
-    mockContent({ id: 'c', category: 'PPL', sub_category: '気象', order_index: 1 }),
+    mockContent({ id: 'a', category: 'PPL', sub_category: '航空工学', order_index: 2 }),
+    mockContent({ id: 'b', category: 'PPL', sub_category: '航空工学', order_index: 1 }),
+    mockContent({ id: 'c', category: 'PPL', sub_category: '航空気象', order_index: 1 }),
   ];
 
   it('matches sub_category modules', () => {
@@ -73,7 +73,7 @@ describe('courseProgress', () => {
 
   it('findUncategorizedArticles returns hub articles outside all course modules', () => {
     const released = [
-      mockContent({ id: 'ppl-eng', category: 'PPL', sub_category: '工学' }),
+      mockContent({ id: 'ppl-eng', category: 'PPL', sub_category: '航空工学' }),
       mockContent({ id: 'orphan', category: 'PPL', sub_category: 'その他' }),
     ];
     const hubMetas = {
@@ -82,6 +82,21 @@ describe('courseProgress', () => {
     };
     const orphans = findUncategorizedArticles(released, hubMetas);
     expect(orphans.map((article) => article.id)).toEqual(['orphan']);
+  });
+
+  it('maps PPL course modules to learning_contents sub_category values', () => {
+    const ppl = getCourseById('ppl')!;
+    const engineeringModule = ppl.modules[0];
+    const lawArticle = mockContent({
+      id: 'PPL-5-1-1_AviationLawDefinitions',
+      category: 'PPL',
+      sub_category: '航空法規',
+    });
+    expect(matchesModuleSource(lawArticle, undefined, engineeringModule.source)).toBe(false);
+
+    const lawModule = ppl.modules.find((module) => module.title === '航空法規');
+    expect(lawModule).toBeDefined();
+    expect(matchesModuleSource(lawArticle, undefined, lawModule!.source)).toBe(true);
   });
 
   it('maps every mentality series in article metas to a course module', () => {

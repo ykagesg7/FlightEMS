@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { CourseDef } from '../../../data/courses';
+import { useContentQuizAvailability } from '../../../hooks/useContentQuizAvailability';
 import { buildContentTestHref } from '../../test/testHubFilters';
 import { CPL_CATEGORY, PPL_CATEGORY } from '../../../constants/articleHubCategories';
 import type { LearningContent } from '../../../types';
@@ -51,6 +52,15 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
     [course, articleContents, articleMetas, getArticleProgress]
   );
 
+  const moduleQuizContentIds = useMemo(
+    () =>
+      progress.modules
+        .map((module) => module.items[0]?.contentId)
+        .filter((id): id is string => Boolean(id)),
+    [progress.modules]
+  );
+  const { availableIds: quizAvailableIds } = useContentQuizAvailability(moduleQuizContentIds);
+
   const coursePercentage =
     progress.totalCount > 0 ? Math.round(progress.completionRate * 100) : 0;
 
@@ -77,7 +87,11 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
         {progress.modules.map((module) => {
           const modulePct =
             module.totalCount > 0 ? Math.round(module.completionRate * 100) : 0;
-          const quizHref = moduleQuizHref(module, course.id, articleContents);
+          const firstContentId = module.items[0]?.contentId;
+          const quizHref =
+            firstContentId && quizAvailableIds.has(firstContentId)
+              ? moduleQuizHref(module, course.id, articleContents)
+              : null;
           const isEmpty = module.totalCount === 0;
 
           return (

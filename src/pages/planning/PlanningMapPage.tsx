@@ -16,6 +16,7 @@ import { importWithChunkRetry } from '../../utils/lazyWithRetry';
 import type { FlightTrack } from './tracks/types';
 import { DebriefPanel } from './components/debrief/DebriefPanel';
 import PlanningTab from './components/flight/PlanningTab';
+import { PlanningContextNote } from './components/PlanningContextNote';
 import { PlanningModeSegment } from './components/PlanningModeSegment';
 import { PlanningNotamSheetProvider } from './components/map/PlanningNotamSheetProvider';
 import { createInitialFlightPlan } from './createInitialFlightPlan';
@@ -126,6 +127,7 @@ function PlanningMapPageInner({
               <div className="mb-4">
                 <PlanningModeSegment />
               </div>
+              <PlanningContextNote />
               {leftPanelContent}
             </div>
             <div className="h-full min-h-[calc(100vh-5rem)] min-w-0">
@@ -154,6 +156,10 @@ function PlanningMapPageInner({
 
         <div className="px-4 pb-2">
           <PlanningModeSegment />
+        </div>
+
+        <div className="px-4 pb-2">
+          <PlanningContextNote />
         </div>
 
         <div className="mb-2">
