@@ -351,7 +351,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W42',
     seriesTitle: 'FN（編隊）',
     intro:
-      '来週は編隊の入口2本。V.F.Rの血の掟と滑走路のシンクロ。金曜はメンタリティ枠。',
+      '来週は編隊の入口2本（日・水）と金曜メンタリティ1本。V.F.Rの血の掟、滑走路のシンクロ、７つの習慣その７（シリーズ完走）。',
     articles: [
       {
         id: 'FMT-1-1_WingmanVFR',
@@ -366,6 +366,13 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         title: '第2話：滑走路のシンクロ ～的からの脱出と周辺視野～',
         slug: '/articles/fmt-1-2-runway-lineup-takeoff',
         hook: '的から脱出。周辺視野でリーダーを捉えろ。',
+      },
+      {
+        id: '1.1.7_SharpenTheSaw',
+        publishDate: '2026-10-16',
+        title: '【７つの習慣】その７、道真公と学ぶ「刃を研ぐ」',
+        slug: '/articles/sharpen-the-saw',
+        hook: '切れぬ刃で伐るな。四つの刃を毎日少しずつ研げ。',
       },
     ],
   },
