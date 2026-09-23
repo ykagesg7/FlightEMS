@@ -7,29 +7,29 @@ test.describe('Planning leftover navigation', () => {
     await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible({ timeout: 60_000 });
     await page.getByRole('link', { name: 'PLANNING' }).click();
     await expect(page).toHaveURL(/\/planning$/);
-    await expect(page.getByRole('link', { name: 'Mission Dashboardへ戻る' })).toBeVisible({
+    await expect(page.getByRole('link', { name: 'HOMEへ戻る' })).toBeVisible({
       timeout: 60_000,
     });
 
     await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'HOME', exact: true }).click();
     await expect(page).toHaveURL('/');
-    await expect(page.getByRole('link', { name: 'Mission Dashboardへ戻る' })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'HOMEへ戻る' })).toHaveCount(0);
     await expect(page.locator('.leaflet-container')).toHaveCount(0);
 
     await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'PLANNING' }).click();
     await expect(page).toHaveURL(/\/planning$/);
     await page.getByRole('link', { name: 'LOGIN', exact: true }).click();
     await expect(page).toHaveURL(/\/auth$/);
-    await expect(page.getByRole('link', { name: 'Mission Dashboardへ戻る' })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'HOMEへ戻る' })).toHaveCount(0);
     await expect(page.locator('.leaflet-container')).toHaveCount(0);
 
     await page.goto('/planning');
-    await expect(page.getByRole('link', { name: 'Mission Dashboardへ戻る' })).toBeVisible({
+    await expect(page.getByRole('link', { name: 'HOMEへ戻る' })).toBeVisible({
       timeout: 60_000,
     });
-    await page.getByRole('link', { name: 'Mission Dashboardへ戻る' }).click();
+    await page.getByRole('link', { name: 'HOMEへ戻る' }).click();
     await expect(page).not.toHaveURL(/\/planning$/);
-    await expect(page.getByRole('link', { name: 'Mission Dashboardへ戻る' })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'HOMEへ戻る' })).toHaveCount(0);
     await expect(page.locator('.leaflet-container')).toHaveCount(0);
   });
 });

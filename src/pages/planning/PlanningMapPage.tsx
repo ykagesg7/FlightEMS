@@ -114,11 +114,11 @@ function PlanningMapPageInner({
         <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
           <div className="px-4 pt-4 pb-2 shrink-0">
             <Link
-              to="/mission"
+              to="/"
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              Mission Dashboardへ戻る
+              HOMEへ戻る
             </Link>
           </div>
           <div className="mb-2 flex-1 grid grid-cols-[minmax(28rem,1.05fr)_minmax(0,1fr)] gap-0 items-stretch min-h-[calc(100vh-5rem)] min-w-0">
@@ -144,11 +144,11 @@ function PlanningMapPageInner({
       <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
         <div className="px-4 pt-4 pb-2">
           <Link
-            to="/mission"
+            to="/"
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Mission Dashboardへ戻る
+            HOMEへ戻る
           </Link>
         </div>
 

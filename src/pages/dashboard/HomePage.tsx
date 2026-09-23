@@ -13,6 +13,8 @@ import { ProfileCompletionNudge } from '../../components/profile/ProfileCompleti
 import { InAppNotificationBell } from '../../components/learning/InAppNotificationBell';
 import { SubjectAccuracyChart } from './components/SubjectAccuracyChart';
 import { buildWeakSubjectHref } from '../test/testHubFilters';
+import { DashboardCourseSection } from './components/DashboardCourseSection';
+import { filterGuestAnnouncements } from '../../utils/guestAnnouncements';
 
 const useReveal = (deps?: React.DependencyList) => {
   useEffect(() => {
@@ -121,55 +123,8 @@ const DashboardContent: React.FC = () => {
     loadMetrics();
   }, [user]);
 
-  if (loading) {
-    return <DashboardSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div
-            className={`
-              rounded-xl border-2 p-6 text-center
-              border-brand-primary/50 bg-brand-primary/10
-            `}
-          >
-            <p className="text-red-400 mb-4">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className={`
-                px-4 py-2 rounded-lg border-2
-                border-brand-primary/60 text-brand-primary hover:bg-brand-primary/20
-              `}
-            >
-              再試行
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!metrics) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div
-            className={`
-              rounded-xl border-2 p-6 text-center
-              border-brand-primary/30 bg-brand-primary/10
-            `}
-          >
-            <p className="text-[color:var(--text-muted)]">データがありません</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   const borderColor = 'border-brand-primary/60';
-  const weakest = metrics.weakTopics[0];
+  const weakest = metrics?.weakTopics[0];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -186,11 +141,54 @@ const DashboardContent: React.FC = () => {
           <InAppNotificationBell className="sm:max-w-sm sm:shrink-0" />
         </div>
 
+        {error && (
+          <div
+            className={`
+              mb-6 rounded-xl border-2 p-4 text-center
+              border-brand-primary/50 bg-brand-primary/10
+            `}
+          >
+            <p className="mb-3 text-red-400">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className={`
+                px-4 py-2 rounded-lg border-2
+                border-brand-primary/60 text-brand-primary hover:bg-brand-primary/20
+              `}
+            >
+              再試行
+            </button>
+          </div>
+        )}
+
+        <DashboardCourseSection forceFallback={Boolean(error)} />
         <LearningJourneyCard />
         <div className="mb-6">
           <DailyTasks variant="inline" limit={2} />
         </div>
 
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="rounded-xl border-2 border-brand-primary/30 bg-brand-primary/10 p-6 animate-pulse"
+              >
+                <div className="h-6 w-32 bg-gray-700/30 rounded mb-4" />
+                <div className="h-12 w-full bg-gray-700/20 rounded" />
+              </div>
+            ))}
+          </div>
+        ) : !metrics ? (
+          <div
+            className={`
+              mb-6 rounded-xl border-2 p-6 text-center
+              border-brand-primary/30 bg-brand-primary/10
+            `}
+          >
+            <p className="text-[color:var(--text-muted)]">学習サマリーを取得できませんでした</p>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Card variant="hud" padding="md" className={borderColor}>
             <CardContent>
@@ -245,12 +243,14 @@ const DashboardContent: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+        )}
 
         <ProfileCompletionNudge
           dismissStorageKey="profile_completion_nudge_home_v1"
           className="mb-6 max-w-3xl"
         />
 
+        {metrics && (
         <details className="mb-6 group rounded-xl border border-brand-primary/30 bg-[var(--panel)]/40 open:pb-4">
           <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-brand-primary marker:content-none [&::-webkit-details-marker]:hidden">
             <span className="inline-flex items-center gap-2">
@@ -281,6 +281,7 @@ const DashboardContent: React.FC = () => {
             <SubjectAccuracyChart />
           </div>
         </details>
+        )}
       </div>
     </div>
   );
@@ -291,22 +292,22 @@ const DashboardContent: React.FC = () => {
  */
 const GuestHomeContent: React.FC = () => {
   const { announcements, isLoading, error } = useAnnouncements();
+  const guestAnnouncements = filterGuestAnnouncements(announcements);
 
   // お知らせデータが読み込まれた後にrevealアニメーションを実行
-  // 依存配列にannouncements.lengthを含めることで、データ読み込み後に再実行
-  useReveal([announcements.length, isLoading]);
+  useReveal([guestAnnouncements.length, isLoading]);
 
   const corePillars = [
     {
       id: 'planning',
-      title: 'Flight Planning',
+      title: 'フライトプランニング',
       summary: '地図、経路、気象情報をひとつの画面で確認し、訓練前の準備精度を高めます。',
       href: '/planning',
       cta: '計画を見る',
     },
     {
       id: 'quiz',
-      title: 'Quiz',
+      title: 'クイズ',
       summary: 'Practice、Exam、Review を切り替えながら、理解度と弱点を継続的に把握できます。',
       href: '/test',
       cta: '問題を解く',
@@ -320,28 +321,46 @@ const GuestHomeContent: React.FC = () => {
     },
   ];
 
+  const courseEntryLinks = [
+    {
+      id: 'ppl',
+      label: 'PPL 学科コース',
+      description: 'Private Pilot 学科試験向けの 5 科目を順番に学べます。',
+      href: '/articles?course=ppl',
+    },
+    {
+      id: 'cpl',
+      label: 'CPL 学科コース',
+      description: 'Commercial Pilot 学科試験向けのコースです。',
+      href: '/articles?course=cpl',
+    },
+  ];
+
+  const guestHighlights = [
+    'PPL/CPL 五科目をコース順に学べる',
+    'クイズで弱点を確認できる',
+    'フライトプランニングで訓練準備までつなげられる',
+  ];
+
   const trainingFlow = [
     {
       step: '01',
       title: '読む',
       desc: '学習記事とレッスンで背景知識を理解し、用語と原理を先に押さえます。',
+      href: '/articles',
     },
     {
       step: '02',
       title: '解く',
       desc: 'クイズで理解を確認し、モード別に弱点を切り分けながら復習します。',
+      href: '/test',
     },
     {
       step: '03',
       title: '計画する',
       desc: 'Flight Planning でルートと条件を整理し、実践へつながる判断力を養います。',
+      href: '/planning',
     },
-  ];
-
-  const operationalHighlights = [
-    'Home ダッシュボードで学習状況を一目で把握',
-    '主要機能を 3 本柱に整理したシンプルな導線',
-    '訓練・学習・復習を同じブランド体験で統一',
   ];
 
   return (
@@ -359,17 +378,17 @@ const GuestHomeContent: React.FC = () => {
         <div className="container mx-auto px-4 pt-16 pb-20 lg:pt-24 lg:pb-24">
           <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="max-w-3xl">
-              <div className="mb-4 inline-flex items-center rounded-full border border-brand-primary/20 bg-brand-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-primary">
-                Flight Training Platform
+              <div className="mb-4 inline-flex items-center rounded-full border border-brand-primary/20 bg-brand-primary/10 px-4 py-2 text-xs font-semibold tracking-[0.12em] text-brand-primary">
+                PPL/CPL 学科試験対策
               </div>
               <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
                 Learn Smart.
               </h1>
               <p className="mb-8 max-w-2xl text-lg leading-relaxed text-[color:var(--text-muted)] sm:text-xl">
-                学習・試験対策・フライトプランニングを、ひとつの流れで。
+                PPL/CPL 学科試験対策とフライトプランニングを、ひとつの流れで。
               </p>
 
-              <div className="mb-8 flex flex-col gap-4 sm:flex-row">
+              <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
                 <Link
                   to="/auth?mode=signup"
                   className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/60 bg-brand-primary px-8 py-4 text-sm font-semibold text-[var(--bg)] shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-brand-primary-dark"
@@ -382,10 +401,31 @@ const GuestHomeContent: React.FC = () => {
                 >
                   Flight Planning を体験する
                 </Link>
+                <Link
+                  to="/articles"
+                  className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/40 bg-[var(--panel)] px-8 py-4 text-sm font-semibold text-[var(--text-primary)] transition-all duration-300 hover:scale-[1.02] hover:border-brand-primary/60 hover:bg-brand-primary/10"
+                >
+                  記事から始める（登録不要）
+                </Link>
+              </div>
+
+              <div className="mb-8 grid gap-3 sm:grid-cols-2">
+                {courseEntryLinks.map((course) => (
+                  <Link
+                    key={course.id}
+                    to={course.href}
+                    className="rounded-xl border border-brand-primary/30 bg-[var(--panel)]/80 px-4 py-4 transition-colors hover:border-brand-primary/50 hover:bg-brand-primary/5"
+                  >
+                    <div className="mb-1 text-sm font-semibold text-brand-primary">{course.label}</div>
+                    <div className="text-sm leading-relaxed text-[color:var(--text-muted)]">
+                      {course.description}
+                    </div>
+                  </Link>
+                ))}
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3">
-                {operationalHighlights.map((highlight) => (
+                {guestHighlights.map((highlight) => (
                   <div
                     key={highlight}
                     className="rounded-xl border border-brand-primary/20 bg-[var(--panel)]/80 px-4 py-4 text-sm leading-relaxed text-[color:var(--text-muted)] backdrop-blur-sm"
@@ -405,8 +445,8 @@ const GuestHomeContent: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/35 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-                  <div className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-brand-primary">
-                    Core Modules
+                  <div className="mb-4 text-xs font-semibold tracking-[0.12em] text-brand-primary">
+                    主要機能
                   </div>
                   <div className="grid gap-3">
                     {corePillars.map((pillar) => (
@@ -433,7 +473,7 @@ const GuestHomeContent: React.FC = () => {
             最新情報
           </h2>
           <p className="text-sm text-[color:var(--text-muted)]">
-            学習コンテンツ、機能改善、運用上のお知らせをまとめて確認できます。
+            新記事や試験対策のヒントなど、学習者向けのお知らせを掲載しています。
           </p>
         </div>
 
@@ -466,9 +506,9 @@ const GuestHomeContent: React.FC = () => {
               <p className="text-xs text-red-400 mt-2">{error.message}</p>
             )}
           </div>
-        ) : announcements.length > 0 ? (
+        ) : guestAnnouncements.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {announcements.map((announcement, index) => {
+            {guestAnnouncements.map((announcement, index) => {
               if (process.env.NODE_ENV === 'development') {
                 console.log('AnnouncementCard レンダリング:', { id: announcement.id, title: announcement.title, index });
               }
@@ -488,39 +528,6 @@ const GuestHomeContent: React.FC = () => {
         )}
       </section>
 
-      {/* Core pillars */}
-      <section className="relative container mx-auto px-4 pb-20">
-        <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold text-brand-primary sm:text-4xl">
-            主要機能
-          </h2>
-          <p className="text-sm text-[color:var(--text-muted)]">
-            Flight Planning、Quiz、学習記事 の 3 本柱で学習体験を整理しています。
-          </p>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          {corePillars.map((pillar, index) => (
-            <Link
-              key={pillar.id}
-              to={pillar.href}
-              className="reveal opacity-0 translate-y-4 transition-all duration-700 ease-out"
-              style={{ transitionDelay: `${index * 120}ms` }}
-            >
-              <div className="group h-full rounded-2xl border border-brand-primary/20 bg-[var(--panel)] p-7 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-brand-primary/50 hover:shadow-2xl">
-                <div className="mb-4 inline-flex rounded-full border border-brand-primary/20 bg-brand-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-brand-primary">
-                  {pillar.title}
-                </div>
-                <h3 className="mb-3 text-2xl font-semibold text-[var(--text-primary)]">{pillar.title}</h3>
-                <p className="mb-6 text-sm leading-relaxed text-[color:var(--text-muted)]">{pillar.summary}</p>
-                <div className="text-sm font-semibold text-brand-primary transition-transform duration-300 group-hover:translate-x-1">
-                  {pillar.cta} →
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
       {/* Training flow */}
       <section className="relative container mx-auto px-4 pb-20">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
@@ -532,37 +539,44 @@ const GuestHomeContent: React.FC = () => {
             />
           </div>
           <div className="reveal opacity-0 translate-y-4 transition-all duration-700 ease-out rounded-3xl border border-brand-primary/20 bg-[var(--panel)] p-8 shadow-xl">
-            <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-brand-primary">
-              Workflow
+            <div className="mb-3 text-xs font-semibold tracking-[0.12em] text-brand-primary">
+              学習の流れ
             </div>
             <h2 className="mb-4 text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">
               学習から実践まで、
               <span className="text-brand-primary">迷わない流れ</span>
             </h2>
             <p className="mb-8 text-sm leading-relaxed text-[color:var(--text-muted)]">
-              Home のダッシュボードを起点に、読む、解く、計画する、の順で自然に進められる構成にしています。
-              何を学び、何が不足し、次に何をすべきかを一画面で把握できます。
+              読む、解く、計画する、の順で自然に進められる構成にしています。
+              登録なしでも記事とクイズから始められます。
             </p>
             <div className="space-y-4">
               {trainingFlow.map((item) => (
-                <div
+                <Link
                   key={item.step}
-                  className="rounded-2xl border border-brand-primary/15 bg-[var(--bg)]/50 p-5"
+                  to={item.href}
+                  className="block rounded-2xl border border-brand-primary/15 bg-[var(--bg)]/50 p-5 transition-colors hover:border-brand-primary/40 hover:bg-brand-primary/5"
                 >
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-brand-primary">
-                    Step {item.step}
+                  <div className="mb-2 text-xs font-semibold tracking-[0.12em] text-brand-primary">
+                    ステップ {item.step}
                   </div>
                   <div className="mb-2 text-lg font-semibold text-[var(--text-primary)]">{item.title}</div>
                   <div className="text-sm leading-relaxed text-[color:var(--text-muted)]">{item.desc}</div>
-                </div>
+                </Link>
               ))}
             </div>
-            <div className="mt-8">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Link
+                to="/articles"
+                className="inline-flex items-center text-sm font-semibold text-brand-primary transition-all duration-300 hover:translate-x-1"
+              >
+                記事から始める →
+              </Link>
               <Link
                 to="/auth?mode=signup"
                 className="inline-flex items-center text-sm font-semibold text-brand-primary transition-all duration-300 hover:translate-x-1"
               >
-                登録して Home ダッシュボードを使う →
+                登録して進捗を保存する →
               </Link>
             </div>
           </div>
@@ -587,7 +601,7 @@ const GuestHomeContent: React.FC = () => {
             },
             {
               title: '弱点の可視化',
-              desc: 'Home ダッシュボードを入口に、進捗、正答率、復習候補をまとめて確認できます。',
+              desc: 'クイズ結果から弱点科目を把握し、復習モードで定着を進められます。',
             },
             {
               title: '訓練準備の効率化',
@@ -620,7 +634,7 @@ const GuestHomeContent: React.FC = () => {
             学習と準備を、毎日のルーティンに。
           </h3>
           <p className="mb-8 leading-relaxed text-[color:var(--text-muted)]">
-            アカウントを作成すると、学習進捗、テスト結果、次に進むべきコンテンツを Home からまとめて確認できます。
+            アカウントを作成すると、学習進捗、テスト結果、次に進むべきコンテンツをホームからまとめて確認できます。
           </p>
           <Link
             to="/auth?mode=signup"
