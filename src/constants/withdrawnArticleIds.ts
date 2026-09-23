@@ -8,6 +8,7 @@
  * 1.1.4_WinWinThinking was rewritten (no 黄門 / K's / 埼玉パロディ) and republished 2026-09-22.
  * 1.1.5_SeekFirstToUnderstand was rewritten (no 野球実況 / 忠勝公 / ZOZO) and scheduled W40 Fri 2026-10-02.
  * 1.1.6_Synergize was rewritten (no 夢ゾウ / Top Gun / 清正公) and scheduled W41 Fri 2026-10-09.
+ * 1.1.7_SharpenTheSaw was rewritten (series finale; no hero until user supplies PNG) and scheduled W42 Fri 2026-10-16.
  * mindset tab auto-appears when published mindset articles exist (getVisibleTabs).
  */
 export const WITHDRAWN_ARTICLE_IDS: readonly string[] = [
