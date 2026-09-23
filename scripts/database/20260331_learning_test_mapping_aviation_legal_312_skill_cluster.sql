@@ -3,7 +3,7 @@
 -- Idempotent: UPDATE by learning_content_id; safe to re-run.
 --
 -- Related MDX: src/content/lessons/3.1.2_AviationLegal1.mdx
--- Docs: docs/08_Syllabus_Management_Guide.md (problem-article contract)
+-- Docs: docs/05_Content_Pipeline.md §5 (problem-article contract)
 
 BEGIN;
 

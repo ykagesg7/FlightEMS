@@ -1,7 +1,7 @@
 # Flight Academy ドキュメント索引
 
-**最終更新**: 2026-09-23（段階2 に合わせて読み順とハブだけに縮小）  
-**バージョン**: Documentation Index v5.0
+**最終更新**: 2026-09-23（段階2 正本のみ）  
+**バージョン**: Documentation Index v7.0
 
 本番: [https://flight-lms.vercel.app/](https://flight-lms.vercel.app/)。リポジトリの入口はルート [README.md](../README.md)、エージェント前提は [AGENTS.md](../AGENTS.md)、UI の正本はルート [DESIGN.md](../DESIGN.md)。
 
@@ -17,13 +17,12 @@
 
 | ハブ | ドキュメント |
 |------|--------------|
-| 戦略 | [00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md)、[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) |
+| 戦略・段階 | [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)、[Closed_Sprints.md](Closed_Sprints.md) |
 | 記事・配信 | [05_Content_Pipeline.md](05_Content_Pipeline.md)、[ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)、[content_outlines/README.md](content_outlines/README.md)、[ops/Gemini_CP_FN_System_Prompt.md](ops/Gemini_CP_FN_System_Prompt.md)、[ops/Gemini_Memoir_Article_System_Prompt.md](ops/Gemini_Memoir_Article_System_Prompt.md) |
-| シラバス・記事 ID | [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md) |
-| 仕様・実装 | [02_System_Spec.md](02_System_Spec.md)、[03_Development_Guide.md](03_Development_Guide.md)、[Component_Structure_Guide.md](Component_Structure_Guide.md)、[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)、[GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)、[Flight_Debrief_Tools.md](Flight_Debrief_Tools.md) |
-| 運用・計測 | [04_Operations_Guide.md](04_Operations_Guide.md)、[ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)、[ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md)、[Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)、[06_Long_Term_Execution.md](06_Long_Term_Execution.md) |
-| ツール・外部仕様 | [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md)、[SWIM_Portal/README.md](SWIM_Portal/README.md)、[templates/README.md](templates/README.md) |
-| 参考（旧計画） | [09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)、[Article_Coverage_Backlog.md](Article_Coverage_Backlog.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md) — 現行は [Closed_Sprints.md](Closed_Sprints.md) |
+| 実装・構成 | [Component_Structure_Guide.md](Component_Structure_Guide.md)、[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)、[GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md) |
+| DB・CPL KPI | [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)、[scripts/database/INDEX.md](../scripts/database/INDEX.md) |
+| 運用・計測 | [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)、[Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) |
+| 記事テンプレート | [templates/README.md](templates/README.md) |
 
 ## 更新のしかた
 

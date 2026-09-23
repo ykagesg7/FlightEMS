@@ -2,7 +2,7 @@
 
 **日付**: 2026-06-06  
 **対象**: `/test` Quiz Hub 刷新後（Lane A PR-Q0〜Q5）  
-**方針**: [06_Long_Term_Execution.md](../docs/06_Long_Term_Execution.md) §1.3 — **修正コミットは DESIGN 承認後**。本ファイルは観測メモのみ。
+**方針**: [Closed_Sprints.md](../docs/Closed_Sprints.md) — **修正コミットは DESIGN 承認後**。本ファイルは観測メモのみ。
 
 ---
 

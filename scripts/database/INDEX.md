@@ -1,6 +1,6 @@
 # `scripts/database/` 索引（Supabase・学習DB）
 
-運用・仕様の**長文正本**: [docs/Scripts_Repository_Tooling.md](../../docs/Scripts_Repository_Tooling.md) と [docs/02_System_Spec.md](../../docs/02_System_Spec.md)、CPL メタ／マッピングは [docs/08_Syllabus_Management_Guide.md](../../docs/08_Syllabus_Management_Guide.md)、[docs/09_CPL_Learning_Stub.md](../../docs/09_CPL_Learning_Stub.md)、[docs/db/CPL_KPI_and_Database_Operations.md](../../docs/db/CPL_KPI_and_Database_Operations.md)。
+運用・仕様の**長文正本**: [docs/FOLDER_STRUCTURE.md](../../docs/FOLDER_STRUCTURE.md)（`scripts/`）、CPL メタ／マッピングは [docs/05_Content_Pipeline.md](../../docs/05_Content_Pipeline.md) §5、[docs/Closed_Sprints.md](../../docs/Closed_Sprints.md) §1、[docs/db/CPL_KPI_and_Database_Operations.md](../../docs/db/CPL_KPI_and_Database_Operations.md)。
 
 ## このディレクトリの役割
 
@@ -19,9 +19,9 @@
 | **Articles W33 学び編** `4.2.1`〜`4.2.5` | [`20260808_learning_contents_w33_training_basics.sql`](20260808_learning_contents_w33_training_basics.sql)（ドリップ開始時 `is_published=false` — **2026-08-08 本番 upsert 済**） |
 | **CBT 暫定束ね / PPL-2-3-3（2026-08-12 記録）** | **git に SQL ファイルが無い**。05 W33〜W35 と [Closed_Sprints.md](../../docs/Closed_Sprints.md) を正とする。ファイル名を捏造して置かない。 |
 | PPL／CPL 出題区分・バッチ適用の起点 | `20260324_add_unified_cpl_applicable_exams.sql`、[db/CPL_KPI_and_Database_Operations.md](../../docs/db/CPL_KPI_and_Database_Operations.md) の手順表 |
-| **MLIT 例題集（CPL飛行機）** 2026-06 / 2024-08 | [`20260720_unified_cpl_questions_mlit_sample_202606.sql`](20260720_unified_cpl_questions_mlit_sample_202606.sql)、[`20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql`](20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql)（**2026-07-20 本番適用・ファクトチェック済**。要図除外後 **104問 verified**。手順は [Scripts_Repository_Tooling.md](../../docs/Scripts_Repository_Tooling.md)「MLIT 例題集取込」） |
+| **MLIT 例題集（CPL飛行機）** 2026-06 / 2024-08 | [`20260720_unified_cpl_questions_mlit_sample_202606.sql`](20260720_unified_cpl_questions_mlit_sample_202606.sql)、[`20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql`](20260720_unified_cpl_questions_mlit_sample_202408_backfill.sql)（**2026-07-20 本番適用・ファクトチェック済**。要図除外後 **104問 verified**。手順は `npm run cpl:import`） |
 | CPL 工学・気象・航法 `learning_contents` メタ同期 | `20260412_learning_contents_cpl_engineering_*_meta.sql`、`20260424_learning_contents_cpl_meteo_331_3312_meta.sql`、`20260430_learning_contents_cpl_navigation_341_347_meta.sql` |
-| **PPL Master Subject 5（航空法規）** MDX メタ同期（4＋3＋7 本） | `20260512_learning_contents_ppl_aviation_law_four.sql`（501〜504）、`20260512_learning_contents_ppl_subject5_505_507.sql`（505〜507）、`20260512_learning_contents_ppl_subject5_508_514.sql`（508〜514）（[`PPL_Subject5_Aviation_Law_Structure.md`](../../docs/content_outlines/PPL_Subject5_Aviation_Law_Structure.md)） |
+| **PPL Master Subject 5（航空法規）** MDX メタ同期（4＋3＋7 本） | `20260512_learning_contents_ppl_aviation_law_four.sql`（501〜504）、`20260512_learning_contents_ppl_subject5_505_507.sql`（505〜507）、`20260512_learning_contents_ppl_subject5_508_514.sql`（508〜514）（[05_Content_Pipeline.md](../../docs/05_Content_Pipeline.md) §5、[Closed_Sprints.md](../../docs/Closed_Sprints.md) §1） |
 | **PPL Master Subject 2（航空気象）** Phase 1 | `20260624_learning_contents_ppl_subject2_201.sql`〜`20260625_learning_contents_ppl_subject2_203.sql`、`20260627_learning_contents_ppl_subject2_204.sql`（`order_index` 201〜204） |
 | **PPL Subject 2 `learning_test_mapping`** | [`20260627_learning_test_mapping_ppl_subject2_201_204.sql`](20260627_learning_test_mapping_ppl_subject2_201_204.sql)（大気の基礎/大気・温度・気圧・水分 → `PPL-2-1-1`〜`4`） |
 | **PPL Subject 1 工学 `learning_test_mapping` バックフィル** | [`20260627_backfill_ppl_engineering_test_mapping.sql`](20260627_backfill_ppl_engineering_test_mapping.sql)（**2026-06-28 追補**: `PPL-1-2-1`〜`7` 含め全件本番適用済） |
@@ -139,7 +139,7 @@
 | 通信 3.5.x メタ全集約（本文化後） | `20260507_learning_contents_comm_351_355_meta_sync.sql` |
 | 通信 3.5.5 メタ本文化 | `20260506_learning_contents_comm_355_meta_finalize.sql` |
 | `learning_test_mapping` 追加・修正 | `20260412_learning_test_mapping_*.sql`、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`、§5.2 上位クラスタ追補 `20260505_learning_test_mapping_unmapped_top_clusters.sql`、`20260506_learning_test_mapping_unmapped_tier2.sql`、**W23 法規** `20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql`（`総則/目的`→`3.1.1`）、**W24 空力** `20260606_learning_test_mapping_aero_lift_drag_clusters.sql`（空力基礎 3 クラスタ→`3.2.7`）等（08・14 が索引）。**2026-05**: 緊急通信の再適用・監査のみは `20260505_*.sql` |
-| レガシーテーブル削除（2026-04） | `20260411_drop_*.sql`（[02_System_Spec.md](../../docs/02_System_Spec.md) DB スリム化と対応） |
-| ランク・ゲーミフィケーション（再構築時） | `ppl_rank_*.sql`、`rank_integration*.sql`、`gamification_migration.sql`（[04_Operations_Guide.md](../../docs/04_Operations_Guide.md)） |
+| レガシーテーブル削除（2026-04） | `20260411_drop_*.sql`（[Closed_Sprints.md](../../docs/Closed_Sprints.md) §1） |
+| ランク・ゲーミフィケーション（再構築時） | `ppl_rank_*.sql`、`rank_integration*.sql`、`gamification_migration.sql`（[Component_Structure_Guide.md](../../docs/Component_Structure_Guide.md)） |
 
 詳細リストは増やさず、`docs/**/*.md` 内のリンクを**検索キーにする**。新規のワンオフ適用でも、名前は `YYYYMMDD_目的_snake_case.sql` を維持する。

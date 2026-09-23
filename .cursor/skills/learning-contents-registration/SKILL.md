@@ -56,7 +56,7 @@ Dashboard の SQL Editor で `scripts/database/*.sql` を実行。
 - **PPL Master Subject 5（続）技能証・身体・英語 3 本**: `scripts/database/20260512_learning_contents_ppl_subject5_505_507.sql`（`order_index` 505〜507。本番 MCP `execute_sql` 可。個別 upsert は `register_ppl_article.mjs PPL-5-3-1_PilotCertificateBasics` 等）
 - **PPL Master Subject 5（続）運航・地上・報告ほか 7 本**: `scripts/database/20260512_learning_contents_ppl_subject5_508_514.sql`（`order_index` 508〜514。本番 MCP `execute_sql` 可）
 
-執筆・体裁の全体像: [`docs/09_CPL_Learning_Stub.md`](../../../docs/09_CPL_Learning_Stub.md)
+執筆・体裁の全体像: [`docs/05_Content_Pipeline.md`](../../../docs/05_Content_Pipeline.md) §4–§5、[docs/Closed_Sprints.md`](../../../docs/Closed_Sprints.md) §1
 
 ## learning_contents スキーマ（要約）
 

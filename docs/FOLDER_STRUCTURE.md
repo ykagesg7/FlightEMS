@@ -96,30 +96,26 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **目的**: プロジェクトドキュメントの**正本**（仕様・戦略・運用）
 - **詳細**: [docs/README.md](README.md)を参照
 - **番号付き `00`〜`06`**: AI 初動の**読み順**（[README「AI向けのドキュメント番号」](README.md#ai向けのドキュメント番号読み方)）。それ以外（[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)、旧 `08`–`14`、方針メモ等）は**参照**。
-- **長期バックログ**: [06_Long_Term_Execution.md](06_Long_Term_Execution.md)（リネーム後。旧 15＋旧 12 §5）。`public/docs/` 配信は [sync-public-docs.mjs](../scripts/sync-public-docs.mjs) ホワイトリストのみ
+- **品質・カバレッジ実測**: [Closed_Sprints.md](Closed_Sprints.md) §3、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)。`public/docs/` 配信は [sync-public-docs.mjs](../scripts/sync-public-docs.mjs) ホワイトリストのみ
 
-- **スクリプト系ドキュメント（統合）**: [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)（CPL CSV・Git 補足。`docs-auto-update` は実行しない）。**品質・カバレッジ運用**: [06_Long_Term_Execution.md](06_Long_Term_Execution.md) §1（旧 Phase_C メモを統合。旧 `Phase_Testing_Plan.md` は無い）。**GeoJSON 資産手順**: [GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)。**完了スプリント**: [Closed_Sprints.md](Closed_Sprints.md)
-
-##### `docs/SWIM_Portal/`
-- **目的**: 国土交通省航空局 **SWIM**・**デジタルノータムリクエストサービス**の仕様・手続きの参照用 Markdown（共通編、付録 04、サービス説明書、ユーザーズガイド、情報サービス概要）
-- **索引**: [docs/SWIM_Portal/README.md](SWIM_Portal/README.md)
-- **注意**: `PDF/` 配下の原本 PDF は `.gitignore`（`**/*.pdf`）によりコミット対象外。正本は公式資料に従うこと
+- **スクリプト系ドキュメント**: 下記 [`scripts/`](#scripts) 節。**GeoJSON 資産手順**: [GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)。**完了スプリント**: [Closed_Sprints.md](Closed_Sprints.md)
 
 #### `public/`
 - **目的**: 静的ファイル（画像、GeoJSONなど）
-- **`public/docs/`**: **`docs/` のコピー（手編集しない）**。`npm run sync:public-docs` で `05_Content_Pipeline`・`08`・`09`・`10`・`Article_Coverage_Backlog` 等（[sync-public-docs.mjs](../scripts/sync-public-docs.mjs) の `FILES`）を上書き。MDX から `/docs/*.md` で配信。旧ファイル名（`06_記事…` 等）の **URL 互換は保証しない**（必要ならリダイレクトやリンク更新で対応）。
+- **`public/docs/`**: **`docs/` のコピー（手編集しない）**。`npm run sync:public-docs` でホワイトリスト（[sync-public-docs.mjs](../scripts/sync-public-docs.mjs) の `FILES`）を上書き。MDX から `/docs/*.md` で配信。
 - **注意**: 一部の大きなファイルは`.gitignore`で除外されています
 - **ウェイポイント（本番のみ）**: アルファベット別 `waypoints_<1文字>.json` と `waypoints/index.json` は [.vercelignore](../.vercelignore) で Vercel 転送のみ省略。**Git とローカルビルドは含まれる**。理由とデータ層は [GeoJSON doc](GeoJSON_Waypoints_And_Assets.md)
 
 #### `scripts/`
-- **目的**: 開発・運用スクリプト（説明の正本は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)）
+- **目的**: 開発・運用スクリプト（索引は [scripts/README.md](../scripts/README.md)）
 - **内容**:
-  - `database/`: **総索引は [INDEX.md](../scripts/database/INDEX.md)**。マイグレーション類（例: `20260309_bootstrap_user_learning_profiles.sql`、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`、`20260331_learning_test_mapping_aviation_legal_312_skill_cluster.sql`、`20260410_cpl_stub_lessons_contents_and_mapping.sql`、[05_Content_Pipeline.md](05_Content_Pipeline.md)）は直下に置く。**`docs/` 等から参照されない旧 SQL はリポジトリに残さない**（復元は Git 履歴）。ルート **`archive/`** と [.gitignore](../.gitignore) の `archive/*` はローカル用。詳細は [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)。
-  - `telemetry/`: 週次 GA4 ISO 週レポート、Slack Facts、正本 Facts 下書き、2c 承認分類。仕様は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) の **週次テレメトリ GA4** 節
-  - `cpl_exam/`: CPL 問題 CSV 取込。仕様は [docs/Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) の **CPL Master CSV 取込仕様** 節
-  - `docs-auto-update/`: **実行しない**（欠ファイル `ROADMAP.md` 前提。手順は Skill `docs-sync`）
-  - `sync-public-docs.mjs`: `docs/` から `public/docs/` へのホワイトリスト同期（`npm run sync:public-docs`。`prebuild` でも実行）
-  - `vercel-ignore-build.mjs`: Vercel Ignored Build Step（docs 専用コミットで本番デプロイを作らない。詳細は [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)）
+  - `database/`: **総索引は [INDEX.md](../scripts/database/INDEX.md)**。マイグレーション類は直下に置く。**`docs/` 等から参照されない旧 SQL はリポジトリに残さない**（復元は Git 履歴）。
+  - `telemetry/`: 週次 GA4 ISO 週レポート、Slack Facts、2c 承認。仕様は [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)
+  - `cpl_exam/`: CPL 問題 CSV 取込（`npm run cpl:import`）。仕様は [cpl_exam/CPL_CSV_IMPORT_SPEC.md](../scripts/cpl_exam/CPL_CSV_IMPORT_SPEC.md)
+  - `docs-auto-update/`: **実行しない**（手順は Skill `docs-sync`）
+  - `sync-public-docs.mjs`: `docs/` → `public/docs/` ホワイトリスト同期（`npm run sync:public-docs`、`prebuild`）
+  - `vercel-ignore-build.mjs`: docs 専用コミットで本番ビルドをスキップ（`vercel.json` の `ignoreCommand`）。テスト: `src/__tests__/config/vercelIgnoreBuild.test.ts`
+  - Git コミットは英語のみ: [`.cursor/skills/git-commit-en/SKILL.md`](../.cursor/skills/git-commit-en/SKILL.md)
 
 #### `e2e/`
 - **目的**: **Playwright** によるエンドツーエンドテスト（`npm run test:e2e`）

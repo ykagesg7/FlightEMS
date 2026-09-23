@@ -32,10 +32,10 @@
 | # | ワークストリーム | ゴール | 次の一手 | 正本 |
 |---|------------------|--------|----------|------|
 | 1 | **CP / FN 記事** | 週3本を空けない。CP を git 上で完結させ、FN のドリップに移る | `CP-5-6`〜`5-9` の MDX。FN の開始週を Editorial で決める | [05](05_Content_Pipeline.md)、[Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)、[FN_Formation_2026](content_outlines/FN_Formation_2026/README.md) |
-| 2 | **メンタリティ改稿** | 非公開 24 本を道真稿に改稿し、1 本ずつ再公開 | 週次弧で「+1 本まで」を CP / FN の週に混ぜる | [04_Operations_Guide.md](04_Operations_Guide.md)「ブログ記事の精査・非公開・再公開」、[ops/Gemini_Memoir_Article_System_Prompt.md](ops/Gemini_Memoir_Article_System_Prompt.md) |
-| 3 | **Planning を用途別に整理** | 「学科の航法計算」「実フライトの計画」「振り返り」など用途ごとに入口を分け、画面をシンプルにする | 用途の棚卸しと IA 案（UI 変更はユーザー承認後） | [02_System_Spec.md](02_System_Spec.md) Flight Planning、ルート `DESIGN.md` |
-| 4 | **記事の LMS 型パッケージ** | 記事単体ではなく、コース（順序・進捗・理解チェック）として提供する | 既存の `meta.series` / `order` と進捗を使ったコース定義案（UI 変更は承認後） | [02_System_Spec.md](02_System_Spec.md) Articles、[08](08_Syllabus_Management_Guide.md) |
-| 5 | **3D GIS（無料枠）** | 空域と Waypoint を立体表示し、理解を助ける。差別化の柱 | 無料枠で成立する方式の選定（タイル・地形・配信量）。既存 `/explore/airspace-3d` を土台にする | [02_System_Spec.md](02_System_Spec.md)、[GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md) |
+| 2 | **メンタリティ改稿** | 非公開 24 本を道真稿に改稿し、1 本ずつ再公開 | 週次弧で「+1 本まで」を CP / FN の週に混ぜる | [05_Content_Pipeline.md](05_Content_Pipeline.md) §6、[ops/Gemini_Memoir_Article_System_Prompt.md](ops/Gemini_Memoir_Article_System_Prompt.md) |
+| 3 | **Planning を用途別に整理** | 「学科の航法計算」「実フライトの計画」「振り返り」など用途ごとに入口を分け、画面をシンプルにする | 用途の棚卸しと IA 案（UI 変更はユーザー承認後） | [Component_Structure_Guide.md](Component_Structure_Guide.md) Planning 節、ルート `DESIGN.md` |
+| 4 | **記事の LMS 型パッケージ** | 記事単体ではなく、コース（順序・進捗・理解チェック）として提供する | 既存の `meta.series` / `order` と進捗を使ったコース定義案（UI 変更は承認後） | [Component_Structure_Guide.md](Component_Structure_Guide.md) Articles、[05](05_Content_Pipeline.md) §5 |
+| 5 | **3D GIS（無料枠）** | 空域と Waypoint を立体表示し、理解を助ける。差別化の柱 | 無料枠で成立する方式の選定（タイル・地形・配信量）。既存 `/explore/airspace-3d` を土台にする | [Component_Structure_Guide.md](Component_Structure_Guide.md)、[GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md) |
 
 ### 指標
 
@@ -59,4 +59,4 @@
 | 公開が cron 依存 | 公開確認は Skill `article-publish-check`。人手で `is_published` を回さない |
 | Obsidian がクラウドから見えない | Ingest / Editorial はローカル Cursor（[ops/Work_Allocation.md](ops/Work_Allocation.md)） |
 | 3D の配信量で無料枠を超える | 方式選定の段階でデータ量と外部タイル条件を見積もる |
-| Supabase / 外部 API の無料枠 | ログイン後限定・キャッシュ・上限設計（[00 §3.1](00_Flight_Academy_Strategy.md)） |
+| Supabase / 外部 API の無料枠 | ログイン後限定・キャッシュ・上限設計（[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) §0） |

@@ -23,9 +23,9 @@
 |----------|----------|--------------------|--------------|----------|
 | **CP**（Contact） | `src/content/lessons/CP-*` | **1-1〜5-9 の MDX 完結**（5-6〜5-9 は W40〜W41 に schedule 済） | CP シリーズ完。メンテは体裁・出典のみ | [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)、[Gemini_CP_FN_System_Prompt](ops/Gemini_CP_FN_System_Prompt.md) |
 | **FN**（旧 FMT Season 1。id は `FMT-1-*`） | `src/content/lessons/FMT-1-*` | 1-1〜1-10 の MDX ストック。**W42〜W46 に schedule 済**（週2本・`is_published` は cron） | Season 2 ブリーフは求められたときだけ | [FN_Formation_2026](content_outlines/FN_Formation_2026/README.md)、[Gemini_CP_FN_System_Prompt](ops/Gemini_CP_FN_System_Prompt.md) |
-| **メンタリティ**（道真稿） | `src/content/articles/` | `1.1.1`〜`1.1.4` 公開。残り **24 本**は非公開ゲート | 1 本ずつ道真稿に改稿し、個別に再公開（28 本一括の republish SQL は使わない） | [04](04_Operations_Guide.md)「ブログ記事の精査・非公開・再公開」、[Gemini_Memoir_Article_System_Prompt](ops/Gemini_Memoir_Article_System_Prompt.md) |
+| **メンタリティ**（道真稿） | `src/content/articles/` | `1.1.1`〜`1.1.4` 公開。残り **24 本**は非公開ゲート | 1 本ずつ道真稿に改稿し、個別に再公開（28 本一括の republish SQL は使わない） | 本書 §6、[Gemini_Memoir_Article_System_Prompt](ops/Gemini_Memoir_Article_System_Prompt.md) |
 | 訓練の当たり前（`4.1.*` / `4.2.*`） | `src/content/articles/` | W32〜W33 に公開済 | 追加は Editorial が決める | [ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md) |
-| CPL / PPL 学科 | `src/content/lessons/` | 段階1 完了（[Closed_Sprints.md](Closed_Sprints.md)） | 穴埋めのみ（例: `PPL-2-3-3` / `2-3-4` は骨子だけ） | [08](08_Syllabus_Management_Guide.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md) |
+| CPL / PPL 学科 | `src/content/lessons/` | 段階1 完了（[Closed_Sprints.md](Closed_Sprints.md)） | 穴埋めのみ（例: `PPL-2-3-3` / `2-3-4` は骨子だけ） | 本書 §5、[Closed_Sprints.md](Closed_Sprints.md) §1 |
 
 ## 3. 週次の配信記録
 
@@ -57,8 +57,8 @@
 
 ### 学科記事（CPL / PPL）
 
-- CPL 記事は CPL 出題範囲に絞り、PPL と重なる基礎は短い要約と **PPL 記事へのリンク**（「基礎を復習（PPL）」Callout）にする。共通の定義・法規は PPL 記事を正本にする（[00 §4](00_Flight_Academy_Strategy.md)）。
-- 分類ツリーの正本は CPL クラスタ（`unified_cpl_questions` の `(main_subject, sub_subject)`）。PPL は `applicable_exams` に `PPL` を含む設問の部分集合として扱う（[08](08_Syllabus_Management_Guide.md)）。
+- CPL 記事は CPL 出題範囲に絞り、PPL と重なる基礎は短い要約と **PPL 記事へのリンク**（「基礎を復習（PPL）」Callout）にする。共通の定義・法規は PPL 記事を正本にする（本書 §4・[mdx-article-guide.mdc](../.cursor/rules/mdx-article-guide.mdc)）。
+- 分類ツリーの正本は CPL クラスタ（`unified_cpl_questions` の `(main_subject, sub_subject)`）。PPL は `applicable_exams` に `PPL` を含む設問の部分集合として扱う（本書 §5）。
 - 既に同トピックの `PPL-*` 記事があれば新規 ID で重複執筆しない。`learning_test_mapping` の追加で足りる。
 - 粒度は 1 トピック 1 記事。
 
@@ -67,7 +67,7 @@
 1. 問題データの抽出（学科のみ）: `unified_cpl_questions` を `main_subject` / `sub_subject` で絞り、`importance_score` と `appearance_frequency` で優先度を付ける。
 2. 構成: 学習目標、出題傾向、問題例（学科は最低3問）、解説、試験対策のポイント。操縦記事（CP / FN）は各執筆正本の「1 話の型」に従う。
 3. MDX を置く。`meta.series` / `order` を設定する。
-4. `learning_contents` に登録する（Skill `learning-contents-registration`）。学科は `learning_test_mapping` も（連携契約は [08](08_Syllabus_Management_Guide.md)「問題–記事連携契約」）。
+4. `learning_contents` に登録する（Skill `learning-contents-registration`）。学科は `learning_test_mapping` も（連携契約は本書 §5）。
 5. 品質確認: 内容の正確性、問題との関連、記事↔Quiz の動作。航空安全の判断が絡むときは agent `aviation-safety-review`。
 
 ### 学科記事の品質基準
@@ -85,4 +85,22 @@
 | `learning_test_mapping` | 記事と設問の対応（`unified_cpl_question_ids`）。`v_mapped_questions` で関連問題を取得 |
 | `unified_cpl_questions` | 設問のソース。`applicable_exams` で PPL / CPL を切り分け（`scripts/database/20260324_add_unified_cpl_applicable_exams.sql`） |
 
-CPL Phase 1（19本）の進捗は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)。CPL シリーズの索引は [09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)。航空工学の単元対照は [10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)。
+CPL Phase 1（19本）の進捗は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)。CPL シリーズの `meta.series` は [Closed_Sprints.md](Closed_Sprints.md) §1。段階1 の完了サマリも同書。
+
+### `learning_test_mapping` 契約
+
+- **分類の正**: `unified_cpl_questions` の `(main_subject, sub_subject 全文)`。PPL は `applicable_exams` に `PPL` を含む行の部分集合。
+- **`learning_contents.sub_category`**: `main_subject` と同じ文字列（例: `航空工学`）。
+- **行のルール**: `learning_content_id` = MDX stem。`topic_category` = `main_subject`。`unified_cpl_question_ids` に verified UUID を束ねる（1 記事 = 1 クラスタが原則）。
+- **記事 ID**: ファイル名 stem（`PPL-1-1-1_*`、`3.2.1_*`）が DB キー。計画用 `aero-*` スラッグは DB に入れない。
+
+## 6. メンタリティ記事の非公開・再公開
+
+自己啓発系 MDX **28 本**は `withdrawnArticleIds.ts`（直リンクゲート）と `learning_contents.is_published = false`（一覧除外）の**二段構成**。再公開は **1 本ずつ**（28 本一括 SQL 禁止）。
+
+1. MDX を道真稿に差し替え（[Gemini_Memoir_Article_System_Prompt](ops/Gemini_Memoir_Article_System_Prompt.md)）。
+2. `withdrawnArticleIds.ts` から当該 ID のみ削除してデプロイ。
+3. 個別 SQL で `is_published = true`（例: `scripts/database/20260920_learning_contents_unconscious_success_publish.sql` 以降）。
+4. `/articles` と直リンクの両方を確認。
+
+非公開 SQL: [`20260414_blog_articles_unpublish_learning_contents.sql`](../scripts/database/20260414_blog_articles_unpublish_learning_contents.sql)。一括再公開用（使わない）: [`20260414_blog_articles_republish_learning_contents.sql`](../scripts/database/20260414_blog_articles_republish_learning_contents.sql)。

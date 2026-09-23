@@ -58,4 +58,4 @@ docs: update roadmap with Phase A completion status
 ```
 
 Project pointer rule: `.cursor/rules/git-conventions.mdc`  
-More tooling notes: `docs/Scripts_Repository_Tooling.md`
+More tooling notes: `docs/FOLDER_STRUCTURE.md` (`scripts/` 節)

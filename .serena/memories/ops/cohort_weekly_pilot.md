@@ -1,7 +1,7 @@
 # Phase D cohort weekly pilot (本番)
 
 **Status**: Live on production (2026-06-21)
-**Docs**: `docs/02_System_Spec.md` (cohort), `docs/04_Operations_Guide.md` (cron/notify)
+**Docs**: `docs/Component_Structure_Guide.md` (cohort), `docs/05_Content_Pipeline.md` §1 (cron/notify)
 
 ## Schedule
 - Vercel Cron: `0 0 * * 0` UTC = **Sun 09:00 JST**

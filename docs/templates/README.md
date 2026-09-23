@@ -9,7 +9,7 @@
 - ✅ **コンテンツ作成者**: PPL記事を作成する際のテンプレート使用方法を確認したい場合
 - ✅ **AIアシスタント**: 記事作成時のテンプレート適用方法を確認したい場合
 
-**推奨読み順**: [docs/08_Syllabus_Management_Guide.md](../08_Syllabus_Management_Guide.md) → このドキュメント
+**推奨読み順**: [docs/05_Content_Pipeline.md](../05_Content_Pipeline.md) §4 → このドキュメント
 
 ---
 
@@ -32,7 +32,7 @@ PPL記事作成用の標準テンプレートです。このテンプレート�
 CPL 学科向けの **単元スタブ**（本文は後から拡充）用。`learning_contents.id` とファイル名を一致させ、`learning_test_mapping` 投入前提のセクション付き。
 
 **場所**: `docs/templates/CPL_Lesson_Stub_Template.mdx`  
-**運用**: [Article_Coverage_Backlog.md](../Article_Coverage_Backlog.md)
+**運用**: [Closed_Sprints.md](../Closed_Sprints.md)、[05_Content_Pipeline.md](../05_Content_Pipeline.md)
 
 ---
 
@@ -207,7 +207,7 @@ result = calculation()
 
 ### 1. トピックの選定
 
-- [PPL Master Syllabus](../PPL_Master_Syllabus.md)からPhase 1の優先トピックを選択
+- [Closed_Sprints.md](../Closed_Sprints.md) §1 から Phase 1 の優先トピックを選択
 - 学習順序を考慮（基礎→応用）
 
 ### 2. テンプレートのコピー
@@ -265,13 +265,13 @@ INSERT INTO learning_contents (
 
 ### 必須参照
 
-- [PPL Master Syllabus](../PPL_Master_Syllabus.md) - 全トピック一覧
-- [Syllabus管理ガイド](../08_Syllabus_Management_Guide.md) - システム統合方法
+- [05_Content_Pipeline.md](../05_Content_Pipeline.md) §5 - 記事 ID・mapping 契約
+- [Closed_Sprints.md](../Closed_Sprints.md) §1 - CPL シリーズ表
 
 ### 参考資料
 
 - [CPL記事作成ロードマップ](../05_Content_Pipeline.md) - CPL記事の作成方法
-- [設計仕様書](../02_System_Spec.md) - データベース設計仕様
+- [Component_Structure_Guide.md](../Component_Structure_Guide.md) - `src/` 構成
 
 ---
 
@@ -283,7 +283,7 @@ A: ファイル名は`learning_contents`テーブルの`id`として使用され
 
 ### Q: order番号はどう決めればいいですか？
 
-A: [PPL Master Syllabus](../PPL_Master_Syllabus.md)のトピック順序に従って設定します。同じ科目内で連番になるように設定してください。
+A: [05_Content_Pipeline.md](../05_Content_Pipeline.md) §5 の記事 ID 規約に従って設定します。同じ科目内で連番になるように設定してください。
 
 ### Q: 画像はどこに配置すればいいですか？
 

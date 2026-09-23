@@ -28,19 +28,19 @@ Confirm docs update when you:
 
 | Role | File | Content |
 |------|------|---------|
-| Entry | `docs/README.md` | Reading order and hubs only (no change log) |
-| Product stages | `docs/Product_North_Star_and_GTM.md` | §0 current stage and on-hold items; §1–§7 are May history |
-| Current work | `docs/01_Current_Status_and_Roadmap.md` | Stage-2 workstreams and current state |
+| Entry | `docs/README.md` | Reading order and hubs only |
+| Product stages | `docs/Product_North_Star_and_GTM.md` | §0 current stage and on-hold items |
+| Current work | `docs/01_Current_Status_and_Roadmap.md` | Stage-2 workstreams |
 | Completed work | `docs/Closed_Sprints.md` | What exists, invariants, final numbers |
-| Work allocation | `docs/ops/Work_Allocation.md` | Cloud / local / GrokBot / Actions / Cron |
-| Specification | `docs/02_System_Spec.md` | /test, Dashboard, DB, data flows |
+| Content pipeline | `docs/05_Content_Pipeline.md` | CP/FN/memoir drip, mapping contract |
+| Work allocation | `docs/ops/Work_Allocation.md` | Cloud / local / Actions / Cron |
 | Structure | `docs/Component_Structure_Guide.md` | `src/` layout, components |
-| Repo folders | `docs/FOLDER_STRUCTURE.md` | Top-level dirs (non-`src/`) |
-| Scripts & tooling | `docs/Scripts_Repository_Tooling.md` | CPL CSV, `sync:public-docs`, Git encoding |
-| Cursor MCP | `docs/Cursor_MCP_Setup.md` | MCP, Serena, rules/agents notes |
+| Repo folders | `docs/FOLDER_STRUCTURE.md` | Top-level dirs, scripts |
+| Cursor MCP | `docs/Cursor_MCP_Setup.md` | MCP, release checks |
+| Weekly telemetry | `docs/ops/Weekly_Telemetry_Review.md` | GA4 + Sentry review |
 
 ## Before finishing
 
 - Prefer updating the right file over duplicating content.
-- Keep README as summary; `02_System_Spec` as spec; structure guides as structure.
+- Keep README as summary; structure guides as structure.
 - If no docs change is needed, state that briefly.

@@ -157,7 +157,7 @@ KaTeX 記法を使用:
 
 ## CPL 記事から PPL 記事へのリンク（基礎復習）
 
-[00_Flight_Academy_Strategy.md](../../docs/00_Flight_Academy_Strategy.md) §4 に従う。
+[05_Content_Pipeline.md](../../docs/05_Content_Pipeline.md) §4 に従う。
 
 - **CPL 記事**では、PPL 範囲と重なる基礎は**短く要約**し、詳細は **`/articles/{PPL記事の learning_contents.id}`** へリンクする。
 - Callout 等で **「PPL 範囲の復習（任意）」** と明記し、CPL 本編の主読者を迷わせないようにする。

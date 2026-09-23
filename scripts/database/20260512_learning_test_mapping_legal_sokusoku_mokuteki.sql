@@ -1,7 +1,7 @@
 -- W23 2026: 航空法規クラスタ「総則/目的」→ `3.1.1_AviationLegal0` への learning_test_mapping 追補案。
 -- 参照: docs/Article_Coverage_Backlog.md §6（2026-05-06 スナップショットで上位の未マッピング例）。
 -- 冪等: ON CONFLICT (learning_content_id, topic_category) DO UPDATE。
--- 適用: Supabase MCP execute_sql または Dashboard（本番は docs/04_Operations_Guide.md に沿う）。
+-- 適用: Supabase MCP execute_sql または Dashboard（本番は docs/Cursor_MCP_Setup.md に沿う）。
 
 INSERT INTO learning_test_mapping (
   learning_content_id,

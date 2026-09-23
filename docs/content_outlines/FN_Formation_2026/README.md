@@ -7,7 +7,7 @@
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
 **MDX 規則**: [`.cursor/rules/mdx-article-guide.mdc`](../../../.cursor/rules/mdx-article-guide.mdc)  
 **登録**: Skill [`learning-contents-registration`](../../../.cursor/skills/learning-contents-registration/SKILL.md) — `category`: **操縦**、`sub_category`: **編隊飛行**、`series`: **USAF-Formation-Flying**  
-**公開**: [articlePublishSchedule.ts](../../../api/_lib/articlePublishSchedule.ts) · [04 §Articles](../../04_Operations_Guide.md) · Skill [`article-publish-check`](../../../.cursor/skills/article-publish-check/SKILL.md)
+**公開**: [articlePublishSchedule.ts](../../../api/_lib/articlePublishSchedule.ts) · [05 §1](../../05_Content_Pipeline.md) · Skill [`article-publish-check`](../../../.cursor/skills/article-publish-check/SKILL.md)
 
 ---
 

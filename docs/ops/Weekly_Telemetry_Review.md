@@ -10,7 +10,7 @@
 | 用途 | 参照 |
 |------|------|
 | MCP・SA・secrets 正本 | [Cursor_MCP_Setup.md](../Cursor_MCP_Setup.md)「Google Analytics MCP」「ローカル secrets」 |
-| タグ／Realtime／チャンク運用 | [04_Operations_Guide.md](../04_Operations_Guide.md)「GA4」「Sentry」 |
+| タグ／Realtime | [Cursor_MCP_Setup.md](../Cursor_MCP_Setup.md)（測定 ID **`G-22VFYSM69J`**） |
 | Quiz Hub 単発ファネル | [`artifacts/quiz_hub_funnel_memo_2026-07-08.md`](../../artifacts/quiz_hub_funnel_memo_2026-07-08.md) |
 | 週末コンテンツ | [ops/Weekend_Content_Pipeline.md](Weekend_Content_Pipeline.md)（土曜 Ingest / 日曜 Editorial。テレメトリとは分離） |
 | Slack | `#fa-telemetry`（`C0BQ5R19QDV`） |
@@ -73,7 +73,7 @@
 
 1. **GA4**: Actions の artifact `ga4-<ISO週>`（なければローカル SA + Data API）。今週・前週の users / sessions / screenPageViews / engagedSessions。日次。上位 `pagePath`・記事パス・source/medium・device・landing。
 2. **Sentry**: 直近 7d の error 件数、`is:unresolved lastSeen:-7d`、チャンク系（`FLIGHT-ACADEMY-4` 等）の最終発生。
-3. **文書**: CI `weekly-telemetry-draft-pr` が週節・ボードを自動追記して docs-only PR を出す。任意で Skill `weekly-telemetry-review` が Sentry 等を追記。L0 はスレッドの `APPROVE-DOC`（2c）のみ。必要なら [04](../04_Operations_Guide.md) へ運用変更のみリンク。
+3. **文書**: CI `weekly-telemetry-draft-pr` が週節・ボードを自動追記して docs-only PR を出す。任意で Skill `weekly-telemetry-review` が Sentry 等を追記。L0 はスレッドの `APPROVE-DOC`（2c）のみ。運用変更は本書 §2c と [05_Content_Pipeline.md](../05_Content_Pipeline.md) にのみ追記する。
 
 ---
 
