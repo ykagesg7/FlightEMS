@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import {
   parsePlanningMode,
   trackPlanningModeView,
+  type PlanningMode,
 } from '../../lib/planningAnalytics';
 import { ArrowLeft } from 'lucide-react';
 import { useDebouncedCallback } from 'use-debounce';
@@ -15,6 +16,7 @@ import { importWithChunkRetry } from '../../utils/lazyWithRetry';
 import type { FlightTrack } from './tracks/types';
 import { DebriefPanel } from './components/debrief/DebriefPanel';
 import PlanningTab from './components/flight/PlanningTab';
+import { PlanningModeSegment } from './components/PlanningModeSegment';
 import { PlanningNotamSheetProvider } from './components/map/PlanningNotamSheetProvider';
 import { createInitialFlightPlan } from './createInitialFlightPlan';
 import {
@@ -42,6 +44,7 @@ function MapTabFallback() {
 }
 
 interface PlanningMapPageInnerProps {
+  mode: PlanningMode;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
   tracks: FlightTrack[];
@@ -53,6 +56,7 @@ interface PlanningMapPageInnerProps {
 }
 
 function PlanningMapPageInner({
+  mode,
   flightPlan,
   setFlightPlan,
   tracks,
@@ -63,10 +67,46 @@ function PlanningMapPageInner({
   lastSavedAt,
 }: PlanningMapPageInnerProps) {
   const isXl = useMediaQuery('(min-width: 1280px)');
-  const [mobileTab, setMobileTab] = useState<'planning' | 'map' | 'debrief'>('planning');
+  const [mobileTab, setMobileTab] = useState<'content' | 'map'>('content');
   const focusMapTab = useCallback(() => {
     if (!isXl) setMobileTab('map');
   }, [isXl]);
+
+  const mapProps = {
+    layout: 'split' as const,
+    flightPlan,
+    setFlightPlan,
+    tracks,
+    currentTrackTime,
+    planningMode: mode,
+  };
+
+  const leftPanelContent =
+    mode === 'debrief' ? (
+      <>
+        <h2 className="mb-3 text-lg font-semibold text-whiskyPapa-yellow">振り返り / 航跡</h2>
+        <DebriefPanel
+          flightPlan={flightPlan}
+          tracks={tracks}
+          setTracks={setTracks}
+          currentTime={currentTrackTime}
+          setCurrentTime={setCurrentTrackTime}
+        />
+      </>
+    ) : (
+      <PlanningTab
+        layout="split"
+        mode={mode}
+        flightPlan={flightPlan}
+        setFlightPlan={setFlightPlan}
+        tracks={tracks}
+        setTracks={setTracks}
+        currentTrackTime={currentTrackTime}
+        setCurrentTrackTime={setCurrentTrackTime}
+        onClearLocalDraft={onClearLocalDraft}
+        lastSavedAt={lastSavedAt}
+      />
+    );
 
   if (isXl) {
     return (
@@ -83,48 +123,14 @@ function PlanningMapPageInner({
           </div>
           <div className="mb-2 flex-1 grid grid-cols-[minmax(28rem,1.05fr)_minmax(0,1fr)] gap-0 items-stretch min-h-[calc(100vh-5rem)] min-w-0">
             <div className="overflow-y-auto overflow-x-hidden border-r border-whiskyPapa-yellow/20 p-2 sm:p-4 md:p-6 min-h-0 min-w-0">
-              <Tabs defaultValue="planning">
-                <TabsList className="mb-3 bg-transparent border-b border-whiskyPapa-yellow/20 w-full flex">
-                  <TabsTrigger value="planning" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
-                    計画
-                  </TabsTrigger>
-                  <TabsTrigger value="debrief" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
-                    Debrief
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="planning" className="mt-0">
-                  <PlanningTab
-                    layout="split"
-                    flightPlan={flightPlan}
-                    setFlightPlan={setFlightPlan}
-                    tracks={tracks}
-                    setTracks={setTracks}
-                    currentTrackTime={currentTrackTime}
-                    setCurrentTrackTime={setCurrentTrackTime}
-                    onClearLocalDraft={onClearLocalDraft}
-                  />
-                </TabsContent>
-                <TabsContent value="debrief" className="mt-0">
-                  <h2 className="mb-3 text-lg font-semibold text-whiskyPapa-yellow">Debrief / 航跡</h2>
-                  <DebriefPanel
-                    flightPlan={flightPlan}
-                    tracks={tracks}
-                    setTracks={setTracks}
-                    currentTime={currentTrackTime}
-                    setCurrentTime={setCurrentTrackTime}
-                  />
-                </TabsContent>
-              </Tabs>
+              <div className="mb-4">
+                <PlanningModeSegment />
+              </div>
+              {leftPanelContent}
             </div>
             <div className="h-full min-h-[calc(100vh-5rem)] min-w-0">
               <Suspense fallback={<MapTabFallback />}>
-                <MapTab
-                  layout="split"
-                  flightPlan={flightPlan}
-                  setFlightPlan={setFlightPlan}
-                  tracks={tracks}
-                  currentTrackTime={currentTrackTime}
-                />
+                <MapTab {...mapProps} />
               </Suspense>
             </div>
           </div>
@@ -146,53 +152,46 @@ function PlanningMapPageInner({
           </Link>
         </div>
 
+        <div className="px-4 pb-2">
+          <PlanningModeSegment />
+        </div>
+
         <div className="mb-2">
-          <Tabs value={mobileTab} onValueChange={(v) => setMobileTab(v as 'planning' | 'map' | 'debrief')}>
+          <Tabs value={mobileTab} onValueChange={(v) => setMobileTab(v as 'content' | 'map')}>
             <TabsList className="bg-transparent border-b border-whiskyPapa-yellow/20 w-full flex">
-              <TabsTrigger value="planning" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
-                <span className="flex items-center justify-center">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                  計画
-                </span>
-              </TabsTrigger>
-              <TabsTrigger value="debrief" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
-                <span>Debrief</span>
+              <TabsTrigger value="content" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
+                内容
               </TabsTrigger>
               <TabsTrigger value="map" className="flex-1 text-gray-400 data-[state=active]:text-whiskyPapa-yellow data-[state=active]:bg-whiskyPapa-black-dark">
-                <span className="flex items-center justify-center">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                  </svg>
-                  地図
-                </span>
+                地図
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="planning" className="mt-0">
+            <TabsContent value="content" className="mt-0">
               <div className="p-2 sm:p-4 md:p-6 container mx-auto">
-                <PlanningTab
-                  flightPlan={flightPlan}
-                  setFlightPlan={setFlightPlan}
-                  tracks={tracks}
-                  setTracks={setTracks}
-                  currentTrackTime={currentTrackTime}
-                  setCurrentTrackTime={setCurrentTrackTime}
-                  onClearLocalDraft={onClearLocalDraft}
-                  lastSavedAt={lastSavedAt}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value="debrief" className="mt-0">
-              <div className="p-2 sm:p-4 md:p-6 container mx-auto">
-                <h2 className="mb-3 text-lg font-semibold text-whiskyPapa-yellow">Debrief / 航跡</h2>
-                <DebriefPanel
-                  flightPlan={flightPlan}
-                  tracks={tracks}
-                  setTracks={setTracks}
-                  currentTime={currentTrackTime}
-                  setCurrentTime={setCurrentTrackTime}
-                />
+                {mode === 'debrief' ? (
+                  <>
+                    <h2 className="mb-3 text-lg font-semibold text-whiskyPapa-yellow">振り返り / 航跡</h2>
+                    <DebriefPanel
+                      flightPlan={flightPlan}
+                      tracks={tracks}
+                      setTracks={setTracks}
+                      currentTime={currentTrackTime}
+                      setCurrentTime={setCurrentTrackTime}
+                    />
+                  </>
+                ) : (
+                  <PlanningTab
+                    flightPlan={flightPlan}
+                    setFlightPlan={setFlightPlan}
+                    tracks={tracks}
+                    setTracks={setTracks}
+                    currentTrackTime={currentTrackTime}
+                    setCurrentTrackTime={setCurrentTrackTime}
+                    onClearLocalDraft={onClearLocalDraft}
+                    lastSavedAt={lastSavedAt}
+                    mode={mode}
+                  />
+                )}
               </div>
             </TabsContent>
             <TabsContent value="map" className="mt-0">
@@ -203,6 +202,7 @@ function PlanningMapPageInner({
                     setFlightPlan={setFlightPlan}
                     tracks={tracks}
                     currentTrackTime={currentTrackTime}
+                    planningMode={mode}
                   />
                 </Suspense>
               </div>
@@ -217,6 +217,7 @@ function PlanningMapPageInner({
 function PlanningMapPage() {
   const { leaving } = useUrgentRouterView();
   const [searchParams] = useSearchParams();
+  const mode = parsePlanningMode(searchParams.get('mode'));
   const [flightPlan, setFlightPlan] = React.useState<FlightPlan>(() => {
     const draft = loadFlightPlanDraft();
     return draft ?? createInitialFlightPlan();
@@ -236,8 +237,8 @@ function PlanningMapPage() {
   }, [flightPlan, debouncedPersistDraft]);
 
   React.useEffect(() => {
-    trackPlanningModeView(parsePlanningMode(searchParams.get('mode')));
-  }, [searchParams]);
+    trackPlanningModeView(mode);
+  }, [mode]);
 
   const handleClearLocalDraft = React.useCallback(() => {
     clearFlightPlanDraft();
@@ -251,6 +252,7 @@ function PlanningMapPage() {
   return (
     <WeatherCacheProvider>
       <PlanningMapPageInner
+        mode={mode}
         flightPlan={flightPlan}
         setFlightPlan={setFlightPlan}
         tracks={tracks}

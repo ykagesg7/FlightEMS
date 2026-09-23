@@ -7,14 +7,19 @@ import {
   isMindsetCategory,
   PPL_CATEGORY,
 } from '../../constants/articleHubCategories';
+import { getCourseById } from '../../data/courses';
 import type { LearningContent } from '../../types';
 import type { ArticleMeta } from '../../types/articles';
 
 export type ArticleHubTab = 'continue' | 'cpl' | 'ppl' | 'usaf' | 'mindset';
 export type ArticleHubSort = 'date' | 'title' | 'readingTime' | 'series';
 export type ArticleHubStatus = 'all' | 'in-progress' | 'completed';
+/** `courses` = コース一覧（既定） / `articles` = すべての記事（旧カテゴリタブ） */
+export type ArticleHubView = 'courses' | 'articles';
 
 export interface ArticleHubState {
+  view: ArticleHubView;
+  course: string | null;
   tab: ArticleHubTab;
   query: string;
   tags: string[];
@@ -36,12 +41,33 @@ export interface FilterArticleHubInput {
 }
 
 export const DEFAULT_ARTICLE_HUB_STATE: ArticleHubState = {
+  view: 'courses',
+  course: null,
   tab: 'continue',
   query: '',
   tags: [],
   status: 'all',
   sort: 'date',
 };
+
+function parseCourseParam(raw: string | null): string | null {
+  if (!raw) return null;
+  return getCourseById(raw) ? raw : null;
+}
+
+function inferArticlesView(params: URLSearchParams, legacy: Partial<ArticleHubState>): boolean {
+  if (params.get('view') === 'articles') return true;
+  if (params.has('tab')) return true;
+  if (params.has('q') || params.has('tags') || params.has('status') || params.has('sort')) {
+    return true;
+  }
+  if (legacy.tab && legacy.tab !== 'continue') return true;
+  if (legacy.query?.trim()) return true;
+  if (legacy.tags && legacy.tags.length > 0) return true;
+  if (legacy.status && legacy.status !== 'all') return true;
+  if (legacy.sort && legacy.sort !== 'date') return true;
+  return false;
+}
 
 export const ARTICLE_HUB_TAB_LABELS: Record<ArticleHubTab, string> = {
   continue: '続きから',
@@ -190,9 +216,14 @@ export function parseArticleHubSearchParams(
   visibleTabs: ArticleHubTab[]
 ): ArticleHubState {
   const legacy = parseLegacyArticleHubParams(params);
+  const course = parseCourseParam(params.get('course'));
+  const articlesView = inferArticlesView(params, legacy);
+
   return {
     ...DEFAULT_ARTICLE_HUB_STATE,
     ...legacy,
+    view: course ? 'courses' : articlesView ? 'articles' : 'courses',
+    course,
     tab: normalizeTab(legacy.tab ?? params.get('tab'), visibleTabs),
     query: params.get('q') ?? legacy.query ?? '',
     tags: legacy.tags ?? (params.get('tags')?.split(',').filter(Boolean) ?? []),
@@ -211,11 +242,18 @@ export function parseArticleHubSearchParams(
 
 export function buildArticleHubSearchParams(state: ArticleHubState): URLSearchParams {
   const params = new URLSearchParams();
-  if (state.tab !== 'continue') params.set('tab', state.tab);
-  if (state.query.trim()) params.set('q', state.query.trim());
-  if (state.tags.length > 0) params.set('tags', state.tags.join(','));
-  if (state.status !== 'all') params.set('status', state.status);
-  if (state.sort !== 'date') params.set('sort', state.sort);
+  if (state.course) {
+    params.set('course', state.course);
+    return params;
+  }
+  if (state.view === 'articles') {
+    params.set('view', 'articles');
+    if (state.tab !== 'continue') params.set('tab', state.tab);
+    if (state.query.trim()) params.set('q', state.query.trim());
+    if (state.tags.length > 0) params.set('tags', state.tags.join(','));
+    if (state.status !== 'all') params.set('status', state.status);
+    if (state.sort !== 'date') params.set('sort', state.sort);
+  }
   return params;
 }
 

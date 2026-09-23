@@ -22,6 +22,7 @@ const DEFAULT_ORIGIN = 'https://flightacademy.com';
 /** Client hubs with no prerendered index. `dist/articles/` exists for OG pages, so `/articles` 404s without this. */
 export const SPA_HUB_FALLBACK_PATHS = [
   'articles',
+  'courses',
   'planning',
   'test',
   'auth',
