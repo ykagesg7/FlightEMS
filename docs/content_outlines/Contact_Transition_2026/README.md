@@ -2,7 +2,7 @@
 
 **読者**: 空自 T-4 学生（Joe / 博多弁 / 道真）。副次: シミュレータ。サイト全体を軍事化しない。公式教程の代替ではない。  
 **呼称**: 公開面は **CP**（空自）。USAF 教範の章名 Contact は出典参照に残す。  
-**位置**: 読む順は **CP → FMT**（単機の飛行Envelopeのあと編隊）。FMT Season 2（BFM 幾何）はそのさらに後。  
+**位置**: 読む順は **CP → FN**（単機の飛行Envelopeのあと編隊）。FN Season 2（BFM 幾何）はそのさらに後。  
 **既存公開**: **W34** 1-1〜1-3（8/17・19・21）。**W35** 2-1〜2-3（8/24・26・28）。**W36** 2-4〜2-6（**8/30**・9/2・9/4）。**W37** 3-1 **日 9/6**、3-2 水 9/9、4-1 金 9/11（Season 4 前倒し）。**W38** 4-2 **日 9/13**、5-1 水 9/16、5-2 金 9/18。**W39** 5-3 **日 9/20**、5-4 水 9/23（秋分の日）、5-5 金 9/25。`is_published` は cron が schedule の日付で反転。**1 話目は日曜 `publishDate`（digest 送信日）**。  
 **共通ルール**: [External_LLM_Article_Brief.md](../../templates/External_LLM_Article_Brief.md)  
 **操縦プロンプト**: [Gemini_CP_FN_System_Prompt.md](../../ops/Gemini_CP_FN_System_Prompt.md)  
@@ -22,13 +22,13 @@
 4. 1 話 = 原則 1・サイトピクチャ 1。例外は **S5-6** のみ（教程が loop の前後半と定義）。
 5. 書く順は **S1 → S2 → S3 → S4 → S5**。S5 を S4 より先に書かない。
 
-Heat-to-Guns、CAS 9-Line、FMT の HCA / CZ は載せない。Pitchback / Sliceback の **mechanics は S2-6**、戦術用法は FMT Season 2。
+Heat-to-Guns、CAS 9-Line、FN の HCA / CZ は載せない。Pitchback / Sliceback の **mechanics は S2-6**、戦術用法は FN Season 2。
 
 ---
 
 ## 進め方（1 話あたり）
 
-FMT と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通過後だけ MDX。ストック登録。**全話を一括起票しない。**
+FN と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通過後だけ MDX。ストック登録。**全話を一括起票しない。**
 
 **Season 1（1-1〜1-3）は MDX 済（W34 月水金）。** Season 2 の 2-1〜2-6 は精緻化済（W35: 2-1〜2-3、W36: 2-4〜2-6）。**git の MDX は 5-5 まで**（W39）。5-6〜5-9 は SQL ストック行があるが **MDX は無い**。「シリーズ完」は DB 行の話であり git 正本ではない。
 
@@ -183,7 +183,7 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 | Ch4 着陸・フレア | 着陸シリーズ。S3-2 からリンク可 |
 | Vol.2 Area 29–33, 47a, 48 | 採点オーバーレイ。各話の不合格箱だけ |
 | Vol.3 Att 6 briefing | **S1-1** の短い契約 |
-| FMT Season 2 | Pitchback/Sliceback の **戦術用法**だけ |
+| FN Season 2 | Pitchback/Sliceback の **戦術用法**だけ |
 
 ---
 
@@ -285,7 +285,7 @@ S5 の T-38 数字は各話ブリーフ起票時に本表へ足す（表 5.1 / 5
 - T-4 にアフターバーナーがある記述。MAX AB を T-4 の正解にする
 - T-38 の EGT / canopy bow / green donut を T-4 の正解にする
 - Area 名の新造（シャンデル専用 Area など）
-- Heat-to-Guns、CAS 9-Line、FMT Season 2 の HCA / CZ
+- Heat-to-Guns、CAS 9-Line、FN Season 2 の HCA / CZ
 - Pitchback を Immelmann、Sliceback を Split-S として教える
 - 5.19 超音速を T-4 の課目にする
 - 「これでトランジション合格」
@@ -296,7 +296,7 @@ S5 の T-38 数字は各話ブリーフ起票時に本表へ足す（表 5.1 / 5
 
 ## トーン
 
-FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョー。博多弁。内部リンクは `/articles/{slug}`。
+FN と同じ。テキサスのカントリー・バー。道真 + 教官ジョー。博多弁。内部リンクは `/articles/{slug}`。
 
 ---
 
@@ -309,10 +309,10 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 | `sub_category` | 曲技飛行（シリーズ統一。Season で割らない） |
 | `content_type` | text |
 | `is_published` | **ストックは `false`** |
-| `order_index` | 1-1 = **611**、以降連番（FMT 610 の次）。最終 5-9 = **632** |
+| `order_index` | 1-1 = **611**、以降連番（FN 610 の次）。最終 5-9 = **632** |
 | `meta.series` | `USAF-Contact-Phase` |
 | `meta.order` | Season 内 1–N（S1 は 1–3、S5 は 1–9） |
-| 詳細解説 | **PREP**（`P（Point）` / `R（Reason）` / `E（Example）` / 締めの `P（Point）`）。FMT と同じ |
+| 詳細解説 | **PREP**（`P（Point）` / `R（Reason）` / `E（Example）` / 締めの `P（Point）`）。FN と同じ |
 
 ---
 
@@ -320,14 +320,14 @@ FMT と同じ。テキサスのカントリー・バー。道真 + 教官ジョ�
 
 | 日付 | 内容 |
 |------|------|
-| 2026-08-16 | 初版。FMT Season 2 の前に Contact 8 話。 |
+| 2026-08-16 | 初版。FN Season 2 の前に Contact 8 話。 |
 | 2026-08-16 | **5 Season / 22 話**に改定。Fund Ch5 の 5A–5E を MECE 所有者に。1-1 は Area / Purpose（5.1–5.2）。 |
-| 2026-08-16 | 読む順を **Contact → FMT** に変更。`CP-1-1` ストック登録（`order_index` 611）。1-1 ブリーフ削除。 |
-| 2026-08-16 | W34 を Contact 1-1〜1-3 に差し替え（FMT ドリップ取消）。1-2 ブリーフ起票。 |
+| 2026-08-16 | 読む順を **Contact → FN** に変更。`CP-1-1` ストック登録（`order_index` 611）。1-1 ブリーフ削除。 |
+| 2026-08-16 | W34 を Contact 1-1〜1-3 に差し替え（FN ドリップ取消）。1-2 ブリーフ起票。 |
 | 2026-08-16 | `CP-1-2` 登録（`order_index` 612、`publishedAt` 8/19）。1-2 ブリーフ削除。1-3 ブリーフ起票。 |
 | 2026-08-16 | `CP-1-3` 登録（`order_index` 613、`publishedAt` 8/21）。Season 1 完。1-3 ブリーフ削除。 |
 | 2026-08-17 | 公開呼称を **CP** に統一。1-1 計器は T-38 CSW/CDI を読み替え（T-4 の正解にしない）。見出しはエリア維持。 |
-| 2026-08-17 | ファイル名・slug・DB id を `CP-*` に改名（旧 `ctx-*` URL は alias）。詳細解説は PREP（P/R/E/P）見出しに FMT と統一。 |
+| 2026-08-17 | ファイル名・slug・DB id を `CP-*` に改名（旧 `ctx-*` URL は alias）。詳細解説は PREP（P/R/E/P）見出しに FN と統一。 |
 | 2026-08-17 | 公開本文から Area / Fund / Att / Vol.2 番号を外す。不合格は「不合格要件」だけ。 |
 | 2026-08-17 | Season 2-1 Deep stall ブリーフ起票。許可数字（FL200 / 80% rpm / AOA 0.8–1.1 / 140 kt / 6,000 fpm）を本表へ。 |
 | 2026-08-17 | `CP-2-1` ストック登録（`order_index` 614、`is_published: false`）。2-1 ブリーフ削除。2-2 加速失速ブリーフ起票。 |
