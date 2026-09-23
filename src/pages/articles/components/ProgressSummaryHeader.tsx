@@ -17,24 +17,31 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
     : 0;
 
   return (
-    <div className="relative mb-4 overflow-hidden rounded-xl border-2 border-brand-primary/20 bg-brand-secondary-dark p-4 shadow-lg shadow-brand-primary/20 backdrop-blur-sm sm:mb-8 sm:p-6">
-      {/* デモ用オーバーレイ */}
+    <div
+      className="relative mb-4 overflow-hidden rounded-xl border-2 border-brand-primary/20 bg-brand-secondary-dark p-4 shadow-lg shadow-brand-primary/20 backdrop-blur-sm sm:mb-8 sm:p-6"
+      aria-label={isDemo ? '学習進捗のサンプル表示' : '学習進捗'}
+    >
       {isDemo && (
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-blue-500/10 pointer-events-none" />
       )}
 
       <div className="relative z-10">
-        {/* ヘッダータイトル（モバイルは薄く） */}
         <div className="mb-3 flex items-center justify-between sm:mb-6">
           <div>
-            <h1 className="mb-0.5 text-lg font-bold bg-gradient-to-r bg-clip-text text-transparent from-white to-gray-200 sm:mb-2 sm:text-2xl">
-              {isDemo ? '📊 学習進捗（デモ）' : '📊 学習進捗'}
-            </h1>
-            <p className="hidden text-sm text-gray-300 sm:block">
+            <div className="mb-1 flex flex-wrap items-center gap-2">
+              <h1 className="text-lg font-bold text-white sm:text-2xl">
+                {isDemo ? '学習進捗（サンプル）' : '学習進捗'}
+              </h1>
+              {isDemo && (
+                <span className="rounded-full border border-brand-primary/40 bg-brand-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-primary sm:text-xs">
+                  サンプル
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-gray-300 sm:text-sm">
               {isDemo
-                ? '登録すると、あなたの実際の学習データが表示されます。'
-                : '継続的な学習でスキルアップを目指しましょう。'
-              }
+                ? '表示中の数字はサンプルです。登録後にあなたの進捗が表示されます。'
+                : '継続的な学習でスキルアップを目指しましょう。'}
             </p>
           </div>
 

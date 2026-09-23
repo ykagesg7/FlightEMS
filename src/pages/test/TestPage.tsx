@@ -488,6 +488,12 @@ const TestPage: React.FC = () => {
         )}
       </div>
 
+      {!user && (
+        <p className="mb-4 rounded-xl border border-brand-primary/20 bg-brand-primary/5 px-4 py-3 text-center text-sm text-[var(--text-muted)]">
+          クイズは登録不要で試せます。結果の保存はアカウント登録後に利用できます。
+        </p>
+      )}
+
       {(hubState.tab === 'review' || hubState.tab === 'diagnostic') && (
         <WeakAreasHero
           userId={user?.id}

@@ -118,7 +118,7 @@ export const MarketingLayout: React.FC = () => {
               <NavLink to="/planning" className={navLinkDesktop}>
                 PLANNING
               </NavLink>
-              <NavLink to="/test" className={navLinkDesktop}>
+              <NavLink to="/quiz" className={navLinkDesktop}>
                 QUIZ
               </NavLink>
               {showAdminNav ? (
@@ -226,7 +226,7 @@ export const MarketingLayout: React.FC = () => {
                     transition={{ delay: 0.25 }}
                   >
                     <NavLink
-                      to="/test"
+                      to="/quiz"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={navLinkMobile}
                     >
@@ -321,7 +321,7 @@ export const MarketingLayout: React.FC = () => {
                 </li>
                 <li>
                   <NavLink
-                    to="/test"
+                    to="/quiz"
                     className="text-sm text-gray-400 transition-colors hover:text-brand-primary"
                   >
                     Quiz

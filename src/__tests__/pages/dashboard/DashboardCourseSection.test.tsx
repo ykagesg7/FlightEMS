@@ -44,7 +44,7 @@ describe('DashboardCourseSection', () => {
           id: 'ppl-eng-1',
           title: 'PPL 工学入門',
           category: 'PPL',
-          sub_category: '工学',
+          sub_category: '航空工学',
           description: null,
           order_index: 1,
           parent_id: null,

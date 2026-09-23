@@ -30,7 +30,7 @@ export const CourseListView: React.FC<CourseListViewProps> = ({
   return (
     <div className="space-y-4" data-testid="course-list-view">
       <p className="text-sm text-[var(--text-muted)]">
-        コースを選んで学習の順番と進捗を確認できます。
+        コースを選んで学習の順番と進捗を確認できます。PPL 受験なら <strong className="text-[var(--text-primary)]">PPL 学科</strong> から始めましょう。
       </p>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {courses.map((course) => {

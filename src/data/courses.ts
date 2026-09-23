@@ -19,8 +19,9 @@ export interface CourseDef {
   modules: CourseModuleDef[];
 }
 
-const PPL_SUBJECTS = ['工学', '気象', '法規', '航法', '通信'] as const;
-const CPL_SUBJECTS = ['工学', '気象', '法規', '航法', '通信'] as const;
+/** Matches `learning_contents.sub_category` (see scripts/database/register_ppl_article.mjs). */
+const PPL_SUBJECTS = ['航空工学', '航空気象', '航空法規', '空中航法', '航空通信'] as const;
+const CPL_SUBJECTS = ['航空工学', '航空気象', '航空法規', '空中航法', '航空通信'] as const;
 
 const CP_PHASES = [
   { id: 'cp-1', title: 'CP-1 基礎', prefix: 'CP-1-' },
@@ -51,7 +52,7 @@ export const COURSES: CourseDef[] = [
     description: 'Private Pilot License 学科試験向けの 5 科目コース。',
     modules: PPL_SUBJECTS.map((subCategory) => ({
       id: `ppl-${subCategory}`,
-      title: subCategory === '工学' ? '航空工学' : `航空${subCategory}`,
+      title: subCategory,
       source: {
         kind: 'sub_category' as const,
         category: PPL_CATEGORY,
@@ -72,7 +73,7 @@ export const COURSES: CourseDef[] = [
       },
       ...CPL_SUBJECTS.map((subCategory) => ({
         id: `cpl-${subCategory}`,
-        title: subCategory === '工学' ? '航空工学' : `航空${subCategory}`,
+        title: subCategory,
         source: {
           kind: 'sub_category' as const,
           category: CPL_CATEGORY,

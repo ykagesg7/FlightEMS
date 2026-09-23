@@ -19,6 +19,14 @@ test.describe('/test PPL level', () => {
   });
 });
 
+test.describe('/quiz alias', () => {
+  test('loads the same quiz hub as /test', async ({ page }) => {
+    await page.goto('/quiz?tab=diagnostic');
+    await expect(page.getByRole('button', { name: /10問診断を開始/ })).toBeVisible();
+    await expect(page.getByText(/結果の保存はアカウント登録後/)).toBeVisible();
+  });
+});
+
 test.describe('/test Quiz Hub', () => {
   test('defaults to diagnostic tab in URL', async ({ page }) => {
     await page.goto('/test');
