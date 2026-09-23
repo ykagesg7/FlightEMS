@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ProfileHubSection } from '../../../auth/profileCompletion';
+import { Typography } from '../../../components/ui/Typography';
 import { PROFILE_HUB_SECTIONS } from './profileHubSections';
 
 interface ProfileHubSectionListProps {
@@ -8,6 +9,9 @@ interface ProfileHubSectionListProps {
 
 export const ProfileHubSectionList: React.FC<ProfileHubSectionListProps> = ({ onSelect }) => (
   <nav aria-label="プロフィール設定" className="md:hidden" data-testid="profile-hub-section-list">
+    <Typography variant="caption" color="muted" className="mb-2 block px-1 font-medium">
+      設定と履歴
+    </Typography>
     <ul className="divide-y divide-brand-primary/15 overflow-hidden rounded-xl border border-brand-primary/20">
       {PROFILE_HUB_SECTIONS.map((section) => (
         <li key={section.id}>

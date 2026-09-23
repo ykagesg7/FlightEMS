@@ -1,6 +1,7 @@
 import React from 'react';
 import type { ProfileCompletion } from '../../../auth/profileCompletion';
 import type { ProfileHubSection } from '../../../auth/profileCompletion';
+import { Typography } from '../../../components/ui/Typography';
 import { ProfileCompletionStrip } from './ProfileCompletionStrip';
 import { PROFILE_HUB_SECTIONS } from './profileHubSections';
 
@@ -22,6 +23,9 @@ export const ProfileHubSidebar: React.FC<ProfileHubSidebarProps> = ({
   >
     <div className="sticky top-24 space-y-4">
       <ProfileCompletionStrip completion={completion} compact className="rounded-lg border border-brand-primary/15 p-3" />
+      <Typography variant="caption" color="muted" className="px-1 font-medium">
+        設定と履歴
+      </Typography>
       <ul className="space-y-1">
         {PROFILE_HUB_SECTIONS.map((section) => {
           const isActive = activeSection === section.id;
