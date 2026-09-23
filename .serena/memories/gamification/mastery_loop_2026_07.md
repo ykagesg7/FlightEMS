@@ -36,6 +36,6 @@ Wired from `TestPage` / `CPLExamSession`. Results shown in `QuizResultsView` via
 - UI: `mem:ux/home_articles_quiz_2026_07`
 
 ## Docs
-- Spec: `docs/02_System_Spec.md` gamification + Home/Articles/Quiz UX
-- Ops: `docs/04_Operations_Guide.md` release checklist
+- Spec: `docs/Component_Structure_Guide.md` gamification + Home/Articles/Quiz UX
+- Ops: `docs/Cursor_MCP_Setup.md` release checklist
 - NSM: `docs/Product_North_Star_and_GTM.md`

@@ -14,7 +14,7 @@ describe('vercel ignored build step', () => {
     expect(isSkippableDeployPath('scripts/telemetry/apply_week_review.py')).toBe(true);
     expect(isSkippableDeployPath('e2e/planning-debrief.spec.ts')).toBe(true);
     expect(
-      shouldIgnoreBuild(['docs/ops/Weekly_Telemetry_Review.md', 'public/docs/09_CPL_Learning_Stub.md']),
+      shouldIgnoreBuild(['docs/ops/Weekly_Telemetry_Review.md', 'public/docs/Closed_Sprints.md']),
     ).toBe(true);
   });
 

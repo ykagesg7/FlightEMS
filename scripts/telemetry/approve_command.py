@@ -27,7 +27,6 @@ WEEK_RE = re.compile(r"^\d{4}-W\d{2}$")
 ALLOWED_FILES = frozenset(
     {
         "docs/ops/Weekly_Telemetry_Review.md",
-        "docs/04_Operations_Guide.md",
     }
 )
 MENTION_RE = re.compile(r"(?<![A-Za-z0-9_])@|</?@[A-Z0-9]+>")

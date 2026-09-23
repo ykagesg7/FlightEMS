@@ -29,7 +29,7 @@
 - `src/__tests__/planning/canDeleteQuestionReport.test.ts`
 
 ## Docs updated (in commit 865c6d9)
-- `docs/02_System_Spec.md`, `docs/Component_Structure_Guide.md`, `docs/README.md`, `docs/Scripts_Repository_Tooling.md`
+- `docs/Component_Structure_Guide.md`, `docs/README.md`, `scripts/README.md`
 
 ## Uncommitted work (as of 2026-06-07, separate from 865c6d9)
 - Airspace map layer refactor (`planning/components/map/*`, RAPCON.geojson)

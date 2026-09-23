@@ -9,7 +9,7 @@
 - ✅ **コンテンツ作成者**: PPL記事を作成する際のテンプレート使用方法を確認したい場合
 - ✅ **AIアシスタント**: 記事作成時のテンプレート適用方法を確認したい場合
 
-**推奨読み順**: [docs/08_Syllabus_Management_Guide.md](../08_Syllabus_Management_Guide.md) → このドキュメント
+**推奨読み順**: [docs/05_Content_Pipeline.md](../05_Content_Pipeline.md) §4 → このドキュメント
 
 ---
 
@@ -265,13 +265,13 @@ INSERT INTO learning_contents (
 
 ### 必須参照
 
-- [08_Syllabus_Management_Guide.md](../08_Syllabus_Management_Guide.md) - 記事 ID・分類の正本
-- [Syllabus管理ガイド](../08_Syllabus_Management_Guide.md) - システム統合方法
+- [05_Content_Pipeline.md](../05_Content_Pipeline.md) §5 - 記事 ID・mapping 契約
+- [Closed_Sprints.md](../Closed_Sprints.md) §1 - CPL シリーズ表
 
 ### 参考資料
 
 - [CPL記事作成ロードマップ](../05_Content_Pipeline.md) - CPL記事の作成方法
-- [設計仕様書](../02_System_Spec.md) - データベース設計仕様
+- [Component_Structure_Guide.md](../Component_Structure_Guide.md) - `src/` 構成
 
 ---
 
@@ -283,7 +283,7 @@ A: ファイル名は`learning_contents`テーブルの`id`として使用され
 
 ### Q: order番号はどう決めればいいですか？
 
-A: [08_Syllabus_Management_Guide.md](../08_Syllabus_Management_Guide.md) の記事 ID 規約に従って設定します。同じ科目内で連番になるように設定してください。
+A: [05_Content_Pipeline.md](../05_Content_Pipeline.md) §5 の記事 ID 規約に従って設定します。同じ科目内で連番になるように設定してください。
 
 ### Q: 画像はどこに配置すればいいですか？
 

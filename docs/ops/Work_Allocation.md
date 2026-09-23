@@ -60,4 +60,4 @@ Cursor が Grok に毎回渡すもの:
 
 ## 6. Vercel Cron
 
-設定は `vercel.json`、処理は `api/cron.ts`（`?job=`）。記事の公開日は `api/_lib/articlePublishSchedule.ts` と MDX の `publishedAt`（JST）。運用は [04_Operations_Guide.md](../04_Operations_Guide.md)「Articles 日次公開・週次案内メール」。
+設定は `vercel.json`、処理は `api/cron.ts`（`?job=`）。記事の公開日は `api/_lib/articlePublishSchedule.ts` と MDX の `publishedAt`（JST）。運用は [05_Content_Pipeline.md](../05_Content_Pipeline.md) §1。

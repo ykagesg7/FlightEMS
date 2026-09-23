@@ -32,8 +32,8 @@
 
 ## 4. 取り込み後の必須チェック（人間 / Cursor）
 
-- [ ] `meta.slug` がルートと一致するか（[02_System_Spec](../02_System_Spec.md)）
-- [ ] 新規なら `learning_contents`・必要なら `learning_test_mapping`（[08](../08_Syllabus_Management_Guide.md)）
+- [ ] `meta.slug` がルートと一致するか（[05_Content_Pipeline.md](../05_Content_Pipeline.md) §4）
+- [ ] 新規なら `learning_contents`・必要なら `learning_test_mapping`（同書 §5）
 - [ ] `npm run build` または該当ページのローカル表示
 - [ ] 比喩・フィクションの境界が既存記事と矛盾しないか（通信・緊急系は特に）
 

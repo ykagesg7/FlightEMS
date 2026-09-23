@@ -281,11 +281,26 @@ npx -y obsidian-mcp-rs install cursor --global "C:\Users\YOU\iCloudDrive\iCloud~
 |------|------|
 | **Auth Email Templates**（日本語件名等） | MCP にテンプレート編集 API なし |
 | **Auth UI トグル**（Leaked Password、Confirm email 等） | Dashboard / Management API 外 |
-| **Postgres エンジンのアップグレード** | インフラ操作 — Free は **Pause/Restore**、Pro は **Infrastructure → Upgrade project**（[04_Operations_Guide.md](04_Operations_Guide.md)） |
+| **Postgres エンジンのアップグレード** | インフラ操作 — Free は **Pause/Restore**、Pro は **Infrastructure → Upgrade project** |
 
 ### 定期監査（推奨）
 
-リリース前または月次: `get_advisors`（security）→ [04_Operations_Guide.md](04_Operations_Guide.md)「Supabase Security Advisor」の許容 WARN 表と照合。[ops/MCP_RELEASE_CHECKLIST.md](ops/MCP_RELEASE_CHECKLIST.md) §1 参照。
+リリース前または月次: `get_advisors`（security）→ 下表の許容 WARN と照合。
+
+| WARN | 対応 |
+|------|------|
+| `auth_leaked_password_protection` | **許容（Free）** — Pro 以上でのみ ON |
+| `vulnerable_postgres_version` | **監視** — MCP/SQL ではエンジンアップグレード不可 |
+| linter 0029（cohort RPC） | **解消済** — `20260603_cohort_rpc_security_invoker_wrappers.sql` |
+
+### リリース前チェック（MCP / 手動）
+
+| 場所 | 手順 |
+|------|------|
+| Supabase | `list_migrations` → `scripts/database/` 整合。`get_advisors`（security）。`execute_sql` で verified 件数・mapping 行数を記録 |
+| Vercel | `list_projects`、`get_runtime_logs` / ビルドログ |
+| GitHub | 未解決 PR / issue |
+| ローカル | `npm run test:run`、`npm run lint`、`npm run build`（必要なら `test:e2e`） |
 
 Serena メモ: `mem:ops/supabase_security_advisor`（cohort RPC・Free 制限・Postgres 監視の要約）。`mem:planning/opensky_traffic_layer`（OpenSky 本番 env・502/504 対策・モジュール索引）。
 
@@ -297,7 +312,7 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
 
 ### Flight Academy での位置づけ
 
-- **タグ（`gtag` / `VITE_GA_MEASUREMENT_ID`）の代替にはならない**。ブラウザから `g/collect` が届いていない状態では、Data API のレポートも空に近くなる。収集パイプラインの切り分けは [docs/04_Operations_Guide.md](04_Operations_Guide.md)「GA4」を先に参照する。
+- **タグ（`gtag` / `VITE_GA_MEASUREMENT_ID`）の代替にはならない**。ブラウザから `g/collect` が届いていない状態では、Data API のレポートも空に近くなる。週次数字は [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)。測定 ID 本番フォールバック: **`G-22VFYSM69J`**。
 - **用途の例**: プロパティ一覧の確認、過去期間の `screenPageViews` 等の有無確認、Cursor 上での自然言語による要約（データが蓄積されたあと）。
 
 ### 経路の比較（このリポジトリの推奨）
@@ -310,7 +325,7 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
 
 **プロパティ ID と測定 ID（混同しない）**
 
-- **`G-xxxx`（ウェブデータストリームの測定 ID）** — アプリの `VITE_GA_MEASUREMENT_ID` と一致させる単位。**タグ検証・Realtime はここが起点**。[04_Operations_Guide.md の GA4 節](04_Operations_Guide.md) のチェックリストと対応する。
+- **`G-xxxx`（ウェブデータストリームの測定 ID）** — アプリの `VITE_GA_MEASUREMENT_ID` と一致させる単位。**タグ検証・Realtime はここが起点**。週次レビュー手順は [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)。
 - **プロパティ ID（数値、例 `123456789`）** — GA 管理画面のプロパティ設定で確認。Data API は多くの場合 **`properties/{property_id}`** 単位。**MCP がプロパティを指定するときはこちら**。測定 ID（`G-…`）と **入れ替えない**。
 
 **ルート B のパッケージ名について**: 資料によって `npx -y @modelcontextprotocol/server-google-analytics` のように書かれた例があるが、このスコープ名のパッケージは **npm 登録なし（404）** であることを本リポジトリで確認済み（2026-05-05）。利用するなら **`npm search` / npm ページ / GitHub** で、採用するサーバー名を必ず確かめてから `mcp.json` に書く。
@@ -336,7 +351,7 @@ Google 公式の [Analytics MCP サーバー](https://github.com/googleanalytics
 
 `.cursor/mcp.json` の `GOOGLE_APPLICATION_CREDENTIALS` は、上記の **絶対パス**（スラッシュ区切り可）だけを指す。アプリの `.env.local`（`VITE_*` 等）とは役割が違うので混ぜない。
 
-週次テレメトリの GitHub Actions は同じ SA JSON の本文をリポジトリ secret **`GA4_SA_JSON`** に置く（ファイルはコミットしない）。**2026-08-17 に登録済**。手順は [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) と [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md#週次テレメトリ-ga4iso-週github-actions)。
+週次テレメトリの GitHub Actions は同じ SA JSON の本文をリポジトリ secret **`GA4_SA_JSON`** に置く（ファイルはコミットしない）。**2026-08-17 に登録済**。手順は [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) と [scripts/telemetry/](../scripts/telemetry/)（`approve_command.py`）。
 
 ### ADC と Analytics スコープ（403 対策）
 
@@ -424,7 +439,7 @@ MCP ツール **`get_account_summaries`** が **空配列でない**こと、続
 1. **`google-analytics-mcp`**（ルート A）ブロックで `GOOGLE_APPLICATION_CREDENTIALS` と `GOOGLE_PROJECT_ID` を実値にする（パスは Windows でも `C:/...` のスラッシュ推奨）。
 2. **pipx / Python** が動く環境であることを確認する（ルート B のときは検証済み **`npx` パッケージ**のみ）。
 3. **Cursor を再起動**し、**Settings → Tools & Integrations → MCP** でサーバーが接続済み（緑）、ツール一覧に GA / reporting 関連が出ることを確認する。
-4. **疎通の考え方**: チャットで「過去 7 日の `screenPageViews` の上位ページ」のように **Data API が返すクエリ**を依頼し、結果がレポート側と整合するか見る。**タグ未設置で 0 に近い**のは異常というより収集側の問題のことが多い（[04](04_Operations_Guide.md) の GA4 チェックリストどおり）。
+4. **疎通の考え方**: チャットで「過去 7 日の `screenPageViews` の上位ページ」のように **Data API が返すクエリ**を依頼し、結果がレポート側と整合するか見る。**タグ未設置で 0 に近い**のは異常というより収集側の問題のことが多い（`VITE_GA_MEASUREMENT_ID` と GA4 Realtime を照合）。
 
 ### Cursor への接続例（Windows・ルート A）
 
@@ -519,4 +534,4 @@ GA4 を [BigQuery にリンクする](https://support.google.com/analytics/answe
 
 ## コミットメッセージ（英語）
 
-プロジェクト規約ではコミットタイトルは **英語のみ**（Windows 文字化け対策）。詳細は Skill [`.cursor/skills/git-commit-en/SKILL.md`](../.cursor/skills/git-commit-en/SKILL.md) と [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md) を参照。
+プロジェクト規約ではコミットタイトルは **英語のみ**（Windows 文字化け対策）。詳細は Skill [`.cursor/skills/git-commit-en/SKILL.md`](../.cursor/skills/git-commit-en/SKILL.md) を参照。

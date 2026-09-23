@@ -20,11 +20,11 @@
 | **プロダクト成長・段階・NSM** | [docs/Product_North_Star_and_GTM.md](docs/Product_North_Star_and_GTM.md) §0 |
 | **現行ワークストリーム** | [docs/01_Current_Status_and_Roadmap.md](docs/01_Current_Status_and_Roadmap.md) |
 | **完了サマリ（段階1）** | [docs/Closed_Sprints.md](docs/Closed_Sprints.md) |
-| **現行仕様（DB・/test 等）** | [docs/02_System_Spec.md](docs/02_System_Spec.md) |
+| **現行仕様（DB・/test 等）** | [docs/Component_Structure_Guide.md](docs/Component_Structure_Guide.md) |
 | **`src/` 構成** | [docs/Component_Structure_Guide.md](docs/Component_Structure_Guide.md) |
 | **リポジトリフォルダ索引** | [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) |
 | **Cursor MCP** | [docs/Cursor_MCP_Setup.md](docs/Cursor_MCP_Setup.md) |
-| **Supabase SQL 索引（短）** | [scripts/database/INDEX.md](scripts/database/INDEX.md)（詳細運用・CPL は [docs/Scripts_Repository_Tooling.md](docs/Scripts_Repository_Tooling.md)） |
+| **Supabase SQL 索引（短）** | [scripts/database/INDEX.md](scripts/database/INDEX.md)（CPL CSV は [scripts/cpl_exam/CPL_CSV_IMPORT_SPEC.md](scripts/cpl_exam/CPL_CSV_IMPORT_SPEC.md)） |
 
 過去のルート README にあったマップ操作・CPL 資料の詳細は、上記 `docs/` およびアプリ内ヘルプを参照してください。`cpl_exam_data/` の実データは `.gitignore` 対象の場合があります。
 

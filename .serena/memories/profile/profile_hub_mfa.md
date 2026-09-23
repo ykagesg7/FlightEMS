@@ -1,7 +1,7 @@
 # Profile Hub + MFA (2026-06)
 
 **Status**: **Production deployed & recovery codes verified** on `main` (2026-06-21, `https://flight-lms.vercel.app/`)
-**Docs**: `docs/02_System_Spec.md` (Profile Hub), `docs/04_Operations_Guide.md` (MFA ops), `docs/03_Development_Guide.md` (Vercel 12-fn limit), `DESIGN.md`
+**Docs**: `docs/Component_Structure_Guide.md` (Profile Hub), `docs/Cursor_MCP_Setup.md` (MFA ops), `AGENTS.md` (Vercel 12-fn limit), `DESIGN.md`
 
 ## Profile Hub IA
 - 4 sections via `?tab=`: `profile` | `learning` | `privacy` | `account`

@@ -1,7 +1,7 @@
 -- Incremental learning_test_mapping for PPL lesson articles (航空工学 clusters).
 -- Links ReviewContentLink: unified_cpl_question_ids / test_question_ids overlaps.
 --
--- Rules (see docs/08_Syllabus_Management_Guide.md):
+-- Rules (see docs/05_Content_Pipeline.md §5):
 -- - Default: verified + applicable_exams @> {PPL}（/test の PPL 基礎モードと整合）
 -- - Exception blocks below: 性能と耐空性/*・遠隔表示計器/ジャイロ・航法計器/磁方位計器 は、
 --   現行データが CPL のみの行が多いため **PPL 条件なし（verified のみ）** で束ねる。

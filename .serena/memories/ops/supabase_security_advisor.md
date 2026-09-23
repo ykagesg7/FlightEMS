@@ -1,7 +1,7 @@
 # Supabase Security Advisor — FlightAcademy 本番
 
 **Project**: `fstynltdfdetpyvbrswr` (Free, ap-northeast-1)
-**Docs**: `docs/04_Operations_Guide.md` § Supabase Security Advisor
+**Docs**: `docs/Cursor_MCP_Setup.md` § Supabase Security Advisor
 
 ## 2026-06-22 状態（mfa_recovery_codes RLS ポリシー追加後）
 

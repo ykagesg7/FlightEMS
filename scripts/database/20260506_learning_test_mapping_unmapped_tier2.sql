@@ -9,7 +9,7 @@
 --   - 冪等: ON CONFLICT (learning_content_id, topic_category) DO UPDATE。
 --   - mapping_source でロールバック時に追跡可能にする。
 --
--- 適用: Supabase MCP execute_sql または Dashboard SQL エディタ（本番は [04_Operations_Guide.md](../../docs/04_Operations_Guide.md) に沿う）
+-- 適用: Supabase MCP execute_sql または Dashboard SQL エディタ（本番は docs/Cursor_MCP_Setup.md に沿う）
 
 -- 1) 工学: 航空機の構造/荷重と強度（§6 スナップショット 16 問）
 INSERT INTO learning_test_mapping (

@@ -58,7 +58,7 @@ PPL/CPL 記事の本文化と、記事↔Quiz 連携。今後は穴埋めのみ�
 - 記事のスクロール読了だけでは ALPM に数えない。読了 5 XP は理解確認へ進むための
   軽い即時フィードバックとして扱う。
 - **UI（2026-07-20）**: Quiz 結果の「学習成果」、HOME「今日の1手」、Articles「次の理解チェック」で
-  マイルストーン達成を学習者に見せる（詳細は [02_System_Spec.md](02_System_Spec.md)）。
+  マイルストーン達成を学習者に見せる（詳細は [Component_Structure_Guide.md](Component_Structure_Guide.md)）。
 - **狙い**: 潜在層には **自己効力感**（「自分でもできる」）、訓練生には **効率的な実力向上の実感**。中長期では **LTV（顧客生涯価値）** の最大化に寄与する行動を週次で促す。
 
 ### 1.2 計測契約（要決定）
@@ -73,13 +73,13 @@ PPL/CPL 記事の本文化と、記事↔Quiz 連携。今後は穴埋めのみ�
 | **デモ／内部アカウント** | GA4・DB 集計から除外するルール |
 | **ロードマップ未設定ユーザー** | デフォルト経路（例: 気象・通信 PMF スライス）を ALPM の母集団に含めるか |
 
-**正本の役割分担**: NSM の **定義・計測契約の文章**は **本書**。ダッシュボード用の **数式・イベント名・DB マッピング**は確定後 **[02_System_Spec.md](02_System_Spec.md)** に追記する（別タスク）。
+**正本の役割分担**: NSM の **定義・計測契約の文章**は **本書**。ダッシュボード用の **数式・イベント名・DB マッピング**は確定後 **[Component_Structure_Guide.md](Component_Structure_Guide.md)** に追記する（別タスク）。
 
 ---
 
 ## 2. 二重動線オンボーディング
 
-属性に応じて **アハ体験（Aha! Moment）** を最短にする。実装詳細・画面仕様は **[02_System_Spec.md](02_System_Spec.md)** の「プロダクト方針連携（将来）」に委譲。
+属性に応じて **アハ体験（Aha! Moment）** を最短にする。実装詳細・画面仕様は **[Component_Structure_Guide.md](Component_Structure_Guide.md)** に委譲（保留）。
 
 ### 2.1 訓練生パス（CPL 学科・フライトスクール在籍など）
 
@@ -128,11 +128,11 @@ PPL/CPL 記事の本文化と、記事↔Quiz 連携。今後は穴埋めのみ�
 ### 5.1 方針
 
 - 初期段階から **興味関心** と **学習ログ**（記事進捗、クイズ、セッション等）を蓄積し、将来の **推奨付き選択モデル（アダプティブ・ラーニング）** への移行に備える。
-- **既存基盤**（概念レベル）: `learning_progress`、`learning_sessions`、`user_learning_profiles`、`user_test_results`、`quiz_sessions` 等。詳細表は [02_System_Spec.md](02_System_Spec.md)。
+- **既存基盤**（概念レベル）: `learning_progress`、`learning_sessions`、`user_learning_profiles`、`user_test_results`、`quiz_sessions` 等。詳細は [Component_Structure_Guide.md](Component_Structure_Guide.md)。
 
 ### 5.2 実装の正本
 
-- スキーマ追加・イベント命名・プライバシー境界の **仕様**は **[02_System_Spec.md](02_System_Spec.md)** および **[ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)**（分析・GA4）に追記していく。
+- スキーマ追加・イベント命名・プライバシー境界の **仕様**は **[Component_Structure_Guide.md](Component_Structure_Guide.md)** および **[ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)**（分析・GA4）に追記していく。
 - 本書は **事業意図** の固定にとどめ、列定義のダブりを作らない。
 
 ---
@@ -148,7 +148,7 @@ PPL/CPL 記事の本文化と、記事↔Quiz 連携。今後は穴埋めのみ�
 | **通信・電波・航空法** | **一般的な学科範囲の説明**に留める。免許・周波数・運用の具体的助言に読まれない表現、**電波法・航空法上の助言と誤解されない**工夫 |
 | **AI 出力** | ナビゲーターは **記事根拠**を示す。誤情報を防ぐための固定免責（画面テンプレートは別タスク） |
 
-詳細チェックは **本書 §6** と [04_Operations_Guide.md](04_Operations_Guide.md) を併覧。
+詳細チェックは **本書 §6** と [05_Content_Pipeline.md](05_Content_Pipeline.md) を併覧。
 
 ---
 
@@ -158,7 +158,7 @@ PPL/CPL 記事の本文化と、記事↔Quiz 連携。今後は穴埋めのみ�
 |---|------------|----------------|------------------------|
 | 1 | **気象・通信** の単元レベル診断問題と、ナビゲーション対象記事の選定 | ID、しゃどーさん | 本書 §3.2 / [05](05_Content_Pipeline.md) |
 | 2 | **10 代向け** 利用規約・通信分野の免責条項の叩き台 | CLO | 別紙（公開前レビュー）↔ 本書 §6 |
-| 3 | 初期診断後の **セグメント分け** と **データ収集ログ** の設計 | CTO | [02](02_System_Spec.md)、必要なら migration メモ |
+| 3 | 初期診断後の **セグメント分け** と **データ収集ログ** の設計 | CTO | [Component_Structure_Guide.md](Component_Structure_Guide.md)、必要なら migration メモ |
 | 4 | 若年層の自律学習を促す **AI ナビゲーターのペルソナ** | CMO、CS | プロンプト／CS プレイブック（リポジトリ外可） |
 | 5 | **ALPM 計測契約**の確定とダッシュボード要件 | CFO／CTO／プロダクト | 本書 §1.2、GA4／内部集計の正本 |
 
@@ -170,6 +170,6 @@ PPL/CPL 記事の本文化と、記事↔Quiz 連携。今後は穴埋めのみ�
 |--------------|------|
 | [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) | 段階2 のワークストリームと現在地 |
 | [Closed_Sprints.md](Closed_Sprints.md) | 段階1 の完了サマリ・不変条件・最終数値 |
-| [02_System_Spec.md](02_System_Spec.md) | アプリ・DB・API の現行仕様と将来のイベント設計先 |
+| [Component_Structure_Guide.md](Component_Structure_Guide.md) | `src/` 構成と将来のイベント設計先 |
 | [05_Content_Pipeline.md](05_Content_Pipeline.md) | CP / FN / メンタリティの配信表と記事パイプライン |
 | [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md) | 週次 GA4・Sentry レビュー |

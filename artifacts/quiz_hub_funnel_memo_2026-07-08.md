@@ -3,7 +3,7 @@
 **作成日**: 2026-07-01（W27 ブロック H）  
 **最終更新**: 2026-05-28（GA4 MCP `run_report` / `run_funnel_report` 再取得）  
 **対象期間**: 2026-06-06（Quiz Hub Lane A 本番投入）〜 2026-07-08  
-**プロパティ**: FlightAcademy — 測定 ID `G-22VFYSM69J` / Data API property ID **`532610432`**（[04_Operations_Guide.md](../docs/04_Operations_Guide.md)）  
+**プロパティ**: FlightAcademy — 測定 ID `G-22VFYSM69J` / Data API property ID **`532610432`**（[Cursor_MCP_Setup.md](../docs/Cursor_MCP_Setup.md)）  
 **タイムゾーン**: Asia/Tokyo（レポートメタデータ）
 
 ---

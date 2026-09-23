@@ -64,7 +64,7 @@
 - 航空気象: `3.3.1`〜`3.3.12`（スタブ配置・マッピングは [Closed_Sprints](../Closed_Sprints.md) §3）
 - 航空法規: `3.1.7`〜`3.1.8`（Phase 2 リスト）
 
-**KPI 節 最終更新（本パート）**: 2026-04-30（`3.4.5`〜`3.4.7` のシリーズ・DB メタを [09](../09_CPL_Learning_Stub.md)・`20260430_learning_contents_cpl_navigation_341_347_meta.sql` に追随）
+**KPI 節 最終更新（本パート）**: 2026-04-30（`3.4.5`〜`3.4.7` のシリーズ・DB メタを [Closed_Sprints.md](../Closed_Sprints.md) §1・`20260430_learning_contents_cpl_navigation_341_347_meta.sql` に追随）
 
 ---
 

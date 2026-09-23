@@ -1,6 +1,6 @@
 # 航空機レイヤー — Planning 地図（本番運用 / airplanes.live）
 
-**Docs**: `docs/02_System_Spec.md` 地図節 · `docs/03_Development_Guide.md` 航空機レイヤー · `docs/04_Operations_Guide.md` 航空機レイヤー運用
+**Docs**: `docs/Component_Structure_Guide.md` 地図・航空機レイヤー · `docs/ops/Work_Allocation.md` 運用
 
 ## 重要（2026-06-24 移行）
 

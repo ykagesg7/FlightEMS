@@ -6,7 +6,7 @@
 - ✅ **フロントエンド開発者**: コンポーネント構造を理解したい場合
 - ✅ **コードレビュアー**: コンポーネント配置の妥当性を確認したい場合
 
-**推奨読み順**: [docs/README.md](README.md) → [03_Development_Guide.md](03_Development_Guide.md) → このドキュメント。UI トークンとエージェント前提の要約はルートの [**AGENTS.md**](../AGENTS.md)・[**DESIGN.md**](../DESIGN.md) を参照。
+**推奨読み順**: [docs/README.md](README.md) → ルート [**AGENTS.md**](../AGENTS.md) → このドキュメント。UI トークンは [**DESIGN.md**](../DESIGN.md) を参照。
 
 ---
 
@@ -120,7 +120,7 @@ src/components/
 - **`MDXContent`（外枠）**: 目次横並び時の記事列は **`min-w-0 w-full flex-1`** で flex 子の幅潰れを防ぐ。
 - **`Callout`**: 内部の `prose` に **`prose-invert`** を付与。
 - **GFM Markdown（表など）**: Vite の `@mdx-js/rollup` に **`remark-gfm`** を適用済み（`vite.config.ts`）。レッスン MDX では **GitHub Flavored Markdown の表記法**（`|` テーブル、取り消し線等）が使える。体裁は **`MDXContentWithTheme`** の `table` / `th` / `td` / `tr` と整合。
-- **レッスン MDX のアフィリエイト用 raw `div`**: ルートに **`not-prose`**、レイアウトは **CSS Grid**（`src/content/lessons/*.mdx` の Monetization Spot）。新規追加時は [02_System_Spec.md](02_System_Spec.md)「MDX 表示・学習者向け文言」を参照。
+- **レッスン MDX のアフィリエイト用 raw `div`**: ルートに **`not-prose`**、レイアウトは **CSS Grid**（`src/content/lessons/*.mdx` の Monetization Spot）。新規追加時は本節と [05_Content_Pipeline.md](05_Content_Pipeline.md) §4 を参照。
 
 ### レイアウトとルート付近フック
 
@@ -388,6 +388,12 @@ src/pages/
 
 新規で地図レイヤ・気象・NOTAM を触る場合は、同ディレクトリ内の既存 `services` / `utils` / `api` 連携パターンに合わせる。
 
+### Debrief・3D 空域（要約）
+
+- **Debrief**: GPX / KML / CSV 取込。Geolocation 簡易記録。ログイン時は Supabase Storage + DB メタ。UI は Planning の **Debrief タブ**。
+- **SWIM NOTAM**: ブラウザは `/api/swim-notam-search` のみ。Preflight Briefing と地図チップで表示。
+- **3D**: 隔離ルート `/explore/airspace-3d`（Cesium `vendor-cesium`）。NavLog カードから導線。ハブ HTML に Cesium を注入しない（[Closed_Sprints.md](Closed_Sprints.md) §2）。
+
 ---
 
 ## 🔧 インポートパス規則
@@ -519,8 +525,9 @@ ls src/pages/planning/components/
 
 ## 📚 関連ドキュメント
 
-- [03_Development_Guide.md](03_Development_Guide.md) - 開発環境とコーディング規約
-- [02_System_Spec.md](02_System_Spec.md) - データベース設計とAPI仕様
+- [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) - リポジトリ構成
+- [05_Content_Pipeline.md](05_Content_Pipeline.md) - 記事・配信パイプライン
+- [Cursor_MCP_Setup.md](Cursor_MCP_Setup.md) - MCP と Supabase 運用
 
 ---
 
