@@ -16,6 +16,8 @@ interface ImportMetaEnv {
   /** Cloudflare Turnstile サイトキー（Auth CAPTCHA・任意） */
   readonly VITE_TURNSTILE_SITE_KEY?: string;
   readonly VITE_APP_ENV: 'development' | 'production';
+  /** Build-time Cesium Workers/Assets base (local /cesium/ or jsDelivr on Preview). */
+  readonly VITE_CESIUM_BASE_URL?: string;
   readonly GOOGLE_GEMINI_API_KEY: string;
   readonly GOOGLE_CLOUD_VISION_API_KEY: string;
   readonly NODE_ENV: 'development' | 'production';

@@ -8,6 +8,7 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { cesiumStaticAssetsPlugin } from './vite/cesiumStaticAssetsPlugin';
+import { resolveCesiumBaseUrl } from './vite/cesiumVersion';
 import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
 import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
 import { articlesIndexPlugin } from './vite/articlesIndexPlugin';
@@ -100,10 +101,21 @@ export default defineConfig(({ mode }) => {
     }
   }
 
+  const cesiumDeploy = resolveCesiumBaseUrl({
+    vercel: process.env.VERCEL,
+    vercelEnv: process.env.VERCEL_ENV,
+    cesiumCdn: process.env.CESIUM_CDN,
+  });
+  if (cesiumDeploy.useCdn) {
+    console.log(
+      `[vite] Cesium CDN (Preview): ${cesiumDeploy.baseUrl} (cesium@${cesiumDeploy.version})`,
+    );
+  }
+
   const plugins: PluginOption[] = [
     // Assets/Workers only. Do not inject Cesium.js into every HTML shell
     // (vite-plugin-cesium did, which WASM-initialized Articles/Quiz).
-    cesiumStaticAssetsPlugin(),
+    cesiumStaticAssetsPlugin({ skipCopy: cesiumDeploy.useCdn }),
     ...(mode === 'development' ? [devOpenskyApiPlugin(), devWeatherApiPlugin()] : []),
     react({
       jsxRuntime: 'automatic',
@@ -156,6 +168,7 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_SENTRY_DSN': JSON.stringify(sentryClientDsn),
       'import.meta.env.VITE_VERCEL_DEV_API_ORIGIN': JSON.stringify(vercelDevApiOrigin),
       'import.meta.env.VITE_GA_MEASUREMENT_ID': JSON.stringify(gaMeasurementId),
+      'import.meta.env.VITE_CESIUM_BASE_URL': JSON.stringify(cesiumDeploy.baseUrl),
     },
     build: {
       // Sentry のためソースマップを有効化（hidden: デプロイ先には公開しない）
