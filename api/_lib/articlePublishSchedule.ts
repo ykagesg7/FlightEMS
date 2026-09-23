@@ -293,7 +293,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W40',
     seriesTitle: 'CP（単機）',
     intro:
-      '来週は操縦2本（日・水）。Split-S / Immelmann と Cuban Eight。金曜はメンタリティ枠（稿ができ次第別途 schedule）。',
+      '来週は操縦2本（日・水）と金曜メンタリティ1本。Split-S / Immelmann、Cuban Eight、７つの習慣その５。',
     articles: [
       {
         id: 'CP-5-6_SplitSImmelmann',
@@ -308,6 +308,13 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         title: '第20話：45°下げで裏返せ ～Cuban Eight～',
         slug: '/articles/cp-5-7-cuban-eight',
         hook: '45°下げで裏返せ。リードして引き起こせ。2回目は逆。',
+      },
+      {
+        id: '1.1.5_SeekFirstToUnderstand',
+        publishDate: '2026-10-02',
+        title: '【７つの習慣】その５、道真公と学ぶ「まず理解に徹し、そして理解される」',
+        slug: '/articles/seek-first-to-understand',
+        hook: '「はい」の前に要約を一文返せ。編隊の無線はそこから澄む。',
       },
     ],
   },

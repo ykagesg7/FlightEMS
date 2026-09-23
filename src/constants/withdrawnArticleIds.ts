@@ -6,10 +6,10 @@
  * 1.1.3_PrioritizingMostImportant was rewritten (no 埼玉解放 / Top Gun) and republished 2026-09-21.
  * 1.1.2_EndWithFuture was rewritten (no くまモン / 清正公) and republished 2026-09-21.
  * 1.1.4_WinWinThinking was rewritten (no 黄門 / K's / 埼玉パロディ) and republished 2026-09-22.
+ * 1.1.5_SeekFirstToUnderstand was rewritten (no 野球実況 / 忠勝公 / ZOZO) and scheduled W40 Fri 2026-10-02.
  * mindset tab auto-appears when published mindset articles exist (getVisibleTabs).
  */
 export const WITHDRAWN_ARTICLE_IDS: readonly string[] = [
-  '1.1.5_SeekFirstToUnderstand',
   '1.1.6_Synergize',
   '1.2.5_RightPeopleOnBoard',
   '1.2.6_GiveAndTake',
