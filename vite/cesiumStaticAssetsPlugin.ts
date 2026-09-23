@@ -6,6 +6,9 @@ import type { Plugin, ResolvedConfig } from 'vite';
 
 const CESIUM_URL_PREFIX = '/cesium/';
 
+/** CesiumJS Quickstart: only these four dirs are required at runtime. */
+export const CESIUM_RUNTIME_DIRS = ['Workers', 'ThirdParty', 'Assets', 'Widgets'] as const;
+
 const MIME_BY_EXT: Record<string, string> = {
   '.js': 'text/javascript; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8',
@@ -102,7 +105,14 @@ export function cesiumStaticAssetsPlugin(): Plugin {
         return;
       }
       const dest = resolve(process.cwd(), outDir, 'cesium');
-      await cp(cesiumRoot, dest, { recursive: true });
+      for (const dir of CESIUM_RUNTIME_DIRS) {
+        const src = join(cesiumRoot, dir);
+        if (!existsSync(src)) {
+          console.warn(`[cesium-static-assets] skip copy: missing ${src}`);
+          continue;
+        }
+        await cp(src, join(dest, dir), { recursive: true });
+      }
     },
   };
 }
