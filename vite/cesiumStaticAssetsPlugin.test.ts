@@ -1,8 +1,14 @@
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { resolveCesiumAssetPath } from './cesiumStaticAssetsPlugin';
+import { CESIUM_RUNTIME_DIRS, resolveCesiumAssetPath } from './cesiumStaticAssetsPlugin';
 
 const root = resolve('/tmp/cesium-build-root');
+
+describe('CESIUM_RUNTIME_DIRS', () => {
+  it('lists the four Cesium Quickstart directories only', () => {
+    expect([...CESIUM_RUNTIME_DIRS]).toEqual(['Workers', 'ThirdParty', 'Assets', 'Widgets']);
+  });
+});
 
 describe('resolveCesiumAssetPath', () => {
   it('maps a worker URL under the Cesium build root', () => {
