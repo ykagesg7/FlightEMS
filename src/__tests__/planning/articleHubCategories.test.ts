@@ -29,18 +29,18 @@ function mockContent(
 }
 
 describe('articleHubCategories', () => {
-  it('allows rewritten habits 1–4 while habit 5 stays withdrawn', () => {
+  it('allows rewritten habits 1–5; habit 5 stays off catalog until drip publish', () => {
     expect(isWithdrawnArticle('1.1.1_UnconsciousSuccess')).toBe(false);
     expect(isWithdrawnArticle('1.1.2_EndWithFuture')).toBe(false);
     expect(isWithdrawnArticle('1.1.3_PrioritizingMostImportant')).toBe(false);
     expect(isWithdrawnArticle('1.1.4_WinWinThinking')).toBe(false);
-    expect(isWithdrawnArticle('1.1.5_SeekFirstToUnderstand')).toBe(true);
+    expect(isWithdrawnArticle('1.1.5_SeekFirstToUnderstand')).toBe(false);
     const contents = [
       mockContent('1.1.1_UnconsciousSuccess', 'メンタリティー', true),
       mockContent('1.1.2_EndWithFuture', 'メンタリティー', true),
       mockContent('1.1.3_PrioritizingMostImportant', 'メンタリティー', true),
       mockContent('1.1.4_WinWinThinking', 'メンタリティー', true),
-      mockContent('1.1.5_SeekFirstToUnderstand', 'メンタリティー', true),
+      mockContent('1.1.5_SeekFirstToUnderstand', 'メンタリティー', false),
     ];
     expect(filterPublishedArticleContents(contents).map((c) => c.id)).toEqual([
       '1.1.1_UnconsciousSuccess',
