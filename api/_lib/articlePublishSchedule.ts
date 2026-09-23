@@ -2,9 +2,9 @@
  * Shared schedule for drip publish (learning_contents) and weekly digest email.
  * Keep in sync with MDX meta.publishedAt.
  * One series per ISO week (訓練の当たり前 / Contact / FMT).
- * Default drip: 3/week when writing capacity is tight.
- * Cadence: **1st article Sunday** (digest day, readable at 17:00 JST email),
- * **2nd Wednesday, 3rd Friday**. First publishDate = Sunday before ISO-week Monday.
+ * Default drip (W39 and earlier CP): 3/week Sun·Wed·Fri.
+ * Cadence from **2026-W40**: **2 CP/FN per week** (Sun·Wed) + **Friday mentality slot**
+ * (not listed here until a draft exists). Digest still anchors on Sunday.
  * Stock unpublished IDs until listed here; cron only flips IDs in this file.
  */
 
@@ -286,6 +286,160 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         title: '第18話：頂点は水平、完了は進入に戻せ ～Loop～',
         slug: '/articles/cp-5-5-loop',
         hook: '頂点は水平。150を切るな。完了は進入に戻せ。',
+      },
+    ],
+  },
+  '2026-W40': {
+    isoWeek: '2026-W40',
+    seriesTitle: 'CP（単機）',
+    intro:
+      '来週は操縦2本（日・水）。Split-S / Immelmann と Cuban Eight。金曜はメンタリティ枠（稿ができ次第別途 schedule）。',
+    articles: [
+      {
+        id: 'CP-5-6_SplitSImmelmann',
+        publishDate: '2026-09-28',
+        title: '第19話：一周を前半と後半に切れ ～Split-S / Immelmann～',
+        slug: '/articles/cp-5-6-split-s-immelmann',
+        hook: 'Loopを切れ。Split-Sは背面から、Immelmannは頂点でhalf roll。',
+      },
+      {
+        id: 'CP-5-7_CubanEight',
+        publishDate: '2026-10-01',
+        title: '第20話：45°下げで裏返せ ～Cuban Eight～',
+        slug: '/articles/cp-5-7-cuban-eight',
+        hook: '45°下げで裏返せ。リードして引き起こせ。2回目は逆。',
+      },
+    ],
+  },
+  '2026-W41': {
+    isoWeek: '2026-W41',
+    seriesTitle: 'CP（単機）',
+    intro:
+      '来週は CP 最終2本。Cloverleaf と Chandelle。単機シリーズ完。金曜はメンタリティ枠。',
+    articles: [
+      {
+        id: 'CP-5-8_Cloverleaf',
+        publishDate: '2026-10-05',
+        title: '第21話：同じ向きに4枚の葉を描け ～Cloverleaf～',
+        slug: '/articles/cp-5-8-cloverleaf',
+        hook: '同じ向きに4枚。各葉は90°。第1葉は最寄りborderへ。',
+      },
+      {
+        id: 'CP-5-9_Chandelle',
+        publishDate: '2026-10-08',
+        title: '第22話：最大高度の180°を描け ～Chandelle～',
+        slug: '/articles/cp-5-9-chandelle',
+        hook: '180°で最大高度。翼水平だが水平飛行ではない。',
+      },
+    ],
+  },
+  '2026-W42': {
+    isoWeek: '2026-W42',
+    seriesTitle: 'FN（編隊）',
+    intro:
+      '来週は編隊の入口2本。V.F.Rの血の掟と滑走路のシンクロ。金曜はメンタリティ枠。',
+    articles: [
+      {
+        id: 'FMT-1-1_WingmanVFR',
+        publishDate: '2026-10-12',
+        title: '第1話：ウイングマンの魂 ～V.F.Rの血の掟～',
+        slug: '/articles/fmt-1-1-wingman-vfr',
+        hook: 'V.F.Rの順番。衝突回避が先、編隊はその次。',
+      },
+      {
+        id: 'FMT-1-2_RunwayLineupTakeoff',
+        publishDate: '2026-10-15',
+        title: '第2話：滑走路のシンクロ ～的からの脱出と周辺視野～',
+        slug: '/articles/fmt-1-2-runway-lineup-takeoff',
+        hook: '的から脱出。周辺視野でリーダーを捉えろ。',
+      },
+    ],
+  },
+  '2026-W43': {
+    isoWeek: '2026-W43',
+    seriesTitle: 'FN（編隊）',
+    intro:
+      '来週は空中の居場所と運用チェック。Fingertip / Route、Ops check / FENCE。金曜はメンタリティ枠。',
+    articles: [
+      {
+        id: 'FMT-1-3_FingertipRoute',
+        publishDate: '2026-10-19',
+        title: '第3話：空中の居場所 ～FingertipとRoute～',
+        slug: '/articles/fmt-1-3-fingertip-route',
+        hook: 'helmet abeam slab bolt。Routeは2 ship widths〜500 ft。',
+      },
+      {
+        id: 'FMT-1-4_OpsCheckFence',
+        publishDate: '2026-10-22',
+        title: '第4話：下を向く順番 ～Ops checkとFENCE～',
+        slug: '/articles/fmt-1-4-ops-check-fence',
+        hook: '居場所のあとで下を向く。FENCEは空域IN/OUT。',
+      },
+    ],
+  },
+  '2026-W44': {
+    isoWeek: '2026-W44',
+    seriesTitle: 'FN（編隊）',
+    intro:
+      '来週は Lead change と Spread。リードは渡す、広げて見る。金曜はメンタリティ枠。',
+    articles: [
+      {
+        id: 'FMT-1-5_LeadChange',
+        publishDate: '2026-10-26',
+        title: '第5話：リードは渡すもん ～Lead Change～',
+        slug: '/articles/fmt-1-5-lead-change',
+        hook: 'リードは奪わず渡す。ackは3/9到達後。',
+      },
+      {
+        id: 'FMT-1-6_Spread',
+        publishDate: '2026-10-29',
+        title: '第6話：広いのは見るため ～Spread～',
+        slug: '/articles/fmt-1-6-spread',
+        hook: 'Spreadは1,000–3,000 ftの箱。見るため広げろ。',
+      },
+    ],
+  },
+  '2026-W45': {
+    isoWeek: '2026-W45',
+    seriesTitle: 'FN（編隊）',
+    intro:
+      '来週は Trail 族と Rejoin。後ろの箱と合流の型。金曜はメンタリティ枠。',
+    articles: [
+      {
+        id: 'FMT-1-7_TrailFamily',
+        publishDate: '2026-11-02',
+        title: '第7話：後ろなら全部同じはブルシット ～Trail族～',
+        slug: '/articles/fmt-1-7-trail-family',
+        hook: 'Close TrailとETは別箱。Fluid≠FM。',
+      },
+      {
+        id: 'FMT-1-8_Rejoin',
+        publishDate: '2026-11-05',
+        title: '第8話：合流ば救うな ～Pitchout / Rejoin / Overshoot / Breakout～',
+        slug: '/articles/fmt-1-8-rejoin',
+        hook: '合流を救うな。Overshootは早く。Breakoutは4条件。',
+      },
+    ],
+  },
+  '2026-W46': {
+    isoWeek: '2026-W46',
+    seriesTitle: 'FN（編隊）',
+    intro:
+      '来週は FN Season 1 の締め2本。LAB と Lost Wingman。金曜はメンタリティ枠。',
+    articles: [
+      {
+        id: 'FMT-1-9_TacticalLAB',
+        publishDate: '2026-11-09',
+        title: '第9話：見せ場じゃない ～LAB / Tactical Turns～',
+        slug: '/articles/fmt-1-9-tactical-lab',
+        hook: 'LABは4,000–6,000 ft。合図なしはdelayed 90。',
+      },
+      {
+        id: 'FMT-1-10_LostWingman',
+        publishDate: '2026-11-12',
+        title: '第10話：探すな、離れろ ～Lost Wingman / KIO～',
+        slug: '/articles/fmt-1-10-lost-wingman',
+        hook: '見失ったら探すな。wings-levelはinformと15°×15 s。',
       },
     ],
   },
