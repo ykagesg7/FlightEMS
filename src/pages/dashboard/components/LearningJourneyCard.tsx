@@ -49,14 +49,67 @@ const STAGE_ACTIONS: Record<
   },
 };
 
+const PREPARATION_FALLBACK = STAGE_ACTIONS.preparation;
+
+function LearningJourneySkeleton() {
+  return (
+    <Card variant="hud" padding="md" className="mb-6 border-brand-primary/60" data-testid="learning-journey-skeleton">
+      <CardContent>
+        <div className="animate-pulse space-y-3">
+          <div className="h-4 w-40 rounded bg-gray-700/30" />
+          <div className="h-6 w-32 rounded bg-gray-700/30" />
+          <div className="h-3 w-full rounded bg-gray-700/20" />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function LearningJourneyPreparationFallback() {
+  return (
+    <Card variant="hud" padding="md" className="mb-6 border-brand-primary/60" data-testid="learning-journey-preparation">
+      <CardContent>
+        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+          <div className="min-w-0 flex-1">
+            <Typography variant="caption" color="muted" className="mb-1">
+              学科試験までの現在地
+            </Typography>
+            <Typography variant="h3" color="brand" className="mb-2">
+              {STAGE_LABELS.preparation}
+            </Typography>
+            <Typography variant="body-sm" color="muted" className="mb-3">
+              {PREPARATION_FALLBACK.description}
+            </Typography>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-700/30">
+              <div className="h-full w-[8%] rounded-full bg-brand-primary" />
+            </div>
+          </div>
+          <Link
+            to={PREPARATION_FALLBACK.to}
+            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-brand-primary/50 px-4 py-3 text-sm font-semibold text-brand-primary transition hover:bg-brand-primary/10"
+          >
+            {PREPARATION_FALLBACK.label}
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export const LearningJourneyCard: React.FC = () => {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['gamification', 'learning-journey'],
     queryFn: fetchLearningJourney,
     staleTime: 30_000,
   });
 
-  if (isLoading || !data?.journey) return null;
+  if (isLoading) {
+    return <LearningJourneySkeleton />;
+  }
+
+  if (isError || !data?.journey) {
+    return <LearningJourneyPreparationFallback />;
+  }
 
   const { journey } = data;
   const action = STAGE_ACTIONS[journey.stage];
