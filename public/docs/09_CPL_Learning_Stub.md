@@ -1,5 +1,7 @@
 # CPL 学習記事スタブ（シリーズ索引）
 
+> **現行は [Closed_Sprints.md](Closed_Sprints.md)**（段階1 完了）と [05_Content_Pipeline.md](05_Content_Pipeline.md)（配信）。本書は CPL シリーズの索引として残す（記事から `/docs/` リンクされる）。
+
 **作成日**: 2026年3月  
 **想定読者**: コンテンツ執筆者、学科対策を進める学習者、AI アシスタント
 

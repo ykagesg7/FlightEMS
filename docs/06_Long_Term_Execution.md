@@ -1,5 +1,7 @@
 # 長期実行計画（品質・コンテンツ・分析・成長）
 
+> **現行は [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)**（段階2）。カバレッジ 50% などの数値目標は保留（[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) §0）。
+
 **最終更新**: 2026年9月20日（Phase C 品質メモを本書 §1 へ統合）
 
 **位置づけ**: [01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)・[00_Flight_Academy_Strategy.md](00_Flight_Academy_Strategy.md) の補助。執筆方針と記事 ID の**原則**は [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md)「記事 ID の正本とエイリアス」を正とし、本書は実装・運用の**長期バックログ**に絞る。

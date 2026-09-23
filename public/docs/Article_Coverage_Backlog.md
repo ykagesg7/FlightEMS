@@ -1,5 +1,7 @@
 # 記事単元の網羅状況とバックログ
 
+> **現行は [Closed_Sprints.md](Closed_Sprints.md)**（段階1 完了サマリ・最終数値）。本書は 2026-07 時点のマッピング・スナップショットとして残す。
+
 **作成日**: 2026-04-10  
 **スナップショット更新**: 2026-07-22（W30 — `PPL-4-3-2` 公開・mapping **139 行**・PPL **63**・Subject 4 Phase 1 **完走**）
 **MCP 再取得（W30 Subject 4 第8本）**: 2026-07-22 — **`PPL-4-3-2`** 深文化公開 + mapping **34 問**（緊急機の行動20 + 救難手続9 + 緊急機管制5）。SQL: [`20260722_learning_contents_ppl432_mayday_pan_pan.sql`](../scripts/database/20260722_learning_contents_ppl432_mayday_pan_pan.sql)・[`20260722_learning_test_mapping_ppl432_mayday_pan_pan.sql`](../scripts/database/20260722_learning_test_mapping_ppl432_mayday_pan_pan.sql)。
