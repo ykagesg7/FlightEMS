@@ -1,7 +1,9 @@
+import articleMetas from 'virtual:articles-index';
 import React, { useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { filterPublishedArticleContents } from '../../../constants/articleHubCategories';
 import { useLearningProgress } from '../../../hooks/useLearningProgress';
+import { getArticleNavigationNeighbors } from '../../../utils/articleNavigation';
 
 function prefetchMDX(id: string) {
   import(`../../../content/articles/${id}.mdx`)
@@ -17,20 +19,14 @@ export const PrevNextNav: React.FC<{ currentId: string; listPath?: string }> = (
   const navigate = useNavigate();
 
   const list = useMemo(
-    () =>
-      filterPublishedArticleContents(learningContents)
-        .slice()
-        .sort((a, b) =>
-          a.category === b.category
-            ? a.order_index - b.order_index
-            : a.category.localeCompare(b.category)
-        ),
+    () => filterPublishedArticleContents(learningContents),
     [learningContents]
   );
 
-  const idx = useMemo(() => list.findIndex((c) => c.id === currentId), [list, currentId]);
-  const prev = idx > 0 ? list[idx - 1] : undefined;
-  const next = idx >= 0 && idx < list.length - 1 ? list[idx + 1] : undefined;
+  const { prev, next } = useMemo(
+    () => getArticleNavigationNeighbors(currentId, list, articleMetas),
+    [currentId, list]
+  );
 
   useEffect(() => {
     if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) {
