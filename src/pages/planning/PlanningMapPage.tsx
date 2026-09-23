@@ -1,5 +1,9 @@
 import React, { Suspense, useCallback, useState, lazy } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import {
+  parsePlanningMode,
+  trackPlanningModeView,
+} from '../../lib/planningAnalytics';
 import { ArrowLeft } from 'lucide-react';
 import { useDebouncedCallback } from 'use-debounce';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs';
@@ -212,6 +216,7 @@ function PlanningMapPageInner({
 
 function PlanningMapPage() {
   const { leaving } = useUrgentRouterView();
+  const [searchParams] = useSearchParams();
   const [flightPlan, setFlightPlan] = React.useState<FlightPlan>(() => {
     const draft = loadFlightPlanDraft();
     return draft ?? createInitialFlightPlan();
@@ -229,6 +234,10 @@ function PlanningMapPage() {
   React.useEffect(() => {
     debouncedPersistDraft(flightPlan);
   }, [flightPlan, debouncedPersistDraft]);
+
+  React.useEffect(() => {
+    trackPlanningModeView(parsePlanningMode(searchParams.get('mode')));
+  }, [searchParams]);
 
   const handleClearLocalDraft = React.useCallback(() => {
     clearFlightPlanDraft();

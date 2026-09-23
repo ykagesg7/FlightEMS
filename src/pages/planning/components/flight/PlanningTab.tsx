@@ -29,6 +29,7 @@ import { FlightSummary } from './FlightSummary';
 import { PlanningCard } from './PlanningCard';
 import PlanPrintView from './PlanPrintView';
 import RoutePlanning from './RoutePlanning';
+import { trackPlanningNavlogReady } from '../../../../lib/planningAnalytics';
 import {
   planningTabPrintWrapperClass,
   planningTabRootGridClass,
@@ -356,6 +357,19 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
       return next;
     });
   }, [navLog, setFlightPlan]);
+
+  const navlogReadyTrackedRef = React.useRef(false);
+  React.useEffect(() => {
+    if (navlogReadyTrackedRef.current) return;
+    if (
+      flightPlan.departure &&
+      flightPlan.arrival &&
+      navLog.segments.length > 0
+    ) {
+      navlogReadyTrackedRef.current = true;
+      trackPlanningNavlogReady();
+    }
+  }, [flightPlan.departure, flightPlan.arrival, navLog.segments.length]);
 
   const handleSegmentOverrideChange = React.useCallback(
     (from: string, to: string, patch: { casKt?: number; altitudeFt?: number }) => {
