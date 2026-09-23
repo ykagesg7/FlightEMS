@@ -75,7 +75,7 @@ module.exports = {
       },
       fontFamily: {
         // Display fonts (Marketing/Headers)
-        display: ['Arial Black', 'Impact', 'sans-serif'],  // Impactful headers
+        display: ['Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', 'Yu Gothic UI', 'Meiryo', 'system-ui', 'sans-serif'],
         // Body fonts (Readable content)
         body: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         // Monospace fonts (HUD/Data)
