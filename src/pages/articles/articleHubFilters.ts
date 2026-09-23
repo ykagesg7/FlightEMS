@@ -63,16 +63,20 @@ function isArticleCompleted(progress: ArticleProgressSnapshot | null): boolean {
   return progress.completed === true || (progress.scrollProgress ?? 0) >= 95;
 }
 
+const warnedMissingMetaIds = new Set<string>();
+
 function resolveMeta(
   article: LearningContent,
   metas: Record<string, ArticleMeta>
 ): ArticleMeta | undefined {
-  return (
-    metas[article.id] ??
-    Object.values(metas).find(
-      (m) => m.slug.includes(article.id) || article.title.includes(m.title)
-    )
-  );
+  const meta = metas[article.id];
+  if (!meta && import.meta.env.DEV && !warnedMissingMetaIds.has(article.id)) {
+    warnedMissingMetaIds.add(article.id);
+    console.warn(
+      `[articleHub] No exact meta match for learning_contents.id "${article.id}"`
+    );
+  }
+  return meta;
 }
 
 function matchesQuery(

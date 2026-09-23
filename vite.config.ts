@@ -9,6 +9,10 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { cesiumStaticAssetsPlugin } from './vite/cesiumStaticAssetsPlugin';
 import { resolveCesiumBaseUrl } from './vite/cesiumVersion';
+import {
+  deleteDistSourcemapsPlugin,
+  DIST_SOURCEMAP_GLOB,
+} from './vite/deleteDistSourcemapsPlugin';
 import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
 import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
 import { articlesIndexPlugin } from './vite/articlesIndexPlugin';
@@ -146,8 +150,15 @@ export default defineConfig(({ mode }) => {
         org: sentryOrg,
         project: sentryProject,
         authToken: sentryAuthToken,
+        sourcemaps: {
+          filesToDeleteAfterUpload: [DIST_SOURCEMAP_GLOB],
+        },
       }),
     );
+  }
+  // When Sentry upload is skipped (local / CI without token), still strip maps from dist.
+  if (mode === 'production' && !sentryAuthToken) {
+    plugins.push(deleteDistSourcemapsPlugin());
   }
 
   return {
