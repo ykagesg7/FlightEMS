@@ -153,7 +153,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
     );
   }, [currentQuestionIndex, questions.length, currentQuestion]);
 
-  /** 解答送信後 → 正誤・解説ブロックへ（Practice / Review） */
+  /** 解答送信後 → 「次の問題」CTA へ（モバイル固定パレット下でも次アクションが見えるように） */
   useEffect(() => {
     if (!currentQuestion || mode === 'exam' || !showImmediateFeedback) return;
     const fb = feedback[currentQuestion.id];
@@ -164,8 +164,8 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
     prevFeedbackKeyRef.current = feedbackKey;
 
     return scrollToQuizAnchorDeferred(
-      feedbackRegionRef.current,
-      { block: 'start' },
+      nextActionRef.current ?? feedbackRegionRef.current,
+      { block: 'nearest' },
       120,
     );
   }, [feedback, currentQuestion, mode, showImmediateFeedback]);
