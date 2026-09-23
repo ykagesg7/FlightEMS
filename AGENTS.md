@@ -11,9 +11,22 @@
 
 ## コスト運用（Cursor）
 
-- 日常: **Composer 2.5** または **Grok 4.5**（Cursor Models 枠）
+- 日常: **Composer** または **Grok**（Cursor Models 枠で選べる最新版。版番号はここに固定しない）
 - 難設計・法規・航空安全の難問のみ frontier（Other Models）を明示切替
 - 調査は Ask、編集が固まったら Agent。単純な1ファイル修正はサブエージェント不要
+
+## 実行場所と MCP
+
+分担の正本: [`docs/ops/Work_Allocation.md`](docs/ops/Work_Allocation.md)
+
+| 場所 | 使える MCP・前提 | やること |
+|------|------------------|----------|
+| **Cloud Agent（Cursor Project）** | Supabase / Vercel / GitHub / Sentry などダッシュボード連携の MCP。秘密は Cloud Agents > Secrets | 実装、PR、SQL、MDX 確定稿。マージはユーザーの明示時のみ |
+| **ローカル Cursor（Desktop）** | Global `mcp.json` の Obsidian MCP、GA4 MCP（ローカル SA / ADC） | 土曜 Ingest・日曜 Editorial、Desktop での pull |
+
+- クラウドから Obsidian の Vault は見えない。クリップや Ideas を捏造せず、ローカル Editorial の結果だけを前提にする。
+- GA4 の週次数値はクラウドでは読まない。GitHub Actions の `weekly-telemetry-ga4` artifact を使う。
+- MCP の設定手順は [`docs/Cursor_MCP_Setup.md`](docs/Cursor_MCP_Setup.md)。
 
 ## プロジェクト概要
 
@@ -89,5 +102,7 @@ npm exec -- tsc -b   # 型チェック
 
 - [DESIGN.md](DESIGN.md)
 - [docs/README.md](docs/README.md)
-- [docs/Product_North_Star_and_GTM.md](docs/Product_North_Star_and_GTM.md)
+- [docs/Product_North_Star_and_GTM.md](docs/Product_North_Star_and_GTM.md)（§0 が現行の段階）
+- [docs/01_Current_Status_and_Roadmap.md](docs/01_Current_Status_and_Roadmap.md)
+- [docs/ops/Work_Allocation.md](docs/ops/Work_Allocation.md)
 - [docs/Cursor_MCP_Setup.md](docs/Cursor_MCP_Setup.md)
