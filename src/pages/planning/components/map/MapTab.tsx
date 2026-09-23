@@ -32,6 +32,8 @@ import { useClearAirspaceOnMapClick } from './hooks/useClearAirspaceOnMapClick';
 import type { AirspaceSelection } from './planningAirspaceTypes';
 import { usePlanningNotamSheetOptional } from './planningNotamSheetContext';
 import './mapStyles.css';
+import type { PlanningMode } from '../../../../lib/planningAnalytics';
+import { mapPresetForPlanningMode } from '../../../../lib/planningModeMapPreset';
 import type { PlanningPanelLayout } from '../../planningPanelLayout';
 import { mapLayersUseInlineSidebar } from '../../planningPanelLayout';
 
@@ -48,6 +50,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 export interface MapTabProps {
   layout?: PlanningPanelLayout;
+  planningMode?: PlanningMode;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
   tracks: FlightTrack[];
@@ -56,6 +59,7 @@ export interface MapTabProps {
 
 const MapTab: React.FC<MapTabProps> = ({
   layout = 'full',
+  planningMode = 'plan',
   flightPlan,
   setFlightPlan,
   tracks,
@@ -116,6 +120,14 @@ const MapTab: React.FC<MapTabProps> = ({
   const handleLayerControllerChange = useCallback((controller: PlanningMapLayerController | null) => {
     setLayerController(controller);
   }, []);
+
+  const prevPlanningModeRef = React.useRef<PlanningMode>(planningMode);
+  useEffect(() => {
+    if (!layerController || prevPlanningModeRef.current === planningMode) return;
+    prevPlanningModeRef.current = planningMode;
+    const preset = mapPresetForPlanningMode(planningMode);
+    if (preset) layerController.applyPreset(preset);
+  }, [layerController, planningMode]);
 
   const handleLiveTrafficControlsChange = useCallback((controls: LiveTrafficLayerControls | null) => {
     setLiveTrafficControls(controls);

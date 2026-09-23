@@ -31,10 +31,13 @@ import {
   pickNextComprehensionArticle,
   resolveArticleComprehensionStatus,
 } from '../../../utils/articleComprehensionStatus';
+import { getCourseById } from '../../../data/courses';
 import { ArticleActiveFilterChips } from './ArticleActiveFilterChips';
 import { ArticleFilterDrawer } from './ArticleFilterDrawer';
 import { ArticleHubToolbar } from './ArticleHubToolbar';
 import { ContinueReadingHero } from './ContinueReadingHero';
+import { CourseDetailView } from './CourseDetailView';
+import { CourseListView } from './CourseListView';
 import { EnhancedArticleCard } from './EnhancedArticleCard';
 import { NextComprehensionCTA } from './NextComprehensionCTA';
 import { ProgressSidebar } from './ProgressSidebar';
@@ -270,7 +273,15 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
   const showGridSkeleton = isLoading || progressLoading;
 
   const clearAllFilters = () =>
-    updateHubState({ query: '', tags: [], status: 'all', tab: 'continue' }, { replace: true });
+    updateHubState(
+      { view: 'articles', course: null, query: '', tags: [], status: 'all', tab: 'continue' },
+      { replace: true }
+    );
+
+  const activeCourse = hubState.course ? getCourseById(hubState.course) : null;
+  const showCourseList = !activeCourse && hubState.view === 'courses';
+  const showCourseDetail = Boolean(activeCourse);
+  const showArticleGrid = hubState.view === 'articles' && !activeCourse;
 
   return (
     <div className="relative min-h-screen bg-[var(--bg)] py-8 text-[var(--text-primary)]">
@@ -300,7 +311,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
           />
         )}
 
-        {stats && (
+        {showArticleGrid && stats && (
           <div className="mb-6 xl:hidden">
             <ProgressSidebar
               stats={stats}
@@ -312,11 +323,53 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
           </div>
         )}
 
-        {nextComprehensionArticle && (
+        {showArticleGrid && nextComprehensionArticle && (
           <NextComprehensionCTA article={nextComprehensionArticle} />
         )}
 
+        <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="記事ハブ表示">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={showCourseList || showCourseDetail}
+            onClick={() => updateHubState({ view: 'courses', course: null })}
+            className={`rounded-lg px-4 py-2 text-sm font-medium ${
+              showCourseList || showCourseDetail
+                ? 'bg-brand-primary text-[var(--bg)]'
+                : 'border border-brand-primary/25 text-[var(--text-primary)] hover:bg-brand-primary/10'
+            }`}
+          >
+            コース一覧
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={showArticleGrid}
+            onClick={() => updateHubState({ view: 'articles', course: null })}
+            className={`rounded-lg px-4 py-2 text-sm font-medium ${
+              showArticleGrid
+                ? 'bg-brand-primary text-[var(--bg)]'
+                : 'border border-brand-primary/25 text-[var(--text-primary)] hover:bg-brand-primary/10'
+            }`}
+          >
+            すべての記事
+          </button>
+        </div>
+
+        {showCourseDetail && activeCourse && (
+          <div className="mb-4">
+            <button
+              type="button"
+              onClick={() => updateHubState({ course: null, view: 'courses' })}
+              className="text-sm text-brand-primary hover:underline"
+            >
+              ← コース一覧へ
+            </button>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-4">
+          {showArticleGrid && (
           <div className="order-2 hidden xl:order-1 xl:col-span-1 xl:block">
             {stats && (
               <ProgressSidebar
@@ -328,8 +381,29 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
               />
             )}
           </div>
+          )}
 
-          <div className="order-1 xl:order-2 xl:col-span-3">
+          <div className={`order-1 xl:order-2 ${showArticleGrid ? 'xl:col-span-3' : 'xl:col-span-4'}`}>
+            {showCourseList && (
+              <CourseListView
+                articleContents={articleContents}
+                articleMetas={articleMetas}
+                getArticleProgress={getArticleProgress}
+              />
+            )}
+
+            {showCourseDetail && activeCourse && (
+              <CourseDetailView
+                course={activeCourse}
+                articleContents={articleContents}
+                articleMetas={articleMetas}
+                getArticleProgress={getArticleProgress}
+                onArticleClick={handleArticleClick}
+              />
+            )}
+
+            {showArticleGrid && (
+            <>
             <ArticleHubToolbar
               state={hubState}
               visibleTabs={visibleTabs}
@@ -360,8 +434,10 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
               onTagsChange={(tags) => updateHubState({ tags })}
               onStatusChange={(status: ArticleHubStatus) => updateHubState({ status })}
             />
+            </>
+            )}
 
-            {heroArticle && (
+            {showArticleGrid && heroArticle && (
               <ContinueReadingHero
                 article={heroArticle}
                 meta={getMetaForArticle(heroArticle, articleMetas)}
@@ -372,6 +448,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
               />
             )}
 
+            {showArticleGrid && (
             <div
               className="space-y-8"
               role="tabpanel"
@@ -437,8 +514,9 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 </div>
               )}
             </div>
+            )}
 
-            {isDemo && gridContents.length > 0 && !showGridSkeleton && (
+            {showArticleGrid && isDemo && gridContents.length > 0 && !showGridSkeleton && (
               <div className="mt-12 rounded-xl border-2 border-dashed border-brand-primary/40 bg-brand-primary/10 p-6 text-center">
                 <h3 className="mb-2 text-xl font-bold text-[var(--text-primary)]">
                   さらに詳しい学習分析を体験

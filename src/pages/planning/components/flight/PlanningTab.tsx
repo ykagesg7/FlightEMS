@@ -1,6 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import type { PlanningMode } from '../../../../lib/planningAnalytics';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +39,7 @@ import {
 
 interface PlanningTabProps {
   layout?: PlanningPanelLayout;
+  mode?: PlanningMode;
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
   tracks: FlightTrack[];
@@ -56,6 +58,7 @@ const DRAFT_NOTICE_DISMISS_KEY = 'fa-plan-draft-notice-dismissed-v1';
 
 const PlanningTab: React.FC<PlanningTabProps> = ({
   layout = 'full',
+  mode = 'plan',
   flightPlan,
   setFlightPlan,
   tracks: _tracks,
@@ -66,7 +69,23 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   lastSavedAt = null,
 }) => {
   const navigate = useNavigate();
+  const [, setSearchParams] = useSearchParams();
   const isSplitLayout = layout === 'split';
+  const isLearn = mode === 'learn';
+  const isPlan = mode === 'plan';
+  const isBrief = mode === 'brief';
+  const showSetup = isPlan;
+  const showRouteEditor = isLearn || isPlan;
+  const showBriefingCollapsed = isPlan;
+  const routeReady = Boolean(flightPlan.departure && flightPlan.arrival);
+
+  const switchToBriefMode = () => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('mode', 'brief');
+      return next;
+    }, { replace: true });
+  };
   const [airportOptions, setAirportOptions] = React.useState<AirportGroupOption[]>([]);
   const [navaidOptions, setNavaidOptions] = React.useState<NavaidOption[]>([]);
   const [waypointOptions, setWaypointOptions] = React.useState<WaypointOption[]>([]);
@@ -403,9 +422,56 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
     return () => cancelAnimationFrame(raf1);
   }, [printRequested, flightPlan.routeSegments]);
 
+  const emptyStateBanner = !routeReady && (isLearn || isPlan) ? (
+    <div
+      className="rounded-md border border-whiskyPapa-yellow/40 bg-whiskyPapa-yellow/10 px-4 py-3 text-sm text-gray-100"
+      role="status"
+    >
+      <p className="font-medium text-whiskyPapa-yellow">まず出発地と到着地を選びましょう</p>
+      <p className="mt-1 text-xs text-gray-300">Route カードで空港を設定すると NavLog が生成されます。</p>
+    </div>
+  ) : null;
+
+  const learnArticleLink = isLearn ? (
+    <p className="text-xs text-gray-400">
+      航法の理論は{' '}
+      <Link to="/articles/CPL-Hub-Navigation" className="text-whiskyPapa-yellow underline hover:text-whiskyPapa-yellow/80">
+        CPL 空中航法ハブ
+      </Link>
+      {' '}から読めます。Planning 学習モードで計算を試してください。
+    </p>
+  ) : null;
+
   return (
     <div className={planningTabRootGridClass(layout)}>
+      {isBrief && (
+        <div className="col-span-full space-y-3 sm:space-y-4">
+          <PlanningCard title="ブリーフィング" defaultOpen>
+            <PreflightBriefingPanel flightPlan={flightPlan} layout={layout} embedded />
+          </PlanningCard>
+          {routeReady && (
+            <div className="flex flex-wrap gap-2 print-hide">
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="min-h-[44px] inline-flex items-center justify-center px-3 py-2 bg-whiskyPapa-yellow/20 hover:bg-whiskyPapa-yellow/30 text-white text-sm rounded border border-whiskyPapa-yellow/40"
+              >
+                印刷
+              </button>
+              <button
+                type="button"
+                onClick={openAirspace3d}
+                className="min-h-[44px] inline-flex items-center justify-center px-3 py-2 text-sm rounded border border-whiskyPapa-yellow/30 text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10"
+              >
+                3D 空域を見る
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className={isSplitLayout ? 'space-y-3 sm:space-y-4 md:space-y-6' : 'lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6'}>
+        {showSetup && (
         <PlanningCard title="Setup">
         <div className="flex flex-col gap-3 print-hide">
           {draftNoticeVisible && (
@@ -533,6 +599,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
           </details>
         </div>
         </PlanningCard>
+        )}
 
         <Transition appear show={clearDraftOpen} as={Fragment}>
           <Dialog as="div" className="relative z-[300]" onClose={() => setClearDraftOpen(false)}>
@@ -593,6 +660,10 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
       </div>
 
       <div className={isSplitLayout ? 'space-y-3 min-w-0' : 'lg:col-span-3 space-y-3'}>
+        {emptyStateBanner}
+        {learnArticleLink}
+
+        {showRouteEditor && (
         <PlanningCard title="Route">
           <FlightParameters layout={layout} flightPlan={flightPlan} setFlightPlan={setFlightPlan} variant="route" />
           <div className="mt-4">
@@ -606,6 +677,21 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
             />
           </div>
         </PlanningCard>
+        )}
+
+        {isBrief && routeReady && (
+          <PlanningCard title="ルート概要">
+            <p className="text-sm text-gray-200">
+              {flightPlan.departure?.label ?? flightPlan.departure?.value} →{' '}
+              {flightPlan.arrival?.label ?? flightPlan.arrival?.value}
+              {flightPlan.waypoints && flightPlan.waypoints.length > 0
+                ? `（経由 ${flightPlan.waypoints.length} 点）`
+                : ''}
+            </p>
+          </PlanningCard>
+        )}
+
+        {(isLearn || isPlan || isBrief) && (
         <PlanningCard title="NavLog">
           <FlightSummary
             layout={layout}
@@ -613,13 +699,27 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
             fuelBelowReserve={navLog.fuelBelowReserve}
             aboveServiceCeiling={navLog.aboveServiceCeiling}
             aboveMaxFuel={navLog.aboveMaxFuel}
-            onSegmentOverrideChange={handleSegmentOverrideChange}
+            onSegmentOverrideChange={isBrief ? undefined : handleSegmentOverrideChange}
             onOpenAirspace3d={openAirspace3d}
           />
         </PlanningCard>
+        )}
+
+        {showBriefingCollapsed && (
         <PlanningCard title="Briefing" defaultOpen={false}>
+          <p className="mb-2 text-xs text-gray-400 print-hide">
+            出発前の METAR/TAF・NOTAM はブリーフィングモードで確認できます。
+            <button
+              type="button"
+              onClick={switchToBriefMode}
+              className="ml-1 text-whiskyPapa-yellow underline hover:text-whiskyPapa-yellow/80"
+            >
+              ブリーフィングへ
+            </button>
+          </p>
           <PreflightBriefingPanel flightPlan={flightPlan} layout={layout} embedded />
         </PlanningCard>
+        )}
       </div>
 
       {/* 印刷専用ビュー（画面では非表示、印刷時のみ表示） */}

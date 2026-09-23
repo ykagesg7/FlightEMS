@@ -38,6 +38,8 @@ describe('articleHubFilters', () => {
   ];
 
   const defaultState: ArticleHubState = {
+    view: 'articles',
+    course: null,
     tab: 'continue',
     query: '',
     tags: [],
@@ -55,6 +57,24 @@ describe('articleHubFilters', () => {
     const visible = getVisibleTabs(contents);
     const state = parseArticleHubSearchParams(new URLSearchParams('q=VOR'), visible);
     expect(state.query).toBe('VOR');
+    expect(state.view).toBe('articles');
+  });
+
+  it('parses course param and defaults to courses view', () => {
+    const visible = getVisibleTabs(contents);
+    const state = parseArticleHubSearchParams(new URLSearchParams('course=ppl'), visible);
+    expect(state.course).toBe('ppl');
+    expect(state.view).toBe('courses');
+  });
+
+  it('builds course-only search params', () => {
+    const params = buildArticleHubSearchParams({
+      ...defaultState,
+      view: 'courses',
+      course: 'cpl',
+    });
+    expect(params.get('course')).toBe('cpl');
+    expect(params.has('view')).toBe(false);
   });
 
   it('filters by keyword query', () => {

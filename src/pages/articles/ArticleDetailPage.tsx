@@ -7,8 +7,13 @@ import { useAuth } from '../../hooks/useAuth';
 import { ArticleMeta } from '../../types/articles';
 import { isArticlePreviewAllowed, isArticleReadable, isArticleReleased } from '../../utils/articlePublishGate';
 import { findArticleByRouteParam, getArticleIndex } from '../../utils/articlesIndex';
+import { filterReleasedArticleContents } from '../../constants/articleHubCategories';
+import { useArticleProgress } from '../../hooks/useArticleProgress';
+import { useLearningProgress } from '../../hooks/useLearningProgress';
 import { getMetaForArticle } from './articleHubFilters';
+import { ArticleCoursePositionBanner } from './components/ArticleCoursePosition';
 import { CommentSection } from './components/CommentSection';
+import { findArticleCoursePosition } from '../../utils/articleCourseContext';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 import { PrevNextNav } from './components/PrevNextNav';
 import { ReadingProgressBar } from './components/ReadingProgressBar';
@@ -21,6 +26,8 @@ const ArticleDetailPage: React.FC = () => {
   const { contentId } = useParams<{ contentId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { learningContents } = useLearningProgress();
+  const { getArticleProgress } = useArticleProgress();
   const {
     comments,
     isLoading,
@@ -84,6 +91,16 @@ const ArticleDetailPage: React.FC = () => {
   const { prev, next } = usePrevNext(articleId);
 
   const resolvedCurrentMeta = articleId ? articleMetas[articleId] : undefined;
+
+  const releasedContents = useMemo(
+    () => filterReleasedArticleContents(learningContents, articleMetas),
+    [learningContents, articleMetas]
+  );
+
+  const coursePosition = useMemo(() => {
+    if (!articleId) return null;
+    return findArticleCoursePosition(articleId, releasedContents, articleMetas, getArticleProgress);
+  }, [articleId, releasedContents, articleMetas, getArticleProgress]);
 
   const nextMeta = useMemo(
     () => (next ? getMetaForArticle(next, articleMetas) : undefined),
@@ -193,6 +210,7 @@ const ArticleDetailPage: React.FC = () => {
                 本番ではこの日まで表示されません。
               </div>
             )}
+            {coursePosition && <ArticleCoursePositionBanner position={coursePosition} />}
             <ReadingProgressBar contentId={articleId} endSentinelRef={articleReadEndRef} />
             <MDXLoader contentId={articleId} />
             <div
