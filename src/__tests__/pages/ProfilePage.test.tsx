@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
@@ -14,6 +15,36 @@ vi.mock('@/hooks/useCohortProfile', () => ({
     fetchError: null,
   }),
 }));
+vi.mock('@/utils/cohortApi', () => ({
+  fetchLearningJourney: vi.fn().mockResolvedValue({
+    journey: {
+      license_target: 'CPL',
+      stage: 'preparation',
+      stage_order: 1,
+      cohort_phase: 'active',
+      target_test_date: null,
+      article_comprehension_count: 0,
+      delayed_retention_count: 0,
+      srs_due_count: 0,
+      mastered_subject_count: 0,
+    },
+    error: null,
+  }),
+}));
+
+function renderProfilePage(initialEntry: string) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter initialEntries={[initialEntry]}>
+        <ProfilePage />
+      </MemoryRouter>
+    </QueryClientProvider>,
+  );
+}
 vi.mock('@/utils/supabase', () => ({
   default: {
     from: vi.fn(() => ({
@@ -87,15 +118,13 @@ describe('ProfilePage', () => {
       selector(createAuthState()),
     );
 
-    render(
-      <MemoryRouter initialEntries={['/profile']}>
-        <ProfilePage />
-      </MemoryRouter>,
-    );
+    renderProfilePage('/profile');
 
-    expect(screen.getByText('プロフィール設定')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'プロフィール', level: 1 })).toBeInTheDocument();
+    expect(screen.getByTestId('profile-primary-focus')).toBeInTheDocument();
     expect(screen.getByTestId('profile-hub-section-list')).toBeInTheDocument();
     expect(screen.getByTestId('profile-hub-section-list')).toHaveTextContent('学習・受験');
+    expect(screen.getByTestId('profile-hub-section-list')).toHaveTextContent('設定と履歴');
   });
 
   it('renders privacy leaderboard via legacy deep link', () => {
@@ -103,11 +132,7 @@ describe('ProfilePage', () => {
       selector(createAuthState()),
     );
 
-    render(
-      <MemoryRouter initialEntries={['/profile?tab=leaderboard']}>
-        <ProfilePage />
-      </MemoryRouter>,
-    );
+    renderProfilePage('/profile?tab=leaderboard');
 
     expect(screen.getByText('学習者ランキング（任意参加）')).toBeInTheDocument();
     expect(screen.getByTestId('profile-hub-back')).toBeInTheDocument();

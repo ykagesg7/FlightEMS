@@ -13,8 +13,8 @@ import { ProfileCombinedAccountSection } from './components/ProfileCombinedAccou
 import { ProfileCombinedLearningSection } from './components/ProfileCombinedLearningSection';
 import { ProfileCombinedPrivacySection } from './components/ProfileCombinedPrivacySection';
 import { ProfileCombinedProfileSection } from './components/ProfileCombinedProfileSection';
-import { ProfileCompletionStrip } from './components/ProfileCompletionStrip';
 import { ProfileHubBackLink } from './components/ProfileHubBackLink';
+import { ProfilePrimaryFocus } from './components/ProfilePrimaryFocus';
 import { ProfileHubSectionList } from './components/ProfileHubSectionList';
 import { ProfileHubSidebar } from './components/ProfileHubSidebar';
 import { ProfileIdentityHeader } from './components/ProfileIdentityHeader';
@@ -31,8 +31,8 @@ const ProfilePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
   const route = resolveProfileRoute(tabParam, searchParams.get('panel'));
+  const isHubRoot = !tabParam;
   const activeSection: ProfileHubSection = route.section ?? 'profile';
-  const showMobileList = !tabParam;
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -187,18 +187,14 @@ const ProfilePage: React.FC = () => {
       <div className="container mx-auto max-w-6xl px-4">
         <div className="mb-8 text-center md:text-left">
           <Typography variant="h1" color="brand" className="mb-2">
-            プロフィール設定
+            プロフィール
           </Typography>
           <Typography variant="body" color="muted">
-            あなたの情報を管理しましょう
+            受験目標と次の学習ステップを確認し、設定は下のメニューから変更できます
           </Typography>
         </div>
 
         <ProfileIdentityHeader profile={profile} email={user?.email} />
-
-        <div className="mb-6 md:hidden">
-          <ProfileCompletionStrip completion={completion} />
-        </div>
 
         <div className="flex flex-col gap-8 md:flex-row">
           <ProfileHubSidebar
@@ -227,19 +223,23 @@ const ProfilePage: React.FC = () => {
               )}
             </div>
 
-            {showMobileList ? (
-              <ProfileHubSectionList onSelect={navigateSection} />
-            ) : null}
-
-            <div className={showMobileList ? 'hidden md:block' : 'block'}>
-              {!showMobileList ? <ProfileHubBackLink /> : null}
-              {!showMobileList ? (
+            {isHubRoot ? (
+              <>
+                <ProfilePrimaryFocus onEditExam={() => navigateSection('learning')} />
+                <ProfileHubSectionList onSelect={navigateSection} />
+                <Typography variant="caption" color="muted" className="mt-6 hidden px-1 md:block">
+                  左のメニューから設定と履歴を開けます
+                </Typography>
+              </>
+            ) : (
+              <>
+                <ProfileHubBackLink />
                 <Typography variant="h2" color="brand" className="mb-6 text-lg font-bold md:hidden">
                   {sectionMeta.label}
                 </Typography>
-              ) : null}
-              {renderSection()}
-            </div>
+                {renderSection()}
+              </>
+            )}
           </div>
         </div>
       </div>

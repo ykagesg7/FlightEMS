@@ -7,10 +7,10 @@ export type ProfileHubSectionMeta = {
 };
 
 export const PROFILE_HUB_SECTIONS: ProfileHubSectionMeta[] = [
-  { id: 'profile', label: 'プロフィール', description: '名前・アバター・SNS' },
-  { id: 'learning', label: '学習・受験', description: '試験月・週次バッジ' },
-  { id: 'privacy', label: '通知と公開', description: '通知とランキング' },
-  { id: 'account', label: 'アカウント', description: 'ログインとセキュリティ' },
+  { id: 'profile', label: 'プロフィール', description: '名前・アバター・公開情報' },
+  { id: 'learning', label: '学習・受験', description: '受験予定の編集・週次バッジ' },
+  { id: 'privacy', label: '通知と公開', description: '通知設定・ランキング参加' },
+  { id: 'account', label: 'アカウント', description: 'ログイン方法・セキュリティ' },
 ];
 
 export function getProfileHubSectionMeta(id: ProfileHubSection): ProfileHubSectionMeta {
