@@ -13,7 +13,7 @@ colors:
   hud_danger: "#ff2244"
   hud_info: "#00aaff"
 typography:
-  display: "Arial Black, Impact, sans-serif"
+  display: "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, Yu Gothic, Yu Gothic UI, Meiryo, system-ui, sans-serif"
   body: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"
   mono: "Courier New, Consolas, JetBrains Mono, monospace"
 spacing:
@@ -33,10 +33,34 @@ Implement UI with **Tailwind** tokens defined in [`tailwind.config.js`](tailwind
 |------------|---------------------|--------|
 | Primary actions / links | `brand.primary` | Buttons, key highlights |
 | App chrome / panels | `brand.secondary`, `brand.surface` | Layout backgrounds |
-| HUD day accent | `hud.green` | Tactical / planning emphasis |
-| HUD night accent | `hud.red` | Night mode emphasis |
+| Planning emphasis | `brand.primary` | Border or weight on planning UI — not a new hue, not neon green |
+| Achievement / XP / completion | `hud.green` | Progress, streaks, completion states only |
+| Night / low-light surfaces | `brand.secondary` (deeper navy shift) | Darker navy backgrounds — not `hud.red` |
 | Warning / caution | `hud.warning` | Non-destructive alerts |
-| Danger | `hud.danger` | Destructive or critical |
+| Danger / destructive / error | `hud.danger` | Destructive actions, critical errors |
+
+## ゲスト面とアプリ内
+
+**ゲスト面**（未ログインの獲得導線）と**アプリ内**（ログイン後の学習・計画）でトーンを分ける。
+
+| 面 | 対象 | トーン |
+|----|------|--------|
+| ゲスト面 | `/`、未ログイン `/articles`、記事ヘッダークローム | 紺（`brand.secondary` / `brand.surface`）、落ち着いた青、道真・梅・編隊の既存ビジュアル。**HUD ネオンは使わない** |
+| アプリ内 | ダッシュボード、計画インストルメント、ログイン後クローム | 既存の Cockpit / HUD 美学（ネオンアクセント可） |
+
+記事本文・幅・`prose-invert`、Profile Hub の規定はこの章で変更しない。
+
+## CTA の順
+
+ゲスト面の CTA 優先順位（上から主 → 副 → 第三）。価格表記はしない。
+
+| 順位 | ラベル例 | スタイル |
+|------|----------|----------|
+| Primary | 登録 | 白地ボタン、文字色 `brand.secondary` |
+| Secondary | 記事を読む | — |
+| Tertiary | ログイン | — |
+
+**使わない文言**: ミッション開始、スクランブル。
 
 ## Typography
 

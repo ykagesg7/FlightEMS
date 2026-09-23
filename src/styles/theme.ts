@@ -46,7 +46,7 @@ export const SemanticColors = {
  * Typography Tokens
  */
 export const Typography = {
-  display: ['Arial Black', 'Impact', 'sans-serif'],
+  display: ['Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', 'Yu Gothic UI', 'Meiryo', 'system-ui', 'sans-serif'],
   body: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
   mono: ['Courier New', 'Consolas', 'JetBrains Mono', 'monospace'],
   hud: ['Courier New', 'monospace'],  // Legacy alias
