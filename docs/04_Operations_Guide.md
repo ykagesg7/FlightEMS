@@ -652,7 +652,7 @@ npm run test:ui       # UIモード
 
 ### **2026年1月（当時のマーケティング文脈での統一）**
 
-- Home / Header / Footer のマーケティング文言を当時のコンセプトに合わせて変更（履歴。現在の戦略は [00](00_Flight_Academy_Strategy.md)）
+- Home / Header / Footer のマーケティング文言を当時のコンセプトに合わせて変更（履歴。現在の戦略は [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) §0）
 - About のメンバー紹介（THE CREW）セクションをコメントアウト（レガシー）
 
 ### **2026年2月 - 地図機能のACC Sector/RAPCON情報表示拡張**

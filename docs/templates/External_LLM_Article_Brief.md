@@ -17,7 +17,7 @@
 | 禁止 | 理由 |
 |------|------|
 | **YAML 形式のフロントマター** | 本プロジェクトの MDX は **`export const meta`**（[PPL テンプレート](PPL_Article_Template.mdx)・既存 CPL） |
-| **法令の具体的番号・条文を断定** | 一次情報は当局サイト。[00 F.A. Strategy §3](../00_Flight_Academy_Strategy.md) の非公式支援の境界 |
+| **法令の具体的番号・条文を断定** | 一次情報は当局サイト。[Product_North_Star_and_GTM.md](../Product_North_Star_and_GTM.md) §6 の非公式支援の境界 |
 | **パッケージバージョン・依存の変更案** | エージェント規約で無承認バンプ禁止 |
 | **`public/docs/` の直接編集** | 正本は `docs/` のみ |
 

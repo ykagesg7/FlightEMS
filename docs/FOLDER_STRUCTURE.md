@@ -96,9 +96,9 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **目的**: プロジェクトドキュメントの**正本**（仕様・戦略・運用）
 - **詳細**: [docs/README.md](README.md)を参照
 - **番号付き `00`〜`06`**: AI 初動の**読み順**（[README「AI向けのドキュメント番号」](README.md#ai向けのドキュメント番号読み方)）。それ以外（[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md)、旧 `08`–`14`、方針メモ等）は**参照**。
-- **長期バックログ**: [06_Long_Term_Execution.md](06_Long_Term_Execution.md)（リネーム後。旧 15＋旧 12 §5）。`public/docs/` 配信は [sync-public-docs.mjs](../scripts/sync-public-docs.mjs) ホワイトリストのみ
+- **品質・カバレッジ実測**: [Closed_Sprints.md](Closed_Sprints.md) §3、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md)。`public/docs/` 配信は [sync-public-docs.mjs](../scripts/sync-public-docs.mjs) ホワイトリストのみ
 
-- **スクリプト系ドキュメント（統合）**: [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)（CPL CSV・Git 補足。`docs-auto-update` は実行しない）。**品質・カバレッジ運用**: [06_Long_Term_Execution.md](06_Long_Term_Execution.md) §1（旧 Phase_C メモを統合。旧 `Phase_Testing_Plan.md` は無い）。**GeoJSON 資産手順**: [GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)。**完了スプリント**: [Closed_Sprints.md](Closed_Sprints.md)
+- **スクリプト系ドキュメント（統合）**: [Scripts_Repository_Tooling.md](Scripts_Repository_Tooling.md)（CPL CSV・Git 補足。`docs-auto-update` は実行しない）。**GeoJSON 資産手順**: [GeoJSON_Waypoints_And_Assets.md](GeoJSON_Waypoints_And_Assets.md)。**完了スプリント**: [Closed_Sprints.md](Closed_Sprints.md)
 
 ##### `docs/SWIM_Portal/`
 - **目的**: 国土交通省航空局 **SWIM**・**デジタルノータムリクエストサービス**の仕様・手続きの参照用 Markdown（共通編、付録 04、サービス説明書、ユーザーズガイド、情報サービス概要）
@@ -107,7 +107,7 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 
 #### `public/`
 - **目的**: 静的ファイル（画像、GeoJSONなど）
-- **`public/docs/`**: **`docs/` のコピー（手編集しない）**。`npm run sync:public-docs` で `05_Content_Pipeline`・`08`・`09`・`10`・`Article_Coverage_Backlog` 等（[sync-public-docs.mjs](../scripts/sync-public-docs.mjs) の `FILES`）を上書き。MDX から `/docs/*.md` で配信。旧ファイル名（`06_記事…` 等）の **URL 互換は保証しない**（必要ならリダイレクトやリンク更新で対応）。
+- **`public/docs/`**: **`docs/` のコピー（手編集しない）**。`npm run sync:public-docs` で `05_Content_Pipeline`・`08`・`09`（[sync-public-docs.mjs](../scripts/sync-public-docs.mjs) の `FILES`）を上書き。MDX から `/docs/*.md` で配信。旧ファイル名の **URL 互換は保証しない**（必要ならリダイレクトやリンク更新で対応）。
 - **注意**: 一部の大きなファイルは`.gitignore`で除外されています
 - **ウェイポイント（本番のみ）**: アルファベット別 `waypoints_<1文字>.json` と `waypoints/index.json` は [.vercelignore](../.vercelignore) で Vercel 転送のみ省略。**Git とローカルビルドは含まれる**。理由とデータ層は [GeoJSON doc](GeoJSON_Waypoints_And_Assets.md)
 

@@ -15,8 +15,8 @@ const FILES = [
   '05_Content_Pipeline.md',
   '08_Syllabus_Management_Guide.md',
   '09_CPL_Learning_Stub.md',
-  '10_航空工学_学科試験攻略ブログ_ロードマップ.md',
-  'Article_Coverage_Backlog.md',
+  'Closed_Sprints.md',
+  'Product_North_Star_and_GTM.md',
 ];
 
 const outDir = join(root, 'public', 'docs');

@@ -59,4 +59,4 @@
 | 公開が cron 依存 | 公開確認は Skill `article-publish-check`。人手で `is_published` を回さない |
 | Obsidian がクラウドから見えない | Ingest / Editorial はローカル Cursor（[ops/Work_Allocation.md](ops/Work_Allocation.md)） |
 | 3D の配信量で無料枠を超える | 方式選定の段階でデータ量と外部タイル条件を見積もる |
-| Supabase / 外部 API の無料枠 | ログイン後限定・キャッシュ・上限設計（[00 §3.1](00_Flight_Academy_Strategy.md)） |
+| Supabase / 外部 API の無料枠 | ログイン後限定・キャッシュ・上限設計（[Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) §0） |

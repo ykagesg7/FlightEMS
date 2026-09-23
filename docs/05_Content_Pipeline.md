@@ -25,7 +25,7 @@
 | **FN**（旧 FMT Season 1。id は `FMT-1-*`） | `src/content/lessons/FMT-1-*` | 1-1〜1-10 の MDX ストック。**W42〜W46 に schedule 済**（週2本・`is_published` は cron） | Season 2 ブリーフは求められたときだけ | [FN_Formation_2026](content_outlines/FN_Formation_2026/README.md)、[Gemini_CP_FN_System_Prompt](ops/Gemini_CP_FN_System_Prompt.md) |
 | **メンタリティ**（道真稿） | `src/content/articles/` | `1.1.1`〜`1.1.4` 公開。残り **24 本**は非公開ゲート | 1 本ずつ道真稿に改稿し、個別に再公開（28 本一括の republish SQL は使わない） | [04](04_Operations_Guide.md)「ブログ記事の精査・非公開・再公開」、[Gemini_Memoir_Article_System_Prompt](ops/Gemini_Memoir_Article_System_Prompt.md) |
 | 訓練の当たり前（`4.1.*` / `4.2.*`） | `src/content/articles/` | W32〜W33 に公開済 | 追加は Editorial が決める | [ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md) |
-| CPL / PPL 学科 | `src/content/lessons/` | 段階1 完了（[Closed_Sprints.md](Closed_Sprints.md)） | 穴埋めのみ（例: `PPL-2-3-3` / `2-3-4` は骨子だけ） | [08](08_Syllabus_Management_Guide.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md) |
+| CPL / PPL 学科 | `src/content/lessons/` | 段階1 完了（[Closed_Sprints.md](Closed_Sprints.md)） | 穴埋めのみ（例: `PPL-2-3-3` / `2-3-4` は骨子だけ） | [08](08_Syllabus_Management_Guide.md)、[09](09_CPL_Learning_Stub.md) |
 
 ## 3. 週次の配信記録
 
@@ -57,7 +57,7 @@
 
 ### 学科記事（CPL / PPL）
 
-- CPL 記事は CPL 出題範囲に絞り、PPL と重なる基礎は短い要約と **PPL 記事へのリンク**（「基礎を復習（PPL）」Callout）にする。共通の定義・法規は PPL 記事を正本にする（[00 §4](00_Flight_Academy_Strategy.md)）。
+- CPL 記事は CPL 出題範囲に絞り、PPL と重なる基礎は短い要約と **PPL 記事へのリンク**（「基礎を復習（PPL）」Callout）にする。共通の定義・法規は PPL 記事を正本にする（本書 §4・[mdx-article-guide.mdc](../.cursor/rules/mdx-article-guide.mdc)）。
 - 分類ツリーの正本は CPL クラスタ（`unified_cpl_questions` の `(main_subject, sub_subject)`）。PPL は `applicable_exams` に `PPL` を含む設問の部分集合として扱う（[08](08_Syllabus_Management_Guide.md)）。
 - 既に同トピックの `PPL-*` 記事があれば新規 ID で重複執筆しない。`learning_test_mapping` の追加で足りる。
 - 粒度は 1 トピック 1 記事。
@@ -85,4 +85,4 @@
 | `learning_test_mapping` | 記事と設問の対応（`unified_cpl_question_ids`）。`v_mapped_questions` で関連問題を取得 |
 | `unified_cpl_questions` | 設問のソース。`applicable_exams` で PPL / CPL を切り分け（`scripts/database/20260324_add_unified_cpl_applicable_exams.sql`） |
 
-CPL Phase 1（19本）の進捗は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)。CPL シリーズの索引は [09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)。航空工学の単元対照は [10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)。
+CPL Phase 1（19本）の進捗は [db/CPL_KPI_and_Database_Operations.md](db/CPL_KPI_and_Database_Operations.md)。CPL シリーズの索引は [09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)。段階1 の完了サマリは [Closed_Sprints.md](Closed_Sprints.md)。

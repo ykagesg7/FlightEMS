@@ -10,9 +10,9 @@
 - ✅ **コンテンツ作成者**: 記事作成時の命名規則やデータベース登録方法を確認したい場合
 - ✅ **プロジェクトマネージャー**: システム統合の全体像を理解したい場合
 
-**推奨読み順**: [docs/README.md](README.md) → [05_Content_Pipeline.md](05_Content_Pipeline.md) → [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md) → このドキュメント
+**推奨読み順**: [docs/README.md](README.md) → [05_Content_Pipeline.md](05_Content_Pipeline.md) → [Closed_Sprints.md](Closed_Sprints.md) → このドキュメント
 
-**関連（記事パイプライン）**: [05_Content_Pipeline.md](05_Content_Pipeline.md)、[PPL_Master_Syllabus.md](PPL_Master_Syllabus.md)、[10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md)。05 / PPL_Master / 08 / 10 は責務が違うので**ファイル統合しない**（ID 対照は下節）。
+**関連（記事パイプライン）**: [05_Content_Pipeline.md](05_Content_Pipeline.md)、[09_CPL_Learning_Stub.md](09_CPL_Learning_Stub.md)、[Closed_Sprints.md](Closed_Sprints.md) §1。ID 対照は下節。
 
 ---
 
@@ -267,7 +267,7 @@ PPL 工学・計器まとめて追加する例: [scripts/database/20260329_learn
 |------|--------------------------|------|
 | **分類ツリー（単元の木）** | Supabase の **`(main_subject, sub_subject 全文)`**（CPL 学科クラスタ） | PPL は `applicable_exams` に `PPL` を含む行による**同一ツリー上の部分集合** |
 | **ファイル名・`learning_contents.id`** | MDX の stem（例: `PPL-1-1-2_AirspeedBasics`, `3.2.1_PropellerTheory`） | アプリと Supabase の単一キー |
-| **PPL シラバス上の位置づけ** | [PPL_Master_Syllabus.md](PPL_Master_Syllabus.md) のトピック ID | 進捗・順序の正 |
+| **PPL シラバス上の位置づけ** | `PPL-{Subject}-{Section}-{Topic}` のトピック ID（[Closed_Sprints.md](Closed_Sprints.md) §1） | 進捗・順序の正 |
 | **CPL 全体ロードマップ上の見出し** | [05](05_Content_Pipeline.md) の `3.x.x_TopicName` | Phase・科目横断の計画の正 |
 | **10 の `aero-*` / `inst-*` / `stru-*` 等** | 執筆計画・誘導設計用スラッグ | **DB には入れない**。実体は下記いずれかの MDX id に寄せる |
 
@@ -483,9 +483,9 @@ const pplSyllabus = await getArticles({
 ## 📚 参考資料
 
 ### 関連ドキュメント
-- `docs/PPL_Master_Syllabus.md` - PPL Master Syllabus
-- `docs/05_Content_Pipeline.md` - CPL記事作成ロードマップ
-- `docs/10_航空工学_学科試験攻略ブログ_ロードマップ.md` - 航空工学の科目別ロードマップ（中・小分類マッピング、4ChoiceQuiz連携）
+- `docs/Closed_Sprints.md` - 段階1 完了サマリ（PPL/CPL 記事の正本）
+- `docs/05_Content_Pipeline.md` - 配信表と記事パイプライン
+- `docs/09_CPL_Learning_Stub.md` - CPL シリーズ索引
 - `docs/templates/PPL_Article_Template.mdx` - PPL記事テンプレート
 - `docs/02_System_Spec.md` - データベース設計仕様
 

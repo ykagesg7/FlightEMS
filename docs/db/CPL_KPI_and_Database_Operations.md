@@ -6,13 +6,13 @@
 
 ## CPL Phase 1 — KPI「19本」トラッカー（正本）
 
-**目的**: [01_Current_Status_and_Roadmap.md](../01_Current_Status_and_Roadmap.md)・[00_Flight_Academy_Strategy.md](../00_Flight_Academy_Strategy.md) の **Phase 1（19 執筆単位）** とリポジトリ実態を **1 表に固定**する。  
+**目的**: [01_Current_Status_and_Roadmap.md](../01_Current_Status_and_Roadmap.md)・[Closed_Sprints.md](../Closed_Sprints.md) の **Phase 1（19 執筆単位）** とリポジトリ実態を **1 表に固定**する。  
 **更新ルール**: 本文化・`learning_test_mapping`・シリーズ変更時にこの表を更新し、[05_Content_Pipeline.md](../05_Content_Pipeline.md) の KPI 節からリンクする。
 
 **数値の定義**
 
 - **本文化**: `meta.series` が `CPL-Learning-Stub` **ではない**（専用シリーズで本文執筆済みとみなす）。スタブは同一条件で「スタブ」。
-- **マッピング**: [Article_Coverage_Backlog.md](../Article_Coverage_Backlog.md) のスナップショットに準拠。再集計は §5 SQL。
+- **マッピング**: [Closed_Sprints.md](../Closed_Sprints.md) §3 のスナップショットに準拠。再集計は §5 SQL。
 
 **KPI 19 本の内訳（[05_Content_Pipeline.md](../05_Content_Pipeline.md) と整合）**
 
@@ -48,7 +48,7 @@
 
 | `learning_contents.id` | 備考 |
 |------------------------|------|
-| `3.4.5_NDBNavigation` | `meta.series: CPL-Navigation`。マッピングは [20260413_learning_test_mapping_nav_345_355_stub.sql](../../scripts/database/20260413_learning_test_mapping_nav_345_355_stub.sql) 等（[14](../Article_Coverage_Backlog.md)） |
+| `3.4.5_NDBNavigation` | `meta.series: CPL-Navigation`。マッピングは [20260413_learning_test_mapping_nav_345_355_stub.sql](../../scripts/database/20260413_learning_test_mapping_nav_345_355_stub.sql) 等（[Closed_Sprints](../Closed_Sprints.md) §3） |
 | `3.4.6_DMENavigation` | 同上（旧スタブメタから **2026-04-30** に `CPL-Navigation` へ統一） |
 | `3.4.7_DeadReckoningAdvanced` | 同上 |
 
@@ -58,10 +58,10 @@
 
 ### Phase 1 以外（同一ロードマップ内の関連だが KPI 19 に含めない例）
 
-以下は [05_Content_Pipeline.md](../05_Content_Pipeline.md) Phase 2 または [14](../Article_Coverage_Backlog.md) で並行管理する。
+以下は [05_Content_Pipeline.md](../05_Content_Pipeline.md) または [Closed_Sprints.md](../Closed_Sprints.md) §3 で並行管理する。
 
 - 航空工学: `3.2.7`〜`3.2.12` など
-- 航空気象: `3.3.1`〜`3.3.12`（スタブ配置・マッピングは [14](../Article_Coverage_Backlog.md)）
+- 航空気象: `3.3.1`〜`3.3.12`（スタブ配置・マッピングは [Closed_Sprints](../Closed_Sprints.md) §3）
 - 航空法規: `3.1.7`〜`3.1.8`（Phase 2 リスト）
 
 **KPI 節 最終更新（本パート）**: 2026-04-30（`3.4.5`〜`3.4.7` のシリーズ・DB メタを [09](../09_CPL_Learning_Stub.md)・`20260430_learning_contents_cpl_navigation_341_347_meta.sql` に追随）

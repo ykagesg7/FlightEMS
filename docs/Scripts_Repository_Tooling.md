@@ -12,7 +12,7 @@
 | GA4 MCP・OAuth / ADC（ローカル例） | [下記](#ga4-mcp-oauth--adcローカル例) |
 | 週次テレメトリ GA4（ISO 週・CI） | [下記](#週次テレメトリ-ga4iso-週github-actions) |
 | 規約ファイル | [.cursor/skills/git-commit-en/SKILL.md](../.cursor/skills/git-commit-en/SKILL.md)（ポインタ: [.cursor/rules/git-conventions.mdc](../.cursor/rules/git-conventions.mdc)） |
-| 品質・カバレッジ運用（参考） | [06_Long_Term_Execution.md](06_Long_Term_Execution.md) §1（旧 Phase_C メモを統合。旧 `Phase_Testing_Plan.md` は無い） |
+| 品質・カバレッジ運用（参考） | [Closed_Sprints.md](Closed_Sprints.md) §3、[01_Current_Status_and_Roadmap.md](01_Current_Status_and_Roadmap.md) |
 
 ルートの npm: `npm run cpl:import`、`npm run sync:public-docs` 等。`docs:update` / `docs:validate` / `docs:setup` は **実行しない**。
 

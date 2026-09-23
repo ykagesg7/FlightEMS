@@ -166,7 +166,7 @@ AI から **実ブラウザ**（コンソール・ネットワーク・スナッ
 
 #### **Tailwind CSS**
 - ユーティリティファーストのCSSフレームワーク
-- カスタムカラー: Marketing 系は黒×黄基調（Phase C で Flight Academy ブランドへ移行予定、[00](00_Flight_Academy_Strategy.md) §7）
+- カスタムカラー: Marketing 系は黒×黄基調（Flight Academy ブランド移行は段階1 完了。[Closed_Sprints.md](Closed_Sprints.md)）
 - レスポンシブデザイン対応
 
 ### **デザインシステムとテーマ戦略（2025年12月実装）**

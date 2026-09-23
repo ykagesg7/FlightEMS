@@ -101,7 +101,7 @@
 
 - [05_Content_Pipeline.md](05_Content_Pipeline.md) — 記事作成のフェーズと優先度  
 - [08_Syllabus_Management_Guide.md](08_Syllabus_Management_Guide.md) — 分類の正本・マッピング SQL の考え方  
-- [10_航空工学_学科試験攻略ブログ_ロードマップ.md](10_航空工学_学科試験攻略ブログ_ロードマップ.md) — 工学系ブログ・記事計画（該当する場合）
+- [Closed_Sprints.md](Closed_Sprints.md) §1 — 段階1 完了サマリ（CPL 航空工学 3.2.x 含む）
 
 ---
 
