@@ -322,7 +322,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W41',
     seriesTitle: 'CP（単機）',
     intro:
-      '来週は CP 最終2本。Cloverleaf と Chandelle。単機シリーズ完。金曜はメンタリティ枠。',
+      '来週は CP 最終2本（日・水）と金曜メンタリティ1本。Cloverleaf、Chandelle、７つの習慣その６。',
     articles: [
       {
         id: 'CP-5-8_Cloverleaf',
@@ -337,6 +337,13 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         title: '第22話：最大高度の180°を描け ～Chandelle～',
         slug: '/articles/cp-5-9-chandelle',
         hook: '180°で最大高度。翼水平だが水平飛行ではない。',
+      },
+      {
+        id: '1.1.6_Synergize',
+        publishDate: '2026-10-09',
+        title: '【７つの習慣】その６、道真公と学ぶ「シナジーを創り出す」',
+        slug: '/articles/synergize',
+        hook: '違いを設計に載せろ。1＋1を2で終わらせるな。',
       },
     ],
   },
