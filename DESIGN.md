@@ -23,7 +23,7 @@ spacing:
 
 ## Overview
 
-**Flight Academy（Cockpit / HUD）** aesthetic: dark navy surfaces, Air Force–inspired blue primary, and HUD-style neon accents for focus states. Learning content uses **Typography (`prose`)** with **`prose-invert`** for lesson readability (see `MDXContent` / component guide).
+**Flight Academy** splits tone by surface: **guest acquisition** routes (`/`, logged-out articles) use a calm navy learning brand; **Cockpit / HUD** neon accents belong to **logged-in app chrome** only (dashboard, planning instruments). See [「ゲスト面とアプリ内」](#ゲスト面とアプリ内). Learning content uses **Typography (`prose`)** with **`prose-invert`** for lesson readability (see `MDXContent` / component guide).
 
 Implement UI with **Tailwind** tokens defined in [`tailwind.config.js`](tailwind.config.js) — prefer `brand.*`, `hud.*`, and CSS-variable-driven `semantic.*` over raw hex in components.
 
@@ -57,10 +57,24 @@ Implement UI with **Tailwind** tokens defined in [`tailwind.config.js`](tailwind
 | 順位 | ラベル例 | スタイル |
 |------|----------|----------|
 | Primary | 登録 | 白地ボタン、文字色 `brand.secondary` |
-| Secondary | 記事を読む | — |
-| Tertiary | ログイン | — |
+| Secondary | 記事を読む | アウトライン。枠・文字色 `brand.primary`、背景は透明 |
+| Tertiary | ログイン | テキストリンク。文字色 `brand.primary` |
 
 **使わない文言**: ミッション開始、スクランブル。
+
+## OG・SNS
+
+- OG 画像とシリーズ告知カードはゲスト面のトーン（紺、落ち着いた青）に揃える。**HUD ネオンは使わない**。Impact や Arial Black 系のレタリングも使わない。
+- 画像上の文字は少なく。
+- `topgun_*` というアセット名、「ミッション開始」「スクランブル」は使わない。
+- main 上の習慣ヒーロー（seek-first-to-understand、synergize、sharpen-the-saw）はそのまま。本規定は**新規** OG・シリーズカードにのみ適用。
+- ピクセルサイズや制作パイプラインの規定はここでは設けない。
+
+## 信頼
+
+- **対象**: 社会人訓練生・航空学生、PPL/CPL 志望者。本プロダクトは記事と学習コンテンツを提供する。
+- 法規は学習テーマとして名指ししてよい。法的結論は書かない。HUD 語彙を運用手順のように見せない。
+- 価格表記やプラン名は書かない。
 
 ## Typography
 
