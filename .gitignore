@@ -119,8 +119,8 @@ scripts/docs-auto-update/node_modules/
 # Supabase CLI temp
 supabase/.temp/
 
-# Vite temp
-vite.config.ts.timestamp-*.mjs
+# Vite temp (editor / dev-server scratch; any extension)
+vite.config.ts.timestamp-*
 
 # Playwright
 playwright-report/
