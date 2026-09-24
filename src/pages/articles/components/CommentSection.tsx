@@ -32,14 +32,27 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     onLoadComments();
   }, [onLoadComments]);
 
+  const isGuest = !currentUserId;
+  const sectionBorderClass = isGuest ? 'border-brand-primary/30' : 'border-hud-green/30';
+  const countBadgeClass = isGuest
+    ? 'bg-brand-primary/20 text-brand-primary'
+    : 'bg-hud-green/20 text-hud-green';
+  const guestPromptBorderClass = isGuest
+    ? 'border-brand-primary/30 bg-brand-primary/5'
+    : 'border-hud-green/30 bg-hud-green/5';
+  const guestPromptButtonClass = isGuest
+    ? 'rounded-lg border-2 border-brand-primary bg-transparent px-6 py-2 font-bold text-brand-primary hover:bg-brand-primary/10'
+    : 'rounded-lg bg-hud-green px-6 py-2 font-bold text-[var(--bg)] hover:opacity-90';
+  const spinnerBorderClass = isGuest ? 'border-brand-primary' : 'border-hud-green';
+
   return (
-    <details className="mt-12 rounded-xl border border-hud-green/30 bg-brand-secondary-dark p-6">
+    <details className={`mt-12 rounded-xl border ${sectionBorderClass} bg-brand-secondary-dark p-6`}>
       <summary className="flex cursor-pointer list-none items-center gap-2 text-2xl font-bold text-[color:var(--text-primary)]">
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
         </svg>
         コメント
-        <span className="rounded-full bg-hud-green/20 px-2 py-1 text-sm text-hud-green">
+        <span className={`rounded-full px-2 py-1 text-sm ${countBadgeClass}`}>
           {comments.length}
         </span>
       </summary>
@@ -56,14 +69,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         </div>
       ) : (
         /* ゲストユーザー向けのログイン誘導メッセージ */
-        <div className="mb-6 rounded-lg border-2 border-dashed border-hud-green/30 bg-hud-green/5 p-4 text-center">
+        <div className={`mb-6 rounded-lg border-2 border-dashed p-4 text-center ${guestPromptBorderClass}`}>
           <p className="mb-3 text-[color:var(--text-primary)]">
             コメントを投稿するにはログインが必要です。
           </p>
           <button
             type="button"
             onClick={() => navigate('/auth')}
-            className="rounded-lg bg-hud-green px-6 py-2 font-bold text-[var(--bg)] hover:opacity-90"
+            className={guestPromptButtonClass}
           >
             ログイン / 新規登録
           </button>
@@ -74,7 +87,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       {isLoading && comments.length === 0 && (
         <div className="flex justify-center py-8">
           <div
-            className="h-8 w-8 animate-spin rounded-full border-b-2 border-hud-green"
+            className={`h-8 w-8 animate-spin rounded-full border-b-2 ${spinnerBorderClass}`}
           />
         </div>
       )}
@@ -97,6 +110,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               key={comment.id}
               comment={comment}
               isOwner={currentUserId === comment.user_id}
+              isGuest={isGuest}
               onEdit={onEditComment}
               onDelete={onDeleteComment}
             />

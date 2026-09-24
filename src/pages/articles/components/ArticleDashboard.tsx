@@ -41,6 +41,7 @@ import { CourseListView } from './CourseListView';
 import { EnhancedArticleCard } from './EnhancedArticleCard';
 import { NextComprehensionCTA } from './NextComprehensionCTA';
 import { ProgressSidebar } from './ProgressSidebar';
+import { GUEST_CTA_PRIMARY_CLASS } from '../../../constants/guestSurfaceCta';
 import { ProgressSummaryHeader } from './ProgressSummaryHeader';
 
 interface ArticleDashboardProps {
@@ -399,6 +400,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 articleMetas={articleMetas}
                 getArticleProgress={getArticleProgress}
                 onArticleClick={handleArticleClick}
+                isGuest={isDemo}
               />
             )}
 
@@ -528,9 +530,9 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 <button
                   type="button"
                   onClick={showRegistrationModal}
-                  className="rounded-xl bg-brand-primary px-8 py-3 font-medium text-[var(--bg)] hover:bg-brand-primary-dark"
+                  className={GUEST_CTA_PRIMARY_CLASS}
                 >
-                  無料で始める
+                  登録
                 </button>
               </div>
             )}

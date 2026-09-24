@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { GUEST_CTA_PRIMARY_CLASS } from '../../../constants/guestSurfaceCta';
 import {
   countMindsetArticles,
   CPL_CATEGORY,
@@ -139,26 +140,48 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
       </div>
 
       {categoryRows.length > 0 && (
-        <div className="rounded-xl border-2 border-hud-green/20 bg-brand-secondary-dark p-5 shadow-lg backdrop-blur-sm">
-          <h3 className="mb-4 flex items-center bg-gradient-to-r from-hud-green to-hud-green/80 bg-clip-text text-lg font-bold text-transparent">
+        <div
+          className={`rounded-xl border-2 bg-brand-secondary-dark p-5 shadow-lg backdrop-blur-sm ${
+            isDemo ? 'border-brand-primary/20' : 'border-hud-green/20'
+          }`}
+        >
+          <h3
+            className={`mb-4 flex items-center bg-gradient-to-r bg-clip-text text-lg font-bold text-transparent ${
+              isDemo
+                ? 'from-brand-primary to-brand-primary/80'
+                : 'from-hud-green to-hud-green/80'
+            }`}
+          >
             カテゴリー別進捗
           </h3>
           <div className="space-y-4">
             {categoryRows.map(({ category, read, total, percentage }) => (
               <div key={category}>
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-medium text-hud-green/90">{category}</span>
+                  <span
+                    className={`text-sm font-medium ${
+                      isDemo ? 'text-brand-primary/90' : 'text-hud-green/90'
+                    }`}
+                  >
+                    {category}
+                  </span>
                   <span className="text-xs text-[var(--text-muted)]">
                     {read}/{total}
                   </span>
                 </div>
-                <div className="h-3 w-full overflow-hidden rounded-full border border-hud-green/30 bg-[var(--bg)]">
+                <div
+                  className={`h-3 w-full overflow-hidden rounded-full border bg-[var(--bg)] ${
+                    isDemo ? 'border-brand-primary/30' : 'border-hud-green/30'
+                  }`}
+                >
                   <div
-                    className={`h-full rounded-full bg-gradient-to-r shadow-lg ${
+                    className={`h-full rounded-full bg-gradient-to-r shadow-lg transition-all duration-500 ${
                       percentage === 100
                         ? 'from-hud-green to-hud-green/80 shadow-hud-green/50'
-                        : 'from-hud-green/80 to-hud-green/60 shadow-hud-green/30'
-                    } transition-all duration-500`}
+                        : isDemo
+                          ? 'from-brand-primary to-brand-primary/80 shadow-brand-primary/30'
+                          : 'from-hud-green/80 to-hud-green/60 shadow-hud-green/30'
+                    }`}
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
@@ -223,9 +246,9 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
             <button
               type="button"
               onClick={onRegisterClick}
-              className="w-full transform rounded-lg bg-gradient-to-r from-brand-primary to-brand-primary/80 px-4 py-3 text-sm font-medium text-[var(--bg)] shadow-md transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:from-brand-primary/90 hover:to-brand-primary/70 hover:shadow-lg"
+              className={`w-full ${GUEST_CTA_PRIMARY_CLASS}`}
             >
-              無料で始める
+              登録
             </button>
           </div>
         </div>

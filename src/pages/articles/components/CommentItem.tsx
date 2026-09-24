@@ -6,6 +6,7 @@ import { CommentForm } from './CommentForm';
 interface CommentItemProps {
   comment: ArticleComment;
   isOwner: boolean;
+  isGuest?: boolean;
   onEdit: (commentId: string, content: string) => Promise<void>;
   onDelete: (commentId: string) => Promise<void>;
 }
@@ -13,6 +14,7 @@ interface CommentItemProps {
 export const CommentItem: React.FC<CommentItemProps> = ({
   comment,
   isOwner,
+  isGuest = false,
   onEdit,
   onDelete
 }) => {
@@ -51,9 +53,17 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   const isEdited = comment.updated_at !== comment.created_at;
 
+  const cardBorderClass = isGuest ? 'border-brand-primary/20' : 'border-[#39FF14]/20';
+  const avatarClass = isGuest
+    ? 'bg-brand-primary text-brand-secondary'
+    : 'bg-[#39FF14] text-[#0b1d3a]';
+  const profileLinkClass = isGuest
+    ? 'bg-brand-primary/20 text-brand-primary hover:bg-brand-primary/30'
+    : 'bg-[#39FF14]/20 text-[#39FF14] hover:bg-[#39FF14]/30';
+
   return (
     <div
-      className="p-4 rounded-lg transition-all bg-white/5 border border-[#39FF14]/20 backdrop-blur-sm"
+      className={`p-4 rounded-lg transition-all bg-white/5 border backdrop-blur-sm ${cardBorderClass}`}
     >
       {/* ヘッダー */}
       <div className="flex justify-between items-start mb-3">
@@ -72,7 +82,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             />
           ) : null}
           <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${comment.user.avatar_url ? 'hidden' : ''} bg-[#39FF14] text-[#0b1d3a]`}
+            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${comment.user.avatar_url ? 'hidden' : ''} ${avatarClass}`}
           >
             {comment.user.display_name.charAt(0).toUpperCase()}
           </div>
@@ -87,7 +97,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               {isOwner && comment.user.display_name === '名無しさん' && (
                 <Link
                   to="/profile?tab=profile"
-                  className="text-xs px-2 py-0.5 rounded-full transition-all bg-[#39FF14]/20 text-[#39FF14] hover:bg-[#39FF14]/30"
+                  className={`text-xs px-2 py-0.5 rounded-full transition-all ${profileLinkClass}`}
                   title="プロフィールでユーザー名を設定"
                 >
                   設定する

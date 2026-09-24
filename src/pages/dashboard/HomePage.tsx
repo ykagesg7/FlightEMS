@@ -14,6 +14,11 @@ import { InAppNotificationBell } from '../../components/learning/InAppNotificati
 import { SubjectAccuracyChart } from './components/SubjectAccuracyChart';
 import { buildWeakSubjectHref } from '../test/testHubFilters';
 import { DashboardCourseSection } from './components/DashboardCourseSection';
+import {
+  GUEST_CTA_PRIMARY_CLASS,
+  GUEST_CTA_SECONDARY_CLASS,
+  GUEST_CTA_TERTIARY_CLASS,
+} from '../../constants/guestSurfaceCta';
 import { filterGuestAnnouncements } from '../../utils/guestAnnouncements';
 
 const useReveal = (deps?: React.DependencyList) => {
@@ -388,24 +393,15 @@ const GuestHomeContent: React.FC = () => {
                 PPL/CPL 学科試験対策とフライトプランニングを、ひとつの流れで。
               </p>
 
-              <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-                <Link
-                  to="/articles?course=ppl"
-                  className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/60 bg-brand-primary px-8 py-4 text-sm font-semibold text-[var(--bg)] shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-brand-primary-dark"
-                >
-                  PPL 学科コースを始める
+              <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+                <Link to="/auth?mode=signup" className={GUEST_CTA_PRIMARY_CLASS}>
+                  登録
                 </Link>
-                <Link
-                  to="/auth?mode=signup"
-                  className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/40 bg-[var(--panel)] px-8 py-4 text-sm font-semibold text-[var(--text-primary)] transition-all duration-300 hover:scale-[1.02] hover:border-brand-primary/60 hover:bg-brand-primary/10"
-                >
-                  アカウントを作成する
+                <Link to="/articles" className={GUEST_CTA_SECONDARY_CLASS}>
+                  記事を読む
                 </Link>
-                <Link
-                  to="/planning"
-                  className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/40 bg-[var(--panel)] px-8 py-4 text-sm font-semibold text-[var(--text-primary)] transition-all duration-300 hover:scale-[1.02] hover:border-brand-primary/60 hover:bg-brand-primary/10"
-                >
-                  Flight Planning を体験する
+                <Link to="/auth" className={GUEST_CTA_TERTIARY_CLASS}>
+                  ログイン
                 </Link>
               </div>
 
@@ -565,18 +561,12 @@ const GuestHomeContent: React.FC = () => {
                 </Link>
               ))}
             </div>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Link
-                to="/articles"
-                className="inline-flex items-center text-sm font-semibold text-brand-primary transition-all duration-300 hover:translate-x-1"
-              >
-                記事から始める →
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+              <Link to="/articles" className={GUEST_CTA_SECONDARY_CLASS}>
+                記事を読む
               </Link>
-              <Link
-                to="/auth?mode=signup"
-                className="inline-flex items-center text-sm font-semibold text-brand-primary transition-all duration-300 hover:translate-x-1"
-              >
-                登録して進捗を保存する →
+              <Link to="/auth?mode=signup" className={GUEST_CTA_TERTIARY_CLASS}>
+                登録して進捗を保存する
               </Link>
             </div>
           </div>
@@ -636,11 +626,8 @@ const GuestHomeContent: React.FC = () => {
           <p className="mb-8 leading-relaxed text-[color:var(--text-muted)]">
             アカウントを作成すると、学習進捗、テスト結果、次に進むべきコンテンツをホームからまとめて確認できます。
           </p>
-          <Link
-            to="/auth?mode=signup"
-            className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/60 bg-brand-primary px-8 py-4 font-semibold text-[var(--bg)] shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-brand-primary-dark"
-          >
-            Flight Academy を始める
+          <Link to="/auth?mode=signup" className={GUEST_CTA_PRIMARY_CLASS}>
+            登録
           </Link>
         </div>
       </section>
