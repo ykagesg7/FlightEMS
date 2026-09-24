@@ -95,7 +95,3 @@ export async function fetchWindAtLocationTime(
   const p = pressureHpaForAltitudeFt(altitudeFt);
   return fetchWindAtPressureHpa(latitude, longitude, p, refTime, forecastDays);
 }
-
-export function addMinutesUtc(d: Date, minutes: number): Date {
-  return new Date(d.getTime() + minutes * 60_000);
-}
