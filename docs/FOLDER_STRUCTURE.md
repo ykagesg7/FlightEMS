@@ -71,14 +71,6 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 
 ### 📊 データ・コンテンツ
 
-#### `cpl_exam_data/`
-- **状態**: 空ディレクトリ（実際のデータは.gitignoreで除外）
-- **目的**: CPL試験問題データの格納場所
-- **説明**:
-  - 実際のPDFや変換済みMDXファイルは`.gitignore`で除外されています
-  - `scripts/cpl_exam/`のスクリプトで使用されます
-  - READMEで参照されていますが、実際のデータはリポジトリに含まれません
-
 #### `dist/`
 - **状態**: 空ディレクトリ（ビルド成果物）
 - **目的**: Viteビルドの出力先
@@ -111,7 +103,6 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **内容**:
   - `database/`: **総索引は [INDEX.md](../scripts/database/INDEX.md)**。マイグレーション類は直下に置く。**`docs/` 等から参照されない旧 SQL はリポジトリに残さない**（復元は Git 履歴）。
   - `telemetry/`: 週次 GA4 ISO 週レポート、Slack Facts、2c 承認。仕様は [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)
-  - `cpl_exam/`: CPL 問題 CSV 取込（`npm run cpl:import`）。仕様は [cpl_exam/CPL_CSV_IMPORT_SPEC.md](../scripts/cpl_exam/CPL_CSV_IMPORT_SPEC.md)
   - `docs-auto-update/`: **実行しない**（手順は Skill `docs-sync`）
   - `sync-public-docs.mjs`: `docs/` → `public/docs/` ホワイトリスト同期（`npm run sync:public-docs`、`prebuild`）
   - `vercel-ignore-build.mjs`: docs 専用コミットで本番ビルドをスキップ（`vercel.json` の `ignoreCommand`）。テスト: `src/__tests__/config/vercelIgnoreBuild.test.ts`
@@ -156,7 +147,6 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **.cursor**: バックアップファイルと空ディレクトリを整理
 - **.github**: 不要なワークフローを削除、テスト・ビルド検証のみ保持
 - **api**: 正常（Vercel Serverless Functions）
-- **cpl_exam_data**: 空だが、scriptsで参照されているため保持（.gitignoreでデータ除外）
 - **dist**: 空だが、ビルド成果物なので正常（.gitignoreで除外）
 - **src/components**: 未使用コンポーネント5ファイルと空フォルダ1つを削除、構造を整理
 
@@ -169,8 +159,6 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - `dist/` - ビルド成果物
 - `.vercel/` - Vercel設定
 - `.vscode/` - VS Code設定（`extensions.json`を除く）
-- `cpl_exam_data/raw_pdfs/` - 生PDFファイル
-- `cpl_exam_data/converted_md/` - 変換済みMDXファイル
 - `coverage/` - テストカバレッジレポート
 - `.vitest/` - Vitestキャッシュ
 - `node_modules/` - 依存関係
