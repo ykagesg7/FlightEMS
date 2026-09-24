@@ -20,6 +20,7 @@ interface CourseDetailViewProps {
   articleMetas: Record<string, ArticleMeta>;
   getArticleProgress: (id: string) => ArticleProgressSnapshot | null;
   onArticleClick: (articleId: string) => void;
+  isGuest?: boolean;
 }
 
 function moduleQuizHref(
@@ -46,6 +47,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
   articleMetas,
   getArticleProgress,
   onArticleClick,
+  isGuest = false,
 }) => {
   const progress = useMemo(
     () => computeCourseProgress(course, articleContents, articleMetas, getArticleProgress),
@@ -121,7 +123,13 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
               {!isEmpty && (
                 <div className="mb-3 h-2 w-full overflow-hidden rounded-full border border-brand-primary/20 bg-[var(--bg)]">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-hud-green/80 to-hud-green transition-all duration-500"
+                    className={`h-full rounded-full bg-gradient-to-r transition-all duration-500 ${
+                      modulePct === 100
+                        ? 'from-hud-green/80 to-hud-green'
+                        : isGuest
+                          ? 'from-brand-primary/80 to-brand-primary'
+                          : 'from-hud-green/80 to-hud-green'
+                    }`}
                     style={{ width: `${modulePct}%` }}
                   />
                 </div>

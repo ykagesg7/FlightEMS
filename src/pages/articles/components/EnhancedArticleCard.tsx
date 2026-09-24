@@ -125,7 +125,11 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
         {progress && progressPercentage > 0 && (
           <div className="absolute left-0 right-0 top-0 z-10 h-1 bg-brand-surface">
             <div
-              className={`h-full ${isCompleted || comprehensionStatus !== 'unread' ? 'bg-hud-green' : 'bg-brand-primary'}`}
+              className={`h-full ${
+                isCompleted || comprehensionStatus === 'comprehended'
+                  ? 'bg-hud-green'
+                  : 'bg-brand-primary'
+              }`}
               style={{ width: `${progressPercentage}%` }}
             />
           </div>

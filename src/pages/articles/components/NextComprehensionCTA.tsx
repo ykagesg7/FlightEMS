@@ -29,17 +29,17 @@ export const NextComprehensionCTA: React.FC<NextComprehensionCTAProps> = ({
 
   return (
     <section
-      className="mb-6 rounded-xl border-2 border-hud-green/30 bg-brand-secondary-dark p-4 shadow-lg shadow-hud-green/10 sm:p-5"
+      className="mb-6 rounded-xl border-2 border-brand-primary/30 bg-brand-secondary-dark p-4 shadow-lg sm:p-5"
       aria-labelledby="next-comprehension-heading"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-start gap-3">
           <ClipboardCheck
-            className="mt-0.5 h-7 w-7 shrink-0 text-hud-green"
+            className="mt-0.5 h-7 w-7 shrink-0 text-brand-primary"
             aria-hidden
           />
           <div className="min-w-0">
-            <p className="mb-0.5 text-xs font-semibold uppercase tracking-wide text-hud-green">
+            <p className="mb-0.5 text-xs font-semibold uppercase tracking-wide text-brand-primary">
               次の理解チェック
             </p>
             <h2
@@ -58,7 +58,7 @@ export const NextComprehensionCTA: React.FC<NextComprehensionCTAProps> = ({
           <Link
             to={quizHref}
             onClick={() => trackArticleToQuizClick(article.id, article.category)}
-            className="inline-flex items-center justify-center rounded-lg bg-hud-green px-4 py-2.5 text-sm font-semibold text-brand-secondary transition hover:brightness-110"
+            className="inline-flex items-center justify-center rounded-lg border-2 border-brand-primary/60 bg-brand-primary px-4 py-2.5 text-sm font-semibold text-[var(--bg)] transition hover:bg-brand-primary-dark"
           >
             理解チェックを始める
           </Link>

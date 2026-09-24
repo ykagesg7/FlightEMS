@@ -1,4 +1,5 @@
 import React from 'react';
+import { GUEST_CTA_PRIMARY_COMPACT_CLASS } from '../../../constants/guestSurfaceCta';
 import { LearningStats } from '../../../hooks/useArticleProgress';
 
 interface ProgressSummaryHeaderProps {
@@ -47,10 +48,11 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
 
           {isDemo && (
             <button
+              type="button"
               onClick={onRegisterClick}
-              className="px-3 py-2 rounded-xl font-medium text-xs transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border backdrop-blur-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500 border-blue-500/30 sm:px-6 sm:py-3 sm:text-sm"
+              className={GUEST_CTA_PRIMARY_COMPACT_CLASS}
             >
-              ✨ 無料で登録
+              登録
             </button>
           )}
         </div>
@@ -70,7 +72,11 @@ export const ProgressSummaryHeader: React.FC<ProgressSummaryHeaderProps> = ({
 
           <div className="rounded-xl border-2 border-brand-primary/20 bg-brand-secondary-dark p-2 shadow-lg shadow-brand-primary/20 backdrop-blur-sm sm:p-4">
             <div className="text-center">
-              <div className="mb-0.5 text-xl font-bold text-green-400 sm:mb-1 sm:text-2xl">
+              <div
+                className={`mb-0.5 text-xl font-bold sm:mb-1 sm:text-2xl ${
+                  isDemo ? 'text-brand-primary' : 'text-green-400'
+                }`}
+              >
                 {stats.completedMissions}
               </div>
               <div className="text-[10px] font-medium text-gray-400 sm:text-xs">
