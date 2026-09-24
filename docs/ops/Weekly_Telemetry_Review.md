@@ -11,7 +11,7 @@
 |------|------|
 | MCP・SA・secrets 正本 | [Cursor_MCP_Setup.md](../Cursor_MCP_Setup.md)「Google Analytics MCP」「ローカル secrets」 |
 | タグ／Realtime | [Cursor_MCP_Setup.md](../Cursor_MCP_Setup.md)（測定 ID **`G-22VFYSM69J`**） |
-| Quiz Hub 単発ファネル | [`artifacts/quiz_hub_funnel_memo_2026-07-08.md`](../../artifacts/quiz_hub_funnel_memo_2026-07-08.md) |
+| Quiz Hub 単発ファネル | Git 履歴の `artifacts/quiz_hub_funnel_memo_2026-07-08.md`（2026-07 時点メモ） |
 | 週末コンテンツ | [ops/Weekend_Content_Pipeline.md](Weekend_Content_Pipeline.md)（土曜 Ingest / 日曜 Editorial。テレメトリとは分離） |
 | Slack | `#fa-telemetry`（`C0BQ5R19QDV`） |
 
@@ -373,7 +373,7 @@
 
 #### メモ / 生データ
 
-- [`artifacts/ga4_w33_report.json`](../../artifacts/ga4_w33_report.json)（ローカル生成・コミット任意）
+- `artifacts/ga4_w33_report.json`（ローカル生成・コミット任意・追跡なし）
 
 ---
 
@@ -413,7 +413,7 @@
 
 #### メモ / 生データ
 
-- 任意 JSON: [`artifacts/ga4_w32_report.json`](../../artifacts/ga4_w32_report.json)（ローカル生成・コミット任意）
+- 任意 JSON: `artifacts/ga4_w32_report.json`（ローカル生成・コミット任意・追跡なし）
 
 ---
 

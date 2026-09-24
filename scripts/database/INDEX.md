@@ -135,7 +135,7 @@
 | **Quiz 法規 D-2 改稿・復帰** | [`20260528_quiz_art151_d2_fix_and_reverify.sql`](20260528_quiz_art151_d2_fix_and_reverify.sql)（8 件 verified 復帰 — **2026-05-28 本番適用済**） |
 | **Quiz Phase 2 削除（D-1 + Tier A）** | [`20260528_quiz_phase2_delete_d1_tier_a.sql`](20260528_quiz_phase2_delete_d1_tier_a.sql)（30 件 — **2026-05-28 本番適用済**） |
 | **Quiz Phase 3 削除（D-2 重複 + Tier B + 破損）** | [`20260528_quiz_phase3_delete_d2_dupes_tier_b.sql`](20260528_quiz_phase3_delete_d2_dupes_tier_b.sql)（146 件 — **2026-05-28 本番適用済**） |
-| **Quiz Phase 3 needs_review 棚卸し** | [`20260528_quiz_phase3_needs_review_fix_verify.sql`](20260528_quiz_phase3_needs_review_fix_verify.sql)（修正4・復帰9・削除7 — **2026-05-28 本番適用済**）。レポート: [`artifacts/quiz_cbt_deletion_candidates_2026-05-28.md`](../artifacts/quiz_cbt_deletion_candidates_2026-05-28.md) |
+| **Quiz Phase 3 needs_review 棚卸し** | [`20260528_quiz_phase3_needs_review_fix_verify.sql`](20260528_quiz_phase3_needs_review_fix_verify.sql)（修正4・復帰9・削除7 — **2026-05-28 本番適用済**）。棚卸しメモは Git 履歴の `artifacts/quiz_cbt_deletion_candidates_2026-05-28.md` |
 | Phase B・Phase 2 対象 8 単元（気象 3.3.10〜12・工学 3.2.10〜12・法規 3.1.7〜8）`learning_contents` / `content_title` | `20260505_learning_contents_phase2_eight_meta.sql` |
 | 通信 3.5.4 メタ本文化（May） | `20260505_learning_contents_comm_354_meta_finalize.sql` |
 | 通信 3.5.x メタ全集約（本文化後） | `20260507_learning_contents_comm_351_355_meta_sync.sql` |

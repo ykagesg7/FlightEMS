@@ -87,8 +87,6 @@ share/python-wheels/
 *.egg
 
 # Large data directories that slow down Cursor
-cpl_exam_data/raw_pdfs/
-cpl_exam_data/converted_md/
 scripts/bulk_*.sql
 scripts/batch_*.sql
 scripts/unified_*.sql

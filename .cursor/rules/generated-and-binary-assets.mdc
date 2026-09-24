@@ -3,7 +3,6 @@ description: Large binary and generated data — avoid heavy bulk edits
 globs:
   - public/images/**
   - public/geojson/**
-  - cpl_exam_data/**
   - "**/*.pdf"
   - "**/*.png"
   - "**/*.jpg"

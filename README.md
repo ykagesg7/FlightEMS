@@ -24,9 +24,9 @@
 | **`src/` 構成** | [docs/Component_Structure_Guide.md](docs/Component_Structure_Guide.md) |
 | **リポジトリフォルダ索引** | [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) |
 | **Cursor MCP** | [docs/Cursor_MCP_Setup.md](docs/Cursor_MCP_Setup.md) |
-| **Supabase SQL 索引（短）** | [scripts/database/INDEX.md](scripts/database/INDEX.md)（CPL CSV は [scripts/cpl_exam/CPL_CSV_IMPORT_SPEC.md](scripts/cpl_exam/CPL_CSV_IMPORT_SPEC.md)） |
+| **Supabase SQL 索引（短）** | [scripts/database/INDEX.md](scripts/database/INDEX.md) |
 
-過去のルート README にあったマップ操作・CPL 資料の詳細は、上記 `docs/` およびアプリ内ヘルプを参照してください。`cpl_exam_data/` の実データは `.gitignore` 対象の場合があります。
+過去のルート README にあったマップ操作・CPL 資料の詳細は、上記 `docs/` およびアプリ内ヘルプを参照してください。CPL 試験問題は Supabase（`unified_cpl_questions` 等）に取込済みです。
 
 ## ライセンス
 
