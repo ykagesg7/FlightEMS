@@ -2,16 +2,17 @@
  * Blog / self-help MDX under src/content/articles — temporarily withheld from the site
  * while content is reviewed (legal: 夢をかなえるゾウ character usage).
  * After legal clearance: clear this list and run republish SQL (see docs/05_Content_Pipeline.md §6).
- * 1.1.1_UnconsciousSuccess was rewritten (no 夢ゾウ / Top Gun stills) and republished 2026-09-20.
- * 1.1.3_PrioritizingMostImportant was rewritten (no 埼玉解放 / Top Gun) and republished 2026-09-21.
- * 1.1.2_EndWithFuture was rewritten (no くまモン / 清正公) and republished 2026-09-21.
- * 1.1.4_WinWinThinking was rewritten (no 黄門 / K's / 埼玉パロディ) and republished 2026-09-22.
- * 1.1.5_SeekFirstToUnderstand was rewritten (no 野球実況 / 忠勝公 / ZOZO) and scheduled W40 Fri 2026-10-02.
- * 1.1.6_Synergize was rewritten (no 夢ゾウ / Top Gun / 清正公) and scheduled W41 Fri 2026-10-09.
- * 1.1.7_SharpenTheSaw was rewritten (series finale; no hero until user supplies PNG) and scheduled W42 Fri 2026-10-16.
+ * 1.1.1_UnconsciousSuccess stays readable; series redrip from 2026-09-27 (JST).
+ * 1.1.2–1.1.7 are withheld again so the series restarts at 1.1.1 on 2026-09-27.
  * mindset tab auto-appears when published mindset articles exist (getVisibleTabs).
  */
 export const WITHDRAWN_ARTICLE_IDS: readonly string[] = [
+  '1.1.2_EndWithFuture',
+  '1.1.3_PrioritizingMostImportant',
+  '1.1.4_WinWinThinking',
+  '1.1.5_SeekFirstToUnderstand',
+  '1.1.6_Synergize',
+  '1.1.7_SharpenTheSaw',
   '1.2.5_RightPeopleOnBoard',
   '1.2.6_GiveAndTake',
   '1.2.7_GiveAndTake2',
