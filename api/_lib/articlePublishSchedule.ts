@@ -293,8 +293,15 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W40',
     seriesTitle: 'CP（単機）',
     intro:
-      '来週は操縦2本（日・水）と金曜メンタリティ1本。Split-S / Immelmann、Cuban Eight、７つの習慣その５。',
+      '来週は７つの習慣シリーズ再出発（その１）と CP 2本。Split-S / Immelmann、Cuban Eight。',
     articles: [
+      {
+        id: '1.1.1_UnconsciousSuccess',
+        publishDate: '2026-09-27',
+        title: '【７つの習慣】その１、道真公と学ぶ「主体性」',
+        slug: '/articles/unconscious-success',
+        hook: '関心の輪と影響の輪を、太宰府の左遷で噛み砕く。',
+      },
       {
         id: 'CP-5-6_SplitSImmelmann',
         publishDate: '2026-09-28',
@@ -309,20 +316,12 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         slug: '/articles/cp-5-7-cuban-eight',
         hook: '45°下げで裏返せ。リードして引き起こせ。2回目は逆。',
       },
-      {
-        id: '1.1.5_SeekFirstToUnderstand',
-        publishDate: '2026-10-02',
-        title: '【７つの習慣】その５、道真公と学ぶ「まず理解に徹し、そして理解される」',
-        slug: '/articles/seek-first-to-understand',
-        hook: '「はい」の前に要約を一文返せ。編隊の無線はそこから澄む。',
-      },
     ],
   },
   '2026-W41': {
     isoWeek: '2026-W41',
     seriesTitle: 'CP（単機）',
-    intro:
-      '来週は CP 最終2本（日・水）と金曜メンタリティ1本。Cloverleaf、Chandelle、７つの習慣その６。',
+    intro: '来週は CP 最終2本（日・水）。Cloverleaf、Chandelle。',
     articles: [
       {
         id: 'CP-5-8_Cloverleaf',
@@ -338,20 +337,13 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         slug: '/articles/cp-5-9-chandelle',
         hook: '180°で最大高度。翼水平だが水平飛行ではない。',
       },
-      {
-        id: '1.1.6_Synergize',
-        publishDate: '2026-10-09',
-        title: '【７つの習慣】その６、道真公と学ぶ「シナジーを創り出す」',
-        slug: '/articles/synergize',
-        hook: '違いを設計に載せろ。1＋1を2で終わらせるな。',
-      },
     ],
   },
   '2026-W42': {
     isoWeek: '2026-W42',
     seriesTitle: 'FN（編隊）',
     intro:
-      '来週は編隊の入口2本（日・水）と金曜メンタリティ1本。V.F.Rの血の掟、滑走路のシンクロ、７つの習慣その７（シリーズ完走）。',
+      '来週は編隊の入口2本（日・水）。V.F.Rの血の掟、滑走路のシンクロ。',
     articles: [
       {
         id: 'FMT-1-1_WingmanVFR',
@@ -366,13 +358,6 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         title: '第2話：滑走路のシンクロ ～的からの脱出と周辺視野～',
         slug: '/articles/fmt-1-2-runway-lineup-takeoff',
         hook: '的から脱出。周辺視野でリーダーを捉えろ。',
-      },
-      {
-        id: '1.1.7_SharpenTheSaw',
-        publishDate: '2026-10-16',
-        title: '【７つの習慣】その７、道真公と学ぶ「刃を研ぐ」',
-        slug: '/articles/sharpen-the-saw',
-        hook: '切れぬ刃で伐るな。四つの刃を毎日少しずつ研げ。',
       },
     ],
   },
