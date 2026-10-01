@@ -15,3 +15,19 @@ export interface FlightViewer3DProps {
 export type FlightImageryMode = 'gsi' | 'google';
 
 export type FlightCameraMode = 'chase' | 'cockpit';
+
+/** 3D プレビューのカメラ調整（フライトプラン高度そのものは変更しない） */
+export type FlightViewControls = {
+  /** カメラ追従高度に加算する ft（-500…2000 想定） */
+  altitudeOffsetFt: number;
+  /** チェイスカメラの水平距離（m） */
+  chaseDistanceM: number;
+  /** チェイス／コックピットの俯角（度、負 = 下向き） */
+  chasePitchDeg: number;
+};
+
+export const DEFAULT_FLIGHT_VIEW_CONTROLS: FlightViewControls = {
+  altitudeOffsetFt: 0,
+  chaseDistanceM: 650,
+  chasePitchDeg: -18,
+};

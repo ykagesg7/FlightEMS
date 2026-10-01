@@ -5,6 +5,11 @@ export function feetToMeters(altFt: number): number {
   return altFt * 0.3048;
 }
 
+/** 3D プレビュー用カメラ高度オフセット（計画高度は変更しない） */
+export function applyPreviewAltitudeOffset(altFt: number, offsetFt: number): number {
+  return altFt + offsetFt;
+}
+
 export type FlightPathSample = {
   lon: number;
   lat: number;

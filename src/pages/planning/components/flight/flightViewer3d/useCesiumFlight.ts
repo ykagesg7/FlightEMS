@@ -8,6 +8,7 @@ import {
   ColorMaterialProperty,
   EllipsoidTerrainProvider,
   GoogleMaps,
+  TerrainProvider,
   HeadingPitchRange,
   JulianDate,
   LabelStyle,
@@ -19,12 +20,20 @@ import {
 } from 'cesium';
 import '../../../../explore/airspace3d/cesiumBaseUrl';
 import {
+  applyPreviewAltitudeOffset,
   buildPlaybackPointsFromWaypoints,
   feetToMeters,
   interpolatePlaybackAtTime,
   type PlaybackPoint3D,
 } from './flightViewer3dMath';
-import type { FlightCameraMode, FlightImageryMode, Waypoint3D } from './types';
+import { GsiDemPngTerrainProvider } from './gsiDemPngTerrainProvider';
+import type {
+  FlightCameraMode,
+  FlightImageryMode,
+  FlightViewControls,
+  Waypoint3D,
+} from './types';
+import { DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
 
 const GSI_SEAMLESS_PHOTO =
   'https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg';
@@ -38,6 +47,7 @@ export type UseCesiumFlightOptions = {
   imageryMode: FlightImageryMode;
   cameraMode: FlightCameraMode;
   isProUser: boolean;
+  viewControls?: FlightViewControls;
 };
 
 export type UseCesiumFlightResult = {
@@ -150,15 +160,18 @@ function updateFollowCamera(
   viewer: Viewer,
   pose: ReturnType<typeof interpolatePlaybackAtTime>,
   mode: FlightCameraMode,
+  controls: FlightViewControls,
 ) {
-  const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(pose.altFt));
+  const altFt = applyPreviewAltitudeOffset(pose.altFt, controls.altitudeOffsetFt);
+  const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(altFt));
   const heading = CesiumMath.toRadians(pose.headingDeg);
+  const pitchRad = CesiumMath.toRadians(controls.chasePitchDeg);
   if (mode === 'cockpit') {
     viewer.camera.setView({
       destination: pos,
       orientation: {
         heading,
-        pitch: CesiumMath.toRadians(-8),
+        pitch: pitchRad,
         roll: 0,
       },
     });
@@ -166,8 +179,16 @@ function updateFollowCamera(
   }
   viewer.camera.lookAt(
     pos,
-    new HeadingPitchRange(heading + Math.PI, CesiumMath.toRadians(-18), 650),
+    new HeadingPitchRange(heading + Math.PI, pitchRad, controls.chaseDistanceM),
   );
+}
+
+function createGsiTerrainProvider(): TerrainProvider {
+  return new GsiDemPngTerrainProvider() as unknown as TerrainProvider;
+}
+
+function setDepthTestAgainstTerrain(viewer: Viewer, enabled: boolean) {
+  viewer.scene.globe.depthTestAgainstTerrain = enabled;
 }
 
 export function useCesiumFlight({
@@ -176,6 +197,7 @@ export function useCesiumFlight({
   imageryMode,
   cameraMode,
   isProUser,
+  viewControls = DEFAULT_FLIGHT_VIEW_CONTROLS,
 }: UseCesiumFlightOptions): UseCesiumFlightResult {
   const viewerRef = useRef<Viewer | null>(null);
   const tilesetRef = useRef<Cesium3DTileset | null>(null);
@@ -183,6 +205,7 @@ export function useCesiumFlight({
   const startJulianRef = useRef<JulianDate | null>(null);
   const totalSecRef = useRef(0);
   const cameraModeRef = useRef(cameraMode);
+  const viewControlsRef = useRef(viewControls);
   const imageryApplyingRef = useRef(false);
 
   const [ready, setReady] = useState(false);
@@ -192,6 +215,7 @@ export function useCesiumFlight({
   const [totalDurationSec, setTotalDurationSec] = useState(0);
 
   cameraModeRef.current = cameraMode;
+  viewControlsRef.current = viewControls;
 
   const applyImagery = useCallback(
     async (viewer: Viewer, mode: FlightImageryMode) => {
@@ -206,7 +230,8 @@ export function useCesiumFlight({
         }
         if (mode === 'gsi') {
           viewer.scene.globe.show = true;
-          viewer.terrainProvider = new EllipsoidTerrainProvider();
+          viewer.terrainProvider = createGsiTerrainProvider();
+          setDepthTestAgainstTerrain(viewer, true);
           const imagery = new UrlTemplateImageryProvider({
             url: GSI_SEAMLESS_PHOTO,
             credit: '国土地理院',
@@ -224,6 +249,7 @@ export function useCesiumFlight({
           viewer.scene.primitives.add(tileset);
           tilesetRef.current = tileset;
           viewer.scene.globe.show = true;
+          setDepthTestAgainstTerrain(viewer, true);
         }
         restoreCamera(viewer, snap);
       } finally {
@@ -284,7 +310,7 @@ export function useCesiumFlight({
             },
           },
         });
-        viewer.scene.globe.depthTestAgainstTerrain = false;
+        setDepthTestAgainstTerrain(viewer, false);
         if (cancelled) {
           viewer.destroy();
           return;
@@ -300,7 +326,7 @@ export function useCesiumFlight({
           const total = totalSecRef.current || 1;
           const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
           setProgressPct(Math.min(100, Math.max(0, (tSec / total) * 100)));
-          updateFollowCamera(viewer, pose, cameraModeRef.current);
+          updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
           setPlaying(viewer.clock.shouldAnimate);
         };
         viewer.clock.onTick.addEventListener(onTick);
@@ -339,8 +365,17 @@ export function useCesiumFlight({
     if (!viewer || viewer.isDestroyed() || !ready || !startJ) return;
     const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
     const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
-    updateFollowCamera(viewer, pose, cameraMode);
+    updateFollowCamera(viewer, pose, cameraMode, viewControlsRef.current);
   }, [cameraMode, ready]);
+
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    const startJ = startJulianRef.current;
+    if (!viewer || viewer.isDestroyed() || !ready || !startJ) return;
+    const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
+    const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
+    updateFollowCamera(viewer, pose, cameraModeRef.current, viewControls);
+  }, [viewControls, ready]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
@@ -370,7 +405,7 @@ export function useCesiumFlight({
     setPlaying(false);
     const pose = interpolatePlaybackAtTime(playbackRef.current, tSec);
     setProgressPct((tSec / (total || 1)) * 100);
-    updateFollowCamera(viewer, pose, cameraModeRef.current);
+    updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
   }, []);
 
   return {

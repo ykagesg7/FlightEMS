@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  applyPreviewAltitudeOffset,
   buildPlaybackPointsFromWaypoints,
   feetToMeters,
   interpolatePathByFraction,
@@ -10,6 +11,12 @@ describe('flightViewer3dMath', () => {
   it('converts feet to meters', () => {
     expect(feetToMeters(1000)).toBeCloseTo(304.8, 4);
     expect(feetToMeters(0)).toBe(0);
+  });
+
+  it('applies preview altitude offset without mutating plan altitude semantics', () => {
+    expect(applyPreviewAltitudeOffset(3000, 0)).toBe(3000);
+    expect(applyPreviewAltitudeOffset(3000, 500)).toBe(3500);
+    expect(applyPreviewAltitudeOffset(1000, -200)).toBe(800);
   });
 
   it('builds playback with monotonic time', () => {
