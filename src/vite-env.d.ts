@@ -18,6 +18,8 @@ interface ImportMetaEnv {
   readonly VITE_APP_ENV: 'development' | 'production';
   /** Build-time Cesium Workers/Assets base (local /cesium/ or jsDelivr on Preview). */
   readonly VITE_CESIUM_BASE_URL?: string;
+  /** Google Maps API（Photorealistic 3D Tiles・Planning 3D プレビュー Pro 表示） */
+  readonly VITE_GOOGLE_MAPS_API_KEY?: string;
   readonly GOOGLE_GEMINI_API_KEY: string;
   readonly GOOGLE_CLOUD_VISION_API_KEY: string;
   readonly NODE_ENV: 'development' | 'production';
