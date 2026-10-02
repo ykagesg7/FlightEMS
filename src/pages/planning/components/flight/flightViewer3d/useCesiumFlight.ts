@@ -27,7 +27,9 @@ import {
   interpolatePlaybackAtTime,
   type PlaybackPoint3D,
 } from './flightViewer3dMath';
+import { canUseGooglePhotorealistic3D } from './googlePhotorealistic3dAccess';
 import { GsiDemPngTerrainProvider } from './gsiDemPngTerrainProvider';
+import { gsiSeamlessPhotoImageryOptions } from './gsiTileConfig';
 import type {
   FlightCameraMode,
   FlightImageryMode,
@@ -36,8 +38,7 @@ import type {
 } from './types';
 import { DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
 
-const GSI_SEAMLESS_PHOTO =
-  'https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg';
+const VIEWER_BOOT_TIMEOUT_MS = 25_000;
 
 const ROUTE_ENTITY_PREFIX = 'flight-viewer-route-';
 const ROUTE_POLYLINE_ID = 'flight-viewer-route-line';
@@ -46,7 +47,8 @@ const ROUTE_POLYLINE_ID = 'flight-viewer-route-line';
 const PLAYBACK_MULTIPLIER = 40;
 
 export type UseCesiumFlightOptions = {
-  containerRef: React.RefObject<HTMLDivElement | null>;
+  /** マウント済みコンテナ（callback ref で渡す） */
+  mountEl: HTMLDivElement | null;
   waypoints: Waypoint3D[];
   imageryMode: FlightImageryMode;
   cameraMode: FlightCameraMode;
@@ -62,7 +64,25 @@ export type UseCesiumFlightResult = {
   togglePlay: () => void;
   seekProgress: (pct: number) => void;
   totalDurationSec: number;
+  retryInit: () => void;
 };
+
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timeoutId = window.setTimeout(() => {
+      reject(new Error(message));
+    }, ms);
+    promise
+      .then((value) => {
+        window.clearTimeout(timeoutId);
+        resolve(value);
+      })
+      .catch((err: unknown) => {
+        window.clearTimeout(timeoutId);
+        reject(err instanceof Error ? err : new Error(String(err)));
+      });
+  });
+}
 
 function saveCamera(viewer: Viewer) {
   const cam = viewer.camera;
@@ -204,7 +224,7 @@ function setDepthTestAgainstTerrain(viewer: Viewer, enabled: boolean) {
 }
 
 export function useCesiumFlight({
-  containerRef,
+  mountEl,
   waypoints,
   imageryMode,
   cameraMode,
@@ -228,13 +248,20 @@ export function useCesiumFlight({
   const [playing, setPlaying] = useState(false);
   const [progressPct, setProgressPct] = useState(0);
   const [totalDurationSec, setTotalDurationSec] = useState(0);
+  const [initAttempt, setInitAttempt] = useState(0);
 
   cameraModeRef.current = cameraMode;
   viewControlsRef.current = viewControls;
+  const waypointsBootRef = useRef(waypoints);
+  waypointsBootRef.current = waypoints;
+  const imageryModeBootRef = useRef(imageryMode);
+  imageryModeBootRef.current = imageryMode;
+
+  const google3dAllowed = canUseGooglePhotorealistic3D(isProUser);
 
   const applyImagery = useCallback(
     async (viewer: Viewer, mode: FlightImageryMode) => {
-      if (mode === 'google' && !isProUser) return;
+      if (mode === 'google' && !google3dAllowed) return;
       const snap = saveCamera(viewer);
       imageryApplyingRef.current = true;
       try {
@@ -247,10 +274,7 @@ export function useCesiumFlight({
           viewer.scene.globe.show = true;
           viewer.terrainProvider = createGsiTerrainProvider();
           setDepthTestAgainstTerrain(viewer, true);
-          const imagery = new UrlTemplateImageryProvider({
-            url: GSI_SEAMLESS_PHOTO,
-            credit: '国土地理院',
-          });
+          const imagery = new UrlTemplateImageryProvider(gsiSeamlessPhotoImageryOptions);
           viewer.imageryLayers.addImageryProvider(imagery);
         } else {
           const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
@@ -271,7 +295,7 @@ export function useCesiumFlight({
         imageryApplyingRef.current = false;
       }
     },
-    [isProUser],
+    [google3dAllowed],
   );
 
   const rebuildRoute = useCallback((viewer: Viewer, wps: Waypoint3D[]) => {
@@ -300,76 +324,79 @@ export function useCesiumFlight({
   }, []);
 
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+    if (!mountEl) return;
+    setError(null);
+    setReady(false);
+    const el = mountEl;
     let cancelled = false;
 
-    const boot = async () => {
-      try {
-        const viewer = new Viewer(el, {
-          animation: false,
-          timeline: false,
-          baseLayerPicker: false,
-          geocoder: false,
-          homeButton: false,
-          sceneModePicker: false,
-          navigationHelpButton: false,
-          fullscreenButton: false,
-          infoBox: false,
-          selectionIndicator: false,
-          baseLayer: false,
-          terrainProvider: new EllipsoidTerrainProvider(),
-          contextOptions: {
-            webgl: {
-              failIfMajorPerformanceCaveat: false,
-              preserveDrawingBuffer: true,
-            },
+    const runBoot = async (): Promise<void> => {
+      const viewer = new Viewer(el, {
+        animation: false,
+        timeline: false,
+        baseLayerPicker: false,
+        geocoder: false,
+        homeButton: false,
+        sceneModePicker: false,
+        navigationHelpButton: false,
+        fullscreenButton: false,
+        infoBox: false,
+        selectionIndicator: false,
+        baseLayer: false,
+        terrainProvider: new EllipsoidTerrainProvider(),
+        contextOptions: {
+          webgl: {
+            failIfMajorPerformanceCaveat: false,
+            preserveDrawingBuffer: true,
           },
-        });
-        setDepthTestAgainstTerrain(viewer, false);
-        if (cancelled) {
-          viewer.destroy();
-          return;
-        }
-        viewerRef.current = viewer;
-        rebuildRoute(viewer, waypoints);
-        await applyImagery(viewer, imageryMode);
-        if (cancelled) {
-          viewer.destroy();
-          viewerRef.current = null;
-          return;
-        }
-        // ready 後の imagery effect が同値で二重適用しないようスキップ
-        skipNextImageryEffectRef.current = true;
-
-        const onTick = () => {
-          const startJ = startJulianRef.current;
-          if (!startJ || imageryApplyingRef.current) return;
-          const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
-          const total = totalSecRef.current || 1;
-          const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
-          setProgressPct(Math.min(100, Math.max(0, (tSec / total) * 100)));
-
-          const animating = viewer.clock.shouldAnimate;
-          if (animating) {
-            updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
-          } else if (wasAnimatingRef.current) {
-            // 一時停止へ遷移した直後: lookAt ロック解除 → 手動視点を許可
-            unlockCamera(viewer);
-          }
-          wasAnimatingRef.current = animating;
-          setPlaying(animating);
-        };
-        viewer.clock.onTick.addEventListener(onTick);
-
-        if (!cancelled) setReady(true);
-      } catch (e) {
-        console.error(e);
-        setError(e instanceof Error ? e.message : String(e));
+        },
+      });
+      setDepthTestAgainstTerrain(viewer, false);
+      if (cancelled) {
+        viewer.destroy();
+        return;
       }
+      viewerRef.current = viewer;
+      rebuildRoute(viewer, waypointsBootRef.current);
+      await applyImagery(viewer, imageryModeBootRef.current);
+      if (cancelled) {
+        viewer.destroy();
+        viewerRef.current = null;
+        return;
+      }
+      skipNextImageryEffectRef.current = true;
+
+      const onTick = () => {
+        const startJ = startJulianRef.current;
+        if (!startJ || imageryApplyingRef.current) return;
+        const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
+        const total = totalSecRef.current || 1;
+        const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
+        setProgressPct(Math.min(100, Math.max(0, (tSec / total) * 100)));
+
+        const animating = viewer.clock.shouldAnimate;
+        if (animating) {
+          updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
+        } else if (wasAnimatingRef.current) {
+          unlockCamera(viewer);
+        }
+        wasAnimatingRef.current = animating;
+        setPlaying(animating);
+      };
+      viewer.clock.onTick.addEventListener(onTick);
+
+      if (!cancelled) setReady(true);
     };
 
-    void boot();
+    void withTimeout(
+      runBoot(),
+      VIEWER_BOOT_TIMEOUT_MS,
+      '3D ビューアの初期化がタイムアウトしました。再試行してください。',
+    ).catch((e: unknown) => {
+      if (cancelled) return;
+      console.error(e);
+      setError(e instanceof Error ? e.message : String(e));
+    });
 
     return () => {
       cancelled = true;
@@ -381,8 +408,7 @@ export function useCesiumFlight({
       tilesetRef.current = null;
       setReady(false);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- viewer は一度だけ初期化
-  }, [containerRef]);
+  }, [mountEl, initAttempt, applyImagery, rebuildRoute]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
@@ -425,7 +451,7 @@ export function useCesiumFlight({
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer || viewer.isDestroyed() || !ready) return;
-    if (imageryMode === 'google' && !isProUser) return;
+    if (imageryMode === 'google' && !google3dAllowed) return;
     if (skipNextImageryEffectRef.current) {
       skipNextImageryEffectRef.current = false;
       return;
@@ -434,7 +460,11 @@ export function useCesiumFlight({
       console.error(e);
       setError(e instanceof Error ? e.message : String(e));
     });
-  }, [imageryMode, isProUser, ready, applyImagery]);
+  }, [imageryMode, google3dAllowed, ready, applyImagery]);
+
+  const retryInit = useCallback(() => {
+    setInitAttempt((n) => n + 1);
+  }, []);
 
   const togglePlay = useCallback(() => {
     const viewer = viewerRef.current;
@@ -473,5 +503,6 @@ export function useCesiumFlight({
     togglePlay,
     seekProgress,
     totalDurationSec,
+    retryInit,
   };
 }
