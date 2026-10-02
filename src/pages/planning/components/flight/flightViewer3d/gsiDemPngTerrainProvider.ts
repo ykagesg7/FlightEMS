@@ -2,8 +2,8 @@
  * 国土地理院 dem_png / dem5a_png タイルから Cesium 地形を生成する。
  * tilemapjp/Cesium-JapanGSI (JapanGSITerrainProvider) の dem_png 処理を TypeScript/ESM 向けに移植。
  *
- * 欠タイル（レベル0の全球タイル等）は FAILED にせず平坦 Heightmap を返し、
- * 子タイル（日本域）と imagery の進行を止めない。
+ * 欠タイル（404 / 全無効画素）は平坦 Heightmap を返し、子 refinement を止める。
+ * z0 はネットワークなしのローカル平坦タイル。
  */
 import {
   Credit,
@@ -13,9 +13,14 @@ import {
   TerrainProvider,
   WebMercatorTilingScheme,
 } from 'cesium';
+import { imageDataIsAllGsiDemNoData } from './gsiDemPngAnalysis';
+import {
+  getSharedGsiDemTileCache,
+} from './gsiDemTileCache';
 import {
   GSI_DEM5A_MAX_LEVEL,
   GSI_DEM_PNG_MIN_LEVEL,
+  GSI_PREVIEW_MAX_FETCH_LEVEL,
   shouldFetchGsiDemNetworkTile,
 } from './gsiTileConfig';
 
@@ -26,12 +31,14 @@ const GSI_MAX_TERRAIN_LEVEL = GSI_DEM5A_MAX_LEVEL;
 const DEFAULT_CREDIT = new Credit('国土地理院');
 /** Cesium childTileMask: 4 子タイルすべて存在 */
 const ALL_CHILDREN_MASK = 15;
+const NO_CHILDREN_MASK = 0;
 
 export type GsiDemPngTerrainProviderOptions = {
   url?: string;
   credit?: Credit | string;
   /** 地形の起伏を強調する倍率（1 = 実高度） */
   heightPower?: number;
+  tileCache?: ReturnType<typeof getSharedGsiDemTileCache>;
 };
 
 /**
@@ -53,7 +60,10 @@ export function buildGsiDemTileUrl(
   return `${demPngBase}/${level}/${x}/${y}.png`;
 }
 
-function decodeDemPngHeights(image: CanvasImageSource): number[][] {
+function decodeDemPngHeights(image: CanvasImageSource): {
+  heightCSV: number[][];
+  allNoData: boolean;
+} {
   const width = 256;
   const height = 256;
   const canvas = document.createElement('canvas');
@@ -65,7 +75,9 @@ function decodeDemPngHeights(image: CanvasImageSource): number[][] {
   }
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(image, 0, 0);
-  const pixData = ctx.getImageData(0, 0, width, height).data;
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const allNoData = imageDataIsAllGsiDemNoData(imageData.data, width, height);
+  const pixData = imageData.data;
   const heightCSV: number[][] = [];
   for (let y = 0; y < height; y++) {
     const row: number[] = [];
@@ -88,7 +100,7 @@ function decodeDemPngHeights(image: CanvasImageSource): number[][] {
     }
     heightCSV.push(row);
   }
-  return heightCSV;
+  return { heightCSV, allNoData };
 }
 
 /**
@@ -102,6 +114,7 @@ export class GsiDemPngTerrainProvider {
 
   private readonly _url: string;
   private readonly _heightPower: number;
+  private readonly _cache: ReturnType<typeof getSharedGsiDemTileCache>;
   private readonly _heightmapWidth = 32;
   private readonly _demDataWidth = 256;
   private readonly _terrainDataStructure = {
@@ -116,6 +129,7 @@ export class GsiDemPngTerrainProvider {
   constructor(options: GsiDemPngTerrainProviderOptions = {}) {
     this._url = options.url ?? GSI_DEM_PNG_BASE;
     this._heightPower = options.heightPower ?? 1;
+    this._cache = options.tileCache ?? getSharedGsiDemTileCache();
     const credit = options.credit ?? DEFAULT_CREDIT;
     this.credit = typeof credit === 'string' ? new Credit(credit) : credit;
     this.tilingScheme = new WebMercatorTilingScheme({ numberOfLevelZeroTilesX: 2 });
@@ -139,25 +153,30 @@ export class GsiDemPngTerrainProvider {
   }
 
   getTileDataAvailable(_x: number, _y: number, _level: number): boolean {
-    // false にすると Cesium がルートタイルを作れず地球全体が描画されない（z0 はローカル平坦タイルで返す）
     return true;
   }
 
-  private createFlatTerrainData(level: number): HeightmapTerrainData {
+  private createFlatTerrainData(level: number, allowRefinement: boolean): HeightmapTerrainData {
     const whm = this._heightmapWidth;
     const hmp = new Int16Array(whm * whm);
+    const atMax = level >= GSI_MAX_TERRAIN_LEVEL;
+    const childTileMask = atMax || !allowRefinement ? NO_CHILDREN_MASK : ALL_CHILDREN_MASK;
     return new HeightmapTerrainData({
       buffer: hmp,
       width: whm,
       height: whm,
       structure: this._terrainDataStructure,
-      childTileMask: level >= GSI_MAX_TERRAIN_LEVEL ? 0 : ALL_CHILDREN_MASK,
+      childTileMask,
     });
+  }
+
+  private barrenTerrain(level: number): HeightmapTerrainData {
+    return this.createFlatTerrainData(level, false);
   }
 
   requestTileGeometry(x: number, y: number, level: number): Promise<HeightmapTerrainData> {
     if (level < GSI_DEM_PNG_MIN_LEVEL) {
-      return Promise.resolve(this.createFlatTerrainData(level));
+      return Promise.resolve(this.createFlatTerrainData(level, true));
     }
     const orgX = x;
     const orgY = y;
@@ -170,22 +189,48 @@ export class GsiDemPngTerrainProvider {
 
     x >>= shift + 1;
     y >>= shift;
-    const shiftX = (orgX % 2 ** (shift + 1)) / 2 ** (shift + 1);
-    const shiftY = (orgY % 2 ** shift) / 2 ** shift;
+    let shiftX = (orgX % 2 ** (shift + 1)) / 2 ** (shift + 1);
+    let shiftY = (orgY % 2 ** shift) / 2 ** shift;
 
-    const url = buildGsiDemTileUrl(requestLevel, x, y, this._url);
-    if (!shouldFetchGsiDemNetworkTile(requestLevel)) {
-      return Promise.resolve(this.createFlatTerrainData(level));
+    let fetchLevel = requestLevel;
+    let fetchX = x;
+    let fetchY = y;
+    if (fetchLevel > GSI_PREVIEW_MAX_FETCH_LEVEL) {
+      const drop = fetchLevel - GSI_PREVIEW_MAX_FETCH_LEVEL;
+      fetchX >>= drop;
+      fetchY >>= drop;
+      fetchLevel = GSI_PREVIEW_MAX_FETCH_LEVEL;
+      shift += drop;
+      shiftX = (x % 2 ** drop) / 2 ** drop + shiftX / 2 ** drop;
+      shiftY = (y % 2 ** drop) / 2 ** drop + shiftY / 2 ** drop;
     }
+
+    if (!shouldFetchGsiDemNetworkTile(fetchLevel)) {
+      return Promise.resolve(this.createFlatTerrainData(level, true));
+    }
+
+    const skipped = this._cache.shouldSkipNetworkFetch(fetchLevel, fetchX, fetchY);
+    if (skipped) {
+      return Promise.resolve(this.barrenTerrain(level));
+    }
+
+    const url = buildGsiDemTileUrl(fetchLevel, fetchX, fetchY, this._url);
     const resource = new Resource({ url });
 
     return (async (): Promise<HeightmapTerrainData> => {
       try {
         const image = await resource.fetchImage();
         if (!image) {
-          return this.createFlatTerrainData(level);
+          this._cache.set(fetchLevel, fetchX, fetchY, 'missing');
+          return this.barrenTerrain(level);
         }
-        const heightCSV = decodeDemPngHeights(image);
+        const { heightCSV, allNoData } = decodeDemPngHeights(image);
+        if (allNoData) {
+          this._cache.set(fetchLevel, fetchX, fetchY, 'nodata');
+          return this.barrenTerrain(level);
+        }
+        this._cache.set(fetchLevel, fetchX, fetchY, 'elevated');
+
         const whm = this._heightmapWidth;
         const wim = this._demDataWidth;
         const hmp = new Int16Array(whm * whm);
@@ -198,16 +243,17 @@ export class GsiDemPngTerrainProvider {
           }
         }
 
+        const allowRefinement = level < GSI_MAX_TERRAIN_LEVEL;
         return new HeightmapTerrainData({
           buffer: hmp,
           width: whm,
           height: whm,
           structure: this._terrainDataStructure,
-          childTileMask: level >= GSI_MAX_TERRAIN_LEVEL ? 0 : ALL_CHILDREN_MASK,
+          childTileMask: allowRefinement ? ALL_CHILDREN_MASK : NO_CHILDREN_MASK,
         });
       } catch {
-        // 404 等: FAILED にせず平坦タイルを返し、子タイル要求を継続させる
-        return this.createFlatTerrainData(level);
+        this._cache.set(fetchLevel, fetchX, fetchY, 'missing');
+        return this.barrenTerrain(level);
       }
     })();
   }
