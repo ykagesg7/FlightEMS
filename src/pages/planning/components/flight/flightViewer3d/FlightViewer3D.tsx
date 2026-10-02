@@ -1,7 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
-import React, { Fragment, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 import { FUKUOKA_VFR_SAMPLE_WAYPOINTS } from './fukuokaVfrSample';
+import { shouldShowGooglePhotorealistic3dProUpsell } from './googlePhotorealistic3dAccess';
 import type { FlightCameraMode, FlightImageryMode, FlightViewer3DProps } from './types';
 import { DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
 import { useCesiumFlight } from './useCesiumFlight';
@@ -13,7 +14,7 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
   initialMode = 'gsi',
   isProUser = false,
 }) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [mountEl, setMountEl] = useState<HTMLDivElement | null>(null);
   const resolvedWaypoints = useMemo(
     () => (waypoints.length >= 2 ? waypoints : FUKUOKA_VFR_SAMPLE_WAYPOINTS),
     [waypoints],
@@ -23,8 +24,8 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
   const [viewControls, setViewControls] = useState(DEFAULT_FLIGHT_VIEW_CONTROLS);
   const [proUpsellOpen, setProUpsellOpen] = useState(false);
 
-  const { ready, error, playing, progressPct, togglePlay, seekProgress } = useCesiumFlight({
-    containerRef,
+  const { ready, error, playing, progressPct, togglePlay, seekProgress, retryInit } = useCesiumFlight({
+    mountEl,
     waypoints: resolvedWaypoints,
     imageryMode,
     cameraMode,
@@ -33,7 +34,7 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
   });
 
   const requestImageryMode = (next: FlightImageryMode) => {
-    if (next === 'google' && !isProUser) {
+    if (next === 'google' && shouldShowGooglePhotorealistic3dProUpsell(isProUser)) {
       setProUpsellOpen(true);
       return;
     }
@@ -81,13 +82,27 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
       ) : null}
 
       {error ? (
-        <div className="shrink-0 bg-hud-danger/20 px-3 py-2 text-xs text-red-200" role="alert">
-          {error}
+        <div
+          className="flex shrink-0 flex-wrap items-center justify-between gap-2 bg-hud-danger/20 px-3 py-2 text-xs text-red-200"
+          role="alert"
+        >
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={retryInit}
+            className="min-h-[36px] rounded border border-red-300/40 px-2 py-1 text-xs hover:bg-hud-danger/30"
+          >
+            再試行
+          </button>
         </div>
       ) : null}
 
       <div className="relative min-h-[240px] flex-1">
-        <div ref={containerRef} className="absolute inset-0 h-full w-full" aria-label="3D ルートプレビュー" />
+        <div
+          ref={setMountEl}
+          className="absolute inset-0 h-full w-full"
+          aria-label="3D ルートプレビュー"
+        />
         {!ready && !error ? (
           <div className="absolute inset-0 flex items-center justify-center text-sm text-gray-400" role="status">
             3D を読み込み中…

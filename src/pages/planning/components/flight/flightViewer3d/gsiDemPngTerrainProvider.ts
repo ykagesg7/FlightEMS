@@ -13,10 +13,15 @@ import {
   TerrainProvider,
   WebMercatorTilingScheme,
 } from 'cesium';
+import {
+  GSI_DEM5A_MAX_LEVEL,
+  isGsiDemTerrainLevelAvailable,
+} from './gsiTileConfig';
 
 const GSI_DEM_PNG_BASE = 'https://cyberjapandata.gsi.go.jp/xyz/dem_png';
 const GSI_DEM5A_PNG_BASE = 'https://cyberjapandata.gsi.go.jp/xyz/dem5a_png';
-const GSI_MAX_TERRAIN_LEVEL = 15;
+
+const GSI_MAX_TERRAIN_LEVEL = GSI_DEM5A_MAX_LEVEL;
 const DEFAULT_CREDIT = new Credit('国土地理院');
 /** Cesium childTileMask: 4 子タイルすべて存在 */
 const ALL_CHILDREN_MASK = 15;
@@ -132,8 +137,8 @@ export class GsiDemPngTerrainProvider {
     return false;
   }
 
-  getTileDataAvailable(_x: number, _y: number, _level: number): boolean {
-    return true;
+  getTileDataAvailable(_x: number, _y: number, level: number): boolean {
+    return isGsiDemTerrainLevelAvailable(level);
   }
 
   private createFlatTerrainData(level: number): HeightmapTerrainData {
@@ -149,6 +154,9 @@ export class GsiDemPngTerrainProvider {
   }
 
   requestTileGeometry(x: number, y: number, level: number): Promise<HeightmapTerrainData> {
+    if (!isGsiDemTerrainLevelAvailable(level)) {
+      return Promise.resolve(this.createFlatTerrainData(level));
+    }
     const orgX = x;
     const orgY = y;
     let shift = 0;

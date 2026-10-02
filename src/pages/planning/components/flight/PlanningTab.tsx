@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import React, { Fragment, Suspense, lazy, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import type { PlanningMode } from '../../../../lib/planningAnalytics';
 import {
@@ -37,10 +37,8 @@ import {
   type PlanningPanelLayout,
 } from '../../planningPanelLayout';
 import { flightPlanToWaypoint3D } from './flightViewer3d/flightPlanToWaypoint3D';
-
-const FlightViewer3D = lazy(() =>
-  import('./flightViewer3d/FlightViewer3D').then((m) => ({ default: m.FlightViewer3D })),
-);
+import { FlightViewer3DSuspense } from './flightViewer3d/FlightViewer3DSuspense';
+import { preloadFlightViewer3DModule } from './flightViewer3d/flightViewer3dLazy';
 
 interface PlanningTabProps {
   layout?: PlanningPanelLayout;
@@ -97,6 +95,12 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
       flightPlan.groundElevationFt,
     ],
   );
+
+  useEffect(() => {
+    if (isPlan || isBrief) {
+      preloadFlightViewer3DModule();
+    }
+  }, [isPlan, isBrief]);
 
   const switchToBriefMode = () => {
     setSearchParams((prev) => {
@@ -715,15 +719,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
             <p className="mb-2 text-xs text-gray-400 print-hide">
               計画ルートを 3D で確認します（教育用・地形は簡略表示）。ルート未設定時は福岡 VFR デモを表示します。
             </p>
-            <Suspense
-              fallback={
-                <div className="flex h-48 items-center justify-center text-sm text-gray-400" role="status">
-                  3D プレビューを読み込み中…
-                </div>
-              }
-            >
-              <FlightViewer3D waypoints={waypoint3d ?? []} isProUser={false} />
-            </Suspense>
+            <FlightViewer3DSuspense waypoints={waypoint3d ?? []} isProUser={false} />
           </PlanningCard>
         )}
 
