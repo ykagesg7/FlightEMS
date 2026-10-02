@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { buildGsiDemTileUrl } from '../../pages/planning/components/flight/flightViewer3d/gsiDemPngTerrainProvider';
-import { isGsiDemTerrainLevelAvailable } from '../../pages/planning/components/flight/flightViewer3d/gsiTileConfig';
+import { shouldFetchGsiDemNetworkTile } from '../../pages/planning/components/flight/flightViewer3d/gsiTileConfig';
 
 describe('buildGsiDemTileUrl', () => {
-  it('still builds URLs for level 0 when explicitly requested (network avoided via availability)', () => {
+  it('builds level 0 URLs only when callers fetch (provider skips network at z0)', () => {
     expect(buildGsiDemTileUrl(0, 0, 0)).toBe(
       'https://cyberjapandata.gsi.go.jp/xyz/dem_png/0/0/0.png',
     );
-    expect(isGsiDemTerrainLevelAvailable(0)).toBe(false);
+    expect(shouldFetchGsiDemNetworkTile(0)).toBe(false);
   });
 
   it('uses dem_png for levels below 15', () => {

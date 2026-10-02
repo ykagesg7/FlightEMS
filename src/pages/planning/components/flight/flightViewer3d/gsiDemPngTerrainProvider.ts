@@ -15,7 +15,8 @@ import {
 } from 'cesium';
 import {
   GSI_DEM5A_MAX_LEVEL,
-  isGsiDemTerrainLevelAvailable,
+  GSI_DEM_PNG_MIN_LEVEL,
+  shouldFetchGsiDemNetworkTile,
 } from './gsiTileConfig';
 
 const GSI_DEM_PNG_BASE = 'https://cyberjapandata.gsi.go.jp/xyz/dem_png';
@@ -137,8 +138,9 @@ export class GsiDemPngTerrainProvider {
     return false;
   }
 
-  getTileDataAvailable(_x: number, _y: number, level: number): boolean {
-    return isGsiDemTerrainLevelAvailable(level);
+  getTileDataAvailable(_x: number, _y: number, _level: number): boolean {
+    // false にすると Cesium がルートタイルを作れず地球全体が描画されない（z0 はローカル平坦タイルで返す）
+    return true;
   }
 
   private createFlatTerrainData(level: number): HeightmapTerrainData {
@@ -154,7 +156,7 @@ export class GsiDemPngTerrainProvider {
   }
 
   requestTileGeometry(x: number, y: number, level: number): Promise<HeightmapTerrainData> {
-    if (!isGsiDemTerrainLevelAvailable(level)) {
+    if (level < GSI_DEM_PNG_MIN_LEVEL) {
       return Promise.resolve(this.createFlatTerrainData(level));
     }
     const orgX = x;
@@ -172,6 +174,9 @@ export class GsiDemPngTerrainProvider {
     const shiftY = (orgY % 2 ** shift) / 2 ** shift;
 
     const url = buildGsiDemTileUrl(requestLevel, x, y, this._url);
+    if (!shouldFetchGsiDemNetworkTile(requestLevel)) {
+      return Promise.resolve(this.createFlatTerrainData(level));
+    }
     const resource = new Resource({ url });
 
     return (async (): Promise<HeightmapTerrainData> => {
