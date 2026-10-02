@@ -4,6 +4,7 @@ import {
   TELEMETRY_CHANNEL_ID,
   filterSlackCallback,
   filterSlashCommand,
+  hasLegacyCursorApprovalPrefix,
   isTelemetryApproveCommand,
   verifySlackSignature,
 } from '../../../api/_lib/telemetryApproveCore';
@@ -20,6 +21,8 @@ describe('telemetryApproveCore', () => {
     expect(isTelemetryApproveCommand('APPROVE T-03')).toBe(true);
     expect(isTelemetryApproveCommand('approve-doc')).toBe(false);
     expect(isTelemetryApproveCommand('APPROVE-DOC please')).toBe(false);
+    expect(isTelemetryApproveCommand('@Cursor APPROVE-DOC')).toBe(false);
+    expect(hasLegacyCursorApprovalPrefix('@Cursor APPROVE-DOC')).toBe(true);
   });
 
   it('dispatches thread commands in the telemetry channel', () => {
@@ -42,6 +45,21 @@ describe('telemetryApproveCore', () => {
       eventTs: '1.2',
       ack: '記録: 正本PRのマージを開始します。',
     });
+  });
+
+  it('rejects legacy @Cursor approval prefix', () => {
+    const result = filterSlackCallback({
+      type: 'event_callback',
+      event: {
+        type: 'message',
+        channel: TELEMETRY_CHANNEL_ID,
+        user: 'U0928GWP3AA',
+        text: '@Cursor APPROVE-DOC',
+        ts: '1.2',
+        thread_ts: '1.0',
+      },
+    });
+    expect(result).toEqual({ kind: 'ignore', reason: 'legacy_cursor_prefix' });
   });
 
   it('ignores bots, non-threads, and other channels', () => {

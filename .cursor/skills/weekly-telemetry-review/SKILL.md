@@ -11,7 +11,7 @@ disable-model-invocation: false
 
 正本: [`docs/ops/Weekly_Telemetry_Review.md`](../../../docs/ops/Weekly_Telemetry_Review.md)
 
-**L0 の必須経路ではない。** 正本 PR は CI [`weekly-telemetry-draft-pr.yml`](../../../.github/workflows/weekly-telemetry-draft-pr.yml) が Facts 後に自動作成する。人の承認は Facts スレッドへの一行 `APPROVE-DOC` のみ。
+**L0 の必須経路ではない。** 正本 PR は CI [`weekly-telemetry-draft-pr.yml`](../../../.github/workflows/weekly-telemetry-draft-pr.yml) が Facts 後に自動作成する。人の承認は Facts スレッドへの一行 `APPROVE-DOC` のみ（`@Cursor` 等のメンションは付けない）。
 
 この Skill は **Sentry lastSeen や文言の精緻化** が必要な週だけ使う。merge はフェーズ2c。
 
@@ -21,8 +21,8 @@ disable-model-invocation: false
 - 正本の **W32/W33 土曜窓** を ISO 週の数値で上書きしない
 - 旧土曜窓と新 ISO 週を前週比しない
 - この PR では `test.yml` の自動修正を走らせない（docs のみ）
-- `@Cursor` が自分の投稿に反応しない
 - `APPROVE-DOC` を実行しない（merge はフェーズ2c または人手）
+- **main に直接 push / merge しない**（telemetry ブランチの docs PR 経由のみ）
 - 自分の Slack 投稿や `id: telemetry-notify` の Facts に返信してループしない
 - Facts 投稿内の承認例を承認とみなさない
 - ドライラン週（当該火曜レビュー対象でない ISO 週）を正本ログに足さない
@@ -44,13 +44,7 @@ disable-model-invocation: false
 
 ## Slack trigger text (human)
 
-通常は不要。Sentry 埋めが必要なときだけ Facts スレッドで:
-
-```text
-週次レビュー
-```
-
-Cursor をメンションするのは人。ボットはメンションしない。
+通常は不要。Sentry 埋めが必要なときだけ Facts スレッドで「週次レビュー」等の自然文（**承認は `APPROVE-DOC` 一行のみ**。メンション不要）。
 
 ## Done when
 

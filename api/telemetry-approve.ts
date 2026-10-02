@@ -97,6 +97,11 @@ function ignoreMessage(reason: string): { text: string } {
   if (reason === 'not_command') {
     return { text: 'HOLD または APPROVE-DOC を一行で指定してください。' };
   }
+  if (reason === 'legacy_cursor_prefix') {
+    return {
+      text: '承認は一行の APPROVE-DOC のみです。@Cursor などのメンションは付けません。',
+    };
+  }
   if (reason === 'wrong_channel') {
     return { text: 'このコマンドは #fa-telemetry のスレッド専用です。' };
   }

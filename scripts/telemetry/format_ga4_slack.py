@@ -126,7 +126,8 @@ def format_slack_mrkdwn(
         "正本転記: 火曜レビューの当該 ISO 週のみ。この投稿は承認コマンドではない。"
     )
     lines.append(
-        "次: 正本PRは自動作成。スレッドに PR URL が付いたら確認し、一行 `APPROVE-DOC`"
+        "次: 正本PRは自動作成。スレッドに PR URL が付いたら確認し、"
+        "メンションなし一行 `APPROVE-DOC`"
     )
     lines.append(
         "承認例（スレッド返信・一行・大文字）: "

@@ -25,10 +25,11 @@
 - **フェーズ2a（実装・検証済）**: [`.github/workflows/weekly-telemetry-notify.yml`](../../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ **日本語** Facts を投稿する。`@` メンションなし。Secret `SLACK_WEBHOOK_URL`（必須）。`SLACK_BOT_TOKEN` があると投稿末尾に **スレッド Permalink** を付ける。
 - **フェーズ2b（実装）**: [`.github/workflows/weekly-telemetry-draft-pr.yml`](../../.github/workflows/weekly-telemetry-draft-pr.yml) が Facts 成功後に docs-only PR を自動作成する（merge しない。**非 Draft**）。適用は [`apply_week_review.py`](../../scripts/telemetry/apply_week_review.py)。Cursor Skill [`weekly-telemetry-review`](../../.cursor/skills/weekly-telemetry-review/SKILL.md) は任意（Sentry 追記）。Facts 下書きは `scripts/telemetry/format_ga4_review.py`。
 - **フェーズ2c（L0 実装・配線済）**: スレッドの一行コマンドを [`.github/workflows/weekly-telemetry-approve.yml`](../../.github/workflows/weekly-telemetry-approve.yml) が実行する。`APPROVE-DOC` は `telemetry/YYYY-Www` かつ docs のみの PR を squash merge（**Draft なら自動で Ready**）。`APPROVE T-xx` は **許可リスト空**のため no-op。受信は Vercel [`api/telemetry-approve.ts`](../../api/telemetry-approve.ts)（Slack Events `message.channels`。notify アプリには付けない）。ACK は `fa-telemetry-notify` の Incoming Webhook。**マージ成功後のみ**成功 ACK。失敗時は再送を促す ACK。Slash Command は使わない。未配線でも `gh workflow run weekly-telemetry-approve.yml` で人手起動できる。
+- **フェーズ2d（CI 失敗通知）**: [`.github/workflows/weekly-telemetry-failure-notify.yml`](../../.github/workflows/weekly-telemetry-failure-notify.yml) が GA4 / notify / draft-pr / approve のいずれかが **failure** で終了したとき `#fa-telemetry` に日本語アラートを投稿する（週・失敗ステップ・実行ログ URL）。Secret はフェーズ2a と同じ **`SLACK_WEBHOOK_URL`**（または `SLACK_BOT_TOKEN`）。未設定ならステップはスキップ（ログに理由を残す）。
 
 ### Slack 承認コマンド
 
-レポート投稿の **スレッドに返信**する。一行・大文字。絵文字だけでは判定しない。人の必須操作は **`APPROVE-DOC` のみ**（正本 PR は CI が用意する）。未承認のまま次の火曜が来たら **実行しない**（fail-closed）。
+レポート投稿の **スレッドに返信**する。一行・大文字。絵文字だけでは判定しない。人の必須操作は **`APPROVE-DOC` のみ**（正本 PR は CI が用意する）。**`@Cursor` やその他のメンションを付けない**（旧 `@Cursor APPROVE-DOC` は受け付けない）。未承認のまま次の火曜が来たら **実行しない**（fail-closed）。
 
 | コマンド | 意味 | 段階 |
 |----------|------|------|

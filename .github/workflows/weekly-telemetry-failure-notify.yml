@@ -1,0 +1,73 @@
+name: weekly-telemetry-failure-notify
+
+# Posts to #fa-telemetry when any weekly telemetry workflow fails.
+# Reuses SLACK_WEBHOOK_URL / SLACK_BOT_TOKEN (same as notify). Skips if unset.
+on:
+  workflow_run:
+    workflows:
+      - weekly-telemetry-ga4
+      - weekly-telemetry-notify
+      - weekly-telemetry-draft-pr
+      - weekly-telemetry-approve
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: weekly-telemetry-failure-${{ github.event.workflow_run.id }}
+  cancel-in-progress: false
+
+jobs:
+  alert:
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Self-test failure formatter
+        run: python scripts/telemetry/workflow_failure_slack.py --self-test
+
+      - name: Collect failed steps
+        id: meta
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs" > /tmp/telemetry-jobs.json
+          WEEK="$(gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --json event --jq -r '
+            .event
+            | try(fromjson) catch .
+            | if type == "object" then .inputs.week // "" else "" end
+          ' 2>/dev/null || true)"
+          echo "week=$WEEK" >> "$GITHUB_OUTPUT"
+
+      - name: Post Slack failure alert
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL_ID: C0BQ5R19QDV
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          WEEK_HINT: ${{ steps.meta.outputs.week }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SLACK_BOT_TOKEN:-}" ] && [ -z "${SLACK_WEBHOOK_URL:-}" ]; then
+            echo "Skip Slack: set repository secret SLACK_WEBHOOK_URL (or SLACK_BOT_TOKEN)."
+            exit 0
+          fi
+          python scripts/telemetry/workflow_failure_slack.py \
+            --workflow-name "$WORKFLOW_NAME" \
+            --run-url "$RUN_URL" \
+            --week "$WEEK_HINT" \
+            --jobs-file /tmp/telemetry-jobs.json \
+            --post

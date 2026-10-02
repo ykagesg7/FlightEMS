@@ -2,6 +2,8 @@ name: weekly-telemetry-approve
 
 # Phase 2c: keyword-driven approve. L0 squash-merges a docs-only telemetry PR.
 # L1 allowlist starts empty. Does not listen to Slack (Vercel Events API does).
+# Never push commits to main; merge only telemetry/YYYY-Www docs PRs after APPROVE-DOC.
+# Agents and automation must not workflow_dispatch merge without human Slack approval.
 # Never add this job to weekly-telemetry-ga4.yml.
 on:
   repository_dispatch:
