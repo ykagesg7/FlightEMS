@@ -61,7 +61,14 @@ def normalize_command(text: str) -> str:
     return text.replace("\u00a0", " ").strip()
 
 
+def has_legacy_cursor_approval_prefix(text: str) -> bool:
+    raw = normalize_command(text)
+    return bool(re.search(r"@cursor\b", raw, flags=re.IGNORECASE))
+
+
 def parse_command(text: str) -> str | None:
+    if has_legacy_cursor_approval_prefix(text):
+        return None
     command = normalize_command(text)
     if not COMMAND_RE.fullmatch(command):
         return None
@@ -376,6 +383,7 @@ def self_test() -> None:
 
     assert parse_command("approve-doc") is None
     assert parse_command("APPROVE-DOC please") is None
+    assert parse_command("@Cursor APPROVE-DOC") is None
     assert parse_command("APPROVE-DOC") == "APPROVE-DOC"
     ack = ack_text("merge_doc")
     failed = ack_text("merge_failed")

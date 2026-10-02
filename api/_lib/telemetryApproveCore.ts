@@ -5,6 +5,7 @@ export const TELEMETRY_APPROVE_WORKFLOW = 'weekly-telemetry-approve.yml';
 export const COMMAND_RE =
   /^(APPROVE-DOC|HOLD|SKIP T-\d{2}|REJECT T-\d{2}|APPROVE T-\d{2})$/;
 const MENTION_RE = /<@U[A-Z0-9]+(?:\|[^>]+)?>/g;
+const LEGACY_CURSOR_PREFIX_RE = /^@cursor(\s|$)/i;
 
 export type SlackMessageEvent = {
   type?: string;
@@ -53,11 +54,23 @@ export function normalizeCommand(text: string): string {
   return stripSlackMentions(text.replace(/\u00a0/g, ' ')).trim();
 }
 
+export function hasLegacyCursorApprovalPrefix(text: string): boolean {
+  const raw = text.replace(/\u00a0/g, ' ').trim();
+  if (/@cursor\b/i.test(raw)) {
+    return true;
+  }
+  const withoutMentions = normalizeCommand(text);
+  return LEGACY_CURSOR_PREFIX_RE.test(withoutMentions);
+}
+
 export function isTelemetryApproveCommand(text: string): boolean {
   return parseApproveCommand(text) !== null;
 }
 
 export function parseApproveCommand(text: string): string | null {
+  if (hasLegacyCursorApprovalPrefix(text)) {
+    return null;
+  }
   const command = normalizeCommand(text);
   return COMMAND_RE.test(command) ? command : null;
 }
@@ -165,7 +178,11 @@ export function filterSlackCallback(payload: SlackPayload): FilterResult {
   if (!event.thread_ts) {
     return { kind: 'ignore', reason: 'not_thread' };
   }
-  const command = parseApproveCommand(event.text ?? '');
+  const rawText = event.text ?? '';
+  if (hasLegacyCursorApprovalPrefix(rawText)) {
+    return { kind: 'ignore', reason: 'legacy_cursor_prefix' };
+  }
+  const command = parseApproveCommand(rawText);
   if (!command) {
     return { kind: 'ignore', reason: 'not_command' };
   }
@@ -187,7 +204,11 @@ export function filterSlashCommand(payload: SlackSlashPayload): FilterResult {
   if (!payload.thread_ts) {
     return { kind: 'ignore', reason: 'not_thread' };
   }
-  const command = parseApproveCommand(payload.text ?? '');
+  const rawText = payload.text ?? '';
+  if (hasLegacyCursorApprovalPrefix(rawText)) {
+    return { kind: 'ignore', reason: 'legacy_cursor_prefix' };
+  }
+  const command = parseApproveCommand(rawText);
   if (!command) {
     return { kind: 'ignore', reason: 'not_command' };
   }

@@ -1,7 +1,8 @@
 name: weekly-telemetry-draft-pr
 
 # Phase 2b: after Slack facts, open a docs-only telemetry PR. Does not merge.
-# Human L0 is a one-line APPROVE-DOC in the Facts thread.
+# Never push to main — only telemetry/YYYY-Www branches.
+# Human L0 is a one-line APPROVE-DOC in the Facts thread (no @Cursor prefix).
 on:
   workflow_run:
     workflows: ["weekly-telemetry-notify"]
@@ -46,6 +47,7 @@ jobs:
           python scripts/telemetry/format_ga4_review.py --self-test
           python scripts/telemetry/apply_week_review.py --self-test
           python scripts/telemetry/approve_command.py --self-test
+          python scripts/telemetry/workflow_failure_slack.py --self-test
 
       - name: Resolve notify run
         id: src
@@ -116,6 +118,10 @@ jobs:
         run: |
           set -euo pipefail
           BRANCH="telemetry/${WEEK}"
+          if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
+            echo "Refusing to push telemetry branch named main/master."
+            exit 1
+          fi
           EXISTING="$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --head "$BRANCH" --json url --jq '.[0].url // empty')"
           if [ -n "$EXISTING" ]; then
             echo "pr_url=$EXISTING" >> "$GITHUB_OUTPUT"
