@@ -5,9 +5,20 @@ interface PlanningCardProps {
   defaultOpen?: boolean;
   headerRight?: React.ReactNode;
   children: React.ReactNode;
+  /**
+   * false のとき、カードが閉じている間は children をマウントしない。
+   * Cesium など重い Viewer の 0×0 初期化を避ける用途。
+   */
+  mountChildrenWhenClosed?: boolean;
 }
 
-export function PlanningCard({ title, defaultOpen = true, headerRight, children }: PlanningCardProps) {
+export function PlanningCard({
+  title,
+  defaultOpen = true,
+  headerRight,
+  children,
+  mountChildrenWhenClosed = true,
+}: PlanningCardProps) {
   const [open, setOpen] = React.useState(defaultOpen);
   return (
     <details
@@ -19,7 +30,9 @@ export function PlanningCard({ title, defaultOpen = true, headerRight, children 
         <span>{title}</span>
         {headerRight ? <span className="font-normal">{headerRight}</span> : null}
       </summary>
-      <div className="border-t border-whiskyPapa-yellow/10 p-3 sm:p-4 md:p-5">{children}</div>
+      <div className="border-t border-whiskyPapa-yellow/10 p-3 sm:p-4 md:p-5">
+        {mountChildrenWhenClosed || open ? children : null}
+      </div>
     </details>
   );
 }

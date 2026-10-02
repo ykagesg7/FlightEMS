@@ -13,6 +13,7 @@ import {
   JulianDate,
   LabelStyle,
   Math as CesiumMath,
+  Matrix4,
   PolylineDashMaterialProperty,
   UrlTemplateImageryProvider,
   Viewer,
@@ -40,6 +41,9 @@ const GSI_SEAMLESS_PHOTO =
 
 const ROUTE_ENTITY_PREFIX = 'flight-viewer-route-';
 const ROUTE_POLYLINE_ID = 'flight-viewer-route-line';
+
+/** デモ／プレビュー用。実時間 1x は長距離で遅すぎるため加速する */
+const PLAYBACK_MULTIPLIER = 40;
 
 export type UseCesiumFlightOptions = {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -75,6 +79,11 @@ function restoreCamera(viewer: Viewer, snap: ReturnType<typeof saveCamera>) {
   viewer.camera.direction = snap.direction;
   viewer.camera.up = snap.up;
   viewer.camera.right = snap.right;
+}
+
+/** lookAt ロックを解除し、一時停止中の手動視点操作を許可する */
+function unlockCamera(viewer: Viewer) {
+  viewer.camera.lookAtTransform(Matrix4.IDENTITY);
 }
 
 function removeRouteEntities(viewer: Viewer) {
@@ -145,6 +154,7 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
 
 function fitCameraToRoute(viewer: Viewer, waypoints: Waypoint3D[]) {
   if (waypoints.length === 0) return;
+  unlockCamera(viewer);
   const mid = waypoints[Math.floor(waypoints.length / 2)] ?? waypoints[0]!;
   viewer.camera.setView({
     destination: Cartesian3.fromDegrees(mid.lon, mid.lat - 0.35, 85_000),
@@ -167,6 +177,7 @@ function updateFollowCamera(
   const heading = CesiumMath.toRadians(pose.headingDeg);
   const pitchRad = CesiumMath.toRadians(controls.chasePitchDeg);
   if (mode === 'cockpit') {
+    unlockCamera(viewer);
     viewer.camera.setView({
       destination: pos,
       orientation: {
@@ -177,6 +188,7 @@ function updateFollowCamera(
     });
     return;
   }
+  // heading + π: 機体進行方向の後方から chase（機体後方視点）
   viewer.camera.lookAt(
     pos,
     new HeadingPitchRange(heading + Math.PI, pitchRad, controls.chaseDistanceM),
@@ -207,6 +219,9 @@ export function useCesiumFlight({
   const cameraModeRef = useRef(cameraMode);
   const viewControlsRef = useRef(viewControls);
   const imageryApplyingRef = useRef(false);
+  const wasAnimatingRef = useRef(false);
+  /** boot 直後の初期 imagery 適用を effect で二重実行しない */
+  const skipNextImageryEffectRef = useRef(false);
 
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -274,8 +289,9 @@ export function useCesiumFlight({
     viewer.clock.stopTime = stop.clone();
     viewer.clock.currentTime = start.clone();
     viewer.clock.clockRange = ClockRange.CLAMPED;
-    viewer.clock.multiplier = 1;
+    viewer.clock.multiplier = PLAYBACK_MULTIPLIER;
     viewer.clock.shouldAnimate = false;
+    wasAnimatingRef.current = false;
     setProgressPct(0);
     setPlaying(false);
     if (wps.length >= 2) {
@@ -318,6 +334,13 @@ export function useCesiumFlight({
         viewerRef.current = viewer;
         rebuildRoute(viewer, waypoints);
         await applyImagery(viewer, imageryMode);
+        if (cancelled) {
+          viewer.destroy();
+          viewerRef.current = null;
+          return;
+        }
+        // ready 後の imagery effect が同値で二重適用しないようスキップ
+        skipNextImageryEffectRef.current = true;
 
         const onTick = () => {
           const startJ = startJulianRef.current;
@@ -326,8 +349,16 @@ export function useCesiumFlight({
           const total = totalSecRef.current || 1;
           const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
           setProgressPct(Math.min(100, Math.max(0, (tSec / total) * 100)));
-          updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
-          setPlaying(viewer.clock.shouldAnimate);
+
+          const animating = viewer.clock.shouldAnimate;
+          if (animating) {
+            updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
+          } else if (wasAnimatingRef.current) {
+            // 一時停止へ遷移した直後: lookAt ロック解除 → 手動視点を許可
+            unlockCamera(viewer);
+          }
+          wasAnimatingRef.current = animating;
+          setPlaying(animating);
         };
         viewer.clock.onTick.addEventListener(onTick);
 
@@ -363,24 +394,42 @@ export function useCesiumFlight({
     const viewer = viewerRef.current;
     const startJ = startJulianRef.current;
     if (!viewer || viewer.isDestroyed() || !ready || !startJ) return;
+    // 再生中のみ chase 追従。停止中はモード切替時だけ姿勢を合わせる
     const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
     const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
     updateFollowCamera(viewer, pose, cameraMode, viewControlsRef.current);
+    if (!viewer.clock.shouldAnimate) {
+      unlockCamera(viewer);
+    }
   }, [cameraMode, ready]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
     const startJ = startJulianRef.current;
     if (!viewer || viewer.isDestroyed() || !ready || !startJ) return;
-    const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
-    const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
-    updateFollowCamera(viewer, pose, cameraModeRef.current, viewControls);
+    if (!viewer.clock.shouldAnimate && cameraModeRef.current === 'chase') {
+      // 停止中のスライダー調整時は一度追従してからロック解除（手動操作を継続可能に）
+      const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
+      const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
+      updateFollowCamera(viewer, pose, cameraModeRef.current, viewControls);
+      unlockCamera(viewer);
+      return;
+    }
+    if (viewer.clock.shouldAnimate) {
+      const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
+      const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
+      updateFollowCamera(viewer, pose, cameraModeRef.current, viewControls);
+    }
   }, [viewControls, ready]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer || viewer.isDestroyed() || !ready) return;
     if (imageryMode === 'google' && !isProUser) return;
+    if (skipNextImageryEffectRef.current) {
+      skipNextImageryEffectRef.current = false;
+      return;
+    }
     void applyImagery(viewer, imageryMode).catch((e) => {
       console.error(e);
       setError(e instanceof Error ? e.message : String(e));
@@ -390,8 +439,14 @@ export function useCesiumFlight({
   const togglePlay = useCallback(() => {
     const viewer = viewerRef.current;
     if (!viewer || viewer.isDestroyed()) return;
-    viewer.clock.shouldAnimate = !viewer.clock.shouldAnimate;
-    setPlaying(viewer.clock.shouldAnimate);
+    const next = !viewer.clock.shouldAnimate;
+    viewer.clock.multiplier = PLAYBACK_MULTIPLIER;
+    viewer.clock.shouldAnimate = next;
+    if (!next) {
+      unlockCamera(viewer);
+      wasAnimatingRef.current = false;
+    }
+    setPlaying(next);
   }, []);
 
   const seekProgress = useCallback((pct: number) => {
@@ -402,10 +457,12 @@ export function useCesiumFlight({
     const tSec = (Math.min(100, Math.max(0, pct)) / 100) * total;
     viewer.clock.currentTime = JulianDate.addSeconds(startJ, tSec, new JulianDate());
     viewer.clock.shouldAnimate = false;
+    wasAnimatingRef.current = false;
     setPlaying(false);
     const pose = interpolatePlaybackAtTime(playbackRef.current, tSec);
     setProgressPct((tSec / (total || 1)) * 100);
     updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
+    unlockCamera(viewer);
   }, []);
 
   return {

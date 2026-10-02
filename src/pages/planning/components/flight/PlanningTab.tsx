@@ -83,7 +83,20 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   const showRouteEditor = isLearn || isPlan;
   const showBriefingCollapsed = isPlan;
   const routeReady = Boolean(flightPlan.departure && flightPlan.arrival);
-  const waypoint3d = useMemo(() => flightPlanToWaypoint3D(flightPlan), [flightPlan]);
+  // 3D rebuild はルート幾何に効くフィールドのみ（燃料・天候等の変更で再生をリセットしない）
+  const waypoint3d = useMemo(
+    () => flightPlanToWaypoint3D(flightPlan),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: route geometry fields only
+    [
+      flightPlan.departure,
+      flightPlan.arrival,
+      flightPlan.waypoints,
+      flightPlan.routeSegments,
+      flightPlan.altitude,
+      flightPlan.speed,
+      flightPlan.groundElevationFt,
+    ],
+  );
 
   const switchToBriefMode = () => {
     setSearchParams((prev) => {
@@ -698,7 +711,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         )}
 
         {(isPlan || isBrief) && (
-          <PlanningCard title="3D ルートプレビュー" defaultOpen={false}>
+          <PlanningCard title="3D ルートプレビュー" defaultOpen={false} mountChildrenWhenClosed={false}>
             <p className="mb-2 text-xs text-gray-400 print-hide">
               計画ルートを 3D で確認します（教育用・地形は簡略表示）。ルート未設定時は福岡 VFR デモを表示します。
             </p>
