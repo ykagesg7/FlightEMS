@@ -14,8 +14,13 @@ export const GSI_SEAMLESS_PHOTO_MAX_LEVEL = 18;
 /** 日本域おおよそ（低ズームの海外タイル要求を抑える） */
 export const GSI_JAPAN_IMAGERY_RECTANGLE = Rectangle.fromDegrees(122.0, 20.0, 154.0, 46.5);
 
-export function isGsiDemTerrainLevelAvailable(level: number): boolean {
+export function shouldFetchGsiDemNetworkTile(level: number): boolean {
   return level >= GSI_DEM_PNG_MIN_LEVEL && level <= GSI_DEM5A_MAX_LEVEL;
+}
+
+/** @deprecated use shouldFetchGsiDemNetworkTile — kept for tests/docs migration */
+export function isGsiDemTerrainLevelAvailable(level: number): boolean {
+  return shouldFetchGsiDemNetworkTile(level);
 }
 
 export const gsiSeamlessPhotoImageryOptions = {

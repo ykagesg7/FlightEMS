@@ -272,6 +272,7 @@ export function useCesiumFlight({
         }
         if (mode === 'gsi') {
           viewer.scene.globe.show = true;
+          viewer.scene.globe.baseColor = Color.fromCssColorString('#1e3a5f');
           viewer.terrainProvider = createGsiTerrainProvider();
           setDepthTestAgainstTerrain(viewer, true);
           const imagery = new UrlTemplateImageryProvider(gsiSeamlessPhotoImageryOptions);
