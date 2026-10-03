@@ -15,6 +15,10 @@ export interface FlightViewer3DProps {
   /** Planning ホスト／ポップアウト同期用。未指定時はコンポーネント内で状態を保持 */
   viewerUi?: Planning3dViewerUiState;
   onViewerUiChange?: (next: Planning3dViewerUiState) => void;
+  /**
+   * ポップアウト等: 親 flex 内で残り高さをすべて使う（Planning インラインは未指定のまま）。
+   */
+  fillAvailableHeight?: boolean;
 }
 
 export type FlightImageryMode = 'gsi' | 'google';

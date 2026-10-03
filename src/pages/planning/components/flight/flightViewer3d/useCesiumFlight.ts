@@ -476,6 +476,7 @@ export function useCesiumFlight({
     clearFlightViewer3dDebugFlags();
     const el = mountEl;
     let cancelled = false;
+    let resizeObserver: ResizeObserver | null = null;
 
     const runBootCore = (): Viewer => {
       const viewer = new Viewer(el, {
@@ -553,6 +554,14 @@ export function useCesiumFlight({
         setError(msg);
         setFlightViewer3dErrorFlag(msg);
       }
+
+      if (typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(() => {
+          if (viewer.isDestroyed()) return;
+          viewer.resize();
+        });
+        resizeObserver.observe(el);
+      }
     };
 
     void withTimeout(
@@ -569,6 +578,8 @@ export function useCesiumFlight({
 
     return () => {
       cancelled = true;
+      resizeObserver?.disconnect();
+      resizeObserver = null;
       clearFlightViewer3dDebugFlags();
       const v = viewerRef.current;
       if (v && !v.isDestroyed()) {

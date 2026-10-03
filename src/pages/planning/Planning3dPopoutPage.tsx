@@ -17,7 +17,8 @@ const Planning3dPopoutPage: React.FC = () => {
 
   return (
     <div
-      className="flex h-screen flex-col overflow-hidden bg-brand-secondary text-gray-100"
+      className="flex h-dvh max-h-dvh min-h-0 flex-col overflow-hidden bg-brand-secondary text-gray-100"
+      style={{ height: '100dvh', maxHeight: '100dvh' }}
       data-testid="planning-3d-popout-page"
     >
       <Helmet>
@@ -29,12 +30,13 @@ const Planning3dPopoutPage: React.FC = () => {
           Planning ページのルート編集と同期します。このウィンドウを閉じると Planning 内の 3D プレビューが再開します。
         </p>
       </header>
-      <div className="min-h-0 flex-1 p-2">
+      <div className="flex min-h-0 flex-1 flex-col p-2">
         <FlightViewer3DSuspense
           waypoints={waypoints}
           isProUser={isProUser}
           viewerUi={viewerUi}
           onViewerUiChange={setViewerUi}
+          fillAvailableHeight
         />
       </div>
     </div>
