@@ -15,7 +15,11 @@ type ChunkPhase = 'loading' | 'error';
  * タイムアウト / import 失敗はパネル内エラー（無限スピナー回避）。
  */
 export function FlightViewer3DSuspense(props: FlightViewer3DProps) {
+  const { fillAvailableHeight = false } = props;
   const [attempt, setAttempt] = useState(0);
+  const fillShellClass = fillAvailableHeight
+    ? 'flex h-full min-h-0 flex-1 flex-col'
+    : undefined;
   const [chunkPhase, setChunkPhase] = useState<ChunkPhase>('loading');
   const [chunkError, setChunkError] = useState<string | null>(null);
 
@@ -78,11 +82,15 @@ export function FlightViewer3DSuspense(props: FlightViewer3DProps) {
     );
   }
 
-  return (
+  const suspenseFallback = fillAvailableHeight
+    ? 'flex min-h-0 flex-1 items-center justify-center text-sm text-gray-400'
+    : 'flex h-48 items-center justify-center text-sm text-gray-400';
+
+  const content = (
     <FlightViewer3DErrorBoundary onReset={() => setAttempt((n) => n + 1)}>
       <Suspense
         fallback={
-          <div className="flex h-48 items-center justify-center text-sm text-gray-400" role="status">
+          <div className={suspenseFallback} role="status">
             3D プレビューを読み込み中…
           </div>
         }
@@ -91,4 +99,10 @@ export function FlightViewer3DSuspense(props: FlightViewer3DProps) {
       </Suspense>
     </FlightViewer3DErrorBoundary>
   );
+
+  if (!fillShellClass) {
+    return content;
+  }
+
+  return <div className={fillShellClass}>{content}</div>;
 }
