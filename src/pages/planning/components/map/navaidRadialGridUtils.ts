@@ -77,7 +77,7 @@ export function dmeLabelBearings(): number[] {
 
 /**
  * 基準点から磁方位に沿った折れ線（Leaflet [lat, lng][]）。
- * 各サンプルは calculateOffsetPoint（教育用固定磁気偏差）を用いる。
+ * 各サンプルは calculateOffsetPoint（GSI 2020.0 格子による磁気偏差）を用いる。
  */
 export function buildRadialPolyline(
   origin: LatLon,
