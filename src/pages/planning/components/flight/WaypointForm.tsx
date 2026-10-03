@@ -29,10 +29,29 @@ interface WaypointFormProps {
   hideSubmitButton?: boolean;
   /** 指定時は追加処理に使用（未指定なら setFlightPlan でマージ） */
   onAdd?: (waypoint: Waypoint) => void;
+  displayName?: string;
+  onDisplayNameChange?: (name: string) => void;
+  saveAsUserPoint?: boolean;
+  onSaveAsUserPointChange?: (checked: boolean) => void;
+  showUserPointSaveOption?: boolean;
 }
 
 const WaypointForm = forwardRef<WaypointCoordinateFormHandle, WaypointFormProps>(
-  ({ flightPlan, setFlightPlan, embedded, hideSubmitButton, onAdd }, ref) => {
+  (
+    {
+      flightPlan,
+      setFlightPlan,
+      embedded,
+      hideSubmitButton,
+      onAdd,
+      displayName,
+      onDisplayNameChange,
+      saveAsUserPoint = false,
+      onSaveAsUserPointChange,
+      showUserPointSaveOption = false,
+    },
+    ref,
+  ) => {
     const [bearing, setBearing] = useState<string>('');
     const [distance, setDistance] = useState<string>('');
     const [coordinateInputMode, setCoordinateInputMode] = useState<'DMS' | 'Decimal'>('DMS');
@@ -114,9 +133,11 @@ const WaypointForm = forwardRef<WaypointCoordinateFormHandle, WaypointFormProps>
         }
       }
 
+      const trimmedName = displayName?.trim();
+      const defaultName = `カスタム WP ${flightPlan.waypoints.length + 1}`;
       return {
         id: `custom-${Date.now()}`,
-        name: `カスタム WP ${flightPlan.waypoints.length + 1}`,
+        name: trimmedName && trimmedName.length > 0 ? trimmedName : defaultName,
         type: 'custom' as const,
         coordinates: coords,
         latitude: finalLat,
@@ -132,6 +153,7 @@ const WaypointForm = forwardRef<WaypointCoordinateFormHandle, WaypointFormProps>
       coordinates.decimal.lon,
       distance,
       flightPlan.waypoints.length,
+      displayName,
     ]);
 
     useImperativeHandle(ref, () => ({ tryBuildWaypoint }), [tryBuildWaypoint]);
@@ -211,6 +233,30 @@ const WaypointForm = forwardRef<WaypointCoordinateFormHandle, WaypointFormProps>
     return (
       <div className={shellClass}>
         {title}
+
+        <div className="mb-3">
+          <label className="block text-sm font-medium text-gray-400">表示名</label>
+          <input
+            type="text"
+            value={displayName ?? ''}
+            onChange={(e) => onDisplayNameChange?.(e.target.value)}
+            placeholder={`例: 田川 / WP${flightPlan.waypoints.length + 1}`}
+            className={`${inputClass} px-3 py-2`}
+            maxLength={64}
+          />
+        </div>
+
+        {showUserPointSaveOption ? (
+          <label className="mb-3 flex min-h-[44px] cursor-pointer items-center gap-2 text-sm text-gray-300">
+            <input
+              type="checkbox"
+              checked={saveAsUserPoint}
+              onChange={(e) => onSaveAsUserPointChange?.(e.target.checked)}
+              className="rounded border-gray-500"
+            />
+            マイポイントとして保存（ログイン時）
+          </label>
+        ) : null}
 
         <div className="mb-4">
           <label className="inline-flex items-center cursor-pointer text-gray-400">

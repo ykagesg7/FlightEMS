@@ -1,16 +1,11 @@
-import type { Airport, FlightPlan, Waypoint } from '../../../../../types';
+import type { Airport, FlightPlan } from '../../../../../types';
 import type { Waypoint3D } from './types';
+import { labelForFlightNode } from '../../../utils/waypointDisplayName';
 
 function airportElevFt(airport: Airport | undefined): number {
   const raw = airport?.properties?.['Elev(ft)'];
   const n = typeof raw === 'number' ? raw : typeof raw === 'string' ? Number(raw) : NaN;
   return Number.isFinite(n) ? n : 0;
-}
-
-function labelFor(node: Airport | Waypoint): string {
-  if ('value' in node && node.value) return node.value;
-  if (node.name) return node.name;
-  return 'WP';
 }
 
 /**
@@ -24,16 +19,17 @@ export function flightPlanToWaypoint3D(plan: FlightPlan): Waypoint3D[] | null {
 
   if (plan.departure) {
     nodes.push({
-      name: labelFor(plan.departure),
+      name: labelForFlightNode(plan.departure),
       lat: plan.departure.latitude,
       lon: plan.departure.longitude,
       altFt: airportElevFt(plan.departure) || plan.groundElevationFt || 0,
       speedKts: defaultSpeed,
     });
   }
-  for (const wp of plan.waypoints ?? []) {
+  for (let i = 0; i < (plan.waypoints ?? []).length; i++) {
+    const wp = plan.waypoints[i]!;
     nodes.push({
-      name: labelFor(wp),
+      name: labelForFlightNode(wp, i),
       lat: wp.latitude,
       lon: wp.longitude,
       altFt: cruiseAlt,
@@ -49,7 +45,7 @@ export function flightPlanToWaypoint3D(plan: FlightPlan): Waypoint3D[] | null {
           ? segToArrival.altitude
           : airportElevFt(plan.arrival);
     nodes.push({
-      name: labelFor(plan.arrival),
+      name: labelForFlightNode(plan.arrival),
       lat: plan.arrival.latitude,
       lon: plan.arrival.longitude,
       altFt: endAlt,
