@@ -9,6 +9,8 @@ on:
 
 jobs:
   verify:
+    # main 向け PR は mekiki-ci が lint / test:run / golden / Cesium / build を担当（二重実行を避ける）
+    if: github.event_name != 'pull_request' || github.base_ref != 'main'
     runs-on: ubuntu-latest
     env:
       VITE_SUPABASE_URL: https://test.supabase.co

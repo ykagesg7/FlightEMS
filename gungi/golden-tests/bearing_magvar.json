@@ -1,0 +1,453 @@
+{
+  "suite": "bearing_magvar",
+  "version": 1,
+  "status": "FILLED 2026-10-03 JST — 真方位・磁気偏差は国土地理院の公式ツールから取得、磁方位換算は定義から。アプリのコードでは計算していない",
+  "coordinateSource": "OurAirports airports.csv（https://davidmegginson.github.io/ourairports-data/airports.csv、2026-10-03 JST 取得）。AIP Japan AD 2.2 の ARP と照合推奨",
+  "datum": "WGS84 / JGD2011（差は本用途で無視できる）",
+  "conventions": {
+    "trueBearing": "度、真北から時計回り、0<=x<360。出発点での初期方位（azimuth1）",
+    "magneticVariation": "度（10進）、西偏を正。磁方位 = 真方位 + 西偏",
+    "angleFormat": "出典が度分（例 7°36.5′）の場合は 10進度に換算して expected に入れ、原文は sourceRaw に残す"
+  },
+  "tolerancePolicy": {
+    "trueBearing": {
+      "abs": 0.2,
+      "note": "現行 calculateTrueBearing は球面公式。GRS80 測地線の方位角との差は国内で最大約0.15°（RJTT→ROAH）。楕円体実装に切り替えたら 0.001 に締める"
+    },
+    "magneticVariation": {
+      "abs": 0.5,
+      "note": "現行は空港10点の逆距離加重（教育用近似）。基準は国土地理院 2020.0 年値。外挿域・離島は caseごとの tolerance を参照"
+    },
+    "magneticBearing": {
+      "abs": 1e-09,
+      "note": "規約どおりの加算と 0..360 正規化の確認。値は定義から決まる"
+    }
+  },
+  "trueBearing": {
+    "target": "src/utils/bearing.ts#calculateTrueBearing(lat1, lng1, lat2, lng2)",
+    "referenceTool": "国土地理院 測量計算サイト『距離と方位角の計算』（GRS80）の azimuth1",
+    "cases": [
+      {
+        "id": "TB-01",
+        "from": {
+          "id": "RJTT",
+          "name": "東京国際（羽田）",
+          "lat": 35.549678,
+          "lon": 139.786958
+        },
+        "to": {
+          "id": "RJOO",
+          "name": "大阪国際（伊丹）",
+          "lat": 34.780853,
+          "lon": 135.440829
+        },
+        "purpose": "代表的な西南西レグ（~219nm）",
+        "expected": 259.100791666667,
+        "source": "国土地理院 測量計算サイト『距離と方位角の計算』REST API（GRS80）。GET https://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/bl2st_calc.pl?outputType=json&ellipsoid=GRS80&latitude1=35.549678&longitude1=139.786958&latitude2=34.780853&longitude2=135.440829 取得 2026-10-03 JST。値は OutputData.azimuth1",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "sourceRaw": "{\"OutputData\":{\"geoLength\":\"404995.899\",\"azimuth1\":\"259.100791666667\",\"azimuth2\":\"76.5968333333333\"}}",
+        "crossCheck": {
+          "tool": "GeographicLib 2.1 Geodesic.Inverse（GRS80: a=6378137, f=1/298.257222101）",
+          "azi1": 259.100790598,
+          "diffArcsec": 0.0038
+        }
+      },
+      {
+        "id": "TB-02",
+        "from": {
+          "id": "RJOO",
+          "name": "大阪国際（伊丹）",
+          "lat": 34.780853,
+          "lon": 135.440829
+        },
+        "to": {
+          "id": "RJTT",
+          "name": "東京国際（羽田）",
+          "lat": 35.549678,
+          "lon": 139.786958
+        },
+        "purpose": "TB-01 の逆方向。往復で 180° 差にならない（子午線収束）ことの確認",
+        "expected": 76.5968333333333,
+        "source": "国土地理院 測量計算サイト『距離と方位角の計算』REST API（GRS80）。GET https://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/bl2st_calc.pl?outputType=json&ellipsoid=GRS80&latitude1=34.780853&longitude1=135.440829&latitude2=35.549678&longitude2=139.786958 取得 2026-10-03 JST。値は OutputData.azimuth1",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "sourceRaw": "{\"OutputData\":{\"geoLength\":\"404995.899\",\"azimuth1\":\"76.5968333333333\",\"azimuth2\":\"259.100791666667\"}}",
+        "crossCheck": {
+          "tool": "GeographicLib 2.1 Geodesic.Inverse（GRS80: a=6378137, f=1/298.257222101）",
+          "azi1": 76.596832386,
+          "diffArcsec": 0.0034
+        }
+      },
+      {
+        "id": "TB-03",
+        "from": {
+          "id": "RJFF",
+          "name": "福岡",
+          "lat": 33.585899,
+          "lon": 130.451004
+        },
+        "to": {
+          "id": "RJTT",
+          "name": "東京国際（羽田）",
+          "lat": 35.549678,
+          "lon": 139.786958
+        },
+        "purpose": "長距離東北東（~477nm）。既存 navLogGolden と同じ区間",
+        "expected": 73.1112722222222,
+        "source": "国土地理院 測量計算サイト『距離と方位角の計算』REST API（GRS80）。GET https://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/bl2st_calc.pl?outputType=json&ellipsoid=GRS80&latitude1=33.585899&longitude1=130.451004&latitude2=35.549678&longitude2=139.786958 取得 2026-10-03 JST。値は OutputData.azimuth1",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "sourceRaw": "{\"OutputData\":{\"geoLength\":\"883587.757\",\"azimuth1\":\"73.1112722222222\",\"azimuth2\":\"258.417088888889\"}}",
+        "crossCheck": {
+          "tool": "GeographicLib 2.1 Geodesic.Inverse（GRS80: a=6378137, f=1/298.257222101）",
+          "azi1": 73.111272302,
+          "diffArcsec": -0.0003
+        }
+      },
+      {
+        "id": "TB-04",
+        "from": {
+          "id": "RJCC",
+          "name": "新千歳",
+          "lat": 42.774753,
+          "lon": 141.690414
+        },
+        "to": {
+          "id": "RJCW",
+          "name": "稚内",
+          "lat": 45.404202,
+          "lon": 141.800995
+        },
+        "purpose": "真北付近（わずかに東、0°側）",
+        "expected": 1.69783333333333,
+        "source": "国土地理院 測量計算サイト『距離と方位角の計算』REST API（GRS80）。GET https://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/bl2st_calc.pl?outputType=json&ellipsoid=GRS80&latitude1=42.774753&longitude1=141.690414&latitude2=45.404202&longitude2=141.800995 取得 2026-10-03 JST。値は OutputData.azimuth1",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "sourceRaw": "{\"OutputData\":{\"geoLength\":\"292302.684\",\"azimuth1\":\"1.69783333333333\",\"azimuth2\":\"181.774791666667\"}}",
+        "crossCheck": {
+          "tool": "GeographicLib 2.1 Geodesic.Inverse（GRS80: a=6378137, f=1/298.257222101）",
+          "azi1": 1.697832105,
+          "diffArcsec": 0.0044
+        }
+      },
+      {
+        "id": "TB-05",
+        "from": {
+          "id": "RJSS",
+          "name": "仙台",
+          "lat": 38.139702,
+          "lon": 140.917007
+        },
+        "to": {
+          "id": "RJCH",
+          "name": "函館",
+          "lat": 41.77,
+          "lon": 140.822006
+        },
+        "purpose": "真北付近（わずかに西、360°側）。0/360 正規化の境界",
+        "expected": 358.876594444444,
+        "source": "国土地理院 測量計算サイト『距離と方位角の計算』REST API（GRS80）。GET https://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/bl2st_calc.pl?outputType=json&ellipsoid=GRS80&latitude1=38.139702&longitude1=140.917007&latitude2=41.77&longitude2=140.822006 取得 2026-10-03 JST。値は OutputData.azimuth1",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "sourceRaw": "{\"OutputData\":{\"geoLength\":\"403167.554\",\"azimuth1\":\"358.876594444444\",\"azimuth2\":\"178.815555555556\"}}",
+        "crossCheck": {
+          "tool": "GeographicLib 2.1 Geodesic.Inverse（GRS80: a=6378137, f=1/298.257222101）",
+          "azi1": 358.876594463,
+          "diffArcsec": -0.0001
+        }
+      },
+      {
+        "id": "TB-06",
+        "from": {
+          "id": "RJTT",
+          "name": "東京国際（羽田）",
+          "lat": 35.549678,
+          "lon": 139.786958
+        },
+        "to": {
+          "id": "RJTH",
+          "name": "八丈島",
+          "lat": 33.114843,
+          "lon": 139.785645
+        },
+        "purpose": "ほぼ真南（経度差 ~0.001°）。180° 付近",
+        "expected": 180.026002777778,
+        "source": "国土地理院 測量計算サイト『距離と方位角の計算』REST API（GRS80）。GET https://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/bl2st_calc.pl?outputType=json&ellipsoid=GRS80&latitude1=35.549678&longitude1=139.786958&latitude2=33.114843&longitude2=139.785645 取得 2026-10-03 JST。値は OutputData.azimuth1",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "sourceRaw": "{\"OutputData\":{\"geoLength\":\"270092.533\",\"azimuth1\":\"180.026002777778\",\"azimuth2\":\"0.0252638888888889\"}}",
+        "crossCheck": {
+          "tool": "GeographicLib 2.1 Geodesic.Inverse（GRS80: a=6378137, f=1/298.257222101）",
+          "azi1": 180.026003708,
+          "diffArcsec": -0.0034
+        }
+      },
+      {
+        "id": "TB-07",
+        "from": {
+          "id": "RJFF",
+          "name": "福岡",
+          "lat": 33.585899,
+          "lon": 130.451004
+        },
+        "to": {
+          "id": "RJFZ",
+          "name": "築城",
+          "lat": 33.685001,
+          "lon": 131.039993
+        },
+        "purpose": "短距離（~30nm）での精度",
+        "expected": 78.4635555555556,
+        "source": "国土地理院 測量計算サイト『距離と方位角の計算』REST API（GRS80）。GET https://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/bl2st_calc.pl?outputType=json&ellipsoid=GRS80&latitude1=33.585899&longitude1=130.451004&latitude2=33.685001&longitude2=131.039993 取得 2026-10-03 JST。値は OutputData.azimuth1",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "sourceRaw": "{\"OutputData\":{\"geoLength\":\"55739.447\",\"azimuth1\":\"78.4635555555556\",\"azimuth2\":\"258.789802777778\"}}",
+        "crossCheck": {
+          "tool": "GeographicLib 2.1 Geodesic.Inverse（GRS80: a=6378137, f=1/298.257222101）",
+          "azi1": 78.463555257,
+          "diffArcsec": 0.0011
+        }
+      },
+      {
+        "id": "TB-08",
+        "from": {
+          "id": "RJTT",
+          "name": "東京国際（羽田）",
+          "lat": 35.549678,
+          "lon": 139.786958
+        },
+        "to": {
+          "id": "ROAH",
+          "name": "那覇",
+          "lat": 26.192437,
+          "lon": 127.639804
+        },
+        "purpose": "国内最長級（~840nm）。球面と楕円体の差が最大になる区間",
+        "expected": 231.507327777778,
+        "source": "国土地理院 測量計算サイト『距離と方位角の計算』REST API（GRS80）。GET https://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/bl2st_calc.pl?outputType=json&ellipsoid=GRS80&latitude1=35.549678&longitude1=139.786958&latitude2=26.192437&longitude2=127.639804 取得 2026-10-03 JST。値は OutputData.azimuth1",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "sourceRaw": "{\"OutputData\":{\"geoLength\":\"1555038.045\",\"azimuth1\":\"231.507327777778\",\"azimuth2\":\"45.236275\"}}",
+        "crossCheck": {
+          "tool": "GeographicLib 2.1 Geodesic.Inverse（GRS80: a=6378137, f=1/298.257222101）",
+          "azi1": 231.507328203,
+          "diffArcsec": -0.0015
+        }
+      }
+    ]
+  },
+  "magneticVariation": {
+    "target": "src/utils/japanMagneticVariation.ts#interpolateJapanMagneticVariationWestDeg(lat, lon)",
+    "referenceTool": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（3分グリッド内挿）の偏角",
+    "epoch": "2020.0（2020-01-01 00:00 UT）",
+    "cases": [
+      {
+        "id": "MV-01",
+        "point": {
+          "id": "RJTT",
+          "name": "東京国際（羽田）",
+          "lat": 35.549678,
+          "lon": 139.786958
+        },
+        "purpose": "モデル局点の近傍（局点座標と ARP は約0.6km離れ、局点値そのものは返らない）",
+        "expected": 7.53,
+        "sourceRaw": "入力: 緯 度 北緯 35°32′59″ 経 度 東経 139°47′13″ → 偏角 D（西偏＋/東偏−） +7.53°（+7 °32′）",
+        "source": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（磁気図2020.0年値の3分グリッド内挿）。POST https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/bilinear.cgi  ido1=35&ido2=32&ido3=59&kei1=139&kei2=47&kei3=13（入力は整数秒に丸め）取得 2026-10-03 JST。出力は 0.01° 単位",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "inputRoundedDms": {
+          "ido1": 35,
+          "ido2": 32,
+          "ido3": 59,
+          "kei1": 139,
+          "kei2": 47,
+          "kei3": 13
+        }
+      },
+      {
+        "id": "MV-02",
+        "point": {
+          "id": "GSI-EX-TOKYO",
+          "name": "国土地理院 近似式の計算例地点（東京）",
+          "lat": 35.68,
+          "lon": 139.7
+        },
+        "purpose": "国土地理院が近似式の計算例を公開している地点。近似式例と計算サイト値の差を見る",
+        "expected": 7.62,
+        "expectedQuadratic2020": 7.608333333333333,
+        "sourceRaw": "入力: 緯 度 北緯 35°40′48″ 経 度 東経 139°42′0″ → 偏角 D（西偏＋/東偏−） +7.62°（+7 °37′）",
+        "source": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（磁気図2020.0年値の3分グリッド内挿）。POST https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/bilinear.cgi  ido1=35&ido2=40&ido3=48&kei1=139&kei2=42&kei3=0（入力は整数秒に丸め）取得 2026-10-03 JST。出力は 0.01° 単位",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "inputRoundedDms": {
+          "ido1": 35,
+          "ido2": 40,
+          "ido3": 48,
+          "kei1": 139,
+          "kei2": 42,
+          "kei3": 0
+        },
+        "expectedQuadratic2020Source": "国土地理院 https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/index.html 『近似式から求める』の計算例（東京 φ=35.68°, λ=139.70°）D2020.0=7°36.5′（西偏）。参照 2026-10-03 JST。テストでは使わない"
+      },
+      {
+        "id": "MV-03",
+        "point": {
+          "id": "RJNK",
+          "name": "小松",
+          "lat": 36.393407,
+          "lon": 136.406895
+        },
+        "purpose": "日本海側・局点間の内挿",
+        "knownFailing": "#66",
+        "expected": 8.3,
+        "sourceRaw": "入力: 緯 度 北緯 36°23′36″ 経 度 東経 136°24′25″ → 偏角 D（西偏＋/東偏−） +8.30°（+8 °18′）",
+        "source": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（磁気図2020.0年値の3分グリッド内挿）。POST https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/bilinear.cgi  ido1=36&ido2=23&ido3=36&kei1=136&kei2=24&kei3=25（入力は整数秒に丸め）取得 2026-10-03 JST。出力は 0.01° 単位",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "inputRoundedDms": {
+          "ido1": 36,
+          "ido2": 23,
+          "ido3": 36,
+          "kei1": 136,
+          "kei2": 24,
+          "kei3": 25
+        }
+      },
+      {
+        "id": "MV-04",
+        "point": {
+          "id": "RJFZ",
+          "name": "築城",
+          "lat": 33.685001,
+          "lon": 131.039993
+        },
+        "purpose": "九州北部・局点間の内挿（築城）",
+        "expected": 7.71,
+        "sourceRaw": "入力: 緯 度 北緯 33°41′6″ 経 度 東経 131°2′24″ → 偏角 D（西偏＋/東偏−） +7.71°（+7 °43′）",
+        "source": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（磁気図2020.0年値の3分グリッド内挿）。POST https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/bilinear.cgi  ido1=33&ido2=41&ido3=6&kei1=131&kei2=2&kei3=24（入力は整数秒に丸め）取得 2026-10-03 JST。出力は 0.01° 単位",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "inputRoundedDms": {
+          "ido1": 33,
+          "ido2": 41,
+          "ido3": 6,
+          "kei1": 131,
+          "kei2": 2,
+          "kei3": 24
+        }
+      },
+      {
+        "id": "MV-05",
+        "point": {
+          "id": "RJCW",
+          "name": "稚内",
+          "lat": 45.404202,
+          "lon": 141.800995
+        },
+        "purpose": "局点の外側（北端）。外挿の弱さを測る",
+        "tolerance": {
+          "abs": 1.0
+        },
+        "knownFailing": "#66",
+        "expected": 10.56,
+        "sourceRaw": "入力: 緯 度 北緯 45°24′15″ 経 度 東経 141°48′4″ → 偏角 D（西偏＋/東偏−） +10.56°（+10 °34′）",
+        "source": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（磁気図2020.0年値の3分グリッド内挿）。POST https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/bilinear.cgi  ido1=45&ido2=24&ido3=15&kei1=141&kei2=48&kei3=4（入力は整数秒に丸め）取得 2026-10-03 JST。出力は 0.01° 単位",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "inputRoundedDms": {
+          "ido1": 45,
+          "ido2": 24,
+          "ido3": 15,
+          "kei1": 141,
+          "kei2": 48,
+          "kei3": 4
+        }
+      },
+      {
+        "id": "MV-06",
+        "point": {
+          "id": "ROIG",
+          "name": "新石垣",
+          "lat": 24.396389,
+          "lon": 124.245
+        },
+        "purpose": "局点の外側（南西端）。外挿の弱さを測る",
+        "tolerance": {
+          "abs": 1.0
+        },
+        "knownFailing": "#66",
+        "expected": 5.02,
+        "sourceRaw": "入力: 緯 度 北緯 24°23′47″ 経 度 東経 124°14′42″ → 偏角 D（西偏＋/東偏−） +5.02°（+5 °1′）",
+        "source": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（磁気図2020.0年値の3分グリッド内挿）。POST https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/bilinear.cgi  ido1=24&ido2=23&ido3=47&kei1=124&kei2=14&kei3=42（入力は整数秒に丸め）取得 2026-10-03 JST。出力は 0.01° 単位",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "inputRoundedDms": {
+          "ido1": 24,
+          "ido2": 23,
+          "ido3": 47,
+          "kei1": 124,
+          "kei2": 14,
+          "kei3": 42
+        }
+      },
+      {
+        "id": "MV-07",
+        "point": {
+          "id": "RJTH",
+          "name": "八丈島",
+          "lat": 33.114843,
+          "lon": 139.785645
+        },
+        "purpose": "離島（八丈島）",
+        "tolerance": {
+          "abs": 1.0
+        },
+        "expected": 8.14,
+        "sourceRaw": "入力: 緯 度 北緯 33°6′53″ 経 度 東経 139°47′8″ → 偏角 D（西偏＋/東偏−） +8.14°（+8 °8′）",
+        "source": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（磁気図2020.0年値の3分グリッド内挿）。POST https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/bilinear.cgi  ido1=33&ido2=6&ido3=53&kei1=139&kei2=47&kei3=8（入力は整数秒に丸め）取得 2026-10-03 JST。出力は 0.01° 単位",
+        "filledBy": "Grok Bot（上様の指示により公式ツールから取得）",
+        "filledAt": "2026-10-03",
+        "inputRoundedDms": {
+          "ido1": 33,
+          "ido2": 6,
+          "ido3": 53,
+          "kei1": 139,
+          "kei2": 47,
+          "kei3": 8
+        }
+      }
+    ],
+    "note": "基準は国土地理院 2020.0 年値（上様決定 2026-10-03）"
+  },
+  "magneticBearing": {
+    "target": "src/utils/bearing.ts#trueToMagneticDeg(trueDeg, variationDeg)",
+    "referenceTool": "定義（磁方位 = 真方位 + 西偏、0<=x<360 に正規化）。教本の該当頁を source に",
+    "cases": [
+      {
+        "id": "MB-01",
+        "input": {
+          "trueDeg": 355,
+          "variationDeg": 8
+        },
+        "purpose": "西偏で 360 を跨ぐ（真 355°、8°W）",
+        "expected": 3.0,
+        "source": "定義: 磁方位 = 真方位 + 西偏（東偏は負）、0≦x<360 に正規化。355 + 8 = 363 → 3（国土地理院も西偏を正とする: https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/index.html ）。教本頁は上様が追記可",
+        "filledBy": "Grok Bot（定義から）",
+        "filledAt": "2026-10-03"
+      },
+      {
+        "id": "MB-02",
+        "input": {
+          "trueDeg": 3,
+          "variationDeg": -5
+        },
+        "purpose": "東偏（負値）で 0 を下回る（真 003°、5°E）",
+        "expected": 358.0,
+        "source": "定義: 磁方位 = 真方位 + 西偏（東偏は負）、0≦x<360 に正規化。3 + (−5) = −2 → 358。教本頁は上様が追記可",
+        "filledBy": "Grok Bot（定義から）",
+        "filledAt": "2026-10-03"
+      }
+    ]
+  }
+}

@@ -23,6 +23,7 @@
 |------|------------------|----------|
 | **Cloud Agent（Cursor Project）** | Supabase / Vercel / GitHub / Sentry などダッシュボード連携の MCP。秘密は Cloud Agents > Secrets | 実装、PR、SQL、MDX 確定稿。マージはユーザーの明示時のみ |
 | **ローカル Cursor（Desktop）** | Global `mcp.json` の Obsidian MCP、GA4 MCP（ローカル SA / ADC） | 土曜 Ingest・日曜 Editorial、Desktop での pull |
+| **GrokBot（家老・斥候）** | GitHub（Issue / PR / Checks の読み取りとラベル・Issue 操作）、Slack `#fa-gungi`、Cursor クラウドエージェント起動 | `gungi-task` Issue の起票と進行管理、三振管理、法令・通達の巡回。コード・SQL・マージはしない |
 
 - クラウドから Obsidian の Vault は見えない。クリップや Ideas を捏造せず、ローカル Editorial の結果だけを前提にする。
 - GA4 の週次数値はクラウドでは読まない。GitHub Actions の `weekly-telemetry-ga4` artifact を使う。
@@ -47,7 +48,8 @@ npm run lint         # ESLint
 npm run test         # Vitest（ウォッチ）
 npm run test:run     # Vitest 単発
 npm run test:e2e     # Playwright
-npm exec -- tsc -b   # 型チェック
+npm run test:golden  # ゴールデン（gungi/golden-tests）
+npm run type-check   # tsc -b
 ```
 
 ## ディレクトリ
@@ -75,6 +77,7 @@ npm exec -- tsc -b   # 型チェック
 2. レッスン MDX → [`.cursor/rules/mdx-article-guide.mdc`](.cursor/rules/mdx-article-guide.mdc)（必要なら agent `mdx-content`）。精緻化時の **脱AI臭診断のみ** → Skill [`mdx-ai-smell-inspect`](.cursor/skills/mdx-ai-smell-inspect/SKILL.md)（upstream [`tools/natural-japanese`](tools/natural-japanese)；全文リライト禁止）
 3. `learning_contents` 登録 → Skill [`learning-contents-registration`](.cursor/skills/learning-contents-registration/SKILL.md)
 4. コミットメッセージ → Skill [`git-commit-en`](.cursor/skills/git-commit-en/SKILL.md)（英語・Conventional Commits）
+4.5. `gungi-task` Issue からの作業 → Issue の受入条件と `.cursor/rules/aviation.mdc` に従い Draft PR（本文に `Closes #N`）。`gungi/golden-tests/` の期待値は変更しない（`golden-change-approved` はユーザーのみ）。仕様 [`gungi/SPEC.md`](gungi/SPEC.md)
 5. 週末クリップ整理／週次発信弧 → Skill [`weekend-ingest`](.cursor/skills/weekend-ingest/SKILL.md) / [`weekend-editorial`](.cursor/skills/weekend-editorial/SKILL.md)（正本 [`docs/ops/Weekend_Content_Pipeline.md`](docs/ops/Weekend_Content_Pipeline.md)）。**Skill＝手順、Context＝その週の材料**。公式 Obsidian スキルの丸設置はしない（うちのルールはフォルダ契約）
 6. 週次記事メール文案 → Skill [`weekly-article-digest`](.cursor/skills/weekly-article-digest/SKILL.md)（送信は明示時のみ）
 7. 記事ドリップ公開確認 → Skill [`article-publish-check`](.cursor/skills/article-publish-check/SKILL.md)

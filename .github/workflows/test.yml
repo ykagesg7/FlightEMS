@@ -26,9 +26,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm run test:run
-
+      # 単体テスト本体は main 向け PR では mekiki-ci / inspect が担当。ここはカバレッジ用に 1 回だけ実行。
       - name: Generate test coverage
         run: npm run test:coverage
 
