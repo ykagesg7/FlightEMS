@@ -2,7 +2,7 @@
  * 国土地理院 dem_png / dem5a_png タイルから Cesium 地形を生成する。
  * tilemapjp/Cesium-JapanGSI (JapanGSITerrainProvider) の dem_png 処理を TypeScript/ESM 向けに移植。
  *
- * 欠タイル（404 / 全無効画素）は平坦 Heightmap を返し、子 refinement を止める。
+ * 欠タイル（404 / 全無効画素）は海抜 0 + 親タイルアップサンプル（可能なら）で埋め、子 refinement は継続。
  * z0 はネットワークなしのローカル平坦タイル。
  */
 import {
@@ -15,7 +15,14 @@ import {
 } from 'cesium';
 import { imageDataIsAllGsiDemNoData } from './gsiDemPngAnalysis';
 import {
+  gsiDemParentFallbackFetch,
+  gsiDemSeaLevelAllowsChildRefinement,
+  gsiDemUpsampleShiftFromParent,
+} from './gsiDemTerrainFallback';
+import {
   getSharedGsiDemTileCache,
+  isBarrenGsiDemTileStatus,
+  type GsiDemTileStatus,
 } from './gsiDemTileCache';
 import {
   GSI_DEM5A_MAX_LEVEL,
@@ -103,6 +110,12 @@ function decodeDemPngHeights(image: CanvasImageSource): {
   return { heightCSV, allNoData };
 }
 
+type FetchTileShift = {
+  shift: number;
+  shiftX: number;
+  shiftY: number;
+};
+
 /**
  * GSI 数値標高 PNG（dem_png / dem5a_png）TerrainProvider。
  */
@@ -170,8 +183,120 @@ export class GsiDemPngTerrainProvider {
     });
   }
 
-  private barrenTerrain(level: number): HeightmapTerrainData {
-    return this.createFlatTerrainData(level, false);
+  /** 海抜 0。欠損時も LOD を切らず周辺タイルと継ぎ目を抑える */
+  private seaLevelTerrain(level: number): HeightmapTerrainData {
+    return this.createFlatTerrainData(level, gsiDemSeaLevelAllowsChildRefinement(level));
+  }
+
+  private buildTerrainFromHeightCsv(
+    level: number,
+    heightCSV: number[][],
+    sampling: FetchTileShift,
+  ): HeightmapTerrainData {
+    const whm = this._heightmapWidth;
+    const wim = this._demDataWidth;
+    const hmp = new Int16Array(whm * whm);
+    const { shift, shiftX, shiftY } = sampling;
+
+    for (let yy = 0; yy < whm; yy++) {
+      for (let xx = 0; xx < whm; xx++) {
+        const py = Math.round(((yy / 2 ** shift / (whm - 1)) + shiftY) * (wim - 1));
+        const px = Math.round(((xx / 2 ** (shift + 1) / (whm - 1)) + shiftX) * (wim - 1));
+        hmp[yy * whm + xx] = Math.round(heightCSV[py]![px]! * this._heightPower);
+      }
+    }
+
+    const allowRefinement = gsiDemSeaLevelAllowsChildRefinement(level);
+    return new HeightmapTerrainData({
+      buffer: hmp,
+      width: whm,
+      height: whm,
+      structure: this._terrainDataStructure,
+      childTileMask: allowRefinement ? ALL_CHILDREN_MASK : NO_CHILDREN_MASK,
+    });
+  }
+
+  private markTileStatus(
+    fetchLevel: number,
+    fetchX: number,
+    fetchY: number,
+    status: GsiDemTileStatus,
+  ): void {
+    this._cache.set(fetchLevel, fetchX, fetchY, status);
+  }
+
+  private async loadHeightCsvFromNetwork(
+    fetchLevel: number,
+    fetchX: number,
+    fetchY: number,
+  ): Promise<{ heightCSV: number[][] } | 'missing' | 'nodata'> {
+    if (!shouldFetchGsiDemNetworkTile(fetchLevel)) {
+      return 'missing';
+    }
+
+    const skip = this._cache.shouldSkipNetworkFetch(fetchLevel, fetchX, fetchY);
+    if (skip === 'missing' || skip === 'nodata') {
+      return skip;
+    }
+    if (skip) {
+      return 'missing';
+    }
+
+    const url = buildGsiDemTileUrl(fetchLevel, fetchX, fetchY, this._url);
+    const resource = new Resource({ url, retryAttempts: 0 });
+
+    try {
+      const image = await resource.fetchImage();
+      if (!image) {
+        this.markTileStatus(fetchLevel, fetchX, fetchY, 'missing');
+        return 'missing';
+      }
+      const { heightCSV, allNoData } = decodeDemPngHeights(image);
+      if (allNoData) {
+        this.markTileStatus(fetchLevel, fetchX, fetchY, 'nodata');
+        return 'nodata';
+      }
+      this.markTileStatus(fetchLevel, fetchX, fetchY, 'elevated');
+      return { heightCSV };
+    } catch {
+      this.markTileStatus(fetchLevel, fetchX, fetchY, 'missing');
+      return 'missing';
+    }
+  }
+
+  private async resolveMissingTile(
+    level: number,
+    fetchLevel: number,
+    fetchX: number,
+    fetchY: number,
+    sampling: FetchTileShift,
+  ): Promise<HeightmapTerrainData> {
+    const parent = gsiDemParentFallbackFetch(fetchLevel, fetchX, fetchY);
+    if (parent) {
+      const parentStatus = this._cache.get(parent.parentLevel, parent.parentX, parent.parentY);
+      const mayUpsample =
+        parentStatus === 'elevated' ||
+        parentStatus === undefined ||
+        !isBarrenGsiDemTileStatus(parentStatus);
+      if (mayUpsample) {
+        const parentLoad = await this.loadHeightCsvFromNetwork(
+          parent.parentLevel,
+          parent.parentX,
+          parent.parentY,
+        );
+        if (parentLoad !== 'missing' && parentLoad !== 'nodata') {
+          const upsampled = gsiDemUpsampleShiftFromParent(
+            fetchX,
+            fetchY,
+            sampling.shift,
+            sampling.shiftX,
+            sampling.shiftY,
+          );
+          return this.buildTerrainFromHeightCsv(level, parentLoad.heightCSV, upsampled);
+        }
+      }
+    }
+    return this.seaLevelTerrain(level);
   }
 
   requestTileGeometry(x: number, y: number, level: number): Promise<HeightmapTerrainData> {
@@ -209,52 +334,23 @@ export class GsiDemPngTerrainProvider {
       return Promise.resolve(this.createFlatTerrainData(level, true));
     }
 
+    const sampling: FetchTileShift = { shift, shiftX, shiftY };
+
     const skipped = this._cache.shouldSkipNetworkFetch(fetchLevel, fetchX, fetchY);
     if (skipped) {
-      return Promise.resolve(this.barrenTerrain(level));
+      const selfStatus = this._cache.get(fetchLevel, fetchX, fetchY);
+      if (isBarrenGsiDemTileStatus(selfStatus)) {
+        return this.resolveMissingTile(level, fetchLevel, fetchX, fetchY, sampling);
+      }
+      return Promise.resolve(this.seaLevelTerrain(level));
     }
 
-    const url = buildGsiDemTileUrl(fetchLevel, fetchX, fetchY, this._url);
-    const resource = new Resource({ url });
-
     return (async (): Promise<HeightmapTerrainData> => {
-      try {
-        const image = await resource.fetchImage();
-        if (!image) {
-          this._cache.set(fetchLevel, fetchX, fetchY, 'missing');
-          return this.barrenTerrain(level);
-        }
-        const { heightCSV, allNoData } = decodeDemPngHeights(image);
-        if (allNoData) {
-          this._cache.set(fetchLevel, fetchX, fetchY, 'nodata');
-          return this.barrenTerrain(level);
-        }
-        this._cache.set(fetchLevel, fetchX, fetchY, 'elevated');
-
-        const whm = this._heightmapWidth;
-        const wim = this._demDataWidth;
-        const hmp = new Int16Array(whm * whm);
-
-        for (let yy = 0; yy < whm; yy++) {
-          for (let xx = 0; xx < whm; xx++) {
-            const py = Math.round(((yy / 2 ** shift / (whm - 1)) + shiftY) * (wim - 1));
-            const px = Math.round(((xx / 2 ** (shift + 1) / (whm - 1)) + shiftX) * (wim - 1));
-            hmp[yy * whm + xx] = Math.round(heightCSV[py]![px]! * this._heightPower);
-          }
-        }
-
-        const allowRefinement = level < GSI_MAX_TERRAIN_LEVEL;
-        return new HeightmapTerrainData({
-          buffer: hmp,
-          width: whm,
-          height: whm,
-          structure: this._terrainDataStructure,
-          childTileMask: allowRefinement ? ALL_CHILDREN_MASK : NO_CHILDREN_MASK,
-        });
-      } catch {
-        this._cache.set(fetchLevel, fetchX, fetchY, 'missing');
-        return this.barrenTerrain(level);
+      const loaded = await this.loadHeightCsvFromNetwork(fetchLevel, fetchX, fetchY);
+      if (loaded === 'missing' || loaded === 'nodata') {
+        return this.resolveMissingTile(level, fetchLevel, fetchX, fetchY, sampling);
       }
+      return this.buildTerrainFromHeightCsv(level, loaded.heightCSV, sampling);
     })();
   }
 }

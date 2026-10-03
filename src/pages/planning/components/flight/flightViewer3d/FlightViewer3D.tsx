@@ -21,6 +21,7 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
   isProUser = false,
   viewerUi: viewerUiProp,
   onViewerUiChange,
+  fillAvailableHeight = false,
 }) => {
   const [mountEl, setMountEl] = useState<HTMLDivElement | null>(null);
   const resolvedWaypoints = useMemo(
@@ -86,11 +87,15 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
 
   const usingDemo = waypoints.length < 2;
 
+  const shellClass = fillAvailableHeight
+    ? 'relative flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-brand-primary/30 bg-brand-surface'
+    : 'relative flex min-h-[280px] flex-col overflow-hidden rounded-lg border border-brand-primary/30 bg-brand-surface';
+  const canvasRegionClass = fillAvailableHeight
+    ? 'relative min-h-0 flex-1'
+    : 'relative min-h-[240px] flex-1';
+
   return (
-    <div
-      className="relative flex min-h-[280px] flex-col overflow-hidden rounded-lg border border-brand-primary/30 bg-brand-surface"
-      data-testid="flight-viewer-3d"
-    >
+    <div className={shellClass} data-testid="flight-viewer-3d">
       <div className="absolute right-2 top-2 z-10 flex gap-1 rounded-lg border border-brand-primary/40 bg-brand-surface/90 p-1 shadow-md backdrop-blur-sm">
         <button
           type="button"
@@ -140,7 +145,7 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
         </div>
       ) : null}
 
-      <div className="relative min-h-[240px] flex-1">
+      <div className={canvasRegionClass}>
         <div
           ref={setMountEl}
           className="absolute inset-0 h-full w-full"
