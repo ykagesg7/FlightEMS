@@ -37,8 +37,9 @@ import {
   type PlanningPanelLayout,
 } from '../../planningPanelLayout';
 import { flightPlanToWaypoint3D } from './flightViewer3d/flightPlanToWaypoint3D';
-import { FlightViewer3DSuspense } from './flightViewer3d/FlightViewer3DSuspense';
+import { PlanningFlightViewer3DPanel } from './flightViewer3d/PlanningFlightViewer3DPanel';
 import { preloadFlightViewer3DModule } from './flightViewer3d/flightViewer3dLazy';
+import { useFlightViewer3dProUser } from '../../hooks/useFlightViewer3dProUser';
 import { mergeWaypointSearchOptions } from '../../userWaypoints/mergeWaypointSearchOptions';
 import { useUserSavedWaypoints } from '../../userWaypoints/useUserSavedWaypoints';
 
@@ -83,6 +84,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   const showRouteEditor = isLearn || isPlan;
   const showBriefingCollapsed = isPlan;
   const routeReady = Boolean(flightPlan.departure && flightPlan.arrival);
+  const isFlightViewer3dProUser = useFlightViewer3dProUser();
   // 3D rebuild はルート幾何に効くフィールドのみ（燃料・天候等の変更で再生をリセットしない）
   const waypoint3d = useMemo(
     () => flightPlanToWaypoint3D(flightPlan),
@@ -735,7 +737,10 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
             <p className="mb-2 text-xs text-gray-400 print-hide">
               計画ルートを 3D で確認します（教育用・地形は簡略表示）。ルート未設定時は福岡 VFR デモを表示します。
             </p>
-            <FlightViewer3DSuspense waypoints={waypoint3d ?? []} isProUser={false} />
+            <PlanningFlightViewer3DPanel
+              waypoints={waypoint3d ?? []}
+              isProUser={isFlightViewer3dProUser}
+            />
           </PlanningCard>
         )}
 
