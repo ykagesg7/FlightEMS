@@ -23,7 +23,6 @@ import '../../../../explore/airspace3d/cesiumBaseUrl';
 import {
   applyPreviewAltitudeOffset,
   buildPlaybackPointsFromWaypoints,
-  chaseCameraOffsetEnuMeters,
   feetToMeters,
   interpolatePlaybackAtTime,
   type PlaybackPoint3D,
@@ -38,6 +37,7 @@ import type {
   Waypoint3D,
 } from './types';
 import { DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
+import { setChaseCameraFollowingTarget } from './flightViewer3dChaseCamera';
 import { ensureFlightViewerAircraft, removeFlightViewerAircraft } from './flightViewerAircraft';
 
 const VIEWER_BOOT_TIMEOUT_MS = 25_000;
@@ -219,14 +219,13 @@ function updateFollowCamera(
     });
     return;
   }
-  const enuOffset = chaseCameraOffsetEnuMeters(
+  unlockCamera(viewer);
+  setChaseCameraFollowingTarget(
+    viewer,
+    pos,
     pose.headingDeg,
     controls.chaseDistanceM,
     controls.chasePitchDeg,
-  );
-  viewer.camera.lookAt(
-    pos,
-    new Cartesian3(enuOffset.east, enuOffset.north, enuOffset.up),
   );
 }
 
