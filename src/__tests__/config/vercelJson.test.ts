@@ -30,8 +30,9 @@ describe('vercel.json SPA fallback', () => {
     const rewrites = config.rewrites ?? [];
     const spa = rewrites.filter((rule) => rule.destination === '/');
     expect(spa).toHaveLength(1);
-    expect(spa[0]?.source).toBe('/(.*)');
+    expect(spa[0]?.source).toBe('/((?!assets/).*)');
     expect(spa[0]?.source).not.toContain('?!api/');
+    expect(spa[0]?.source).toContain('?!assets/');
 
     const destinations = rewrites.map((rule) => rule.destination);
     expect(destinations).toContain('/api/mfa-recovery-codes?action=:action');
