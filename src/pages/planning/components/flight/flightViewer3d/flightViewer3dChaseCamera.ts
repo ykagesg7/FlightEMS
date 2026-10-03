@@ -2,10 +2,12 @@ import {
   Cartesian3,
   Cartesian4,
   Cartographic,
+  Math as CesiumMath,
   Matrix4,
   Transforms,
   type Viewer,
 } from 'cesium';
+import { AIRCRAFT_YAW_OFFSET_DEG } from '../../../../explore/airspace3d/aircraftIcon';
 import { chaseCameraOffsetEnuMeters } from './flightViewer3dMath';
 
 const scratchSubtract = new Cartesian3();
@@ -34,17 +36,22 @@ export function expectedChaseCameraHeightGainM(rangeM: number, chasePitchDeg: nu
   return rangeM * Math.sin(depressionRad);
 }
 
-/** コックピット setView 用（俯角 UI は負値、Cesium pitch も負＝地平線より下） */
-export function cockpitCameraOrientation(
+/** コックピット視線（target 基準 ENU 単位ベクトル）。UI 俯角は負＝下向き。 */
+export function cockpitLookDirectionEnu(
   trackHeadingDeg: number,
   chasePitchDeg: number,
-): { heading: number; pitch: number; roll: number } {
-  const depressionDeg = Math.min(89, Math.max(1, Math.abs(chasePitchDeg)));
-  const degToRad = (d: number) => (d * Math.PI) / 180;
+): { east: number; north: number; up: number } {
+  const depressionRad = Math.min(
+    (89 * Math.PI) / 180,
+    Math.max((1 * Math.PI) / 180, (Math.abs(chasePitchDeg) * Math.PI) / 180),
+  );
+  const h = (trackHeadingDeg * Math.PI) / 180;
+  const cosP = Math.cos(depressionRad);
+  const sinP = Math.sin(depressionRad);
   return {
-    heading: degToRad(trackHeadingDeg),
-    pitch: degToRad(-depressionDeg),
-    roll: 0,
+    east: Math.sin(h) * cosP,
+    north: Math.cos(h) * cosP,
+    up: -sinP,
   };
 }
 
@@ -56,10 +63,16 @@ export function setCockpitCameraView(
   trackHeadingDeg: number,
   chasePitchDeg: number,
 ): void {
-  const orient = cockpitCameraOrientation(trackHeadingDeg, chasePitchDeg);
+  const destination = Cartesian3.fromDegrees(lon, lat, altMeters);
+  const depressionDeg = Math.min(89, Math.max(1, Math.abs(chasePitchDeg)));
+  viewer.camera.lookAtTransform(Matrix4.IDENTITY);
   viewer.camera.setView({
-    destination: Cartesian3.fromDegrees(lon, lat, altMeters),
-    orientation: orient,
+    destination,
+    orientation: {
+      heading: CesiumMath.toRadians(trackHeadingDeg + AIRCRAFT_YAW_OFFSET_DEG),
+      pitch: CesiumMath.toRadians(-depressionDeg),
+      roll: 0,
+    },
   });
 }
 

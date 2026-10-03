@@ -462,9 +462,6 @@ export function useCesiumFlight({
       cameraMode,
       viewControlsRef.current,
     );
-    if (!viewer.clock.shouldAnimate) {
-      unlockCamera(viewer);
-    }
   }, [cameraMode, ready]);
 
   useEffect(() => {
@@ -482,7 +479,6 @@ export function useCesiumFlight({
         cameraModeRef.current,
         viewControls,
       );
-      unlockCamera(viewer);
       return;
     }
     if (viewer.clock.shouldAnimate) {
@@ -550,7 +546,6 @@ export function useCesiumFlight({
       cameraModeRef.current,
       viewControlsRef.current,
     );
-    unlockCamera(viewer);
   }, []);
 
   return {

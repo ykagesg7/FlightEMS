@@ -5,16 +5,19 @@ import {
   cartographicHeight,
   chaseCameraWorldPositionFromTarget,
   expectedChaseCameraHeightGainM,
-  cockpitCameraOrientation,
+  cockpitLookDirectionEnu,
 } from '../../pages/planning/components/flight/flightViewer3d/flightViewer3dChaseCamera';
 import { chaseCameraOffsetEnuMeters, isChaseCameraOffsetBehindAndAbove } from '../../pages/planning/components/flight/flightViewer3d/flightViewer3dMath';
 
 describe('flightViewer3dChaseCamera', () => {
-  it('maps cockpit UI depression to negative Cesium setView pitch', () => {
-    const o = cockpitCameraOrientation(120, -18);
-    expect(o.pitch).toBeCloseTo((-18 * Math.PI) / 180, 5);
-    expect(o.heading).toBeCloseTo((120 * Math.PI) / 180, 5);
-    expect(o.roll).toBe(0);
+  it('aims cockpit look vector along track with depression below horizon', () => {
+    const north = cockpitLookDirectionEnu(0, -18);
+    expect(north.north).toBeCloseTo(Math.cos((18 * Math.PI) / 180), 3);
+    expect(north.up).toBeCloseTo(-Math.sin((18 * Math.PI) / 180), 3);
+    expect(north.east).toBeCloseTo(0, 3);
+    const east = cockpitLookDirectionEnu(90, -18);
+    expect(east.east).toBeGreaterThan(0.9);
+    expect(east.north).toBeCloseTo(0, 2);
   });
 
   it('places camera above target by range*sin(depression) for steep and mild chase', () => {
