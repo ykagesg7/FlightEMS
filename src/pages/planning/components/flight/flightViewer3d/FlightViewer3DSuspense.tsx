@@ -8,43 +8,49 @@ import {
 } from './flightViewer3dLazy';
 import { FlightViewer3DErrorBoundary } from './FlightViewer3DErrorBoundary';
 
-type LoadPhase = 'pending' | 'ready' | 'error';
+type ChunkPhase = 'loading' | 'error';
 
+/**
+ * チャンク待ちと Suspense を二重にしない: すぐ Lazy をマウントし Suspense fallback のみ表示。
+ * タイムアウト / import 失敗はパネル内エラー（無限スピナー回避）。
+ */
 export function FlightViewer3DSuspense(props: FlightViewer3DProps) {
   const [attempt, setAttempt] = useState(0);
-  const [phase, setPhase] = useState<LoadPhase>('pending');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [chunkPhase, setChunkPhase] = useState<ChunkPhase>('loading');
+  const [chunkError, setChunkError] = useState<string | null>(null);
 
   useEffect(() => {
-    setPhase('pending');
-    setErrorMessage(null);
-    let cancelled = false;
+    setChunkPhase('loading');
+    setChunkError(null);
     let settled = false;
 
     const timeoutId = window.setTimeout(() => {
-      if (!cancelled && !settled) {
-        setPhase('error');
-        setErrorMessage('3D プレビューの読み込みがタイムアウトしました。');
+      if (!settled) {
+        setChunkPhase('error');
+        setChunkError(
+          '3D プレビューの読み込みがタイムアウトしました。回線が遅い場合は再試行してください。',
+        );
       }
     }, FLIGHT_VIEWER_3D_CHUNK_TIMEOUT_MS);
 
     flightViewer3DModulePromise
       .then(() => {
-        if (cancelled) return;
         settled = true;
         window.clearTimeout(timeoutId);
-        setPhase('ready');
+        setChunkError(null);
+        setChunkPhase('loading');
       })
       .catch((e: unknown) => {
-        if (cancelled) return;
         settled = true;
         window.clearTimeout(timeoutId);
-        setPhase('error');
-        setErrorMessage(e instanceof Error ? e.message : '3D プレビューの読み込みに失敗しました。');
+        setChunkPhase('error');
+        setChunkError(
+          e instanceof Error ? e.message : '3D プレビューの読み込みに失敗しました。',
+        );
       });
 
     return () => {
-      cancelled = true;
+      settled = true;
       window.clearTimeout(timeoutId);
     };
   }, [attempt]);
@@ -54,13 +60,13 @@ export function FlightViewer3DSuspense(props: FlightViewer3DProps) {
     setAttempt((n) => n + 1);
   };
 
-  if (phase === 'error') {
+  if (chunkPhase === 'error' && chunkError) {
     return (
       <div
         className="flex min-h-[12rem] flex-col items-center justify-center gap-3 px-4 text-center"
         role="alert"
       >
-        <p className="text-sm text-red-200">{errorMessage}</p>
+        <p className="text-sm text-red-200">{chunkError}</p>
         <button
           type="button"
           onClick={retry}
@@ -68,14 +74,6 @@ export function FlightViewer3DSuspense(props: FlightViewer3DProps) {
         >
           再試行
         </button>
-      </div>
-    );
-  }
-
-  if (phase === 'pending') {
-    return (
-      <div className="flex h-48 items-center justify-center text-sm text-gray-400" role="status">
-        3D プレビューを読み込み中…
       </div>
     );
   }

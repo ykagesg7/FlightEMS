@@ -7,7 +7,7 @@ import {
   Transforms,
   type Viewer,
 } from 'cesium';
-import { AIRCRAFT_YAW_OFFSET_DEG } from '../../../../explore/airspace3d/aircraftIcon';
+import { AIRCRAFT_YAW_OFFSET_DEG } from './flightViewerAircraftConstants';
 import { chaseCameraOffsetEnuMeters } from './flightViewer3dMath';
 
 const scratchSubtract = new Cartesian3();

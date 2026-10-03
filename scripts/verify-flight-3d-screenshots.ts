@@ -138,12 +138,26 @@ async function main() {
     { key: FLIGHT_PLAN_DRAFT_STORAGE_KEY, json: draftJson },
   );
 
+  await page.addInitScript(() => {
+    performance.mark('flight-3d-nav-start');
+    window.__flightViewer3dNavStartMs = performance.now();
+  });
+  const navStart = Date.now();
   await page.goto(`${BASE}/planning?mode=plan`, { waitUntil: 'domcontentloaded', timeout: 180_000 });
   const details3d = page.locator('details').filter({
     has: page.locator('summary', { hasText: '3D ルートプレビュー' }),
   });
   await details3d.locator('summary').click({ timeout: 60_000 });
   await waitViewerReady(page);
+  const timings = await page.evaluate(() => ({
+    chunkMs: window.__flightViewer3dChunkMs ?? null,
+    controlsMs: window.__flightViewer3dControlsReadyMs ?? null,
+  }));
+  const controlsWallMs = Date.now() - navStart;
+  console.log('timings', { ...timings, controlsWallMs });
+  if (controlsWallMs > 15_000) {
+    console.warn(`WARN: controls enabled after ${controlsWallMs}ms (target <= 15000)`);
+  }
   console.log('viewer ready');
   await page.getByTestId('flight-viewer-mode-gsi').click();
   await page.waitForTimeout(12_000);

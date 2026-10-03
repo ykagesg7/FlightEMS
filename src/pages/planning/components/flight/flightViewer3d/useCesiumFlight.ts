@@ -55,7 +55,8 @@ import {
   setFlightViewer3dReadyFlag,
 } from './flightViewer3dDebug';
 
-const VIEWER_BOOT_TIMEOUT_MS = 25_000;
+/** Viewer 生成＋ルート構築のみ（地形タイルは ready 後に非同期） */
+const VIEWER_BOOT_TIMEOUT_MS = 15_000;
 const LABEL_DEPTH_TEST_DISTANCE = Number.POSITIVE_INFINITY;
 
 const ROUTE_ENTITY_PREFIX = 'flight-viewer-route-';
@@ -464,7 +465,7 @@ export function useCesiumFlight({
     const el = mountEl;
     let cancelled = false;
 
-    const runBoot = async (): Promise<void> => {
+    const runBootCore = (): Viewer => {
       const viewer = new Viewer(el, {
         animation: false,
         timeline: false,
@@ -486,19 +487,8 @@ export function useCesiumFlight({
         },
       });
       setDepthTestAgainstTerrain(viewer, false);
-      if (cancelled) {
-        viewer.destroy();
-        return;
-      }
       viewerRef.current = viewer;
       rebuildRoute(viewer, waypointsBootRef.current);
-      await applyImagery(viewer, imageryModeBootRef.current);
-      if (cancelled) {
-        viewer.destroy();
-        viewerRef.current = null;
-        return;
-      }
-      skipNextImageryEffectRef.current = true;
 
       const onTick = () => {
         const startJ = startJulianRef.current;
@@ -526,15 +516,34 @@ export function useCesiumFlight({
       };
       viewer.clock.onTick.addEventListener(onTick);
       installChaseAircraftBillboardSceneRotation(viewer, () => cameraModeRef.current === 'chase');
+      return viewer;
+    };
 
-      if (!cancelled) {
-        setReady(true);
-        setFlightViewer3dReadyFlag(true);
+    const runBoot = async (): Promise<void> => {
+      const viewer = runBootCore();
+      if (cancelled) {
+        viewer.destroy();
+        viewerRef.current = null;
+        return;
+      }
+
+      skipNextImageryEffectRef.current = true;
+      setReady(true);
+      setFlightViewer3dReadyFlag(true);
+
+      try {
+        await applyImagery(viewer, imageryModeBootRef.current);
+      } catch (e: unknown) {
+        if (cancelled) return;
+        console.error(e);
+        const msg = e instanceof Error ? e.message : String(e);
+        setError(msg);
+        setFlightViewer3dErrorFlag(msg);
       }
     };
 
     void withTimeout(
-      runBoot(),
+      Promise.resolve().then(() => runBoot()),
       VIEWER_BOOT_TIMEOUT_MS,
       '3D ビューアの初期化がタイムアウトしました。再試行してください。',
     ).catch((e: unknown) => {
