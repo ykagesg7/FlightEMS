@@ -3,16 +3,11 @@
  * Keep in sync with MDX meta.publishedAt.
  * One series per ISO week (訓練の当たり前 / Contact / FMT).
  * Default drip (W39 and earlier CP): 3/week Sun·Wed·Fri.
- * Cadence from **2026-W40**: **3/week Sun·Wed·Fri** — CP/FN on Sun·Wed + **Friday mentality**
- * when scheduled (Editorial approval). Digest still anchors on Sunday.
+ * Cadence from **2026-W41**: **Sun mentality** (when scheduled) + **Wed·Fri CP/FN**.
+ * Sunday mentality slots need Editorial approval; omit from schedule until approved.
+ * Digest still anchors on Sunday.
  * Stock unpublished IDs until listed here; cron only flips IDs in this file.
  */
-
-/**
- * W41 CP-5-8 only. Plan B (default): `2026-10-05` (Mon exception).
- * Plan A: change to `2026-10-04` (Sun) before merge.
- */
-export const W41_CP_5_8_PUBLISH_DATE = '2026-10-05';
 
 export interface ScheduledArticle {
   id: string;
@@ -327,48 +322,47 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   '2026-W41': {
     isoWeek: '2026-W41',
     seriesTitle: 'CP（単機）',
-    intro:
-      '来週は CP 最終2本（日・水）。金曜は７つの習慣その２『終わりを思い描く』。Cloverleaf、Chandelle。',
+    intro: '来週は CP 最終2本（水・金）。Cloverleaf、Chandelle。日曜メンタリティは次週から。',
     articles: [
       {
         id: 'CP-5-8_Cloverleaf',
-        publishDate: W41_CP_5_8_PUBLISH_DATE,
+        publishDate: '2026-10-07',
         title: '第21話：同じ向きに4枚の葉を描け ～Cloverleaf～',
         slug: '/articles/cp-5-8-cloverleaf',
         hook: '同じ向きに4枚。各葉は90°。第1葉は最寄りborderへ。',
       },
       {
         id: 'CP-5-9_Chandelle',
-        publishDate: '2026-10-07',
+        publishDate: '2026-10-09',
         title: '第22話：最大高度の180°を描け ～Chandelle～',
         slug: '/articles/cp-5-9-chandelle',
         hook: '180°で最大高度。翼水平だが水平飛行ではない。',
-      },
-      {
-        id: '1.1.2_EndWithFuture',
-        publishDate: '2026-10-09',
-        title: '【７つの習慣】その２、道真公と学ぶ「終わりを思い描く」',
-        slug: '/articles/end-with-future',
-        hook: '終わりの絵を先に持て。灯台の光を見失わぬこと。',
       },
     ],
   },
   '2026-W42': {
     isoWeek: '2026-W42',
-    seriesTitle: 'FN（編隊）',
+    seriesTitle: 'FN（編隊）＋メンタリティ',
     intro:
-      '来週は編隊の入口2本（日・水）。V.F.Rの血の掟、滑走路のシンクロ。',
+      '来週は７つの習慣その２（日）と編隊入口2本（水・金）。V.F.Rの血の掟、滑走路のシンクロ。',
     articles: [
       {
-        id: 'FMT-1-1_WingmanVFR',
+        id: '1.1.2_EndWithFuture',
         publishDate: '2026-10-11',
+        title: '【７つの習慣】その２、道真公と学ぶ「終わりを思い描く」',
+        slug: '/articles/end-with-future',
+        hook: '終わりの絵を先に持て。灯台の光を見失わぬこと。',
+      },
+      {
+        id: 'FMT-1-1_WingmanVFR',
+        publishDate: '2026-10-14',
         title: '第1話：ウイングマンの魂 ～V.F.Rの血の掟～',
         slug: '/articles/fmt-1-1-wingman-vfr',
         hook: 'V.F.Rの順番。衝突回避が先、編隊はその次。',
       },
       {
         id: 'FMT-1-2_RunwayLineupTakeoff',
-        publishDate: '2026-10-14',
+        publishDate: '2026-10-16',
         title: '第2話：滑走路のシンクロ ～的からの脱出と周辺視野～',
         slug: '/articles/fmt-1-2-runway-lineup-takeoff',
         hook: '的から脱出。周辺視野でリーダーを捉えろ。',
@@ -379,18 +373,18 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W43',
     seriesTitle: 'FN（編隊）',
     intro:
-      '来週は空中の居場所と運用チェック。Fingertip / Route、Ops check / FENCE。金曜はメンタリティ枠。',
+      '来週は空中の居場所と運用チェック（水・金）。Fingertip / Route、Ops check / FENCE。日曜メンタリティ枠は稿未承認のため空け。',
     articles: [
       {
         id: 'FMT-1-3_FingertipRoute',
-        publishDate: '2026-10-18',
+        publishDate: '2026-10-21',
         title: '第3話：空中の居場所 ～FingertipとRoute～',
         slug: '/articles/fmt-1-3-fingertip-route',
         hook: 'helmet abeam slab bolt。Routeは2 ship widths〜500 ft。',
       },
       {
         id: 'FMT-1-4_OpsCheckFence',
-        publishDate: '2026-10-21',
+        publishDate: '2026-10-23',
         title: '第4話：下を向く順番 ～Ops checkとFENCE～',
         slug: '/articles/fmt-1-4-ops-check-fence',
         hook: '居場所のあとで下を向く。FENCEは空域IN/OUT。',
@@ -401,18 +395,18 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W44',
     seriesTitle: 'FN（編隊）',
     intro:
-      '来週は Lead change と Spread。リードは渡す、広げて見る。金曜はメンタリティ枠。',
+      '来週は Lead change と Spread（水・金）。リードは渡す、広げて見る。日曜メンタリティ枠は稿未承認のため空け。',
     articles: [
       {
         id: 'FMT-1-5_LeadChange',
-        publishDate: '2026-10-25',
+        publishDate: '2026-10-28',
         title: '第5話：リードは渡すもん ～Lead Change～',
         slug: '/articles/fmt-1-5-lead-change',
         hook: 'リードは奪わず渡す。ackは3/9到達後。',
       },
       {
         id: 'FMT-1-6_Spread',
-        publishDate: '2026-10-28',
+        publishDate: '2026-10-30',
         title: '第6話：広いのは見るため ～Spread～',
         slug: '/articles/fmt-1-6-spread',
         hook: 'Spreadは1,000–3,000 ftの箱。見るため広げろ。',
@@ -423,18 +417,18 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W45',
     seriesTitle: 'FN（編隊）',
     intro:
-      '来週は Trail 族と Rejoin。後ろの箱と合流の型。金曜はメンタリティ枠。',
+      '来週は Trail 族と Rejoin（水・金）。後ろの箱と合流の型。日曜メンタリティ枠は稿未承認のため空け。',
     articles: [
       {
         id: 'FMT-1-7_TrailFamily',
-        publishDate: '2026-11-01',
+        publishDate: '2026-11-04',
         title: '第7話：後ろなら全部同じはブルシット ～Trail族～',
         slug: '/articles/fmt-1-7-trail-family',
         hook: 'Close TrailとETは別箱。Fluid≠FM。',
       },
       {
         id: 'FMT-1-8_Rejoin',
-        publishDate: '2026-11-04',
+        publishDate: '2026-11-06',
         title: '第8話：合流ば救うな ～Pitchout / Rejoin / Overshoot / Breakout～',
         slug: '/articles/fmt-1-8-rejoin',
         hook: '合流を救うな。Overshootは早く。Breakoutは4条件。',
@@ -445,18 +439,18 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W46',
     seriesTitle: 'FN（編隊）',
     intro:
-      '来週は FN Season 1 の締め2本。LAB と Lost Wingman。金曜はメンタリティ枠。',
+      '来週は FN Season 1 の締め2本（水・金）。LAB と Lost Wingman。日曜メンタリティ枠は稿未承認のため空け。',
     articles: [
       {
         id: 'FMT-1-9_TacticalLAB',
-        publishDate: '2026-11-08',
+        publishDate: '2026-11-11',
         title: '第9話：見せ場じゃない ～LAB / Tactical Turns～',
         slug: '/articles/fmt-1-9-tactical-lab',
         hook: 'LABは4,000–6,000 ft。合図なしはdelayed 90。',
       },
       {
         id: 'FMT-1-10_LostWingman',
-        publishDate: '2026-11-11',
+        publishDate: '2026-11-13',
         title: '第10話：探すな、離れろ ～Lost Wingman / KIO～',
         slug: '/articles/fmt-1-10-lost-wingman',
         hook: '見失ったら探すな。wings-levelはinformと15°×15 s。',

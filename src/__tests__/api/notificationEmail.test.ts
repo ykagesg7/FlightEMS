@@ -148,7 +148,7 @@ describe('api/lib/notificationEmail', () => {
     expect(content.htmlContent).toContain('前回フック');
     expect(content.htmlContent).toContain('新着コンテンツ');
     expect(content.htmlContent).toContain('<strong>今すぐ</strong>');
-    expect(content.htmlContent).toContain('週3本。');
+    expect(content.htmlContent).toContain('週3枠。');
 
     const monday = getWeeklyArticleDigestEmailContent(
       digest,
@@ -163,8 +163,8 @@ describe('api/lib/notificationEmail', () => {
   });
 
   it('labels digest items by publishDate vs send date (今すぐ / weekday)', () => {
-    expect(digestArticleDayLabel('2026-10-05', '2026-10-04')).toBe('月');
-    expect(digestArticleDayLabel('2026-10-05', '2026-10-05')).toBe('今すぐ');
+    expect(digestArticleDayLabel('2026-10-11', '2026-10-10')).toBe('日');
+    expect(digestArticleDayLabel('2026-10-11', '2026-10-11')).toBe('今すぐ');
     expect(digestArticleDayLabel('2026-10-07', '2026-10-05')).toBe('水');
 
     const w41 = getDigestForIsoWeek('2026-W41');
@@ -176,9 +176,19 @@ describe('api/lib/notificationEmail', () => {
       'sunday_preview',
       '2026-10-04',
     );
-    expect(sundayPreview.htmlContent).toMatch(/<strong>月<\/strong>.*Cloverleaf/);
+    expect(sundayPreview.htmlContent).toMatch(/<strong>水<\/strong>.*Cloverleaf/);
     expect(sundayPreview.htmlContent).not.toMatch(
       /<strong>今すぐ<\/strong>.*Cloverleaf/,
     );
+
+    const w42 = getDigestForIsoWeek('2026-W42');
+    const w42Sunday = getWeeklyArticleDigestEmailContent(
+      w42!,
+      'https://example.test',
+      null,
+      'sunday_preview',
+      '2026-10-10',
+    );
+    expect(w42Sunday.htmlContent).toMatch(/<strong>日<\/strong>.*終わりを思い描く/);
   });
 });

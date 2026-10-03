@@ -175,7 +175,7 @@ export function getWeeklyArticleDigestEmailContent(
       ${reminderBlock}
       <h2 style="font-size:16px;margin:24px 0 8px;">${primaryLabel}（${digest.isoWeek}）— ${digest.seriesTitle}</h2>
       <p>${digest.intro}</p>
-      <p><strong>週3本。</strong>1本目は案内と同時（今すぐ）。水・金に続く。読み終わったら、明日の一手だけ試してみてほしい。</p>
+      <p><strong>週3枠。</strong>日曜はメンタリティ（その週に載せた分）、水・金は操縦記事。日曜分は案内と同時（今すぐ）で読める。水・金に続く。読み終わったら、明日の一手だけ試してみてほしい。</p>
       <ul style="padding-left:18px;list-style:disc;">
         ${upcomingItems}
       </ul>
