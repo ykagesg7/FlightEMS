@@ -1,7 +1,6 @@
 import { Cartesian3, Cartographic, Matrix4, Transforms } from 'cesium';
 import { describe, expect, it } from 'vitest';
 import {
-  applyPreviewAltitudeOffset,
   buildPlaybackPointsFromWaypoints,
   chaseCameraOffsetEnuMeters,
   feetToMeters,
@@ -10,6 +9,7 @@ import {
   interpolatePlaybackAtTime,
   isChaseCameraOffsetBehindAndAbove,
   lerpHeadingDeg,
+  routeLegProjectionAtPosition,
   smoothedPlaybackHeadingDeg,
 } from '../../pages/planning/components/flight/flightViewer3d/flightViewer3dMath';
 
@@ -17,12 +17,6 @@ describe('flightViewer3dMath', () => {
   it('converts feet to meters', () => {
     expect(feetToMeters(1000)).toBeCloseTo(304.8, 4);
     expect(feetToMeters(0)).toBe(0);
-  });
-
-  it('applies preview altitude offset without mutating plan altitude semantics', () => {
-    expect(applyPreviewAltitudeOffset(3000, 0)).toBe(3000);
-    expect(applyPreviewAltitudeOffset(3000, 500)).toBe(3500);
-    expect(applyPreviewAltitudeOffset(1000, -200)).toBe(800);
   });
 
   it('builds playback with monotonic time', () => {
@@ -43,15 +37,26 @@ describe('flightViewer3dMath', () => {
     expect(lerpHeadingDeg(359, 1, 0.5)).toBeCloseTo(0, 5);
   });
 
+  it('uses instant track heading outside symmetric turn blend window', () => {
+    const points = [
+      { lon: 0, lat: 0, altFt: 5000, tSec: 0 },
+      { lon: 0, lat: 1, altFt: 5000, tSec: 10 },
+      { lon: 1, lat: 1, altFt: 5000, tSec: 20 },
+    ];
+    const afterBlend = smoothedPlaybackHeadingDeg(points, 11.6, 3);
+    const instant = interpolatePlaybackAtTime(points, 11.6).headingDeg;
+    expect(afterBlend).toBeCloseTo(instant, 1);
+  });
+
   it('smooths heading over blend window at leg turns', () => {
     const points = [
       { lon: 0, lat: 0, altFt: 5000, tSec: 0 },
       { lon: 0, lat: 1, altFt: 5000, tSec: 10 },
       { lon: 1, lat: 1, altFt: 5000, tSec: 20 },
     ];
-    const beforeTurn = smoothedPlaybackHeadingDeg(points, 9.5, 3);
+    const beforeTurn = smoothedPlaybackHeadingDeg(points, 7.5, 3);
     expect(beforeTurn).toBeCloseTo(0, 1);
-    const midTurn = smoothedPlaybackHeadingDeg(points, 10.5, 3);
+    const midTurn = smoothedPlaybackHeadingDeg(points, 10, 3);
     expect(midTurn).toBeGreaterThan(0);
     expect(midTurn).toBeLessThan(90);
     const afterTurn = smoothedPlaybackHeadingDeg(points, 20, 3);
@@ -86,6 +91,21 @@ describe('flightViewer3dMath', () => {
     const cameraH = Cartographic.fromCartesian(camera).height;
     expect(cameraH).toBeGreaterThan(targetH);
     expect(isChaseCameraOffsetBehindAndAbove(heading, offset)).toBe(true);
+  });
+
+  it('finds route leg from position along RJFA-like corridor', () => {
+    const wps = [
+      { name: 'RJFA', lat: 33.8814, lon: 130.6517, altFt: 5000 },
+      { name: 'wp1', lat: 33.6381, lon: 130.8067, altFt: 5000 },
+      { name: 'wp2', lat: 33.5981, lon: 131.1881, altFt: 5000 },
+      { name: 'RJFZ', lat: 33.685, lon: 131.0403, altFt: 5000 },
+    ];
+    const midLeg0 = routeLegProjectionAtPosition(33.76, 130.72, wps);
+    expect(midLeg0.legIndex).toBe(0);
+    expect(midLeg0.along).toBeGreaterThan(0.2);
+    expect(midLeg0.along).toBeLessThan(0.95);
+    const midLeg1 = routeLegProjectionAtPosition(33.61, 131.0, wps);
+    expect(midLeg1.legIndex).toBe(1);
   });
 
   it('interpolates path fraction at endpoints', () => {

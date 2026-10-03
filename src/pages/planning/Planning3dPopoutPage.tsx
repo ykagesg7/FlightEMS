@@ -9,7 +9,7 @@ import { preloadFlightViewer3DModule } from './components/flight/flightViewer3d/
  * 2D 地図ポップアウトを追加する場合も BroadcastChannel 契約を拡張する。
  */
 const Planning3dPopoutPage: React.FC = () => {
-  const { waypoints, isProUser } = usePlanning3dPopoutClient();
+  const { waypoints, isProUser, viewerUi, setViewerUi } = usePlanning3dPopoutClient();
 
   useEffect(() => {
     preloadFlightViewer3DModule();
@@ -30,7 +30,12 @@ const Planning3dPopoutPage: React.FC = () => {
         </p>
       </header>
       <div className="min-h-0 flex-1 p-2">
-        <FlightViewer3DSuspense waypoints={waypoints} isProUser={isProUser} />
+        <FlightViewer3DSuspense
+          waypoints={waypoints}
+          isProUser={isProUser}
+          viewerUi={viewerUi}
+          onViewerUiChange={setViewerUi}
+        />
       </div>
     </div>
   );

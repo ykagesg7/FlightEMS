@@ -1,3 +1,5 @@
+import type { Planning3dViewerUiState } from './planning3dViewerUi';
+
 export interface Waypoint3D {
   name: string;
   lat: number;
@@ -10,24 +12,45 @@ export interface FlightViewer3DProps {
   waypoints: Waypoint3D[];
   initialMode?: 'gsi' | 'google';
   isProUser?: boolean;
+  /** Planning ホスト／ポップアウト同期用。未指定時はコンポーネント内で状態を保持 */
+  viewerUi?: Planning3dViewerUiState;
+  onViewerUiChange?: (next: Planning3dViewerUiState) => void;
 }
 
 export type FlightImageryMode = 'gsi' | 'google';
 
 export type FlightCameraMode = 'chase' | 'cockpit';
 
+export type FlightPlaybackSpeed = 1 | 2 | 3;
+
 /** 3D プレビューのカメラ調整（フライトプラン高度そのものは変更しない） */
 export type FlightViewControls = {
-  /** カメラ追従高度に加算する ft（-500…2000 想定） */
-  altitudeOffsetFt: number;
+  /** 3D プレビューで機体・カメラが使う高度（ft） */
+  previewAltitudeFt: number;
   /** チェイスカメラの水平距離（m） */
   chaseDistanceM: number;
   /** チェイス／コックピットの俯角（度、負 = 下向き） */
   chasePitchDeg: number;
 };
 
+export const PREVIEW_ALTITUDE_STEP_FT = 500;
+
+export function derivePlannedPreviewAltitudeFt(waypoints: Waypoint3D[]): number {
+  if (waypoints.length === 0) return 3000;
+  return Math.max(...waypoints.map((w) => w.altFt));
+}
+
+export function createFlightViewControls(waypoints: Waypoint3D[]): FlightViewControls {
+  return {
+    previewAltitudeFt: derivePlannedPreviewAltitudeFt(waypoints),
+    chaseDistanceM: 650,
+    chasePitchDeg: -18,
+  };
+}
+
+/** @deprecated use createFlightViewControls(waypoints) */
 export const DEFAULT_FLIGHT_VIEW_CONTROLS: FlightViewControls = {
-  altitudeOffsetFt: 0,
+  previewAltitudeFt: 3000,
   chaseDistanceM: 650,
   chasePitchDeg: -18,
 };

@@ -21,7 +21,6 @@ import {
 } from 'cesium';
 import '../../../../explore/airspace3d/cesiumBaseUrl';
 import {
-  applyPreviewAltitudeOffset,
   buildPlaybackPointsFromWaypoints,
   feetToMeters,
   interpolatePlaybackAtTime,
@@ -34,12 +33,16 @@ import { gsiSeamlessPhotoImageryOptions } from './gsiTileConfig';
 import type {
   FlightCameraMode,
   FlightImageryMode,
+  FlightPlaybackSpeed,
   FlightViewControls,
   Waypoint3D,
 } from './types';
 import { COCKPIT_HEADING_BLEND_SEC, DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
 import { setChaseCameraFollowingTarget, setCockpitCameraView } from './flightViewer3dChaseCamera';
-import { resampleCockpitGroundGraphics } from './flightViewerGroundRoute';
+import {
+  resampleCockpitGroundGraphics,
+  updateCockpitAheadGroundRoute,
+} from './flightViewerGroundRoute';
 import { dedupeConsecutiveGroundPositions } from './flightViewerRouteGraphics';
 import { updateCockpitWaypointLabelVisibility } from './flightViewerCockpitLayers';
 import {
@@ -66,9 +69,6 @@ const ROUTE_GROUND_POLYLINE_ID = 'flight-viewer-route-ground-line';
 /** コックピット用地上ラベル・ルートの scaleByDistance（約 10 nm まで読める） */
 const COCKPIT_GROUND_LABEL_SCALE = new NearFarScalar(500, 1.4, 185_200, 0.72);
 
-/** デモ／プレビュー用。実時間 1x は長距離で遅すぎるため加速する */
-const PLAYBACK_MULTIPLIER = 40;
-
 export type UseCesiumFlightOptions = {
   /** マウント済みコンテナ（callback ref で渡す） */
   mountEl: HTMLDivElement | null;
@@ -77,6 +77,8 @@ export type UseCesiumFlightOptions = {
   cameraMode: FlightCameraMode;
   isProUser: boolean;
   viewControls?: FlightViewControls;
+  /** 1x = 計画速度に基づく再生時間（buildPlaybackPointsFromWaypoints の totalSec） */
+  playbackSpeed?: FlightPlaybackSpeed;
 };
 
 export type UseCesiumFlightResult = {
@@ -159,6 +161,7 @@ function scheduleCockpitGroundResample(viewer: Viewer, waypoints: Waypoint3D[]):
 
 function applyFlightRouteLayerVisibility(viewer: Viewer, mode: FlightCameraMode) {
   const cockpit = mode === 'cockpit';
+  setDepthTestAgainstTerrain(viewer, !cockpit);
   const airLine = viewer.entities.getById(ROUTE_POLYLINE_ID);
   if (airLine) airLine.show = !cockpit;
   const groundLine = viewer.entities.getById(ROUTE_GROUND_POLYLINE_ID);
@@ -315,12 +318,15 @@ function updateFollowCamera(
   controls: FlightViewControls,
   routeWaypoints: Waypoint3D[],
 ) {
-  const altFt = applyPreviewAltitudeOffset(pose.altFt, controls.altitudeOffsetFt);
+  const altFt = controls.previewAltitudeFt;
   if (mode === 'cockpit') {
     const headingDeg = smoothedPlaybackHeadingDeg(playback, tSec, COCKPIT_HEADING_BLEND_SEC);
     unlockCamera(viewer);
     setCockpitCameraView(viewer, pose.lon, pose.lat, feetToMeters(altFt), headingDeg);
-    updateCockpitWaypointLabelVisibility(viewer, routeWaypoints, pose.fraction);
+    updateCockpitWaypointLabelVisibility(viewer, routeWaypoints, pose.lon, pose.lat);
+    updateCockpitAheadGroundRoute(viewer, pose.lon, pose.lat, routeWaypoints, {
+      forceTerrainSample: !viewer.clock.shouldAnimate,
+    });
     return;
   }
   const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(altFt));
@@ -349,6 +355,7 @@ export function useCesiumFlight({
   cameraMode,
   isProUser,
   viewControls = DEFAULT_FLIGHT_VIEW_CONTROLS,
+  playbackSpeed = 1,
 }: UseCesiumFlightOptions): UseCesiumFlightResult {
   const viewerRef = useRef<Viewer | null>(null);
   const tilesetRef = useRef<Cesium3DTileset | null>(null);
@@ -371,6 +378,8 @@ export function useCesiumFlight({
 
   cameraModeRef.current = cameraMode;
   viewControlsRef.current = viewControls;
+  const playbackSpeedRef = useRef(playbackSpeed);
+  playbackSpeedRef.current = playbackSpeed;
   const waypointsBootRef = useRef(waypoints);
   waypointsBootRef.current = waypoints;
   const routeWaypointsRef = useRef<Waypoint3D[]>(waypoints);
@@ -398,6 +407,8 @@ export function useCesiumFlight({
           setDepthTestAgainstTerrain(viewer, true);
           const imagery = new UrlTemplateImageryProvider(gsiSeamlessPhotoImageryOptions);
           viewer.imageryLayers.addImageryProvider(imagery);
+          viewer.scene.globe.preloadAncestors = true;
+          viewer.scene.globe.preloadSiblings = true;
           scheduleCockpitGroundResample(viewer, routeWaypointsRef.current);
         } else {
           const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
@@ -437,12 +448,17 @@ export function useCesiumFlight({
     viewer.clock.stopTime = stop.clone();
     viewer.clock.currentTime = start.clone();
     viewer.clock.clockRange = ClockRange.CLAMPED;
-    viewer.clock.multiplier = PLAYBACK_MULTIPLIER;
+    viewer.clock.multiplier = playbackSpeedRef.current;
     viewer.clock.shouldAnimate = false;
     wasAnimatingRef.current = false;
     setProgressPct(0);
     setPlaying(false);
-    ensureFlightViewerAircraft(viewer, points, start);
+    ensureFlightViewerAircraft(
+      viewer,
+      points,
+      start,
+      viewControlsRef.current.previewAltitudeFt,
+    );
     setFlightViewerAircraftVisible(viewer, cameraModeRef.current !== 'cockpit');
     applyFlightRouteLayerVisibility(viewer, cameraModeRef.current);
     if (wps.length >= 2) {
@@ -638,6 +654,24 @@ export function useCesiumFlight({
     });
   }, [imageryMode, google3dAllowed, ready, applyImagery]);
 
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer || viewer.isDestroyed() || !ready) return;
+    viewer.clock.multiplier = playbackSpeed;
+  }, [playbackSpeed, ready]);
+
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    const startJ = startJulianRef.current;
+    if (!viewer || viewer.isDestroyed() || !ready || !startJ) return;
+    ensureFlightViewerAircraft(
+      viewer,
+      playbackRef.current,
+      startJ,
+      viewControls.previewAltitudeFt,
+    );
+  }, [viewControls.previewAltitudeFt, ready]);
+
   const retryInit = useCallback(() => {
     setInitAttempt((n) => n + 1);
   }, []);
@@ -646,7 +680,7 @@ export function useCesiumFlight({
     const viewer = viewerRef.current;
     if (!viewer || viewer.isDestroyed()) return;
     const next = !viewer.clock.shouldAnimate;
-    viewer.clock.multiplier = PLAYBACK_MULTIPLIER;
+    viewer.clock.multiplier = playbackSpeedRef.current;
     viewer.clock.shouldAnimate = next;
     if (!next) {
       unlockCamera(viewer);

@@ -2,12 +2,10 @@ import {
   Cartesian3,
   Cartesian4,
   Cartographic,
-  Math as CesiumMath,
   Matrix4,
   Transforms,
   type Viewer,
 } from 'cesium';
-import { AIRCRAFT_YAW_OFFSET_DEG } from './flightViewerAircraftConstants';
 import {
   COCKPIT_EYE_OFFSET_FT,
   COCKPIT_LOOK_PITCH_DEG,
@@ -83,16 +81,25 @@ export function setCockpitCameraView(
   trackHeadingDeg: number,
 ): void {
   const eyeAlt = cockpitEyeHeightMeters(viewer, lon, lat, altMeters);
-  const destination = Cartesian3.fromDegrees(lon, lat, eyeAlt);
+  const eye = Cartesian3.fromDegrees(lon, lat, eyeAlt);
   const pitchDeg = Math.min(-1, Math.max(-12, COCKPIT_LOOK_PITCH_DEG));
   const headingDeg = Number.isFinite(trackHeadingDeg) ? trackHeadingDeg : 0;
+  const lookEnu = cockpitLookDirectionEnu(headingDeg, pitchDeg);
+  const enu = Transforms.eastNorthUpToFixedFrame(eye, undefined, scratchEnu);
+  const dirLocal = new Cartesian3(lookEnu.east, lookEnu.north, lookEnu.up);
+  Matrix4.multiplyByPointAsVector(enu, dirLocal, scratchDirection);
+  if (Cartesian3.magnitude(scratchDirection) < 1e-6) return;
+  Cartesian3.normalize(scratchDirection, scratchDirection);
+  Matrix4.getColumn(enu, 2, scratchColumn);
+  Cartesian3.fromCartesian4(scratchColumn, scratchUp);
+  if (Cartesian3.magnitude(scratchUp) < 1e-6) return;
+  Cartesian3.normalize(scratchUp, scratchUp);
   viewer.camera.lookAtTransform(Matrix4.IDENTITY);
   viewer.camera.setView({
-    destination,
+    destination: eye,
     orientation: {
-      heading: CesiumMath.toRadians(headingDeg + AIRCRAFT_YAW_OFFSET_DEG),
-      pitch: CesiumMath.toRadians(pitchDeg),
-      roll: 0,
+      direction: scratchDirection,
+      up: scratchUp,
     },
   });
 }

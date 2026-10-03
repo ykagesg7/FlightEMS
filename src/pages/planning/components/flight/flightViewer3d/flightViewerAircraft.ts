@@ -73,15 +73,17 @@ export function uninstallChaseAircraftBillboardSceneRotation(viewer: Viewer): vo
 function buildPlaybackPositionProperty(
   playback: PlaybackPoint3D[],
   startJulian: JulianDate,
+  previewAltitudeFt: number,
 ): SampledPositionProperty {
   const position = new SampledPositionProperty();
   position.setInterpolationOptions({
     interpolationDegree: 1,
     interpolationAlgorithm: LinearApproximation,
   });
+  const altM = feetToMeters(previewAltitudeFt);
   for (const p of playback) {
     const t = JulianDate.addSeconds(startJulian, p.tSec, new JulianDate());
-    position.addSample(t, Cartesian3.fromDegrees(p.lon, p.lat, feetToMeters(p.altFt)));
+    position.addSample(t, Cartesian3.fromDegrees(p.lon, p.lat, altM));
   }
   return position;
 }
@@ -144,11 +146,12 @@ export function ensureFlightViewerAircraft(
   viewer: Viewer,
   playback: PlaybackPoint3D[],
   startJulian: JulianDate,
+  previewAltitudeFt: number,
 ): void {
   removeFlightViewerAircraft(viewer);
   if (playback.length === 0) return;
 
-  const position = buildPlaybackPositionProperty(playback, startJulian);
+  const position = buildPlaybackPositionProperty(playback, startJulian, previewAltitudeFt);
   const rotationHalo = new ConstantProperty(0);
   const rotationMain = new ConstantProperty(0);
   chaseBillboardRotationByViewer.set(viewer, {

@@ -5,6 +5,7 @@ import {
   createPlanning3dPopoutState,
   parsePlanning3dPopoutMessage,
 } from '../../pages/planning/components/flight/flightViewer3d/planning3dPopoutSync';
+import { createDefaultPlanning3dViewerUi } from '../../pages/planning/components/flight/flightViewer3d/planning3dViewerUi';
 
 describe('planning3dPopoutSync', () => {
   const sampleWaypoints = [
@@ -13,7 +14,12 @@ describe('planning3dPopoutSync', () => {
   ];
 
   it('round-trips state messages', () => {
-    const payload = createPlanning3dPopoutState(sampleWaypoints, false, 3);
+    const payload = createPlanning3dPopoutState(
+      sampleWaypoints,
+      false,
+      3,
+      createDefaultPlanning3dViewerUi(sampleWaypoints),
+    );
     const parsed = parsePlanning3dPopoutMessage({ type: 'state', payload });
     expect(parsed).toEqual({ type: 'state', payload });
   });
@@ -21,13 +27,23 @@ describe('planning3dPopoutSync', () => {
   it('ignores stale revisions', () => {
     const newer = applyPlanning3dPopoutState(5, {
       type: 'state',
-      payload: createPlanning3dPopoutState(sampleWaypoints, true, 4),
+      payload: createPlanning3dPopoutState(
+        sampleWaypoints,
+        true,
+        4,
+        createDefaultPlanning3dViewerUi(sampleWaypoints),
+      ),
     });
     expect(newer).toBeNull();
 
     const ok = applyPlanning3dPopoutState(2, {
       type: 'state',
-      payload: createPlanning3dPopoutState(sampleWaypoints, true, 3),
+      payload: createPlanning3dPopoutState(
+        sampleWaypoints,
+        true,
+        3,
+        createDefaultPlanning3dViewerUi(sampleWaypoints),
+      ),
     });
     expect(ok?.revision).toBe(3);
     expect(ok?.next.isProUser).toBe(true);

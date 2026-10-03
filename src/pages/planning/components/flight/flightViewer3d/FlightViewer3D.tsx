@@ -1,10 +1,16 @@
 import { Dialog, Transition } from '@headlessui/react';
-import React, { Fragment, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 import { FUKUOKA_VFR_SAMPLE_WAYPOINTS } from './fukuokaVfrSample';
 import { shouldShowGooglePhotorealistic3dProUpsell } from './googlePhotorealistic3dAccess';
-import type { FlightCameraMode, FlightImageryMode, FlightViewer3DProps } from './types';
-import { DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
+import { FlightViewer3DControls } from './flightViewer3dControls';
+import {
+  createDefaultPlanning3dViewerUi,
+  previewAltitudeSliderBounds,
+  type Planning3dViewerUiState,
+} from './planning3dViewerUi';
+import type { FlightViewer3DProps } from './types';
+import { derivePlannedPreviewAltitudeFt } from './types';
 import { useCesiumFlight } from './useCesiumFlight';
 
 export type { FlightViewer3DProps, Waypoint3D } from './types';
@@ -13,15 +19,42 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
   waypoints,
   initialMode = 'gsi',
   isProUser = false,
+  viewerUi: viewerUiProp,
+  onViewerUiChange,
 }) => {
   const [mountEl, setMountEl] = useState<HTMLDivElement | null>(null);
   const resolvedWaypoints = useMemo(
     () => (waypoints.length >= 2 ? waypoints : FUKUOKA_VFR_SAMPLE_WAYPOINTS),
     [waypoints],
   );
-  const [imageryMode, setImageryMode] = useState<FlightImageryMode>(initialMode);
-  const [cameraMode, setCameraMode] = useState<FlightCameraMode>('chase');
-  const [viewControls, setViewControls] = useState(DEFAULT_FLIGHT_VIEW_CONTROLS);
+  const [internalUi, setInternalUi] = useState<Planning3dViewerUiState>(() => ({
+    ...createDefaultPlanning3dViewerUi(resolvedWaypoints),
+    imageryMode: initialMode,
+  }));
+  const isControlled = viewerUiProp !== undefined && onViewerUiChange !== undefined;
+  const viewerUi = isControlled ? viewerUiProp! : internalUi;
+
+  const setViewerUi = useCallback(
+    (next: Planning3dViewerUiState) => {
+      if (isControlled) {
+        onViewerUiChange!(next);
+      } else {
+        setInternalUi(next);
+      }
+    },
+    [isControlled, onViewerUiChange],
+  );
+
+  useEffect(() => {
+    if (isControlled) return;
+    const planned = derivePlannedPreviewAltitudeFt(resolvedWaypoints);
+    setInternalUi((prev) => ({
+      ...prev,
+      viewControls: { ...prev.viewControls, previewAltitudeFt: planned },
+    }));
+  }, [resolvedWaypoints, isControlled]);
+
+  const { imageryMode, cameraMode, viewControls, playbackSpeed } = viewerUi;
   const [proUpsellOpen, setProUpsellOpen] = useState(false);
 
   const { ready, error, playing, progressPct, togglePlay, seekProgress, retryInit } = useCesiumFlight({
@@ -31,14 +64,24 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
     cameraMode,
     isProUser,
     viewControls,
+    playbackSpeed,
   });
 
-  const requestImageryMode = (next: FlightImageryMode) => {
+  const plannedAltFt = useMemo(
+    () => derivePlannedPreviewAltitudeFt(resolvedWaypoints),
+    [resolvedWaypoints],
+  );
+  const { minFt: previewAltitudeMinFt, maxFt: previewAltitudeMaxFt } = useMemo(
+    () => previewAltitudeSliderBounds(plannedAltFt),
+    [plannedAltFt],
+  );
+
+  const requestImageryMode = (next: typeof imageryMode) => {
     if (next === 'google' && shouldShowGooglePhotorealistic3dProUpsell(isProUser)) {
       setProUpsellOpen(true);
       return;
     }
-    setImageryMode(next);
+    setViewerUi({ ...viewerUi, imageryMode: next });
   };
 
   const usingDemo = waypoints.length < 2;
@@ -110,130 +153,21 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
         ) : null}
       </div>
 
-      <div className="flex shrink-0 flex-col gap-2 border-t border-brand-primary/25 bg-brand-surface px-3 py-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            data-testid="flight-viewer-play"
-            onClick={togglePlay}
-            disabled={!ready}
-            className="min-h-[44px] rounded border border-brand-primary/50 px-3 py-1.5 text-xs text-brand-primary hover:bg-brand-primary/10 disabled:opacity-40"
-          >
-            {playing ? '一時停止' : '再生'}
-          </button>
-          <div
-            className="flex rounded border border-brand-primary/40 p-0.5"
-            role="group"
-            aria-label="カメラモード"
-          >
-            <button
-              type="button"
-              data-testid="flight-viewer-camera-chase"
-              onClick={() => setCameraMode('chase')}
-              disabled={!ready}
-              className={`min-h-[40px] rounded px-2.5 text-xs disabled:opacity-40 ${
-                cameraMode === 'chase'
-                  ? 'bg-brand-primary/25 text-brand-primary'
-                  : 'text-gray-300 hover:bg-brand-primary/10'
-              }`}
-            >
-              チェイス
-            </button>
-            <button
-              type="button"
-              data-testid="flight-viewer-camera-cockpit"
-              onClick={() => setCameraMode('cockpit')}
-              disabled={!ready}
-              className={`min-h-[40px] rounded px-2.5 text-xs disabled:opacity-40 ${
-                cameraMode === 'cockpit'
-                  ? 'bg-brand-primary/25 text-brand-primary'
-                  : 'text-gray-300 hover:bg-brand-primary/10'
-              }`}
-            >
-              コックピット
-            </button>
-          </div>
-          <label className="flex min-h-[44px] flex-1 min-w-[140px] items-center gap-2 text-xs text-gray-300">
-            <span className="shrink-0 tabular-nums">{Math.round(progressPct)}%</span>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              step={0.5}
-              value={progressPct}
-              disabled={!ready}
-              onChange={(e) => seekProgress(Number(e.target.value))}
-              className="h-2 flex-1 accent-brand-primary"
-              aria-label="再生位置"
-            />
-          </label>
-        </div>
-        <div className="flex flex-wrap items-end gap-x-4 gap-y-2 text-xs text-gray-300">
-          <label className="flex min-w-[10rem] flex-1 flex-col gap-1">
-            <span>
-              高度オフセット（ft）
-              <span className="ml-1 tabular-nums text-gray-400">{viewControls.altitudeOffsetFt}</span>
-            </span>
-            <span className="text-2xs text-gray-500">プレビュー用カメラのみ（計画高度は変更しません）</span>
-            <input
-              type="range"
-              min={-500}
-              max={2000}
-              step={50}
-              disabled={!ready}
-              value={viewControls.altitudeOffsetFt}
-              onChange={(e) =>
-                setViewControls((c) => ({ ...c, altitudeOffsetFt: Number(e.target.value) }))
-              }
-              className="h-2 accent-brand-primary"
-              data-testid="flight-viewer-alt-offset"
-              aria-label="高度オフセット"
-            />
-          </label>
-          {cameraMode === 'chase' ? (
-            <label className="flex min-w-[8rem] flex-1 flex-col gap-1">
-              <span>
-                距離（m）
-                <span className="ml-1 tabular-nums text-gray-400">{viewControls.chaseDistanceM}</span>
-              </span>
-              <input
-                type="range"
-                min={80}
-                max={3000}
-                step={20}
-                disabled={!ready}
-                value={viewControls.chaseDistanceM}
-                onChange={(e) =>
-                  setViewControls((c) => ({ ...c, chaseDistanceM: Number(e.target.value) }))
-                }
-                className="h-2 accent-brand-primary disabled:opacity-40"
-                data-testid="flight-viewer-chase-distance"
-                aria-label="チェイス距離"
-              />
-            </label>
-          ) : null}
-          <label className="flex min-w-[8rem] flex-1 flex-col gap-1">
-            <span>
-              {cameraMode === 'cockpit' ? '前方俯角（°）' : '俯角（°）'}
-              <span className="ml-1 tabular-nums text-gray-400">{viewControls.chasePitchDeg}</span>
-            </span>
-            <input
-              type="range"
-              min={-75}
-              max={-5}
-              step={1}
-              disabled={!ready}
-              value={viewControls.chasePitchDeg}
-              onChange={(e) =>
-                setViewControls((c) => ({ ...c, chasePitchDeg: Number(e.target.value) }))
-              }
-              className="h-2 accent-brand-primary"
-              data-testid="flight-viewer-chase-pitch"
-              aria-label="俯角"
-            />
-          </label>
-        </div>
-      </div>
+      <FlightViewer3DControls
+        ready={ready}
+        playing={playing}
+        progressPct={progressPct}
+        cameraMode={cameraMode}
+        viewControls={viewControls}
+        playbackSpeed={playbackSpeed}
+        previewAltitudeMinFt={previewAltitudeMinFt}
+        previewAltitudeMaxFt={previewAltitudeMaxFt}
+        onTogglePlay={togglePlay}
+        onSeekProgress={seekProgress}
+        onCameraModeChange={(mode) => setViewerUi({ ...viewerUi, cameraMode: mode })}
+        onViewControlsChange={(next) => setViewerUi({ ...viewerUi, viewControls: next })}
+        onPlaybackSpeedChange={(speed) => setViewerUi({ ...viewerUi, playbackSpeed: speed })}
+      />
 
       <Transition appear show={proUpsellOpen} as={Fragment}>
         <Dialog as="div" className="relative z-[400]" onClose={() => setProUpsellOpen(false)}>
