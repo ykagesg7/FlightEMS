@@ -3,6 +3,7 @@ import { FlightPlan, RouteSegment } from '../../../../types/index';
 import { formatBearing } from '../../../../utils/format';
 import type { PlanningPanelLayout } from '../../planningPanelLayout';
 import { RouteProfilePanel } from '../profile/RouteProfilePanel';
+import { resolveNavPointLabel } from '../../utils/waypointDisplayName';
 
 interface FlightSummaryProps {
   layout?: PlanningPanelLayout;
@@ -139,8 +140,8 @@ export const FlightSummary: React.FC<FlightSummaryProps> = ({
             <tbody className="divide-y border-whiskyPapa-yellow/20">
               {segments.map((segment: RouteSegment, index: number) => (
                 <tr key={`${segment.from}-${segment.to}-${index}`}>
-                  <td className="px-2 py-1 text-white">{segment.from}</td>
-                  <td className="px-2 py-1 text-white">{segment.to}</td>
+                  <td className="px-2 py-1 text-white">{resolveNavPointLabel(flightPlan, segment.from)}</td>
+                  <td className="px-2 py-1 text-white">{resolveNavPointLabel(flightPlan, segment.to)}</td>
                   <td className="px-2 py-1 text-gray-300">{segment.phase ?? 'cruise'}</td>
                   <td className="px-2 py-1 text-white text-right">
                     <input

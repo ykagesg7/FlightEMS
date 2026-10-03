@@ -10,15 +10,27 @@ import { calculateDistance, decimalToDMS } from '../../../../utils';
 import { calculateMagneticBearing } from '../../../../utils/bearing';
 import { asSelectStyles } from '../../../../utils/reactSelectStyles';
 import { buildWaypointFromNavaid } from '../../utils/buildWaypointFromNavaid';
+import type { UserSavedWaypoint, UserSavedWaypointInput } from '../../userWaypoints/types';
+import {
+  isSavedWaypointOptionValue,
+  parseSavedWaypointIdFromOptionValue,
+  savedWaypointOptionValue,
+} from '../../userWaypoints/mergeWaypointSearchOptions';
 import WaypointForm, { WaypointCoordinateFormHandle } from './WaypointForm';
 
-type AddMode = 'navaid' | 'waypoint' | 'coordinates';
+type AddMode = 'navaid' | 'waypoint' | 'coordinates' | 'saved';
 
 interface WaypointAddPanelProps {
   flightPlan: FlightPlan;
   setFlightPlan: React.Dispatch<React.SetStateAction<FlightPlan>>;
   navaidOptions: NavaidOption[];
   waypointOptions: WaypointOption[];
+  userSavedWaypoints?: UserSavedWaypoint[];
+  isAuthenticated?: boolean;
+  userSavedError?: string | null;
+  onSaveUserPoint?: (input: UserSavedWaypointInput) => Promise<{ error: string | null }>;
+  onDeleteUserSaved?: (id: string) => Promise<{ ok: boolean; error: string | null }>;
+  onRenameUserSaved?: (id: string, name: string) => Promise<{ ok: boolean; error: string | null }>;
 }
 
 const tabBtn = (active: boolean) =>
@@ -34,8 +46,16 @@ const WaypointAddPanel: React.FC<WaypointAddPanelProps> = ({
   setFlightPlan,
   navaidOptions,
   waypointOptions,
+  userSavedWaypoints = [],
+  isAuthenticated = false,
+  userSavedError,
+  onSaveUserPoint,
+  onDeleteUserSaved,
+  onRenameUserSaved,
 }) => {
   const [mode, setMode] = useState<AddMode>('navaid');
+  const [coordDisplayName, setCoordDisplayName] = useState('');
+  const [saveAsUserPoint, setSaveAsUserPoint] = useState(false);
   const [selectedNavaid, setSelectedNavaid] = useState<NavaidOption | null>(null);
   const [navaidBearing, setNavaidBearing] = useState('');
   const [navaidDistance, setNavaidDistance] = useState('');
@@ -70,11 +90,14 @@ const WaypointAddPanel: React.FC<WaypointAddPanelProps> = ({
         setPanelError('Waypoint を選択してください');
         return;
       }
+      const savedId = isSavedWaypointOptionValue(selectedWaypoint.value)
+        ? parseSavedWaypointIdFromOptionValue(selectedWaypoint.value)
+        : null;
       const waypoint: Waypoint = {
-        id: selectedWaypoint.value,
+        id: savedId ? savedWaypointOptionValue(savedId) : selectedWaypoint.value,
         name: selectedWaypoint.name,
-        type: 'waypoint',
-        sourceId: selectedWaypoint.value,
+        type: savedId ? 'custom' : 'waypoint',
+        sourceId: savedId ?? selectedWaypoint.value,
         coordinates: [selectedWaypoint.longitude, selectedWaypoint.latitude],
         latitude: selectedWaypoint.latitude,
         longitude: selectedWaypoint.longitude,
@@ -92,6 +115,17 @@ const WaypointAddPanel: React.FC<WaypointAddPanelProps> = ({
     const built = coordFormRef.current?.tryBuildWaypoint();
     if (built) {
       handleAddWaypoint(built);
+      if (saveAsUserPoint && onSaveUserPoint) {
+        void onSaveUserPoint({
+          name: built.name,
+          latitude: built.latitude,
+          longitude: built.longitude,
+        }).then((res) => {
+          if (res.error) setPanelError(res.error);
+        });
+      }
+      setCoordDisplayName('');
+      setSaveAsUserPoint(false);
     }
   };
 
@@ -196,6 +230,18 @@ const WaypointAddPanel: React.FC<WaypointAddPanelProps> = ({
         >
           座標
         </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={mode === 'saved'}
+          className={tabBtn(mode === 'saved')}
+          onClick={() => {
+            setMode('saved');
+            setPanelError('');
+          }}
+        >
+          マイポイント
+        </button>
       </div>
 
       {mode === 'navaid' && (
@@ -288,11 +334,89 @@ const WaypointAddPanel: React.FC<WaypointAddPanelProps> = ({
           flightPlan={flightPlan}
           embedded
           hideSubmitButton
+          displayName={coordDisplayName}
+          onDisplayNameChange={setCoordDisplayName}
+          saveAsUserPoint={saveAsUserPoint}
+          onSaveAsUserPointChange={setSaveAsUserPoint}
+          showUserPointSaveOption={isAuthenticated}
         />
+      )}
+
+      {mode === 'saved' && (
+        <div className="space-y-2">
+          {!isAuthenticated ? (
+            <p className="text-sm text-gray-400">ログインするとマイポイントを保存・呼び出しできます。</p>
+          ) : null}
+          {userSavedError ? <p className="text-xs text-amber-300">{userSavedError}</p> : null}
+          {userSavedWaypoints.length === 0 ? (
+            <p className="text-sm text-gray-500">保存済みポイントはありません。座標タブで追加し「マイポイントとして保存」をオンにしてください。</p>
+          ) : (
+            <ul className="max-h-48 space-y-2 overflow-y-auto">
+              {userSavedWaypoints.map((row) => (
+                <li
+                  key={row.id}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded border border-gray-600 bg-gray-800/80 px-2 py-2 text-sm"
+                >
+                  <div className="min-w-0">
+                    <div className="font-medium text-gray-100">{row.name}</div>
+                    <div className="text-xs text-gray-400">
+                      {row.latitude.toFixed(4)}, {row.longitude.toFixed(4)}
+                      {row.ident ? ` · ${row.ident}` : ''}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 gap-1">
+                    <button
+                      type="button"
+                      className="min-h-[36px] rounded border border-whiskyPapa-yellow/40 px-2 text-xs text-whiskyPapa-yellow"
+                      onClick={() => {
+                        handleAddWaypoint({
+                          id: savedWaypointOptionValue(row.id),
+                          name: row.name,
+                          type: 'custom',
+                          sourceId: row.id,
+                          coordinates: [row.longitude, row.latitude],
+                          latitude: row.latitude,
+                          longitude: row.longitude,
+                          nameEditable: true,
+                        });
+                      }}
+                    >
+                      追加
+                    </button>
+                    <button
+                      type="button"
+                      className="min-h-[36px] rounded border border-gray-500 px-2 text-xs text-gray-300"
+                      onClick={() => {
+                        const next = window.prompt('表示名を変更', row.name);
+                        if (next?.trim() && onRenameUserSaved) {
+                          void onRenameUserSaved(row.id, next.trim());
+                        }
+                      }}
+                    >
+                      名前
+                    </button>
+                    <button
+                      type="button"
+                      className="min-h-[36px] rounded border border-red-500/50 px-2 text-xs text-red-300"
+                      onClick={() => {
+                        if (onDeleteUserSaved && window.confirm(`「${row.name}」を削除しますか？`)) {
+                          void onDeleteUserSaved(row.id);
+                        }
+                      }}
+                    >
+                      削除
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
 
       {panelError ? <p className="mt-2 text-sm text-red-400">{panelError}</p> : null}
 
+      {mode !== 'saved' ? (
       <button
         type="button"
         onClick={handlePanelAdd}
@@ -300,6 +424,7 @@ const WaypointAddPanel: React.FC<WaypointAddPanelProps> = ({
       >
         ルートに追加
       </button>
+      ) : null}
     </div>
   );
 };

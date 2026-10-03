@@ -39,6 +39,8 @@ import {
 import { flightPlanToWaypoint3D } from './flightViewer3d/flightPlanToWaypoint3D';
 import { FlightViewer3DSuspense } from './flightViewer3d/FlightViewer3DSuspense';
 import { preloadFlightViewer3DModule } from './flightViewer3d/flightViewer3dLazy';
+import { mergeWaypointSearchOptions } from '../../userWaypoints/mergeWaypointSearchOptions';
+import { useUserSavedWaypoints } from '../../userWaypoints/useUserSavedWaypoints';
 
 interface PlanningTabProps {
   layout?: PlanningPanelLayout;
@@ -111,7 +113,12 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   };
   const [airportOptions, setAirportOptions] = React.useState<AirportGroupOption[]>([]);
   const [navaidOptions, setNavaidOptions] = React.useState<NavaidOption[]>([]);
-  const [waypointOptions, setWaypointOptions] = React.useState<WaypointOption[]>([]);
+  const [catalogWaypointOptions, setCatalogWaypointOptions] = React.useState<WaypointOption[]>([]);
+  const userSavedWaypoints = useUserSavedWaypoints();
+  const waypointOptions = useMemo(
+    () => mergeWaypointSearchOptions(catalogWaypointOptions, userSavedWaypoints.rows),
+    [catalogWaypointOptions, userSavedWaypoints.rows],
+  );
   const [airspaceDatasets, setAirspaceDatasets] = React.useState<Array<{ id: string; data: AirspaceDataset | null }>>([
     { id: 'ACC_Sector_High', data: null },
     { id: 'ACC_Sector_Low', data: null },
@@ -278,7 +285,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
           latitude: feature.geometry.coordinates[1],
           longitude: feature.geometry.coordinates[0],
         }));
-        setWaypointOptions(waypointList);
+        setCatalogWaypointOptions(waypointList);
       } catch (error) {
         console.error("Waypointsデータの読み込みに失敗しました", error);
       }
@@ -697,6 +704,15 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
               airportOptions={airportOptions}
               navaidOptions={navaidOptions}
               waypointOptions={waypointOptions}
+              userSavedWaypoints={userSavedWaypoints.rows}
+              isAuthenticated={userSavedWaypoints.isAuthenticated}
+              userSavedError={userSavedWaypoints.lastError}
+              onSaveUserPoint={async (input) => {
+                const result = await userSavedWaypoints.savePoint(input);
+                return { error: result.error };
+              }}
+              onDeleteUserSaved={userSavedWaypoints.removePoint}
+              onRenameUserSaved={userSavedWaypoints.renamePoint}
             />
           </div>
         </PlanningCard>

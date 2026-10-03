@@ -6,6 +6,7 @@ import { asSelectStyles } from '../../../../utils/reactSelectStyles';
 import WaypointAddPanel from './WaypointAddPanel';
 import WaypointList from './WaypointList';
 import type { PlanningPanelLayout } from '../../planningPanelLayout';
+import type { UserSavedWaypoint, UserSavedWaypointInput } from '../../userWaypoints/types';
 
 /**
  * Route Planning コンポーネント
@@ -18,6 +19,12 @@ interface RoutePlanningProps {
   airportOptions: AirportGroupOption[];
   navaidOptions: NavaidOption[];
   waypointOptions: WaypointOption[];
+  userSavedWaypoints?: UserSavedWaypoint[];
+  isAuthenticated?: boolean;
+  userSavedError?: string | null;
+  onSaveUserPoint?: (input: UserSavedWaypointInput) => Promise<{ error: string | null }>;
+  onDeleteUserSaved?: (id: string) => Promise<{ ok: boolean; error: string | null }>;
+  onRenameUserSaved?: (id: string, name: string) => Promise<{ ok: boolean; error: string | null }>;
 }
 
 const RoutePlanning: React.FC<RoutePlanningProps> = ({
@@ -27,6 +34,12 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   airportOptions,
   navaidOptions,
   waypointOptions,
+  userSavedWaypoints,
+  isAuthenticated,
+  userSavedError,
+  onSaveUserPoint,
+  onDeleteUserSaved,
+  onRenameUserSaved,
 }) => {
   const isSplitLayout = layout === 'split';
   return (
@@ -93,6 +106,12 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
             setFlightPlan={setFlightPlan}
             navaidOptions={navaidOptions}
             waypointOptions={waypointOptions}
+            userSavedWaypoints={userSavedWaypoints}
+            isAuthenticated={isAuthenticated}
+            userSavedError={userSavedError}
+            onSaveUserPoint={onSaveUserPoint}
+            onDeleteUserSaved={onDeleteUserSaved}
+            onRenameUserSaved={onRenameUserSaved}
           />
         </div>
 

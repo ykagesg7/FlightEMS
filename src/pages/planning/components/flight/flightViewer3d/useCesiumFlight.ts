@@ -14,6 +14,7 @@ import {
   LabelStyle,
   Math as CesiumMath,
   Matrix4,
+  NearFarScalar,
   PolylineDashMaterialProperty,
   UrlTemplateImageryProvider,
   Viewer,
@@ -37,8 +38,10 @@ import type {
   Waypoint3D,
 } from './types';
 import { DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
+import { ensureFlightViewerAircraft, removeFlightViewerAircraft } from './flightViewerAircraft';
 
 const VIEWER_BOOT_TIMEOUT_MS = 25_000;
+const LABEL_DEPTH_TEST_DISTANCE = Number.POSITIVE_INFINITY;
 
 const ROUTE_ENTITY_PREFIX = 'flight-viewer-route-';
 const ROUTE_POLYLINE_ID = 'flight-viewer-route-line';
@@ -107,6 +110,7 @@ function unlockCamera(viewer: Viewer) {
 }
 
 function removeRouteEntities(viewer: Viewer) {
+  removeFlightViewerAircraft(viewer);
   const toRemove = viewer.entities.values.filter((e) => {
     const id = e.id;
     return (
@@ -143,19 +147,26 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
       position: atAlt,
       label: {
         text: w.name,
-        font: '13px sans-serif',
+        font: 'bold 14px sans-serif',
         fillColor: Color.WHITE,
         outlineColor: Color.BLACK,
-        outlineWidth: 2,
+        outlineWidth: 3,
         style: LabelStyle.FILL_AND_OUTLINE,
         verticalOrigin: 1,
-        pixelOffset: new Cartesian2(0, -18),
+        pixelOffset: new Cartesian2(0, -22),
+        disableDepthTestDistance: LABEL_DEPTH_TEST_DISTANCE,
+        scaleByDistance: new NearFarScalar(500, 1.35, 8_000_000, 0.65),
+        showBackground: true,
+        backgroundColor: Color.fromCssColorString('#0d1b2a').withAlpha(0.72),
+        backgroundPadding: new Cartesian2(8, 5),
       },
       point: {
-        pixelSize: 10,
+        pixelSize: 14,
         color: Color.fromCssColorString('#39FF14'),
         outlineColor: Color.BLACK,
-        outlineWidth: 1,
+        outlineWidth: 2,
+        disableDepthTestDistance: LABEL_DEPTH_TEST_DISTANCE,
+        scaleByDistance: new NearFarScalar(500, 1.2, 8_000_000, 0.5),
       },
     });
     viewer.entities.add({
@@ -319,6 +330,7 @@ export function useCesiumFlight({
     wasAnimatingRef.current = false;
     setProgressPct(0);
     setPlaying(false);
+    ensureFlightViewerAircraft(viewer, points, start);
     if (wps.length >= 2) {
       fitCameraToRoute(viewer, wps);
     }

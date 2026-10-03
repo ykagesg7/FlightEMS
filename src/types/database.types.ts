@@ -216,6 +216,42 @@ export type Database = {
           },
         ]
       }
+      user_saved_waypoints: {
+        Row: {
+          created_at: string
+          id: string
+          ident: string | null
+          latitude: number
+          longitude: number
+          memo: string | null
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ident?: string | null
+          latitude: number
+          longitude: number
+          memo?: string | null
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ident?: string | null
+          latitude?: number
+          longitude?: number
+          memo?: string | null
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       in_app_notifications: {
         Row: {
           body: string | null
