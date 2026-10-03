@@ -75,16 +75,31 @@ async function setProgress(page: import('@playwright/test').Page, pct: number) {
 }
 
 async function waitViewerReady(page: import('@playwright/test').Page) {
-  await page.waitForSelector('[data-testid="flight-viewer-3d"]', { timeout: 180_000 });
-  await page.waitForFunction(
-    () => {
-      const err = document.querySelector('.cesium-widget-errorPanel');
-      if (err) return false;
-      const btn = document.querySelector('[data-testid="flight-viewer-play"]');
-      return btn instanceof HTMLButtonElement && !btn.disabled;
-    },
-    { timeout: 180_000 },
-  );
+  const deadline = Date.now() + 15 * 60_000;
+  while (Date.now() < deadline) {
+    const state = await page.evaluate(() => ({
+      ready: Boolean(window.__flightViewer3dReady),
+      err: window.__flightViewer3dError ?? null,
+      playEnabled: (() => {
+        const btn = document.querySelector('[data-testid="flight-viewer-play"]');
+        return btn instanceof HTMLButtonElement && !btn.disabled;
+      })(),
+      cesiumErr: document.querySelector('.cesium-widget-errorPanel')?.textContent?.trim() ?? null,
+    }));
+    if (state.err) throw new Error(`FlightViewer3D: ${state.err}`);
+    if (state.cesiumErr) throw new Error(`Cesium: ${state.cesiumErr}`);
+    if (state.ready || state.playEnabled) return;
+    await page.waitForTimeout(1500);
+  }
+  throw new Error('3D viewer did not become ready within 15 minutes');
+}
+
+async function scrubPlaybackNoCrash(page: import('@playwright/test').Page, label: string) {
+  for (const pct of [0, 25, 50, 75, 100]) {
+    await setProgress(page, pct);
+    const err = await page.evaluate(() => window.__flightViewer3dError ?? null);
+    if (err) throw new Error(`${label} @${pct}%: ${err}`);
+  }
 }
 
 async function shot(page: import('@playwright/test').Page, name: string) {
@@ -106,7 +121,7 @@ async function main() {
       ? ['--enable-webgl']
       : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-webgl'],
   });
-  const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
+  const page = await browser.newPage({ viewport: { width: 1200, height: 900 } });
   page.setDefaultTimeout(180_000);
   page.setDefaultNavigationTimeout(180_000);
 
@@ -129,10 +144,12 @@ async function main() {
   });
   await details3d.locator('summary').click({ timeout: 60_000 });
   await waitViewerReady(page);
+  console.log('viewer ready');
   await page.getByTestId('flight-viewer-mode-gsi').click();
   await page.waitForTimeout(12_000);
 
   await page.getByTestId('flight-viewer-camera-chase').click();
+  await scrubPlaybackNoCrash(page, 'chase-initial');
   await setRange(page, 'flight-viewer-chase-distance', 650);
   await setRange(page, 'flight-viewer-chase-pitch', -18);
   for (const [pct, name] of [[15, 'chase-650-15pct'], [50, 'chase-650-50pct']] as const) {
@@ -144,6 +161,7 @@ async function main() {
   await setRange(page, 'flight-viewer-chase-pitch', -75);
   await setProgress(page, 50);
   await shot(page, 'chase-3000-75-50pct');
+  await scrubPlaybackNoCrash(page, 'chase-3000');
 
   await page.getByTestId('flight-viewer-camera-cockpit').click();
   await setRange(page, 'flight-viewer-chase-pitch', -18);
@@ -156,6 +174,7 @@ async function main() {
     await setProgress(page, pct);
     await shot(page, name);
   }
+  await scrubPlaybackNoCrash(page, 'cockpit');
 
   await browser.close();
   console.log('Screenshots written to', OUT);

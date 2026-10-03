@@ -4,11 +4,11 @@ import {
   JulianDate,
   Math as CesiumMath,
   Matrix4,
-  SceneTransforms,
   Transforms,
   type SampledPositionProperty,
   type Viewer,
 } from 'cesium';
+import { tryWorldToWindowCoordinates } from './safeSceneWindowCoordinates';
 
 const scratchEnu = new Matrix4();
 const scratchAhead = new Cartesian3();
@@ -57,12 +57,8 @@ export function computeChaseScreenBillboardRotationRad(
   if (!sceneReadyForScreenBillboard(viewer)) return null;
   const pos = position.getValue(when);
   if (!pos || !Number.isFinite(pos.x)) return null;
-  const wAc = SceneTransforms.worldToWindowCoordinates(viewer.scene, pos, scratchWin0);
-  const wCam = SceneTransforms.worldToWindowCoordinates(
-    viewer.scene,
-    viewer.camera.position,
-    scratchWin1,
-  );
+  const wAc = tryWorldToWindowCoordinates(viewer.scene, pos, scratchWin0);
+  const wCam = tryWorldToWindowCoordinates(viewer.scene, viewer.camera.positionWC, scratchWin1);
   if (!isWindowCoordValid(wAc) || !isWindowCoordValid(wCam)) return null;
   const ac = wAc as Cartesian2;
   const cam = wCam as Cartesian2;

@@ -44,10 +44,16 @@ import { setChaseCameraFollowingTarget, setCockpitCameraView } from './flightVie
 import { dedupeConsecutiveGroundPositions } from './flightViewerRouteGraphics';
 import {
   ensureFlightViewerAircraft,
+  installChaseAircraftBillboardSceneRotation,
   removeFlightViewerAircraft,
   setFlightViewerAircraftVisible,
-  updateChaseAircraftBillboardRotation,
+  uninstallChaseAircraftBillboardSceneRotation,
 } from './flightViewerAircraft';
+import {
+  clearFlightViewer3dDebugFlags,
+  setFlightViewer3dErrorFlag,
+  setFlightViewer3dReadyFlag,
+} from './flightViewer3dDebug';
 
 const VIEWER_BOOT_TIMEOUT_MS = 25_000;
 const LABEL_DEPTH_TEST_DISTANCE = Number.POSITIVE_INFINITY;
@@ -335,7 +341,6 @@ function updateFollowCamera(
     controls.chaseDistanceM,
     controls.chasePitchDeg,
   );
-  updateChaseAircraftBillboardRotation(viewer);
 }
 
 function createGsiTerrainProvider(): TerrainProvider {
@@ -449,15 +454,13 @@ export function useCesiumFlight({
     if (wps.length >= 2) {
       fitCameraToRoute(viewer, wps);
     }
-    requestAnimationFrame(() => {
-      if (!viewer.isDestroyed()) updateChaseAircraftBillboardRotation(viewer);
-    });
   }, []);
 
   useEffect(() => {
     if (!mountEl) return;
     setError(null);
     setReady(false);
+    clearFlightViewer3dDebugFlags();
     const el = mountEl;
     let cancelled = false;
 
@@ -522,8 +525,12 @@ export function useCesiumFlight({
         setPlaying(animating);
       };
       viewer.clock.onTick.addEventListener(onTick);
+      installChaseAircraftBillboardSceneRotation(viewer, () => cameraModeRef.current === 'chase');
 
-      if (!cancelled) setReady(true);
+      if (!cancelled) {
+        setReady(true);
+        setFlightViewer3dReadyFlag(true);
+      }
     };
 
     void withTimeout(
@@ -533,13 +540,17 @@ export function useCesiumFlight({
     ).catch((e: unknown) => {
       if (cancelled) return;
       console.error(e);
-      setError(e instanceof Error ? e.message : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg);
+      setFlightViewer3dErrorFlag(msg);
     });
 
     return () => {
       cancelled = true;
+      clearFlightViewer3dDebugFlags();
       const v = viewerRef.current;
       if (v && !v.isDestroyed()) {
+        uninstallChaseAircraftBillboardSceneRotation(v);
         v.destroy();
       }
       viewerRef.current = null;

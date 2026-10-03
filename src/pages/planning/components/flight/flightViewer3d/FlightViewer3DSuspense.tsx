@@ -6,6 +6,7 @@ import {
   flightViewer3DModulePromise,
   preloadFlightViewer3DModule,
 } from './flightViewer3dLazy';
+import { FlightViewer3DErrorBoundary } from './FlightViewer3DErrorBoundary';
 
 type LoadPhase = 'pending' | 'ready' | 'error';
 
@@ -80,14 +81,16 @@ export function FlightViewer3DSuspense(props: FlightViewer3DProps) {
   }
 
   return (
-    <Suspense
-      fallback={
-        <div className="flex h-48 items-center justify-center text-sm text-gray-400" role="status">
-          3D プレビューを読み込み中…
-        </div>
-      }
-    >
-      <LazyFlightViewer3D key={attempt} {...props} />
-    </Suspense>
+    <FlightViewer3DErrorBoundary onReset={() => setAttempt((n) => n + 1)}>
+      <Suspense
+        fallback={
+          <div className="flex h-48 items-center justify-center text-sm text-gray-400" role="status">
+            3D プレビューを読み込み中…
+          </div>
+        }
+      >
+        <LazyFlightViewer3D key={attempt} {...props} />
+      </Suspense>
+    </FlightViewer3DErrorBoundary>
   );
 }

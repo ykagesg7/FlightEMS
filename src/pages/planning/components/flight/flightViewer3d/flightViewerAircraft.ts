@@ -29,6 +29,47 @@ type ChaseBillboardRotationState = {
 
 const chaseBillboardRotationByViewer = new WeakMap<Viewer, ChaseBillboardRotationState>();
 
+type SceneRotationListener = {
+  remove: () => void;
+};
+
+const chaseBillboardSceneListenerByViewer = new WeakMap<Viewer, SceneRotationListener>();
+
+/**
+ * ビルボード回転は scene.postRender のみ（React / rAF / clock.onTick からは呼ばない）。
+ */
+export function installChaseAircraftBillboardSceneRotation(
+  viewer: Viewer,
+  isChaseMode: () => boolean,
+): void {
+  uninstallChaseAircraftBillboardSceneRotation(viewer);
+  let renderedFrames = 0;
+  const scene = viewer.scene;
+  const onPostRender = () => {
+    if (viewer.isDestroyed()) return;
+    renderedFrames += 1;
+    if (renderedFrames < 1) return;
+    if (!isChaseMode()) return;
+    updateChaseAircraftBillboardRotation(viewer);
+  };
+  scene.postRender.addEventListener(onPostRender);
+  chaseBillboardSceneListenerByViewer.set(viewer, {
+    remove: () => {
+      if (!viewer.isDestroyed()) {
+        scene.postRender.removeEventListener(onPostRender);
+      }
+    },
+  });
+}
+
+export function uninstallChaseAircraftBillboardSceneRotation(viewer: Viewer): void {
+  const listener = chaseBillboardSceneListenerByViewer.get(viewer);
+  if (listener) {
+    listener.remove();
+    chaseBillboardSceneListenerByViewer.delete(viewer);
+  }
+}
+
 function buildPlaybackPositionProperty(
   playback: PlaybackPoint3D[],
   startJulian: JulianDate,
