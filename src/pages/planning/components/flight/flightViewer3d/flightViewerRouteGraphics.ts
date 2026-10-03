@@ -12,3 +12,13 @@ export function dedupeConsecutiveGroundPositions(waypoints: Waypoint3D[]): Carte
   }
   return out;
 }
+
+export function dedupeConsecutiveCartesian3(positions: Cartesian3[]): Cartesian3[] {
+  const out: Cartesian3[] = [];
+  for (const p of positions) {
+    const last = out[out.length - 1];
+    if (last && Cartesian3.equalsEpsilon(last, p, 0.5)) continue;
+    out.push(p);
+  }
+  return out;
+}

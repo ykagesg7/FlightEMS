@@ -178,12 +178,12 @@ async function main() {
   await scrubPlaybackNoCrash(page, 'chase-3000');
 
   await page.getByTestId('flight-viewer-camera-cockpit').click();
-  await setRange(page, 'flight-viewer-chase-pitch', -18);
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(10_000);
   for (const [pct, name] of [
     [15, 'cockpit-15pct'],
     [45, 'cockpit-45pct'],
     [80, 'cockpit-80pct'],
+    [100, 'cockpit-100pct'],
   ] as const) {
     await setProgress(page, pct);
     await shot(page, name);

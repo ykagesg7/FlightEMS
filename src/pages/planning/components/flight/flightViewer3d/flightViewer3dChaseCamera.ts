@@ -8,7 +8,12 @@ import {
   type Viewer,
 } from 'cesium';
 import { AIRCRAFT_YAW_OFFSET_DEG } from './flightViewerAircraftConstants';
-import { chaseCameraOffsetEnuMeters } from './flightViewer3dMath';
+import {
+  COCKPIT_EYE_OFFSET_FT,
+  COCKPIT_LOOK_PITCH_DEG,
+  COCKPIT_MIN_TERRAIN_CLEARANCE_M,
+} from './types';
+import { chaseCameraOffsetEnuMeters, feetToMeters } from './flightViewer3dMath';
 
 const scratchSubtract = new Cartesian3();
 const scratchDirection = new Cartesian3();
@@ -55,22 +60,38 @@ export function cockpitLookDirectionEnu(
   };
 }
 
+function cockpitEyeHeightMeters(
+  viewer: Viewer,
+  lon: number,
+  lat: number,
+  altMeters: number,
+): number {
+  const eyeM = altMeters + feetToMeters(COCKPIT_EYE_OFFSET_FT);
+  const carto = Cartographic.fromDegrees(lon, lat);
+  const terrainH = viewer.scene.globe.getHeight(carto);
+  if (terrainH !== undefined && Number.isFinite(terrainH)) {
+    return Math.max(eyeM, terrainH + COCKPIT_MIN_TERRAIN_CLEARANCE_M);
+  }
+  return eyeM;
+}
+
 export function setCockpitCameraView(
   viewer: Viewer,
   lon: number,
   lat: number,
   altMeters: number,
   trackHeadingDeg: number,
-  chasePitchDeg: number,
 ): void {
-  const destination = Cartesian3.fromDegrees(lon, lat, altMeters);
-  const depressionDeg = Math.min(89, Math.max(1, Math.abs(chasePitchDeg)));
+  const eyeAlt = cockpitEyeHeightMeters(viewer, lon, lat, altMeters);
+  const destination = Cartesian3.fromDegrees(lon, lat, eyeAlt);
+  const pitchDeg = Math.min(-1, Math.max(-12, COCKPIT_LOOK_PITCH_DEG));
+  const headingDeg = Number.isFinite(trackHeadingDeg) ? trackHeadingDeg : 0;
   viewer.camera.lookAtTransform(Matrix4.IDENTITY);
   viewer.camera.setView({
     destination,
     orientation: {
-      heading: CesiumMath.toRadians(trackHeadingDeg + AIRCRAFT_YAW_OFFSET_DEG),
-      pitch: CesiumMath.toRadians(-depressionDeg),
+      heading: CesiumMath.toRadians(headingDeg + AIRCRAFT_YAW_OFFSET_DEG),
+      pitch: CesiumMath.toRadians(pitchDeg),
       roll: 0,
     },
   });

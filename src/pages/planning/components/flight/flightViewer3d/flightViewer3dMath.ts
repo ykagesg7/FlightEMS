@@ -72,6 +72,7 @@ export function segmentHeadingDeg(
   lat2: number,
   lon2: number,
 ): number {
+  if (haversineNm(lat1, lon1, lat2, lon2) < 0.000_5) return 0;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const lat1r = (lat1 * Math.PI) / 180;
   const lat2r = (lat2 * Math.PI) / 180;
@@ -170,11 +171,16 @@ export function interpolatePlaybackAtTime(
   const last = points[points.length - 1]!;
   if (tSec >= last.tSec) {
     const prev = points[points.length - 2] ?? last;
+    const prev2 = points[points.length - 3];
+    let headingDeg = segmentHeadingDeg(prev.lat, prev.lon, last.lat, last.lon);
+    if ((!Number.isFinite(headingDeg) || headingDeg === 0) && prev2) {
+      headingDeg = segmentHeadingDeg(prev2.lat, prev2.lon, prev.lat, prev.lon);
+    }
     return {
       lon: last.lon,
       lat: last.lat,
       altFt: last.altFt,
-      headingDeg: segmentHeadingDeg(prev.lat, prev.lon, last.lat, last.lon),
+      headingDeg: Number.isFinite(headingDeg) ? headingDeg : 0,
       fraction,
     };
   }

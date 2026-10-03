@@ -6,10 +6,8 @@ import {
   ClockRange,
   Color,
   ColorMaterialProperty,
-  ConstantProperty,
   EllipsoidTerrainProvider,
   GoogleMaps,
-  HeightReference,
   TerrainProvider,
   JulianDate,
   LabelStyle,
@@ -41,7 +39,9 @@ import type {
 } from './types';
 import { COCKPIT_HEADING_BLEND_SEC, DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
 import { setChaseCameraFollowingTarget, setCockpitCameraView } from './flightViewer3dChaseCamera';
+import { resampleCockpitGroundGraphics } from './flightViewerGroundRoute';
 import { dedupeConsecutiveGroundPositions } from './flightViewerRouteGraphics';
+import { updateCockpitWaypointLabelVisibility } from './flightViewerCockpitLayers';
 import {
   ensureFlightViewerAircraft,
   installChaseAircraftBillboardSceneRotation,
@@ -149,21 +149,11 @@ function terrainProviderSupportsGroundClamp(viewer: Viewer): boolean {
   return !(viewer.terrainProvider instanceof EllipsoidTerrainProvider);
 }
 
-function enableGroundRouteTerrainClamp(viewer: Viewer): void {
-  if (!terrainProviderSupportsGroundClamp(viewer)) return;
-  const groundLine = viewer.entities.getById(ROUTE_GROUND_POLYLINE_ID);
-  if (groundLine?.polyline) {
-    groundLine.polyline.clampToGround = new ConstantProperty(true);
-  }
-  for (const entity of viewer.entities.values) {
-    const id = entity.id;
-    if (typeof id !== 'string' || !id.includes('wp-ground-')) continue;
-    if (entity.label) {
-      entity.label.heightReference = new ConstantProperty(HeightReference.CLAMP_TO_GROUND);
-    }
-    if (entity.point) {
-      entity.point.heightReference = new ConstantProperty(HeightReference.CLAMP_TO_GROUND);
-    }
+function scheduleCockpitGroundResample(viewer: Viewer, waypoints: Waypoint3D[]): void {
+  if (terrainProviderSupportsGroundClamp(viewer)) {
+    void resampleCockpitGroundGraphics(viewer, waypoints).catch((e) => {
+      console.error('cockpit ground resample failed', e);
+    });
   }
 }
 
@@ -209,13 +199,15 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
       },
     });
     if (groundRoutePositions.length >= 2) {
+      const magentaSolid = Color.fromCssColorString('#FF00FF').withAlpha(0.95);
       viewer.entities.add({
         id: ROUTE_GROUND_POLYLINE_ID,
         show: false,
         polyline: {
           positions: groundRoutePositions,
-          width: 5,
+          width: 8,
           material: routeMagenta,
+          depthFailMaterial: new ColorMaterialProperty(magentaSolid),
         },
       });
     }
@@ -286,7 +278,10 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
         show: false,
         polyline: {
           positions: [atAlt, onGround],
-          width: 1.5,
+          width: 2,
+          depthFailMaterial: new ColorMaterialProperty(
+            Color.fromCssColorString('#7DAAF7').withAlpha(0.55),
+          ),
           material: new PolylineDashMaterialProperty({
             color: Color.fromCssColorString('#7DAAF7').withAlpha(0.55),
             dashLength: 12,
@@ -318,19 +313,14 @@ function updateFollowCamera(
   playback: PlaybackPoint3D[],
   mode: FlightCameraMode,
   controls: FlightViewControls,
+  routeWaypoints: Waypoint3D[],
 ) {
   const altFt = applyPreviewAltitudeOffset(pose.altFt, controls.altitudeOffsetFt);
   if (mode === 'cockpit') {
     const headingDeg = smoothedPlaybackHeadingDeg(playback, tSec, COCKPIT_HEADING_BLEND_SEC);
     unlockCamera(viewer);
-    setCockpitCameraView(
-      viewer,
-      pose.lon,
-      pose.lat,
-      feetToMeters(altFt),
-      headingDeg,
-      controls.chasePitchDeg,
-    );
+    setCockpitCameraView(viewer, pose.lon, pose.lat, feetToMeters(altFt), headingDeg);
+    updateCockpitWaypointLabelVisibility(viewer, routeWaypoints, pose.fraction);
     return;
   }
   const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(altFt));
@@ -383,6 +373,8 @@ export function useCesiumFlight({
   viewControlsRef.current = viewControls;
   const waypointsBootRef = useRef(waypoints);
   waypointsBootRef.current = waypoints;
+  const routeWaypointsRef = useRef<Waypoint3D[]>(waypoints);
+  routeWaypointsRef.current = waypoints;
   const imageryModeBootRef = useRef(imageryMode);
   imageryModeBootRef.current = imageryMode;
 
@@ -406,7 +398,7 @@ export function useCesiumFlight({
           setDepthTestAgainstTerrain(viewer, true);
           const imagery = new UrlTemplateImageryProvider(gsiSeamlessPhotoImageryOptions);
           viewer.imageryLayers.addImageryProvider(imagery);
-          enableGroundRouteTerrainClamp(viewer);
+          scheduleCockpitGroundResample(viewer, routeWaypointsRef.current);
         } else {
           const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
           if (!key) {
@@ -430,6 +422,7 @@ export function useCesiumFlight({
   );
 
   const rebuildRoute = useCallback((viewer: Viewer, wps: Waypoint3D[]) => {
+    routeWaypointsRef.current = wps;
     removeRouteEntities(viewer);
     addRouteGraphics(viewer, wps);
     const { points, totalSec } = buildPlaybackPointsFromWaypoints(wps);
@@ -454,6 +447,9 @@ export function useCesiumFlight({
     applyFlightRouteLayerVisibility(viewer, cameraModeRef.current);
     if (wps.length >= 2) {
       fitCameraToRoute(viewer, wps);
+    }
+    if (!(viewer.terrainProvider instanceof EllipsoidTerrainProvider)) {
+      scheduleCockpitGroundResample(viewer, wps);
     }
   }, []);
 
@@ -507,6 +503,7 @@ export function useCesiumFlight({
             playbackRef.current,
             cameraModeRef.current,
             viewControlsRef.current,
+            routeWaypointsRef.current,
           );
         } else if (wasAnimatingRef.current) {
           unlockCamera(viewer);
@@ -590,6 +587,7 @@ export function useCesiumFlight({
       playbackRef.current,
       cameraMode,
       viewControlsRef.current,
+      routeWaypointsRef.current,
     );
   }, [cameraMode, ready]);
 
@@ -607,6 +605,7 @@ export function useCesiumFlight({
         playbackRef.current,
         cameraModeRef.current,
         viewControls,
+        routeWaypointsRef.current,
       );
       return;
     }
@@ -620,6 +619,7 @@ export function useCesiumFlight({
         playbackRef.current,
         cameraModeRef.current,
         viewControls,
+        routeWaypointsRef.current,
       );
     }
   }, [viewControls, ready]);
@@ -674,6 +674,7 @@ export function useCesiumFlight({
       playbackRef.current,
       cameraModeRef.current,
       viewControlsRef.current,
+      routeWaypointsRef.current,
     );
   }, []);
 
