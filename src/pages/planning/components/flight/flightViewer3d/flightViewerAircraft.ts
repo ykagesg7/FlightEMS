@@ -24,6 +24,7 @@ type ChaseBillboardRotationState = {
   position: SampledPositionProperty;
   rotationHalo: ConstantProperty;
   rotationMain: ConstantProperty;
+  lastRad: number;
 };
 
 const chaseBillboardRotationByViewer = new WeakMap<Viewer, ChaseBillboardRotationState>();
@@ -68,7 +69,7 @@ function addAircraftBillboardEntity(
   });
 }
 
-/** チェイス時のみ onTick / seek から呼ぶ（CallbackProperty は Cesium で描画例外になるため） */
+/** チェイス時のみ onTick / seek から呼ぶ（無効時は lastRad を維持） */
 export function updateChaseAircraftBillboardRotation(viewer: Viewer): void {
   const state = chaseBillboardRotationByViewer.get(viewer);
   if (!state || viewer.isDestroyed()) return;
@@ -77,6 +78,8 @@ export function updateChaseAircraftBillboardRotation(viewer: Viewer): void {
     state.position,
     viewer.clock.currentTime,
   );
+  if (rad === null) return;
+  state.lastRad = rad;
   state.rotationHalo.setValue(rad);
   state.rotationMain.setValue(rad);
 }
@@ -107,7 +110,12 @@ export function ensureFlightViewerAircraft(
   const position = buildPlaybackPositionProperty(playback, startJulian);
   const rotationHalo = new ConstantProperty(0);
   const rotationMain = new ConstantProperty(0);
-  chaseBillboardRotationByViewer.set(viewer, { position, rotationHalo, rotationMain });
+  chaseBillboardRotationByViewer.set(viewer, {
+    position,
+    rotationHalo,
+    rotationMain,
+    lastRad: 0,
+  });
 
   addAircraftBillboardEntity(viewer, FLIGHT_VIEWER_AIRCRAFT_HALO_ID, position, rotationHalo, {
     halo: true,
@@ -115,5 +123,4 @@ export function ensureFlightViewerAircraft(
   addAircraftBillboardEntity(viewer, FLIGHT_VIEWER_AIRCRAFT_ID, position, rotationMain, {
     halo: false,
   });
-  updateChaseAircraftBillboardRotation(viewer);
 }

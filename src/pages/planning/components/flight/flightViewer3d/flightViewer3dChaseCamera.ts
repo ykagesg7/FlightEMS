@@ -96,6 +96,7 @@ export function setChaseCameraFollowingTarget(
   const enu = Transforms.eastNorthUpToFixedFrame(eye, undefined, scratchEnu);
   Matrix4.getColumn(enu, 2, scratchColumn);
   Cartesian3.fromCartesian4(scratchColumn, scratchUp);
+  if (Cartesian3.magnitude(scratchUp) < 1e-6) return;
   Cartesian3.normalize(scratchUp, scratchUp);
   viewer.camera.setView({
     destination: eye,

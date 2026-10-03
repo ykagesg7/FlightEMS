@@ -41,6 +41,7 @@ import type {
 } from './types';
 import { COCKPIT_HEADING_BLEND_SEC, DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
 import { setChaseCameraFollowingTarget, setCockpitCameraView } from './flightViewer3dChaseCamera';
+import { dedupeConsecutiveGroundPositions } from './flightViewerRouteGraphics';
 import {
   ensureFlightViewerAircraft,
   removeFlightViewerAircraft,
@@ -137,7 +138,12 @@ function removeRouteEntities(viewer: Viewer) {
   }
 }
 
+function terrainProviderSupportsGroundClamp(viewer: Viewer): boolean {
+  return !(viewer.terrainProvider instanceof EllipsoidTerrainProvider);
+}
+
 function enableGroundRouteTerrainClamp(viewer: Viewer): void {
+  if (!terrainProviderSupportsGroundClamp(viewer)) return;
   const groundLine = viewer.entities.getById(ROUTE_GROUND_POLYLINE_ID);
   if (groundLine?.polyline) {
     groundLine.polyline.clampToGround = new ConstantProperty(true);
@@ -183,7 +189,7 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
   const routePositions = waypoints.map((w) =>
     Cartesian3.fromDegrees(w.lon, w.lat, feetToMeters(w.altFt)),
   );
-  const groundRoutePositions = waypoints.map((w) => Cartesian3.fromDegrees(w.lon, w.lat));
+  const groundRoutePositions = dedupeConsecutiveGroundPositions(waypoints);
   const routeMagenta = new ColorMaterialProperty(Color.fromCssColorString('#FF00FF').withAlpha(0.92));
 
   if (routePositions.length >= 2) {
@@ -195,19 +201,22 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
         material: routeMagenta,
       },
     });
-    viewer.entities.add({
-      id: ROUTE_GROUND_POLYLINE_ID,
-      show: false,
-      polyline: {
-        positions: groundRoutePositions,
-        width: 5,
-        material: routeMagenta,
-      },
-    });
+    if (groundRoutePositions.length >= 2) {
+      viewer.entities.add({
+        id: ROUTE_GROUND_POLYLINE_ID,
+        show: false,
+        polyline: {
+          positions: groundRoutePositions,
+          width: 5,
+          material: routeMagenta,
+        },
+      });
+    }
   }
   for (let i = 0; i < waypoints.length; i++) {
     const w = waypoints[i]!;
-    const atAlt = Cartesian3.fromDegrees(w.lon, w.lat, feetToMeters(w.altFt));
+    const altM = feetToMeters(w.altFt);
+    const atAlt = Cartesian3.fromDegrees(w.lon, w.lat, altM);
     const onGround = Cartesian3.fromDegrees(w.lon, w.lat, 0);
     viewer.entities.add({
       id: `${ROUTE_ENTITY_PREFIX}wp-${i}`,
@@ -264,18 +273,20 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
         scaleByDistance: COCKPIT_GROUND_LABEL_SCALE,
       },
     });
-    viewer.entities.add({
-      id: `${ROUTE_ENTITY_PREFIX}drop-${i}`,
-      show: false,
-      polyline: {
-        positions: [atAlt, onGround],
-        width: 1.5,
-        material: new PolylineDashMaterialProperty({
-          color: Color.fromCssColorString('#7DAAF7').withAlpha(0.55),
-          dashLength: 12,
-        }),
-      },
-    });
+    if (altM > 2) {
+      viewer.entities.add({
+        id: `${ROUTE_ENTITY_PREFIX}drop-${i}`,
+        show: false,
+        polyline: {
+          positions: [atAlt, onGround],
+          width: 1.5,
+          material: new PolylineDashMaterialProperty({
+            color: Color.fromCssColorString('#7DAAF7').withAlpha(0.55),
+            dashLength: 12,
+          }),
+        },
+      });
+    }
   }
 }
 
@@ -438,6 +449,9 @@ export function useCesiumFlight({
     if (wps.length >= 2) {
       fitCameraToRoute(viewer, wps);
     }
+    requestAnimationFrame(() => {
+      if (!viewer.isDestroyed()) updateChaseAircraftBillboardRotation(viewer);
+    });
   }, []);
 
   useEffect(() => {

@@ -9,4 +9,9 @@ describe('flightViewerAircraftBillboard', () => {
   it('maps screen-right track to +90deg clockwise', () => {
     expect(billboardRotationRadFromScreenDelta(100, 0)).toBeCloseTo(Math.PI / 2, 5);
   });
+
+  it('returns null for tiny or non-finite deltas', () => {
+    expect(billboardRotationRadFromScreenDelta(0, 0)).toBeNull();
+    expect(billboardRotationRadFromScreenDelta(Number.NaN, 1)).toBeNull();
+  });
 });
