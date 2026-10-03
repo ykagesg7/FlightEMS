@@ -1,0 +1,49 @@
+---
+description: 航空計算・フライトプランニング・3D表示の鉄則（軍令）。計算ロジックやその表示を触るときに適用
+globs:
+  - src/utils/bearing.ts
+  - src/utils/windTriangle.ts
+  - src/utils/windComponents.ts
+  - src/utils/japanMagneticVariation.ts
+  - src/utils/offset.ts
+  - src/utils/pressureAltitudeIsa.ts
+  - src/utils/flightTime.ts
+  - src/utils/dms.ts
+  - src/utils/waypointCoords.ts
+  - src/utils/airspace.ts
+  - src/pages/planning/**
+  - src/pages/explore/**
+  - api/_lib/swimNotam*.ts
+  - gungi/golden-tests/**
+  - src/utils/__golden__/**
+alwaysApply: false
+---
+
+# 航空ドメイン軍令
+
+常時ルール `core-project.mdc`（日本語・版変更禁止・UI 無断変更禁止・`any` 禁止）が前提。MDX 本文は `mdx-article-guide.mdc` を正とする。
+
+## 1. 単位と符号
+- 速度 kt、高度 ft、距離 nm、昇降率 fpm、気圧 hPa、温度 °C を既定とする。内部で m・km を使う場合は変換関数（例 `feetToMeters`）を通し、変数名に単位を付ける（`distanceNm`、`altFt`）。
+- 磁気偏差は**西偏を正**、`磁方位 = 真方位 + 偏差`（`src/utils/bearing.ts`、`japanMagneticVariation.ts` の規約）。符号規約を変えない。
+- 方位は 0 以上 360 未満に正規化する。既存の正規化関数を使い、独自実装を増やさない。
+
+## 2. 座標系（Cesium）
+- 3D は Cesium。ローカル座標は ENU（East-North-Up、m）。カメラ・機体姿勢の計算は `flightViewer3d/flightViewer3dMath.ts` / `flightViewer3dChaseCamera.ts` の関数を通す。軸の手書き反転を禁止。
+- Cesium の `CallbackProperty` を billboard rotation に使わない（既知のクラッシュ。PR #64 参照）。
+- ハブページに Cesium を注入しない。3D は `/explore/airspace-3d` と flightViewer3d の遅延読込に隔離（`docs/Closed_Sprints.md` §2）。
+
+## 3. 計算ロジックの検証
+- 計算関数は純粋関数に保ち、React コンポーネントに計算を埋め込まない。
+- 計算を変更したら、`src/__tests__/` の該当単体テストを更新・追加し、`npm run test:golden` を全件パスさせる（`knownFailing` マーク付きケースは Issue 解消まで `it.fails` のまま）。
+- **`gungi/golden-tests/` の期待値を変更してはならない。** テストが合わない場合は実装を直す。期待値が誤っていると判断したら変更せず、PR 本文に根拠と出典を書いて上様の判断を仰ぐ（`golden-change-approved` ラベルがない PR は CI で落ちる）。
+- 浮動小数の比較は、ゴールデン JSON の `tolerance` に従う。表示用に丸めた値（nm 小数1桁、度の整数など）は丸め後の値で完全一致させる。
+
+## 4. 法規・安全
+- 規則上の数値（最低安全高度、燃料予備、気象条件など）を推測で書かない。条文や通達を引用する場合は条文番号と出典 URL を PR 本文に書き、不明なら `needs-source` として止める。
+- 安全に関わる変更は `.cursor/agents/aviation-safety-review.md` の観点（blocker / caution / suggestion）で自己点検し、結果を PR 本文に残す。
+- クイズ設問・学習カタログは Supabase 上にある。本番 SQL は実行せず、SQL 案を PR に添付して上様の承認を待つ。
+
+## 5. 完了の定義
+- `npm run type-check`、`npm run lint`、`npm run test:run`、`npm run test:golden`、`npm run build` がローカルで通ること。
+- PR 本文に `Closes #<Issue番号>`、変更理由、検証コマンドの結果を書く。

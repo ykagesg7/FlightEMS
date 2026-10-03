@@ -1,0 +1,126 @@
+# 目付（機械的検分）— main 向け PR の必須チェック候補
+name: mekiki-ci
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: mekiki-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inspect:
+    if: github.event_name == 'workflow_dispatch' || (github.event.action != 'labeled' && github.event.action != 'unlabeled')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VITE_SUPABASE_URL: https://test.supabase.co
+      VITE_SUPABASE_ANON_KEY: test-anon-key-ci
+    steps:
+      - name: 城内コード取得
+        uses: actions/checkout@v4
+
+      - name: Node.js 環境構築
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: 依存関係の展開
+        run: npm ci
+
+      - name: 型検査
+        run: npm run type-check
+
+      - name: 軍令違反チェック（lint）
+        run: npm run lint
+
+      - name: 単体テスト
+        run: npm run test:run
+
+      - name: ゴールデンテスト
+        run: npm run test:golden
+
+      - name: Cesium CDN バージョン固定の確認
+        run: npm run check:cesium-cdn
+
+      - name: ビルド
+        run: npm run build
+
+  golden-guard:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 変更ファイル確認
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          set -euo pipefail
+          CHANGED="$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json files --jq '.files[].path' | grep '^gungi/golden-tests/' || true)"
+          if [ -z "$CHANGED" ]; then
+            echo "gungi/golden-tests/ の変更なし"
+            exit 0
+          fi
+          echo "変更されたゴールデンファイル:"; echo "$CHANGED"
+          if echo ",$LABELS," | grep -q ',golden-change-approved,'; then
+            echo "golden-change-approved あり。通過。"
+            exit 0
+          fi
+          echo "::error::gungi/golden-tests/ の変更には上様の golden-change-approved ラベルが必要です"
+          exit 1
+
+  e2e:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    env:
+      VITE_SUPABASE_URL: https://test.supabase.co
+      VITE_SUPABASE_ANON_KEY: test-anon-key-ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+
+  notify:
+    needs: [inspect]
+    if: always() && github.event_name == 'pull_request' && needs.inspect.result != 'skipped' && needs.inspect.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 戦況速報（#fa-gungi）
+        env:
+          WEBHOOK: ${{ secrets.SLACK_GUNGI_WEBHOOK_URL }}
+          RESULT: ${{ needs.inspect.result }}
+          PR_NUM: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [ -z "${WEBHOOK:-}" ]; then
+            echo "SLACK_GUNGI_WEBHOOK_URL 未設定のため通知スキップ"
+            exit 0
+          fi
+          if [ "$RESULT" = "success" ]; then
+            TEXT="【目付】PR #${PR_NUM} 検分 Green: ${PR_TITLE}\n${PR_URL}\n（Preview URL は PR の Vercel コメント参照）"
+          else
+            TEXT="【目付】PR #${PR_NUM} 検分 Red（${RESULT}）: ${PR_TITLE}\n${RUN_URL}\n三振判定は家老が行います。"
+          fi
+          jq -n --arg t "$(printf '%b' "$TEXT")" '{text: $t}' \
+            | curl -sS -X POST -H 'Content-type: application/json' --data @- "$WEBHOOK"
