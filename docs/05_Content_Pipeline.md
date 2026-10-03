@@ -23,7 +23,7 @@
 |----------|----------|--------------------|--------------|----------|
 | **CP**（Contact） | `src/content/lessons/CP-*` | **1-1〜5-9 の MDX 完結**（5-6〜5-9 は W40〜W41 に schedule 済） | CP シリーズ完。メンテは体裁・出典のみ | [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)、[Gemini_CP_FN_System_Prompt](ops/Gemini_CP_FN_System_Prompt.md) |
 | **FN**（旧 FMT Season 1。id は `FMT-1-*`） | `src/content/lessons/FMT-1-*` | 1-1〜1-10 の MDX ストック。**W42〜W46 に schedule 済**（週2本・`is_published` は cron） | Season 2 ブリーフは求められたときだけ | [FN_Formation_2026](content_outlines/FN_Formation_2026/README.md)、[Gemini_CP_FN_System_Prompt](ops/Gemini_CP_FN_System_Prompt.md) |
-| **メンタリティ**（道真稿） | `src/content/articles/` | `1.1.1` 公開済。`1.1.2` は W42 日 10/11 ドリップ予定。`1.1.3`〜は非公開ゲート | 日曜枠は Editorial 承認後に schedule へ | 本書 §6、[Gemini_Memoir_Article_System_Prompt](ops/Gemini_Memoir_Article_System_Prompt.md) |
+| **メンタリティ**（道真稿） | `src/content/articles/` | `1.1.1` 公開済。`1.1.2` は W41 日 **10/4**、`1.1.3` は W42 日 **10/11** ドリップ予定。`1.1.4`〜は非公開ゲート | 日曜枠は Editorial 承認後に schedule へ | 本書 §6、[Gemini_Memoir_Article_System_Prompt](ops/Gemini_Memoir_Article_System_Prompt.md) |
 | 訓練の当たり前（`4.1.*` / `4.2.*`） | `src/content/articles/` | W32〜W33 に公開済 | 追加は Editorial が決める | [ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md) |
 | CPL / PPL 学科 | `src/content/lessons/` | 段階1 完了（[Closed_Sprints.md](Closed_Sprints.md)） | 穴埋めのみ（例: `PPL-2-3-3` / `2-3-4` は骨子だけ） | 本書 §5、[Closed_Sprints.md](Closed_Sprints.md) §1 |
 
@@ -38,9 +38,9 @@
 | 2026-W38（〜09-21） | CP 4-2 / 5-1 / 5-2（9/13・16・18） | |
 | 2026-W39（〜09-28） | CP 5-3 / 5-4 / 5-5（9/20・23・25） | 旧 cadence（週3本操縦）。`is_published` は cron |
 | 2026-W40（〜10-05） | 1.1.1（9/27 日）+ CP 5-6 / 5-7（9/28・10/1） | 週3枠へ戻す前の週。CP は月・木のまま（済） |
-| 2026-W41（〜10-12） | CP 5-8 / 5-9（水 10/7・金 10/9） | CP 完結。10/5 月公開は取りやめ（リライト確保） |
-| 2026-W42（〜10-19） | 1.1.2（日 10/11）+ FN 1-1 / 1-2（水 10/14・金 10/16） | 日=メンタリティ・水金=FN 開始 |
-| 2026-W43（〜10-26） | FN 1-3 / 1-4（水 10/21・金 10/23） | 日曜メンタリティ枠空（1.1.3 未承認） |
+| 2026-W41（〜10-12） | 1.1.2（日 **10/4**）+ CP 5-8 / 5-9（水 10/7・金 10/9） | CP 完結。10/5 月 CP-5-8 は取りやめ |
+| 2026-W42（〜10-19） | 1.1.3（日 10/11）+ FN 1-1 / 1-2（水 10/14・金 10/16） | 日=メンタリティ・水金=FN |
+| 2026-W43（〜10-26） | FN 1-3 / 1-4（水 10/21・金 10/23） | 日曜メンタリティ枠空（1.1.4 未承認） |
 | 2026-W44（〜11-02） | FN 1-5 / 1-6（水 10/28・金 10/30） | 日曜枠空 |
 | 2026-W45（〜11-09） | FN 1-7 / 1-8（水 11/4・金 11/6） | 日曜枠空 |
 | 2026-W46（〜11-16） | FN 1-9 / 1-10（水 11/11・金 11/13） | FN Season 1 締め。日曜枠空 |

@@ -321,9 +321,17 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W41': {
     isoWeek: '2026-W41',
-    seriesTitle: 'CP（単機）',
-    intro: '来週は CP 最終2本（水・金）。Cloverleaf、Chandelle。日曜メンタリティは次週から。',
+    seriesTitle: 'CP（単機）＋メンタリティ',
+    intro:
+      '来週は７つの習慣その２（日）と CP 最終2本（水・金）。終わりを思い描く、Cloverleaf、Chandelle。',
     articles: [
+      {
+        id: '1.1.2_EndWithFuture',
+        publishDate: '2026-10-04',
+        title: '【７つの習慣】その２、道真公と学ぶ「終わりを思い描く」',
+        slug: '/articles/end-with-future',
+        hook: '終わりの絵を先に持て。灯台の光を見失わぬこと。',
+      },
       {
         id: 'CP-5-8_Cloverleaf',
         publishDate: '2026-10-07',
@@ -344,14 +352,14 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W42',
     seriesTitle: 'FN（編隊）＋メンタリティ',
     intro:
-      '来週は７つの習慣その２（日）と編隊入口2本（水・金）。V.F.Rの血の掟、滑走路のシンクロ。',
+      '来週は７つの習慣その３（日）と編隊入口2本（水・金）。最優先事項、V.F.Rの血の掟、滑走路のシンクロ。',
     articles: [
       {
-        id: '1.1.2_EndWithFuture',
+        id: '1.1.3_PrioritizingMostImportant',
         publishDate: '2026-10-11',
-        title: '【７つの習慣】その２、道真公と学ぶ「終わりを思い描く」',
-        slug: '/articles/end-with-future',
-        hook: '終わりの絵を先に持て。灯台の光を見失わぬこと。',
+        title: '【７つの習慣】その３、道真公と学ぶ「最優先事項を優先する」',
+        slug: '/articles/prioritizing-most-important',
+        hook: '重要と緊急を見極めろ。第2領域に操縦桿を置け。',
       },
       {
         id: 'FMT-1-1_WingmanVFR',
