@@ -31,6 +31,8 @@ import type { MapTabProps } from './components/map/MapTab';
 /** Leaflet 込みの地図は別チャンク（iOS の巨大 module 失敗を緩和） */
 const MapTab = lazy(() =>
   importWithChunkRetry(async () => {
+    const { initJapanMagneticVariationGrid } = await import('../../utils/japanMagneticVariation');
+    await initJapanMagneticVariationGrid();
     const mod = await import('./components/map/MapTab');
     return { default: mod.default as React.ComponentType };
   })

@@ -1,5 +1,10 @@
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+import { beforeAll, vi } from 'vitest';
+import { initJapanMagneticVariationGrid } from './utils/japanMagneticVariation';
+
+beforeAll(async () => {
+  await initJapanMagneticVariationGrid();
+});
 
 /**
  * Node 24 undici `Request` rejects jsdom's AbortSignal (different realm).

@@ -7,7 +7,7 @@ import {
   WaypointOption,
 } from '../../../../types/index';
 import { calculateDistance, decimalToDMS } from '../../../../utils';
-import { calculateMagneticBearing } from '../../../../utils/bearing';
+import { calculateMagneticBearing } from '../../../../utils/magneticBearing';
 import { asSelectStyles } from '../../../../utils/reactSelectStyles';
 import { buildWaypointFromNavaid } from '../../utils/buildWaypointFromNavaid';
 import type { UserSavedWaypoint, UserSavedWaypointInput } from '../../userWaypoints/types';

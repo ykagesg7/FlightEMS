@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { calculateTrueBearing, calculateMagneticBearing } from '../../utils/bearing';
+import { calculateTrueBearing } from '../../utils/bearing';
+import { calculateMagneticBearing } from '../../utils/magneticBearing';
 
 describe('calculateTrueBearing', () => {
   it('is 0° for due north', () => {

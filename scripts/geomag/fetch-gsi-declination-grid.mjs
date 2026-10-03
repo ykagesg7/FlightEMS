@@ -8,13 +8,12 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { gzipSync } from 'node:zlib';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = join(__dirname, '../../src/utils/data');
 const META_PATH = join(OUT_DIR, 'gsiGeomag2020DeclinationWest.meta.json');
 
-/** 6分（0.1°）。3分ノード間を sample.cgi が内挿するため、0.1° 双一次でも GSI 参照値に整合（軍議 golden 検証済み）。 */
+/** 0.1° 格子。各点は sample.cgi（内部で 3 分グリッド内挿）の偏角 D。 */
 const LAT_MIN = 20.05;
 const LAT_MAX = 49.95;
 const LON_MIN = 120.05;
@@ -99,14 +98,12 @@ async function main() {
   await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
 
   const binPath = join(OUT_DIR, 'gsiGeomag2020DeclinationWest.u16');
-  const gzPath = join(OUT_DIR, 'gsiGeomag2020DeclinationWest.u16.gz');
   await writeFile(binPath, Buffer.from(values.buffer));
-  await writeFile(gzPath, gzipSync(Buffer.from(values.buffer)));
 
   const meta = {
     epoch: '2020.0',
     source:
-      'GSI geomag menu_04 sample.cgi (declination D on 0.1° lattice; west positive). Matches bilinear.cgi within golden tolerances.',
+      'GSI geomag menu_04 sample.cgi (declination D on 0.1° lattice; west positive). Each lattice value uses GSI 3-minute grid interpolation server-side.',
     latMin: LAT_MIN,
     latMax: LAT_MAX,
     lonMin: LON_MIN,
@@ -118,7 +115,7 @@ async function main() {
     fetchedAt: new Date().toISOString(),
   };
   await writeFile(META_PATH, JSON.stringify(meta, null, 2) + '\n');
-  console.log(`Wrote ${binPath} (${values.byteLength} bytes) and ${gzPath}`);
+  console.log(`Wrote ${binPath} (${values.byteLength} bytes)`);
 }
 
 main().catch((err) => {

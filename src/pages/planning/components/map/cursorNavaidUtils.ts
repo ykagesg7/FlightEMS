@@ -1,4 +1,4 @@
-import { calculateMagneticBearing } from '../../../../utils/bearing';
+import { calculateMagneticBearing } from '../../../../utils/magneticBearing';
 import type { PlanningMapNavaid } from './planningMapTypes';
 
 export type LatLngLike = { lat: number; lng: number };

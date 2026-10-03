@@ -1,6 +1,6 @@
 {
   "epoch": "2020.0",
-  "source": "GSI geomag menu_04 sample.cgi (declination D on 0.1\u00b0 lattice; west positive)",
+  "source": "GSI geomag menu_04 sample.cgi (declination D on 0.1\u00b0 lattice; west positive; server uses 3-minute grid interpolation)",
   "latMin": 20.05,
   "latMax": 49.95,
   "lonMin": 120.05,

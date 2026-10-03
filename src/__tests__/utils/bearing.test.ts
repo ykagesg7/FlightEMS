@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateMagneticBearing } from '../../utils/bearing';
+import { calculateMagneticBearing } from '../../utils/magneticBearing';
 
 describe('Bearing Utils', () => {
   describe('calculateMagneticBearing', () => {

@@ -2,7 +2,7 @@ import L from 'leaflet';
 import { CircleMarker, Polyline, Popup } from 'react-leaflet';
 import React, { useMemo } from 'react';
 import { FlightPlan, Waypoint } from '../../../../types/index';
-import { calculateMagneticBearing } from '../../../../utils/bearing';
+import { calculateMagneticBearing } from '../../../../utils/magneticBearing';
 
 function isFiniteLatLon(lat: unknown, lon: unknown): lat is number {
   return typeof lat === 'number' && typeof lon === 'number' && Number.isFinite(lat) && Number.isFinite(lon);

@@ -18,7 +18,6 @@ import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
 import { articlesIndexPlugin } from './vite/articlesIndexPlugin';
 import { injectGoogleTagPlugin } from './vite/injectGoogleTagPlugin';
 import { prerenderArticlesPlugin } from './vite/prerenderArticlesPlugin';
-import { gsiGridAssetPlugin } from './vite/gsiGridAssetPlugin';
 
 /** flight-lms Vercel Production 用 GA4 ストリーム（公開 ID）。環境変数が空でも本番デプロイでタグを挿す */
 const GA4_MEASUREMENT_ID_VERCEL_PRODUCTION_FALLBACK = 'G-22VFYSM69J';
@@ -118,7 +117,6 @@ export default defineConfig(({ mode }) => {
   }
 
   const plugins: PluginOption[] = [
-    gsiGridAssetPlugin(),
     // Assets/Workers only. Do not inject Cesium.js into every HTML shell
     // (vite-plugin-cesium did, which WASM-initialized Articles/Quiz).
     cesiumStaticAssetsPlugin({ skipCopy: cesiumDeploy.useCdn }),
@@ -165,7 +163,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins,
-    assetsInclude: ['**/*.u16', '**/*.u16?arraybuffer'],
+    assetsInclude: ['**/*.u16'],
     server: {
       proxy: {
         '/api': {
@@ -202,6 +200,13 @@ export default defineConfig(({ mode }) => {
           manualChunks: (id) => {
             if (id.includes('node_modules/leaflet') || id.includes('node_modules/react-leaflet')) {
               return 'vendor-leaflet';
+            }
+            if (
+              id.includes('gsiGeomag2020DeclinationWest') ||
+              id.includes('japanMagneticVariation') ||
+              id.includes('magneticBearing')
+            ) {
+              return 'planning-magvar';
             }
             if (mode !== 'development') return undefined;
 

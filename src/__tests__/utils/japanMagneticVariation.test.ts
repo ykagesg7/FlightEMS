@@ -1,7 +1,13 @@
-import { describe, expect, it } from 'vitest';
-import { interpolateJapanMagneticVariationWestDeg } from '../../utils/japanMagneticVariation';
+import { beforeAll, describe, expect, it } from 'vitest';
+import {
+  initJapanMagneticVariationGrid,
+  interpolateJapanMagneticVariationWestDeg,
+} from '../../utils/japanMagneticVariation';
 
 describe('japanMagneticVariation', () => {
+  beforeAll(async () => {
+    await initJapanMagneticVariationGrid();
+  });
   it('matches GSI 2020.0 near Tokyo (RJTT ARP)', () => {
     expect(interpolateJapanMagneticVariationWestDeg(35.549678, 139.786958)).toBeCloseTo(7.53, 1);
   });
