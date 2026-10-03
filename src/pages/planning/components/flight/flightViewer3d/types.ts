@@ -31,3 +31,9 @@ export const DEFAULT_FLIGHT_VIEW_CONTROLS: FlightViewControls = {
   chaseDistanceM: 650,
   chasePitchDeg: -18,
 };
+
+/** コックピット視点の目線高度（機体位置からの ft） */
+export const COCKPIT_EYE_OFFSET_FT = 8;
+
+/** ウェイポイント折れ点でカメラ方位を補間するシミュレーション時間（秒） */
+export const COCKPIT_HEADING_BLEND_SEC = 3;

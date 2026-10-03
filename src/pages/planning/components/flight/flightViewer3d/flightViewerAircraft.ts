@@ -29,6 +29,12 @@ export function removeFlightViewerAircraft(viewer: Viewer): void {
   if (entity) viewer.entities.remove(entity);
 }
 
+export function setFlightViewerAircraftVisible(viewer: Viewer, visible: boolean): void {
+  const entity = viewer.entities.getById(FLIGHT_VIEWER_AIRCRAFT_ID);
+  if (!entity) return;
+  entity.show = visible;
+}
+
 export function ensureFlightViewerAircraft(
   viewer: Viewer,
   playback: PlaybackPoint3D[],

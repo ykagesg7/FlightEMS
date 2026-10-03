@@ -66,7 +66,7 @@ export type PlaybackPoint3D = {
   tSec: number;
 };
 
-function segmentHeadingDeg(
+export function segmentHeadingDeg(
   lat1: number,
   lon1: number,
   lat2: number,
@@ -210,4 +210,61 @@ export function interpolatePathByFraction(
   const total = points[points.length - 1]?.tSec ?? 0;
   const tSec = total * Math.min(1, Math.max(0, fraction));
   return interpolatePlaybackAtTime(points, tSec);
+}
+
+/** 最短回りの方位差（度、-180…180） */
+export function headingShortestDeltaDeg(fromDeg: number, toDeg: number): number {
+  return ((toDeg - fromDeg + 540) % 360) - 180;
+}
+
+/** 方位を最短経路で補間（0–360） */
+export function lerpHeadingDeg(fromDeg: number, toDeg: number, t: number): number {
+  const u = Math.min(1, Math.max(0, t));
+  const delta = headingShortestDeltaDeg(fromDeg, toDeg);
+  return ((fromDeg + delta * u) % 360 + 360) % 360;
+}
+
+export type PlaybackHeadingTurn = {
+  tSec: number;
+  fromDeg: number;
+  toDeg: number;
+};
+
+/** 再生点列の折れ点（レグ方位が変わる箇所） */
+export function findPlaybackHeadingTurns(points: PlaybackPoint3D[]): PlaybackHeadingTurn[] {
+  const turns: PlaybackHeadingTurn[] = [];
+  if (points.length < 3) return turns;
+  for (let i = 0; i < points.length - 2; i++) {
+    const a = points[i]!;
+    const b = points[i + 1]!;
+    const c = points[i + 2]!;
+    const fromDeg = segmentHeadingDeg(a.lat, a.lon, b.lat, b.lon);
+    const toDeg = segmentHeadingDeg(b.lat, b.lon, c.lat, c.lon);
+    if (Math.abs(headingShortestDeltaDeg(fromDeg, toDeg)) < 0.05) continue;
+    const last = turns[turns.length - 1];
+    if (last && last.tSec === b.tSec && last.toDeg === toDeg) continue;
+    turns.push({ tSec: b.tSec, fromDeg, toDeg });
+  }
+  return turns;
+}
+
+/**
+ * コックピット用のスムーズ方位（折れ点で blendSec 秒かけて最短角補間）。
+ */
+export function smoothedPlaybackHeadingDeg(
+  points: PlaybackPoint3D[],
+  tSec: number,
+  blendSec: number,
+): number {
+  if (blendSec <= 0 || points.length < 2) {
+    return interpolatePlaybackAtTime(points, tSec).headingDeg;
+  }
+  const turns = findPlaybackHeadingTurns(points);
+  for (const turn of turns) {
+    if (tSec >= turn.tSec && tSec < turn.tSec + blendSec) {
+      const u = (tSec - turn.tSec) / blendSec;
+      return lerpHeadingDeg(turn.fromDeg, turn.toDeg, u);
+    }
+  }
+  return interpolatePlaybackAtTime(points, tSec).headingDeg;
 }

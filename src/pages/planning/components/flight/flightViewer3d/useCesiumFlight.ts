@@ -25,6 +25,7 @@ import {
   buildPlaybackPointsFromWaypoints,
   feetToMeters,
   interpolatePlaybackAtTime,
+  smoothedPlaybackHeadingDeg,
   type PlaybackPoint3D,
 } from './flightViewer3dMath';
 import { canUseGooglePhotorealistic3D } from './googlePhotorealistic3dAccess';
@@ -36,9 +37,21 @@ import type {
   FlightViewControls,
   Waypoint3D,
 } from './types';
-import { DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
-import { setChaseCameraFollowingTarget } from './flightViewer3dChaseCamera';
-import { ensureFlightViewerAircraft, removeFlightViewerAircraft } from './flightViewerAircraft';
+import {
+  COCKPIT_EYE_OFFSET_FT,
+  COCKPIT_HEADING_BLEND_SEC,
+  DEFAULT_FLIGHT_VIEW_CONTROLS,
+} from './types';
+import {
+  applyCameraViewAtEye,
+  setChaseCameraFollowingTarget,
+  trackHeadingToLocalLookDirection,
+} from './flightViewer3dChaseCamera';
+import {
+  ensureFlightViewerAircraft,
+  removeFlightViewerAircraft,
+  setFlightViewerAircraftVisible,
+} from './flightViewerAircraft';
 
 const VIEWER_BOOT_TIMEOUT_MS = 25_000;
 const LABEL_DEPTH_TEST_DISTANCE = Number.POSITIVE_INFINITY;
@@ -155,7 +168,7 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
         verticalOrigin: 1,
         pixelOffset: new Cartesian2(0, -22),
         disableDepthTestDistance: LABEL_DEPTH_TEST_DISTANCE,
-        scaleByDistance: new NearFarScalar(500, 1.35, 8_000_000, 0.65),
+        scaleByDistance: new NearFarScalar(10, 1.25, 400_000, 0.9),
         showBackground: true,
         backgroundColor: Color.fromCssColorString('#0d1b2a').withAlpha(0.72),
         backgroundPadding: new Cartesian2(8, 5),
@@ -166,7 +179,7 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
         outlineColor: Color.BLACK,
         outlineWidth: 2,
         disableDepthTestDistance: LABEL_DEPTH_TEST_DISTANCE,
-        scaleByDistance: new NearFarScalar(500, 1.2, 8_000_000, 0.5),
+        scaleByDistance: new NearFarScalar(10, 1.1, 400_000, 0.85),
       },
     });
     viewer.entities.add({
@@ -200,25 +213,26 @@ function fitCameraToRoute(viewer: Viewer, waypoints: Waypoint3D[]) {
 function updateFollowCamera(
   viewer: Viewer,
   pose: ReturnType<typeof interpolatePlaybackAtTime>,
+  tSec: number,
+  playback: PlaybackPoint3D[],
   mode: FlightCameraMode,
   controls: FlightViewControls,
 ) {
   const altFt = applyPreviewAltitudeOffset(pose.altFt, controls.altitudeOffsetFt);
-  const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(altFt));
-  const trackHeadingRad = CesiumMath.toRadians(pose.headingDeg);
-  const cockpitPitchRad = CesiumMath.toRadians(controls.chasePitchDeg);
   if (mode === 'cockpit') {
+    const eyeAltFt = altFt + COCKPIT_EYE_OFFSET_FT;
+    const eye = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(eyeAltFt));
+    const headingDeg = smoothedPlaybackHeadingDeg(playback, tSec, COCKPIT_HEADING_BLEND_SEC);
+    const localLook = trackHeadingToLocalLookDirection(
+      headingDeg,
+      Math.abs(controls.chasePitchDeg),
+      new Cartesian3(),
+    );
     unlockCamera(viewer);
-    viewer.camera.setView({
-      destination: pos,
-      orientation: {
-        heading: trackHeadingRad,
-        pitch: cockpitPitchRad,
-        roll: 0,
-      },
-    });
+    applyCameraViewAtEye(viewer, eye, localLook);
     return;
   }
+  const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(altFt));
   unlockCamera(viewer);
   setChaseCameraFollowingTarget(
     viewer,
@@ -334,6 +348,7 @@ export function useCesiumFlight({
     setProgressPct(0);
     setPlaying(false);
     ensureFlightViewerAircraft(viewer, points, start);
+    setFlightViewerAircraftVisible(viewer, cameraModeRef.current !== 'cockpit');
     if (wps.length >= 2) {
       fitCameraToRoute(viewer, wps);
     }
@@ -392,7 +407,14 @@ export function useCesiumFlight({
 
         const animating = viewer.clock.shouldAnimate;
         if (animating) {
-          updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
+          updateFollowCamera(
+            viewer,
+            pose,
+            tSec,
+            playbackRef.current,
+            cameraModeRef.current,
+            viewControlsRef.current,
+          );
         } else if (wasAnimatingRef.current) {
           unlockCamera(viewer);
         }
@@ -439,7 +461,15 @@ export function useCesiumFlight({
     // 再生中のみ chase 追従。停止中はモード切替時だけ姿勢を合わせる
     const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
     const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
-    updateFollowCamera(viewer, pose, cameraMode, viewControlsRef.current);
+    setFlightViewerAircraftVisible(viewer, cameraMode !== 'cockpit');
+    updateFollowCamera(
+      viewer,
+      pose,
+      tSec,
+      playbackRef.current,
+      cameraMode,
+      viewControlsRef.current,
+    );
     if (!viewer.clock.shouldAnimate) {
       unlockCamera(viewer);
     }
@@ -449,18 +479,31 @@ export function useCesiumFlight({
     const viewer = viewerRef.current;
     const startJ = startJulianRef.current;
     if (!viewer || viewer.isDestroyed() || !ready || !startJ) return;
-    if (!viewer.clock.shouldAnimate && cameraModeRef.current === 'chase') {
-      // 停止中のスライダー調整時は一度追従してからロック解除（手動操作を継続可能に）
+    if (!viewer.clock.shouldAnimate) {
       const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
       const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
-      updateFollowCamera(viewer, pose, cameraModeRef.current, viewControls);
+      updateFollowCamera(
+        viewer,
+        pose,
+        tSec,
+        playbackRef.current,
+        cameraModeRef.current,
+        viewControls,
+      );
       unlockCamera(viewer);
       return;
     }
     if (viewer.clock.shouldAnimate) {
       const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
       const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
-      updateFollowCamera(viewer, pose, cameraModeRef.current, viewControls);
+      updateFollowCamera(
+        viewer,
+        pose,
+        tSec,
+        playbackRef.current,
+        cameraModeRef.current,
+        viewControls,
+      );
     }
   }, [viewControls, ready]);
 
@@ -507,7 +550,14 @@ export function useCesiumFlight({
     setPlaying(false);
     const pose = interpolatePlaybackAtTime(playbackRef.current, tSec);
     setProgressPct((tSec / (total || 1)) * 100);
-    updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
+    updateFollowCamera(
+      viewer,
+      pose,
+      tSec,
+      playbackRef.current,
+      cameraModeRef.current,
+      viewControlsRef.current,
+    );
     unlockCamera(viewer);
   }, []);
 
