@@ -43,3 +43,8 @@ declare module '*.png' {
   const value: string;
   export default value;
 }
+
+declare module '*.u16?arraybuffer' {
+  const value: ArrayBuffer;
+  export default value;
+}

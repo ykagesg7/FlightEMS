@@ -2,12 +2,13 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { articlesIndexPlugin } from './vite/articlesIndexPlugin';
+import { gsiGridAssetPlugin } from './vite/gsiGridAssetPlugin';
 
 const testSupabaseUrl = 'https://test.supabase.co';
 const testSupabaseAnonKey = 'test-anon-key';
 
 export default defineConfig({
-  plugins: [react(), articlesIndexPlugin()],
+  plugins: [react(), articlesIndexPlugin(), gsiGridAssetPlugin()],
   define: {
     'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(
       process.env.VITE_SUPABASE_URL ?? testSupabaseUrl,

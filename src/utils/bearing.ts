@@ -1,7 +1,4 @@
-import { MAGNETIC_DECLINATION } from './constants';
-
-/** 磁気方位計算で使用する既定偏差（度、西偏を正の加算）。UI の注記と共有する。 */
-export { MAGNETIC_DECLINATION };
+import { interpolateJapanMagneticVariationWestDeg } from './japanMagneticVariation';
 
 function normalizeDeg(deg: number): number {
   return ((deg % 360) + 360) % 360;
@@ -17,8 +14,13 @@ export function calculateTrueBearing(lat1: number, lng1: number, lat2: number, l
   return normalizeDeg(Math.atan2(x, y) * 180 / Math.PI);
 }
 
-export function trueToMagneticDeg(trueDeg: number, variationDeg = MAGNETIC_DECLINATION): number {
+export function trueToMagneticDeg(trueDeg: number, variationDeg: number): number {
   return normalizeDeg(trueDeg + variationDeg);
+}
+
+/** レグ中点の国土地理院2020.0偏差で磁方位（大圏真方位 + 西偏）。 */
+export function magneticVariationDegForLeg(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  return interpolateJapanMagneticVariationWestDeg((lat1 + lat2) / 2, (lng1 + lng2) / 2);
 }
 
 export function calculateMagneticBearing(
@@ -26,7 +28,8 @@ export function calculateMagneticBearing(
   lng1: number,
   lat2: number,
   lng2: number,
-  variationDeg = MAGNETIC_DECLINATION,
+  variationDeg?: number,
 ): number {
-  return trueToMagneticDeg(calculateTrueBearing(lat1, lng1, lat2, lng2), variationDeg);
-} 
+  const variation = variationDeg ?? magneticVariationDegForLeg(lat1, lng1, lat2, lng2);
+  return trueToMagneticDeg(calculateTrueBearing(lat1, lng1, lat2, lng2), variation);
+}

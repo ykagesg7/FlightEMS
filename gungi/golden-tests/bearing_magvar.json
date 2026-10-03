@@ -299,7 +299,6 @@
           "lon": 136.406895
         },
         "purpose": "日本海側・局点間の内挿",
-        "knownFailing": "#66",
         "expected": 8.3,
         "sourceRaw": "入力: 緯 度 北緯 36°23′36″ 経 度 東経 136°24′25″ → 偏角 D（西偏＋/東偏−） +8.30°（+8 °18′）",
         "source": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（磁気図2020.0年値の3分グリッド内挿）。POST https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/bilinear.cgi  ido1=36&ido2=23&ido3=36&kei1=136&kei2=24&kei3=25（入力は整数秒に丸め）取得 2026-10-03 JST。出力は 0.01° 単位",
@@ -349,7 +348,6 @@
         "tolerance": {
           "abs": 1.0
         },
-        "knownFailing": "#66",
         "expected": 10.56,
         "sourceRaw": "入力: 緯 度 北緯 45°24′15″ 経 度 東経 141°48′4″ → 偏角 D（西偏＋/東偏−） +10.56°（+10 °34′）",
         "source": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（磁気図2020.0年値の3分グリッド内挿）。POST https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/bilinear.cgi  ido1=45&ido2=24&ido3=15&kei1=141&kei2=48&kei3=4（入力は整数秒に丸め）取得 2026-10-03 JST。出力は 0.01° 単位",
@@ -376,7 +374,6 @@
         "tolerance": {
           "abs": 1.0
         },
-        "knownFailing": "#66",
         "expected": 5.02,
         "sourceRaw": "入力: 緯 度 北緯 24°23′47″ 経 度 東経 124°14′42″ → 偏角 D（西偏＋/東偏−） +5.02°（+5 °1′）",
         "source": "国土地理院『地磁気値（2020.0年値）を求める』計算サイト（磁気図2020.0年値の3分グリッド内挿）。POST https://vldb.gsi.go.jp/sokuchi/geomag/menu_04/bilinear.cgi  ido1=24&ido2=23&ido3=47&kei1=124&kei2=14&kei3=42（入力は整数秒に丸め）取得 2026-10-03 JST。出力は 0.01° 単位",
