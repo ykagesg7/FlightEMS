@@ -5,18 +5,16 @@ import {
   cartographicHeight,
   chaseCameraWorldPositionFromTarget,
   expectedChaseCameraHeightGainM,
-  trackHeadingToLocalLookDirection,
+  cockpitCameraOrientation,
 } from '../../pages/planning/components/flight/flightViewer3d/flightViewer3dChaseCamera';
 import { chaseCameraOffsetEnuMeters, isChaseCameraOffsetBehindAndAbove } from '../../pages/planning/components/flight/flightViewer3d/flightViewer3dMath';
 
 describe('flightViewer3dChaseCamera', () => {
-  it('aligns cockpit look direction with track heading in local ENU', () => {
-    const north = trackHeadingToLocalLookDirection(0, 0, new Cartesian3());
-    expect(north.y).toBeGreaterThan(0.99);
-    expect(Math.abs(north.z)).toBeLessThan(0.02);
-    const east = trackHeadingToLocalLookDirection(90, 10, new Cartesian3());
-    expect(east.x).toBeGreaterThan(0.9);
-    expect(east.z).toBeLessThan(0);
+  it('maps cockpit UI depression to negative Cesium setView pitch', () => {
+    const o = cockpitCameraOrientation(120, -18);
+    expect(o.pitch).toBeCloseTo((-18 * Math.PI) / 180, 5);
+    expect(o.heading).toBeCloseTo((120 * Math.PI) / 180, 5);
+    expect(o.roll).toBe(0);
   });
 
   it('places camera above target by range*sin(depression) for steep and mild chase', () => {

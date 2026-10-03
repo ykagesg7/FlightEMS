@@ -1,38 +1,99 @@
 import {
-  CallbackProperty,
   Cartesian3,
   Color,
-  ColorBlendMode,
-  HeadingPitchRoll,
   JulianDate,
   LinearApproximation,
-  Math as CesiumMath,
-  Quaternion,
+  NearFarScalar,
   SampledPositionProperty,
-  VelocityOrientationProperty,
+  SampledProperty,
   type Viewer,
 } from 'cesium';
+import { headingDegToBillboardRotation } from '../../../../explore/airspace3d/aircraftIcon';
 import {
-  AIRCRAFT_YAW_OFFSET_DEG,
-  createAircraftGltfDataUri,
-} from '../../../../explore/airspace3d/aircraftIcon';
-import { feetToMeters, type PlaybackPoint3D } from './flightViewer3dMath';
+  feetToMeters,
+  interpolatePlaybackAtTime,
+  type PlaybackPoint3D,
+} from './flightViewer3dMath';
 
 export const FLIGHT_VIEWER_AIRCRAFT_ID = 'flight-viewer-aircraft';
+export const FLIGHT_VIEWER_AIRCRAFT_HALO_ID = 'flight-viewer-aircraft-halo';
 
-const modelYawFix = Quaternion.fromHeadingPitchRoll(
-  new HeadingPitchRoll(CesiumMath.toRadians(AIRCRAFT_YAW_OFFSET_DEG), 0, 0),
-);
+const AIRCRAFT_BILLBOARD_IMAGE = '/airplane.png';
+const AIRCRAFT_HALO_BILLBOARD_IMAGE = '/airplane-halo.png';
+
+/** チェイス 650〜3000 m で視認できるピクセルサイズ */
+const aircraftBillboardScaleByDistance = new NearFarScalar(450, 1.35, 7500, 0.42);
+
+function buildPlaybackPositionProperty(
+  playback: PlaybackPoint3D[],
+  startJulian: JulianDate,
+): SampledPositionProperty {
+  const position = new SampledPositionProperty();
+  position.setInterpolationOptions({
+    interpolationDegree: 1,
+    interpolationAlgorithm: LinearApproximation,
+  });
+  for (const p of playback) {
+    const t = JulianDate.addSeconds(startJulian, p.tSec, new JulianDate());
+    position.addSample(t, Cartesian3.fromDegrees(p.lon, p.lat, feetToMeters(p.altFt)));
+  }
+  return position;
+}
+
+function buildPlaybackBillboardRotationProperty(
+  playback: PlaybackPoint3D[],
+  startJulian: JulianDate,
+): SampledProperty {
+  const rotation = new SampledProperty(Number);
+  rotation.setInterpolationOptions({
+    interpolationDegree: 1,
+    interpolationAlgorithm: LinearApproximation,
+  });
+  for (const p of playback) {
+    const t = JulianDate.addSeconds(startJulian, p.tSec, new JulianDate());
+    const headingDeg = interpolatePlaybackAtTime(playback, p.tSec).headingDeg;
+    rotation.addSample(t, headingDegToBillboardRotation(headingDeg));
+  }
+  return rotation;
+}
+
+function addAircraftBillboardEntity(
+  viewer: Viewer,
+  id: string,
+  position: SampledPositionProperty,
+  rotation: SampledProperty,
+  options: { halo: boolean },
+): void {
+  const scale = options.halo ? 1.14 : 1;
+  viewer.entities.add({
+    id,
+    position,
+    billboard: {
+      image: options.halo ? AIRCRAFT_HALO_BILLBOARD_IMAGE : AIRCRAFT_BILLBOARD_IMAGE,
+      width: 72,
+      height: 72,
+      scale,
+      scaleByDistance: aircraftBillboardScaleByDistance,
+      rotation,
+      alignedAxis: Cartesian3.UNIT_Z,
+      color: Color.WHITE,
+      disableDepthTestDistance: Number.POSITIVE_INFINITY,
+    },
+  });
+}
 
 export function removeFlightViewerAircraft(viewer: Viewer): void {
-  const entity = viewer.entities.getById(FLIGHT_VIEWER_AIRCRAFT_ID);
-  if (entity) viewer.entities.remove(entity);
+  for (const id of [FLIGHT_VIEWER_AIRCRAFT_ID, FLIGHT_VIEWER_AIRCRAFT_HALO_ID]) {
+    const entity = viewer.entities.getById(id);
+    if (entity) viewer.entities.remove(entity);
+  }
 }
 
 export function setFlightViewerAircraftVisible(viewer: Viewer, visible: boolean): void {
-  const entity = viewer.entities.getById(FLIGHT_VIEWER_AIRCRAFT_ID);
-  if (!entity) return;
-  entity.show = visible;
+  for (const id of [FLIGHT_VIEWER_AIRCRAFT_ID, FLIGHT_VIEWER_AIRCRAFT_HALO_ID]) {
+    const entity = viewer.entities.getById(id);
+    if (entity) entity.show = visible;
+  }
 }
 
 export function ensureFlightViewerAircraft(
@@ -43,44 +104,13 @@ export function ensureFlightViewerAircraft(
   removeFlightViewerAircraft(viewer);
   if (playback.length === 0) return;
 
-  const position = new SampledPositionProperty();
-  position.setInterpolationOptions({
-    interpolationDegree: 1,
-    interpolationAlgorithm: LinearApproximation,
+  const position = buildPlaybackPositionProperty(playback, startJulian);
+  const rotation = buildPlaybackBillboardRotationProperty(playback, startJulian);
+
+  addAircraftBillboardEntity(viewer, FLIGHT_VIEWER_AIRCRAFT_HALO_ID, position, rotation, {
+    halo: true,
   });
-  for (const p of playback) {
-    const t = JulianDate.addSeconds(startJulian, p.tSec, new JulianDate());
-    position.addSample(t, Cartesian3.fromDegrees(p.lon, p.lat, feetToMeters(p.altFt)));
-  }
-
-  const velocityOrientation = new VelocityOrientationProperty(position);
-  const scratch = new Quaternion();
-  const orientation = new CallbackProperty((time) => {
-    const qVel = velocityOrientation.getValue(time, scratch);
-    if (!qVel) return Quaternion.IDENTITY;
-    return Quaternion.multiply(qVel, modelYawFix, scratch);
-  }, false);
-
-  viewer.entities.add({
-    id: FLIGHT_VIEWER_AIRCRAFT_ID,
-    position,
-    orientation,
-    model: {
-      uri: createAircraftGltfDataUri(),
-      minimumPixelSize: 96,
-      maximumScale: 80_000,
-      scale: 1.2,
-      color: Color.fromCssColorString('#7DAAF7'),
-      colorBlendMode: ColorBlendMode.REPLACE,
-      silhouetteColor: Color.WHITE,
-      silhouetteSize: 2,
-    },
-    point: {
-      pixelSize: 14,
-      color: Color.fromCssColorString('#FFE94A'),
-      outlineColor: Color.BLACK,
-      outlineWidth: 2,
-      disableDepthTestDistance: Number.POSITIVE_INFINITY,
-    },
+  addAircraftBillboardEntity(viewer, FLIGHT_VIEWER_AIRCRAFT_ID, position, rotation, {
+    halo: false,
   });
 }

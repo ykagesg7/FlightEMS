@@ -2,7 +2,6 @@ import {
   Cartesian3,
   Cartesian4,
   Cartographic,
-  Matrix3,
   Matrix4,
   Transforms,
   type Viewer,
@@ -13,8 +12,6 @@ const scratchSubtract = new Cartesian3();
 const scratchDirection = new Cartesian3();
 const scratchUp = new Cartesian3();
 const scratchEnu = new Matrix4();
-const scratchRotation = new Matrix3();
-const scratchWorldDir = new Cartesian3();
 const scratchColumn = new Cartesian4();
 
 export function chaseCameraWorldPositionFromTarget(
@@ -37,38 +34,32 @@ export function expectedChaseCameraHeightGainM(rangeM: number, chasePitchDeg: nu
   return rangeM * Math.sin(depressionRad);
 }
 
-/** コックピット／チェイス共通: 真方位（度）から ENU 先方向（俯角は正の下向き度） */
-export function trackHeadingToLocalLookDirection(
+/** コックピット setView 用（俯角 UI は負値、Cesium pitch も負＝地平線より下） */
+export function cockpitCameraOrientation(
   trackHeadingDeg: number,
-  depressionDeg: number,
-  result = new Cartesian3(),
-): Cartesian3 {
-  const h = (trackHeadingDeg * Math.PI) / 180;
-  const dep = (Math.max(1, Math.min(89, depressionDeg)) * Math.PI) / 180;
-  result.x = Math.sin(h) * Math.cos(dep);
-  result.y = Math.cos(h) * Math.cos(dep);
-  result.z = -Math.sin(dep);
-  return Cartesian3.normalize(result, result);
+  chasePitchDeg: number,
+): { heading: number; pitch: number; roll: number } {
+  const depressionDeg = Math.min(89, Math.max(1, Math.abs(chasePitchDeg)));
+  const degToRad = (d: number) => (d * Math.PI) / 180;
+  return {
+    heading: degToRad(trackHeadingDeg),
+    pitch: degToRad(-depressionDeg),
+    roll: 0,
+  };
 }
 
-export function applyCameraViewAtEye(
+export function setCockpitCameraView(
   viewer: Viewer,
-  eye: Cartesian3,
-  localEnuLookDirection: Cartesian3,
+  lon: number,
+  lat: number,
+  altMeters: number,
+  trackHeadingDeg: number,
+  chasePitchDeg: number,
 ): void {
-  const enu = Transforms.eastNorthUpToFixedFrame(eye, undefined, scratchEnu);
-  Matrix4.getMatrix3(enu, scratchRotation);
-  Matrix3.multiplyByVector(scratchRotation, localEnuLookDirection, scratchWorldDir);
-  Cartesian3.normalize(scratchWorldDir, scratchDirection);
-  Matrix4.getColumn(enu, 2, scratchColumn);
-  Cartesian3.fromCartesian4(scratchColumn, scratchUp);
-  Cartesian3.normalize(scratchUp, scratchUp);
+  const orient = cockpitCameraOrientation(trackHeadingDeg, chasePitchDeg);
   viewer.camera.setView({
-    destination: eye,
-    orientation: {
-      direction: scratchDirection,
-      up: scratchUp,
-    },
+    destination: Cartesian3.fromDegrees(lon, lat, altMeters),
+    orientation: orient,
   });
 }
 

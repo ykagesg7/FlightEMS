@@ -37,16 +37,8 @@ import type {
   FlightViewControls,
   Waypoint3D,
 } from './types';
-import {
-  COCKPIT_EYE_OFFSET_FT,
-  COCKPIT_HEADING_BLEND_SEC,
-  DEFAULT_FLIGHT_VIEW_CONTROLS,
-} from './types';
-import {
-  applyCameraViewAtEye,
-  setChaseCameraFollowingTarget,
-  trackHeadingToLocalLookDirection,
-} from './flightViewer3dChaseCamera';
+import { COCKPIT_HEADING_BLEND_SEC, DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
+import { setChaseCameraFollowingTarget, setCockpitCameraView } from './flightViewer3dChaseCamera';
 import {
   ensureFlightViewerAircraft,
   removeFlightViewerAircraft,
@@ -220,16 +212,16 @@ function updateFollowCamera(
 ) {
   const altFt = applyPreviewAltitudeOffset(pose.altFt, controls.altitudeOffsetFt);
   if (mode === 'cockpit') {
-    const eyeAltFt = altFt + COCKPIT_EYE_OFFSET_FT;
-    const eye = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(eyeAltFt));
     const headingDeg = smoothedPlaybackHeadingDeg(playback, tSec, COCKPIT_HEADING_BLEND_SEC);
-    const localLook = trackHeadingToLocalLookDirection(
-      headingDeg,
-      Math.abs(controls.chasePitchDeg),
-      new Cartesian3(),
-    );
     unlockCamera(viewer);
-    applyCameraViewAtEye(viewer, eye, localLook);
+    setCockpitCameraView(
+      viewer,
+      pose.lon,
+      pose.lat,
+      feetToMeters(altFt),
+      headingDeg,
+      controls.chasePitchDeg,
+    );
     return;
   }
   const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(altFt));
