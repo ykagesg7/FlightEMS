@@ -121,15 +121,38 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
           >
             {playing ? '一時停止' : '再生'}
           </button>
-          <button
-            type="button"
-            data-testid="flight-viewer-camera"
-            onClick={() => setCameraMode((m) => (m === 'chase' ? 'cockpit' : 'chase'))}
-            disabled={!ready}
-            className="min-h-[44px] rounded border border-brand-primary/40 px-3 py-1.5 text-xs text-gray-200 hover:bg-brand-primary/10 disabled:opacity-40"
+          <div
+            className="flex rounded border border-brand-primary/40 p-0.5"
+            role="group"
+            aria-label="カメラモード"
           >
-            {cameraMode === 'chase' ? 'チェイス' : 'コックピット'}
-          </button>
+            <button
+              type="button"
+              data-testid="flight-viewer-camera-chase"
+              onClick={() => setCameraMode('chase')}
+              disabled={!ready}
+              className={`min-h-[40px] rounded px-2.5 text-xs disabled:opacity-40 ${
+                cameraMode === 'chase'
+                  ? 'bg-brand-primary/25 text-brand-primary'
+                  : 'text-gray-300 hover:bg-brand-primary/10'
+              }`}
+            >
+              チェイス
+            </button>
+            <button
+              type="button"
+              data-testid="flight-viewer-camera-cockpit"
+              onClick={() => setCameraMode('cockpit')}
+              disabled={!ready}
+              className={`min-h-[40px] rounded px-2.5 text-xs disabled:opacity-40 ${
+                cameraMode === 'cockpit'
+                  ? 'bg-brand-primary/25 text-brand-primary'
+                  : 'text-gray-300 hover:bg-brand-primary/10'
+              }`}
+            >
+              コックピット
+            </button>
+          </div>
           <label className="flex min-h-[44px] flex-1 min-w-[140px] items-center gap-2 text-xs text-gray-300">
             <span className="shrink-0 tabular-nums">{Math.round(progressPct)}%</span>
             <input
@@ -167,29 +190,31 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
               aria-label="高度オフセット"
             />
           </label>
+          {cameraMode === 'chase' ? (
+            <label className="flex min-w-[8rem] flex-1 flex-col gap-1">
+              <span>
+                距離（m）
+                <span className="ml-1 tabular-nums text-gray-400">{viewControls.chaseDistanceM}</span>
+              </span>
+              <input
+                type="range"
+                min={80}
+                max={3000}
+                step={20}
+                disabled={!ready}
+                value={viewControls.chaseDistanceM}
+                onChange={(e) =>
+                  setViewControls((c) => ({ ...c, chaseDistanceM: Number(e.target.value) }))
+                }
+                className="h-2 accent-brand-primary disabled:opacity-40"
+                data-testid="flight-viewer-chase-distance"
+                aria-label="チェイス距離"
+              />
+            </label>
+          ) : null}
           <label className="flex min-w-[8rem] flex-1 flex-col gap-1">
             <span>
-              距離（m）
-              <span className="ml-1 tabular-nums text-gray-400">{viewControls.chaseDistanceM}</span>
-            </span>
-            <input
-              type="range"
-              min={80}
-              max={3000}
-              step={20}
-              disabled={!ready || cameraMode !== 'chase'}
-              value={viewControls.chaseDistanceM}
-              onChange={(e) =>
-                setViewControls((c) => ({ ...c, chaseDistanceM: Number(e.target.value) }))
-              }
-              className="h-2 accent-brand-primary disabled:opacity-40"
-              data-testid="flight-viewer-chase-distance"
-              aria-label="チェイス距離"
-            />
-          </label>
-          <label className="flex min-w-[8rem] flex-1 flex-col gap-1">
-            <span>
-              俯角（°）
+              {cameraMode === 'cockpit' ? '前方俯角（°）' : '俯角（°）'}
               <span className="ml-1 tabular-nums text-gray-400">{viewControls.chasePitchDeg}</span>
             </span>
             <input

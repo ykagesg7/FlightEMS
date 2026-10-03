@@ -25,6 +25,7 @@ import {
   buildPlaybackPointsFromWaypoints,
   feetToMeters,
   interpolatePlaybackAtTime,
+  smoothedPlaybackHeadingDeg,
   type PlaybackPoint3D,
 } from './flightViewer3dMath';
 import { canUseGooglePhotorealistic3D } from './googlePhotorealistic3dAccess';
@@ -36,15 +37,34 @@ import type {
   FlightViewControls,
   Waypoint3D,
 } from './types';
-import { DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
-import { setChaseCameraFollowingTarget } from './flightViewer3dChaseCamera';
-import { ensureFlightViewerAircraft, removeFlightViewerAircraft } from './flightViewerAircraft';
+import { COCKPIT_HEADING_BLEND_SEC, DEFAULT_FLIGHT_VIEW_CONTROLS } from './types';
+import { setChaseCameraFollowingTarget, setCockpitCameraView } from './flightViewer3dChaseCamera';
+import { resampleCockpitGroundGraphics } from './flightViewerGroundRoute';
+import { dedupeConsecutiveGroundPositions } from './flightViewerRouteGraphics';
+import { updateCockpitWaypointLabelVisibility } from './flightViewerCockpitLayers';
+import {
+  ensureFlightViewerAircraft,
+  installChaseAircraftBillboardSceneRotation,
+  removeFlightViewerAircraft,
+  setFlightViewerAircraftVisible,
+  uninstallChaseAircraftBillboardSceneRotation,
+} from './flightViewerAircraft';
+import {
+  clearFlightViewer3dDebugFlags,
+  setFlightViewer3dErrorFlag,
+  setFlightViewer3dReadyFlag,
+} from './flightViewer3dDebug';
 
-const VIEWER_BOOT_TIMEOUT_MS = 25_000;
+/** Viewer 生成＋ルート構築のみ（地形タイルは ready 後に非同期） */
+const VIEWER_BOOT_TIMEOUT_MS = 15_000;
 const LABEL_DEPTH_TEST_DISTANCE = Number.POSITIVE_INFINITY;
 
 const ROUTE_ENTITY_PREFIX = 'flight-viewer-route-';
 const ROUTE_POLYLINE_ID = 'flight-viewer-route-line';
+const ROUTE_GROUND_POLYLINE_ID = 'flight-viewer-route-ground-line';
+
+/** コックピット用地上ラベル・ルートの scaleByDistance（約 10 nm まで読める） */
+const COCKPIT_GROUND_LABEL_SCALE = new NearFarScalar(500, 1.4, 185_200, 0.72);
 
 /** デモ／プレビュー用。実時間 1x は長距離で遅すぎるため加速する */
 const PLAYBACK_MULTIPLIER = 40;
@@ -115,11 +135,49 @@ function removeRouteEntities(viewer: Viewer) {
     const id = e.id;
     return (
       typeof id === 'string' &&
-      (id === ROUTE_POLYLINE_ID || id.startsWith(ROUTE_ENTITY_PREFIX))
+      (id === ROUTE_POLYLINE_ID ||
+        id === ROUTE_GROUND_POLYLINE_ID ||
+        id.startsWith(ROUTE_ENTITY_PREFIX))
     );
   });
   for (const entity of toRemove) {
     viewer.entities.remove(entity);
+  }
+}
+
+function terrainProviderSupportsGroundClamp(viewer: Viewer): boolean {
+  return !(viewer.terrainProvider instanceof EllipsoidTerrainProvider);
+}
+
+function scheduleCockpitGroundResample(viewer: Viewer, waypoints: Waypoint3D[]): void {
+  if (terrainProviderSupportsGroundClamp(viewer)) {
+    void resampleCockpitGroundGraphics(viewer, waypoints).catch((e) => {
+      console.error('cockpit ground resample failed', e);
+    });
+  }
+}
+
+function applyFlightRouteLayerVisibility(viewer: Viewer, mode: FlightCameraMode) {
+  const cockpit = mode === 'cockpit';
+  const airLine = viewer.entities.getById(ROUTE_POLYLINE_ID);
+  if (airLine) airLine.show = !cockpit;
+  const groundLine = viewer.entities.getById(ROUTE_GROUND_POLYLINE_ID);
+  if (groundLine) groundLine.show = cockpit;
+
+  for (const entity of viewer.entities.values) {
+    const id = entity.id;
+    if (typeof id !== 'string' || !id.startsWith(ROUTE_ENTITY_PREFIX)) continue;
+    if (id.includes('wp-ground-')) {
+      entity.show = cockpit;
+      continue;
+    }
+    if (id.includes('-drop-')) {
+      entity.show = cockpit;
+      continue;
+    }
+    if (id.includes('-wp-')) {
+      entity.show = !cockpit;
+    }
   }
 }
 
@@ -128,19 +186,36 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
   const routePositions = waypoints.map((w) =>
     Cartesian3.fromDegrees(w.lon, w.lat, feetToMeters(w.altFt)),
   );
+  const groundRoutePositions = dedupeConsecutiveGroundPositions(waypoints);
+  const routeMagenta = new ColorMaterialProperty(Color.fromCssColorString('#FF00FF').withAlpha(0.92));
+
   if (routePositions.length >= 2) {
     viewer.entities.add({
       id: ROUTE_POLYLINE_ID,
       polyline: {
         positions: routePositions,
         width: 3,
-        material: new ColorMaterialProperty(Color.fromCssColorString('#FF00FF').withAlpha(0.92)),
+        material: routeMagenta,
       },
     });
+    if (groundRoutePositions.length >= 2) {
+      const magentaSolid = Color.fromCssColorString('#FF00FF').withAlpha(0.95);
+      viewer.entities.add({
+        id: ROUTE_GROUND_POLYLINE_ID,
+        show: false,
+        polyline: {
+          positions: groundRoutePositions,
+          width: 8,
+          material: routeMagenta,
+          depthFailMaterial: new ColorMaterialProperty(magentaSolid),
+        },
+      });
+    }
   }
   for (let i = 0; i < waypoints.length; i++) {
     const w = waypoints[i]!;
-    const atAlt = Cartesian3.fromDegrees(w.lon, w.lat, feetToMeters(w.altFt));
+    const altM = feetToMeters(w.altFt);
+    const atAlt = Cartesian3.fromDegrees(w.lon, w.lat, altM);
     const onGround = Cartesian3.fromDegrees(w.lon, w.lat, 0);
     viewer.entities.add({
       id: `${ROUTE_ENTITY_PREFIX}wp-${i}`,
@@ -155,7 +230,7 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
         verticalOrigin: 1,
         pixelOffset: new Cartesian2(0, -22),
         disableDepthTestDistance: LABEL_DEPTH_TEST_DISTANCE,
-        scaleByDistance: new NearFarScalar(500, 1.35, 8_000_000, 0.65),
+        scaleByDistance: new NearFarScalar(10, 1.25, 400_000, 0.9),
         showBackground: true,
         backgroundColor: Color.fromCssColorString('#0d1b2a').withAlpha(0.72),
         backgroundPadding: new Cartesian2(8, 5),
@@ -166,20 +241,54 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
         outlineColor: Color.BLACK,
         outlineWidth: 2,
         disableDepthTestDistance: LABEL_DEPTH_TEST_DISTANCE,
-        scaleByDistance: new NearFarScalar(500, 1.2, 8_000_000, 0.5),
+        scaleByDistance: new NearFarScalar(10, 1.1, 400_000, 0.85),
       },
     });
     viewer.entities.add({
-      id: `${ROUTE_ENTITY_PREFIX}drop-${i}`,
-      polyline: {
-        positions: [atAlt, onGround],
-        width: 1.5,
-        material: new PolylineDashMaterialProperty({
-          color: Color.fromCssColorString('#7DAAF7').withAlpha(0.55),
-          dashLength: 12,
-        }),
+      id: `${ROUTE_ENTITY_PREFIX}wp-ground-${i}`,
+      show: false,
+      position: onGround,
+      label: {
+        text: w.name,
+        font: 'bold 15px sans-serif',
+        fillColor: Color.WHITE,
+        outlineColor: Color.BLACK,
+        outlineWidth: 3,
+        style: LabelStyle.FILL_AND_OUTLINE,
+        verticalOrigin: 1,
+        pixelOffset: new Cartesian2(0, -40),
+        disableDepthTestDistance: LABEL_DEPTH_TEST_DISTANCE,
+        scaleByDistance: COCKPIT_GROUND_LABEL_SCALE,
+        showBackground: true,
+        backgroundColor: Color.fromCssColorString('#0d1b2a').withAlpha(0.82),
+        backgroundPadding: new Cartesian2(8, 5),
+      },
+      point: {
+        pixelSize: 12,
+        color: Color.fromCssColorString('#39FF14'),
+        outlineColor: Color.BLACK,
+        outlineWidth: 2,
+        disableDepthTestDistance: LABEL_DEPTH_TEST_DISTANCE,
+        scaleByDistance: COCKPIT_GROUND_LABEL_SCALE,
       },
     });
+    if (altM > 2) {
+      viewer.entities.add({
+        id: `${ROUTE_ENTITY_PREFIX}drop-${i}`,
+        show: false,
+        polyline: {
+          positions: [atAlt, onGround],
+          width: 2,
+          depthFailMaterial: new ColorMaterialProperty(
+            Color.fromCssColorString('#7DAAF7').withAlpha(0.55),
+          ),
+          material: new PolylineDashMaterialProperty({
+            color: Color.fromCssColorString('#7DAAF7').withAlpha(0.55),
+            dashLength: 12,
+          }),
+        },
+      });
+    }
   }
 }
 
@@ -200,25 +309,21 @@ function fitCameraToRoute(viewer: Viewer, waypoints: Waypoint3D[]) {
 function updateFollowCamera(
   viewer: Viewer,
   pose: ReturnType<typeof interpolatePlaybackAtTime>,
+  tSec: number,
+  playback: PlaybackPoint3D[],
   mode: FlightCameraMode,
   controls: FlightViewControls,
+  routeWaypoints: Waypoint3D[],
 ) {
   const altFt = applyPreviewAltitudeOffset(pose.altFt, controls.altitudeOffsetFt);
-  const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(altFt));
-  const trackHeadingRad = CesiumMath.toRadians(pose.headingDeg);
-  const cockpitPitchRad = CesiumMath.toRadians(controls.chasePitchDeg);
   if (mode === 'cockpit') {
+    const headingDeg = smoothedPlaybackHeadingDeg(playback, tSec, COCKPIT_HEADING_BLEND_SEC);
     unlockCamera(viewer);
-    viewer.camera.setView({
-      destination: pos,
-      orientation: {
-        heading: trackHeadingRad,
-        pitch: cockpitPitchRad,
-        roll: 0,
-      },
-    });
+    setCockpitCameraView(viewer, pose.lon, pose.lat, feetToMeters(altFt), headingDeg);
+    updateCockpitWaypointLabelVisibility(viewer, routeWaypoints, pose.fraction);
     return;
   }
+  const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(altFt));
   unlockCamera(viewer);
   setChaseCameraFollowingTarget(
     viewer,
@@ -268,6 +373,8 @@ export function useCesiumFlight({
   viewControlsRef.current = viewControls;
   const waypointsBootRef = useRef(waypoints);
   waypointsBootRef.current = waypoints;
+  const routeWaypointsRef = useRef<Waypoint3D[]>(waypoints);
+  routeWaypointsRef.current = waypoints;
   const imageryModeBootRef = useRef(imageryMode);
   imageryModeBootRef.current = imageryMode;
 
@@ -291,6 +398,7 @@ export function useCesiumFlight({
           setDepthTestAgainstTerrain(viewer, true);
           const imagery = new UrlTemplateImageryProvider(gsiSeamlessPhotoImageryOptions);
           viewer.imageryLayers.addImageryProvider(imagery);
+          scheduleCockpitGroundResample(viewer, routeWaypointsRef.current);
         } else {
           const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
           if (!key) {
@@ -314,6 +422,7 @@ export function useCesiumFlight({
   );
 
   const rebuildRoute = useCallback((viewer: Viewer, wps: Waypoint3D[]) => {
+    routeWaypointsRef.current = wps;
     removeRouteEntities(viewer);
     addRouteGraphics(viewer, wps);
     const { points, totalSec } = buildPlaybackPointsFromWaypoints(wps);
@@ -334,8 +443,13 @@ export function useCesiumFlight({
     setProgressPct(0);
     setPlaying(false);
     ensureFlightViewerAircraft(viewer, points, start);
+    setFlightViewerAircraftVisible(viewer, cameraModeRef.current !== 'cockpit');
+    applyFlightRouteLayerVisibility(viewer, cameraModeRef.current);
     if (wps.length >= 2) {
       fitCameraToRoute(viewer, wps);
+    }
+    if (!(viewer.terrainProvider instanceof EllipsoidTerrainProvider)) {
+      scheduleCockpitGroundResample(viewer, wps);
     }
   }, []);
 
@@ -343,10 +457,11 @@ export function useCesiumFlight({
     if (!mountEl) return;
     setError(null);
     setReady(false);
+    clearFlightViewer3dDebugFlags();
     const el = mountEl;
     let cancelled = false;
 
-    const runBoot = async (): Promise<void> => {
+    const runBootCore = (): Viewer => {
       const viewer = new Viewer(el, {
         animation: false,
         timeline: false,
@@ -368,19 +483,8 @@ export function useCesiumFlight({
         },
       });
       setDepthTestAgainstTerrain(viewer, false);
-      if (cancelled) {
-        viewer.destroy();
-        return;
-      }
       viewerRef.current = viewer;
       rebuildRoute(viewer, waypointsBootRef.current);
-      await applyImagery(viewer, imageryModeBootRef.current);
-      if (cancelled) {
-        viewer.destroy();
-        viewerRef.current = null;
-        return;
-      }
-      skipNextImageryEffectRef.current = true;
 
       const onTick = () => {
         const startJ = startJulianRef.current;
@@ -392,7 +496,15 @@ export function useCesiumFlight({
 
         const animating = viewer.clock.shouldAnimate;
         if (animating) {
-          updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
+          updateFollowCamera(
+            viewer,
+            pose,
+            tSec,
+            playbackRef.current,
+            cameraModeRef.current,
+            viewControlsRef.current,
+            routeWaypointsRef.current,
+          );
         } else if (wasAnimatingRef.current) {
           unlockCamera(viewer);
         }
@@ -400,24 +512,51 @@ export function useCesiumFlight({
         setPlaying(animating);
       };
       viewer.clock.onTick.addEventListener(onTick);
+      installChaseAircraftBillboardSceneRotation(viewer, () => cameraModeRef.current === 'chase');
+      return viewer;
+    };
 
-      if (!cancelled) setReady(true);
+    const runBoot = async (): Promise<void> => {
+      const viewer = runBootCore();
+      if (cancelled) {
+        viewer.destroy();
+        viewerRef.current = null;
+        return;
+      }
+
+      skipNextImageryEffectRef.current = true;
+      setReady(true);
+      setFlightViewer3dReadyFlag(true);
+
+      try {
+        await applyImagery(viewer, imageryModeBootRef.current);
+      } catch (e: unknown) {
+        if (cancelled) return;
+        console.error(e);
+        const msg = e instanceof Error ? e.message : String(e);
+        setError(msg);
+        setFlightViewer3dErrorFlag(msg);
+      }
     };
 
     void withTimeout(
-      runBoot(),
+      Promise.resolve().then(() => runBoot()),
       VIEWER_BOOT_TIMEOUT_MS,
       '3D ビューアの初期化がタイムアウトしました。再試行してください。',
     ).catch((e: unknown) => {
       if (cancelled) return;
       console.error(e);
-      setError(e instanceof Error ? e.message : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg);
+      setFlightViewer3dErrorFlag(msg);
     });
 
     return () => {
       cancelled = true;
+      clearFlightViewer3dDebugFlags();
       const v = viewerRef.current;
       if (v && !v.isDestroyed()) {
+        uninstallChaseAircraftBillboardSceneRotation(v);
         v.destroy();
       }
       viewerRef.current = null;
@@ -439,28 +578,49 @@ export function useCesiumFlight({
     // 再生中のみ chase 追従。停止中はモード切替時だけ姿勢を合わせる
     const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
     const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
-    updateFollowCamera(viewer, pose, cameraMode, viewControlsRef.current);
-    if (!viewer.clock.shouldAnimate) {
-      unlockCamera(viewer);
-    }
+    setFlightViewerAircraftVisible(viewer, cameraMode !== 'cockpit');
+    applyFlightRouteLayerVisibility(viewer, cameraMode);
+    updateFollowCamera(
+      viewer,
+      pose,
+      tSec,
+      playbackRef.current,
+      cameraMode,
+      viewControlsRef.current,
+      routeWaypointsRef.current,
+    );
   }, [cameraMode, ready]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
     const startJ = startJulianRef.current;
     if (!viewer || viewer.isDestroyed() || !ready || !startJ) return;
-    if (!viewer.clock.shouldAnimate && cameraModeRef.current === 'chase') {
-      // 停止中のスライダー調整時は一度追従してからロック解除（手動操作を継続可能に）
+    if (!viewer.clock.shouldAnimate) {
       const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
       const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
-      updateFollowCamera(viewer, pose, cameraModeRef.current, viewControls);
-      unlockCamera(viewer);
+      updateFollowCamera(
+        viewer,
+        pose,
+        tSec,
+        playbackRef.current,
+        cameraModeRef.current,
+        viewControls,
+        routeWaypointsRef.current,
+      );
       return;
     }
     if (viewer.clock.shouldAnimate) {
       const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
       const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
-      updateFollowCamera(viewer, pose, cameraModeRef.current, viewControls);
+      updateFollowCamera(
+        viewer,
+        pose,
+        tSec,
+        playbackRef.current,
+        cameraModeRef.current,
+        viewControls,
+        routeWaypointsRef.current,
+      );
     }
   }, [viewControls, ready]);
 
@@ -507,8 +667,15 @@ export function useCesiumFlight({
     setPlaying(false);
     const pose = interpolatePlaybackAtTime(playbackRef.current, tSec);
     setProgressPct((tSec / (total || 1)) * 100);
-    updateFollowCamera(viewer, pose, cameraModeRef.current, viewControlsRef.current);
-    unlockCamera(viewer);
+    updateFollowCamera(
+      viewer,
+      pose,
+      tSec,
+      playbackRef.current,
+      cameraModeRef.current,
+      viewControlsRef.current,
+      routeWaypointsRef.current,
+    );
   }, []);
 
   return {

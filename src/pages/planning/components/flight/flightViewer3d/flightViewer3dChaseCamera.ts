@@ -2,19 +2,23 @@ import {
   Cartesian3,
   Cartesian4,
   Cartographic,
-  Matrix3,
+  Math as CesiumMath,
   Matrix4,
   Transforms,
   type Viewer,
 } from 'cesium';
-import { chaseCameraOffsetEnuMeters } from './flightViewer3dMath';
+import { AIRCRAFT_YAW_OFFSET_DEG } from './flightViewerAircraftConstants';
+import {
+  COCKPIT_EYE_OFFSET_FT,
+  COCKPIT_LOOK_PITCH_DEG,
+  COCKPIT_MIN_TERRAIN_CLEARANCE_M,
+} from './types';
+import { chaseCameraOffsetEnuMeters, feetToMeters } from './flightViewer3dMath';
 
 const scratchSubtract = new Cartesian3();
 const scratchDirection = new Cartesian3();
 const scratchUp = new Cartesian3();
 const scratchEnu = new Matrix4();
-const scratchRotation = new Matrix3();
-const scratchWorldDir = new Cartesian3();
 const scratchColumn = new Cartesian4();
 
 export function chaseCameraWorldPositionFromTarget(
@@ -37,37 +41,58 @@ export function expectedChaseCameraHeightGainM(rangeM: number, chasePitchDeg: nu
   return rangeM * Math.sin(depressionRad);
 }
 
-/** コックピット／チェイス共通: 真方位（度）から ENU 先方向（俯角は正の下向き度） */
-export function trackHeadingToLocalLookDirection(
+/** コックピット視線（target 基準 ENU 単位ベクトル）。UI 俯角は負＝下向き。 */
+export function cockpitLookDirectionEnu(
   trackHeadingDeg: number,
-  depressionDeg: number,
-  result = new Cartesian3(),
-): Cartesian3 {
+  chasePitchDeg: number,
+): { east: number; north: number; up: number } {
+  const depressionRad = Math.min(
+    (89 * Math.PI) / 180,
+    Math.max((1 * Math.PI) / 180, (Math.abs(chasePitchDeg) * Math.PI) / 180),
+  );
   const h = (trackHeadingDeg * Math.PI) / 180;
-  const dep = (Math.max(1, Math.min(89, depressionDeg)) * Math.PI) / 180;
-  result.x = Math.sin(h) * Math.cos(dep);
-  result.y = Math.cos(h) * Math.cos(dep);
-  result.z = -Math.sin(dep);
-  return Cartesian3.normalize(result, result);
+  const cosP = Math.cos(depressionRad);
+  const sinP = Math.sin(depressionRad);
+  return {
+    east: Math.sin(h) * cosP,
+    north: Math.cos(h) * cosP,
+    up: -sinP,
+  };
 }
 
-export function applyCameraViewAtEye(
+function cockpitEyeHeightMeters(
   viewer: Viewer,
-  eye: Cartesian3,
-  localEnuLookDirection: Cartesian3,
+  lon: number,
+  lat: number,
+  altMeters: number,
+): number {
+  const eyeM = altMeters + feetToMeters(COCKPIT_EYE_OFFSET_FT);
+  const carto = Cartographic.fromDegrees(lon, lat);
+  const terrainH = viewer.scene.globe.getHeight(carto);
+  if (terrainH !== undefined && Number.isFinite(terrainH)) {
+    return Math.max(eyeM, terrainH + COCKPIT_MIN_TERRAIN_CLEARANCE_M);
+  }
+  return eyeM;
+}
+
+export function setCockpitCameraView(
+  viewer: Viewer,
+  lon: number,
+  lat: number,
+  altMeters: number,
+  trackHeadingDeg: number,
 ): void {
-  const enu = Transforms.eastNorthUpToFixedFrame(eye, undefined, scratchEnu);
-  Matrix4.getMatrix3(enu, scratchRotation);
-  Matrix3.multiplyByVector(scratchRotation, localEnuLookDirection, scratchWorldDir);
-  Cartesian3.normalize(scratchWorldDir, scratchDirection);
-  Matrix4.getColumn(enu, 2, scratchColumn);
-  Cartesian3.fromCartesian4(scratchColumn, scratchUp);
-  Cartesian3.normalize(scratchUp, scratchUp);
+  const eyeAlt = cockpitEyeHeightMeters(viewer, lon, lat, altMeters);
+  const destination = Cartesian3.fromDegrees(lon, lat, eyeAlt);
+  const pitchDeg = Math.min(-1, Math.max(-12, COCKPIT_LOOK_PITCH_DEG));
+  const headingDeg = Number.isFinite(trackHeadingDeg) ? trackHeadingDeg : 0;
+  viewer.camera.lookAtTransform(Matrix4.IDENTITY);
   viewer.camera.setView({
-    destination: eye,
+    destination,
     orientation: {
-      direction: scratchDirection,
-      up: scratchUp,
+      heading: CesiumMath.toRadians(headingDeg + AIRCRAFT_YAW_OFFSET_DEG),
+      pitch: CesiumMath.toRadians(pitchDeg),
+      roll: 0,
     },
   });
 }
@@ -87,10 +112,12 @@ export function setChaseCameraFollowingTarget(
     new Cartesian3(),
   );
   Cartesian3.subtract(target, eye, scratchSubtract);
+  if (Cartesian3.magnitude(scratchSubtract) < 1e-4) return;
   Cartesian3.normalize(scratchSubtract, scratchDirection);
   const enu = Transforms.eastNorthUpToFixedFrame(eye, undefined, scratchEnu);
   Matrix4.getColumn(enu, 2, scratchColumn);
   Cartesian3.fromCartesian4(scratchColumn, scratchUp);
+  if (Cartesian3.magnitude(scratchUp) < 1e-6) return;
   Cartesian3.normalize(scratchUp, scratchUp);
   viewer.camera.setView({
     destination: eye,

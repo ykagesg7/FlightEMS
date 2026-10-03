@@ -5,9 +5,12 @@ import {
   buildPlaybackPointsFromWaypoints,
   chaseCameraOffsetEnuMeters,
   feetToMeters,
+  headingShortestDeltaDeg,
   interpolatePathByFraction,
   interpolatePlaybackAtTime,
   isChaseCameraOffsetBehindAndAbove,
+  lerpHeadingDeg,
+  smoothedPlaybackHeadingDeg,
 } from '../../pages/planning/components/flight/flightViewer3d/flightViewer3dMath';
 
 describe('flightViewer3dMath', () => {
@@ -32,6 +35,27 @@ describe('flightViewer3dMath', () => {
     for (let i = 1; i < points.length; i++) {
       expect(points[i]!.tSec).toBeGreaterThanOrEqual(points[i - 1]!.tSec);
     }
+  });
+
+  it('computes shortest heading delta across 359→0 wrap', () => {
+    expect(headingShortestDeltaDeg(359, 1)).toBeCloseTo(2, 5);
+    expect(headingShortestDeltaDeg(1, 359)).toBeCloseTo(-2, 5);
+    expect(lerpHeadingDeg(359, 1, 0.5)).toBeCloseTo(0, 5);
+  });
+
+  it('smooths heading over blend window at leg turns', () => {
+    const points = [
+      { lon: 0, lat: 0, altFt: 5000, tSec: 0 },
+      { lon: 0, lat: 1, altFt: 5000, tSec: 10 },
+      { lon: 1, lat: 1, altFt: 5000, tSec: 20 },
+    ];
+    const beforeTurn = smoothedPlaybackHeadingDeg(points, 9.5, 3);
+    expect(beforeTurn).toBeCloseTo(0, 1);
+    const midTurn = smoothedPlaybackHeadingDeg(points, 10.5, 3);
+    expect(midTurn).toBeGreaterThan(0);
+    expect(midTurn).toBeLessThan(90);
+    const afterTurn = smoothedPlaybackHeadingDeg(points, 20, 3);
+    expect(afterTurn).toBeCloseTo(90, 1);
   });
 
   it('places chase offset behind and above for steep and mild UI pitch', () => {
