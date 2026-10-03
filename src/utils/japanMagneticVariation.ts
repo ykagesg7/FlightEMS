@@ -6,6 +6,7 @@
 import {
   gsiGeomag2020DeclinationWestDeg,
   initGsiGeomag2020DeclinationGrid,
+  isGsiGeomag2020GridFallbackActive,
   GSI_GEOMAG_2020_META,
 } from './gsiGeomag2020DeclinationWest';
 
@@ -21,9 +22,14 @@ export const JAPAN_MAG_VAR_STATIONS: readonly MagVarStation[] = [];
 
 export { initGsiGeomag2020DeclinationGrid as initJapanMagneticVariationGrid };
 
+/** 格子 u16 の取得に失敗し、代表値で磁方位を続行しているとき true。 */
+export function isJapanMagneticVariationGridFallbackActive(): boolean {
+  return isGsiGeomag2020GridFallbackActive();
+}
+
 /**
  * 西偏（度）。真方位に加算して磁方位を得る。
- * `initJapanMagneticVariationGrid()` 後に利用する。
+ * 格子読込前・失敗時は代表偏角（羽田付近・GSI 2020.0）を返す。
  */
 export function interpolateJapanMagneticVariationWestDeg(lat: number, lon: number): number {
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) {

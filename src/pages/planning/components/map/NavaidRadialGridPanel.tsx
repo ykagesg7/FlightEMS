@@ -35,7 +35,7 @@ export const NavaidRadialGridPanel: React.FC<Props> = ({
       </p>
       <p className="text-2xs text-gray-500">
         磁方位 {NAVAID_RADIAL_STEP_DEG}°・距離 {NAVAID_DME_STEP_NM} nm（最大{' '}
-        {NAVAID_RADIAL_MAX_NM} nm）。教育用固定磁気偏差。実運航用ではありません。
+        {NAVAID_RADIAL_MAX_NM} nm）。国土地理院 磁気図2020.0年値に基づく教育用参考表示。実運航用ではありません。
       </p>
       <div className="text-2xs text-gray-300">
         基準:{' '}

@@ -16,6 +16,7 @@ import { importWithChunkRetry } from '../../utils/lazyWithRetry';
 import type { FlightTrack } from './tracks/types';
 import { DebriefPanel } from './components/debrief/DebriefPanel';
 import PlanningTab from './components/flight/PlanningTab';
+import { MagneticVariationFallbackNotice } from './components/MagneticVariationFallbackNotice';
 import { PlanningContextNote } from './components/PlanningContextNote';
 import { PlanningModeSegment } from './components/PlanningModeSegment';
 import { PlanningNotamSheetProvider } from './components/map/PlanningNotamSheetProvider';
@@ -130,6 +131,7 @@ function PlanningMapPageInner({
                 <PlanningModeSegment />
               </div>
               <PlanningContextNote />
+              <MagneticVariationFallbackNotice />
               {leftPanelContent}
             </div>
             <div className="h-full min-h-[calc(100vh-5rem)] min-w-0">
@@ -162,6 +164,7 @@ function PlanningMapPageInner({
 
         <div className="px-4 pb-2">
           <PlanningContextNote />
+          <MagneticVariationFallbackNotice />
         </div>
 
         <div className="mb-2">
