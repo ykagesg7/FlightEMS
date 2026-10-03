@@ -144,10 +144,9 @@ async function main() {
   });
   const navStart = Date.now();
   await page.goto(`${BASE}/planning?mode=plan`, { waitUntil: 'domcontentloaded', timeout: 180_000 });
-  const details3d = page.locator('details').filter({
-    has: page.locator('summary', { hasText: '3D ルートプレビュー' }),
-  });
-  await details3d.locator('summary').click({ timeout: 60_000 });
+  const summary3d = page.getByText('3D ルートプレビュー', { exact: true });
+  await summary3d.scrollIntoViewIfNeeded({ timeout: 60_000 });
+  await summary3d.click({ timeout: 60_000 });
   await waitViewerReady(page);
   const timings = await page.evaluate(() => ({
     chunkMs: window.__flightViewer3dChunkMs ?? null,

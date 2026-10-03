@@ -12,8 +12,15 @@ export const PlanningFlightViewer3DPanel: React.FC<PlanningFlightViewer3DPanelPr
   waypoints,
   isProUser,
 }) => {
-  const { poppedOut, popupBlocked, openPopout, focusPopout, dismissPopupBlocked } =
-    usePlanning3dPopoutHost(waypoints, isProUser);
+  const {
+    poppedOut,
+    popupBlocked,
+    openPopout,
+    focusPopout,
+    dismissPopupBlocked,
+    viewerUi,
+    setViewerUi,
+  } = usePlanning3dPopoutHost(waypoints, isProUser);
 
   return (
     <div data-testid="planning-flight-viewer-3d-panel">
@@ -48,7 +55,12 @@ export const PlanningFlightViewer3DPanel: React.FC<PlanningFlightViewer3DPanelPr
               別ウィンドウで開く
             </button>
           </div>
-          <FlightViewer3DSuspense waypoints={waypoints} isProUser={isProUser} />
+          <FlightViewer3DSuspense
+            waypoints={waypoints}
+            isProUser={isProUser}
+            viewerUi={viewerUi}
+            onViewerUiChange={setViewerUi}
+          />
         </>
       ) : (
         <div

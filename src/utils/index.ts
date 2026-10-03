@@ -125,8 +125,7 @@ export const dmsToDecimal = (dms: string, isLatitude: boolean): number | null =>
   return (hemisphere === 'S' || hemisphere === 'W') ? -decimal : decimal;
 };
 
-export const SPEED_INCREMENT = 5;
-export const ALTITUDE_INCREMENT = 500;
+export { SPEED_INCREMENT, ALTITUDE_INCREMENT } from './flightParametersConstants';
 
 export const parseTimeString = (timeString: string): Date => {
   const [hours, minutes] = timeString.split(':').map(Number);

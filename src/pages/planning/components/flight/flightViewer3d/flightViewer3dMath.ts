@@ -84,6 +84,66 @@ export function segmentHeadingDeg(
   return (brng + 360) % 360;
 }
 
+export type RouteLegProjection = {
+  legIndex: number;
+  /** レグ上の 0–1（端点はクランプ） */
+  along: number;
+  distanceNm: number;
+};
+
+/** 現在位置がどのウェイポイント間レグ上にあるか（最近傍レグ） */
+export function routeLegProjectionAtPosition(
+  lat: number,
+  lon: number,
+  waypoints: Waypoint3D[],
+): RouteLegProjection {
+  if (waypoints.length < 2) {
+    return { legIndex: 0, along: 0, distanceNm: 0 };
+  }
+  let bestLeg = 0;
+  let bestAlong = 0;
+  let bestDistNm = Infinity;
+  for (let i = 0; i < waypoints.length - 1; i++) {
+    const a = waypoints[i]!;
+    const b = waypoints[i + 1]!;
+    const proj = projectOntoSegmentNm(lat, lon, a.lat, a.lon, b.lat, b.lon);
+    if (proj.distanceNm < bestDistNm) {
+      bestDistNm = proj.distanceNm;
+      bestLeg = i;
+      bestAlong = proj.along;
+    }
+  }
+  return { legIndex: bestLeg, along: bestAlong, distanceNm: bestDistNm };
+}
+
+function projectOntoSegmentNm(
+  lat: number,
+  lon: number,
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+): { along: number; distanceNm: number } {
+  const segNm = haversineNm(lat1, lon1, lat2, lon2);
+  if (segNm < 1e-6) {
+    return { along: 0, distanceNm: haversineNm(lat, lon, lat1, lon1) };
+  }
+  const latM = ((lat - lat1) * Math.PI) / 180;
+  const lonM = ((lon - lon1) * Math.PI) / 180;
+  const lat1r = (lat1 * Math.PI) / 180;
+  const lat2r = (lat2 * Math.PI) / 180;
+  const dLat = lat2r - lat1r;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const segLatM = dLat;
+  const segLonM = dLon * Math.cos(lat1r);
+  const dot = latM * segLatM + lonM * segLonM;
+  const segLenSq = segLatM * segLatM + segLonM * segLonM;
+  const along = segLenSq > 0 ? Math.min(1, Math.max(0, dot / segLenSq)) : 0;
+  const plat = lat1 + (lat2 - lat1) * along;
+  const plon = lon1 + (lon2 - lon1) * along;
+  return { along, distanceNm: haversineNm(lat, lon, plat, plon) };
+}
+
 function haversineNm(
   lat1: number,
   lon1: number,
@@ -255,22 +315,24 @@ export function findPlaybackHeadingTurns(points: PlaybackPoint3D[]): PlaybackHea
 }
 
 /**
- * コックピット用のスムーズ方位（折れ点で blendSec 秒かけて最短角補間）。
+ * コックピット用方位：直線レグでは瞬間航跡方位、折れ点の前後 blendSec 秒だけ補間。
  */
 export function smoothedPlaybackHeadingDeg(
   points: PlaybackPoint3D[],
   tSec: number,
   blendSec: number,
 ): number {
+  const instant = interpolatePlaybackAtTime(points, tSec).headingDeg;
   if (blendSec <= 0 || points.length < 2) {
-    return interpolatePlaybackAtTime(points, tSec).headingDeg;
+    return instant;
   }
+  const half = blendSec / 2;
   const turns = findPlaybackHeadingTurns(points);
   for (const turn of turns) {
-    if (tSec >= turn.tSec && tSec < turn.tSec + blendSec) {
-      const u = (tSec - turn.tSec) / blendSec;
+    if (tSec >= turn.tSec - half && tSec < turn.tSec + half) {
+      const u = (tSec - (turn.tSec - half)) / blendSec;
       return lerpHeadingDeg(turn.fromDeg, turn.toDeg, u);
     }
   }
-  return interpolatePlaybackAtTime(points, tSec).headingDeg;
+  return instant;
 }

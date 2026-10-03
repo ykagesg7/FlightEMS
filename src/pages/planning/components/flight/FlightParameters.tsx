@@ -5,12 +5,11 @@ import { CACHE_DURATION, useWeatherCache, type WeatherCache } from '../../../../
 import { fetchWeatherData, FilteredWeatherData } from '../../../../services/weather';
 import { FlightPlan } from '../../../../types/index';
 import {
-  ALTITUDE_INCREMENT,
   calculateAirspeeds,
   calculateCASIncrementForMach,
   parseTimeString,
-  SPEED_INCREMENT
 } from '../../../../utils';
+import { ALTITUDE_INCREMENT, SPEED_INCREMENT } from '../../../../utils/flightParametersConstants';
 import type { PlanningPanelLayout } from '../../planningPanelLayout';
 import { flightParametersGridClass } from '../../planningPanelLayout';
 

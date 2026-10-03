@@ -1,13 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { derivePlannedPreviewAltitudeFt } from './types';
 import type { Waypoint3D } from './types';
 import {
   PLANNING_3D_POPOUT_CHANNEL,
   PLANNING_3D_POPOUT_PATH,
+  applyPlanning3dPopoutViewerUi,
   createPlanning3dPopoutState,
   parsePlanning3dPopoutMessage,
   postPlanning3dPopoutMessage,
   type Planning3dPopoutStatePayload,
 } from './planning3dPopoutSync';
+import {
+  clonePlanning3dViewerUi,
+  createDefaultPlanning3dViewerUi,
+  type Planning3dViewerUiState,
+} from './planning3dViewerUi';
 
 const POPOUT_WINDOW_NAME = 'fa-planning-3d-popout';
 const POPOUT_FEATURES =
@@ -19,6 +26,8 @@ export type UsePlanning3dPopoutHostResult = {
   openPopout: () => void;
   focusPopout: () => void;
   dismissPopupBlocked: () => void;
+  viewerUi: Planning3dViewerUiState;
+  setViewerUi: (next: Planning3dViewerUiState) => void;
 };
 
 export function usePlanning3dPopoutHost(
@@ -27,14 +36,27 @@ export function usePlanning3dPopoutHost(
 ): UsePlanning3dPopoutHostResult {
   const [poppedOut, setPoppedOut] = useState(false);
   const [popupBlocked, setPopupBlocked] = useState(false);
+  const [viewerUi, setViewerUiState] = useState<Planning3dViewerUiState>(() =>
+    createDefaultPlanning3dViewerUi(waypoints),
+  );
   const popoutRef = useRef<Window | null>(null);
   const channelRef = useRef<BroadcastChannel | null>(null);
   const revisionRef = useRef(0);
   const waypointsRef = useRef(waypoints);
   const isProRef = useRef(isProUser);
+  const viewerUiRef = useRef(viewerUi);
 
   waypointsRef.current = waypoints;
   isProRef.current = isProUser;
+  viewerUiRef.current = viewerUi;
+
+  useEffect(() => {
+    const planned = derivePlannedPreviewAltitudeFt(waypoints);
+    setViewerUiState((prev) => ({
+      ...prev,
+      viewControls: { ...prev.viewControls, previewAltitudeFt: planned },
+    }));
+  }, [waypoints]);
 
   const ensureChannel = useCallback(() => {
     if (typeof BroadcastChannel === 'undefined') return null;
@@ -44,7 +66,7 @@ export function usePlanning3dPopoutHost(
         const msg = parsePlanning3dPopoutMessage(ev.data);
         if (!msg) return;
         if (msg.type === 'ready') {
-          postStateToChannel(channelRef.current, waypointsRef.current, isProRef.current, revisionRef);
+          postStateToChannel(channelRef.current, waypointsRef.current, isProRef.current, revisionRef, viewerUiRef);
         }
         if (msg.type === 'closed') {
           popoutRef.current = null;
@@ -52,6 +74,12 @@ export function usePlanning3dPopoutHost(
         }
         if (msg.type === 'focus-request') {
           popoutRef.current?.focus();
+        }
+        if (msg.type === 'viewer-ui') {
+          const applied = applyPlanning3dPopoutViewerUi(revisionRef.current, msg);
+          if (!applied) return;
+          revisionRef.current = applied.revision;
+          setViewerUiState(applied.viewerUi);
         }
       };
     }
@@ -65,8 +93,28 @@ export function usePlanning3dPopoutHost(
       waypointsRef.current,
       isProRef.current,
       revisionRef,
+      viewerUiRef,
     );
   }, [ensureChannel]);
+
+  const setViewerUi = useCallback(
+    (next: Planning3dViewerUiState) => {
+      const cloned = clonePlanning3dViewerUi(next);
+      viewerUiRef.current = cloned;
+      setViewerUiState(cloned);
+      if (poppedOut) {
+        revisionRef.current += 1;
+        postStateToChannel(
+          ensureChannel(),
+          waypointsRef.current,
+          isProRef.current,
+          revisionRef,
+          viewerUiRef,
+        );
+      }
+    },
+    [ensureChannel, poppedOut],
+  );
 
   useEffect(() => {
     if (!poppedOut) return;
@@ -113,7 +161,13 @@ export function usePlanning3dPopoutHost(
     popoutRef.current = win;
     setPoppedOut(true);
     revisionRef.current += 1;
-    postStateToChannel(ensureChannel(), waypointsRef.current, isProRef.current, revisionRef);
+    postStateToChannel(
+      ensureChannel(),
+      waypointsRef.current,
+      isProRef.current,
+      revisionRef,
+      viewerUiRef,
+    );
   }, [ensureChannel, postCurrentState]);
 
   const focusPopout = useCallback(() => {
@@ -133,6 +187,8 @@ export function usePlanning3dPopoutHost(
     openPopout,
     focusPopout,
     dismissPopupBlocked,
+    viewerUi,
+    setViewerUi,
   };
 }
 
@@ -141,11 +197,13 @@ function postStateToChannel(
   waypoints: Waypoint3D[],
   isProUser: boolean,
   revisionRef: { current: number },
+  viewerUiRef: { current: Planning3dViewerUiState },
 ): void {
   const payload: Planning3dPopoutStatePayload = createPlanning3dPopoutState(
     waypoints,
     isProUser,
     revisionRef.current,
+    viewerUiRef.current,
   );
   postPlanning3dPopoutMessage(channel, { type: 'state', payload });
 }
