@@ -78,10 +78,19 @@ function AppShell() {
   );
 }
 
+const planning3dPopoutRoute = {
+  path: 'planning/3d-popout',
+  lazy: async () => {
+    const mod = await importWithChunkRetry(() => import('./pages/planning/Planning3dPopoutPage'));
+    return { Component: mod.default };
+  },
+};
+
 const router = createBrowserRouter([
   {
     element: <AppShell />,
     children: [
+      planning3dPopoutRoute,
       {
         element: <MarketingLayout />,
         children: [
