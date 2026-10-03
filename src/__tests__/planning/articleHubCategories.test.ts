@@ -29,9 +29,9 @@ function mockContent(
 }
 
 describe('articleHubCategories', () => {
-  it('allows habit 1 only; habits 2–7 withheld again for series redrip from 2026-09-27', () => {
+  it('allows habits 1–2; habits 3–7 withheld until gold-slot approval', () => {
     expect(isWithdrawnArticle('1.1.1_UnconsciousSuccess')).toBe(false);
-    expect(isWithdrawnArticle('1.1.2_EndWithFuture')).toBe(true);
+    expect(isWithdrawnArticle('1.1.2_EndWithFuture')).toBe(false);
     expect(isWithdrawnArticle('1.1.3_PrioritizingMostImportant')).toBe(true);
     expect(isWithdrawnArticle('1.1.4_WinWinThinking')).toBe(true);
     expect(isWithdrawnArticle('1.1.5_SeekFirstToUnderstand')).toBe(true);
@@ -47,6 +47,7 @@ describe('articleHubCategories', () => {
     ];
     expect(filterPublishedArticleContents(contents).map((c) => c.id)).toEqual([
       '1.1.1_UnconsciousSuccess',
+      '1.1.2_EndWithFuture',
     ]);
   });
 

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { WeeklyArticleDigest } from './articlePublishSchedule';
+import { getJstDateString } from './articlePublishGate';
 import { getServiceSupabase } from './supabaseService';
 
 export type CohortNotificationTemplateKey =
@@ -119,16 +120,25 @@ function weekdayLabelJst(isoDate: string): string {
 export type WeeklyArticleDigestTiming = 'sunday_preview' | 'week_start';
 
 /** Digest: coming-week preview (Sun) or week-start catch-up (Mon) + optional reminder. */
+export function digestArticleDayLabel(
+  publishDate: string,
+  sendDateJst: string,
+): '今すぐ' | string {
+  if (publishDate <= sendDateJst) return '今すぐ';
+  return weekdayLabelJst(publishDate);
+}
+
 export function getWeeklyArticleDigestEmailContent(
   digest: WeeklyArticleDigest,
   baseUrl: string,
   previousDigest?: WeeklyArticleDigest | null,
   timing: WeeklyArticleDigestTiming = 'sunday_preview',
+  sendDateJst: string = getJstDateString(),
 ): { subject: string; htmlContent: string } {
   const renderItems = (articles: WeeklyArticleDigest['articles']) =>
     articles
-      .map((a, index) => {
-        const day = index === 0 ? '今すぐ' : weekdayLabelJst(a.publishDate);
+      .map((a) => {
+        const day = digestArticleDayLabel(a.publishDate, sendDateJst);
         const href = `${baseUrl}${a.slug.startsWith('/') ? a.slug : `/${a.slug}`}`;
         return `<li style="margin-bottom:12px;">
         <strong>${day}</strong> <a href="${href}">${a.title}</a><br/>
@@ -332,6 +342,7 @@ export async function dispatchWeeklyArticleDigestEmails(
     baseUrl,
     previousDigest,
     timing,
+    getJstDateString(),
   );
 
   const { data: profiles, error: profilesError } = await supabase

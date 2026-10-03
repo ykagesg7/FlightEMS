@@ -19,6 +19,30 @@ export function getPreviousIsoWeekJst(date: Date = new Date()): string {
   return getIsoWeekJst(new Date(date.getTime() - 7 * 86400000));
 }
 
+/** Monday 12:00 JST within the given ISO week label (digest bundle key). */
+function dateInIsoWeek(isoWeek: string): Date {
+  const match = /^(\d{4})-W(\d{2})$/.exec(isoWeek);
+  if (!match) {
+    throw new Error(`Invalid ISO week: ${isoWeek}`);
+  }
+  const year = Number(match[1]);
+  const week = Number(match[2]);
+  const jan4 = new Date(Date.UTC(year, 0, 4, 3, 0, 0));
+  const jan4Day = jan4.getUTCDay() || 7;
+  const mondayWeek1 = new Date(jan4);
+  mondayWeek1.setUTCDate(jan4.getUTCDate() - jan4Day + 1);
+  const monday = new Date(mondayWeek1);
+  monday.setUTCDate(mondayWeek1.getUTCDate() + (week - 1) * 7);
+  monday.setUTCHours(3, 0, 0, 0);
+  return monday;
+}
+
+/** Previous digest key (W41 → W40; W01 → prior year’s last week). */
+export function getPreviousIsoWeekKey(isoWeek: string): string {
+  const anchor = dateInIsoWeek(isoWeek);
+  return getIsoWeekJst(new Date(anchor.getTime() - 7 * 86400000));
+}
+
 /** Next ISO week in JST calendar (Sunday evening digest → coming Mon–Fri week). */
 export function getNextIsoWeekJst(date: Date = new Date()): string {
   return getIsoWeekJst(new Date(date.getTime() + 7 * 86400000));

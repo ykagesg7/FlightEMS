@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildCohortDedupeKey,
+  digestArticleDayLabel,
   getCohortEmailContent,
   getWeeklyArticleDigestEmailContent,
   isEmailAllowedForTemplate,
 } from '../../../api/_lib/notificationEmail';
+import { getDigestForIsoWeek } from '../../../api/_lib/articlePublishSchedule';
 import type { WeeklyArticleDigest } from '../../../api/_lib/articlePublishSchedule';
 
 describe('api/lib/notificationEmail', () => {
@@ -131,7 +133,13 @@ describe('api/lib/notificationEmail', () => {
         },
       ],
     };
-    const content = getWeeklyArticleDigestEmailContent(digest, 'https://example.test', previous);
+    const content = getWeeklyArticleDigestEmailContent(
+      digest,
+      'https://example.test',
+      previous,
+      'sunday_preview',
+      '2026-08-03',
+    );
     expect(content.subject).toContain('来週の案内');
     expect(content.subject).toContain('2026-W32');
     expect(content.htmlContent).toContain('後始末までが仕事ばい。');
@@ -147,9 +155,30 @@ describe('api/lib/notificationEmail', () => {
       'https://example.test',
       previous,
       'week_start',
+      '2026-08-03',
     );
     expect(monday.subject).toContain('今週の案内');
     expect(monday.htmlContent).toContain('月曜の朝');
     expect(monday.htmlContent).toContain('先週の振り返り');
+  });
+
+  it('labels digest items by publishDate vs send date (今すぐ / weekday)', () => {
+    expect(digestArticleDayLabel('2026-10-05', '2026-10-04')).toBe('月');
+    expect(digestArticleDayLabel('2026-10-05', '2026-10-05')).toBe('今すぐ');
+    expect(digestArticleDayLabel('2026-10-07', '2026-10-05')).toBe('水');
+
+    const w41 = getDigestForIsoWeek('2026-W41');
+    expect(w41).not.toBeNull();
+    const sundayPreview = getWeeklyArticleDigestEmailContent(
+      w41!,
+      'https://example.test',
+      null,
+      'sunday_preview',
+      '2026-10-04',
+    );
+    expect(sundayPreview.htmlContent).toMatch(/<strong>月<\/strong>.*Cloverleaf/);
+    expect(sundayPreview.htmlContent).not.toMatch(
+      /<strong>今すぐ<\/strong>.*Cloverleaf/,
+    );
   });
 });

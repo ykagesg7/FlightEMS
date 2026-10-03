@@ -1,7 +1,7 @@
 # コンテンツ・パイプライン（段階2 の配信と記事の作り方）
 
 **作成日**: 2025年1月16日  
-**最終更新**: 2026年9月23日（段階2 の CP / FN / メンタリティ配信表へ改稿。段階1 の Phase 表・週次 W18〜W35・暫定 KPI は [Closed_Sprints.md](Closed_Sprints.md) と git 履歴へ）  
+**最終更新**: 2026年10月4日（W41〜 日・水・金 cadence 復帰、W41 金 1.1.2。段階1 の Phase 表・週次 W18〜W35 は [Closed_Sprints.md](Closed_Sprints.md) と git 履歴へ）  
 **バージョン**: v2.0.0
 
 **読む人**: 記事を書く・配信を組む人と AI アシスタント。方針は [Product_North_Star_and_GTM.md](Product_North_Star_and_GTM.md) §0、ワークストリームは [01](01_Current_Status_and_Roadmap.md) §2、週末の弧は [ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md)。
@@ -23,7 +23,7 @@
 |----------|----------|--------------------|--------------|----------|
 | **CP**（Contact） | `src/content/lessons/CP-*` | **1-1〜5-9 の MDX 完結**（5-6〜5-9 は W40〜W41 に schedule 済） | CP シリーズ完。メンテは体裁・出典のみ | [Contact_Transition_2026](content_outlines/Contact_Transition_2026/README.md)、[Gemini_CP_FN_System_Prompt](ops/Gemini_CP_FN_System_Prompt.md) |
 | **FN**（旧 FMT Season 1。id は `FMT-1-*`） | `src/content/lessons/FMT-1-*` | 1-1〜1-10 の MDX ストック。**W42〜W46 に schedule 済**（週2本・`is_published` は cron） | Season 2 ブリーフは求められたときだけ | [FN_Formation_2026](content_outlines/FN_Formation_2026/README.md)、[Gemini_CP_FN_System_Prompt](ops/Gemini_CP_FN_System_Prompt.md) |
-| **メンタリティ**（道真稿） | `src/content/articles/` | `1.1.1`〜`1.1.4` 公開。残り **24 本**は非公開ゲート | 1 本ずつ道真稿に改稿し、個別に再公開（28 本一括の republish SQL は使わない） | 本書 §6、[Gemini_Memoir_Article_System_Prompt](ops/Gemini_Memoir_Article_System_Prompt.md) |
+| **メンタリティ**（道真稿） | `src/content/articles/` | `1.1.1` 公開済。`1.1.2` は W41 金 10/9 ドリップ予定。`1.1.3`〜は非公開ゲート | 1 本ずつ道真稿に改稿し、金枠は Editorial 承認後に schedule へ | 本書 §6、[Gemini_Memoir_Article_System_Prompt](ops/Gemini_Memoir_Article_System_Prompt.md) |
 | 訓練の当たり前（`4.1.*` / `4.2.*`） | `src/content/articles/` | W32〜W33 に公開済 | 追加は Editorial が決める | [ops/Weekend_Content_Pipeline.md](ops/Weekend_Content_Pipeline.md) |
 | CPL / PPL 学科 | `src/content/lessons/` | 段階1 完了（[Closed_Sprints.md](Closed_Sprints.md)） | 穴埋めのみ（例: `PPL-2-3-3` / `2-3-4` は骨子だけ） | 本書 §5、[Closed_Sprints.md](Closed_Sprints.md) §1 |
 
@@ -37,13 +37,13 @@
 | 2026-W37（〜09-14） | CP 3-1 / 3-2 / 4-1 | |
 | 2026-W38（〜09-21） | CP 4-2 / 5-1 / 5-2（9/13・16・18） | |
 | 2026-W39（〜09-28） | CP 5-3 / 5-4 / 5-5（9/20・23・25） | 旧 cadence（週3本操縦）。`is_published` は cron |
-| 2026-W40（〜10-05） | CP 5-6 / 5-7（9/28・10/1） | **新 cadence 開始**: 週2本操縦＋金メンタリティ枠（稿未定・schedule 外） |
-| 2026-W41（〜10-12） | CP 5-8 / 5-9（10/5・10/8） | CP 完結。金枠はメンタリティ予約 |
-| 2026-W42（〜10-19） | FN 1-1 / 1-2（10/12・10/15） | 編隊入口 |
-| 2026-W43（〜10-26） | FN 1-3 / 1-4（10/19・10/22） | |
-| 2026-W44（〜11-02） | FN 1-5 / 1-6（10/26・10/29） | |
-| 2026-W45（〜11-09） | FN 1-7 / 1-8（11/2・11/5） | |
-| 2026-W46（〜11-16） | FN 1-9 / 1-10（11/9・11/12） | FN Season 1 締め。金枠はメンタリティ予約 |
+| 2026-W40（〜10-05） | 1.1.1（9/27 日）+ CP 5-6 / 5-7（9/28・10/1） | 週3枠へ戻す前の週。CP は月・木のまま（済） |
+| 2026-W41（〜10-12） | CP 5-8 / 5-9 / 1.1.2（**10/5**・10/7・10/9） | **案B**: 5-8 は月 10/5 例外（`W41_CP_5_8_PUBLISH_DATE`）。CP 完結＋金メンタリティ |
+| 2026-W42（〜10-19） | FN 1-1 / 1-2（10/11・10/14） | 編隊入口。金 10/16 はメンタリティ枠（稿未承認・schedule 外） |
+| 2026-W43（〜10-26） | FN 1-3 / 1-4（10/18・10/21） | 金 10/23 はメンタリティ枠（稿未承認） |
+| 2026-W44（〜11-02） | FN 1-5 / 1-6（10/25・10/28） | 金 10/30 はメンタリティ枠（稿未承認） |
+| 2026-W45（〜11-09） | FN 1-7 / 1-8（11/1・11/4） | 金 11/6 はメンタリティ枠（稿未承認） |
+| 2026-W46（〜11-16） | FN 1-9 / 1-10（11/8・11/11） | FN Season 1 締め。金 11/13 はメンタリティ枠（稿未承認） |
 
 ---
 
