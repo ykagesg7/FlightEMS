@@ -9,7 +9,6 @@ import {
   EllipsoidTerrainProvider,
   GoogleMaps,
   TerrainProvider,
-  HeadingPitchRange,
   JulianDate,
   LabelStyle,
   Math as CesiumMath,
@@ -24,7 +23,7 @@ import '../../../../explore/airspace3d/cesiumBaseUrl';
 import {
   applyPreviewAltitudeOffset,
   buildPlaybackPointsFromWaypoints,
-  chaseCameraHeadingPitchRange,
+  chaseCameraOffsetEnuMeters,
   feetToMeters,
   interpolatePlaybackAtTime,
   type PlaybackPoint3D,
@@ -220,10 +219,14 @@ function updateFollowCamera(
     });
     return;
   }
-  const chase = chaseCameraHeadingPitchRange(pose.headingDeg, controls.chasePitchDeg);
+  const enuOffset = chaseCameraOffsetEnuMeters(
+    pose.headingDeg,
+    controls.chaseDistanceM,
+    controls.chasePitchDeg,
+  );
   viewer.camera.lookAt(
     pos,
-    new HeadingPitchRange(chase.headingRad, chase.pitchRad, controls.chaseDistanceM),
+    new Cartesian3(enuOffset.east, enuOffset.north, enuOffset.up),
   );
 }
 

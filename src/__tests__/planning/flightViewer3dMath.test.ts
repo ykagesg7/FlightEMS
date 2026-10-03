@@ -1,11 +1,13 @@
+import { Cartesian3, Cartographic, Matrix4, Transforms } from 'cesium';
 import { describe, expect, it } from 'vitest';
 import {
   applyPreviewAltitudeOffset,
   buildPlaybackPointsFromWaypoints,
-  chaseCameraHeadingPitchRange,
+  chaseCameraOffsetEnuMeters,
   feetToMeters,
   interpolatePathByFraction,
   interpolatePlaybackAtTime,
+  isChaseCameraOffsetBehindAndAbove,
 } from '../../pages/planning/components/flight/flightViewer3d/flightViewer3dMath';
 
 describe('flightViewer3dMath', () => {
@@ -32,15 +34,34 @@ describe('flightViewer3dMath', () => {
     }
   });
 
-  it('maps chase UI depression to positive Cesium lookAt pitch', () => {
-    const steep = chaseCameraHeadingPitchRange(90, -75);
-    expect(steep.pitchRad).toBeCloseTo((75 * Math.PI) / 180, 5);
-    expect(steep.pitchRad).toBeGreaterThan(0);
-    expect(steep.headingRad).toBeCloseTo((270 * Math.PI) / 180, 5);
+  it('places chase offset behind and above for steep and mild UI pitch', () => {
+    const steep = chaseCameraOffsetEnuMeters(90, 3000, -75);
+    expect(isChaseCameraOffsetBehindAndAbove(90, steep)).toBe(true);
+    expect(steep.up).toBeGreaterThan(2500);
 
-    const mild = chaseCameraHeadingPitchRange(0, -18);
-    expect(mild.pitchRad).toBeCloseTo((18 * Math.PI) / 180, 5);
-    expect(mild.headingRad).toBeCloseTo(Math.PI, 5);
+    const mild = chaseCameraOffsetEnuMeters(0, 650, -18);
+    expect(isChaseCameraOffsetBehindAndAbove(0, mild)).toBe(true);
+    expect(mild.up).toBeGreaterThan(150);
+    expect(mild.north).toBeLessThan(0);
+  });
+
+  it('chase world position is higher than target on the ellipsoid', () => {
+    const targetAltM = feetToMeters(5000);
+    const lon = 130.8067;
+    const lat = 33.6381;
+    const heading = 55;
+    const offset = chaseCameraOffsetEnuMeters(heading, 3000, -75);
+    const target = Cartesian3.fromDegrees(lon, lat, targetAltM);
+    const enu = Transforms.eastNorthUpToFixedFrame(target);
+    const camera = Matrix4.multiplyByPoint(
+      enu,
+      new Cartesian3(offset.east, offset.north, offset.up),
+      new Cartesian3(),
+    );
+    const targetH = Cartographic.fromCartesian(target).height;
+    const cameraH = Cartographic.fromCartesian(camera).height;
+    expect(cameraH).toBeGreaterThan(targetH);
+    expect(isChaseCameraOffsetBehindAndAbove(heading, offset)).toBe(true);
   });
 
   it('interpolates path fraction at endpoints', () => {

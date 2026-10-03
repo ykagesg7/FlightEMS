@@ -10,21 +10,44 @@ export function applyPreviewAltitudeOffset(altFt: number, offsetFt: number): num
   return altFt + offsetFt;
 }
 
+export type ChaseCameraEnuOffsetM = {
+  east: number;
+  north: number;
+  up: number;
+};
+
 /**
- * チェイスカメラ用 HeadingPitchRange（Cesium lookAt の target 基準 ENU）。
- * UI の俯角は負値＝機体を見下ろす。Cesium の pitch は正＝カメラがターゲットの水平面上方。
+ * チェイスカメラ位置（target 基準ローカル ENU、m）。UI 俯角は負＝見下ろす。
+ * range は斜距離。カメラは進路の後方かつ上方（camera.lookAt に Cartesian3 渡す）。
  */
-export function chaseCameraHeadingPitchRange(
+export function chaseCameraOffsetEnuMeters(
   trackHeadingDeg: number,
+  rangeM: number,
   chasePitchDeg: number,
-): { headingRad: number; pitchRad: number } {
-  const depressionDeg = Math.min(89, Math.max(1, Math.abs(chasePitchDeg)));
-  const behindDeg = ((trackHeadingDeg + 180) % 360 + 360) % 360;
-  const degToRad = (deg: number) => (deg * Math.PI) / 180;
+): ChaseCameraEnuOffsetM {
+  const depressionRad = Math.min(
+    (89 * Math.PI) / 180,
+    Math.max((1 * Math.PI) / 180, (Math.abs(chasePitchDeg) * Math.PI) / 180),
+  );
+  const horizontal = rangeM * Math.cos(depressionRad);
+  const up = rangeM * Math.sin(depressionRad);
+  const h = (trackHeadingDeg * Math.PI) / 180;
   return {
-    headingRad: degToRad(behindDeg),
-    pitchRad: degToRad(depressionDeg),
+    east: -Math.sin(h) * horizontal,
+    north: -Math.cos(h) * horizontal,
+    up,
   };
+}
+
+/** オフセットが進路後方かつ上方か */
+export function isChaseCameraOffsetBehindAndAbove(
+  trackHeadingDeg: number,
+  offset: ChaseCameraEnuOffsetM,
+): boolean {
+  if (offset.up <= 0) return false;
+  const h = (trackHeadingDeg * Math.PI) / 180;
+  const dot = Math.sin(h) * offset.east + Math.cos(h) * offset.north;
+  return dot < 0;
 }
 
 export type FlightPathSample = {
