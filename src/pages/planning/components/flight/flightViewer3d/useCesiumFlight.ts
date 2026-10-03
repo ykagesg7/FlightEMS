@@ -24,6 +24,7 @@ import '../../../../explore/airspace3d/cesiumBaseUrl';
 import {
   applyPreviewAltitudeOffset,
   buildPlaybackPointsFromWaypoints,
+  chaseCameraHeadingPitchRange,
   feetToMeters,
   interpolatePlaybackAtTime,
   type PlaybackPoint3D,
@@ -205,24 +206,24 @@ function updateFollowCamera(
 ) {
   const altFt = applyPreviewAltitudeOffset(pose.altFt, controls.altitudeOffsetFt);
   const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(altFt));
-  const heading = CesiumMath.toRadians(pose.headingDeg);
-  const pitchRad = CesiumMath.toRadians(controls.chasePitchDeg);
+  const trackHeadingRad = CesiumMath.toRadians(pose.headingDeg);
+  const cockpitPitchRad = CesiumMath.toRadians(controls.chasePitchDeg);
   if (mode === 'cockpit') {
     unlockCamera(viewer);
     viewer.camera.setView({
       destination: pos,
       orientation: {
-        heading,
-        pitch: pitchRad,
+        heading: trackHeadingRad,
+        pitch: cockpitPitchRad,
         roll: 0,
       },
     });
     return;
   }
-  // heading + π: 機体進行方向の後方から chase（機体後方視点）
+  const chase = chaseCameraHeadingPitchRange(pose.headingDeg, controls.chasePitchDeg);
   viewer.camera.lookAt(
     pos,
-    new HeadingPitchRange(heading + Math.PI, pitchRad, controls.chaseDistanceM),
+    new HeadingPitchRange(chase.headingRad, chase.pitchRad, controls.chaseDistanceM),
   );
 }
 

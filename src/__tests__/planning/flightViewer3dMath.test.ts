@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   applyPreviewAltitudeOffset,
   buildPlaybackPointsFromWaypoints,
+  chaseCameraHeadingPitchRange,
   feetToMeters,
   interpolatePathByFraction,
   interpolatePlaybackAtTime,
@@ -29,6 +30,17 @@ describe('flightViewer3dMath', () => {
     for (let i = 1; i < points.length; i++) {
       expect(points[i]!.tSec).toBeGreaterThanOrEqual(points[i - 1]!.tSec);
     }
+  });
+
+  it('maps chase UI depression to positive Cesium lookAt pitch', () => {
+    const steep = chaseCameraHeadingPitchRange(90, -75);
+    expect(steep.pitchRad).toBeCloseTo((75 * Math.PI) / 180, 5);
+    expect(steep.pitchRad).toBeGreaterThan(0);
+    expect(steep.headingRad).toBeCloseTo((270 * Math.PI) / 180, 5);
+
+    const mild = chaseCameraHeadingPitchRange(0, -18);
+    expect(mild.pitchRad).toBeCloseTo((18 * Math.PI) / 180, 5);
+    expect(mild.headingRad).toBeCloseTo(Math.PI, 5);
   });
 
   it('interpolates path fraction at endpoints', () => {

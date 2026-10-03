@@ -5,29 +5,24 @@ import {
   ColorBlendMode,
   HeadingPitchRoll,
   JulianDate,
+  LinearApproximation,
   Math as CesiumMath,
   Quaternion,
   SampledPositionProperty,
-  Transforms,
+  VelocityOrientationProperty,
   type Viewer,
 } from 'cesium';
 import {
+  AIRCRAFT_YAW_OFFSET_DEG,
   createAircraftGltfDataUri,
-  playbackHeadingToModelHeadingDeg,
 } from '../../../../explore/airspace3d/aircraftIcon';
-import { feetToMeters, interpolatePlaybackAtTime, type PlaybackPoint3D } from './flightViewer3dMath';
+import { feetToMeters, type PlaybackPoint3D } from './flightViewer3dMath';
 
 export const FLIGHT_VIEWER_AIRCRAFT_ID = 'flight-viewer-aircraft';
 
-function poseAtTime(
-  playback: PlaybackPoint3D[],
-  startJulian: JulianDate,
-  time: JulianDate | undefined,
-): ReturnType<typeof interpolatePlaybackAtTime> | null {
-  if (!time) return null;
-  const tSec = JulianDate.secondsDifference(time, startJulian);
-  return interpolatePlaybackAtTime(playback, Math.max(0, tSec));
-}
+const modelYawFix = Quaternion.fromHeadingPitchRoll(
+  new HeadingPitchRoll(CesiumMath.toRadians(AIRCRAFT_YAW_OFFSET_DEG), 0, 0),
+);
 
 export function removeFlightViewerAircraft(viewer: Viewer): void {
   const entity = viewer.entities.getById(FLIGHT_VIEWER_AIRCRAFT_ID);
@@ -43,19 +38,21 @@ export function ensureFlightViewerAircraft(
   if (playback.length === 0) return;
 
   const position = new SampledPositionProperty();
+  position.setInterpolationOptions({
+    interpolationDegree: 1,
+    interpolationAlgorithm: LinearApproximation,
+  });
   for (const p of playback) {
     const t = JulianDate.addSeconds(startJulian, p.tSec, new JulianDate());
     position.addSample(t, Cartesian3.fromDegrees(p.lon, p.lat, feetToMeters(p.altFt)));
   }
 
-  const playbackRef = playback;
+  const velocityOrientation = new VelocityOrientationProperty(position);
+  const scratch = new Quaternion();
   const orientation = new CallbackProperty((time) => {
-    const pose = poseAtTime(playbackRef, startJulian, time);
-    if (!pose) return Quaternion.IDENTITY;
-    const pos = Cartesian3.fromDegrees(pose.lon, pose.lat, feetToMeters(pose.altFt));
-    const heading = playbackHeadingToModelHeadingDeg(pose.headingDeg);
-    const hpr = new HeadingPitchRoll(CesiumMath.toRadians(heading), 0, 0);
-    return Transforms.headingPitchRollQuaternion(pos, hpr);
+    const qVel = velocityOrientation.getValue(time, scratch);
+    if (!qVel) return Quaternion.IDENTITY;
+    return Quaternion.multiply(qVel, modelYawFix, scratch);
   }, false);
 
   viewer.entities.add({

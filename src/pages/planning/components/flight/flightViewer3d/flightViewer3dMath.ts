@@ -10,6 +10,23 @@ export function applyPreviewAltitudeOffset(altFt: number, offsetFt: number): num
   return altFt + offsetFt;
 }
 
+/**
+ * チェイスカメラ用 HeadingPitchRange（Cesium lookAt の target 基準 ENU）。
+ * UI の俯角は負値＝機体を見下ろす。Cesium の pitch は正＝カメラがターゲットの水平面上方。
+ */
+export function chaseCameraHeadingPitchRange(
+  trackHeadingDeg: number,
+  chasePitchDeg: number,
+): { headingRad: number; pitchRad: number } {
+  const depressionDeg = Math.min(89, Math.max(1, Math.abs(chasePitchDeg)));
+  const behindDeg = ((trackHeadingDeg + 180) % 360 + 360) % 360;
+  const degToRad = (deg: number) => (deg * Math.PI) / 180;
+  return {
+    headingRad: degToRad(behindDeg),
+    pitchRad: degToRad(depressionDeg),
+  };
+}
+
 export type FlightPathSample = {
   lon: number;
   lat: number;
