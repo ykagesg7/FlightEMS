@@ -5,6 +5,9 @@ export const GSI_DEM_PNG_MIN_LEVEL = 1;
 export const GSI_DEM_PNG_MAX_LEVEL = 14;
 export const GSI_DEM5A_MAX_LEVEL = 15;
 
+/** 教育用 3D プレビュー — dem5a z15 まで取りに行かず z14 で十分 */
+export const GSI_PREVIEW_MAX_FETCH_LEVEL = GSI_DEM_PNG_MAX_LEVEL;
+
 /** 全国最新写真（シームレス）— maps.gsi.go.jp layers1.txt minZoom 2 */
 export const GSI_SEAMLESS_PHOTO_URL =
   'https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg';
