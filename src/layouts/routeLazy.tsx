@@ -18,7 +18,7 @@ async function loadPage(
  */
 export function lazyRoute(
   importer: () => Promise<PageModule>,
-  retry = false,
+  retry = true,
 ) {
   return {
     lazy: async () => {
@@ -32,7 +32,7 @@ export function lazyProtectedRoute(
   importer: () => Promise<PageModule>,
   options?: { retry?: boolean; requireAdmin?: boolean },
 ) {
-  const retry = options?.retry ?? false;
+  const retry = options?.retry ?? true;
   const requireAdmin = options?.requireAdmin;
   return {
     lazy: async () => {

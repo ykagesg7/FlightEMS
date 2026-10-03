@@ -18,6 +18,7 @@ import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
 import { GoogleAnalyticsTracker } from './components/GoogleAnalyticsTracker';
 import { PasswordRecoveryGuard } from './components/auth/PasswordRecoveryGuard';
 import ScrollManager from './components/ScrollManager';
+import { RouteErrorElement } from './components/RouteErrorElement';
 import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 import { MarketingLayout } from './layouts/MarketingLayout';
 import { lazyProtectedRoute, lazyRoute } from './layouts/routeLazy';
@@ -89,6 +90,7 @@ const planning3dPopoutRoute = {
 const router = createBrowserRouter([
   {
     element: <AppShell />,
+    errorElement: <RouteErrorElement />,
     children: [
       planning3dPopoutRoute,
       {
