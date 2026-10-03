@@ -99,9 +99,12 @@ async function main() {
   const doc = toPlanDocument(buildRjfaPlan());
   const draftJson = JSON.stringify(doc);
 
+  const headed = Boolean(process.env.DISPLAY);
   const browser = await chromium.launch({
-    headless: true,
-    args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-webgl'],
+    headless: !headed,
+    args: headed
+      ? ['--enable-webgl']
+      : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-webgl'],
   });
   const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
   page.setDefaultTimeout(180_000);
