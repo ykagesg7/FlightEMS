@@ -9,6 +9,7 @@ vi.mock('../../lib/googleAnalytics', () => ({
 import {
   clearChunkReloadFlag,
   isChunkLoadFailure,
+  registerVitePreloadErrorHandler,
   reloadOnceForStaleChunk,
 } from '../../utils/chunkLoadRecovery';
 
@@ -30,6 +31,38 @@ describe('chunkLoadRecovery', () => {
     ).toBe(true);
     expect(isChunkLoadFailure(new Error('Importing a module script failed.'))).toBe(true);
     expect(isChunkLoadFailure(new Error('Something else'))).toBe(false);
+  });
+
+  it('detects MIME type failures (Chrome, Firefox, Safari-style messages)', () => {
+    expect(
+      isChunkLoadFailure(
+        new Error("'text/html' is not a valid JavaScript MIME type."),
+      ),
+    ).toBe(true);
+    expect(
+      isChunkLoadFailure(
+        'Loading module was blocked because of a disallowed MIME type (“text/html”).',
+      ),
+    ).toBe(true);
+    expect(
+      isChunkLoadFailure(new Error('Failed to load module script: Expected a JavaScript module script')),
+    ).toBe(true);
+  });
+
+  it('registerVitePreloadErrorHandler reloads once on vite:preloadError', () => {
+    const reload = vi.fn();
+    vi.stubGlobal('location', { ...window.location, reload, pathname: '/' });
+    registerVitePreloadErrorHandler();
+    const event = new Event('vite:preloadError');
+    const preventDefault = vi.spyOn(event, 'preventDefault');
+    window.dispatchEvent(event);
+
+    expect(preventDefault).toHaveBeenCalled();
+    expect(reload).toHaveBeenCalledTimes(1);
+
+    reload.mockClear();
+    window.dispatchEvent(new Event('vite:preloadError'));
+    expect(reload).not.toHaveBeenCalled();
   });
 
   it('reloadOnceForStaleChunk sends chunk_recovery_reload once per session', () => {
