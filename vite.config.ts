@@ -163,6 +163,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins,
+    assetsInclude: ['**/*.u16'],
     server: {
       proxy: {
         '/api': {
@@ -199,6 +200,13 @@ export default defineConfig(({ mode }) => {
           manualChunks: (id) => {
             if (id.includes('node_modules/leaflet') || id.includes('node_modules/react-leaflet')) {
               return 'vendor-leaflet';
+            }
+            if (
+              id.includes('gsiGeomag2020DeclinationWest') ||
+              id.includes('japanMagneticVariation') ||
+              id.includes('magneticBearing')
+            ) {
+              return 'planning-magvar';
             }
             if (mode !== 'development') return undefined;
 

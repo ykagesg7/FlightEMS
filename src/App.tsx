@@ -21,6 +21,7 @@ import ScrollManager from './components/ScrollManager';
 import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 import { MarketingLayout } from './layouts/MarketingLayout';
 import { lazyProtectedRoute, lazyRoute } from './layouts/routeLazy';
+import { importWithChunkRetry } from './utils/lazyWithRetry';
 
 const LearningRedirect: React.FC = () => {
   return <Navigate to="/articles" replace />;
@@ -96,7 +97,15 @@ const router = createBrowserRouter([
           { path: 'blog', element: <Navigate to="/articles" replace /> },
           { path: 'blog/:slug', element: <Navigate to="/articles" replace /> },
           { path: 'dashboard', element: <Navigate to="/" replace /> },
-          { path: 'planning', ...lazyRoute(() => import('./pages/planning/PlanningMapPage'), true) },
+          {
+            path: 'planning',
+            lazy: async () => {
+              const { initJapanMagneticVariationGrid } = await import('./utils/japanMagneticVariation');
+              await initJapanMagneticVariationGrid();
+              const mod = await importWithChunkRetry(() => import('./pages/planning/PlanningMapPage'));
+              return { Component: mod.default };
+            },
+          },
           { path: 'explore/airspace-3d', ...lazyRoute(() => import('./pages/explore/Airspace3dPage')) },
           { path: 'learning', element: <LearningRedirect /> },
           { path: 'learning/:contentId', element: <LearningContentRedirect /> },

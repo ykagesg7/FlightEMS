@@ -38,7 +38,7 @@ import type { PlanningMapNavaid, PlanningMapRegion } from './planningMapTypes';
 import type { PlanningMapOverlayGroups } from './mapLayerUtils';
 import type { AirportProps, NavaidProps } from './types';
 import type { FlightTrack } from '../../tracks/types';
-import { calculateMagneticBearing } from '../../../../utils/bearing';
+import { calculateMagneticBearing } from '../../../../utils/magneticBearing';
 import { formatBearing } from '../../../../utils/format';
 
 export interface MapTabContentProps {

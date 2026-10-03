@@ -15,9 +15,16 @@
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { calculateTrueBearing, trueToMagneticDeg } from '../bearing';
-import { interpolateJapanMagneticVariationWestDeg } from '../japanMagneticVariation';
+import {
+  initJapanMagneticVariationGrid,
+  interpolateJapanMagneticVariationWestDeg,
+} from '../japanMagneticVariation';
+
+beforeAll(async () => {
+  await initJapanMagneticVariationGrid();
+});
 
 type Tolerance = { abs: number };
 type Pt = { id: string; lat: number; lon: number };

@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { beforeAll, describe, it, expect } from 'vitest';
+import { initJapanMagneticVariationGrid } from '../../utils/japanMagneticVariation';
 import { calculateOffsetPoint } from '../../utils/offset';
 
 describe('calculateOffsetPoint', () => {
+  beforeAll(async () => {
+    await initJapanMagneticVariationGrid();
+  });
   it('returns the same coordinates when distance is 0 NM', () => {
     const lat = 35.5;
     const lon = 139.75;

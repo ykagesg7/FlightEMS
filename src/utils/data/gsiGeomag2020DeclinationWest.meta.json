@@ -1,0 +1,13 @@
+{
+  "epoch": "2020.0",
+  "source": "GSI geomag menu_04 sample.cgi (declination D on 0.1\u00b0 lattice; west positive; server uses 3-minute grid interpolation)",
+  "latMin": 20.05,
+  "latMax": 49.95,
+  "lonMin": 120.05,
+  "lonMax": 153.95,
+  "stepDeg": 0.1,
+  "nLat": 300,
+  "nLon": 340,
+  "scale": 0.01,
+  "fetchedAt": "2026-10-03T08:25:27Z"
+}

@@ -1,10 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { calculateMagneticBearing } from '../../utils/bearing';
+import { calculateMagneticBearing } from '../../utils/magneticBearing';
 
 describe('Bearing Utils', () => {
   describe('calculateMagneticBearing', () => {
     it('calculates bearing between two points', () => {
-      // 東京から大阪への方位（概算）
       const tokyoLat = 35.6762;
       const tokyoLng = 139.6503;
       const osakaLat = 34.6937;
@@ -15,34 +14,34 @@ describe('Bearing Utils', () => {
       expect(bearing).toBeLessThan(360);
     });
 
-    it('calculates bearing for north direction', () => {
-      const bearing = calculateMagneticBearing(0, 0, 1, 0);
-      expect(bearing).toBeCloseTo(8, 1); // 磁気偏差8度を考慮
+    it('calculates bearing for north direction with explicit variation', () => {
+      const bearing = calculateMagneticBearing(0, 0, 1, 0, 8);
+      expect(bearing).toBeCloseTo(8, 1);
     });
 
-    it('calculates bearing for east direction', () => {
-      const bearing = calculateMagneticBearing(0, 0, 0, 1);
-      expect(bearing).toBeCloseTo(98, 1); // 90 + 8度
+    it('calculates bearing for east direction with explicit variation', () => {
+      const bearing = calculateMagneticBearing(0, 0, 0, 1, 8);
+      expect(bearing).toBeCloseTo(98, 1);
     });
 
-    it('calculates bearing for south direction', () => {
-      const bearing = calculateMagneticBearing(0, 0, -1, 0);
-      expect(bearing).toBeCloseTo(188, 1); // 180 + 8度
+    it('calculates bearing for south direction with explicit variation', () => {
+      const bearing = calculateMagneticBearing(0, 0, -1, 0, 8);
+      expect(bearing).toBeCloseTo(188, 1);
     });
 
-    it('calculates bearing for west direction', () => {
-      const bearing = calculateMagneticBearing(0, 0, 0, -1);
-      expect(bearing).toBeCloseTo(278, 1); // 270 + 8度
+    it('calculates bearing for west direction with explicit variation', () => {
+      const bearing = calculateMagneticBearing(0, 0, 0, -1, 8);
+      expect(bearing).toBeCloseTo(278, 1);
     });
 
-    it('handles same coordinates', () => {
+    it('handles same coordinates (true bearing 0 + leg variation)', () => {
       const bearing = calculateMagneticBearing(35.6762, 139.6503, 35.6762, 139.6503);
-      expect(bearing).toBe(8); // 磁気偏差8度
+      expect(bearing).toBeGreaterThanOrEqual(0);
+      expect(bearing).toBeLessThan(360);
     });
 
     it('handles antipodal points', () => {
       const bearing = calculateMagneticBearing(0, 0, 0, 180);
-      // 対蹠点の場合、方位は定義されないが、関数は値を返す
       expect(bearing).toBeGreaterThanOrEqual(0);
       expect(bearing).toBeLessThanOrEqual(360);
     });
