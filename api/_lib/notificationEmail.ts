@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { WeeklyArticleDigest } from './articlePublishSchedule';
+import { getJstDateString } from './articlePublishGate';
 import { getServiceSupabase } from './supabaseService';
 
 export type CohortNotificationTemplateKey =
@@ -119,16 +120,25 @@ function weekdayLabelJst(isoDate: string): string {
 export type WeeklyArticleDigestTiming = 'sunday_preview' | 'week_start';
 
 /** Digest: coming-week preview (Sun) or week-start catch-up (Mon) + optional reminder. */
+export function digestArticleDayLabel(
+  publishDate: string,
+  sendDateJst: string,
+): '今すぐ' | string {
+  if (publishDate <= sendDateJst) return '今すぐ';
+  return weekdayLabelJst(publishDate);
+}
+
 export function getWeeklyArticleDigestEmailContent(
   digest: WeeklyArticleDigest,
   baseUrl: string,
   previousDigest?: WeeklyArticleDigest | null,
   timing: WeeklyArticleDigestTiming = 'sunday_preview',
+  sendDateJst: string = getJstDateString(),
 ): { subject: string; htmlContent: string } {
   const renderItems = (articles: WeeklyArticleDigest['articles']) =>
     articles
-      .map((a, index) => {
-        const day = index === 0 ? '今すぐ' : weekdayLabelJst(a.publishDate);
+      .map((a) => {
+        const day = digestArticleDayLabel(a.publishDate, sendDateJst);
         const href = `${baseUrl}${a.slug.startsWith('/') ? a.slug : `/${a.slug}`}`;
         return `<li style="margin-bottom:12px;">
         <strong>${day}</strong> <a href="${href}">${a.title}</a><br/>
@@ -165,7 +175,7 @@ export function getWeeklyArticleDigestEmailContent(
       ${reminderBlock}
       <h2 style="font-size:16px;margin:24px 0 8px;">${primaryLabel}（${digest.isoWeek}）— ${digest.seriesTitle}</h2>
       <p>${digest.intro}</p>
-      <p><strong>週3本。</strong>1本目は案内と同時（今すぐ）。水・金に続く。読み終わったら、明日の一手だけ試してみてほしい。</p>
+      <p><strong>週3枠。</strong>日曜はメンタリティ（その週に載せた分）、水・金は操縦記事。日曜分は案内と同時（今すぐ）で読める。水・金に続く。読み終わったら、明日の一手だけ試してみてほしい。</p>
       <ul style="padding-left:18px;list-style:disc;">
         ${upcomingItems}
       </ul>
@@ -332,6 +342,7 @@ export async function dispatchWeeklyArticleDigestEmails(
     baseUrl,
     previousDigest,
     timing,
+    getJstDateString(),
   );
 
   const { data: profiles, error: profilesError } = await supabase

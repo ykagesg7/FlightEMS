@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getDigestForIsoWeek } from './articlePublishSchedule';
-import { getIsoWeekJst, resolveArticleDigestIsoWeek } from './cohortWeek';
+import { getIsoWeekJst, getPreviousIsoWeekKey, resolveArticleDigestIsoWeek } from './cohortWeek';
 import {
   dispatchWeeklyArticleDigestEmails,
   type WeeklyArticleDigestTiming,
@@ -43,10 +43,7 @@ export async function handleArticleWeeklyDigest(req: VercelRequest, res: VercelR
     const timing: WeeklyArticleDigestTiming =
       isoWeek === getIsoWeekJst(now) ? 'week_start' : 'sunday_preview';
 
-    const firstPublish = digest.articles[0]?.publishDate;
-    const remindWeek = firstPublish
-      ? getIsoWeekJst(new Date(Date.parse(`${firstPublish}T12:00:00+09:00`) - 7 * 86400000))
-      : getIsoWeekJst(now);
+    const remindWeek = getPreviousIsoWeekKey(isoWeek);
     const previousDigest = getDigestForIsoWeek(remindWeek);
 
     if (!process.env.BREVO_API_KEY) {
