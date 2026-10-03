@@ -1,19 +1,15 @@
 import {
   Cartesian3,
   Color,
+  ConstantProperty,
   JulianDate,
   LinearApproximation,
   NearFarScalar,
   SampledPositionProperty,
-  SampledProperty,
   type Viewer,
 } from 'cesium';
-import { headingDegToBillboardRotation } from '../../../../explore/airspace3d/aircraftIcon';
-import {
-  feetToMeters,
-  interpolatePlaybackAtTime,
-  type PlaybackPoint3D,
-} from './flightViewer3dMath';
+import { computeChaseScreenBillboardRotationRad } from './flightViewerAircraftBillboard';
+import { feetToMeters, type PlaybackPoint3D } from './flightViewer3dMath';
 
 export const FLIGHT_VIEWER_AIRCRAFT_ID = 'flight-viewer-aircraft';
 export const FLIGHT_VIEWER_AIRCRAFT_HALO_ID = 'flight-viewer-aircraft-halo';
@@ -23,6 +19,14 @@ const AIRCRAFT_HALO_BILLBOARD_IMAGE = '/airplane-halo.png';
 
 /** チェイス 650〜3000 m で視認できるピクセルサイズ */
 const aircraftBillboardScaleByDistance = new NearFarScalar(450, 1.35, 7500, 0.42);
+
+type ChaseBillboardRotationState = {
+  position: SampledPositionProperty;
+  rotationHalo: ConstantProperty;
+  rotationMain: ConstantProperty;
+};
+
+const chaseBillboardRotationByViewer = new WeakMap<Viewer, ChaseBillboardRotationState>();
 
 function buildPlaybackPositionProperty(
   playback: PlaybackPoint3D[],
@@ -40,31 +44,14 @@ function buildPlaybackPositionProperty(
   return position;
 }
 
-function buildPlaybackBillboardRotationProperty(
-  playback: PlaybackPoint3D[],
-  startJulian: JulianDate,
-): SampledProperty {
-  const rotation = new SampledProperty(Number);
-  rotation.setInterpolationOptions({
-    interpolationDegree: 1,
-    interpolationAlgorithm: LinearApproximation,
-  });
-  for (const p of playback) {
-    const t = JulianDate.addSeconds(startJulian, p.tSec, new JulianDate());
-    const headingDeg = interpolatePlaybackAtTime(playback, p.tSec).headingDeg;
-    rotation.addSample(t, headingDegToBillboardRotation(headingDeg));
-  }
-  return rotation;
-}
-
 function addAircraftBillboardEntity(
   viewer: Viewer,
   id: string,
   position: SampledPositionProperty,
-  rotation: SampledProperty,
+  rotation: ConstantProperty,
   options: { halo: boolean },
 ): void {
-  const scale = options.halo ? 1.14 : 1;
+  const scale = options.halo ? 1.12 : 1;
   viewer.entities.add({
     id,
     position,
@@ -75,14 +62,27 @@ function addAircraftBillboardEntity(
       scale,
       scaleByDistance: aircraftBillboardScaleByDistance,
       rotation,
-      alignedAxis: Cartesian3.UNIT_Z,
-      color: Color.WHITE,
+      ...(options.halo ? { color: Color.WHITE.withAlpha(0.95) } : {}),
       disableDepthTestDistance: Number.POSITIVE_INFINITY,
     },
   });
 }
 
+/** チェイス時のみ onTick / seek から呼ぶ（CallbackProperty は Cesium で描画例外になるため） */
+export function updateChaseAircraftBillboardRotation(viewer: Viewer): void {
+  const state = chaseBillboardRotationByViewer.get(viewer);
+  if (!state || viewer.isDestroyed()) return;
+  const rad = computeChaseScreenBillboardRotationRad(
+    viewer,
+    state.position,
+    viewer.clock.currentTime,
+  );
+  state.rotationHalo.setValue(rad);
+  state.rotationMain.setValue(rad);
+}
+
 export function removeFlightViewerAircraft(viewer: Viewer): void {
+  chaseBillboardRotationByViewer.delete(viewer);
   for (const id of [FLIGHT_VIEWER_AIRCRAFT_ID, FLIGHT_VIEWER_AIRCRAFT_HALO_ID]) {
     const entity = viewer.entities.getById(id);
     if (entity) viewer.entities.remove(entity);
@@ -105,12 +105,15 @@ export function ensureFlightViewerAircraft(
   if (playback.length === 0) return;
 
   const position = buildPlaybackPositionProperty(playback, startJulian);
-  const rotation = buildPlaybackBillboardRotationProperty(playback, startJulian);
+  const rotationHalo = new ConstantProperty(0);
+  const rotationMain = new ConstantProperty(0);
+  chaseBillboardRotationByViewer.set(viewer, { position, rotationHalo, rotationMain });
 
-  addAircraftBillboardEntity(viewer, FLIGHT_VIEWER_AIRCRAFT_HALO_ID, position, rotation, {
+  addAircraftBillboardEntity(viewer, FLIGHT_VIEWER_AIRCRAFT_HALO_ID, position, rotationHalo, {
     halo: true,
   });
-  addAircraftBillboardEntity(viewer, FLIGHT_VIEWER_AIRCRAFT_ID, position, rotation, {
+  addAircraftBillboardEntity(viewer, FLIGHT_VIEWER_AIRCRAFT_ID, position, rotationMain, {
     halo: false,
   });
+  updateChaseAircraftBillboardRotation(viewer);
 }

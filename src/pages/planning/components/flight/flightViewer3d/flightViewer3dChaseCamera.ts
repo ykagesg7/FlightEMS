@@ -91,6 +91,7 @@ export function setChaseCameraFollowingTarget(
     new Cartesian3(),
   );
   Cartesian3.subtract(target, eye, scratchSubtract);
+  if (Cartesian3.magnitude(scratchSubtract) < 1e-4) return;
   Cartesian3.normalize(scratchSubtract, scratchDirection);
   const enu = Transforms.eastNorthUpToFixedFrame(eye, undefined, scratchEnu);
   Matrix4.getColumn(enu, 2, scratchColumn);

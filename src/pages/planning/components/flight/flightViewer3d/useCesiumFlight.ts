@@ -6,8 +6,10 @@ import {
   ClockRange,
   Color,
   ColorMaterialProperty,
+  ConstantProperty,
   EllipsoidTerrainProvider,
   GoogleMaps,
+  HeightReference,
   TerrainProvider,
   JulianDate,
   LabelStyle,
@@ -43,6 +45,7 @@ import {
   ensureFlightViewerAircraft,
   removeFlightViewerAircraft,
   setFlightViewerAircraftVisible,
+  updateChaseAircraftBillboardRotation,
 } from './flightViewerAircraft';
 
 const VIEWER_BOOT_TIMEOUT_MS = 25_000;
@@ -50,6 +53,10 @@ const LABEL_DEPTH_TEST_DISTANCE = Number.POSITIVE_INFINITY;
 
 const ROUTE_ENTITY_PREFIX = 'flight-viewer-route-';
 const ROUTE_POLYLINE_ID = 'flight-viewer-route-line';
+const ROUTE_GROUND_POLYLINE_ID = 'flight-viewer-route-ground-line';
+
+/** コックピット用地上ラベル・ルートの scaleByDistance（約 10 nm まで読める） */
+const COCKPIT_GROUND_LABEL_SCALE = new NearFarScalar(500, 1.4, 185_200, 0.72);
 
 /** デモ／プレビュー用。実時間 1x は長距離で遅すぎるため加速する */
 const PLAYBACK_MULTIPLIER = 40;
@@ -120,11 +127,54 @@ function removeRouteEntities(viewer: Viewer) {
     const id = e.id;
     return (
       typeof id === 'string' &&
-      (id === ROUTE_POLYLINE_ID || id.startsWith(ROUTE_ENTITY_PREFIX))
+      (id === ROUTE_POLYLINE_ID ||
+        id === ROUTE_GROUND_POLYLINE_ID ||
+        id.startsWith(ROUTE_ENTITY_PREFIX))
     );
   });
   for (const entity of toRemove) {
     viewer.entities.remove(entity);
+  }
+}
+
+function enableGroundRouteTerrainClamp(viewer: Viewer): void {
+  const groundLine = viewer.entities.getById(ROUTE_GROUND_POLYLINE_ID);
+  if (groundLine?.polyline) {
+    groundLine.polyline.clampToGround = new ConstantProperty(true);
+  }
+  for (const entity of viewer.entities.values) {
+    const id = entity.id;
+    if (typeof id !== 'string' || !id.includes('wp-ground-')) continue;
+    if (entity.label) {
+      entity.label.heightReference = new ConstantProperty(HeightReference.CLAMP_TO_GROUND);
+    }
+    if (entity.point) {
+      entity.point.heightReference = new ConstantProperty(HeightReference.CLAMP_TO_GROUND);
+    }
+  }
+}
+
+function applyFlightRouteLayerVisibility(viewer: Viewer, mode: FlightCameraMode) {
+  const cockpit = mode === 'cockpit';
+  const airLine = viewer.entities.getById(ROUTE_POLYLINE_ID);
+  if (airLine) airLine.show = !cockpit;
+  const groundLine = viewer.entities.getById(ROUTE_GROUND_POLYLINE_ID);
+  if (groundLine) groundLine.show = cockpit;
+
+  for (const entity of viewer.entities.values) {
+    const id = entity.id;
+    if (typeof id !== 'string' || !id.startsWith(ROUTE_ENTITY_PREFIX)) continue;
+    if (id.includes('wp-ground-')) {
+      entity.show = cockpit;
+      continue;
+    }
+    if (id.includes('-drop-')) {
+      entity.show = cockpit;
+      continue;
+    }
+    if (id.includes('-wp-')) {
+      entity.show = !cockpit;
+    }
   }
 }
 
@@ -133,13 +183,25 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
   const routePositions = waypoints.map((w) =>
     Cartesian3.fromDegrees(w.lon, w.lat, feetToMeters(w.altFt)),
   );
+  const groundRoutePositions = waypoints.map((w) => Cartesian3.fromDegrees(w.lon, w.lat));
+  const routeMagenta = new ColorMaterialProperty(Color.fromCssColorString('#FF00FF').withAlpha(0.92));
+
   if (routePositions.length >= 2) {
     viewer.entities.add({
       id: ROUTE_POLYLINE_ID,
       polyline: {
         positions: routePositions,
         width: 3,
-        material: new ColorMaterialProperty(Color.fromCssColorString('#FF00FF').withAlpha(0.92)),
+        material: routeMagenta,
+      },
+    });
+    viewer.entities.add({
+      id: ROUTE_GROUND_POLYLINE_ID,
+      show: false,
+      polyline: {
+        positions: groundRoutePositions,
+        width: 5,
+        material: routeMagenta,
       },
     });
   }
@@ -175,7 +237,36 @@ function addRouteGraphics(viewer: Viewer, waypoints: Waypoint3D[]) {
       },
     });
     viewer.entities.add({
+      id: `${ROUTE_ENTITY_PREFIX}wp-ground-${i}`,
+      show: false,
+      position: onGround,
+      label: {
+        text: w.name,
+        font: 'bold 15px sans-serif',
+        fillColor: Color.WHITE,
+        outlineColor: Color.BLACK,
+        outlineWidth: 3,
+        style: LabelStyle.FILL_AND_OUTLINE,
+        verticalOrigin: 1,
+        pixelOffset: new Cartesian2(0, -40),
+        disableDepthTestDistance: LABEL_DEPTH_TEST_DISTANCE,
+        scaleByDistance: COCKPIT_GROUND_LABEL_SCALE,
+        showBackground: true,
+        backgroundColor: Color.fromCssColorString('#0d1b2a').withAlpha(0.82),
+        backgroundPadding: new Cartesian2(8, 5),
+      },
+      point: {
+        pixelSize: 12,
+        color: Color.fromCssColorString('#39FF14'),
+        outlineColor: Color.BLACK,
+        outlineWidth: 2,
+        disableDepthTestDistance: LABEL_DEPTH_TEST_DISTANCE,
+        scaleByDistance: COCKPIT_GROUND_LABEL_SCALE,
+      },
+    });
+    viewer.entities.add({
       id: `${ROUTE_ENTITY_PREFIX}drop-${i}`,
+      show: false,
       polyline: {
         positions: [atAlt, onGround],
         width: 1.5,
@@ -233,6 +324,7 @@ function updateFollowCamera(
     controls.chaseDistanceM,
     controls.chasePitchDeg,
   );
+  updateChaseAircraftBillboardRotation(viewer);
 }
 
 function createGsiTerrainProvider(): TerrainProvider {
@@ -297,6 +389,7 @@ export function useCesiumFlight({
           setDepthTestAgainstTerrain(viewer, true);
           const imagery = new UrlTemplateImageryProvider(gsiSeamlessPhotoImageryOptions);
           viewer.imageryLayers.addImageryProvider(imagery);
+          enableGroundRouteTerrainClamp(viewer);
         } else {
           const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
           if (!key) {
@@ -341,6 +434,7 @@ export function useCesiumFlight({
     setPlaying(false);
     ensureFlightViewerAircraft(viewer, points, start);
     setFlightViewerAircraftVisible(viewer, cameraModeRef.current !== 'cockpit');
+    applyFlightRouteLayerVisibility(viewer, cameraModeRef.current);
     if (wps.length >= 2) {
       fitCameraToRoute(viewer, wps);
     }
@@ -454,6 +548,7 @@ export function useCesiumFlight({
     const tSec = JulianDate.secondsDifference(viewer.clock.currentTime, startJ);
     const pose = interpolatePlaybackAtTime(playbackRef.current, Math.max(0, tSec));
     setFlightViewerAircraftVisible(viewer, cameraMode !== 'cockpit');
+    applyFlightRouteLayerVisibility(viewer, cameraMode);
     updateFollowCamera(
       viewer,
       pose,
