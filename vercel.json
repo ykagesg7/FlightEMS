@@ -56,7 +56,7 @@
       "destination": "/api/cron?job=:job"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/).*)",
       "destination": "/"
     }
   ],
