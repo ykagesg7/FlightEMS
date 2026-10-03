@@ -2,7 +2,7 @@
  * GSI DEM タイルのメモリキャッシュ（404 / 全無効画素を記録し再 fetch を防ぐ）。
  * sessionStorage は任意（同一タブ内の再マウント向け）。
  */
-export type GsiDemTileStatus = 'elevated' | 'nodata' | 'missing' | 'seaFilled';
+export type GsiDemTileStatus = 'elevated' | 'nodata' | 'missing';
 
 const SESSION_PREFIX = 'flight-gsi-dem:';
 const SESSION_MAX_KEYS = 4000;
@@ -24,14 +24,7 @@ function readSession(key: string): GsiDemTileStatus | undefined {
   if (typeof sessionStorage === 'undefined') return undefined;
   try {
     const raw = sessionStorage.getItem(SESSION_PREFIX + key);
-    if (
-      raw === 'elevated' ||
-      raw === 'nodata' ||
-      raw === 'missing' ||
-      raw === 'seaFilled'
-    ) {
-      return raw;
-    }
+    if (raw === 'elevated' || raw === 'nodata' || raw === 'missing') return raw;
   } catch {
     /* quota / private mode */
   }
@@ -75,7 +68,6 @@ export class GsiDemTileCache {
 
   shouldSkipNetworkFetch(level: number, x: number, y: number): GsiDemTileStatus | null {
     const self = this.get(level, x, y);
-    if (self === 'seaFilled') return 'seaFilled';
     if (isBarrenGsiDemTileStatus(self)) return self!;
     const parent = gsiDemParentKey(level, x, y);
     if (parent) {
