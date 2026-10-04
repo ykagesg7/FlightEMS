@@ -337,7 +337,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         publishDate: '2026-10-07',
         title: '第21話：同じ向きに4枚の葉を描け ～Cloverleaf～',
         slug: '/articles/cp-5-8-cloverleaf',
-        hook: '同じ向きに4枚。各葉は90°。第1葉は最寄りborderへ。',
+        hook: '4つの葉で90°ずつ向きを変える。Pitch と Bank を同時に操る T-4 の曲技。',
       },
       {
         id: 'CP-5-9_Chandelle',
