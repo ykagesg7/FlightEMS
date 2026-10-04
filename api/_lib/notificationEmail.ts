@@ -168,6 +168,13 @@ export function getWeeklyArticleDigestEmailContent(
     ? `<p style="margin-top:16px;color:#555;font-size:14px;">${digest.checklistNote}</p>`
     : '';
 
+  const productAnnouncement = digest.productNote
+    ? `
+      <h2 style="font-size:16px;margin:24px 0 8px;">${digest.productNoteTitle ?? 'お知らせ'}</h2>
+      <p style="color:#444;">${digest.productNote}</p>
+      <p><a href="${baseUrl}/planning">Planning を開く</a></p>`
+    : '';
+
   return {
     subject: `Flight Academy — ${primaryLabel}＋${reminderLabel}（${digest.isoWeek}）`,
     htmlContent: `
@@ -180,6 +187,7 @@ export function getWeeklyArticleDigestEmailContent(
         ${upcomingItems}
       </ul>
       <p><a href="${baseUrl}/articles">Articles を開く</a></p>
+      ${productAnnouncement}
       ${checklist}
       <hr style="border:none;border-top:1px solid #ddd;margin:24px 0;" />
       <p style="font-size:12px;color:#777;">

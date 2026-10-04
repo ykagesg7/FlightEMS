@@ -178,6 +178,9 @@ describe('api/lib/notificationEmail', () => {
     );
     expect(sundayPreview.htmlContent).toMatch(/<strong>今すぐ<\/strong>.*終わりを思い描く/);
     expect(sundayPreview.htmlContent).toMatch(/<strong>水<\/strong>.*Cloverleaf/);
+    expect(sundayPreview.htmlContent).toContain('Planning のお知らせ');
+    expect(sundayPreview.htmlContent).toContain('3D ルートプレビュー');
+    expect(sundayPreview.htmlContent).toContain('https://example.test/planning');
 
     const w42 = getDigestForIsoWeek('2026-W42');
     const w42Sunday = getWeeklyArticleDigestEmailContent(
@@ -188,5 +191,6 @@ describe('api/lib/notificationEmail', () => {
       '2026-10-10',
     );
     expect(w42Sunday.htmlContent).toMatch(/<strong>日<\/strong>.*最優先事項を優先する/);
+    expect(w42Sunday.htmlContent).not.toContain('Planning のお知らせ');
   });
 });

@@ -23,6 +23,9 @@ export interface WeeklyArticleDigest {
   intro: string;
   articles: ScheduledArticle[];
   checklistNote?: string;
+  /** Optional product announcement (e.g. Planning feature). Rendered as its own email block. */
+  productNoteTitle?: string;
+  productNote?: string;
 }
 
 export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
@@ -324,6 +327,9 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     seriesTitle: 'CP（単機）＋メンタリティ',
     intro:
       '来週は７つの習慣その２（日）と CP 最終2本（水・金）。終わりを思い描く、Cloverleaf、Chandelle。',
+    productNoteTitle: 'Planning のお知らせ',
+    productNote:
+      'Planning に「3D ルートプレビュー」ば足した。出発〜到着の航路を立体で眺め、再生して経路を確認できる機能たい。標準表示は国土地理院（無料）。アプリの Planning を開いてカードを広げてみてくれ。',
     articles: [
       {
         id: '1.1.2_EndWithFuture',
