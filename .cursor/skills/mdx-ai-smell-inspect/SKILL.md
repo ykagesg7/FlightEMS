@@ -74,7 +74,8 @@ uv run tools/natural-japanese/scripts/terms.py path/to/file.mdx
 | 口頭試問（`学生：` / `教官ジョー`）・Holding の比喩 | **残す** |
 | 「立場の明確化」・実施禁止・T-38 枠の定型 | **残す**（契約） |
 | 専門略語（AOA, buffet, unload, ATS…）の繰り返し | **残す**（教程語）。初出説明不足だけ terms で確認 |
-| `Highlight` / PREP 見出し形式 | **残す**（型） |
+| `Highlight`、結論文の `###` | **残す**（型） |
+| `### 1. P（Point）` などの工程ラベル | **直す候補**（読者に出さない。論理は頭の中だけ） |
 
 finding ごとに「直す / 残す（理由）」を表で出す。機械的な全置換は禁止。
 
