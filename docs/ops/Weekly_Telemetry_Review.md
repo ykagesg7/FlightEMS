@@ -82,11 +82,11 @@
 
 | ID | 課題 | 優先 | 状態 | 次アクション | 最終言及 |
 |----|------|------|------|--------------|----------|
-| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に UTM を検討。W40 も referral 主体（16/61 sess）でメール切り出し困難 | W40 |
-| T-02 | ボリュームが極小（週間 users 一桁）でファネル統計が不安定 | 低 | watch | W40 は **users 27**（W39: 17）。週次比較はノイズ大 | W40 |
+| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に UTM を検討。W40 は (direct) 主体（44/61 sess）。referral 16 — メール切り出し困難 | W40 |
+| T-02 | ボリュームが小さい（週間 users 十〜数十）でファネル統計が不安定 | 低 | watch | W40 は **users 27**（W39: 17）。週次比較はノイズ大 | W40 |
 | T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W40 は `/planning` PV 115。`chunk_recovery_reload` **1**。Sentry は CI 未取得 | W40 |
-| T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W40 でも kebab 着地あり（`3d-popout` / `CPL-Hub-Navigation`）。リダイレクト継続確認 | W40 |
-| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。W40 にも quiz_* イベント **0** | W36 |
+| T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W40: kebab 記事着地 `CPL-Hub-Navigation`。`/planning/3d-popout` はアプリ経路（記事 kebab 対象外）。リダイレクト継続確認 | W40 |
+| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。W40 は quiz_* イベント **0** | W36 |
 
 ---
 
@@ -138,7 +138,7 @@
 | screenPageViews | **193** | 293 |
 | engagedSessions | **38** | 29 |
 
-- **日次**: 20260928: users 5 / sess 7 / PV 17、20261001: users 1 / sess 1 / PV 3、20261002: users 7 / sess 15 / PV 46、20261003: users 13 / sess 31 / PV 113、20261004: users 6 / sess 7 / PV 14
+- **日次**: 20260928: users 5 / sess 7 / PV 17、20261001: users 1 / sess 1 / PV 3、20261002: users 7 / sess 15 / PV 46、20261003: users 13 / sess 31 / PV 113、20261004: users 6 / sess 7 / PV 14。artifact `daily` に **20260929・20260930 の行なし**（ゼロか欠損かは未分解）
 - **上位ページ**: `/planning` PV 115、`/` PV 28、`/explore/airspace-3d` PV 18、`/articles` PV 16、`/planning/3d-popout` PV 12、`/auth` PV 2、`/articles/4.1.1_ChoresAreTheJob` PV 1、`/articles/CPL-Hub-Navigation` PV 1
 - **流入**: (direct) / (none) sess 44、accounts.google.com / referral sess 16、bing / organic sess 1
 - **端末**: desktop sess 53、mobile sess 8
@@ -148,7 +148,7 @@
 #### 課題（Issues）
 
 1. users は直前 ISO 比で増加（27 / 前週 17）。PV 193（前週 293）（T-02）。
-2. 流入は referral 主体（16/61 sess）でメール効果が見えない（T-01）。
+2. 流入は (direct) 主体（44/61 sess）でメール効果が見えない（T-01）。
 3. Sentry は CI 未取得。GA 上の `chunk_recovery_reload` は 1（T-03）。
 4. quiz_* イベント 0 — A2-a（T-05）ベースラインにはまだ使えない。
 
@@ -157,7 +157,7 @@
 - [ ] T-01: 次のダイジェスト送信前に UTM 付与を実装検討（承認後）。
 - [ ] T-03: Desktop Sentry MCP または Issues UI で `FLIGHT-ACADEMY-4` lastSeen を確認。
 - [ ] T-05: W36 までボード維持。W40 は quiz ゼロのためベースライン対象外。
-- [x] T-04: W40 でも kebab 着地を再確認 → closed 維持。
+- [x] T-04: W40 の kebab 記事着地（`CPL-Hub-Navigation`）を再確認。`/planning/3d-popout` はアプリ経路 → closed 維持。
 
 #### メモ / 生データ
 
