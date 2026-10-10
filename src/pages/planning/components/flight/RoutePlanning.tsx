@@ -1,11 +1,9 @@
 import React from 'react';
 import Select, { SingleValue, type StylesConfig } from 'react-select';
 import { AirportGroupOption, AirportOption, FlightPlan, NavaidOption, WaypointOption } from '../../../../types/index';
-import {
-  GSI_GEOMAG_2020_META,
-  isJapanMagneticVariationGridFallbackActive,
-} from '../../../../utils/japanMagneticVariation';
+import { GSI_GEOMAG_2020_META } from '../../../../utils/japanMagneticVariation';
 import { MagneticVariationFallbackNotice } from '../MagneticVariationFallbackNotice';
+import { useJapanMagneticVariationGridLoadMode } from '../../hooks/useJapanMagneticVariationGridLoadMode';
 import { asSelectStyles } from '../../../../utils/reactSelectStyles';
 import WaypointAddPanel from './WaypointAddPanel';
 import WaypointList from './WaypointList';
@@ -46,6 +44,7 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   onRenameUserSaved,
 }) => {
   const isSplitLayout = layout === 'split';
+  const geomagGridLoadMode = useJapanMagneticVariationGridLoadMode();
   return (
     <div>
       <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 text-white">経路計画</h2>
@@ -53,7 +52,7 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
       <p className="text-2xs sm:text-xs text-gray-400 mb-2 sm:mb-3 md:mb-4 leading-relaxed">
         磁気方位は教育用モデルです。レグ中点の偏差は国土地理院磁気図 {GSI_GEOMAG_2020_META.epoch} 年値（0.1°
         格子・sample.cgi 由来）です。
-        {isJapanMagneticVariationGridFallbackActive()
+        {geomagGridLoadMode !== 'loaded'
           ? ' 現在は格子データ未取得のため概算値です。'
           : ''}
         実運航の計画には使用しないでください。

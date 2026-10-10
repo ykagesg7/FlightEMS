@@ -32,7 +32,8 @@ describe('gsiGeomag2020DeclinationWest grid load', () => {
     );
 
     const japan = await import('../../utils/japanMagneticVariation');
-    expect(japan.isJapanMagneticVariationGridFallbackActive()).toBe(true);
+    expect(japan.isJapanMagneticVariationGridFallbackActive()).toBe(false);
+    expect(japan.isJapanMagneticVariationRepresentativeDeclinationActive()).toBe(true);
   });
 
   it('does not reject init when fetch fails; enters fallback and returns finite declination', async () => {

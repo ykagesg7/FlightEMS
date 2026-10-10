@@ -24,12 +24,40 @@ export const GSI_GEOMAG_FALLBACK_DECLINATION_WEST_DEG = 7.53;
 const LOAD_MAX_ATTEMPTS = 3;
 const LOAD_RETRY_DELAY_MS = 250;
 
-type GridLoadMode = 'pending' | 'loaded' | 'fallback';
+export type GsiGeomag2020GridLoadMode = 'pending' | 'loaded' | 'fallback';
 
 let gridCentideg: Uint16Array | null = null;
 let loadPromise: Promise<void> | null = null;
-let gridLoadMode: GridLoadMode = 'pending';
+let gridLoadMode: GsiGeomag2020GridLoadMode = 'pending';
+const gridLoadModeListeners = new Set<() => void>();
 
+function notifyGridLoadModeListeners(): void {
+  gridLoadModeListeners.forEach((listener) => {
+    listener();
+  });
+}
+
+function setGridLoadMode(mode: GsiGeomag2020GridLoadMode): void {
+  if (gridLoadMode === mode) {
+    return;
+  }
+  gridLoadMode = mode;
+  notifyGridLoadModeListeners();
+}
+
+export function getGsiGeomag2020GridLoadMode(): GsiGeomag2020GridLoadMode {
+  return gridLoadMode;
+}
+
+/** React `useSyncExternalStore` 用。格子読込状態が変わったときに通知する。 */
+export function subscribeGsiGeomag2020GridLoadMode(onStoreChange: () => void): () => void {
+  gridLoadModeListeners.add(onStoreChange);
+  return () => {
+    gridLoadModeListeners.delete(onStoreChange);
+  };
+}
+
+/** 格子の取得に失敗し、代表偏角で続行しているとき true（pending は含まない）。 */
 export function isGsiGeomag2020GridFallbackActive(): boolean {
   return gridLoadMode === 'fallback';
 }
@@ -52,7 +80,7 @@ function validateAndAssignGrid(buf: ArrayBuffer): boolean {
     return false;
   }
   gridCentideg = new Uint16Array(buf);
-  gridLoadMode = 'loaded';
+  setGridLoadMode('loaded');
   return true;
 }
 
@@ -95,7 +123,7 @@ async function loadGridWithRetries(): Promise<void> {
     }
   }
   gridCentideg = null;
-  gridLoadMode = 'fallback';
+  setGridLoadMode('fallback');
 }
 
 async function runGridLoad(): Promise<void> {
@@ -103,7 +131,7 @@ async function runGridLoad(): Promise<void> {
   if (isVitest && !isVitestFetchPath()) {
     const ok = await readGridFromDisk();
     if (!ok) {
-      gridLoadMode = 'fallback';
+      setGridLoadMode('fallback');
     }
     return;
   }
@@ -127,7 +155,7 @@ export async function initGsiGeomag2020DeclinationGrid(): Promise<void> {
 export function __resetGsiGeomag2020GridForTests(): void {
   gridCentideg = null;
   loadPromise = null;
-  gridLoadMode = 'pending';
+  setGridLoadMode('pending');
 }
 
 function roundDegToIntegerSecond(deg: number): number {
