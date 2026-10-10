@@ -358,7 +358,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W42',
     seriesTitle: 'FN（編隊）＋メンタリティ',
     intro:
-      '来週は７つの習慣その３（日）と編隊入口2本（水・金）。最優先事項、V.F.Rの血の掟、滑走路のシンクロ。',
+      '本日は７つの習慣その３、来週は編隊入口2本（水・金）。最優先事項、V.F.Rの血の掟、滑走路のシンクロ。',
     articles: [
       {
         id: '1.1.3_PrioritizingMostImportant',
