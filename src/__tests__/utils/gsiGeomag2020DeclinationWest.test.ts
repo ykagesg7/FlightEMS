@@ -21,6 +21,20 @@ describe('gsiGeomag2020DeclinationWest grid load', () => {
     vi.resetModules();
   });
 
+  it('reports representative declination while grid load is still pending', async () => {
+    const mod = await import('../../utils/gsiGeomag2020DeclinationWest');
+    mod.__resetGsiGeomag2020GridForTests();
+
+    expect(mod.isGsiGeomag2020GridFallbackActive()).toBe(false);
+    expect(mod.isGsiGeomag2020RepresentativeDeclinationActive()).toBe(true);
+    expect(mod.gsiGeomag2020DeclinationWestDeg(35.5, 139.8)).toBe(
+      mod.GSI_GEOMAG_FALLBACK_DECLINATION_WEST_DEG,
+    );
+
+    const japan = await import('../../utils/japanMagneticVariation');
+    expect(japan.isJapanMagneticVariationGridFallbackActive()).toBe(true);
+  });
+
   it('does not reject init when fetch fails; enters fallback and returns finite declination', async () => {
     vi.stubGlobal(
       'fetch',

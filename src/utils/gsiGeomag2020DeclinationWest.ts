@@ -34,6 +34,11 @@ export function isGsiGeomag2020GridFallbackActive(): boolean {
   return gridLoadMode === 'fallback';
 }
 
+/** 格子未読込（pending）または読込失敗（fallback）で代表偏角を返しているとき true。 */
+export function isGsiGeomag2020RepresentativeDeclinationActive(): boolean {
+  return gridLoadMode !== 'loaded';
+}
+
 function isVitestFetchPath(): boolean {
   return (
     typeof process !== 'undefined' &&

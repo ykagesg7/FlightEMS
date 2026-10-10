@@ -6,7 +6,7 @@
 import {
   gsiGeomag2020DeclinationWestDeg,
   initGsiGeomag2020DeclinationGrid,
-  isGsiGeomag2020GridFallbackActive,
+  isGsiGeomag2020RepresentativeDeclinationActive,
   GSI_GEOMAG_2020_META,
 } from './gsiGeomag2020DeclinationWest';
 
@@ -22,9 +22,9 @@ export const JAPAN_MAG_VAR_STATIONS: readonly MagVarStation[] = [];
 
 export { initGsiGeomag2020DeclinationGrid as initJapanMagneticVariationGrid };
 
-/** 格子 u16 の取得に失敗し、代表値で磁方位を続行しているとき true。 */
+/** 格子未読込または取得失敗で代表値で磁方位を続行しているとき true。 */
 export function isJapanMagneticVariationGridFallbackActive(): boolean {
-  return isGsiGeomag2020GridFallbackActive();
+  return isGsiGeomag2020RepresentativeDeclinationActive();
 }
 
 /**
