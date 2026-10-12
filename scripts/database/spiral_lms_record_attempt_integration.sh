@@ -74,8 +74,25 @@ INSERT INTO public.learning_contents (id, title, category, is_published)
 VALUES
   ('PPL-1-1-1_TemperatureBasics', 't', 'PPL', true),
   ('4.1.1_ChoresAreTheJob', 'article', 'Articles', false),
-  ('4.1.2_SpeakBeforeAsked', 'article2', 'Articles', true)
+  ('4.1.2_SpeakBeforeAsked', 'article2', 'Articles', true),
+  ('4.1.3_AnswerFirstWord', 'a3', 'Articles', true),
+  ('4.1.4_SayExpectations', 'a4', 'Articles', true),
+  ('4.1.5_JustEnoughIsNotEnough', 'a5', 'Articles', true),
+  ('4.2.1_TurnFeedbackIntoAction', 'a6', 'Articles', true),
+  ('4.2.2_PutAFrameOnFailure', 'a7', 'Articles', true),
+  ('4.2.3_TakeTheGainFromFeedback', 'a8', 'Articles', true),
+  ('4.2.4_YesHasAShortShelfLife', 'a9', 'Articles', true),
+  ('4.2.5_ThinkingStamina', 'a10', 'Articles', true)
 ON CONFLICT (id) DO UPDATE SET is_published = EXCLUDED.is_published;
+
+DO $$
+BEGIN
+  CREATE ROLE anon;
+  CREATE ROLE authenticated;
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END
+$$;
 SQL
 
 run_psql_file "$DB_DIR/20261012_spiral_lms_schema_rls.sql"
