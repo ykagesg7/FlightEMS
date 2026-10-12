@@ -20,9 +20,14 @@ const SpiralNodeMiniQuiz: React.FC<SpiralNodeMiniQuizProps> = ({ nodeId }) => {
   const [selections, setSelections] = useState<Record<string, string[]>>({});
   const [submitted, setSubmitted] = useState(false);
 
+  const revealPerQuestionResults = Boolean(submit.data?.results?.length);
+
   const resultByQuestionId = useMemo(() => {
     const map = new Map<string, boolean>();
-    for (const row of submit.data?.results ?? []) {
+    if (!submit.data?.results) {
+      return map;
+    }
+    for (const row of submit.data.results) {
       map.set(row.question_id, row.correct);
     }
     return map;
@@ -112,7 +117,7 @@ const SpiralNodeMiniQuiz: React.FC<SpiralNodeMiniQuizProps> = ({ nodeId }) => {
           <div className="space-y-2">
             {question.options.map((option) => {
               const selected = (selections[question.id] ?? []).includes(option.id);
-              const graded = submitted && resultByQuestionId.has(question.id);
+              const graded = submitted && revealPerQuestionResults && resultByQuestionId.has(question.id);
               const correct = resultByQuestionId.get(question.id);
               let optionClass =
                 'border rounded-md p-3 flex items-start cursor-pointer hover:bg-gray-50';

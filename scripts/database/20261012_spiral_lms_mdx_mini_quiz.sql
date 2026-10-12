@@ -37,10 +37,114 @@ CREATE TABLE IF NOT EXISTS private.node_mini_quiz_answer_keys (
 
 REVOKE ALL ON TABLE private.node_mini_quiz_answer_keys FROM PUBLIC, anon, authenticated;
 
+ALTER TABLE private.node_mini_quiz_answer_keys ENABLE ROW LEVEL SECURITY;
+
 ALTER TABLE public.node_mini_quiz_questions ENABLE ROW LEVEL SECURITY;
 
 REVOKE ALL ON TABLE public.node_mini_quiz_questions FROM PUBLIC, anon, authenticated;
 GRANT SELECT ON TABLE public.node_mini_quiz_questions TO anon, authenticated;
+
+CREATE OR REPLACE FUNCTION private.spiral_lms_node_mini_quiz_ready(p_node_id text)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT CASE
+    WHEN NOT EXISTS (
+      SELECT 1
+      FROM public.nodes n
+      WHERE n.id = p_node_id
+        AND n.is_published = true
+        AND n.passing_score IS NOT NULL
+    ) THEN false
+    WHEN (
+      SELECT count(*)::integer
+      FROM public.node_mini_quiz_questions q
+      WHERE q.node_id = p_node_id
+    ) = 0 THEN false
+    ELSE NOT EXISTS (
+      SELECT 1
+      FROM public.node_mini_quiz_questions q
+      WHERE q.node_id = p_node_id
+        AND NOT EXISTS (
+          SELECT 1
+          FROM private.node_mini_quiz_answer_keys k
+          WHERE k.question_id = q.id
+        )
+    )
+  END;
+$$;
+
+CREATE OR REPLACE FUNCTION private.spiral_lms_mini_quiz_submissions_last_hour(
+  p_user_id uuid,
+  p_node_id text
+)
+RETURNS integer
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT count(*)::integer
+  FROM public.user_attempts ua
+  WHERE ua.user_id = p_user_id
+    AND ua.node_id = p_node_id
+    AND ua.attempt_kind = 'mini_quiz'
+    AND ua.created_at > now() - interval '1 hour';
+$$;
+
+CREATE OR REPLACE FUNCTION private.spiral_lms_user_node_mini_quiz_ever_passed(
+  p_user_id uuid,
+  p_node_id text
+)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.user_attempts ua
+    INNER JOIN public.nodes n ON n.id = ua.node_id
+    WHERE ua.user_id = p_user_id
+      AND ua.node_id = p_node_id
+      AND ua.attempt_kind = 'mini_quiz'
+      AND ua.passed = true
+      AND ua.score IS NOT NULL
+      AND ua.score >= n.passing_score
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION private.spiral_lms_format_mini_quiz_response(
+  p_user_id uuid,
+  p_node_id text,
+  p_core jsonb,
+  p_results jsonb,
+  p_passed boolean
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_show_results boolean;
+BEGIN
+  v_show_results := p_passed
+    OR private.spiral_lms_user_node_mini_quiz_ever_passed(p_user_id, p_node_id);
+
+  RETURN p_core
+    || jsonb_build_object('score', p_core->'score')
+    || CASE
+      WHEN v_show_results THEN jsonb_build_object('results', p_results)
+      ELSE jsonb_build_object('results', NULL::jsonb)
+    END;
+END;
+$$;
 
 DROP POLICY IF EXISTS node_mini_quiz_questions_select_published ON public.node_mini_quiz_questions;
 CREATE POLICY node_mini_quiz_questions_select_published
@@ -48,12 +152,7 @@ CREATE POLICY node_mini_quiz_questions_select_published
   FOR SELECT
   TO anon, authenticated
   USING (
-    EXISTS (
-      SELECT 1
-      FROM public.nodes n
-      WHERE n.id = node_mini_quiz_questions.node_id
-        AND n.is_published = true
-    )
+    private.spiral_lms_node_mini_quiz_ready(node_mini_quiz_questions.node_id)
   );
 
 -- ---------------------------------------------------------------------------
@@ -96,6 +195,11 @@ BEGIN
       USING ERRCODE = '22023';
   END IF;
 
+  IF jsonb_array_length(p_answers) = 0 THEN
+    RAISE EXCEPTION 'empty_answers'
+      USING ERRCODE = '22023';
+  END IF;
+
   FOR v_elem IN SELECT value FROM jsonb_array_elements(p_answers) AS t(value)
   LOOP
     IF jsonb_typeof(v_elem) <> 'object' THEN
@@ -120,6 +224,11 @@ BEGIN
     v_selected := v_elem->'selected_option_ids';
     IF v_selected IS NULL OR jsonb_typeof(v_selected) <> 'array' THEN
       RAISE EXCEPTION 'invalid_mini_quiz_answers'
+        USING ERRCODE = '22023';
+    END IF;
+
+    IF jsonb_array_length(v_selected) = 0 THEN
+      RAISE EXCEPTION 'empty_answers'
         USING ERRCODE = '22023';
     END IF;
 
@@ -224,14 +333,14 @@ BEGIN
       USING ERRCODE = '22023';
   END IF;
 
+  IF NOT private.spiral_lms_node_mini_quiz_ready(p_node_id) THEN
+    RAISE EXCEPTION 'quiz_not_ready'
+      USING ERRCODE = '22023';
+  END IF;
+
   SELECT count(*)::integer INTO v_total
   FROM public.node_mini_quiz_questions q
   WHERE q.node_id = p_node_id;
-
-  IF v_total = 0 THEN
-    RAISE EXCEPTION 'mini_quiz_not_configured'
-      USING ERRCODE = '22023';
-  END IF;
 
   IF jsonb_array_length(p_normalized_answers) <> v_total THEN
     RAISE EXCEPTION 'mini_quiz_incomplete'
@@ -261,6 +370,19 @@ BEGIN
 
     IF v_selected IS NULL THEN
       RAISE EXCEPTION 'mini_quiz_unknown_question'
+        USING ERRCODE = '22023';
+    END IF;
+
+    IF EXISTS (
+      SELECT 1
+      FROM unnest(v_selected) AS sel(opt_id)
+      WHERE NOT EXISTS (
+        SELECT 1
+        FROM jsonb_array_elements(v_q.options) AS opt(elem)
+        WHERE opt.elem->>'id' = sel.opt_id
+      )
+    ) THEN
+      RAISE EXCEPTION 'invalid_answer'
         USING ERRCODE = '22023';
     END IF;
 
@@ -344,18 +466,7 @@ BEGIN
         USING ERRCODE = '22023';
     END IF;
 
-    RETURN private.spiral_lms_build_attempt_response(p_user_id, v_existing)
-      || CASE
-        WHEN p_attempt_kind = 'mini_quiz' THEN jsonb_build_object(
-          'score', v_existing.score,
-          'results', (
-            SELECT g.results
-            FROM private.spiral_lms_grade_mini_quiz(p_node_id, v_existing.mini_quiz_answers) g
-            LIMIT 1
-          )
-        )
-        ELSE '{}'::jsonb
-      END;
+    RETURN private.spiral_lms_build_attempt_response(p_user_id, v_existing);
   END IF;
 
   BEGIN
@@ -403,18 +514,7 @@ BEGIN
           USING ERRCODE = '22023';
       END IF;
 
-      RETURN private.spiral_lms_build_attempt_response(p_user_id, v_existing)
-        || CASE
-          WHEN p_attempt_kind = 'mini_quiz' THEN jsonb_build_object(
-            'score', v_existing.score,
-            'results', (
-              SELECT g.results
-              FROM private.spiral_lms_grade_mini_quiz(p_node_id, v_existing.mini_quiz_answers) g
-              LIMIT 1
-            )
-          )
-          ELSE '{}'::jsonb
-        END;
+      RETURN private.spiral_lms_build_attempt_response(p_user_id, v_existing);
   END;
 
   INSERT INTO public.user_progress (user_id, node_id, status, attempts, last_attempt_at)
@@ -440,7 +540,7 @@ BEGIN
     'node_status', v_progress.status,
     'content_slug', p_content_slug,
     'score', p_score,
-    'results', p_mini_quiz_results
+    'results', NULL::jsonb
   );
 END;
 $$;
@@ -495,6 +595,44 @@ $$;
 -- ---------------------------------------------------------------------------
 -- Public RPC: submit graded mini-quiz
 -- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.get_node_mini_quiz_questions(p_node_id text)
+RETURNS jsonb
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  IF NOT private.spiral_lms_node_mini_quiz_ready(p_node_id) THEN
+    RAISE EXCEPTION 'quiz_not_ready'
+      USING ERRCODE = '22023';
+  END IF;
+
+  RETURN coalesce(
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', q.id::text,
+          'node_id', q.node_id,
+          'sort_order', q.sort_order,
+          'prompt', q.prompt,
+          'question_type', q.question_type,
+          'options', q.options
+        )
+        ORDER BY q.sort_order
+      )
+      FROM public.node_mini_quiz_questions q
+      WHERE q.node_id = p_node_id
+    ),
+    '[]'::jsonb
+  );
+END;
+$$;
+
+ALTER FUNCTION public.get_node_mini_quiz_questions(text) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.get_node_mini_quiz_questions(text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_node_mini_quiz_questions(text) TO anon, authenticated;
+
 CREATE OR REPLACE FUNCTION public.submit_mini_quiz(
   p_node_id text,
   p_client_attempt_id uuid,
@@ -509,6 +647,8 @@ DECLARE
   v_uid uuid := auth.uid();
   v_normalized jsonb;
   v_grade record;
+  v_core jsonb;
+  v_existing public.user_attempts%ROWTYPE;
 BEGIN
   IF v_uid IS NULL THEN
     RAISE EXCEPTION 'not authenticated'
@@ -524,11 +664,50 @@ BEGIN
 
   v_normalized := private.spiral_lms_normalize_mini_quiz_answers(p_answers);
 
+  SELECT * INTO v_existing
+  FROM public.user_attempts ua
+  WHERE ua.user_id = v_uid
+    AND ua.client_attempt_id = p_client_attempt_id;
+
+  IF FOUND THEN
+    IF NOT private.spiral_lms_attempt_payload_matches(
+      v_existing,
+      p_node_id,
+      'mini_quiz',
+      NULL,
+      v_existing.score,
+      v_normalized
+    ) THEN
+      RAISE EXCEPTION 'idempotency_conflict'
+        USING ERRCODE = '22023';
+    END IF;
+
+    v_core := private.spiral_lms_build_attempt_response(v_uid, v_existing)
+      || jsonb_build_object('score', v_existing.score);
+
+    RETURN private.spiral_lms_format_mini_quiz_response(
+      v_uid,
+      p_node_id,
+      v_core,
+      (
+        SELECT g.results
+        FROM private.spiral_lms_grade_mini_quiz(p_node_id, v_normalized) g
+        LIMIT 1
+      ),
+      v_existing.passed
+    );
+  END IF;
+
+  IF private.spiral_lms_mini_quiz_submissions_last_hour(v_uid, p_node_id) >= 5 THEN
+    RAISE EXCEPTION 'rate_limited'
+      USING ERRCODE = '22023';
+  END IF;
+
   SELECT g.score, g.passed, g.results
   INTO v_grade
   FROM private.spiral_lms_grade_mini_quiz(p_node_id, v_normalized) g;
 
-  RETURN private.spiral_lms_record_attempt_core(
+  v_core := private.spiral_lms_record_attempt_core(
     v_uid,
     p_node_id,
     'mini_quiz',
@@ -538,6 +717,14 @@ BEGIN
     v_grade.passed,
     v_normalized,
     v_grade.results
+  );
+
+  RETURN private.spiral_lms_format_mini_quiz_response(
+    v_uid,
+    p_node_id,
+    v_core,
+    v_grade.results,
+    v_grade.passed
   );
 END;
 $$;
@@ -666,5 +853,75 @@ REVOKE ALL ON FUNCTION private.spiral_lms_attempt_payload_matches(public.user_at
 REVOKE ALL ON FUNCTION private.spiral_lms_grade_mini_quiz(text, jsonb) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_record_attempt_core(uuid, text, text, uuid, text, numeric, boolean, jsonb, jsonb) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_validate_mini_quiz_submission(uuid, text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_node_mini_quiz_ready(text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_mini_quiz_submissions_last_hour(uuid, text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_user_node_mini_quiz_ever_passed(uuid, text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_format_mini_quiz_response(uuid, text, jsonb, jsonb, boolean) FROM PUBLIC, anon, authenticated;
+
+ALTER FUNCTION private.spiral_lms_node_mini_quiz_ready(text) OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_mini_quiz_submissions_last_hour(uuid, text) OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_user_node_mini_quiz_ever_passed(uuid, text) OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_format_mini_quiz_response(uuid, text, jsonb, jsonb, boolean) OWNER TO postgres;
+
+-- Mini-quiz-only nodes + z-gate exclusions (PR ④ hardening)
+CREATE OR REPLACE FUNCTION private.spiral_lms_z_level_gate_met(
+  p_user_id uuid,
+  p_z_level smallint
+)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT CASE
+    WHEN p_z_level <= 1 THEN true
+    ELSE NOT EXISTS (
+      SELECT 1
+      FROM public.nodes n
+      WHERE n.is_published = true
+        AND n.z_level = p_z_level - 1
+        AND coalesce(n.unlock_config->>'exclude_from_z_gate', '') <> 'true'
+        AND NOT EXISTS (
+          SELECT 1
+          FROM public.user_progress up
+          WHERE up.user_id = p_user_id
+            AND up.node_id = n.id
+            AND up.status = 'MASTERED'
+        )
+    )
+  END;
+$$;
+
+CREATE OR REPLACE FUNCTION private.spiral_lms_required_content_met(
+  p_user_id uuid,
+  p_node_id text
+)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT CASE
+    WHEN (
+      SELECT count(*)::integer
+      FROM public.node_contents nc
+      WHERE nc.node_id = p_node_id
+        AND nc.is_required = true
+    ) > 0 THEN (
+      SELECT bool_and(private.spiral_lms_slug_completed(p_user_id, nc.content_slug))
+      FROM public.node_contents nc
+      WHERE nc.node_id = p_node_id
+        AND nc.is_required = true
+    )
+    WHEN (
+      SELECT n.passing_score IS NOT NULL
+      FROM public.nodes n
+      WHERE n.id = p_node_id
+    ) THEN private.spiral_lms_node_mini_quiz_ready(p_node_id)
+    ELSE false
+  END;
+$$;
 
 COMMIT;

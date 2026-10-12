@@ -53,6 +53,12 @@ export type SpiralLmsDatabase = {
         };
         Returns: import('./spiralLms').SpiralLmsRecordAttemptResponse;
       };
+      get_node_mini_quiz_questions: {
+        Args: {
+          p_node_id: string;
+        };
+        Returns: SpiralMiniQuizQuestionRow[];
+      };
       submit_mini_quiz: {
         Args: {
           p_node_id: string;

@@ -76,6 +76,9 @@ jobs:
       - name: ビルド
         run: npm run build
 
+      - name: 螺旋 LMS 開発サンプルが本番バンドルに含まれないこと
+        run: npm run check:spiral-dev-bundle
+
   golden-guard:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest

@@ -79,7 +79,7 @@ SQL
 run_psql_file "$DB_DIR/20261012_spiral_lms_schema_rls.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_record_attempt.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_mdx_mini_quiz.sql"
-run_psql_file "$DB_DIR/20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql"
+run_psql_file "$DB_DIR/dev/20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql"
 
 run_psql -f - <<'SQL'
 GRANT USAGE ON SCHEMA public TO authenticated, anon;
@@ -142,10 +142,10 @@ if ! echo "$stem" | grep -q '"id": "a"'; then
 fi
 echo "OK: stems are option id/text only"
 
-echo "== wrong answer scores 0 and fails =="
-wrong="$(run_psql -tA <<SQL
+echo "== wrong answer scores 0, fails, and hides per-question results =="
+wrong_json="$(run_psql -tA <<SQL
 SET request.jwt.claim.sub = '${TEST_USER}';
-SELECT (public.submit_mini_quiz(
+SELECT public.submit_mini_quiz(
   'SPIRAL-DEV-MINI',
   '11111111-1111-1111-1111-111111111111'::uuid,
   jsonb_build_array(
@@ -154,20 +154,26 @@ SELECT (public.submit_mini_quiz(
       'selected_option_ids', jsonb_build_array('b')
     )
   )
-)->>'passed');
+)::text;
 SQL
 )"
-wrong="$(echo "$wrong" | tail -n 1 | tr -d '\r')"
-if [[ "$wrong" != "false" ]]; then
-  echo "FAIL: wrong answer should not pass, got ${wrong}"
+wrong_json="$(echo "$wrong_json" | tail -n 1 | tr -d '\r')"
+if ! echo "$wrong_json" | grep -q '"passed": false'; then
+  echo "FAIL: wrong answer should not pass"
+  echo "$wrong_json"
   exit 1
 fi
-echo "OK: wrong answer failed"
+if ! echo "$wrong_json" | grep -q '"results": null'; then
+  echo "FAIL: wrong answer must not leak per-question results"
+  echo "$wrong_json"
+  exit 1
+fi
+echo "OK: wrong answer failed without per-question results"
 
-echo "== correct answer scores 100 and passes =="
-right="$(run_psql -tA <<SQL
+echo "== correct answer scores 100, passes, and returns results =="
+right_json="$(run_psql -tA <<SQL
 SET request.jwt.claim.sub = '${TEST_USER}';
-SELECT (public.submit_mini_quiz(
+SELECT public.submit_mini_quiz(
   'SPIRAL-DEV-MINI',
   '22222222-2222-2222-2222-222222222222'::uuid,
   jsonb_build_array(
@@ -176,14 +182,90 @@ SELECT (public.submit_mini_quiz(
       'selected_option_ids', jsonb_build_array('a')
     )
   )
-)->>'passed');
+)::text;
 SQL
 )"
-right="$(echo "$right" | tail -n 1 | tr -d '\r')"
-if [[ "$right" != "true" ]]; then
-  echo "FAIL: correct answer should pass, got ${right}"
+right_json="$(echo "$right_json" | tail -n 1 | tr -d '\r')"
+if ! echo "$right_json" | grep -q '"passed": true'; then
+  echo "FAIL: correct answer should pass"
+  echo "$right_json"
   exit 1
 fi
-echo "OK: correct answer passed"
+if ! echo "$right_json" | grep -q '"correct": true'; then
+  echo "FAIL: passed attempt should include per-question results"
+  echo "$right_json"
+  exit 1
+fi
+echo "OK: correct answer passed with results"
+
+echo "== node reaches MASTERED after mini-quiz pass =="
+mastered="$(run_psql -tA <<SQL
+SET request.jwt.claim.sub = '${TEST_USER}';
+SELECT status FROM public.user_progress
+WHERE user_id = '${TEST_USER}'::uuid AND node_id = 'SPIRAL-DEV-MINI';
+SQL
+)"
+mastered="$(echo "$mastered" | tail -n 1 | tr -d '\r')"
+if [[ "$mastered" != "MASTERED" ]]; then
+  echo "FAIL: expected MASTERED, got ${mastered}"
+  exit 1
+fi
+echo "OK: SPIRAL-DEV-MINI is MASTERED"
+
+echo "== idempotent replay does not consume rate limit =="
+for i in $(seq 1 6); do
+  run_psql -tA >/dev/null <<SQL
+SET request.jwt.claim.sub = '${TEST_USER}';
+SELECT public.submit_mini_quiz(
+  'SPIRAL-DEV-MINI',
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  jsonb_build_array(
+    jsonb_build_object(
+      'question_id', '${QUESTION_ID}',
+      'selected_option_ids', jsonb_build_array('a')
+    )
+  );
+SQL
+done
+echo "OK: idempotent replays accepted"
+
+echo "== rate limit after five new submissions in one hour =="
+for n in 3 4 5; do
+  run_psql -tA >/dev/null <<SQL
+SET request.jwt.claim.sub = '${TEST_USER}';
+SELECT public.submit_mini_quiz(
+  'SPIRAL-DEV-MINI',
+  ('44444444-4444-4444-4444-00000000000${n}')::uuid,
+  jsonb_build_array(
+    jsonb_build_object(
+      'question_id', '${QUESTION_ID}',
+      'selected_option_ids', jsonb_build_array('b')
+    )
+  )
+);
+SQL
+done
+set +e
+rate_out="$(run_psql -tA 2>&1 <<SQL
+SET request.jwt.claim.sub = '${TEST_USER}';
+SELECT public.submit_mini_quiz(
+  'SPIRAL-DEV-MINI',
+  '55555555-5555-5555-5555-555555555555'::uuid,
+  jsonb_build_array(
+    jsonb_build_object(
+      'question_id', '${QUESTION_ID}',
+      'selected_option_ids', jsonb_build_array('b')
+    )
+  )
+);
+SQL
+)"
+set -e
+if ! echo "$rate_out" | grep -q rate_limited; then
+  echo "FAIL: expected rate_limited after 5 submissions/hour"
+  echo "$rate_out"
+  exit 1
+fi
+echo "OK: rate_limited enforced"
 
 echo "spiral_lms_mini_quiz integration: all checks passed"

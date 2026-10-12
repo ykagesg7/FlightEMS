@@ -1,5 +1,5 @@
--- Spiral LMS PR ④: optional dev / integration sample (1 node, 1 question).
--- Not part of L1/L2 production seed. Safe to apply in CI and local Docker only.
+-- Spiral LMS PR ④: dev / CI sample only — do NOT apply to production DB.
+-- Path: scripts/database/dev/ (see scripts/database/INDEX.md).
 
 BEGIN;
 
@@ -21,7 +21,7 @@ VALUES (
   1,
   99,
   100,
-  '{"z_level_gate":"off"}'::jsonb,
+  '{"z_level_gate":"off","exclude_from_z_gate":true}'::jsonb,
   true,
   NULL
 )

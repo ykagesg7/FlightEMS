@@ -56,7 +56,7 @@ describe('useSubmitSpiralMiniQuiz', () => {
       node_status: 'IN_PROGRESS',
       content_slug: null,
       score: 100,
-      results: [{ question_id: 'q-1', correct: true }],
+      results: [{ question_id: 'q-1', correct: true }] as const,
     });
     vi.stubGlobal('crypto', {
       randomUUID: vi.fn(() => '11111111-1111-4111-8111-111111111111'),

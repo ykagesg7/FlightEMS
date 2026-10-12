@@ -117,17 +117,19 @@ export async function fetchSpiralLmsUserProgress(
 export async function fetchNodeMiniQuizQuestions(
   nodeId: string,
 ): Promise<SpiralMiniQuizQuestionRow[]> {
-  const { data, error } = await spiralLmsSupabase
-    .from('node_mini_quiz_questions')
-    .select('id, node_id, sort_order, prompt, question_type, options')
-    .eq('node_id', nodeId)
-    .order('sort_order', { ascending: true });
+  const { data, error } = await spiralLmsSupabase.rpc('get_node_mini_quiz_questions', {
+    p_node_id: nodeId,
+  });
 
   if (error) {
-    throw new Error(error.message);
+    throw classifySpiralLmsRecordAttemptError(new Error(error.message));
   }
 
-  return (data ?? []) as SpiralMiniQuizQuestionRow[];
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
+  return data as SpiralMiniQuizQuestionRow[];
 }
 
 export async function callSubmitMiniQuiz(params: {

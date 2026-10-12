@@ -14,7 +14,7 @@ const SLUG_MAP_PATH = join(DB_DIR, '20261012_spiral_lms_content_slug_map.sql');
 const MINI_QUIZ_PATH = join(DB_DIR, '20261012_spiral_lms_mdx_mini_quiz.sql');
 const MINI_QUIZ_DEV_SEED_PATH = join(
   DB_DIR,
-  '20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql',
+  'dev/20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql',
 );
 const CONTENT_ROOT = join(process.cwd(), 'src/content');
 
@@ -321,6 +321,9 @@ describe('spiral LMS MDX mini-quiz migration (static)', () => {
     expect(miniQuiz).toMatch(
       /REVOKE ALL ON TABLE private\.node_mini_quiz_answer_keys FROM PUBLIC, anon, authenticated/,
     );
+    expect(miniQuiz).toMatch(
+      /ALTER TABLE private\.node_mini_quiz_answer_keys ENABLE ROW LEVEL SECURITY/,
+    );
   });
 
   it('exposes stems via RLS on published nodes only', () => {
@@ -344,8 +347,27 @@ describe('spiral LMS MDX mini-quiz migration (static)', () => {
     expect(miniQuiz).toMatch(/mini_quiz_use_submit_mini_quiz/);
   });
 
+  it('enforces rate limiting and hides results until pass', () => {
+    expect(miniQuiz).toMatch(/rate_limited/);
+    expect(miniQuiz).toMatch(/spiral_lms_format_mini_quiz_response/);
+    expect(miniQuiz).toMatch(/spiral_lms_mini_quiz_submissions_last_hour/);
+  });
+
+  it('validates quiz readiness and answers', () => {
+    expect(miniQuiz).toMatch(/quiz_not_ready/);
+    expect(miniQuiz).toMatch(/empty_answers/);
+    expect(miniQuiz).toMatch(/invalid_answer/);
+    expect(miniQuiz).toMatch(/get_node_mini_quiz_questions/);
+  });
+
+  it('allows mini-quiz-only nodes to satisfy required content', () => {
+    expect(miniQuiz).toMatch(/spiral_lms_required_content_met/);
+    expect(miniQuiz).toMatch(/spiral_lms_node_mini_quiz_ready\(p_node_id\)/);
+  });
+
   it('dev seed references SPIRAL-DEV-MINI sample node', () => {
     expect(devSeed).toMatch(/SPIRAL-DEV-MINI/);
+    expect(devSeed).toMatch(/exclude_from_z_gate/);
     expect(devSeed).toMatch(/private\.node_mini_quiz_answer_keys/);
   });
 });
