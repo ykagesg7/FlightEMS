@@ -4,7 +4,7 @@
 INSERT INTO learning_contents (id, title, category, sub_category, description, order_index, parent_id, content_type, is_published, updated_at)
 VALUES (
   'FMT-1-1_WingmanVFR',
-  '【操縦】第1話：ウイングマンの魂 ～V.F.Rの血の掟～',
+  '【操縦】第1話：ウイングマンの魂 ～V.F.Rの鉄則～',
   '操縦',
   '編隊飛行',
   '眠い日本語教程を焼却し、USAF T-38 教範 AFMAN 11-2T-38 から「Visual・Formation・Radar」の優先順位を体得する。金魚のフンから最強のウイングマンへ。',
