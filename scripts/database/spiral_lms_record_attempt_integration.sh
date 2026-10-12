@@ -171,7 +171,7 @@ SQL
     record_content "$node_id" "$slug" "$n" >/dev/null
     progress=$((progress + 1))
   done < <(
-    run_psql -tA <<'SQL'
+    run_psql -t -A -F $'\t' <<'SQL'
 SELECT nc.node_id, nc.content_slug
 FROM public.node_contents nc
 INNER JOIN public.nodes n ON n.id = nc.node_id
