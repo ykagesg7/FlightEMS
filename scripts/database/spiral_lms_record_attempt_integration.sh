@@ -1,60 +1,59 @@
 #!/usr/bin/env bash
-# Integration tests for spiral LMS record_attempt (Docker Postgres). Used in mekiki-ci.
+# Integration tests for spiral LMS record_attempt. CI uses SPIRAL_LMS_PG_URL (service container).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 DB_DIR="$ROOT/scripts/database"
+PG_URL="${SPIRAL_LMS_PG_URL:-}"
 CONTAINER_NAME="spiral-lms-pg-test-$$"
-PG_PORT="${SPIRAL_LMS_PG_PORT:-55432}"
-PG_URL="postgresql://postgres:postgres@127.0.0.1:${PG_PORT}/postgres"
 
 cleanup() {
   docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
 }
-trap cleanup EXIT
 
-if ! command -v docker >/dev/null 2>&1; then
-  echo "docker not available; skipping spiral LMS integration tests"
-  exit 0
-fi
-
-if ! docker run -d --name "$CONTAINER_NAME" \
-  -e POSTGRES_PASSWORD=postgres \
-  postgres:16-alpine >/dev/null; then
-  echo "Failed to start Postgres container"
-  exit 1
-fi
-
-ready=0
-for _ in $(seq 1 90); do
-  if docker ps --filter "name=$CONTAINER_NAME" --filter "status=running" -q | grep -q . \
-    && docker exec "$CONTAINER_NAME" pg_isready -U postgres >/dev/null 2>&1; then
-    ready=1
-    break
+if [[ -n "$PG_URL" ]]; then
+  if ! command -v psql >/dev/null 2>&1; then
+    echo "psql required when SPIRAL_LMS_PG_URL is set"
+    exit 1
   fi
-  sleep 1
-done
-
-if [[ "$ready" != "1" ]]; then
-  echo "Postgres container did not become ready in time"
-  docker logs "$CONTAINER_NAME" 2>&1 | tail -30 || true
-  exit 1
-fi
-
-run_psql() {
-  local attempt
-  for attempt in 1 2 3 4 5; do
-    if docker exec -i "$CONTAINER_NAME" psql -v ON_ERROR_STOP=1 -U postgres "$@"; then
-      return 0
+  run_psql() {
+    psql "$PG_URL" -v ON_ERROR_STOP=1 "$@"
+  }
+  run_psql_file() {
+    psql "$PG_URL" -v ON_ERROR_STOP=1 < "$1"
+  }
+else
+  trap cleanup EXIT
+  if ! command -v docker >/dev/null 2>&1; then
+    echo "docker not available; skipping spiral LMS integration tests"
+    exit 0
+  fi
+  if ! docker run -d --name "$CONTAINER_NAME" \
+    -e POSTGRES_PASSWORD=postgres \
+    postgres:16-alpine >/dev/null; then
+    echo "Failed to start Postgres container"
+    exit 1
+  fi
+  ready=0
+  for _ in $(seq 1 90); do
+    if docker ps --filter "name=$CONTAINER_NAME" --filter "status=running" -q | grep -q . \
+      && docker exec "$CONTAINER_NAME" pg_isready -U postgres >/dev/null 2>&1; then
+      ready=1
+      break
     fi
-    sleep 2
+    sleep 1
   done
-  return 1
-}
-
-run_psql_file() {
-  docker exec -i "$CONTAINER_NAME" psql -v ON_ERROR_STOP=1 -U postgres < "$1"
-}
+  if [[ "$ready" != "1" ]]; then
+    echo "Postgres container did not become ready in time"
+    exit 1
+  fi
+  run_psql() {
+    docker exec -i "$CONTAINER_NAME" psql -v ON_ERROR_STOP=1 -U postgres "$@"
+  }
+  run_psql_file() {
+    docker exec -i "$CONTAINER_NAME" psql -v ON_ERROR_STOP=1 -U postgres < "$1"
+  }
+fi
 
 run_psql -f - <<'SQL'
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
