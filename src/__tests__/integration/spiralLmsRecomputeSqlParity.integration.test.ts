@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeAll, beforeEach } from 'vitest';
+import { describe, expect, it, afterAll, beforeAll, beforeEach } from 'vitest';
 import {
   buildSpiralLmsRecomputeContext,
   recomputeSpiralNodeStoredStatus,
@@ -37,6 +37,10 @@ describePg('spiral LMS recompute SQL parity (Postgres)', () => {
   });
 
   beforeEach(() => {
+    resetSpiralCatalog();
+  });
+
+  afterAll(() => {
     resetSpiralCatalog();
   });
 
