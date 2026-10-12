@@ -209,11 +209,10 @@ INSERT INTO public.node_contents (node_id, content_slug, content_type, is_requir
 VALUES ('L1-UNPUB-ART', '/articles/chores-are-the-job', 'article', true, 1);
 SQL
 
-if run_psql -tA <<SQL >/dev/null 2>&1; then
+if run_psql -tA >/dev/null 2>&1 <<SQL; then
 SET request.jwt.claim.sub = '${TEST_USER}';
 SELECT public.record_attempt('L1-UNPUB-ART', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0004'::uuid, '/articles/chores-are-the-job', 100);
 SQL
-then
   echo "FAIL: unpublished article should raise content_not_published"
   exit 1
 else
@@ -221,11 +220,10 @@ else
 fi
 
 # (1) invalid score rejected
-if run_psql -tA <<SQL >/dev/null 2>&1; then
+if run_psql -tA >/dev/null 2>&1 <<SQL; then
 SET request.jwt.claim.sub = '${TEST_USER}';
 SELECT public.record_attempt('L1-A', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0005'::uuid, 'ppl-1-1-1-temperature-basics', 101);
 SQL
-then
   echo "FAIL: score > 100 should be rejected"
   exit 1
 else
