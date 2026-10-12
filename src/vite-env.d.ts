@@ -20,6 +20,8 @@ interface ImportMetaEnv {
   readonly VITE_CESIUM_BASE_URL?: string;
   /** Google Maps API（Photorealistic 3D Tiles・Planning 3D プレビュー Pro 表示） */
   readonly VITE_GOOGLE_MAPS_API_KEY?: string;
+  /** Spiral matrix LMS hooks（npm run dev のみ。本番ビルドでは常に無効） */
+  readonly VITE_SPIRAL_LMS_ENABLED?: string;
   readonly GOOGLE_GEMINI_API_KEY: string;
   readonly GOOGLE_CLOUD_VISION_API_KEY: string;
   readonly NODE_ENV: 'development' | 'production';
