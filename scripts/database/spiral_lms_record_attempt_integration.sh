@@ -110,8 +110,7 @@ VALUES
   ('L2-ZERO', 'zero required', 2, 2, 2, NULL, '{}'::jsonb, true, NULL),
   ('L1-UNPUB-PREREQ', 'unpub prereq', 3, 1, 3, NULL, '{}'::jsonb, false, NULL),
   ('L1-CHILD', 'child', 3, 1, 4, NULL, '{}'::jsonb, true, NULL),
-  ('L1-ART', 'article gate', 4, 1, 5, NULL, '{}'::jsonb, true, NULL),
-  ('L1-ART-UNPUB', 'unpub article gate', 4, 1, 6, NULL, '{}'::jsonb, false, NULL);
+  ('L1-ART', 'article gate', 4, 1, 5, NULL, '{}'::jsonb, true, NULL);
 
 INSERT INTO public.node_prerequisites (node_id, prerequisite_node_id)
 VALUES ('L1-CHILD', 'L1-UNPUB-PREREQ');
@@ -123,8 +122,7 @@ VALUES
   ('L2-A', 'ppl-1-1-1-temperature-basics', 'lesson', true, 1),
   ('L2-ZERO', 'ppl-1-1-1-temperature-basics', 'lesson', false, 1),
   ('L1-CHILD', 'ppl-1-1-1-temperature-basics', 'lesson', true, 1),
-  ('L1-ART', '/articles/speak-before-asked', 'article', true, 1),
-  ('L1-ART-UNPUB', '/articles/chores-are-the-job', 'article', true, 1);
+  ('L1-ART', '/articles/speak-before-asked', 'article', true, 1);
 
 INSERT INTO public.spiral_article_slug_learning_id (content_slug, learning_content_id)
 VALUES ('/articles/chores-are-the-job', '4.1.1_ChoresAreTheJob')
@@ -198,10 +196,17 @@ assert_sql "idempotent does not duplicate attempts" \
   "SELECT count(*)::text FROM public.user_attempts WHERE user_id = '${TEST_USER}'::uuid AND client_attempt_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0001'::uuid;" \
   "1"
 
-# (7) Unpublished article rejected
+# (7) Unpublished article rejected (node added after z-gate tests)
+run_psql -f - <<'SQL'
+INSERT INTO public.nodes (id, title, quadrant, z_level, sort_order, unlock_config, is_published)
+VALUES ('L1-UNPUB-ART', 'unpub article', 4, 1, 6, '{}'::jsonb, true);
+INSERT INTO public.node_contents (node_id, content_slug, content_type, is_required, sort_order)
+VALUES ('L1-UNPUB-ART', '/articles/chores-are-the-job', 'article', true, 1);
+SQL
+
 if run_psql -tA <<SQL >/dev/null 2>&1; then
 SET request.jwt.claim.sub = '${TEST_USER}';
-SELECT public.record_attempt('L1-ART-UNPUB', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0004'::uuid, '/articles/chores-are-the-job', 100);
+SELECT public.record_attempt('L1-UNPUB-ART', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0004'::uuid, '/articles/chores-are-the-job', 100);
 SQL
 then
   echo "FAIL: unpublished article should raise content_not_published"
