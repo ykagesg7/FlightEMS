@@ -4,6 +4,9 @@
 -- Slugs verified against src/content MDX meta.slug; withdrawn articles excluded.
 -- Prerequisite edges connect published nodes only (gaps skipped).
 -- record_attempt (PR ②) must ignore prerequisites whose node is not published.
+-- Same MDX slug may appear on multiple nodes (node_contents is many-to-many).
+-- Article completion is stored per slug (PR ②); reading once satisfies required
+-- content on every node that links that slug.
 
 BEGIN;
 
@@ -73,7 +76,7 @@ VALUES
   ('L1-Q1-1', 'ppl-1-1-8-propeller-basics', 'lesson', false, 2),
   ('L1-Q1-2', 'ppl-1-1-11-control-surfaces', 'lesson', true, 1),
   ('L1-Q1-2', 'ppl-1-1-5-axes-stability', 'lesson', false, 2),
-  ('L1-Q2-1', 'ppl-5-4-6-aerodrome-ground-operations-basics', 'lesson', false, 1),
+  ('L1-Q2-1', 'ppl-5-4-6-aerodrome-ground-operations-basics', 'lesson', true, 1),
   ('L1-Q2-2', 'ppl-4-1-1-air-traffic-services-overview', 'lesson', true, 1),
   ('L1-Q2-2', 'ppl-4-2-3-aerodrome-control-basics', 'lesson', false, 2),
   ('L1-Q3-2', 'ppl-5-3-2-medical-certificate-basics', 'lesson', true, 1),
@@ -82,7 +85,7 @@ VALUES
   ('L2-Q1-1', 'cp-1-1-area-and-purpose', 'lesson', false, 2),
   ('L2-Q1-1', 'cp-1-2-energy', 'lesson', false, 3),
   ('L2-Q1-1', 'cp-1-3-controls-g-pio', 'lesson', false, 4),
-  ('L2-Q1-2', 'ppl-1-1-10-takeoff-landing-performance', 'lesson', false, 1),
+  ('L2-Q1-2', 'ppl-1-1-10-takeoff-landing-performance', 'lesson', true, 1),
   ('L2-Q1-3', 'ppl-1-1-6-stall-spin', 'lesson', true, 1),
   ('L2-Q1-3', 'cp-2-1-deep-stall', 'lesson', false, 2),
   ('L2-Q1-3', 'cp-2-2-accelerated-stall', 'lesson', false, 3),

@@ -97,18 +97,34 @@ CREATE TABLE IF NOT EXISTS public.user_attempts (
 CREATE INDEX IF NOT EXISTS idx_user_attempts_user_node_created
   ON public.user_attempts (user_id, node_id, created_at DESC);
 
--- Reuse project-standard updated_at trigger helper (see question_issue_reports).
+CREATE OR REPLACE FUNCTION public.spiral_set_updated_at()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY INVOKER
+SET search_path = public
+AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.spiral_set_updated_at() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.spiral_set_updated_at() FROM anon;
+REVOKE ALL ON FUNCTION public.spiral_set_updated_at() FROM authenticated;
+GRANT EXECUTE ON FUNCTION public.spiral_set_updated_at() TO postgres;
+
 DROP TRIGGER IF EXISTS trg_spiral_nodes_updated_at ON public.nodes;
 CREATE TRIGGER trg_spiral_nodes_updated_at
   BEFORE UPDATE ON public.nodes
   FOR EACH ROW
-  EXECUTE FUNCTION public.set_question_issue_reports_updated_at();
+  EXECUTE FUNCTION public.spiral_set_updated_at();
 
 DROP TRIGGER IF EXISTS trg_spiral_user_progress_updated_at ON public.user_progress;
 CREATE TRIGGER trg_spiral_user_progress_updated_at
   BEFORE UPDATE ON public.user_progress
   FOR EACH ROW
-  EXECUTE FUNCTION public.set_question_issue_reports_updated_at();
+  EXECUTE FUNCTION public.spiral_set_updated_at();
 
 -- ---------------------------------------------------------------------------
 -- RLS

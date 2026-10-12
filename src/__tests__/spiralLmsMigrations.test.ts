@@ -52,6 +52,28 @@ function extractSeedContentSlugs(seedSql: string): string[] {
   return slugs;
 }
 
+function extractPublishedNodeIds(seedSql: string): Set<string> {
+  const ids = new Set<string>();
+  const nodeRe =
+    /\('(L[12]-Q[1-4]-\d+)',\s*'[^']*',\s*\d+,\s*\d+,\s*\d+,\s*true,\s*NULL\)/g;
+  let m: RegExpExecArray | null;
+  while ((m = nodeRe.exec(seedSql)) !== null) {
+    ids.add(m[1]);
+  }
+  return ids;
+}
+
+function extractRequiredContentCountByNode(seedSql: string): Map<string, number> {
+  const counts = new Map<string, number>();
+  const rowRe =
+    /\('(L[12]-Q[1-4]-\d+)',\s*'[^']+',\s*'(article|lesson)',\s*true,\s*\d+\)/g;
+  let m: RegExpExecArray | null;
+  while ((m = rowRe.exec(seedSql)) !== null) {
+    counts.set(m[1], (counts.get(m[1]) ?? 0) + 1);
+  }
+  return counts;
+}
+
 describe('spiral LMS migrations (static)', () => {
   const schema = readFileSync(SCHEMA_PATH, 'utf8');
   const seed = readFileSync(SEED_PATH, 'utf8');
@@ -131,9 +153,24 @@ describe('spiral LMS migrations (static)', () => {
     expect(new Set(nodeIds).size).toBe(19);
   });
 
-  it('schema defines opens_at on nodes and updated_at on user_progress', () => {
+  it('schema defines opens_at on nodes and spiral_set_updated_at triggers', () => {
     expect(schema).toMatch(/opens_at timestamptz/);
+    expect(schema).toMatch(/FUNCTION public\.spiral_set_updated_at\(\)/);
+    expect(schema).toMatch(/SECURITY INVOKER/);
+    expect(schema).not.toMatch(/set_question_issue_reports_updated_at/);
     expect(schema).toMatch(/trg_spiral_nodes_updated_at/);
     expect(schema).toMatch(/trg_spiral_user_progress_updated_at/);
+  });
+
+  it('every published seed node has at least one required content link', () => {
+    const published = extractPublishedNodeIds(seed);
+    const requiredCounts = extractRequiredContentCountByNode(seed);
+    const missing: string[] = [];
+    for (const nodeId of published) {
+      if ((requiredCounts.get(nodeId) ?? 0) < 1) {
+        missing.push(nodeId);
+      }
+    }
+    expect(missing).toEqual([]);
   });
 });
