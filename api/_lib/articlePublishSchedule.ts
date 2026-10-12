@@ -358,7 +358,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W42',
     seriesTitle: 'FN（編隊）＋メンタリティ',
     intro:
-      '本日は７つの習慣その３、来週は編隊入口2本（水・金）。最優先事項、V.F.Rの血の掟、滑走路のシンクロ。',
+      '本日は７つの習慣その３、来週は編隊入口2本（水・金）。最優先事項、V.F.Rの鉄則、滑走路のシンクロ。',
     articles: [
       {
         id: '1.1.3_PrioritizingMostImportant',
@@ -370,7 +370,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       {
         id: 'FMT-1-1_WingmanVFR',
         publishDate: '2026-10-14',
-        title: '第1話：ウイングマンの魂 ～V.F.Rの血の掟～',
+        title: '第1話：ウイングマンの魂 ～V.F.Rの鉄則～',
         slug: '/articles/fmt-1-1-wingman-vfr',
         hook: 'V.F.Rの順番。衝突回避が先、編隊はその次。',
       },
