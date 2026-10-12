@@ -23,14 +23,19 @@ docker run -d --name "$CONTAINER_NAME" \
   -p "${PG_PORT}:5432" \
   postgres:16-alpine >/dev/null
 
-for _ in $(seq 1 30); do
+ready=0
+for _ in $(seq 1 60); do
   if docker exec "$CONTAINER_NAME" pg_isready -U postgres >/dev/null 2>&1; then
+    ready=1
     break
   fi
   sleep 1
 done
 
-docker exec "$CONTAINER_NAME" pg_isready -U postgres
+if [[ "$ready" != "1" ]]; then
+  echo "Postgres container did not become ready in time"
+  exit 1
+fi
 
 run_psql() {
   docker exec -i "$CONTAINER_NAME" psql -v ON_ERROR_STOP=1 -U postgres "$@"
