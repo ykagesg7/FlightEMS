@@ -11,35 +11,13 @@ import {
   classifySpiralLmsRecordAttemptError,
   type SpiralLmsRecordAttemptErrorKind,
 } from '../utils/spiralLmsRecordAttemptError';
-import { assertValidSpiralLmsScore } from '../utils/spiralLmsScore';
 import { useAuthStore } from '../stores/authStore';
-
-const CONTENT_VIEW_PASSING_SCORE = 100;
 
 function createClientAttemptId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();
   }
   throw new Error('crypto.randomUUID is not available');
-}
-
-function resolveRpcPayload(input: SpiralLmsRecordAttemptInput): {
-  contentSlug: string | null;
-  score: number;
-} {
-  if (input.attemptKind === 'content_view') {
-    const slug = input.contentSlug.trim();
-    if (!slug) {
-      throw new SpiralLmsRecordAttemptError(
-        'unknown',
-        'content_slug_required',
-      );
-    }
-    return { contentSlug: slug, score: CONTENT_VIEW_PASSING_SCORE };
-  }
-
-  assertValidSpiralLmsScore(input.score);
-  return { contentSlug: null, score: input.score };
 }
 
 /**
@@ -68,7 +46,10 @@ export function useRecordSpiralAttempt() {
         throw new SpiralLmsRecordAttemptError('not_authenticated', 'not_authenticated');
       }
 
-      const { contentSlug, score } = resolveRpcPayload(input);
+      const contentSlug = input.contentSlug.trim();
+      if (!contentSlug) {
+        throw new SpiralLmsRecordAttemptError('unknown', 'content_slug_required');
+      }
 
       if (!clientAttemptIdRef.current) {
         clientAttemptIdRef.current = createClientAttemptId();
@@ -77,10 +58,8 @@ export function useRecordSpiralAttempt() {
       try {
         return await callRecordAttempt({
           nodeId: input.nodeId,
-          attemptKind: input.attemptKind,
           clientAttemptId: clientAttemptIdRef.current,
           contentSlug,
-          score,
         });
       } catch (error) {
         throw classifySpiralLmsRecordAttemptError(error);

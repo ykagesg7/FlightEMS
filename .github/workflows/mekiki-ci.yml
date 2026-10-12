@@ -64,6 +64,9 @@ jobs:
           sudo apt-get install -y postgresql-client
           bash scripts/database/spiral_lms_record_attempt_integration.sh
 
+      - name: 螺旋 LMS mini-quiz 結合（Postgres）
+        run: bash scripts/database/spiral_lms_mini_quiz_integration.sh
+
       - name: ゴールデンテスト
         run: npm run test:golden
 
@@ -72,6 +75,9 @@ jobs:
 
       - name: ビルド
         run: npm run build
+
+      - name: 螺旋 LMS 開発サンプルが本番バンドルに含まれないこと
+        run: npm run check:spiral-dev-bundle
 
   golden-guard:
     if: github.event_name == 'pull_request'

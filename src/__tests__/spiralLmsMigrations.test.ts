@@ -11,6 +11,11 @@ const RECORD_ATTEMPT_PATH = join(
   '20261012_spiral_lms_record_attempt.sql',
 );
 const SLUG_MAP_PATH = join(DB_DIR, '20261012_spiral_lms_content_slug_map.sql');
+const MINI_QUIZ_PATH = join(DB_DIR, '20261012_spiral_lms_mdx_mini_quiz.sql');
+const MINI_QUIZ_DEV_SEED_PATH = join(
+  DB_DIR,
+  'dev/20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql',
+);
 const CONTENT_ROOT = join(process.cwd(), 'src/content');
 
 const SPIRAL_TABLES = [
@@ -304,6 +309,87 @@ describe('spiral LMS record_attempt migration (static)', () => {
     expect(recordAttempt).toMatch(
       /REVOKE ALL ON FUNCTION private\.spiral_lms_slug_completed\(uuid, text\) FROM PUBLIC, anon, authenticated/,
     );
+  });
+});
+
+describe('spiral LMS MDX mini-quiz migration (static)', () => {
+  const miniQuiz = readFileSync(MINI_QUIZ_PATH, 'utf8');
+  const devSeed = readFileSync(MINI_QUIZ_DEV_SEED_PATH, 'utf8');
+
+  it('stores answer keys in private schema without client grants', () => {
+    expect(miniQuiz).toMatch(/private\.node_mini_quiz_answer_keys/);
+    expect(miniQuiz).toMatch(
+      /REVOKE ALL ON TABLE private\.node_mini_quiz_answer_keys FROM PUBLIC, anon, authenticated/,
+    );
+    expect(miniQuiz).toMatch(
+      /ALTER TABLE private\.node_mini_quiz_answer_keys ENABLE ROW LEVEL SECURITY/,
+    );
+  });
+
+  it('exposes stems via RLS on published nodes only (authenticated)', () => {
+    expect(miniQuiz).toMatch(/node_mini_quiz_questions_select_published/);
+    expect(miniQuiz).toMatch(
+      /GRANT SELECT ON TABLE public\.node_mini_quiz_questions TO authenticated/,
+    );
+    expect(miniQuiz).not.toMatch(
+      /GRANT SELECT ON TABLE public\.node_mini_quiz_questions TO anon, authenticated/,
+    );
+    expect(miniQuiz).toMatch(/n\.is_published IS TRUE/);
+    expect(miniQuiz).not.toMatch(
+      /USING \(\s*private\.spiral_lms_node_mini_quiz_ready\(node_mini_quiz_questions\.node_id\)/,
+    );
+  });
+
+  it('defines submit_mini_quiz for authenticated only', () => {
+    expect(miniQuiz).toMatch(/CREATE OR REPLACE FUNCTION public\.submit_mini_quiz/);
+    expect(miniQuiz).toMatch(
+      /GRANT EXECUTE ON FUNCTION public\.submit_mini_quiz\(text, uuid, jsonb\) TO authenticated/,
+    );
+    expect(miniQuiz).toMatch(
+      /REVOKE ALL ON FUNCTION public\.submit_mini_quiz\(text, uuid, jsonb\) FROM PUBLIC, anon/,
+    );
+  });
+
+  it('rejects client mini_quiz scores on record_attempt', () => {
+    expect(miniQuiz).toMatch(/mini_quiz_use_submit_mini_quiz/);
+  });
+
+  it('enforces rate limiting, advisory lock, and hides score/results until pass', () => {
+    expect(miniQuiz).toMatch(/rate_limited/);
+    expect(miniQuiz).toMatch(/pg_advisory_xact_lock/);
+    expect(miniQuiz).toMatch(/spiral_lms_format_mini_quiz_response/);
+    expect(miniQuiz).toMatch(/spiral_lms_mini_quiz_submissions_last_hour/);
+    expect(miniQuiz).toMatch(/IF v_show_results THEN/);
+  });
+
+  it('restricts get_node_mini_quiz_questions to authenticated with node lock checks', () => {
+    expect(miniQuiz).toMatch(
+      /GRANT EXECUTE ON FUNCTION public\.get_node_mini_quiz_questions\(text\) TO authenticated/,
+    );
+    expect(miniQuiz).toMatch(
+      /REVOKE ALL ON FUNCTION public\.get_node_mini_quiz_questions\(text\) FROM PUBLIC, anon/,
+    );
+    expect(miniQuiz).toMatch(
+      /PERFORM private\.spiral_lms_validate_mini_quiz_submission\(v_uid, p_node_id\)/,
+    );
+  });
+
+  it('validates quiz readiness and answers', () => {
+    expect(miniQuiz).toMatch(/quiz_not_ready/);
+    expect(miniQuiz).toMatch(/empty_answers/);
+    expect(miniQuiz).toMatch(/invalid_answer/);
+    expect(miniQuiz).toMatch(/get_node_mini_quiz_questions/);
+  });
+
+  it('allows mini-quiz-only nodes to satisfy required content', () => {
+    expect(miniQuiz).toMatch(/spiral_lms_required_content_met/);
+    expect(miniQuiz).toMatch(/spiral_lms_node_mini_quiz_ready\(p_node_id\)/);
+  });
+
+  it('dev seed references SPIRAL-DEV-MINI sample node', () => {
+    expect(devSeed).toMatch(/SPIRAL-DEV-MINI/);
+    expect(devSeed).toMatch(/exclude_from_z_gate/);
+    expect(devSeed).toMatch(/private\.node_mini_quiz_answer_keys/);
   });
 });
 

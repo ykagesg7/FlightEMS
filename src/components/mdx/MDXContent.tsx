@@ -15,6 +15,7 @@ import ImageWithOptimization from './ImageWithOptimization';
 
 const DiagramComponent = React.lazy(() => import('./DiagramComponent'));
 const QuizComponent = React.lazy(() => import('./QuizComponent'));
+const SpiralNodeMiniQuiz = React.lazy(() => import('./SpiralNodeMiniQuiz'));
 
 type HeadingProps = React.HTMLAttributes<HTMLHeadingElement>;
 type ParagraphProps = React.HTMLAttributes<HTMLParagraphElement>;
@@ -118,6 +119,11 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
     Quiz: (props: React.ComponentProps<typeof QuizComponent>) => (
       <Suspense fallback={diagramFallback}>
         <QuizComponent {...props} />
+      </Suspense>
+    ),
+    SpiralMiniQuiz: (props: React.ComponentProps<typeof SpiralNodeMiniQuiz>) => (
+      <Suspense fallback={diagramFallback}>
+        <SpiralNodeMiniQuiz {...props} />
       </Suspense>
     ),
     Diagram: (props: React.ComponentProps<typeof DiagramComponent>) => (

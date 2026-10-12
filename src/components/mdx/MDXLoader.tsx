@@ -4,6 +4,7 @@ import { isChunkLoadFailure, reloadOnceForStaleChunk } from '../../utils/chunkLo
 import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
 import type { ArticleMeta, MDXModule } from '../../types/articles';
 import { getArticleBySlug } from '../../utils/articlesIndex';
+import { loadDevMdxModule } from '../../utils/spiralDevMdx';
 import MDXContent from './MDXContent';
 
 interface MDXLoaderProps {
@@ -65,16 +66,21 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
             return;
           }
 
-          // 従来の動的インポート方式
-          try {
-            // Try articles directory first
-            module = await import(`../../content/articles/${contentId}.mdx`);
-          } catch (_err) {
-            // If articles fails, try lessons directory
+          const devLoader = loadDevMdxModule(contentId);
+          if (devLoader) {
+            module = await devLoader();
+          } else {
+            // 従来の動的インポート方式
             try {
-              module = await import(`../../content/lessons/${contentId}.mdx`);
-            } catch (_err2) {
-              module = await import(`../../content/${contentId}.mdx`);
+              // Try articles directory first
+              module = await import(`../../content/articles/${contentId}.mdx`);
+            } catch (_err) {
+              // If articles fails, try lessons directory
+              try {
+                module = await import(`../../content/lessons/${contentId}.mdx`);
+              } catch (_err2) {
+                module = await import(`../../content/${contentId}.mdx`);
+              }
             }
           }
           articleMeta = module.meta || null;

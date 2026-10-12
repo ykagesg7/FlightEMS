@@ -120,6 +120,7 @@ SQL
 
 run_psql_file "$DB_DIR/20261012_spiral_lms_content_slug_map.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_record_attempt.sql"
+run_psql_file "$DB_DIR/20261012_spiral_lms_mdx_mini_quiz.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_seed_l1_l2_nodes.sql"
 
 run_psql -f - <<'SQL'
