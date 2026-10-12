@@ -7,31 +7,8 @@ BEGIN;
 
 CREATE SCHEMA IF NOT EXISTS private;
 
--- ---------------------------------------------------------------------------
--- Article slug → learning_contents.id (MDX meta.slug paths under /articles/)
--- ---------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS public.spiral_article_slug_learning_id (
-  content_slug text PRIMARY KEY,
-  learning_content_id text NOT NULL REFERENCES public.learning_contents (id) ON DELETE RESTRICT
-);
-
-INSERT INTO public.spiral_article_slug_learning_id (content_slug, learning_content_id)
-VALUES
-  ('/articles/chores-are-the-job', '4.1.1_ChoresAreTheJob'),
-  ('/articles/speak-before-asked', '4.1.2_SpeakBeforeAsked'),
-  ('/articles/answer-first-word', '4.1.3_AnswerFirstWord'),
-  ('/articles/say-expectations', '4.1.4_SayExpectations'),
-  ('/articles/just-enough-is-not-enough', '4.1.5_JustEnoughIsNotEnough'),
-  ('/articles/turn-feedback-into-action', '4.2.1_TurnFeedbackIntoAction'),
-  ('/articles/put-a-frame-on-failure', '4.2.2_PutAFrameOnFailure'),
-  ('/articles/take-the-gain-from-feedback', '4.2.3_TakeTheGainFromFeedback'),
-  ('/articles/yes-has-a-short-shelf-life', '4.2.4_YesHasAShortShelfLife'),
-  ('/articles/thinking-stamina', '4.2.5_ThinkingStamina')
-ON CONFLICT (content_slug) DO UPDATE SET
-  learning_content_id = EXCLUDED.learning_content_id;
-
-REVOKE ALL ON TABLE public.spiral_article_slug_learning_id FROM PUBLIC, anon, authenticated;
-GRANT SELECT ON TABLE public.spiral_article_slug_learning_id TO authenticated;
+-- Prerequisite: apply 20261012_spiral_lms_content_slug_map.sql (explicit MDX slug map).
+DROP TABLE IF EXISTS public.spiral_article_slug_learning_id;
 
 -- ---------------------------------------------------------------------------
 -- user_attempts: distinguish content views vs node mini-quizzes + client idempotency
@@ -98,6 +75,7 @@ BEGIN
     RAISE EXCEPTION 'invalid_score'
       USING ERRCODE = '22023';
   END IF;
+  -- NaN is the only numeric value where (p_score <> p_score); rejects out-of-range too.
   IF p_score <> p_score OR NOT (p_score >= 0::numeric AND p_score <= 100::numeric) THEN
     RAISE EXCEPTION 'invalid_score'
       USING ERRCODE = '22023';
@@ -106,77 +84,74 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION private.spiral_lms_lesson_slug_from_content_id(p_id text)
-RETURNS text
+CREATE OR REPLACE FUNCTION private.spiral_lms_content_publishable(p_content_slug text)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT coalesce(
+    (
+      SELECT lc.is_published IS TRUE
+      FROM public.spiral_content_slug_map m
+      INNER JOIN public.learning_contents lc ON lc.id = m.learning_content_id
+      WHERE m.content_slug = p_content_slug
+    ),
+    false
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION private.spiral_lms_attempt_payload_matches(
+  p_existing public.user_attempts,
+  p_node_id text,
+  p_attempt_kind text,
+  p_content_slug text,
+  p_score numeric
+)
+RETURNS boolean
 LANGUAGE sql
 IMMUTABLE
 SET search_path = public
 AS $$
-  SELECT CASE
-    WHEN position('_' IN p_id) = 0 THEN NULL
-    ELSE lower(split_part(p_id, '_', 1)) || '-' || lower(
-      regexp_replace(
-        regexp_replace(split_part(p_id, '_', 2), '([a-z])([A-Z])', E'\\1-\\2', 'g'),
-        '_',
-        '-',
-        'g'
-      )
-    )
-  END;
+  SELECT
+    p_existing.node_id = p_node_id
+    AND p_existing.attempt_kind = p_attempt_kind
+    AND p_existing.content_slug IS NOT DISTINCT FROM CASE
+      WHEN p_attempt_kind = 'content_view' THEN p_content_slug
+      ELSE NULL
+    END
+    AND p_existing.score IS NOT DISTINCT FROM p_score;
 $$;
 
-CREATE OR REPLACE FUNCTION private.spiral_lms_lesson_publishable(p_content_slug text)
-RETURNS boolean
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = public
-AS $$
-  SELECT coalesce(
-    (
-      SELECT lc.is_published IS TRUE
-      FROM public.learning_contents lc
-      WHERE private.spiral_lms_lesson_slug_from_content_id(lc.id) = p_content_slug
-      LIMIT 1
-    ),
-    false
-  );
-$$;
-
-CREATE OR REPLACE FUNCTION private.spiral_lms_article_publishable(p_content_slug text)
-RETURNS boolean
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = public
-AS $$
-  SELECT coalesce(
-    (
-      SELECT lc.is_published IS TRUE
-      FROM public.spiral_article_slug_learning_id m
-      INNER JOIN public.learning_contents lc ON lc.id = m.learning_content_id
-      WHERE m.content_slug = p_content_slug
-      LIMIT 1
-    ),
-    false
-  );
-$$;
-
-CREATE OR REPLACE FUNCTION private.spiral_lms_content_publishable(
-  p_content_slug text,
-  p_content_type text
+CREATE OR REPLACE FUNCTION private.spiral_lms_build_attempt_response(
+  p_user_id uuid,
+  p_attempt public.user_attempts
 )
-RETURNS boolean
-LANGUAGE sql
+RETURNS jsonb
+LANGUAGE plpgsql
 STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT CASE p_content_type
-    WHEN 'article' THEN private.spiral_lms_article_publishable(p_content_slug)
-    WHEN 'lesson' THEN private.spiral_lms_lesson_publishable(p_content_slug)
-    ELSE false
-  END;
+DECLARE
+  v_progress public.user_progress%ROWTYPE;
+BEGIN
+  SELECT * INTO v_progress
+  FROM public.user_progress
+  WHERE user_id = p_user_id
+    AND node_id = p_attempt.node_id;
+
+  RETURN jsonb_build_object(
+    'success', true,
+    'idempotent', true,
+    'attempt_id', p_attempt.id,
+    'passed', p_attempt.passed,
+    'node_id', p_attempt.node_id,
+    'node_status', v_progress.status,
+    'content_slug', p_attempt.content_slug
+  );
+END;
 $$;
 
 CREATE OR REPLACE FUNCTION private.spiral_lms_slug_completed(
@@ -445,11 +420,15 @@ BEGIN
 END;
 $$;
 
+DROP FUNCTION IF EXISTS private.spiral_lms_lesson_slug_from_content_id(text);
+DROP FUNCTION IF EXISTS private.spiral_lms_lesson_publishable(text);
+DROP FUNCTION IF EXISTS private.spiral_lms_article_publishable(text);
+DROP FUNCTION IF EXISTS private.spiral_lms_content_publishable(text, text);
+
 ALTER FUNCTION private.spiral_lms_validate_score(numeric) OWNER TO postgres;
-ALTER FUNCTION private.spiral_lms_lesson_slug_from_content_id(text) OWNER TO postgres;
-ALTER FUNCTION private.spiral_lms_lesson_publishable(text) OWNER TO postgres;
-ALTER FUNCTION private.spiral_lms_article_publishable(text) OWNER TO postgres;
-ALTER FUNCTION private.spiral_lms_content_publishable(text, text) OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_content_publishable(text) OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_attempt_payload_matches(public.user_attempts, text, text, text, numeric) OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_build_attempt_response(uuid, public.user_attempts) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_slug_completed(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_published_prerequisites_met(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_z_level_gate_met(uuid, smallint) OWNER TO postgres;
@@ -460,10 +439,9 @@ ALTER FUNCTION private.spiral_lms_recompute_node_progress(uuid, text) OWNER TO p
 ALTER FUNCTION private.spiral_lms_recompute_all_published_nodes(uuid) OWNER TO postgres;
 
 REVOKE ALL ON FUNCTION private.spiral_lms_validate_score(numeric) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION private.spiral_lms_lesson_slug_from_content_id(text) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION private.spiral_lms_lesson_publishable(text) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION private.spiral_lms_article_publishable(text) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION private.spiral_lms_content_publishable(text, text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_content_publishable(text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_attempt_payload_matches(public.user_attempts, text, text, text, numeric) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_build_attempt_response(uuid, public.user_attempts) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_slug_completed(uuid, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_published_prerequisites_met(uuid, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_z_level_gate_met(uuid, smallint) FROM PUBLIC, anon, authenticated;
@@ -510,34 +488,32 @@ BEGIN
       USING ERRCODE = '22023';
   END IF;
 
-  SELECT * INTO v_existing
-  FROM public.user_attempts ua
-  WHERE ua.user_id = v_uid
-    AND ua.client_attempt_id = p_client_attempt_id;
-
-  IF FOUND THEN
-    SELECT * INTO v_progress
-    FROM public.user_progress
-    WHERE user_id = v_uid
-      AND node_id = v_existing.node_id;
-
-    RETURN jsonb_build_object(
-      'success', true,
-      'idempotent', true,
-      'attempt_id', v_existing.id,
-      'passed', v_existing.passed,
-      'node_id', v_existing.node_id,
-      'node_status', v_progress.status,
-      'content_slug', v_existing.content_slug
-    );
-  END IF;
-
   IF p_attempt_kind NOT IN ('content_view', 'mini_quiz') THEN
     RAISE EXCEPTION 'invalid attempt_kind'
       USING ERRCODE = '22023';
   END IF;
 
   v_score := private.spiral_lms_validate_score(p_score);
+
+  SELECT * INTO v_existing
+  FROM public.user_attempts ua
+  WHERE ua.user_id = v_uid
+    AND ua.client_attempt_id = p_client_attempt_id;
+
+  IF FOUND THEN
+    IF NOT private.spiral_lms_attempt_payload_matches(
+      v_existing,
+      p_node_id,
+      p_attempt_kind,
+      p_content_slug,
+      v_score
+    ) THEN
+      RAISE EXCEPTION 'idempotency_conflict'
+        USING ERRCODE = '22023';
+    END IF;
+
+    RETURN private.spiral_lms_build_attempt_response(v_uid, v_existing);
+  END IF;
 
   SELECT * INTO v_node
   FROM public.nodes
@@ -580,7 +556,7 @@ BEGIN
         USING ERRCODE = '22023';
     END IF;
 
-    IF NOT private.spiral_lms_content_publishable(p_content_slug, v_content_type) THEN
+    IF NOT private.spiral_lms_content_publishable(p_content_slug) THEN
       RAISE EXCEPTION 'content_not_published'
         USING ERRCODE = '22023';
     END IF;
@@ -600,25 +576,50 @@ BEGIN
     v_passed := v_score >= v_node.passing_score;
   END IF;
 
-  INSERT INTO public.user_attempts (
-    user_id,
-    node_id,
-    content_slug,
-    attempt_kind,
-    client_attempt_id,
-    score,
-    passed
-  )
-  VALUES (
-    v_uid,
-    p_node_id,
-    CASE WHEN p_attempt_kind = 'content_view' THEN p_content_slug ELSE NULL END,
-    p_attempt_kind,
-    p_client_attempt_id,
-    v_score,
-    v_passed
-  )
-  RETURNING id INTO v_attempt_id;
+  BEGIN
+    INSERT INTO public.user_attempts (
+      user_id,
+      node_id,
+      content_slug,
+      attempt_kind,
+      client_attempt_id,
+      score,
+      passed
+    )
+    VALUES (
+      v_uid,
+      p_node_id,
+      CASE WHEN p_attempt_kind = 'content_view' THEN p_content_slug ELSE NULL END,
+      p_attempt_kind,
+      p_client_attempt_id,
+      v_score,
+      v_passed
+    )
+    RETURNING id INTO v_attempt_id;
+  EXCEPTION
+    WHEN unique_violation THEN
+      SELECT * INTO v_existing
+      FROM public.user_attempts ua
+      WHERE ua.user_id = v_uid
+        AND ua.client_attempt_id = p_client_attempt_id;
+
+      IF NOT FOUND THEN
+        RAISE;
+      END IF;
+
+      IF NOT private.spiral_lms_attempt_payload_matches(
+        v_existing,
+        p_node_id,
+        p_attempt_kind,
+        p_content_slug,
+        v_score
+      ) THEN
+        RAISE EXCEPTION 'idempotency_conflict'
+          USING ERRCODE = '22023';
+      END IF;
+
+      RETURN private.spiral_lms_build_attempt_response(v_uid, v_existing);
+  END;
 
   INSERT INTO public.user_progress (user_id, node_id, status, attempts, last_attempt_at)
   VALUES (v_uid, p_node_id, 'LOCKED', 1, now())

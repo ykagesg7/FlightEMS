@@ -10,6 +10,7 @@ const RECORD_ATTEMPT_PATH = join(
   DB_DIR,
   '20261012_spiral_lms_record_attempt.sql',
 );
+const SLUG_MAP_PATH = join(DB_DIR, '20261012_spiral_lms_content_slug_map.sql');
 const CONTENT_ROOT = join(process.cwd(), 'src/content');
 
 const SPIRAL_TABLES = [
@@ -263,10 +264,22 @@ describe('spiral LMS record_attempt migration (static)', () => {
     expect(recordAttempt).toMatch(/spiral_lms_content_publishable/);
   });
 
-  it('supports idempotent client_attempt_id', () => {
+  it('supports idempotent client_attempt_id with conflict detection', () => {
     expect(recordAttempt).toMatch(/client_attempt_id_required/);
     expect(recordAttempt).toMatch(/idx_user_attempts_user_client_attempt_id/);
-    expect(recordAttempt).toMatch(/'idempotent', true/);
+    expect(recordAttempt).toMatch(/idempotency_conflict/);
+    expect(recordAttempt).toMatch(/WHEN unique_violation/);
+    expect(recordAttempt).toMatch(/spiral_lms_attempt_payload_matches/);
+  });
+
+  it('uses explicit slug map (no regex slug derivation)', () => {
+    expect(recordAttempt).toMatch(/spiral_content_slug_map/);
+    expect(recordAttempt).not.toMatch(
+      /CREATE OR REPLACE FUNCTION private\.spiral_lms_lesson_slug_from_content_id/,
+    );
+    expect(recordAttempt).toMatch(
+      /FUNCTION private\.spiral_lms_content_publishable\(p_content_slug text\)/,
+    );
   });
 
   it('ignores prerequisites on unpublished nodes', () => {
@@ -291,5 +304,57 @@ describe('spiral LMS record_attempt migration (static)', () => {
     expect(recordAttempt).toMatch(
       /REVOKE ALL ON FUNCTION private\.spiral_lms_slug_completed\(uuid, text\) FROM PUBLIC, anon, authenticated/,
     );
+  });
+});
+
+describe('spiral LMS content_slug_map (static)', () => {
+  const slugMap = readFileSync(SLUG_MAP_PATH, 'utf8');
+  const seed = readFileSync(SEED_PATH, 'utf8');
+  const slugToContentId = collectMdxSlugToContentId();
+
+  function extractSlugMapEntries(sql: string): Map<string, string> {
+    const entries = new Map<string, string>();
+    const rowRe = /\('([^']+)',\s*'([^']+)'\)/g;
+    let m: RegExpExecArray | null;
+    while ((m = rowRe.exec(sql)) !== null) {
+      entries.set(m[1], m[2]);
+    }
+    return entries;
+  }
+
+  it('enables RLS and matches PR① catalog SELECT grants', () => {
+    expect(slugMap).toMatch(
+      /ALTER TABLE public\.spiral_content_slug_map ENABLE ROW LEVEL SECURITY/,
+    );
+    expect(slugMap).toMatch(
+      /REVOKE ALL ON TABLE public\.spiral_content_slug_map FROM PUBLIC, anon, authenticated/,
+    );
+    expect(slugMap).toMatch(
+      /GRANT SELECT ON TABLE public\.spiral_content_slug_map TO anon, authenticated/,
+    );
+  });
+
+  it('maps every seed node_contents slug to MDX learning_contents id', () => {
+    const map = extractSlugMapEntries(slugMap);
+    const seedSlugs = [...new Set(extractSeedContentSlugs(seed))];
+    const missing: string[] = [];
+    const mismatched: string[] = [];
+    for (const slug of seedSlugs) {
+      const mapped = map.get(slug);
+      const mdxId = slugToContentId.get(slug);
+      if (!mapped) {
+        missing.push(slug);
+        continue;
+      }
+      if (mdxId && mapped !== mdxId) {
+        mismatched.push(`${slug}: map=${mapped} mdx=${mdxId}`);
+      }
+    }
+    expect(missing).toEqual([]);
+    expect(mismatched).toEqual([]);
+    expect(map.get('ppl-5-4-7-ifr-minimum-altitude-intro-for-ppl')).toBe(
+      'PPL-5-4-7_IFRMinimumAltitudeIntroForPPL',
+    );
+    expect(map.get('cp-1-3-controls-g-pio')).toBe('CP-1-3_ControlsGPio');
   });
 });
