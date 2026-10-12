@@ -110,7 +110,8 @@ VALUES
   ('L2-ZERO', 'zero required', 2, 2, 2, NULL, '{}'::jsonb, true, NULL),
   ('L1-UNPUB-PREREQ', 'unpub prereq', 3, 1, 3, NULL, '{}'::jsonb, false, NULL),
   ('L1-CHILD', 'child', 3, 1, 4, NULL, '{}'::jsonb, true, NULL),
-  ('L1-ART', 'article gate', 4, 1, 5, NULL, '{}'::jsonb, true, NULL);
+  ('L1-ART', 'article gate', 4, 1, 5, NULL, '{}'::jsonb, true, NULL),
+  ('L1-ART-UNPUB', 'unpub article gate', 4, 1, 6, NULL, '{}'::jsonb, true, NULL);
 
 INSERT INTO public.node_prerequisites (node_id, prerequisite_node_id)
 VALUES ('L1-CHILD', 'L1-UNPUB-PREREQ');
@@ -122,7 +123,8 @@ VALUES
   ('L2-A', 'ppl-1-1-1-temperature-basics', 'lesson', true, 1),
   ('L2-ZERO', 'ppl-1-1-1-temperature-basics', 'lesson', false, 1),
   ('L1-CHILD', 'ppl-1-1-1-temperature-basics', 'lesson', true, 1),
-  ('L1-ART', '/articles/chores-are-the-job', 'article', true, 1);
+  ('L1-ART', '/articles/speak-before-asked', 'article', true, 1),
+  ('L1-ART-UNPUB', '/articles/chores-are-the-job', 'article', true, 1);
 
 INSERT INTO public.spiral_article_slug_learning_id (content_slug, learning_content_id)
 VALUES ('/articles/chores-are-the-job', '4.1.1_ChoresAreTheJob')
@@ -139,7 +141,12 @@ assert_sql() {
   local sql="$2"
   local expected="$3"
   local got
-  got="$(run_psql -tA -c "SET request.jwt.claim.sub = '${TEST_USER}'; ${sql}")"
+  got="$(run_psql -tA <<SQL
+SET request.jwt.claim.sub = '${TEST_USER}';
+${sql}
+SQL
+)"
+  got="$(echo "$got" | tail -n 1 | tr -d '\r')"
   if [[ "$got" != "$expected" ]]; then
     echo "FAIL: $desc (expected '$expected', got '$got')"
     exit 1
@@ -184,7 +191,11 @@ assert_sql "idempotent does not duplicate attempts" \
   "1"
 
 # (7) Unpublished article rejected
-if run_psql -tA -c "SET request.jwt.claim.sub = '${TEST_USER}'; SELECT public.record_attempt('L1-ART', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0004'::uuid, '/articles/chores-are-the-job', 100);" >/dev/null 2>&1; then
+if run_psql -tA <<SQL >/dev/null 2>&1; then
+SET request.jwt.claim.sub = '${TEST_USER}';
+SELECT public.record_attempt('L1-ART', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0004'::uuid, '/articles/chores-are-the-job', 100);
+SQL
+then
   echo "FAIL: unpublished article should raise content_not_published"
   exit 1
 else
@@ -192,7 +203,11 @@ else
 fi
 
 # (1) invalid score rejected
-if run_psql -tA -c "SET request.jwt.claim.sub = '${TEST_USER}'; SELECT public.record_attempt('L1-A', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0005'::uuid, 'ppl-1-1-1-temperature-basics', 101);" >/dev/null 2>&1; then
+if run_psql -tA <<SQL >/dev/null 2>&1; then
+SET request.jwt.claim.sub = '${TEST_USER}';
+SELECT public.record_attempt('L1-A', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0005'::uuid, 'ppl-1-1-1-temperature-basics', 101);
+SQL
+then
   echo "FAIL: score > 100 should be rejected"
   exit 1
 else
