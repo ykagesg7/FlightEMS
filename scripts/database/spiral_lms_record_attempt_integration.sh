@@ -111,7 +111,7 @@ VALUES
   ('L1-UNPUB-PREREQ', 'unpub prereq', 3, 1, 3, NULL, '{}'::jsonb, false, NULL),
   ('L1-CHILD', 'child', 3, 1, 4, NULL, '{}'::jsonb, true, NULL),
   ('L1-ART', 'article gate', 4, 1, 5, NULL, '{}'::jsonb, true, NULL),
-  ('L1-ART-UNPUB', 'unpub article gate', 4, 1, 6, NULL, '{}'::jsonb, true, NULL);
+  ('L1-ART-UNPUB', 'unpub article gate', 4, 1, 6, NULL, '{}'::jsonb, false, NULL);
 
 INSERT INTO public.node_prerequisites (node_id, prerequisite_node_id)
 VALUES ('L1-CHILD', 'L1-UNPUB-PREREQ');
@@ -172,6 +172,14 @@ assert_sql "L1-B mastered at score 100" \
   "SELECT (public.record_attempt('L1-B', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0003'::uuid, 'ppl-1-1-1-temperature-basics', 100)->>'node_status');" \
   "MASTERED"
 
+assert_sql "L1-CHILD mastered for z gate" \
+  "SELECT (public.record_attempt('L1-CHILD', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0007'::uuid, 'ppl-1-1-1-temperature-basics', 100)->>'node_status');" \
+  "MASTERED"
+
+assert_sql "L1-ART mastered for z gate" \
+  "SELECT (public.record_attempt('L1-ART', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0008'::uuid, '/articles/speak-before-asked', 100)->>'node_status');" \
+  "MASTERED"
+
 assert_sql "L2-A available after L1 gate cleared" \
   "SELECT status FROM public.user_progress WHERE user_id = '${TEST_USER}'::uuid AND node_id = 'L2-A';" \
   "AVAILABLE"
@@ -193,7 +201,7 @@ assert_sql "idempotent does not duplicate attempts" \
 # (7) Unpublished article rejected
 if run_psql -tA <<SQL >/dev/null 2>&1; then
 SET request.jwt.claim.sub = '${TEST_USER}';
-SELECT public.record_attempt('L1-ART', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0004'::uuid, '/articles/chores-are-the-job', 100);
+SELECT public.record_attempt('L1-ART-UNPUB', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0004'::uuid, '/articles/chores-are-the-job', 100);
 SQL
 then
   echo "FAIL: unpublished article should raise content_not_published"
