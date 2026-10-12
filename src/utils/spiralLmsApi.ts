@@ -6,6 +6,11 @@ import type {
   SpiralLmsUserProgress,
   SpiralLmsUserProgressRow,
 } from '../types/spiralLms';
+import type {
+  SpiralMiniQuizAnswerPayload,
+  SpiralMiniQuizQuestionRow,
+  SpiralMiniQuizSubmitResponse,
+} from '../types/spiralLmsMiniQuiz';
 import { classifySpiralLmsRecordAttemptError } from './spiralLmsRecordAttemptError';
 import { isSpiralNodeOpensAtLocked } from './spiralLmsOpensAt';
 import { spiralLmsSupabase } from './spiralLmsSupabase';
@@ -109,19 +114,55 @@ export async function fetchSpiralLmsUserProgress(
   return map;
 }
 
+export async function fetchNodeMiniQuizQuestions(
+  nodeId: string,
+): Promise<SpiralMiniQuizQuestionRow[]> {
+  const { data, error } = await spiralLmsSupabase
+    .from('node_mini_quiz_questions')
+    .select('id, node_id, sort_order, prompt, question_type, options')
+    .eq('node_id', nodeId)
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []) as SpiralMiniQuizQuestionRow[];
+}
+
+export async function callSubmitMiniQuiz(params: {
+  nodeId: string;
+  clientAttemptId: string;
+  answers: SpiralMiniQuizAnswerPayload[];
+}): Promise<SpiralMiniQuizSubmitResponse> {
+  const { data, error } = await spiralLmsSupabase.rpc('submit_mini_quiz', {
+    p_node_id: params.nodeId,
+    p_client_attempt_id: params.clientAttemptId,
+    p_answers: params.answers,
+  });
+
+  if (error) {
+    throw classifySpiralLmsRecordAttemptError(new Error(error.message));
+  }
+
+  if (!data || typeof data !== 'object') {
+    throw classifySpiralLmsRecordAttemptError(new Error('empty submit_mini_quiz response'));
+  }
+
+  return data as SpiralMiniQuizSubmitResponse;
+}
+
 export async function callRecordAttempt(params: {
   nodeId: string;
-  attemptKind: 'content_view' | 'mini_quiz';
   clientAttemptId: string;
-  contentSlug?: string | null;
-  score: number;
+  contentSlug: string;
 }): Promise<SpiralLmsRecordAttemptResponse> {
   const { data, error } = await spiralLmsSupabase.rpc('record_attempt', {
     p_node_id: params.nodeId,
-    p_attempt_kind: params.attemptKind,
+    p_attempt_kind: 'content_view',
     p_client_attempt_id: params.clientAttemptId,
-    p_content_slug: params.contentSlug ?? null,
-    p_score: params.score,
+    p_content_slug: params.contentSlug,
+    p_score: 100,
   });
 
   if (error) {

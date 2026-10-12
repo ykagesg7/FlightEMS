@@ -82,12 +82,4 @@ export type SpiralLmsContentViewAttemptInput = {
   contentSlug: string;
 };
 
-export type SpiralLmsMiniQuizAttemptInput = {
-  nodeId: string;
-  attemptKind: 'mini_quiz';
-  score: number;
-};
-
-export type SpiralLmsRecordAttemptInput =
-  | SpiralLmsContentViewAttemptInput
-  | SpiralLmsMiniQuizAttemptInput;
+export type SpiralLmsRecordAttemptInput = SpiralLmsContentViewAttemptInput;

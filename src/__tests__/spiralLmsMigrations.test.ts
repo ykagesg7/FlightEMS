@@ -11,6 +11,11 @@ const RECORD_ATTEMPT_PATH = join(
   '20261012_spiral_lms_record_attempt.sql',
 );
 const SLUG_MAP_PATH = join(DB_DIR, '20261012_spiral_lms_content_slug_map.sql');
+const MINI_QUIZ_PATH = join(DB_DIR, '20261012_spiral_lms_mdx_mini_quiz.sql');
+const MINI_QUIZ_DEV_SEED_PATH = join(
+  DB_DIR,
+  '20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql',
+);
 const CONTENT_ROOT = join(process.cwd(), 'src/content');
 
 const SPIRAL_TABLES = [
@@ -304,6 +309,44 @@ describe('spiral LMS record_attempt migration (static)', () => {
     expect(recordAttempt).toMatch(
       /REVOKE ALL ON FUNCTION private\.spiral_lms_slug_completed\(uuid, text\) FROM PUBLIC, anon, authenticated/,
     );
+  });
+});
+
+describe('spiral LMS MDX mini-quiz migration (static)', () => {
+  const miniQuiz = readFileSync(MINI_QUIZ_PATH, 'utf8');
+  const devSeed = readFileSync(MINI_QUIZ_DEV_SEED_PATH, 'utf8');
+
+  it('stores answer keys in private schema without client grants', () => {
+    expect(miniQuiz).toMatch(/private\.node_mini_quiz_answer_keys/);
+    expect(miniQuiz).toMatch(
+      /REVOKE ALL ON TABLE private\.node_mini_quiz_answer_keys FROM PUBLIC, anon, authenticated/,
+    );
+  });
+
+  it('exposes stems via RLS on published nodes only', () => {
+    expect(miniQuiz).toMatch(/node_mini_quiz_questions_select_published/);
+    expect(miniQuiz).toMatch(
+      /GRANT SELECT ON TABLE public\.node_mini_quiz_questions TO anon, authenticated/,
+    );
+  });
+
+  it('defines submit_mini_quiz for authenticated only', () => {
+    expect(miniQuiz).toMatch(/CREATE OR REPLACE FUNCTION public\.submit_mini_quiz/);
+    expect(miniQuiz).toMatch(
+      /GRANT EXECUTE ON FUNCTION public\.submit_mini_quiz\(text, uuid, jsonb\) TO authenticated/,
+    );
+    expect(miniQuiz).toMatch(
+      /REVOKE ALL ON FUNCTION public\.submit_mini_quiz\(text, uuid, jsonb\) FROM PUBLIC, anon/,
+    );
+  });
+
+  it('rejects client mini_quiz scores on record_attempt', () => {
+    expect(miniQuiz).toMatch(/mini_quiz_use_submit_mini_quiz/);
+  });
+
+  it('dev seed references SPIRAL-DEV-MINI sample node', () => {
+    expect(devSeed).toMatch(/SPIRAL-DEV-MINI/);
+    expect(devSeed).toMatch(/private\.node_mini_quiz_answer_keys/);
   });
 });
 

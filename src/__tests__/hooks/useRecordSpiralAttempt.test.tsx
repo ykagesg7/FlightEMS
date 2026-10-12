@@ -72,14 +72,12 @@ describe('useRecordSpiralAttempt', () => {
 
     expect(mockCallRecordAttempt).toHaveBeenCalledWith({
       nodeId: 'L1-Q1-01',
-      attemptKind: 'content_view',
       clientAttemptId: '11111111-1111-4111-8111-111111111111',
       contentSlug: 'slug-a',
-      score: 100,
     });
   });
 
-  it('validates mini_quiz score before RPC', async () => {
+  it('rejects empty content slug before RPC', async () => {
     const { result } = renderHook(() => useRecordSpiralAttempt(), {
       wrapper: createWrapper(),
     });
@@ -88,15 +86,15 @@ describe('useRecordSpiralAttempt', () => {
       await result.current
         .recordAttemptAsync({
           nodeId: 'L1-Q1-01',
-          attemptKind: 'mini_quiz',
-          score: 150,
+          attemptKind: 'content_view',
+          contentSlug: '   ',
         })
         .catch(() => undefined);
     });
 
     expect(mockCallRecordAttempt).not.toHaveBeenCalled();
     await waitFor(() => {
-      expect(result.current.recordAttemptErrorKind).toBe('invalid_score');
+      expect(result.current.recordAttemptErrorKind).toBe('unknown');
     });
   });
 
@@ -113,8 +111,8 @@ describe('useRecordSpiralAttempt', () => {
       await result.current
         .recordAttemptAsync({
           nodeId: 'L1-Q1-01',
-          attemptKind: 'mini_quiz',
-          score: 90,
+          attemptKind: 'content_view',
+          contentSlug: 'slug-a',
         })
         .catch(() => undefined);
     });

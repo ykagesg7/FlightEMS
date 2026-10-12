@@ -1,4 +1,5 @@
 import type { SpiralLmsNodeContentRow, SpiralLmsNodePrerequisiteRow, SpiralLmsNodeRow, SpiralLmsUserProgressRow } from './spiralLms';
+import type { SpiralMiniQuizQuestionRow, SpiralMiniQuizSubmitResponse } from './spiralLmsMiniQuiz';
 
 /**
  * Minimal Supabase schema slice for spiral LMS until `database.types` is regenerated post–prod apply.
@@ -33,6 +34,12 @@ export type SpiralLmsDatabase = {
         Update: never;
         Relationships: [];
       };
+      node_mini_quiz_questions: {
+        Row: SpiralMiniQuizQuestionRow;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -45,6 +52,14 @@ export type SpiralLmsDatabase = {
           p_score: number | null;
         };
         Returns: import('./spiralLms').SpiralLmsRecordAttemptResponse;
+      };
+      submit_mini_quiz: {
+        Args: {
+          p_node_id: string;
+          p_client_attempt_id: string;
+          p_answers: import('./spiralLmsMiniQuiz').SpiralMiniQuizAnswerPayload[];
+        };
+        Returns: SpiralMiniQuizSubmitResponse;
       };
     };
     Enums: Record<string, never>;
