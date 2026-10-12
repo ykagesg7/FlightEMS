@@ -18,14 +18,17 @@ if ! command -v docker >/dev/null 2>&1; then
   exit 0
 fi
 
-docker run -d --name "$CONTAINER_NAME" \
+if ! docker run -d --name "$CONTAINER_NAME" \
   -e POSTGRES_PASSWORD=postgres \
-  -p "${PG_PORT}:5432" \
-  postgres:16-alpine >/dev/null
+  postgres:16-alpine >/dev/null; then
+  echo "Failed to start Postgres container"
+  exit 1
+fi
 
 ready=0
-for _ in $(seq 1 60); do
-  if docker exec "$CONTAINER_NAME" pg_isready -U postgres >/dev/null 2>&1; then
+for _ in $(seq 1 90); do
+  if docker ps --filter "name=$CONTAINER_NAME" --filter "status=running" -q | grep -q . \
+    && docker exec "$CONTAINER_NAME" pg_isready -U postgres >/dev/null 2>&1; then
     ready=1
     break
   fi
@@ -34,11 +37,19 @@ done
 
 if [[ "$ready" != "1" ]]; then
   echo "Postgres container did not become ready in time"
+  docker logs "$CONTAINER_NAME" 2>&1 | tail -30 || true
   exit 1
 fi
 
 run_psql() {
-  docker exec -i "$CONTAINER_NAME" psql -v ON_ERROR_STOP=1 -U postgres "$@"
+  local attempt
+  for attempt in 1 2 3 4 5; do
+    if docker exec -i "$CONTAINER_NAME" psql -v ON_ERROR_STOP=1 -U postgres "$@"; then
+      return 0
+    fi
+    sleep 2
+  done
+  return 1
 }
 
 run_psql_file() {
