@@ -6,6 +6,10 @@ import { WITHDRAWN_ARTICLE_IDS } from '../constants/withdrawnArticleIds';
 const DB_DIR = join(process.cwd(), 'scripts/database');
 const SCHEMA_PATH = join(DB_DIR, '20261012_spiral_lms_schema_rls.sql');
 const SEED_PATH = join(DB_DIR, '20261012_spiral_lms_seed_l1_l2_nodes.sql');
+const RECORD_ATTEMPT_PATH = join(
+  DB_DIR,
+  '20261012_spiral_lms_record_attempt.sql',
+);
 const CONTENT_ROOT = join(process.cwd(), 'src/content');
 
 const SPIRAL_TABLES = [
@@ -172,5 +176,72 @@ describe('spiral LMS migrations (static)', () => {
       }
     }
     expect(missing).toEqual([]);
+  });
+});
+
+describe('spiral LMS record_attempt migration (static)', () => {
+  const recordAttempt = readFileSync(RECORD_ATTEMPT_PATH, 'utf8');
+
+  it('extends user_attempts for slug-shared content_view vs mini_quiz', () => {
+    expect(recordAttempt).toMatch(/ADD COLUMN IF NOT EXISTS content_slug text/);
+    expect(recordAttempt).toMatch(/ADD COLUMN IF NOT EXISTS attempt_kind text/);
+    expect(recordAttempt).toMatch(
+      /attempt_kind IN \('content_view', 'mini_quiz'\)/,
+    );
+  });
+
+  it('defines SECURITY DEFINER record_attempt with fixed search_path', () => {
+    expect(recordAttempt).toMatch(
+      /CREATE OR REPLACE FUNCTION public\.record_attempt/,
+    );
+    expect(recordAttempt).toMatch(
+      /FUNCTION public\.record_attempt[\s\S]*SECURITY DEFINER/,
+    );
+    expect(recordAttempt).toMatch(
+      /FUNCTION public\.record_attempt[\s\S]*SET search_path = public/,
+    );
+  });
+
+  it('requires auth.uid and writes only for the caller', () => {
+    expect(recordAttempt).toMatch(/v_uid uuid := auth\.uid\(\)/);
+    expect(recordAttempt).toMatch(/IF v_uid IS NULL THEN/);
+    expect(recordAttempt).toMatch(/user_id,\s*\n\s*node_id,\s*\n\s*content_slug/);
+    expect(recordAttempt).toMatch(/VALUES \(\s*\n\s*v_uid,/);
+  });
+
+  it('revokes PUBLIC/anon and grants EXECUTE to authenticated only', () => {
+    expect(recordAttempt).toMatch(
+      /REVOKE ALL ON FUNCTION public\.record_attempt\(text, text, text, numeric, boolean\) FROM PUBLIC/,
+    );
+    expect(recordAttempt).toMatch(
+      /REVOKE ALL ON FUNCTION public\.record_attempt\(text, text, text, numeric, boolean\) FROM anon/,
+    );
+    expect(recordAttempt).toMatch(
+      /GRANT EXECUTE ON FUNCTION public\.record_attempt\(text, text, text, numeric, boolean\) TO authenticated/,
+    );
+  });
+
+  it('ignores prerequisites on unpublished nodes', () => {
+    expect(recordAttempt).toMatch(/prereq\.is_published = true/);
+    expect(recordAttempt).toMatch(
+      /spiral_lms_published_prerequisites_met/,
+    );
+  });
+
+  it('locks nodes when opens_at is in the future', () => {
+    expect(recordAttempt).toMatch(/opens_at > now\(\)/);
+    expect(recordAttempt).toMatch(/node_locked/);
+  });
+
+  it('recomputes progress using slug-shared completion across nodes', () => {
+    expect(recordAttempt).toMatch(/spiral_lms_slug_completed/);
+    expect(recordAttempt).toMatch(/spiral_lms_recompute_all_published_nodes/);
+    expect(recordAttempt).toMatch(/slug-shared/i);
+  });
+
+  it('private helpers are not executable by anon/authenticated', () => {
+    expect(recordAttempt).toMatch(
+      /REVOKE ALL ON FUNCTION private\.spiral_lms_slug_completed\(uuid, text\) FROM PUBLIC, anon, authenticated/,
+    );
   });
 });
