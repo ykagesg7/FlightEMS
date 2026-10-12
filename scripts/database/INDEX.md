@@ -147,4 +147,19 @@
 | レガシーテーブル削除（2026-04） | `20260411_drop_*.sql`（[Closed_Sprints.md](../../docs/Closed_Sprints.md) §1） |
 | ランク・ゲーミフィケーション（再構築時） | `ppl_rank_*.sql`、`rank_integration*.sql`、`gamification_migration.sql`（[Component_Structure_Guide.md](../../docs/Component_Structure_Guide.md)） |
 
+### 螺旋マトリックス LMS — 本番適用順（#85 + PR ②）
+
+**事前に上様承認必須。** 本番 DB では `learning_contents` に対応 ID が既に存在することを前提に、次の順で適用する（PR ① #85 の DDL と PR ② をまたぐ一連の手順）。
+
+1. [`20261012_spiral_lms_schema_rls.sql`](20261012_spiral_lms_schema_rls.sql) — PR ① #85（DDL・RLS）
+2. [`20261012_spiral_lms_content_slug_map.sql`](20261012_spiral_lms_content_slug_map.sql) — slug 対応表
+3. [`20261012_spiral_lms_record_attempt.sql`](20261012_spiral_lms_record_attempt.sql) — `record_attempt` RPC
+4. [`20261012_spiral_lms_seed_l1_l2_nodes.sql`](20261012_spiral_lms_seed_l1_l2_nodes.sql) — PR ① #85（L1/L2 シード）
+
+### TODO（螺旋マトリックス LMS）
+
+- 結合テストへロック・RLS/anon・opens_at未来・未公開記事拒否・MAINTENANCE非上書き・同時送信の試験を追加（別PR）
+- MAINTENANCE付与・遡及（別PR）
+- 採点はPR④
+
 詳細リストは増やさず、`docs/**/*.md` 内のリンクを**検索キーにする**。新規のワンオフ適用でも、名前は `YYYYMMDD_目的_snake_case.sql` を維持する。
