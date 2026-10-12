@@ -20,9 +20,22 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || (github.event.action != 'labeled' && github.event.action != 'unlabeled')
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:15-alpine@sha256:25d430274d8a31184f9435cc5b2f56aff254952065bbbcac0c51acedb5a1d1e7
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
       VITE_SUPABASE_URL: https://test.supabase.co
       VITE_SUPABASE_ANON_KEY: test-anon-key-ci
+      SPIRAL_LMS_PG_URL: postgresql://postgres:postgres@localhost:5432/postgres
     steps:
       - name: 城内コード取得
         uses: actions/checkout@v4
@@ -44,6 +57,12 @@ jobs:
 
       - name: 単体テスト
         run: npm run test:run
+
+      - name: 螺旋 LMS record_attempt 結合（Postgres）
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          bash scripts/database/spiral_lms_record_attempt_integration.sh
 
       - name: ゴールデンテスト
         run: npm run test:golden

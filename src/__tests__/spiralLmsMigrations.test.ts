@@ -6,6 +6,11 @@ import { WITHDRAWN_ARTICLE_IDS } from '../constants/withdrawnArticleIds';
 const DB_DIR = join(process.cwd(), 'scripts/database');
 const SCHEMA_PATH = join(DB_DIR, '20261012_spiral_lms_schema_rls.sql');
 const SEED_PATH = join(DB_DIR, '20261012_spiral_lms_seed_l1_l2_nodes.sql');
+const RECORD_ATTEMPT_PATH = join(
+  DB_DIR,
+  '20261012_spiral_lms_record_attempt.sql',
+);
+const SLUG_MAP_PATH = join(DB_DIR, '20261012_spiral_lms_content_slug_map.sql');
 const CONTENT_ROOT = join(process.cwd(), 'src/content');
 
 const SPIRAL_TABLES = [
@@ -172,5 +177,184 @@ describe('spiral LMS migrations (static)', () => {
       }
     }
     expect(missing).toEqual([]);
+  });
+});
+
+describe('spiral LMS record_attempt migration (static)', () => {
+  const recordAttempt = readFileSync(RECORD_ATTEMPT_PATH, 'utf8');
+
+  it('extends user_attempts for slug-shared content_view vs mini_quiz', () => {
+    expect(recordAttempt).toMatch(/ADD COLUMN IF NOT EXISTS content_slug text/);
+    expect(recordAttempt).toMatch(/ADD COLUMN IF NOT EXISTS attempt_kind text/);
+    expect(recordAttempt).toMatch(
+      /ADD COLUMN IF NOT EXISTS client_attempt_id uuid/,
+    );
+    expect(recordAttempt).toMatch(
+      /attempt_kind IN \('content_view', 'mini_quiz'\)/,
+    );
+  });
+
+  it('seed L1-Q2-1 and L2-Q1-2 have required node_contents', () => {
+    const seed = readFileSync(SEED_PATH, 'utf8');
+    const requiredCounts = extractRequiredContentCountByNode(seed);
+    expect((requiredCounts.get('L1-Q2-1') ?? 0) >= 1).toBe(true);
+    expect((requiredCounts.get('L2-Q1-2') ?? 0) >= 1).toBe(true);
+  });
+
+  it('defines SECURITY DEFINER record_attempt with fixed search_path', () => {
+    expect(recordAttempt).toMatch(
+      /CREATE OR REPLACE FUNCTION public\.record_attempt/,
+    );
+    expect(recordAttempt).toMatch(
+      /FUNCTION public\.record_attempt[\s\S]*SECURITY DEFINER/,
+    );
+    expect(recordAttempt).toMatch(
+      /FUNCTION public\.record_attempt[\s\S]*SET search_path = public/,
+    );
+  });
+
+  it('requires auth.uid and writes only for the caller', () => {
+    expect(recordAttempt).toMatch(/v_uid uuid := auth\.uid\(\)/);
+    expect(recordAttempt).toMatch(/IF v_uid IS NULL THEN/);
+    expect(recordAttempt).toMatch(/user_id,\s*\n\s*node_id,\s*\n\s*content_slug/);
+    expect(recordAttempt).toMatch(/VALUES \(\s*\n\s*v_uid,/);
+  });
+
+  it('revokes PUBLIC/anon and grants EXECUTE to authenticated only', () => {
+    expect(recordAttempt).toMatch(
+      /REVOKE ALL ON FUNCTION public\.record_attempt\(text, text, uuid, text, numeric\) FROM PUBLIC/,
+    );
+    expect(recordAttempt).toMatch(
+      /REVOKE ALL ON FUNCTION public\.record_attempt\(text, text, uuid, text, numeric\) FROM anon/,
+    );
+    expect(recordAttempt).toMatch(
+      /GRANT EXECUTE ON FUNCTION public\.record_attempt\(text, text, uuid, text, numeric\) TO authenticated/,
+    );
+  });
+
+  it('uses server-side score validation without p_passed', () => {
+    expect(recordAttempt).not.toMatch(/p_passed/);
+    expect(recordAttempt).toMatch(/spiral_lms_validate_score/);
+    expect(recordAttempt).toMatch(/v_score = 100::numeric/);
+    expect(recordAttempt).toMatch(/ua\.score IS NOT NULL/);
+  });
+
+  it('declares private schema and postgres owners', () => {
+    expect(recordAttempt).toMatch(/CREATE SCHEMA IF NOT EXISTS private/);
+    expect(recordAttempt).toMatch(
+      /ALTER FUNCTION public\.record_attempt\(text, text, uuid, text, numeric\) OWNER TO postgres/,
+    );
+  });
+
+  it('enforces z-level gate and zero-required cannot master', () => {
+    expect(recordAttempt).toMatch(/spiral_lms_z_level_gate_met/);
+    expect(recordAttempt).toMatch(/WHEN count\(\*\) = 0 THEN false/);
+    expect(recordAttempt).toMatch(/z_level_gate_locked/);
+  });
+
+  it('preserves MAINTENANCE status during recompute', () => {
+    expect(recordAttempt).toMatch(/v_prev_status = 'MAINTENANCE'/);
+    expect(recordAttempt).toMatch(
+      /WHEN user_progress\.status = 'MAINTENANCE' THEN user_progress\.status/,
+    );
+  });
+
+  it('rejects unpublished learning content for content_view', () => {
+    expect(recordAttempt).toMatch(/content_not_published/);
+    expect(recordAttempt).toMatch(/spiral_lms_content_publishable/);
+  });
+
+  it('supports idempotent client_attempt_id with conflict detection', () => {
+    expect(recordAttempt).toMatch(/client_attempt_id_required/);
+    expect(recordAttempt).toMatch(/idx_user_attempts_user_client_attempt_id/);
+    expect(recordAttempt).toMatch(/idempotency_conflict/);
+    expect(recordAttempt).toMatch(/WHEN unique_violation/);
+    expect(recordAttempt).toMatch(/spiral_lms_attempt_payload_matches/);
+  });
+
+  it('uses explicit slug map (no regex slug derivation)', () => {
+    expect(recordAttempt).toMatch(/spiral_content_slug_map/);
+    expect(recordAttempt).not.toMatch(
+      /CREATE OR REPLACE FUNCTION private\.spiral_lms_lesson_slug_from_content_id/,
+    );
+    expect(recordAttempt).toMatch(
+      /FUNCTION private\.spiral_lms_content_publishable\(p_content_slug text\)/,
+    );
+  });
+
+  it('ignores prerequisites on unpublished nodes', () => {
+    expect(recordAttempt).toMatch(/prereq\.is_published = true/);
+    expect(recordAttempt).toMatch(
+      /spiral_lms_published_prerequisites_met/,
+    );
+  });
+
+  it('locks nodes when opens_at is in the future', () => {
+    expect(recordAttempt).toMatch(/opens_at > now\(\)/);
+    expect(recordAttempt).toMatch(/node_locked/);
+  });
+
+  it('recomputes progress using slug-shared completion across nodes', () => {
+    expect(recordAttempt).toMatch(/spiral_lms_slug_completed/);
+    expect(recordAttempt).toMatch(/spiral_lms_recompute_all_published_nodes/);
+    expect(recordAttempt).toMatch(/slug-shared/i);
+  });
+
+  it('private helpers are not executable by anon/authenticated', () => {
+    expect(recordAttempt).toMatch(
+      /REVOKE ALL ON FUNCTION private\.spiral_lms_slug_completed\(uuid, text\) FROM PUBLIC, anon, authenticated/,
+    );
+  });
+});
+
+describe('spiral LMS content_slug_map (static)', () => {
+  const slugMap = readFileSync(SLUG_MAP_PATH, 'utf8');
+  const seed = readFileSync(SEED_PATH, 'utf8');
+  const slugToContentId = collectMdxSlugToContentId();
+
+  function extractSlugMapEntries(sql: string): Map<string, string> {
+    const entries = new Map<string, string>();
+    const rowRe = /\('([^']+)',\s*'([^']+)'\)/g;
+    let m: RegExpExecArray | null;
+    while ((m = rowRe.exec(sql)) !== null) {
+      entries.set(m[1], m[2]);
+    }
+    return entries;
+  }
+
+  it('enables RLS and matches PR① catalog SELECT grants', () => {
+    expect(slugMap).toMatch(
+      /ALTER TABLE public\.spiral_content_slug_map ENABLE ROW LEVEL SECURITY/,
+    );
+    expect(slugMap).toMatch(
+      /REVOKE ALL ON TABLE public\.spiral_content_slug_map FROM PUBLIC, anon, authenticated/,
+    );
+    expect(slugMap).toMatch(
+      /GRANT SELECT ON TABLE public\.spiral_content_slug_map TO anon, authenticated/,
+    );
+  });
+
+  it('maps every seed node_contents slug to MDX learning_contents id', () => {
+    const map = extractSlugMapEntries(slugMap);
+    const seedSlugs = [...new Set(extractSeedContentSlugs(seed))];
+    const missing: string[] = [];
+    const mismatched: string[] = [];
+    for (const slug of seedSlugs) {
+      const mapped = map.get(slug);
+      const mdxId = slugToContentId.get(slug);
+      if (!mapped) {
+        missing.push(slug);
+        continue;
+      }
+      if (mdxId && mapped !== mdxId) {
+        mismatched.push(`${slug}: map=${mapped} mdx=${mdxId}`);
+      }
+    }
+    expect(missing).toEqual([]);
+    expect(mismatched).toEqual([]);
+    expect(map.get('ppl-5-4-7-ifr-minimum-altitude-intro-for-ppl')).toBe(
+      'PPL-5-4-7_IFRMinimumAltitudeIntroForPPL',
+    );
+    expect(map.get('cp-1-3-controls-g-pio')).toBe('CP-1-3_ControlsGPio');
   });
 });

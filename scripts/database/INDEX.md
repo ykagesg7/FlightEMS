@@ -77,7 +77,9 @@
 | **PPL Subject 2 `learning_test_mapping`（安定度）** | [`20260628_learning_test_mapping_ppl_subject2_205.sql`](20260628_learning_test_mapping_ppl_subject2_205.sql)（大気の基礎/安定度 — **2026-06-28 本番適用済**） |
 | **PPL Subject 1 `learning_contents`（計器/エンジン 7 本）** | [`20260628_learning_contents_ppl_121_127.sql`](20260628_learning_contents_ppl_121_127.sql)（`order_index` 11〜15・17〜18、`1-2-8/9` → 19/20） |
 | **PPL Subject 1 `learning_test_mapping` 残 3 本** | [`20260628_learning_test_mapping_ppl_111_128_129.sql`](20260628_learning_test_mapping_ppl_111_128_129.sql)（`PPL-1-1-11`・`1-2-8`・`1-2-9` — **2026-06-28 本番適用済**） |
-| **螺旋マトリックス LMS（MVP PR ①）** DDL + RLS + L1/L2 シード | [`20261012_spiral_lms_schema_rls.sql`](20261012_spiral_lms_schema_rls.sql)、[`20261012_spiral_lms_seed_l1_l2_nodes.sql`](20261012_spiral_lms_seed_l1_l2_nodes.sql)。**本番適用は上様承認後のみ**。`CREATE TABLE IF NOT EXISTS` は既存テーブルに列を足さない（列追加は同ファイルの `ALTER … IF NOT EXISTS` または追補 migration）。シード再実行は L1/L2 の `title` / `is_published` / `opens_at` を上書きし、当該ノードの `node_prerequisites`・`node_contents` を差し替える。**同一 slug を複数ノードに紐づけ可**。記事完了は slug 単位で記録し（実装は PR ② `record_attempt`）、どのノードから読んでも同 slug を要求する全ノードに反映する。 |
+| **螺旋マトリックス LMS（MVP PR ①）** DDL + RLS + L1/L2 シード | [`20261012_spiral_lms_schema_rls.sql`](20261012_spiral_lms_schema_rls.sql)、[`20261012_spiral_lms_seed_l1_l2_nodes.sql`](20261012_spiral_lms_seed_l1_l2_nodes.sql)。**本番適用は上様承認後のみ**。`CREATE TABLE IF NOT EXISTS` は既存テーブルに列を足さない（列追加は同ファイルの `ALTER … IF NOT EXISTS` または追補 migration）。シード再実行は L1/L2 の `title` / `is_published` / `opens_at` を上書きし、当該ノードの `node_prerequisites`・`node_contents` を差し替える。**同一 slug を複数ノードに紐づけ可**。記事完了は slug 単位で記録し（PR ② `record_attempt`）、どのノードから読んでも同 slug を要求する全ノードに反映する。 |
+| **螺旋マトリックス LMS（MVP PR ②）** slug 対応表 | [`20261012_spiral_lms_content_slug_map.sql`](20261012_spiral_lms_content_slug_map.sql) — `content_slug` ↔ `learning_contents.id`（L1/L2 シード参照分を MDX と明示対応）。`is_published` は `learning_contents` を正とする。RLS + SELECT のみ（#85 同様）。 |
+| **螺旋マトリックス LMS（MVP PR ②）** `record_attempt` RPC | [`20261012_spiral_lms_record_attempt.sql`](20261012_spiral_lms_record_attempt.sql) — `user_attempts` に `content_slug` / `attempt_kind` / `client_attempt_id`（冪等）。合否は **サーバのみ**（`score` 0–100 の有限値、`p_passed` なし）。`content_view` は `score=100` で合格。ミニテストは `nodes.passing_score` と比較（`score IS NULL` の過去行は合格扱いしない）。**設問ごとの採点は PR ④（MDX クイズ）**。必須 `node_contents` が 0 本のノードは `MASTERED` 不可。厳格 **Z 階層ゲート**（L(n) は L(n−1) の公開ノードがすべて `MASTERED` までロック；`unlock_config.z_level_gate = 'off'` で解除）。`MAINTENANCE` / 遡及は別 PR — 再計算は既存 `MAINTENANCE` を上書きしない（TODO: MAINTENANCE 遷移 PR）。`opens_at` 未来は RPC 拒否・進捗 `LOCKED`。**表示上の `opens_at` 解除は PR ③ フック**（`opens_at` と `now()` を読み出し側で比較）。未公開記事（`learning_contents.is_published=false`）への `content_view` は拒否。結合テスト: [`spiral_lms_record_attempt_integration.sh`](spiral_lms_record_attempt_integration.sh)（Docker Postgres / mekiki-ci）。**本番適用は上様承認後のみ**。 |
 | **USAF 編隊飛行（操縦）** ep.1 | `20260616_learning_contents_fmt_wingman_vfr.sql`（`FMT-1-1_WingmanVFR`、`order_index` 601） |
 | **USAF 編隊飛行（操縦）** ep.2 | `20260617_learning_contents_fmt_runway_lineup_takeoff.sql`（`FMT-1-2_RunwayLineupTakeoff`、`order_index` 602） |
 | **USAF 編隊飛行（操縦）** ep.3 | [`20260813_learning_contents_fmt_fingertip_route.sql`](20260813_learning_contents_fmt_fingertip_route.sql)（`FMT-1-3_FingertipRoute`、`order_index` **603**） |
@@ -144,5 +146,20 @@
 | `learning_test_mapping` 追加・修正 | `20260412_learning_test_mapping_*.sql`、`20260330_learning_test_mapping_cpl_clusters_by_subject.sql`、§5.2 上位クラスタ追補 `20260505_learning_test_mapping_unmapped_top_clusters.sql`、`20260506_learning_test_mapping_unmapped_tier2.sql`、**W23 法規** `20260512_learning_test_mapping_legal_sokusoku_mokuteki.sql`（`総則/目的`→`3.1.1`）、**W24 空力** `20260606_learning_test_mapping_aero_lift_drag_clusters.sql`（空力基礎 3 クラスタ→`3.2.7`）等（08・14 が索引）。**2026-05**: 緊急通信の再適用・監査のみは `20260505_*.sql` |
 | レガシーテーブル削除（2026-04） | `20260411_drop_*.sql`（[Closed_Sprints.md](../../docs/Closed_Sprints.md) §1） |
 | ランク・ゲーミフィケーション（再構築時） | `ppl_rank_*.sql`、`rank_integration*.sql`、`gamification_migration.sql`（[Component_Structure_Guide.md](../../docs/Component_Structure_Guide.md)） |
+
+### 螺旋マトリックス LMS — 本番適用順（#85 + PR ②）
+
+**事前に上様承認必須。** 本番 DB では `learning_contents` に対応 ID が既に存在することを前提に、次の順で適用する（PR ① #85 の DDL と PR ② をまたぐ一連の手順）。
+
+1. [`20261012_spiral_lms_schema_rls.sql`](20261012_spiral_lms_schema_rls.sql) — PR ① #85（DDL・RLS）
+2. [`20261012_spiral_lms_content_slug_map.sql`](20261012_spiral_lms_content_slug_map.sql) — slug 対応表
+3. [`20261012_spiral_lms_record_attempt.sql`](20261012_spiral_lms_record_attempt.sql) — `record_attempt` RPC
+4. [`20261012_spiral_lms_seed_l1_l2_nodes.sql`](20261012_spiral_lms_seed_l1_l2_nodes.sql) — PR ① #85（L1/L2 シード）
+
+### TODO（螺旋マトリックス LMS）
+
+- 結合テストへロック・RLS/anon・opens_at未来・未公開記事拒否・MAINTENANCE非上書き・同時送信の試験を追加（別PR）
+- MAINTENANCE付与・遡及（別PR）
+- 採点はPR④
 
 詳細リストは増やさず、`docs/**/*.md` 内のリンクを**検索キーにする**。新規のワンオフ適用でも、名前は `YYYYMMDD_目的_snake_case.sql` を維持する。
