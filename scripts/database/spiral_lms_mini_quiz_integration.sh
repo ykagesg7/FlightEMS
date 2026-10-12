@@ -224,7 +224,8 @@ SELECT public.submit_mini_quiz(
       'question_id', '${QUESTION_ID}',
       'selected_option_ids', jsonb_build_array('a')
     )
-  );
+  )
+);
 SQL
 done
 echo "OK: idempotent replays accepted"
