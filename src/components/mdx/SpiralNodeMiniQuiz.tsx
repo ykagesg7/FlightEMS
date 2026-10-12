@@ -193,7 +193,7 @@ const SpiralNodeMiniQuiz: React.FC<SpiralNodeMiniQuizProps> = ({ nodeId }) => {
               >
                 {passed
                   ? `合格です（${score ?? '—'} 点）。`
-                  : `不合格です（${score ?? '—'} 点）。もう一度挑戦できます。`}
+                  : '不合格です。もう一度挑戦できます。'}
               </p>
             )}
             <button

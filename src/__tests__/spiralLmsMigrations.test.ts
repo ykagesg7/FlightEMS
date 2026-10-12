@@ -326,10 +326,17 @@ describe('spiral LMS MDX mini-quiz migration (static)', () => {
     );
   });
 
-  it('exposes stems via RLS on published nodes only', () => {
+  it('exposes stems via RLS on published nodes only (authenticated)', () => {
     expect(miniQuiz).toMatch(/node_mini_quiz_questions_select_published/);
     expect(miniQuiz).toMatch(
+      /GRANT SELECT ON TABLE public\.node_mini_quiz_questions TO authenticated/,
+    );
+    expect(miniQuiz).not.toMatch(
       /GRANT SELECT ON TABLE public\.node_mini_quiz_questions TO anon, authenticated/,
+    );
+    expect(miniQuiz).toMatch(/n\.is_published IS TRUE/);
+    expect(miniQuiz).not.toMatch(
+      /USING \(\s*private\.spiral_lms_node_mini_quiz_ready\(node_mini_quiz_questions\.node_id\)/,
     );
   });
 
@@ -347,10 +354,24 @@ describe('spiral LMS MDX mini-quiz migration (static)', () => {
     expect(miniQuiz).toMatch(/mini_quiz_use_submit_mini_quiz/);
   });
 
-  it('enforces rate limiting and hides results until pass', () => {
+  it('enforces rate limiting, advisory lock, and hides score/results until pass', () => {
     expect(miniQuiz).toMatch(/rate_limited/);
+    expect(miniQuiz).toMatch(/pg_advisory_xact_lock/);
     expect(miniQuiz).toMatch(/spiral_lms_format_mini_quiz_response/);
     expect(miniQuiz).toMatch(/spiral_lms_mini_quiz_submissions_last_hour/);
+    expect(miniQuiz).toMatch(/IF v_show_results THEN/);
+  });
+
+  it('restricts get_node_mini_quiz_questions to authenticated with node lock checks', () => {
+    expect(miniQuiz).toMatch(
+      /GRANT EXECUTE ON FUNCTION public\.get_node_mini_quiz_questions\(text\) TO authenticated/,
+    );
+    expect(miniQuiz).toMatch(
+      /REVOKE ALL ON FUNCTION public\.get_node_mini_quiz_questions\(text\) FROM PUBLIC, anon/,
+    );
+    expect(miniQuiz).toMatch(
+      /PERFORM private\.spiral_lms_validate_mini_quiz_submission\(v_uid, p_node_id\)/,
+    );
   });
 
   it('validates quiz readiness and answers', () => {

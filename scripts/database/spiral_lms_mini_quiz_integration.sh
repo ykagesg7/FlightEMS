@@ -77,13 +77,35 @@ ON CONFLICT DO NOTHING;
 SQL
 
 run_psql_file "$DB_DIR/20261012_spiral_lms_schema_rls.sql"
+
+slug_map_sql="$DB_DIR/20261012_spiral_lms_content_slug_map.sql"
+lc_values="$(
+  grep -E "^\s+\('" "$slug_map_sql" \
+    | sed -E "s/^[^']*'[^']*', '([^']+)'.*/\1/" \
+    | sort -u \
+    | awk '{printf "('\''%s'\'','\''%s'\'','\''PPL'\'',true),", $1, $1}' \
+    | sed '$ s/,$//'
+)"
+run_psql -f - <<SQL
+CREATE TABLE IF NOT EXISTS public.learning_contents (
+  id text PRIMARY KEY,
+  title text NOT NULL,
+  category text NOT NULL,
+  is_published boolean NOT NULL DEFAULT true
+);
+INSERT INTO public.learning_contents (id, title, category, is_published)
+VALUES ${lc_values}
+ON CONFLICT (id) DO UPDATE SET is_published = true;
+SQL
+
+run_psql_file "$slug_map_sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_record_attempt.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_mdx_mini_quiz.sql"
 run_psql_file "$DB_DIR/dev/20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql"
 
 run_psql -f - <<'SQL'
 GRANT USAGE ON SCHEMA public TO authenticated, anon;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO authenticated, anon;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO authenticated;
 SQL
 
 echo "== record_attempt rejects client mini_quiz score =="
@@ -122,8 +144,9 @@ else
   exit 1
 fi
 
-echo "== stems visible without correct flags =="
+echo "== stems visible without correct flags (authenticated) =="
 stem="$(run_psql -tA <<SQL
+SET ROLE authenticated;
 SET request.jwt.claim.sub = '${TEST_USER}';
 SELECT options::text
 FROM public.node_mini_quiz_questions
@@ -168,7 +191,12 @@ if ! echo "$wrong_json" | grep -q '"results": null'; then
   echo "$wrong_json"
   exit 1
 fi
-echo "OK: wrong answer failed without per-question results"
+if echo "$wrong_json" | grep -q '"score"'; then
+  echo "FAIL: wrong answer must not leak score"
+  echo "$wrong_json"
+  exit 1
+fi
+echo "OK: wrong answer failed without score or per-question results"
 
 echo "== correct answer scores 100, passes, and returns results =="
 right_json="$(run_psql -tA <<SQL
@@ -268,5 +296,58 @@ if ! echo "$rate_out" | grep -q rate_limited; then
   exit 1
 fi
 echo "OK: rate_limited enforced"
+
+CONCURRENT_USER='33333333-3333-3333-3333-333333333333'
+echo "== concurrent submissions cannot exceed rate limit =="
+run_psql -tA >/dev/null <<SQL
+INSERT INTO auth.users (id) VALUES ('${CONCURRENT_USER}'::uuid) ON CONFLICT DO NOTHING;
+SQL
+
+tmpdir="$(mktemp -d)"
+
+submit_wrong() {
+  local cid="$1"
+  local out="$2"
+  run_psql -tA >"$out" 2>&1 <<SQL || true
+SET request.jwt.claim.sub = '${CONCURRENT_USER}';
+SELECT public.submit_mini_quiz(
+  'SPIRAL-DEV-MINI',
+  '${cid}'::uuid,
+  jsonb_build_array(
+    jsonb_build_object(
+      'question_id', '${QUESTION_ID}',
+      'selected_option_ids', jsonb_build_array('b')
+    )
+  )
+)::text;
+SQL
+}
+
+for i in $(seq 1 6); do
+  cid="$(printf '66666666-6666-6666-6666-%012d' "$i")"
+  submit_wrong "$cid" "${tmpdir}/conc_${i}.txt" &
+done
+wait
+
+success_count=0
+rate_limited_count=0
+for i in $(seq 1 6); do
+  body="$(cat "${tmpdir}/conc_${i}.txt")"
+  if echo "$body" | grep -q rate_limited; then
+    rate_limited_count=$((rate_limited_count + 1))
+  elif echo "$body" | grep -q '"passed": false'; then
+    success_count=$((success_count + 1))
+  else
+    echo "FAIL: unexpected concurrent submit outcome"
+    echo "$body"
+    exit 1
+  fi
+done
+if [[ "$success_count" -ne 5 || "$rate_limited_count" -ne 1 ]]; then
+  echo "FAIL: expected 5 accepted + 1 rate_limited, got success=${success_count} rate_limited=${rate_limited_count}"
+  exit 1
+fi
+echo "OK: concurrent burst capped at 5/hour per user-node"
+rm -rf "$tmpdir"
 
 echo "spiral_lms_mini_quiz integration: all checks passed"

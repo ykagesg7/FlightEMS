@@ -25,7 +25,8 @@ export type SpiralMiniQuizQuestionResult = {
 };
 
 export type SpiralMiniQuizSubmitResponse = SpiralLmsRecordAttemptResponse & {
-  score: number;
+  /** Present only after pass (or after a prior pass on this node). */
+  score?: number;
   /** Per-question breakdown; only present after the user has passed this node. */
-  results: SpiralMiniQuizQuestionResult[] | null;
+  results?: SpiralMiniQuizQuestionResult[] | null;
 };

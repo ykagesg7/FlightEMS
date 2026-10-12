@@ -42,7 +42,7 @@ ALTER TABLE private.node_mini_quiz_answer_keys ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.node_mini_quiz_questions ENABLE ROW LEVEL SECURITY;
 
 REVOKE ALL ON TABLE public.node_mini_quiz_questions FROM PUBLIC, anon, authenticated;
-GRANT SELECT ON TABLE public.node_mini_quiz_questions TO anon, authenticated;
+GRANT SELECT ON TABLE public.node_mini_quiz_questions TO authenticated;
 
 CREATE OR REPLACE FUNCTION private.spiral_lms_node_mini_quiz_ready(p_node_id text)
 RETURNS boolean
@@ -137,12 +137,13 @@ BEGIN
   v_show_results := p_passed
     OR private.spiral_lms_user_node_mini_quiz_ever_passed(p_user_id, p_node_id);
 
-  RETURN p_core
-    || jsonb_build_object('score', p_core->'score')
-    || CASE
-      WHEN v_show_results THEN jsonb_build_object('results', p_results)
-      ELSE jsonb_build_object('results', NULL::jsonb)
-    END;
+  IF v_show_results THEN
+    RETURN p_core
+      || jsonb_build_object('score', p_core->'score')
+      || jsonb_build_object('results', p_results);
+  END IF;
+
+  RETURN (p_core - 'score') || jsonb_build_object('results', NULL::jsonb);
 END;
 $$;
 
@@ -150,9 +151,15 @@ DROP POLICY IF EXISTS node_mini_quiz_questions_select_published ON public.node_m
 CREATE POLICY node_mini_quiz_questions_select_published
   ON public.node_mini_quiz_questions
   FOR SELECT
-  TO anon, authenticated
+  TO authenticated
   USING (
-    private.spiral_lms_node_mini_quiz_ready(node_mini_quiz_questions.node_id)
+    EXISTS (
+      SELECT 1
+      FROM public.nodes n
+      WHERE n.id = node_mini_quiz_questions.node_id
+        AND n.is_published IS TRUE
+        AND n.passing_score IS NOT NULL
+    )
   );
 
 -- ---------------------------------------------------------------------------
@@ -602,7 +609,16 @@ STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
+DECLARE
+  v_uid uuid := auth.uid();
 BEGIN
+  IF v_uid IS NULL THEN
+    RAISE EXCEPTION 'not authenticated'
+      USING ERRCODE = '28000';
+  END IF;
+
+  PERFORM private.spiral_lms_validate_mini_quiz_submission(v_uid, p_node_id);
+
   IF NOT private.spiral_lms_node_mini_quiz_ready(p_node_id) THEN
     RAISE EXCEPTION 'quiz_not_ready'
       USING ERRCODE = '22023';
@@ -630,8 +646,8 @@ END;
 $$;
 
 ALTER FUNCTION public.get_node_mini_quiz_questions(text) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.get_node_mini_quiz_questions(text) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.get_node_mini_quiz_questions(text) TO anon, authenticated;
+REVOKE ALL ON FUNCTION public.get_node_mini_quiz_questions(text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.get_node_mini_quiz_questions(text) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.submit_mini_quiz(
   p_node_id text,
@@ -697,6 +713,11 @@ BEGIN
       v_existing.passed
     );
   END IF;
+
+  PERFORM pg_advisory_xact_lock(
+    (hashtext(v_uid::text) & 2147483647),
+    hashtext(p_node_id)
+  );
 
   IF private.spiral_lms_mini_quiz_submissions_last_hour(v_uid, p_node_id) >= 5 THEN
     RAISE EXCEPTION 'rate_limited'
