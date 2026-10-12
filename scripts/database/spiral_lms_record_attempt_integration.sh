@@ -102,6 +102,22 @@ ON CONFLICT DO NOTHING;
 SQL
 
 run_psql_file "$DB_DIR/20261012_spiral_lms_schema_rls.sql"
+
+# slug_map FK requires learning_contents rows (production already has them).
+slug_map_sql="$DB_DIR/20261012_spiral_lms_content_slug_map.sql"
+lc_values="$(
+  grep -E "^\s+\('" "$slug_map_sql" \
+    | sed -E "s/^[^']*'[^']*', '([^']+)'.*/\1/" \
+    | sort -u \
+    | awk '{printf "('\''%s'\'','\''%s'\'','\''PPL'\'',true),", $1, $1}' \
+    | sed '$ s/,$//'
+)"
+run_psql -f - <<SQL
+INSERT INTO public.learning_contents (id, title, category, is_published)
+VALUES ${lc_values}
+ON CONFLICT (id) DO UPDATE SET is_published = true;
+SQL
+
 run_psql_file "$DB_DIR/20261012_spiral_lms_content_slug_map.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_record_attempt.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_seed_l1_l2_nodes.sql"
