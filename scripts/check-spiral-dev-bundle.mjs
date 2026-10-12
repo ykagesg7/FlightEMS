@@ -8,6 +8,10 @@ const MARKERS = [
   'SPIRAL-DEV-MiniQuizSample',
   'SPIRAL-DEV-MINI',
   '螺旋 LMS ミニテスト（開発サンプル）',
+  'dev/spiral-lms',
+  '今日の1単元',
+  '整備点検一覧',
+  '螺旋マトリックス LMS（開発）',
 ];
 
 function walkFiles(dir, acc = []) {

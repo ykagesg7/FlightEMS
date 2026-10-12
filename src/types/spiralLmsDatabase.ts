@@ -40,6 +40,15 @@ export type SpiralLmsDatabase = {
         Update: never;
         Relationships: [];
       };
+      spiral_content_slug_map: {
+        Row: {
+          content_slug: string;
+          learning_content_id: string;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

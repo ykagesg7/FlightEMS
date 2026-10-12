@@ -115,7 +115,7 @@ describe('useSpiralLms', () => {
     expect(result.current.progressByNodeId['L1-Q1-01']?.effectiveStatus).toBe('AVAILABLE');
   });
 
-  it('skips progress fetch when logged out', async () => {
+  it('skips nodes and progress fetch when logged out', async () => {
     vi.stubEnv('MODE', 'development');
     vi.stubEnv('DEV', true);
     vi.stubEnv('VITE_SPIRAL_LMS_ENABLED', 'true');
@@ -126,10 +126,12 @@ describe('useSpiralLms', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.nodes).toHaveLength(1);
+      expect(result.current.isLoading).toBe(false);
     });
 
+    expect(mockFetchNodes).not.toHaveBeenCalled();
     expect(mockFetchProgress).not.toHaveBeenCalled();
+    expect(result.current.nodes).toEqual([]);
     expect(result.current.progressByNodeId).toEqual({});
   });
 });

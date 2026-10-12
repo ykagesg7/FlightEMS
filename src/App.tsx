@@ -23,6 +23,7 @@ import EnhancedErrorBoundary from './components/ui/EnhancedErrorBoundary';
 import { MarketingLayout } from './layouts/MarketingLayout';
 import { lazyProtectedRoute, lazyRoute } from './layouts/routeLazy';
 import { importWithChunkRetry } from './utils/lazyWithRetry';
+import { buildSpiralLmsDevRoutes } from './utils/spiralLmsDevRoutes';
 
 const LearningRedirect: React.FC = () => {
   return <Navigate to="/articles" replace />;
@@ -96,6 +97,7 @@ const router = createBrowserRouter([
       {
         element: <MarketingLayout />,
         children: [
+          ...buildSpiralLmsDevRoutes(),
           { index: true, ...lazyRoute(() => import('./pages/dashboard/HomePage'), true) },
           { path: 'about', ...lazyRoute(() => import('./pages/about/About')) },
           { path: 'mission', ...lazyProtectedRoute(() => import('./pages/mission/Dashboard')) },

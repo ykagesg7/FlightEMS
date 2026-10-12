@@ -163,6 +163,9 @@
 
 - 結合テストへロック・RLS/anon・opens_at未来・未公開記事拒否・MAINTENANCE非上書き・同時送信の試験を追加（別PR）
 - MAINTENANCE付与・遡及（別PR）
+- 合格判定をクイズ版ごとにする（合格後の設問改訂で新版の正誤が漏れるため、実設問投入前に別PR）
+- **開発 UI（PR ⑤）**: 完了判定は `user_progress` 保存値を信頼（表示は参考、サーバが正）。ロック解除後にサーバ再計算前のノードは UI 上 AVAILABLE になりうる
+- **開発 UI（PR ⑤）**: 「公開予定」は必須記事がすべて未公開のとき（MDX `publishedAt` 基準）。将来 `learning_contents.is_published` との統一を検討
 - **本番適用後**: Supabase MCP `generate_typescript_types` で `src/types/database.types.ts` を再生成し、`src/types/spiralLmsDatabase.ts` の暫定スキーマを統合する（PR ③ フックは暫定型を使用中）
 
 詳細リストは増やさず、`docs/**/*.md` 内のリンクを**検索キーにする**。新規のワンオフ適用でも、名前は `YYYYMMDD_目的_snake_case.sql` を維持する。

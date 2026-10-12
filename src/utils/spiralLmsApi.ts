@@ -42,6 +42,22 @@ function enrichProgressRow(
   };
 }
 
+export async function fetchSpiralContentSlugMap(): Promise<Record<string, string>> {
+  const { data, error } = await spiralLmsSupabase
+    .from('spiral_content_slug_map')
+    .select('content_slug, learning_content_id');
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const map: Record<string, string> = {};
+  for (const row of data ?? []) {
+    map[row.content_slug] = row.learning_content_id;
+  }
+  return map;
+}
+
 export async function fetchSpiralLmsNodes(now: Date = new Date()): Promise<SpiralLmsNode[]> {
   const { data: nodes, error: nodesError } = await spiralLmsSupabase
     .from('nodes')
