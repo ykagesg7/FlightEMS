@@ -241,8 +241,8 @@ else
 fi
 
 # Unpublished prerequisite ignored: L1-CHILD should not stay LOCKED solely for unpublished prereq
-assert_sql "unpublished prerequisite ignored" \
+assert_sql "unpublished prerequisite ignored (node can master)" \
   "SELECT status FROM public.user_progress WHERE user_id = '${TEST_USER}'::uuid AND node_id = 'L1-CHILD';" \
-  "AVAILABLE"
+  "MASTERED"
 
 echo "spiral_lms_record_attempt integration: all checks passed"
