@@ -1,14 +1,21 @@
 import type { SpiralLmsNode, SpiralLmsNodeStatus, SpiralLmsUserProgress } from '../types/spiralLms';
-import {
-  areSpiralPrerequisitesMet,
-  resolveSpiralEffectiveStatus,
-} from './spiralLmsEffectiveStatus';
+import { isSpiralRequiredContentScheduled } from './spiralLmsArticleRelease';
 import { isSpiralNodeOpensAtLocked } from './spiralLmsOpensAt';
+import {
+  buildSpiralLmsRecomputeContext,
+  recomputeSpiralNodeStoredStatus,
+  type SpiralLmsRecomputeContext,
+} from './spiralLmsRecomputeStatus';
 
-/** UI label when `opens_at` is still in the future. */
+/** UI label when content is not yet released to learners. */
 export type SpiralLmsScheduledDisplayStatus = 'scheduled';
 
 export type SpiralLmsDisplayStatus = SpiralLmsNodeStatus | SpiralLmsScheduledDisplayStatus;
+
+export type SpiralLmsNodeDisplayContext = SpiralLmsRecomputeContext & {
+  readonly slugToArticleId: Readonly<Record<string, string>>;
+  readonly publishedAtByContentId: Readonly<Record<string, string | undefined>>;
+};
 
 export function compareSpiralLmsNodes(a: SpiralLmsNode, b: SpiralLmsNode): number {
   if (a.z_level !== b.z_level) {
@@ -23,21 +30,38 @@ export function compareSpiralLmsNodes(a: SpiralLmsNode, b: SpiralLmsNode): numbe
   return a.id.localeCompare(b.id);
 }
 
-export function resolveSpiralNodeDisplayStatus(
+export function isSpiralNodeScheduledForDisplay(
+  node: SpiralLmsNode,
+  displayContext: SpiralLmsNodeDisplayContext,
+): boolean {
+  if (isSpiralNodeOpensAtLocked(node.opens_at, displayContext.now)) {
+    return true;
+  }
+  return isSpiralRequiredContentScheduled(
+    node,
+    displayContext.slugToArticleId,
+    displayContext.publishedAtByContentId,
+    displayContext.now,
+  );
+}
+
+export function resolveSpiralNodeStoredStatus(
   node: SpiralLmsNode,
   progressByNodeId: Readonly<Record<string, SpiralLmsUserProgress | undefined>>,
-  now: Date = new Date(),
+  recomputeContext: SpiralLmsRecomputeContext,
+): SpiralLmsNodeStatus {
+  return recomputeSpiralNodeStoredStatus(node, progressByNodeId[node.id], recomputeContext);
+}
+
+export function resolveSpiralNodeDisplayStatus(
+  node: SpiralLmsNode,
+  displayContext: SpiralLmsNodeDisplayContext,
 ): SpiralLmsDisplayStatus {
-  const opensAtLocked = isSpiralNodeOpensAtLocked(node.opens_at, now);
-  if (opensAtLocked) {
+  if (isSpiralNodeScheduledForDisplay(node, displayContext)) {
     return 'scheduled';
   }
 
-  const progress = progressByNodeId[node.id];
-  const storedStatus: SpiralLmsNodeStatus = progress?.status ?? 'LOCKED';
-  const prerequisitesMet = areSpiralPrerequisitesMet(node.prerequisites, progressByNodeId);
-
-  return resolveSpiralEffectiveStatus(storedStatus, false, prerequisitesMet);
+  return resolveSpiralNodeStoredStatus(node, displayContext.progressByNodeId, displayContext);
 }
 
 export function listPublishedSpiralNodes(nodes: readonly SpiralLmsNode[]): SpiralLmsNode[] {
@@ -46,16 +70,35 @@ export function listPublishedSpiralNodes(nodes: readonly SpiralLmsNode[]): Spira
 
 export function pickTodaySpiralUnit(
   nodes: readonly SpiralLmsNode[],
-  progressByNodeId: Readonly<Record<string, SpiralLmsUserProgress | undefined>>,
-  now: Date = new Date(),
+  displayContext: SpiralLmsNodeDisplayContext,
 ): SpiralLmsNode | null {
   const published = listPublishedSpiralNodes(nodes);
-  for (const node of published) {
-    if (resolveSpiralNodeDisplayStatus(node, progressByNodeId, now) === 'AVAILABLE') {
-      return node;
+
+  const pickFrom = (targetStatus: SpiralLmsNodeStatus): SpiralLmsNode | null => {
+    for (const node of published) {
+      const displayStatus = resolveSpiralNodeDisplayStatus(node, displayContext);
+      if (displayStatus === targetStatus) {
+        return node;
+      }
     }
-  }
-  return null;
+    return null;
+  };
+
+  return pickFrom('IN_PROGRESS') ?? pickFrom('AVAILABLE');
+}
+
+export function buildSpiralLmsNodeDisplayContext(
+  nodes: readonly SpiralLmsNode[],
+  progressByNodeId: Readonly<Record<string, SpiralLmsUserProgress | undefined>>,
+  slugToArticleId: Readonly<Record<string, string>>,
+  publishedAtByContentId: Readonly<Record<string, string | undefined>>,
+  now: Date = new Date(),
+): SpiralLmsNodeDisplayContext {
+  return {
+    ...buildSpiralLmsRecomputeContext(nodes, progressByNodeId, now),
+    slugToArticleId,
+    publishedAtByContentId,
+  };
 }
 
 export function spiralLmsDisplayStatusLabel(status: SpiralLmsDisplayStatus): string {

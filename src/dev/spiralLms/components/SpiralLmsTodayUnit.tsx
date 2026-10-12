@@ -1,20 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui';
-import type { SpiralLmsNode, SpiralLmsUserProgress } from '../../../types/spiralLms';
+import type { SpiralLmsNode } from '../../../types/spiralLms';
 import {
   pickTodaySpiralUnit,
   resolveSpiralNodeDisplayStatus,
   spiralLmsDisplayStatusLabel,
   spiralLmsLevelLabel,
   spiralLmsQuadrantLabel,
+  type SpiralLmsNodeDisplayContext,
 } from '../../../utils/spiralLmsNodeDisplay';
 
 type SpiralLmsTodayUnitProps = {
   nodes: readonly SpiralLmsNode[];
-  progressByNodeId: Readonly<Record<string, SpiralLmsUserProgress | undefined>>;
-  slugToArticleId: Readonly<Record<string, string>>;
-  now: Date;
+  displayContext: SpiralLmsNodeDisplayContext;
   isSignedIn: boolean;
 };
 
@@ -28,12 +27,10 @@ function articleHref(slug: string, slugToArticleId: Readonly<Record<string, stri
 
 export const SpiralLmsTodayUnit: React.FC<SpiralLmsTodayUnitProps> = ({
   nodes,
-  progressByNodeId,
-  slugToArticleId,
-  now,
+  displayContext,
   isSignedIn,
 }) => {
-  const todayNode = isSignedIn ? pickTodaySpiralUnit(nodes, progressByNodeId, now) : null;
+  const todayNode = isSignedIn ? pickTodaySpiralUnit(nodes, displayContext) : null;
 
   return (
     <Card variant="brand">
@@ -49,7 +46,7 @@ export const SpiralLmsTodayUnit: React.FC<SpiralLmsTodayUnitProps> = ({
 
         {isSignedIn && !todayNode ? (
           <p className="text-sm text-[color:var(--text-secondary)]" role="status">
-            いま「学習可能」な単元はありません。整備点検一覧で状態を確認してください。
+            いま「学習中」または「学習可能」な単元はありません。整備点検一覧で状態を確認してください。
           </p>
         ) : null}
 
@@ -62,10 +59,7 @@ export const SpiralLmsTodayUnit: React.FC<SpiralLmsTodayUnitProps> = ({
               </p>
               <h3 className="mt-1 text-lg font-semibold text-[color:var(--text-primary)]">{todayNode.title}</h3>
               <p className="mt-1 text-sm text-[color:var(--text-secondary)]">
-                状態:{' '}
-                {spiralLmsDisplayStatusLabel(
-                  resolveSpiralNodeDisplayStatus(todayNode, progressByNodeId, now),
-                )}
+                状態: {spiralLmsDisplayStatusLabel(resolveSpiralNodeDisplayStatus(todayNode, displayContext))}
               </p>
             </div>
 
@@ -75,7 +69,7 @@ export const SpiralLmsTodayUnit: React.FC<SpiralLmsTodayUnitProps> = ({
                 {todayNode.contents
                   .filter((row) => row.is_required)
                   .map((row) => {
-                    const href = articleHref(row.content_slug, slugToArticleId);
+                    const href = articleHref(row.content_slug, displayContext.slugToArticleId);
                     return (
                       <li key={row.content_slug}>
                         {href ? (
@@ -94,11 +88,11 @@ export const SpiralLmsTodayUnit: React.FC<SpiralLmsTodayUnitProps> = ({
               </ul>
             </div>
 
-            {progressByNodeId[todayNode.id] ? (
+            {displayContext.progressByNodeId[todayNode.id] ? (
               <p className="text-xs text-[color:var(--text-secondary)]">
-                試行 {progressByNodeId[todayNode.id]?.attempts ?? 0} 回
-                {progressByNodeId[todayNode.id]?.last_attempt_at
-                  ? ` · 最終: ${new Date(progressByNodeId[todayNode.id]!.last_attempt_at!).toLocaleString('ja-JP')}`
+                試行 {displayContext.progressByNodeId[todayNode.id]?.attempts ?? 0} 回
+                {displayContext.progressByNodeId[todayNode.id]?.last_attempt_at
+                  ? ` · 最終: ${new Date(displayContext.progressByNodeId[todayNode.id]!.last_attempt_at!).toLocaleString('ja-JP')}`
                   : ''}
               </p>
             ) : (

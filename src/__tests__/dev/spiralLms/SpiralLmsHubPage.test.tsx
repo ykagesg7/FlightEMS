@@ -57,12 +57,12 @@ describe('SpiralLmsHubPage', () => {
     vi.unstubAllEnvs();
   });
 
-  it('shows login prompt when signed out', async () => {
+  it('shows only login prompt when signed out', async () => {
     renderPage();
     expect(screen.getByText('ログインして進捗を表示')).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByText('今日の1単元')).toBeInTheDocument();
-      expect(screen.getByText('整備点検一覧')).toBeInTheDocument();
+      expect(screen.queryByText('整備点検一覧')).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: '今日の1単元' })).not.toBeInTheDocument();
     });
   });
 });

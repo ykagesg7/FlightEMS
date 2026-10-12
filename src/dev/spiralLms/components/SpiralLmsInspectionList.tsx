@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui';
-import type { SpiralLmsNode, SpiralLmsUserProgress } from '../../../types/spiralLms';
+import type { SpiralLmsNode } from '../../../types/spiralLms';
 import {
   listPublishedSpiralNodes,
   resolveSpiralNodeDisplayStatus,
@@ -8,12 +8,12 @@ import {
   spiralLmsLevelLabel,
   spiralLmsQuadrantLabel,
   type SpiralLmsDisplayStatus,
+  type SpiralLmsNodeDisplayContext,
 } from '../../../utils/spiralLmsNodeDisplay';
 
 type SpiralLmsInspectionListProps = {
   nodes: readonly SpiralLmsNode[];
-  progressByNodeId: Readonly<Record<string, SpiralLmsUserProgress | undefined>>;
-  now: Date;
+  displayContext: SpiralLmsNodeDisplayContext;
 };
 
 function statusBadgeClass(status: SpiralLmsDisplayStatus): string {
@@ -36,8 +36,7 @@ function statusBadgeClass(status: SpiralLmsDisplayStatus): string {
 
 export const SpiralLmsInspectionList: React.FC<SpiralLmsInspectionListProps> = ({
   nodes,
-  progressByNodeId,
-  now,
+  displayContext,
 }) => {
   const grouped = useMemo(() => {
     const published = listPublishedSpiralNodes(nodes);
@@ -79,7 +78,7 @@ export const SpiralLmsInspectionList: React.FC<SpiralLmsInspectionListProps> = (
                 </thead>
                 <tbody>
                   {levelNodes.map((node) => {
-                    const status = resolveSpiralNodeDisplayStatus(node, progressByNodeId, now);
+                    const status = resolveSpiralNodeDisplayStatus(node, displayContext);
                     return (
                       <tr
                         key={node.id}
