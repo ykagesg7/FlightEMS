@@ -30,6 +30,7 @@ export function compareSpiralLmsNodes(a: SpiralLmsNode, b: SpiralLmsNode): numbe
   return a.id.localeCompare(b.id);
 }
 
+/** 公開予定: `opens_at` 未来、または必須記事がすべて MDX `publishedAt` 未リリース（INDEX.md TODO: is_published 統合は将来）。 */
 export function isSpiralNodeScheduledForDisplay(
   node: SpiralLmsNode,
   displayContext: SpiralLmsNodeDisplayContext,

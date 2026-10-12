@@ -28,7 +28,7 @@ const SpiralLmsHubPage: React.FC = () => {
   const slugMapQuery = useQuery({
     queryKey: ['spiralLms', 'slugMap'],
     queryFn: fetchSpiralContentSlugMap,
-    enabled: featureEnabled,
+    enabled: featureEnabled && Boolean(user?.id),
     staleTime: 60_000,
   });
 

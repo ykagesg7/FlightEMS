@@ -28,7 +28,12 @@ export function isSpiralPublishedPrerequisitesMet(
   return true;
 }
 
-/** Mirrors `private.spiral_lms_z_level_gate_met`. */
+function isNodeExcludedFromZGate(node: SpiralLmsNode): boolean {
+  const flag = node.unlock_config?.exclude_from_z_gate;
+  return flag === true || flag === 'true';
+}
+
+/** Mirrors `private.spiral_lms_z_level_gate_met` (PR ④: `exclude_from_z_gate` nodes omitted). */
 export function isSpiralZLevelGateMet(
   zLevel: number,
   publishedNodes: readonly SpiralLmsNode[],
@@ -39,7 +44,10 @@ export function isSpiralZLevelGateMet(
   }
   const previousLevel = zLevel - 1;
   for (const node of publishedNodes) {
-    if (node.z_level !== previousLevel) {
+    if (!node.is_published || node.z_level !== previousLevel) {
+      continue;
+    }
+    if (isNodeExcludedFromZGate(node)) {
       continue;
     }
     if (progressByNodeId[node.id]?.status !== 'MASTERED') {
@@ -86,9 +94,10 @@ export function isSpiralNodeRecomputeLocked(
 }
 
 /**
- * Display / picker status aligned with server `recompute_node_progress` stored `status`.
- * Progress rows for MASTERED / IN_PROGRESS / AVAILABLE are trusted when not locked
- * (client lacks `user_attempts` to re-derive mastery).
+ * Hub display status when gates are open. MASTERED / IN_PROGRESS / AVAILABLE come from
+ * `user_progress` (server is authoritative; UI does not re-grade attempts or slugs).
+ * After unlock, a stale LOCKED row may still read as AVAILABLE here until the server
+ * recomputes — accepted for dev preview (see scripts/database/INDEX.md).
  */
 export function recomputeSpiralNodeStoredStatus(
   node: SpiralLmsNode,

@@ -3,7 +3,6 @@ import type { SpiralLmsNode, SpiralLmsUserProgress } from '../../types/spiralLms
 import {
   buildSpiralLmsRecomputeContext,
   isSpiralNodeRecomputeLocked,
-  isSpiralPublishedPrerequisitesMet,
   isSpiralZLevelGateMet,
   recomputeSpiralNodeStoredStatus,
 } from '../../utils/spiralLmsRecomputeStatus';
@@ -46,36 +45,7 @@ function progress(
   };
 }
 
-/**
- * Reference port of `private.spiral_lms_recompute_node_progress` status assignment
- * (without MAINTENANCE short-circuit) for equivalence checks in this file only.
- */
-function sqlRecomputeStatusReference(
-  node: SpiralLmsNode,
-  prevStatus: SpiralLmsUserProgress['status'] | undefined,
-  prevAttempts: number,
-  publishedNodes: SpiralLmsNode[],
-  progressByNodeId: Record<string, SpiralLmsUserProgress | undefined>,
-  now: Date,
-): SpiralLmsUserProgress['status'] {
-  const publishedIds = new Set(publishedNodes.filter((n) => n.is_published).map((n) => n.id));
-  const skipZ = node.unlock_config?.z_level_gate === 'off';
-  const opensLocked = node.opens_at != null && new Date(node.opens_at) > now;
-  const prereqMet = isSpiralPublishedPrerequisitesMet(node, publishedIds, progressByNodeId);
-  const zMet = isSpiralZLevelGateMet(node.z_level, publishedNodes, progressByNodeId);
-  const locked = opensLocked || !prereqMet || (!skipZ && !zMet);
-
-  const storedMastered = prevStatus === 'MASTERED';
-  const storedInProgress = prevStatus === 'IN_PROGRESS';
-
-  if (locked) return 'LOCKED';
-  if (storedMastered) return 'MASTERED';
-  if (storedInProgress) return 'IN_PROGRESS';
-  if (prereqMet && (skipZ || zMet)) return 'AVAILABLE';
-  return 'LOCKED';
-}
-
-describe('spiralLmsRecomputeStatus (SQL parity)', () => {
+describe('spiralLmsRecomputeStatus (client locking)', () => {
   const l1a = makeNode({ id: 'L1-Q1-1', z_level: 1, quadrant: 1, sort_order: 1 });
   const l1b = makeNode({
     id: 'L1-Q1-2',
@@ -93,49 +63,49 @@ describe('spiralLmsRecomputeStatus (SQL parity)', () => {
   });
   const published = [l1a, l1b, l2a];
 
-  it('matches SQL reference for z_level gate (L2 locked until all L1 mastered)', () => {
+  it('locks L2 until all non-excluded L1 nodes are mastered (z gate)', () => {
+    const l1Excluded = makeNode({
+      id: 'L1-EX',
+      z_level: 1,
+      sort_order: 3,
+      unlock_config: { exclude_from_z_gate: true },
+    });
     const progressByNodeId = {
       'L1-Q1-1': progress('L1-Q1-1', 'AVAILABLE'),
     };
-    const ctx = buildSpiralLmsRecomputeContext(published, progressByNodeId, fixedNow);
+    const ctx = buildSpiralLmsRecomputeContext([...published, l1Excluded], progressByNodeId, fixedNow);
 
+    expect(isSpiralZLevelGateMet(2, ctx.publishedNodes, progressByNodeId)).toBe(false);
     expect(isSpiralNodeRecomputeLocked(l2a, ctx)).toBe(true);
     expect(recomputeSpiralNodeStoredStatus(l2a, undefined, ctx)).toBe('LOCKED');
-
-    const ref = sqlRecomputeStatusReference(l2a, undefined, 0, published, progressByNodeId, fixedNow);
-    expect(recomputeSpiralNodeStoredStatus(l2a, undefined, ctx)).toBe(ref);
   });
 
-  it('matches SQL reference when prerequisites and z gate are satisfied', () => {
+  it('z gate passes when only exclude_from_z_gate L1 nodes are not mastered', () => {
+    const l1Regular = makeNode({ id: 'L1-REG', z_level: 1, sort_order: 1 });
+    const l1Excluded = makeNode({
+      id: 'L1-EX',
+      z_level: 1,
+      sort_order: 2,
+      unlock_config: { exclude_from_z_gate: true },
+    });
+    const l2 = makeNode({ id: 'L2-TGT', z_level: 2, sort_order: 1 });
     const progressByNodeId = {
-      'L1-Q1-1': progress('L1-Q1-1', 'MASTERED'),
-      'L1-Q1-2': progress('L1-Q1-2', 'MASTERED'),
-      'L2-Q1-1': progress('L2-Q1-1', 'AVAILABLE'),
+      'L1-REG': progress('L1-REG', 'MASTERED'),
     };
-    const ctx = buildSpiralLmsRecomputeContext(published, progressByNodeId, fixedNow);
-
-    const ref = sqlRecomputeStatusReference(
-      l2a,
-      progressByNodeId['L2-Q1-1']?.status,
-      0,
-      published,
-      progressByNodeId,
-      fixedNow,
-    );
-    expect(recomputeSpiralNodeStoredStatus(l2a, progressByNodeId['L2-Q1-1'], ctx)).toBe(ref);
-    expect(ref).toBe('AVAILABLE');
+    const ctx = buildSpiralLmsRecomputeContext([l1Regular, l1Excluded, l2], progressByNodeId, fixedNow);
+    expect(isSpiralZLevelGateMet(2, ctx.publishedNodes, progressByNodeId)).toBe(true);
   });
 
-  it('keeps server LOCKED even when prerequisite row alone would unlock (z gate)', () => {
+  it('keeps server LOCKED when z gate blocks despite stored AVAILABLE', () => {
     const progressByNodeId = {
       'L1-Q1-1': progress('L1-Q1-1', 'MASTERED'),
-      'L2-Q1-1': progress('L2-Q1-1', 'LOCKED'),
+      'L2-Q1-1': progress('L2-Q1-1', 'AVAILABLE'),
     };
     const ctx = buildSpiralLmsRecomputeContext(published, progressByNodeId, fixedNow);
     expect(recomputeSpiralNodeStoredStatus(l2a, progressByNodeId['L2-Q1-1'], ctx)).toBe('LOCKED');
   });
 
-  it('honours unlock_config z_level_gate off', () => {
+  it('honours unlock_config z_level_gate off on the target node', () => {
     const l2Off = makeNode({
       id: 'L2-Q9-1',
       z_level: 2,

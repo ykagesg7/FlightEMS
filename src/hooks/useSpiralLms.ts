@@ -23,7 +23,7 @@ export function useSpiralLms(now: Date = new Date()) {
   const nodesQuery = useQuery({
     queryKey: spiralLmsQueryKeys.nodes,
     queryFn: () => fetchSpiralLmsNodes(now),
-    enabled: featureEnabled,
+    enabled: featureEnabled && Boolean(user?.id),
     staleTime: STALE_TIME_MS,
   });
 
@@ -60,7 +60,10 @@ export function useSpiralLms(now: Date = new Date()) {
     isFeatureEnabled: featureEnabled,
     nodes,
     progressByNodeId,
-    isLoading: featureEnabled && (nodesQuery.isLoading || (Boolean(user?.id) && progressQuery.isLoading)),
+    isLoading:
+      featureEnabled &&
+      Boolean(user?.id) &&
+      (nodesQuery.isLoading || progressQuery.isLoading),
     isFetching: featureEnabled && (nodesQuery.isFetching || progressQuery.isFetching),
     error: (nodesQuery.error ?? progressQuery.error) as Error | null,
     refetch: async () => {

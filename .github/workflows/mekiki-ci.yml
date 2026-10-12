@@ -55,14 +55,16 @@ jobs:
       - name: 軍令違反チェック（lint）
         run: npm run lint
 
+      - name: PostgreSQL クライアント（螺旋 LMS Vitest 結合）
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
       - name: 単体テスト
         run: npm run test:run
 
       - name: 螺旋 LMS record_attempt 結合（Postgres）
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
-          bash scripts/database/spiral_lms_record_attempt_integration.sh
+        run: bash scripts/database/spiral_lms_record_attempt_integration.sh
 
       - name: 螺旋 LMS mini-quiz 結合（Postgres）
         run: bash scripts/database/spiral_lms_mini_quiz_integration.sh
