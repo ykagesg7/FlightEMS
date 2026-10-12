@@ -186,8 +186,18 @@ describe('spiral LMS record_attempt migration (static)', () => {
     expect(recordAttempt).toMatch(/ADD COLUMN IF NOT EXISTS content_slug text/);
     expect(recordAttempt).toMatch(/ADD COLUMN IF NOT EXISTS attempt_kind text/);
     expect(recordAttempt).toMatch(
+      /ADD COLUMN IF NOT EXISTS client_attempt_id uuid/,
+    );
+    expect(recordAttempt).toMatch(
       /attempt_kind IN \('content_view', 'mini_quiz'\)/,
     );
+  });
+
+  it('seed L1-Q2-1 and L2-Q1-2 have required node_contents', () => {
+    const seed = readFileSync(SEED_PATH, 'utf8');
+    const requiredCounts = extractRequiredContentCountByNode(seed);
+    expect((requiredCounts.get('L1-Q2-1') ?? 0) >= 1).toBe(true);
+    expect((requiredCounts.get('L2-Q1-2') ?? 0) >= 1).toBe(true);
   });
 
   it('defines SECURITY DEFINER record_attempt with fixed search_path', () => {
@@ -211,14 +221,52 @@ describe('spiral LMS record_attempt migration (static)', () => {
 
   it('revokes PUBLIC/anon and grants EXECUTE to authenticated only', () => {
     expect(recordAttempt).toMatch(
-      /REVOKE ALL ON FUNCTION public\.record_attempt\(text, text, text, numeric, boolean\) FROM PUBLIC/,
+      /REVOKE ALL ON FUNCTION public\.record_attempt\(text, text, uuid, text, numeric\) FROM PUBLIC/,
     );
     expect(recordAttempt).toMatch(
-      /REVOKE ALL ON FUNCTION public\.record_attempt\(text, text, text, numeric, boolean\) FROM anon/,
+      /REVOKE ALL ON FUNCTION public\.record_attempt\(text, text, uuid, text, numeric\) FROM anon/,
     );
     expect(recordAttempt).toMatch(
-      /GRANT EXECUTE ON FUNCTION public\.record_attempt\(text, text, text, numeric, boolean\) TO authenticated/,
+      /GRANT EXECUTE ON FUNCTION public\.record_attempt\(text, text, uuid, text, numeric\) TO authenticated/,
     );
+  });
+
+  it('uses server-side score validation without p_passed', () => {
+    expect(recordAttempt).not.toMatch(/p_passed/);
+    expect(recordAttempt).toMatch(/spiral_lms_validate_score/);
+    expect(recordAttempt).toMatch(/v_score = 100::numeric/);
+    expect(recordAttempt).toMatch(/ua\.score IS NOT NULL/);
+  });
+
+  it('declares private schema and postgres owners', () => {
+    expect(recordAttempt).toMatch(/CREATE SCHEMA IF NOT EXISTS private/);
+    expect(recordAttempt).toMatch(
+      /ALTER FUNCTION public\.record_attempt\(text, text, uuid, text, numeric\) OWNER TO postgres/,
+    );
+  });
+
+  it('enforces z-level gate and zero-required cannot master', () => {
+    expect(recordAttempt).toMatch(/spiral_lms_z_level_gate_met/);
+    expect(recordAttempt).toMatch(/WHEN count\(\*\) = 0 THEN false/);
+    expect(recordAttempt).toMatch(/z_level_gate_locked/);
+  });
+
+  it('preserves MAINTENANCE status during recompute', () => {
+    expect(recordAttempt).toMatch(/v_prev_status = 'MAINTENANCE'/);
+    expect(recordAttempt).toMatch(
+      /WHEN user_progress\.status = 'MAINTENANCE' THEN user_progress\.status/,
+    );
+  });
+
+  it('rejects unpublished learning content for content_view', () => {
+    expect(recordAttempt).toMatch(/content_not_published/);
+    expect(recordAttempt).toMatch(/spiral_lms_content_publishable/);
+  });
+
+  it('supports idempotent client_attempt_id', () => {
+    expect(recordAttempt).toMatch(/client_attempt_id_required/);
+    expect(recordAttempt).toMatch(/idx_user_attempts_user_client_attempt_id/);
+    expect(recordAttempt).toMatch(/'idempotent', true/);
   });
 
   it('ignores prerequisites on unpublished nodes', () => {

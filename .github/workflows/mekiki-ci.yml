@@ -45,6 +45,9 @@ jobs:
       - name: 単体テスト
         run: npm run test:run
 
+      - name: 螺旋 LMS record_attempt 結合（Postgres）
+        run: bash scripts/database/spiral_lms_record_attempt_integration.sh
+
       - name: ゴールデンテスト
         run: npm run test:golden
 
