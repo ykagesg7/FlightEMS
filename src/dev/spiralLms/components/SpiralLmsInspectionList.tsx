@@ -7,32 +7,14 @@ import {
   spiralLmsDisplayStatusLabel,
   spiralLmsLevelLabel,
   spiralLmsQuadrantLabel,
-  type SpiralLmsDisplayStatus,
   type SpiralLmsNodeDisplayContext,
 } from '../../../utils/spiralLmsNodeDisplay';
+import { spiralLmsDisplayStatusBadgeClass } from '../../../utils/spiralLmsDisplayStatusStyle';
 
 type SpiralLmsInspectionListProps = {
   nodes: readonly SpiralLmsNode[];
   displayContext: SpiralLmsNodeDisplayContext;
 };
-
-function statusBadgeClass(status: SpiralLmsDisplayStatus): string {
-  switch (status) {
-    case 'AVAILABLE':
-      return 'bg-green-100 text-green-800';
-    case 'IN_PROGRESS':
-      return 'bg-blue-100 text-blue-800';
-    case 'MASTERED':
-      return 'bg-gray-100 text-gray-800';
-    case 'MAINTENANCE':
-      return 'bg-amber-100 text-amber-900';
-    case 'scheduled':
-      return 'bg-purple-100 text-purple-900';
-    case 'LOCKED':
-    default:
-      return 'bg-gray-200 text-gray-700';
-  }
-}
 
 export const SpiralLmsInspectionList: React.FC<SpiralLmsInspectionListProps> = ({
   nodes,
@@ -91,7 +73,7 @@ export const SpiralLmsInspectionList: React.FC<SpiralLmsInspectionListProps> = (
                         <td className="px-3 py-2">{node.title}</td>
                         <td className="px-3 py-2">
                           <span
-                            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(status)}`}
+                            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${spiralLmsDisplayStatusBadgeClass(status)}`}
                           >
                             {spiralLmsDisplayStatusLabel(status)}
                           </span>
