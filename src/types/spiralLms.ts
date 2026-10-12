@@ -62,6 +62,8 @@ export type SpiralLmsNode = SpiralLmsNodeRow & {
 
 export type SpiralLmsUserProgress = SpiralLmsUserProgressRow & {
   opensAtLocked: boolean;
+  /** Client display status combining server `status` and `opens_at` unlock (PR ③). */
+  effectiveStatus: SpiralLmsNodeStatus;
 };
 
 export type SpiralLmsRecordAttemptResponse = {
@@ -74,9 +76,18 @@ export type SpiralLmsRecordAttemptResponse = {
   content_slug: string | null;
 };
 
-export type SpiralLmsRecordAttemptInput = {
+export type SpiralLmsContentViewAttemptInput = {
   nodeId: string;
-  attemptKind: SpiralLmsAttemptKind;
-  contentSlug?: string | null;
-  score?: number | null;
+  attemptKind: 'content_view';
+  contentSlug: string;
 };
+
+export type SpiralLmsMiniQuizAttemptInput = {
+  nodeId: string;
+  attemptKind: 'mini_quiz';
+  score: number;
+};
+
+export type SpiralLmsRecordAttemptInput =
+  | SpiralLmsContentViewAttemptInput
+  | SpiralLmsMiniQuizAttemptInput;

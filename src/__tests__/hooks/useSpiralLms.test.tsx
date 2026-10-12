@@ -28,29 +28,29 @@ function createWrapper() {
     React.createElement(QueryClientProvider, { client: queryClient }, children);
 }
 
-const sampleNode = {
-  id: 'L1-Q1-01',
-  title: 'Node',
-  quadrant: 1,
-  z_level: 1,
-  sort_order: 1,
-  passing_score: 80,
-  unlock_config: {},
-  is_published: true,
-  opens_at: '2026-10-13T00:00:00.000Z',
-  created_at: '2026-10-01T00:00:00.000Z',
-  updated_at: '2026-10-01T00:00:00.000Z',
-  opensAtLocked: true,
-  prerequisites: [],
-  contents: [],
-};
-
 describe('useSpiralLms', () => {
   const fixedNow = new Date('2026-10-12T12:00:00.000Z');
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockFetchNodes.mockResolvedValue([sampleNode]);
+    mockFetchNodes.mockResolvedValue([
+      {
+        id: 'L1-Q1-01',
+        title: 'Node',
+        quadrant: 1,
+        z_level: 1,
+        sort_order: 1,
+        passing_score: 80,
+        unlock_config: {},
+        is_published: true,
+        opens_at: '2026-10-11T00:00:00.000Z',
+        created_at: '2026-10-01T00:00:00.000Z',
+        updated_at: '2026-10-01T00:00:00.000Z',
+        opensAtLocked: false,
+        prerequisites: [],
+        contents: [],
+      },
+    ]);
     mockFetchProgress.mockResolvedValue({
       'L1-Q1-01': {
         user_id: 'user-1',
@@ -60,7 +60,8 @@ describe('useSpiralLms', () => {
         last_attempt_at: null,
         mastered_at: null,
         updated_at: '2026-10-01T00:00:00.000Z',
-        opensAtLocked: true,
+        opensAtLocked: false,
+        effectiveStatus: 'LOCKED',
       },
     });
     mockUseAuthStore.mockImplementation((selector) =>
@@ -107,10 +108,11 @@ describe('useSpiralLms', () => {
     expect(mockFetchNodes).toHaveBeenCalledWith(fixedNow);
     expect(mockFetchProgress).toHaveBeenCalledWith(
       'user-1',
-      { 'L1-Q1-01': '2026-10-13T00:00:00.000Z' },
+      { 'L1-Q1-01': '2026-10-11T00:00:00.000Z' },
       fixedNow,
     );
     expect(result.current.progressByNodeId['L1-Q1-01']?.status).toBe('LOCKED');
+    expect(result.current.progressByNodeId['L1-Q1-01']?.effectiveStatus).toBe('AVAILABLE');
   });
 
   it('skips progress fetch when logged out', async () => {

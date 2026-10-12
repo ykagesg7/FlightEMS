@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SpiralLmsRecordAttemptError } from '../../utils/spiralLmsRecordAttemptError';
 
 const mockCallRecordAttempt = vi.fn();
 
@@ -56,7 +57,7 @@ describe('useRecordSpiralAttempt', () => {
     vi.unstubAllGlobals();
   });
 
-  it('sends record_attempt with a generated client_attempt_id', async () => {
+  it('sends content_view with automatic score 100', async () => {
     const { result } = renderHook(() => useRecordSpiralAttempt(), {
       wrapper: createWrapper(),
     });
@@ -66,7 +67,6 @@ describe('useRecordSpiralAttempt', () => {
         nodeId: 'L1-Q1-01',
         attemptKind: 'content_view',
         contentSlug: 'slug-a',
-        score: 100,
       });
     });
 
@@ -79,9 +79,30 @@ describe('useRecordSpiralAttempt', () => {
     });
   });
 
+  it('validates mini_quiz score before RPC', async () => {
+    const { result } = renderHook(() => useRecordSpiralAttempt(), {
+      wrapper: createWrapper(),
+    });
+
+    await act(async () => {
+      await result.current
+        .recordAttemptAsync({
+          nodeId: 'L1-Q1-01',
+          attemptKind: 'mini_quiz',
+          score: 150,
+        })
+        .catch(() => undefined);
+    });
+
+    expect(mockCallRecordAttempt).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(result.current.recordAttemptErrorKind).toBe('invalid_score');
+    });
+  });
+
   it('reuses client_attempt_id on retry', async () => {
     mockCallRecordAttempt
-      .mockRejectedValueOnce(new Error('network'))
+      .mockRejectedValueOnce(new SpiralLmsRecordAttemptError('network', 'Failed to fetch'))
       .mockResolvedValueOnce(rpcResponse);
 
     const { result } = renderHook(() => useRecordSpiralAttempt(), {
@@ -98,6 +119,10 @@ describe('useRecordSpiralAttempt', () => {
         .catch(() => undefined);
     });
 
+    await waitFor(() => {
+      expect(result.current.recordAttemptErrorKind).toBe('network');
+    });
+
     await act(async () => {
       result.current.retryRecordAttempt();
     });
@@ -111,20 +136,50 @@ describe('useRecordSpiralAttempt', () => {
     expect(firstId).toBe(secondId);
   });
 
-  it('throws when feature flag is off', async () => {
+  it('classifies RPC errors on the hook', async () => {
+    mockCallRecordAttempt.mockRejectedValueOnce(
+      new SpiralLmsRecordAttemptError('node_locked', 'node_locked'),
+    );
+
+    const { result } = renderHook(() => useRecordSpiralAttempt(), {
+      wrapper: createWrapper(),
+    });
+
+    await act(async () => {
+      await result.current
+        .recordAttemptAsync({
+          nodeId: 'L1-Q1-01',
+          attemptKind: 'content_view',
+          contentSlug: 'slug-a',
+        })
+        .catch(() => undefined);
+    });
+
+    await waitFor(() => {
+      expect(result.current.recordAttemptErrorKind).toBe('node_locked');
+      expect(result.current.recordAttemptErrorInfo?.kind).toBe('node_locked');
+    });
+  });
+
+  it('reports unknown when feature flag is off', async () => {
     vi.stubEnv('VITE_SPIRAL_LMS_ENABLED', '');
 
     const { result } = renderHook(() => useRecordSpiralAttempt(), {
       wrapper: createWrapper(),
     });
 
-    await expect(
-      result.current.recordAttemptAsync({
-        nodeId: 'L1-Q1-01',
-        attemptKind: 'content_view',
-        contentSlug: 'slug-a',
-        score: 100,
-      }),
-    ).rejects.toThrow('spiral_lms_disabled');
+    await act(async () => {
+      await result.current
+        .recordAttemptAsync({
+          nodeId: 'L1-Q1-01',
+          attemptKind: 'content_view',
+          contentSlug: 'slug-a',
+        })
+        .catch(() => undefined);
+    });
+
+    await waitFor(() => {
+      expect(result.current.recordAttemptErrorKind).toBe('unknown');
+    });
   });
 });

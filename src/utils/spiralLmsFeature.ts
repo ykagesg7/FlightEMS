@@ -6,6 +6,5 @@ export function isSpiralLmsFeatureEnabled(): boolean {
   if (!import.meta.env.DEV) {
     return false;
   }
-  const raw = import.meta.env.VITE_SPIRAL_LMS_ENABLED;
-  return raw === 'true' || raw === '1';
+  return import.meta.env.VITE_SPIRAL_LMS_ENABLED === 'true';
 }

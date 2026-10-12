@@ -161,5 +161,6 @@
 - 結合テストへロック・RLS/anon・opens_at未来・未公開記事拒否・MAINTENANCE非上書き・同時送信の試験を追加（別PR）
 - MAINTENANCE付与・遡及（別PR）
 - 採点はPR④
+- **本番適用後**: Supabase MCP `generate_typescript_types` で `src/types/database.types.ts` を再生成し、`src/types/spiralLmsDatabase.ts` の暫定スキーマを統合する（PR ③ フックは暫定型を使用中）
 
 詳細リストは増やさず、`docs/**/*.md` 内のリンクを**検索キーにする**。新規のワンオフ適用でも、名前は `YYYYMMDD_目的_snake_case.sql` を維持する。

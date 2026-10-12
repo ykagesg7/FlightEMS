@@ -1,17 +1,45 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import type {
   SpiralLmsRecordAttemptInput,
   SpiralLmsRecordAttemptResponse,
 } from '../types/spiralLms';
 import { callRecordAttempt } from '../utils/spiralLmsApi';
 import { isSpiralLmsFeatureEnabled } from '../utils/spiralLmsFeature';
+import {
+  SpiralLmsRecordAttemptError,
+  classifySpiralLmsRecordAttemptError,
+  type SpiralLmsRecordAttemptErrorKind,
+} from '../utils/spiralLmsRecordAttemptError';
+import { assertValidSpiralLmsScore } from '../utils/spiralLmsScore';
 import { useAuthStore } from '../stores/authStore';
+
+const CONTENT_VIEW_PASSING_SCORE = 100;
+
 function createClientAttemptId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();
   }
   throw new Error('crypto.randomUUID is not available');
+}
+
+function resolveRpcPayload(input: SpiralLmsRecordAttemptInput): {
+  contentSlug: string | null;
+  score: number;
+} {
+  if (input.attemptKind === 'content_view') {
+    const slug = input.contentSlug.trim();
+    if (!slug) {
+      throw new SpiralLmsRecordAttemptError(
+        'unknown',
+        'content_slug_required',
+      );
+    }
+    return { contentSlug: slug, score: CONTENT_VIEW_PASSING_SCORE };
+  }
+
+  assertValidSpiralLmsScore(input.score);
+  return { contentSlug: null, score: input.score };
 }
 
 /**
@@ -34,23 +62,29 @@ export function useRecordSpiralAttempt() {
     ): Promise<SpiralLmsRecordAttemptResponse> => {
       lastInputRef.current = input;
       if (!featureEnabled) {
-        throw new Error('spiral_lms_disabled');
+        throw new SpiralLmsRecordAttemptError('unknown', 'spiral_lms_disabled');
       }
       if (!user?.id) {
-        throw new Error('not_authenticated');
+        throw new SpiralLmsRecordAttemptError('not_authenticated', 'not_authenticated');
       }
+
+      const { contentSlug, score } = resolveRpcPayload(input);
 
       if (!clientAttemptIdRef.current) {
         clientAttemptIdRef.current = createClientAttemptId();
       }
 
-      return callRecordAttempt({
-        nodeId: input.nodeId,
-        attemptKind: input.attemptKind,
-        clientAttemptId: clientAttemptIdRef.current,
-        contentSlug: input.contentSlug,
-        score: input.score,
-      });
+      try {
+        return await callRecordAttempt({
+          nodeId: input.nodeId,
+          attemptKind: input.attemptKind,
+          clientAttemptId: clientAttemptIdRef.current,
+          contentSlug,
+          score,
+        });
+      } catch (error) {
+        throw classifySpiralLmsRecordAttemptError(error);
+      }
     },
     onSuccess: () => {
       clientAttemptIdRef.current = null;
@@ -86,6 +120,22 @@ export function useRecordSpiralAttempt() {
     recordAttempt(input, { retry: true });
   }, [recordAttempt]);
 
+  const recordAttemptError = mutation.error;
+  const recordAttemptErrorKind: SpiralLmsRecordAttemptErrorKind | null = useMemo(() => {
+    if (!recordAttemptError) {
+      return null;
+    }
+    return classifySpiralLmsRecordAttemptError(recordAttemptError).kind;
+  }, [recordAttemptError]);
+
+  const recordAttemptErrorInfo = useMemo(() => {
+    if (!recordAttemptError) {
+      return null;
+    }
+    const classified = classifySpiralLmsRecordAttemptError(recordAttemptError);
+    return { kind: classified.kind, message: classified.message };
+  }, [recordAttemptError]);
+
   return {
     ...mutation,
     isFeatureEnabled: featureEnabled,
@@ -95,5 +145,7 @@ export function useRecordSpiralAttempt() {
     recordAttempt,
     recordAttemptAsync,
     retryRecordAttempt,
+    recordAttemptErrorKind,
+    recordAttemptErrorInfo,
   };
 }

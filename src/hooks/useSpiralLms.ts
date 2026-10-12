@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import type { SpiralLmsNode, SpiralLmsUserProgress } from '../types/spiralLms';
 import { fetchSpiralLmsNodes, fetchSpiralLmsUserProgress } from '../utils/spiralLmsApi';
+import { attachSpiralEffectiveStatuses } from '../utils/spiralLmsEffectiveStatus';
 import { isSpiralLmsFeatureEnabled } from '../utils/spiralLmsFeature';
 import { useAuthStore } from '../stores/authStore';
 
@@ -47,8 +48,13 @@ export function useSpiralLms(now: Date = new Date()) {
   });
 
   const nodes: SpiralLmsNode[] = featureEnabled ? (nodesQuery.data ?? []) : [];
-  const progressByNodeId: Record<string, SpiralLmsUserProgress> =
-    featureEnabled && user?.id ? (progressQuery.data ?? {}) : {};
+
+  const progressByNodeId: Record<string, SpiralLmsUserProgress> = useMemo(() => {
+    if (!featureEnabled || !user?.id || !progressQuery.data) {
+      return {};
+    }
+    return attachSpiralEffectiveStatuses(nodes, progressQuery.data, now);
+  }, [featureEnabled, nodes, now, progressQuery.data, user?.id]);
 
   return {
     isFeatureEnabled: featureEnabled,
