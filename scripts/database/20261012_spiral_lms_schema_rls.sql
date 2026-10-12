@@ -1,5 +1,7 @@
 -- Spiral matrix LMS (MVP PR ①): catalog + learner progress tables and RLS.
--- Apply via Supabase migration pipeline only (not part of this PR's deploy).
+-- Apply via Supabase migration pipeline only after 上様 approval (not in this PR deploy).
+-- CREATE TABLE IF NOT EXISTS does not add new columns to an already-applied table;
+-- use follow-up migrations for column changes on existing environments.
 
 BEGIN;
 
@@ -15,9 +17,13 @@ CREATE TABLE IF NOT EXISTS public.nodes (
   passing_score numeric,
   unlock_config jsonb NOT NULL DEFAULT '{}'::jsonb,
   is_published boolean NOT NULL DEFAULT false,
+  opens_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+ALTER TABLE public.nodes
+  ADD COLUMN IF NOT EXISTS opens_at timestamptz;
 
 CREATE INDEX IF NOT EXISTS idx_nodes_z_quadrant_sort
   ON public.nodes (z_level, quadrant, sort_order);
@@ -66,8 +72,12 @@ CREATE TABLE IF NOT EXISTS public.user_progress (
   attempts integer NOT NULL DEFAULT 0 CHECK (attempts >= 0),
   last_attempt_at timestamptz,
   mastered_at timestamptz,
+  updated_at timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (user_id, node_id)
 );
+
+ALTER TABLE public.user_progress
+  ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now();
 
 CREATE INDEX IF NOT EXISTS idx_user_progress_user
   ON public.user_progress (user_id);
@@ -86,6 +96,19 @@ CREATE TABLE IF NOT EXISTS public.user_attempts (
 
 CREATE INDEX IF NOT EXISTS idx_user_attempts_user_node_created
   ON public.user_attempts (user_id, node_id, created_at DESC);
+
+-- Reuse project-standard updated_at trigger helper (see question_issue_reports).
+DROP TRIGGER IF EXISTS trg_spiral_nodes_updated_at ON public.nodes;
+CREATE TRIGGER trg_spiral_nodes_updated_at
+  BEFORE UPDATE ON public.nodes
+  FOR EACH ROW
+  EXECUTE FUNCTION public.set_question_issue_reports_updated_at();
+
+DROP TRIGGER IF EXISTS trg_spiral_user_progress_updated_at ON public.user_progress;
+CREATE TRIGGER trg_spiral_user_progress_updated_at
+  BEFORE UPDATE ON public.user_progress
+  FOR EACH ROW
+  EXECUTE FUNCTION public.set_question_issue_reports_updated_at();
 
 -- ---------------------------------------------------------------------------
 -- RLS
@@ -113,6 +136,12 @@ CREATE POLICY node_prerequisites_select_published ON public.node_prerequisites
       FROM public.nodes n
       WHERE n.id = node_prerequisites.node_id
         AND n.is_published = true
+    )
+    AND EXISTS (
+      SELECT 1
+      FROM public.nodes p
+      WHERE p.id = node_prerequisites.prerequisite_node_id
+        AND p.is_published = true
     )
   );
 
@@ -142,11 +171,11 @@ CREATE POLICY user_attempts_select_own ON public.user_attempts
   TO authenticated
   USING (user_id = (SELECT auth.uid()));
 
-REVOKE ALL ON TABLE public.nodes FROM PUBLIC;
-REVOKE ALL ON TABLE public.node_prerequisites FROM PUBLIC;
-REVOKE ALL ON TABLE public.node_contents FROM PUBLIC;
-REVOKE ALL ON TABLE public.user_progress FROM PUBLIC;
-REVOKE ALL ON TABLE public.user_attempts FROM PUBLIC;
+REVOKE ALL ON TABLE public.nodes FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE public.node_prerequisites FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE public.node_contents FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE public.user_progress FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE public.user_attempts FROM PUBLIC, anon, authenticated;
 
 GRANT SELECT ON TABLE public.nodes TO anon, authenticated;
 GRANT SELECT ON TABLE public.node_prerequisites TO anon, authenticated;
@@ -156,6 +185,8 @@ GRANT SELECT ON TABLE public.user_attempts TO authenticated;
 
 COMMENT ON TABLE public.nodes IS
   'Spiral LMS learning units (quadrant × z_level). Coordinates derived at render time.';
+COMMENT ON COLUMN public.nodes.opens_at IS
+  'Optional future publish time for 公開予定 UI; NULL means no scheduled gate.';
 COMMENT ON TABLE public.node_contents IS
   'MDX content slugs attached to a node; is_required drives completion before mini-quiz.';
 COMMENT ON TABLE public.user_progress IS
