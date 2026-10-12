@@ -178,9 +178,9 @@ assert_sql "L1-ART mastered for z gate" \
   "SELECT (public.record_attempt('L1-ART', 'content_view', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0008'::uuid, '/articles/speak-before-asked', 100)->>'node_status');" \
   "MASTERED"
 
-assert_sql "L2-A available after L1 gate cleared" \
+assert_sql "L2-A unlocked (not LOCKED) after L1 z gate cleared" \
   "SELECT status FROM public.user_progress WHERE user_id = '${TEST_USER}'::uuid AND node_id = 'L2-A';" \
-  "AVAILABLE"
+  "IN_PROGRESS"
 
 # (2) Zero required content cannot MASTERED (only optional link)
 assert_sql "L2-ZERO not MASTERED with zero required content" \
