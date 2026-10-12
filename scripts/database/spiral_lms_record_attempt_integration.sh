@@ -36,6 +36,10 @@ run_psql() {
   docker exec -i "$CONTAINER_NAME" psql -v ON_ERROR_STOP=1 -U postgres "$@"
 }
 
+run_psql_file() {
+  docker exec -i "$CONTAINER_NAME" psql -v ON_ERROR_STOP=1 -U postgres < "$1"
+}
+
 run_psql -f - <<'SQL'
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
@@ -74,8 +78,8 @@ VALUES
 ON CONFLICT (id) DO UPDATE SET is_published = EXCLUDED.is_published;
 SQL
 
-run_psql -f "$DB_DIR/20261012_spiral_lms_schema_rls.sql"
-run_psql -f "$DB_DIR/20261012_spiral_lms_record_attempt.sql"
+run_psql_file "$DB_DIR/20261012_spiral_lms_schema_rls.sql"
+run_psql_file "$DB_DIR/20261012_spiral_lms_record_attempt.sql"
 
 run_psql -f - <<'SQL'
 INSERT INTO auth.users (id) VALUES
