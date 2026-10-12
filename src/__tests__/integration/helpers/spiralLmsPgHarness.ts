@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { SpiralLmsNode, SpiralLmsNodeStatus, SpiralLmsUserProgress } from '../../../types/spiralLms';
 import { isSpiralNodeOpensAtLocked } from '../../../utils/spiralLmsOpensAt';
@@ -34,6 +35,30 @@ function runSqlFile(relativePath: string): void {
 
 let migrationsApplied = false;
 
+/** FK targets for spiral_content_slug_map seed (production DB already has these). */
+function seedLearningContentsForSlugMap(): void {
+  const slugMapSql = readFileSync(join(DB_DIR, '20261012_spiral_lms_content_slug_map.sql'), 'utf8');
+  const ids = new Set<string>();
+  const rowRe = /^\s+\('[^']+',\s*'([^']+)'\)/;
+  for (const line of slugMapSql.split('\n')) {
+    const match = rowRe.exec(line);
+    if (match) {
+      ids.add(match[1]);
+    }
+  }
+  if (ids.size === 0) {
+    return;
+  }
+  const values = [...ids]
+    .map((id) => `('${id.replace(/'/g, "''")}','${id.replace(/'/g, "''")}','PPL',true)`)
+    .join(',\n');
+  psql(`
+INSERT INTO public.learning_contents (id, title, category, is_published)
+VALUES ${values}
+ON CONFLICT (id) DO UPDATE SET is_published = true;
+`);
+}
+
 export function ensureSpiralLmsMigrations(): void {
   if (migrationsApplied) {
     return;
@@ -62,6 +87,7 @@ CREATE TABLE IF NOT EXISTS public.learning_contents (
 `);
 
   runSqlFile('20261012_spiral_lms_schema_rls.sql');
+  seedLearningContentsForSlugMap();
   runSqlFile('20261012_spiral_lms_content_slug_map.sql');
   runSqlFile('20261012_spiral_lms_record_attempt.sql');
   runSqlFile('20261012_spiral_lms_mdx_mini_quiz.sql');
