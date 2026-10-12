@@ -385,10 +385,17 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W43': {
     isoWeek: '2026-W43',
-    seriesTitle: 'FN（編隊）',
+    seriesTitle: 'FN（編隊）＋メンタリティ',
     intro:
-      '来週は空中の居場所と運用チェック（水・金）。Fingertip / Route、Ops check / FENCE。日曜メンタリティ枠は稿未承認のため空け。',
+      '来週は７つの習慣その４（日）と編隊2本（水・金）。Win-Win、Fingertip / Route、Ops check / FENCE。',
     articles: [
+      {
+        id: '1.1.4_WinWinThinking',
+        publishDate: '2026-10-18',
+        title: '【７つの習慣】その４、道真公と学ぶ「Win-Winを考える」',
+        slug: '/articles/win-win-thinking',
+        hook: '同期を蹴落とす目は捨てろ。編隊の公的成功へ。',
+      },
       {
         id: 'FMT-1-3_FingertipRoute',
         publishDate: '2026-10-21',

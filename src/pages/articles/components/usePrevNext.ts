@@ -1,13 +1,13 @@
 import articleMetas from 'virtual:articles-index';
 import { useMemo } from 'react';
-import { filterPublishedArticleContents } from '../../../constants/articleHubCategories';
+import { filterReleasedArticleContents } from '../../../constants/articleHubCategories';
 import { useLearningProgress } from '../../../hooks/useLearningProgress';
 import { getArticleNavigationNeighbors } from '../../../utils/articleNavigation';
 
 export function usePrevNext(currentId: string) {
   const { learningContents } = useLearningProgress();
   const list = useMemo(
-    () => filterPublishedArticleContents(learningContents),
+    () => filterReleasedArticleContents(learningContents, articleMetas),
     [learningContents]
   );
   const neighbors = useMemo(

@@ -1,7 +1,7 @@
 import articleMetas from 'virtual:articles-index';
 import React, { useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { filterPublishedArticleContents } from '../../../constants/articleHubCategories';
+import { filterReleasedArticleContents } from '../../../constants/articleHubCategories';
 import { useLearningProgress } from '../../../hooks/useLearningProgress';
 import { getArticleNavigationNeighbors } from '../../../utils/articleNavigation';
 
@@ -19,7 +19,7 @@ export const PrevNextNav: React.FC<{ currentId: string; listPath?: string }> = (
   const navigate = useNavigate();
 
   const list = useMemo(
-    () => filterPublishedArticleContents(learningContents),
+    () => filterReleasedArticleContents(learningContents, articleMetas),
     [learningContents]
   );
 

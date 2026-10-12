@@ -29,11 +29,11 @@ function mockContent(
 }
 
 describe('articleHubCategories', () => {
-  it('allows habits 1–3; habits 4–7 withheld until Sunday-slot approval', () => {
+  it('allows habits 1–4; habits 5–7 withheld until Sunday-slot approval', () => {
     expect(isWithdrawnArticle('1.1.1_UnconsciousSuccess')).toBe(false);
     expect(isWithdrawnArticle('1.1.2_EndWithFuture')).toBe(false);
     expect(isWithdrawnArticle('1.1.3_PrioritizingMostImportant')).toBe(false);
-    expect(isWithdrawnArticle('1.1.4_WinWinThinking')).toBe(true);
+    expect(isWithdrawnArticle('1.1.4_WinWinThinking')).toBe(false);
     expect(isWithdrawnArticle('1.1.5_SeekFirstToUnderstand')).toBe(true);
     expect(isWithdrawnArticle('1.1.6_Synergize')).toBe(true);
     expect(isWithdrawnArticle('1.1.7_SharpenTheSaw')).toBe(true);
@@ -49,6 +49,7 @@ describe('articleHubCategories', () => {
       '1.1.1_UnconsciousSuccess',
       '1.1.2_EndWithFuture',
       '1.1.3_PrioritizingMostImportant',
+      '1.1.4_WinWinThinking',
     ]);
   });
 
