@@ -16,6 +16,16 @@ const MINI_QUIZ_DEV_SEED_PATH = join(
   DB_DIR,
   'dev/20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql',
 );
+const MINI_QUIZ_VERSION_PATH = join(
+  DB_DIR,
+  '20261013_spiral_lms_mini_quiz_version_pass.sql',
+);
+const MINI_QUIZ_VERSION_DOWN_PATH = join(
+  DB_DIR,
+  '20261013_spiral_lms_mini_quiz_version_pass.down.sql',
+);
+const FK_INDEX_PATH = join(DB_DIR, '20261013_spiral_lms_fk_support_indexes.sql');
+const FK_INDEX_DOWN_PATH = join(DB_DIR, '20261013_spiral_lms_fk_support_indexes.down.sql');
 const CONTENT_ROOT = join(process.cwd(), 'src/content');
 
 const SPIRAL_TABLES = [
@@ -390,6 +400,53 @@ describe('spiral LMS MDX mini-quiz migration (static)', () => {
     expect(devSeed).toMatch(/SPIRAL-DEV-MINI/);
     expect(devSeed).toMatch(/exclude_from_z_gate/);
     expect(devSeed).toMatch(/private\.node_mini_quiz_answer_keys/);
+  });
+});
+
+describe('spiral LMS mini-quiz version pass migration (static)', () => {
+  const versionSql = readFileSync(MINI_QUIZ_VERSION_PATH, 'utf8');
+
+  it('stores mini_quiz_version without exposing answer key material', () => {
+    expect(versionSql).toMatch(/mini_quiz_version text/);
+    expect(versionSql).toMatch(/stem_revision integer/);
+    expect(versionSql).toMatch(/key_revision integer/);
+    expect(versionSql).toMatch(/spiral_lms_canonical_chunk/);
+    expect(versionSql).toMatch(/spiral_lms_node_mini_quiz_version/);
+    expect(versionSql).toMatch(/spiral_lms_mini_quiz_met/);
+    expect(versionSql).toMatch(/spiral_lms_user_node_mini_quiz_ever_passed/);
+    expect(versionSql).toMatch(/spiral_lms_record_attempt_core/);
+    const versionFn =
+      versionSql.match(
+        /CREATE OR REPLACE FUNCTION private\.spiral_lms_node_mini_quiz_version[\s\S]*?\$\$;/,
+      )?.[0] ?? '';
+    expect(versionFn.length).toBeGreaterThan(0);
+    expect(versionFn).not.toMatch(/correct_option_ids/);
+    expect(versionFn).not.toMatch(/\bmd5\s*\(/i);
+  });
+
+  it('provides a down migration restoring PR ④ function bodies', () => {
+    const downSql = readFileSync(MINI_QUIZ_VERSION_DOWN_PATH, 'utf8');
+    expect(downSql).toMatch(/spiral_lms_mini_quiz_met/);
+    expect(downSql).toMatch(/spiral_lms_user_node_mini_quiz_ever_passed/);
+    expect(downSql).toMatch(/spiral_lms_record_attempt_core/);
+    expect(downSql).toMatch(/DROP COLUMN IF EXISTS mini_quiz_version/);
+  });
+});
+
+describe('spiral LMS FK support indexes migration (static)', () => {
+  const indexSql = readFileSync(FK_INDEX_PATH, 'utf8');
+
+  it('adds indexes on slug map learning_content_id and user_attempts node_id', () => {
+    expect(indexSql).toMatch(/idx_spiral_content_slug_map_learning_content_id/);
+    expect(indexSql).toMatch(/idx_user_attempts_node_id/);
+  });
+
+  it('provides a down migration dropping FK support indexes', () => {
+    const downSql = readFileSync(FK_INDEX_DOWN_PATH, 'utf8');
+    expect(downSql).toMatch(/DROP INDEX IF EXISTS public\.idx_user_attempts_node_id/);
+    expect(downSql).toMatch(
+      /DROP INDEX IF EXISTS public\.idx_spiral_content_slug_map_learning_content_id/,
+    );
   });
 });
 
