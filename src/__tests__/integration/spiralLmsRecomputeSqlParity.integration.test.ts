@@ -19,6 +19,8 @@ import {
   psql,
   psqlLastLine,
   resetSpiralCatalog,
+  runSpiralLmsFkSupportIndexesDown,
+  runSpiralLmsFkSupportIndexesUp,
   runSpiralLmsMiniQuizVersionPassDown,
   runSpiralLmsMiniQuizVersionPassUp,
   spiralMiniQuizVersionColumnExists,
@@ -224,6 +226,17 @@ describePg('spiral LMS mini-quiz version parity (Postgres)', () => {
     expect(sqlVersion).not.toMatch(/correct_option/);
   });
 
+  it('TS version string matches SQL for emoji prompts (code point length)', () => {
+    upsertNode({ id: 'MQ-EMO', z_level: 1, passing_score: 80 });
+    const prompt = '天気🛫?';
+    insertMiniQuizStem('MQ-EMO', VERSION_QUESTION_A, 1, prompt);
+
+    const sqlVersion = sqlMiniQuizVersion('MQ-EMO');
+    const tsVersion = computeSpiralMiniQuizVersionFromRows(fetchVersionRows('MQ-EMO'));
+    expect(tsVersion).toBe(sqlVersion);
+    expect([...prompt].length).toBe(4);
+  });
+
   it('submit_mini_quiz stores version without answer key material; stem revision invalidates pass', () => {
     upsertNode({ id: 'MQ-REV', z_level: 1, passing_score: 80 });
     insertMiniQuizStem('MQ-REV', VERSION_QUESTION_A);
@@ -313,6 +326,63 @@ FROM (
     expect(sqlMiniQuizEverPassed(SPIRAL_PG_TEST_USER, 'MQ-KEY')).toBe('f');
   });
 
+  function expectPassInvalidatedAfterVersionChange(nodeId: string, versionBefore: string): void {
+    const versionAfter = sqlMiniQuizVersion(nodeId);
+    expect(versionAfter).not.toBe(versionBefore);
+    expect(sqlMiniQuizMet(SPIRAL_PG_TEST_USER, nodeId)).toBe('f');
+    expect(sqlMiniQuizEverPassed(SPIRAL_PG_TEST_USER, nodeId)).toBe('f');
+  }
+
+  it('DELETE then INSERT (dev seed style) bumps revision and invalidates pass', () => {
+    upsertNode({ id: 'MQ-DELINS', z_level: 1, passing_score: 80 });
+    insertMiniQuizStem('MQ-DELINS', VERSION_QUESTION_A);
+
+    submitMiniQuiz('MQ-DELINS', [{ questionId: VERSION_QUESTION_A, optionId: 'a' }], randomUUID());
+    expect(sqlMiniQuizMet(SPIRAL_PG_TEST_USER, 'MQ-DELINS')).toBe('t');
+    const versionBefore = sqlMiniQuizVersion('MQ-DELINS');
+
+    psql(`DELETE FROM public.node_mini_quiz_questions WHERE node_id = 'MQ-DELINS';`);
+    insertMiniQuizStem('MQ-DELINS', VERSION_QUESTION_A);
+
+    expectPassInvalidatedAfterVersionChange('MQ-DELINS', versionBefore);
+  });
+
+  it('TRUNCATE questions then reinsert bumps revision and invalidates pass', () => {
+    upsertNode({ id: 'MQ-TRUNC', z_level: 1, passing_score: 80 });
+    insertMiniQuizStem('MQ-TRUNC', VERSION_QUESTION_A);
+
+    submitMiniQuiz('MQ-TRUNC', [{ questionId: VERSION_QUESTION_A, optionId: 'a' }], randomUUID());
+    expect(sqlMiniQuizMet(SPIRAL_PG_TEST_USER, 'MQ-TRUNC')).toBe('t');
+    const versionBefore = sqlMiniQuizVersion('MQ-TRUNC');
+
+    psql(`TRUNCATE public.node_mini_quiz_questions CASCADE;`);
+    insertMiniQuizStem('MQ-TRUNC', VERSION_QUESTION_A);
+
+    expectPassInvalidatedAfterVersionChange('MQ-TRUNC', versionBefore);
+  });
+
+  it('manual stem_revision downgrade is ignored on UPDATE (sequence assigns new revision)', () => {
+    upsertNode({ id: 'MQ-MANUAL', z_level: 1, passing_score: 80 });
+    insertMiniQuizStem('MQ-MANUAL', VERSION_QUESTION_A);
+
+    submitMiniQuiz('MQ-MANUAL', [{ questionId: VERSION_QUESTION_A, optionId: 'a' }], randomUUID());
+    expect(sqlMiniQuizMet(SPIRAL_PG_TEST_USER, 'MQ-MANUAL')).toBe('t');
+    const versionBefore = sqlMiniQuizVersion('MQ-MANUAL');
+
+    psql(`
+UPDATE public.node_mini_quiz_questions
+SET stem_revision = 1
+WHERE id = '${VERSION_QUESTION_A}'::uuid;
+`);
+
+    const storedRevision = psql(
+      `SELECT stem_revision::text FROM public.node_mini_quiz_questions WHERE id = '${VERSION_QUESTION_A}'::uuid;`,
+    );
+    expect(storedRevision).not.toBe('1');
+
+    expectPassInvalidatedAfterVersionChange('MQ-MANUAL', versionBefore);
+  });
+
   it('ever_passed hides results until pass on current version', () => {
     upsertNode({ id: 'MQ-HIDE', z_level: 1, passing_score: 80 });
     insertMiniQuizStem('MQ-HIDE', VERSION_QUESTION_A);
@@ -335,14 +405,15 @@ FROM (
     expect(wrongJson.score).toBeUndefined();
   });
 
-  it('version pass migration up → down → up restores behavior', () => {
+  it('version pass and fk_support_indexes migrations up → down → up restore behavior', () => {
     upsertNode({ id: 'MQ-UPDOWN', z_level: 1, passing_score: 80 });
     insertMiniQuizStem('MQ-UPDOWN', VERSION_QUESTION_A);
 
-    const versionBeforeDown = sqlMiniQuizVersion('MQ-UPDOWN');
     expect(spiralMiniQuizVersionColumnExists()).toBe(true);
 
     runSpiralLmsMiniQuizVersionPassDown();
+    runSpiralLmsFkSupportIndexesDown();
+    runSpiralLmsFkSupportIndexesUp();
     expect(spiralMiniQuizVersionColumnExists()).toBe(false);
 
     psql(`
@@ -360,7 +431,7 @@ VALUES (
 
     runSpiralLmsMiniQuizVersionPassUp();
     expect(spiralMiniQuizVersionColumnExists()).toBe(true);
-    expect(sqlMiniQuizVersion('MQ-UPDOWN')).toBe(versionBeforeDown);
+    expect(sqlMiniQuizVersion('MQ-UPDOWN').startsWith('v2|s|')).toBe(true);
 
     psql(`DELETE FROM public.user_attempts WHERE node_id = 'MQ-UPDOWN';`);
     psql(`

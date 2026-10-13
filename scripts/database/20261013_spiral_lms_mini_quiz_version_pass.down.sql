@@ -183,11 +183,17 @@ ALTER TABLE public.user_attempts
 ALTER TABLE public.user_attempts
   DROP COLUMN IF EXISTS mini_quiz_version;
 
+DROP TRIGGER IF EXISTS trg_node_mini_quiz_answer_keys_assign_key_revision ON private.node_mini_quiz_answer_keys;
 DROP TRIGGER IF EXISTS trg_node_mini_quiz_answer_keys_bump_key_revision ON private.node_mini_quiz_answer_keys;
+DROP TRIGGER IF EXISTS trg_node_mini_quiz_questions_assign_stem_revision ON public.node_mini_quiz_questions;
 DROP TRIGGER IF EXISTS trg_node_mini_quiz_questions_bump_stem_revision ON public.node_mini_quiz_questions;
 
+DROP FUNCTION IF EXISTS private.spiral_lms_assign_answer_key_revision();
+DROP FUNCTION IF EXISTS private.spiral_lms_assign_question_stem_revision();
 DROP FUNCTION IF EXISTS private.spiral_lms_bump_answer_key_revision();
 DROP FUNCTION IF EXISTS private.spiral_lms_bump_question_stem_revision();
+
+DROP SEQUENCE IF EXISTS private.spiral_lms_mini_quiz_revision_seq;
 DROP FUNCTION IF EXISTS private.spiral_lms_node_mini_quiz_version(text);
 DROP FUNCTION IF EXISTS private.spiral_lms_canonical_chunk(text);
 

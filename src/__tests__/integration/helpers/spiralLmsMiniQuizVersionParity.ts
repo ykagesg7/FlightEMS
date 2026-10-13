@@ -11,8 +11,10 @@ export type SpiralMiniQuizVersionRow = {
   readonly key_revision: number;
 };
 
+/** Matches PostgreSQL `length(text)` (Unicode code points), not JS UTF-16 units. */
 function canonicalChunk(text: string): string {
-  return `${text.length}:${text}`;
+  const codePointLength = [...text].length;
+  return `${codePointLength}:${text}`;
 }
 
 function sortVersionRows(rows: readonly SpiralMiniQuizVersionRow[]): SpiralMiniQuizVersionRow[] {

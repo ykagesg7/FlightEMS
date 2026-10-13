@@ -15,7 +15,7 @@ ALTER TABLE public.node_mini_quiz_questions
   CHECK (stem_revision >= 1);
 
 COMMENT ON COLUMN public.node_mini_quiz_questions.stem_revision IS
-  'Monotonic revision when prompt/options/type/sort_order change; included in mini_quiz_version (no answer material).';
+  'Global sequence revision on every INSERT/UPDATE; included in mini_quiz_version (no answer material). Manual values are ignored.';
 
 ALTER TABLE private.node_mini_quiz_answer_keys
   ADD COLUMN IF NOT EXISTS key_revision integer NOT NULL DEFAULT 1;
@@ -28,52 +28,66 @@ ALTER TABLE private.node_mini_quiz_answer_keys
   CHECK (key_revision >= 1);
 
 COMMENT ON COLUMN private.node_mini_quiz_answer_keys.key_revision IS
-  'Monotonic revision when correct_option_ids change; revision number only is exposed via mini_quiz_version.';
+  'Global sequence revision on every INSERT/UPDATE; revision number only is exposed via mini_quiz_version. Manual values are ignored.';
 
-CREATE OR REPLACE FUNCTION private.spiral_lms_bump_question_stem_revision()
+CREATE SEQUENCE IF NOT EXISTS private.spiral_lms_mini_quiz_revision_seq;
+
+DROP FUNCTION IF EXISTS private.spiral_lms_bump_question_stem_revision();
+DROP FUNCTION IF EXISTS private.spiral_lms_bump_answer_key_revision();
+
+UPDATE public.node_mini_quiz_questions
+SET stem_revision = nextval('private.spiral_lms_mini_quiz_revision_seq')
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM pg_trigger
+  WHERE tgname = 'trg_node_mini_quiz_questions_assign_stem_revision'
+    AND tgrelid = 'public.node_mini_quiz_questions'::regclass
+);
+
+UPDATE private.node_mini_quiz_answer_keys k
+SET key_revision = nextval('private.spiral_lms_mini_quiz_revision_seq')
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM pg_trigger
+  WHERE tgname = 'trg_node_mini_quiz_answer_keys_assign_key_revision'
+    AND tgrelid = 'private.node_mini_quiz_answer_keys'::regclass
+);
+
+CREATE OR REPLACE FUNCTION private.spiral_lms_assign_question_stem_revision()
 RETURNS trigger
 LANGUAGE plpgsql
 SET search_path = public
 AS $$
 BEGIN
-  IF TG_OP = 'UPDATE'
-     AND (
-       NEW.prompt IS DISTINCT FROM OLD.prompt
-       OR NEW.question_type IS DISTINCT FROM OLD.question_type
-       OR NEW.options IS DISTINCT FROM OLD.options
-       OR NEW.sort_order IS DISTINCT FROM OLD.sort_order
-     ) THEN
-    NEW.stem_revision := OLD.stem_revision + 1;
-  END IF;
+  NEW.stem_revision := nextval('private.spiral_lms_mini_quiz_revision_seq');
   RETURN NEW;
 END;
 $$;
 
 DROP TRIGGER IF EXISTS trg_node_mini_quiz_questions_bump_stem_revision ON public.node_mini_quiz_questions;
-CREATE TRIGGER trg_node_mini_quiz_questions_bump_stem_revision
-  BEFORE UPDATE ON public.node_mini_quiz_questions
+DROP TRIGGER IF EXISTS trg_node_mini_quiz_questions_assign_stem_revision ON public.node_mini_quiz_questions;
+CREATE TRIGGER trg_node_mini_quiz_questions_assign_stem_revision
+  BEFORE INSERT OR UPDATE ON public.node_mini_quiz_questions
   FOR EACH ROW
-  EXECUTE FUNCTION private.spiral_lms_bump_question_stem_revision();
+  EXECUTE FUNCTION private.spiral_lms_assign_question_stem_revision();
 
-CREATE OR REPLACE FUNCTION private.spiral_lms_bump_answer_key_revision()
+CREATE OR REPLACE FUNCTION private.spiral_lms_assign_answer_key_revision()
 RETURNS trigger
 LANGUAGE plpgsql
 SET search_path = public
 AS $$
 BEGIN
-  IF TG_OP = 'UPDATE'
-     AND NEW.correct_option_ids IS DISTINCT FROM OLD.correct_option_ids THEN
-    NEW.key_revision := OLD.key_revision + 1;
-  END IF;
+  NEW.key_revision := nextval('private.spiral_lms_mini_quiz_revision_seq');
   RETURN NEW;
 END;
 $$;
 
 DROP TRIGGER IF EXISTS trg_node_mini_quiz_answer_keys_bump_key_revision ON private.node_mini_quiz_answer_keys;
-CREATE TRIGGER trg_node_mini_quiz_answer_keys_bump_key_revision
-  BEFORE UPDATE ON private.node_mini_quiz_answer_keys
+DROP TRIGGER IF EXISTS trg_node_mini_quiz_answer_keys_assign_key_revision ON private.node_mini_quiz_answer_keys;
+CREATE TRIGGER trg_node_mini_quiz_answer_keys_assign_key_revision
+  BEFORE INSERT OR UPDATE ON private.node_mini_quiz_answer_keys
   FOR EACH ROW
-  EXECUTE FUNCTION private.spiral_lms_bump_answer_key_revision();
+  EXECUTE FUNCTION private.spiral_lms_assign_answer_key_revision();
 
 CREATE OR REPLACE FUNCTION private.spiral_lms_canonical_chunk(p_text text)
 RETURNS text
@@ -336,16 +350,18 @@ END;
 $$;
 
 ALTER FUNCTION private.spiral_lms_canonical_chunk(text) OWNER TO postgres;
-ALTER FUNCTION private.spiral_lms_bump_question_stem_revision() OWNER TO postgres;
-ALTER FUNCTION private.spiral_lms_bump_answer_key_revision() OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_assign_question_stem_revision() OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_assign_answer_key_revision() OWNER TO postgres;
+ALTER SEQUENCE private.spiral_lms_mini_quiz_revision_seq OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_node_mini_quiz_version(text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_mini_quiz_met(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_user_node_mini_quiz_ever_passed(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_record_attempt_core(uuid, text, text, uuid, text, numeric, boolean, jsonb, jsonb) OWNER TO postgres;
 
 REVOKE ALL ON FUNCTION private.spiral_lms_canonical_chunk(text) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION private.spiral_lms_bump_question_stem_revision() FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION private.spiral_lms_bump_answer_key_revision() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_assign_question_stem_revision() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_assign_answer_key_revision() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON SEQUENCE private.spiral_lms_mini_quiz_revision_seq FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_node_mini_quiz_version(text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_mini_quiz_met(uuid, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_user_node_mini_quiz_ever_passed(uuid, text) FROM PUBLIC, anon, authenticated;
