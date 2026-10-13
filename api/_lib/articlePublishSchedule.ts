@@ -401,7 +401,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         publishDate: '2026-10-21',
         title: '第3話：空中の居場所 ～FingertipとRoute～',
         slug: '/articles/fmt-1-3-fingertip-route',
-        hook: 'helmet abeam slab bolt。Routeは2 ship widths〜500 ft。',
+        hook: 'FingertipとRoute、二つの居場所。修正レートを支配してPIOを断ち、ワングランス・ワンチェックで点検せよ。',
       },
       {
         id: 'FMT-1-4_OpsCheckFence',
