@@ -2,7 +2,7 @@
 
 **正本**: 本書（別チャットの Agent はここを先に読む）  
 **作成**: 2026-08-08  
-**最終更新**: 2026-10-06（2026-W40 正本 L0 マージ待ち）  
+**最終更新**: 2026-10-13（2026-W41 正本 L0 マージ待ち）  
 **実施ペース**: **火曜 09:00 JST**（ISO 週: 月曜 00:00〜日曜 23:59、プロパティ TZ = Asia/Tokyo）。欠席週は行を飛ばさず「スキップ」理由を1行残す。**土曜に別窓で埋めない。**
 
 関連:
@@ -82,11 +82,11 @@
 
 | ID | 課題 | 優先 | 状態 | 次アクション | 最終言及 |
 |----|------|------|------|--------------|----------|
-| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に UTM を検討。W40 は (direct) 主体（44/61 sess）。referral 16 — メール切り出し困難 | W40 |
-| T-02 | ボリュームが小さい（週間 users 十〜数十）でファネル統計が不安定 | 低 | watch | W40 は **users 27**（W39: 17）。週次比較はノイズ大 | W40 |
-| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W40 は `/planning` PV 115。`chunk_recovery_reload` **1**。Sentry は CI 未取得 | W40 |
-| T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W40: kebab 記事着地 `CPL-Hub-Navigation`。`/planning/3d-popout` はアプリ経路（記事 kebab 対象外）。リダイレクト継続確認 | W40 |
-| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。W40 は quiz_* イベント **0** | W36 |
+| T-01 | メール導線に UTM がなく GA 上ほぼ `(direct)` / Google ログイン referral | 中 | open | Brevo 週間ダイジェスト URL に UTM を検討。W41 も referral 主体（5/14 sess）でメール切り出し困難 | W41 |
+| T-02 | ボリュームが小さい（週間 users 十〜数十）でファネル統計が不安定 | 低 | watch | W41 は **users 10**（W40: 27）。週次比較はノイズ大 | W41 |
+| T-03 | `/planning` stale chunk（`FLIGHT-ACADEMY-4`） | 中 | open | W41 は `/planning` PV 10。`chunk_recovery_reload` **1**。Sentry は CI 未取得 | W41 |
+| T-04 | kebab slug メールリンク → 正規 ID リダイレクト | — | closed | W41 でも kebab 着地あり（`3d-popout`）。リダイレクト継続確認 | W41 |
+| T-05 | **A2-a** 科目 default 5問 — subject 完走率の改善検証 | 高 | open | W36 ベースライン → W37–W38 計測 → W39 判定。W41 にも quiz_* イベント **1** | W36 |
 
 ---
 
@@ -123,6 +123,47 @@
 ---
 
 ## 週次ログ（新しい週が上）
+
+### 2026-W41（2026-10-05〜2026-10-11 / レビュー 2026-10-13）
+
+**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 38356622311](https://github.com/ykagesg7/FlightEMS/actions/runs/38356622311) / Sentry MCP（未取得）
+**比較**: 直前 ISO 週 2026-W40 のみ（旧土曜窓とは比べない）
+
+#### 現状（Facts）
+
+| 指標 | 今週 | 直前 ISO 週 |
+|------|-----:|------------:|
+| activeUsers | **10** | 27 |
+| sessions | **14** | 61 |
+| screenPageViews | **31** | 193 |
+| engagedSessions | **7** | 38 |
+
+- **日次**: 20261005: users 1 / sess 2 / PV 2、20261006: users 5 / sess 6 / PV 6、20261008: users 1 / sess 1 / PV 9、20261009: users 1 / sess 1 / PV 0、20261010: users 3 / sess 3 / PV 6、20261011: users 1 / sess 1 / PV 8
+- **上位ページ**: `/planning` PV 10、`/` PV 8、`/articles` PV 4、`/auth` PV 3、`/articles/1.1.3_PrioritizingMostImportant` PV 2、`/explore/airspace-3d` PV 2、`/planning/3d-popout` PV 1、`/test` PV 1
+- **流入**: (direct) / (none) sess 8、accounts.google.com / referral sess 5、bing / organic sess 1
+- **端末**: desktop sess 7、mobile sess 7
+- **イベント**: `chunk_recovery_reload` 1、`quiz_hub_view` 1
+- **Sentry**: CI 未取得。7d unresolved / `FLIGHT-ACADEMY-4` lastSeen は未確認。
+
+#### 課題（Issues）
+
+1. users は直前 ISO 比で減少（10 / 前週 27）。PV 31（前週 193）（T-02）。
+2. 流入は referral 主体（5/14 sess）でメール効果が見えない（T-01）。
+3. Sentry は CI 未取得。GA 上の `chunk_recovery_reload` は 1（T-03）。
+4. quiz_* イベント 1（T-05）。
+
+#### 解決案（Actions）
+
+- [ ] T-01: 次のダイジェスト送信前に UTM 付与を実装検討（承認後）。
+- [ ] T-03: Desktop Sentry MCP または Issues UI で `FLIGHT-ACADEMY-4` lastSeen を確認。
+- [ ] T-05: W41 の quiz 計測をベースラインに残す。
+- [x] T-04: W41 でも kebab 着地を再確認 → closed 維持。
+
+#### メモ / 生データ
+
+- Actions artifact `ga4-2026-W41`（正本には生 JSON を貼らない）
+
+---
 
 ### 2026-W40（2026-09-28〜2026-10-04 / レビュー 2026-10-06）
 
@@ -504,6 +545,7 @@
 
 | 日付 | 内容 |
 |------|------|
+| 2026-10-13 | 自動追記 **2026-W41**（フェーズ2b CI）。Sentry は CI 未取得。 |
 | 2026-10-06 | 自動追記 **2026-W40**（フェーズ2b CI）。Sentry は CI 未取得。 |
 | 2026-09-29 | 自動追記 **2026-W39**（フェーズ2b CI）。Sentry は CI 未取得。 |
 | 2026-09-22 | 自動追記 **2026-W38**（フェーズ2b CI）。Sentry は CI 未取得。 |
