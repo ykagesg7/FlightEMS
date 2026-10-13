@@ -16,6 +16,7 @@ import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
 
 // Enhanced Error Boundary and Layout
 import { GoogleAnalyticsTracker } from './components/GoogleAnalyticsTracker';
+import { VercelWebAnalytics } from './components/VercelWebAnalytics';
 import { PasswordRecoveryGuard } from './components/auth/PasswordRecoveryGuard';
 import ScrollManager from './components/ScrollManager';
 import { RouteErrorElement } from './components/RouteErrorElement';
@@ -73,6 +74,7 @@ function AppShell() {
       {import.meta.env.PROD && import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ? (
         <GoogleAnalyticsTracker />
       ) : null}
+      {import.meta.env.PROD ? <VercelWebAnalytics /> : null}
       <ScrollManager />
       <PasswordRecoveryGuard />
       <Outlet />
