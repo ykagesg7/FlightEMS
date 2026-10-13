@@ -1,6 +1,5 @@
-import { createHash } from 'node:crypto';
+/** Test-only mirror of `private.spiral_lms_node_mini_quiz_version` (20261013 migration). */
 
-/** Row shape used to mirror `private.spiral_lms_node_mini_quiz_version` in SQL. */
 export type SpiralMiniQuizVersionRow = {
   readonly sort_order: number;
   readonly id: string;
@@ -8,23 +7,36 @@ export type SpiralMiniQuizVersionRow = {
   readonly question_type: string;
   /** PostgreSQL `options::text` (jsonb cast). */
   readonly options_text: string;
-  readonly correct_option_ids: readonly string[];
+  readonly stem_revision: number;
+  readonly key_revision: number;
 };
 
-/**
- * Mirrors `private.spiral_lms_node_mini_quiz_version` (20261013 migration).
- */
-export function computeSpiralMiniQuizVersionFingerprint(
+function canonicalChunk(text: string): string {
+  return `${text.length}:${text}`;
+}
+
+function sortVersionRows(rows: readonly SpiralMiniQuizVersionRow[]): SpiralMiniQuizVersionRow[] {
+  return [...rows].sort((a, b) => a.sort_order - b.sort_order || a.id.localeCompare(b.id));
+}
+
+export function computeSpiralMiniQuizVersionFromRows(
   rows: readonly SpiralMiniQuizVersionRow[],
 ): string {
-  const sorted = [...rows].sort((a, b) => a.sort_order - b.sort_order);
-  const payload = sorted
+  const sorted = sortVersionRows(rows);
+  const stemPart = sorted
     .map(
       (row) =>
-        `${row.id}|${row.prompt}|${row.question_type}|${row.options_text}|${row.correct_option_ids.join(',')}`,
+        canonicalChunk(row.id) +
+        canonicalChunk(row.prompt) +
+        canonicalChunk(row.question_type) +
+        canonicalChunk(row.options_text) +
+        canonicalChunk(String(row.stem_revision)),
     )
-    .join('##');
-  return createHash('md5').update(payload).digest('hex');
+    .join('');
+  const keyPart = sorted
+    .map((row) => canonicalChunk(row.id) + canonicalChunk(String(row.key_revision)))
+    .join('');
+  return `v2|s|${stemPart}|k|${keyPart}`;
 }
 
 export type SpiralMiniQuizPassAttempt = {
@@ -49,6 +61,16 @@ export function isSpiralMiniQuizPassCountedForVersion(
 
 /** Mirrors `private.spiral_lms_user_node_mini_quiz_ever_passed` for the current version. */
 export function isSpiralMiniQuizEverPassedForCurrentVersion(
+  attempts: readonly SpiralMiniQuizPassAttempt[],
+  passingScore: number,
+  currentVersion: string,
+): boolean {
+  return attempts.some((attempt) =>
+    isSpiralMiniQuizPassCountedForVersion(attempt, passingScore, currentVersion),
+  );
+}
+
+export function tsMiniQuizMet(
   attempts: readonly SpiralMiniQuizPassAttempt[],
   passingScore: number,
   currentVersion: string,

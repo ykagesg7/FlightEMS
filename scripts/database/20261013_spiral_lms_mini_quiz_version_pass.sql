@@ -1,14 +1,88 @@
 -- Spiral matrix LMS: tie mini-quiz pass / result disclosure to the current question-set version.
 -- Apply via Supabase migration pipeline only after 上様 approval.
--- Design: a pass on an older fingerprint does not count toward MASTERED or ever_passed on the current set.
+-- mini_quiz_version is learner-visible: stems use stem_revision; keys use key_revision only (no answer ids).
 
 BEGIN;
 
-ALTER TABLE public.user_attempts
-  ADD COLUMN IF NOT EXISTS mini_quiz_version text;
+ALTER TABLE public.node_mini_quiz_questions
+  ADD COLUMN IF NOT EXISTS stem_revision integer NOT NULL DEFAULT 1;
 
-COMMENT ON COLUMN public.user_attempts.mini_quiz_version IS
-  'MD5 fingerprint of stems + answer keys at attempt time. Pass counts only when it matches the node current version.';
+ALTER TABLE public.node_mini_quiz_questions
+  DROP CONSTRAINT IF EXISTS node_mini_quiz_questions_stem_revision_positive;
+
+ALTER TABLE public.node_mini_quiz_questions
+  ADD CONSTRAINT node_mini_quiz_questions_stem_revision_positive
+  CHECK (stem_revision >= 1);
+
+COMMENT ON COLUMN public.node_mini_quiz_questions.stem_revision IS
+  'Monotonic revision when prompt/options/type/sort_order change; included in mini_quiz_version (no answer material).';
+
+ALTER TABLE private.node_mini_quiz_answer_keys
+  ADD COLUMN IF NOT EXISTS key_revision integer NOT NULL DEFAULT 1;
+
+ALTER TABLE private.node_mini_quiz_answer_keys
+  DROP CONSTRAINT IF EXISTS node_mini_quiz_answer_keys_key_revision_positive;
+
+ALTER TABLE private.node_mini_quiz_answer_keys
+  ADD CONSTRAINT node_mini_quiz_answer_keys_key_revision_positive
+  CHECK (key_revision >= 1);
+
+COMMENT ON COLUMN private.node_mini_quiz_answer_keys.key_revision IS
+  'Monotonic revision when correct_option_ids change; revision number only is exposed via mini_quiz_version.';
+
+CREATE OR REPLACE FUNCTION private.spiral_lms_bump_question_stem_revision()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = public
+AS $$
+BEGIN
+  IF TG_OP = 'UPDATE'
+     AND (
+       NEW.prompt IS DISTINCT FROM OLD.prompt
+       OR NEW.question_type IS DISTINCT FROM OLD.question_type
+       OR NEW.options IS DISTINCT FROM OLD.options
+       OR NEW.sort_order IS DISTINCT FROM OLD.sort_order
+     ) THEN
+    NEW.stem_revision := OLD.stem_revision + 1;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_node_mini_quiz_questions_bump_stem_revision ON public.node_mini_quiz_questions;
+CREATE TRIGGER trg_node_mini_quiz_questions_bump_stem_revision
+  BEFORE UPDATE ON public.node_mini_quiz_questions
+  FOR EACH ROW
+  EXECUTE FUNCTION private.spiral_lms_bump_question_stem_revision();
+
+CREATE OR REPLACE FUNCTION private.spiral_lms_bump_answer_key_revision()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = public
+AS $$
+BEGIN
+  IF TG_OP = 'UPDATE'
+     AND NEW.correct_option_ids IS DISTINCT FROM OLD.correct_option_ids THEN
+    NEW.key_revision := OLD.key_revision + 1;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_node_mini_quiz_answer_keys_bump_key_revision ON private.node_mini_quiz_answer_keys;
+CREATE TRIGGER trg_node_mini_quiz_answer_keys_bump_key_revision
+  BEFORE UPDATE ON private.node_mini_quiz_answer_keys
+  FOR EACH ROW
+  EXECUTE FUNCTION private.spiral_lms_bump_answer_key_revision();
+
+CREATE OR REPLACE FUNCTION private.spiral_lms_canonical_chunk(p_text text)
+RETURNS text
+LANGUAGE sql
+IMMUTABLE
+SET search_path = public
+AS $$
+  SELECT length(coalesce(p_text, ''))::text || ':' || coalesce(p_text, '');
+$$;
 
 CREATE OR REPLACE FUNCTION private.spiral_lms_node_mini_quiz_version(p_node_id text)
 RETURNS text
@@ -17,23 +91,50 @@ STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT md5(coalesce((
-    SELECT string_agg(
-      q.id::text
-        || '|' || q.prompt
-        || '|' || q.question_type
-        || '|' || q.options::text
-        || '|' || array_to_string(k.correct_option_ids, ','),
-      '##' ORDER BY q.sort_order
-    )
-    FROM public.node_mini_quiz_questions q
-    INNER JOIN private.node_mini_quiz_answer_keys k ON k.question_id = q.id
-    WHERE q.node_id = p_node_id
-  ), ''));
+  SELECT 'v2'
+    || coalesce(
+      (
+        SELECT '|s|' || coalesce(
+          (
+            SELECT string_agg(
+              private.spiral_lms_canonical_chunk(q.id::text)
+                || private.spiral_lms_canonical_chunk(q.prompt)
+                || private.spiral_lms_canonical_chunk(q.question_type)
+                || private.spiral_lms_canonical_chunk(q.options::text)
+                || private.spiral_lms_canonical_chunk(q.stem_revision::text),
+              '' ORDER BY q.sort_order, q.id
+            )
+            FROM public.node_mini_quiz_questions q
+            WHERE q.node_id = p_node_id
+          ),
+          ''
+        )
+        || '|k|' || coalesce(
+          (
+            SELECT string_agg(
+              private.spiral_lms_canonical_chunk(q.id::text)
+                || private.spiral_lms_canonical_chunk(k.key_revision::text),
+              '' ORDER BY q.sort_order, q.id
+            )
+            FROM public.node_mini_quiz_questions q
+            INNER JOIN private.node_mini_quiz_answer_keys k ON k.question_id = q.id
+            WHERE q.node_id = p_node_id
+          ),
+          ''
+        )
+      ),
+      '|s||k|'
+    );
 $$;
 
 COMMENT ON FUNCTION private.spiral_lms_node_mini_quiz_version(text) IS
-  'Content fingerprint for a node mini-quiz; changes when stems or answer keys change.';
+  'Learner-visible quiz set version: length-prefixed stems + per-question key_revision integers (no correct_option_ids).';
+
+ALTER TABLE public.user_attempts
+  ADD COLUMN IF NOT EXISTS mini_quiz_version text;
+
+COMMENT ON COLUMN public.user_attempts.mini_quiz_version IS
+  'Snapshot of spiral_lms_node_mini_quiz_version at attempt time; no answer key material.';
 
 UPDATE public.user_attempts ua
 SET mini_quiz_version = private.spiral_lms_node_mini_quiz_version(ua.node_id)
@@ -234,13 +335,18 @@ BEGIN
 END;
 $$;
 
+ALTER FUNCTION private.spiral_lms_canonical_chunk(text) OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_bump_question_stem_revision() OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_bump_answer_key_revision() OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_node_mini_quiz_version(text) OWNER TO postgres;
-REVOKE ALL ON FUNCTION private.spiral_lms_node_mini_quiz_version(text) FROM PUBLIC, anon, authenticated;
-
 ALTER FUNCTION private.spiral_lms_mini_quiz_met(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_user_node_mini_quiz_ever_passed(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_record_attempt_core(uuid, text, text, uuid, text, numeric, boolean, jsonb, jsonb) OWNER TO postgres;
 
+REVOKE ALL ON FUNCTION private.spiral_lms_canonical_chunk(text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_bump_question_stem_revision() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_bump_answer_key_revision() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_node_mini_quiz_version(text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_mini_quiz_met(uuid, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_user_node_mini_quiz_ever_passed(uuid, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_record_attempt_core(uuid, text, text, uuid, text, numeric, boolean, jsonb, jsonb) FROM PUBLIC, anon, authenticated;
