@@ -24,6 +24,19 @@ export function psql(sql: string): string {
   }).trim();
 }
 
+/** Last line of psql output (skips echoed `SET` lines when using JWT claim setup). */
+export function psqlLastLine(sql: string): string {
+  const lines = psql(sql)
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+  const last = lines.at(-1);
+  if (!last) {
+    throw new Error('empty psql result');
+  }
+  return last;
+}
+
 function runSqlFile(relativePath: string): void {
   const full = join(DB_DIR, relativePath);
   const url = spiralPgUrl();
@@ -91,8 +104,20 @@ CREATE TABLE IF NOT EXISTS public.learning_contents (
   runSqlFile('20261012_spiral_lms_content_slug_map.sql');
   runSqlFile('20261012_spiral_lms_record_attempt.sql');
   runSqlFile('20261012_spiral_lms_mdx_mini_quiz.sql');
+  runSqlFile('20261013_spiral_lms_mini_quiz_version_pass.sql');
+  runSqlFile('20261013_spiral_lms_fk_support_indexes.sql');
 
   migrationsApplied = true;
+}
+
+export function sqlMiniQuizVersion(nodeId: string): string {
+  return psql(`SELECT private.spiral_lms_node_mini_quiz_version('${nodeId}');`);
+}
+
+export function sqlMiniQuizMet(userId: string, nodeId: string): string {
+  return psql(
+    `SELECT private.spiral_lms_mini_quiz_met('${userId}'::uuid, '${nodeId}');`,
+  );
 }
 
 export function resetSpiralCatalog(): void {
@@ -279,7 +304,7 @@ VALUES (
   1,
   'test?',
   'single',
-  '[{"id":"a","text":"A"}]'::jsonb
+  '[{"id":"a","text":"A"},{"id":"b","text":"B"}]'::jsonb
 )
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO private.node_mini_quiz_answer_keys (question_id, correct_option_ids)

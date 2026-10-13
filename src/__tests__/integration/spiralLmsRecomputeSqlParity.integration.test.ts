@@ -1,8 +1,14 @@
+import { randomUUID } from 'node:crypto';
 import { describe, expect, it, afterAll, beforeAll, beforeEach } from 'vitest';
 import {
   buildSpiralLmsRecomputeContext,
   recomputeSpiralNodeStoredStatus,
 } from '../../utils/spiralLmsRecomputeStatus';
+import {
+  computeSpiralMiniQuizVersionFingerprint,
+  isSpiralMiniQuizEverPassedForCurrentVersion,
+  isSpiralMiniQuizPassCountedForVersion,
+} from '../../utils/spiralLmsMiniQuizVersion';
 import {
   SPIRAL_PG_TEST_USER,
   ensureSpiralLmsMigrations,
@@ -10,8 +16,11 @@ import {
   fetchSpiralProgressFromDb,
   insertMiniQuizStem,
   psql,
+  psqlLastLine,
   resetSpiralCatalog,
   spiralPgUrl,
+  sqlMiniQuizMet,
+  sqlMiniQuizVersion,
   sqlRecomputeAndReadStatus,
   upsertNode,
   upsertProgress,
@@ -90,14 +99,17 @@ describePg('spiral LMS recompute SQL parity (Postgres)', () => {
     expect(sqlRecomputeAndReadStatus(SPIRAL_PG_TEST_USER, 'MQ-ONLY')).toBe('AVAILABLE');
 
     psql(`
-INSERT INTO public.user_attempts (user_id, node_id, attempt_kind, passed, score, client_attempt_id)
+INSERT INTO public.user_attempts (
+  user_id, node_id, attempt_kind, passed, score, client_attempt_id, mini_quiz_version
+)
 VALUES (
   '${SPIRAL_PG_TEST_USER}'::uuid,
   'MQ-ONLY',
   'mini_quiz',
   true,
   90,
-  gen_random_uuid()
+  gen_random_uuid(),
+  private.spiral_lms_node_mini_quiz_version('MQ-ONLY')
 );
 `);
     expectTsMatchesSqlAfterRecompute('MQ-ONLY', now);
@@ -122,5 +134,135 @@ VALUES (
     const now = new Date();
     expectTsMatchesSqlAfterRecompute('L2-OFF', now);
     expect(sqlRecomputeAndReadStatus(SPIRAL_PG_TEST_USER, 'L2-OFF')).toBe('AVAILABLE');
+  });
+});
+
+const VERSION_QUESTION_A = 'cccccccc-cccc-cccc-cccc-cccccccccccc';
+
+function fetchVersionRows(nodeId: string) {
+  const raw = psql(`
+SELECT coalesce(json_agg(row_to_json(t) ORDER BY t.sort_order), '[]'::json)
+FROM (
+  SELECT
+    q.sort_order,
+    q.id::text AS id,
+    q.prompt,
+    q.question_type,
+    q.options::text AS options_text,
+    k.correct_option_ids
+  FROM public.node_mini_quiz_questions q
+  INNER JOIN private.node_mini_quiz_answer_keys k ON k.question_id = q.id
+  WHERE q.node_id = '${nodeId}'
+) t;
+`);
+  return JSON.parse(raw || '[]') as Array<{
+    sort_order: number;
+    id: string;
+    prompt: string;
+    question_type: string;
+    options_text: string;
+    correct_option_ids: string[];
+  }>;
+}
+
+function submitMiniQuiz(nodeId: string, questionId: string, optionId: string, clientId: string) {
+  const json = psqlLastLine(`
+SET request.jwt.claim.sub = '${SPIRAL_PG_TEST_USER}';
+SELECT public.submit_mini_quiz(
+  '${nodeId}',
+  '${clientId}'::uuid,
+  jsonb_build_array(
+    jsonb_build_object(
+      'question_id', '${questionId}',
+      'selected_option_ids', jsonb_build_array('${optionId}')
+    )
+  )
+)::text;
+`);
+  return JSON.parse(json) as {
+    passed: boolean;
+    score?: number;
+    results: unknown;
+    node_status?: string;
+  };
+}
+
+describePg('spiral LMS mini-quiz version parity (Postgres)', () => {
+  beforeAll(() => {
+    ensureSpiralLmsMigrations();
+  });
+
+  beforeEach(() => {
+    resetSpiralCatalog();
+  });
+
+  afterAll(() => {
+    resetSpiralCatalog();
+  });
+
+  it('TS fingerprint matches SQL spiral_lms_node_mini_quiz_version', () => {
+    upsertNode({ id: 'MQ-V', z_level: 1, passing_score: 80 });
+    insertMiniQuizStem('MQ-V', VERSION_QUESTION_A);
+
+    const sqlVersion = sqlMiniQuizVersion('MQ-V');
+    const tsVersion = computeSpiralMiniQuizVersionFingerprint(fetchVersionRows('MQ-V'));
+    expect(tsVersion).toBe(sqlVersion);
+  });
+
+  it('submit_mini_quiz stores version; old pass does not count after stem revision', () => {
+    upsertNode({ id: 'MQ-REV', z_level: 1, passing_score: 80 });
+    insertMiniQuizStem('MQ-REV', VERSION_QUESTION_A);
+
+    const passClient = randomUUID();
+    const passResp = submitMiniQuiz('MQ-REV', VERSION_QUESTION_A, 'a', passClient);
+    expect(passResp.passed).toBe(true);
+    expect(sqlRecomputeAndReadStatus(SPIRAL_PG_TEST_USER, 'MQ-REV')).toBe('MASTERED');
+
+    const storedVersion = psql(`
+SELECT mini_quiz_version FROM public.user_attempts
+WHERE user_id = '${SPIRAL_PG_TEST_USER}'::uuid AND client_attempt_id = '${passClient}'::uuid;
+`);
+    expect(storedVersion).toBe(sqlMiniQuizVersion('MQ-REV'));
+
+    psql(
+      `UPDATE public.node_mini_quiz_questions SET prompt = 'revised stem' WHERE id = '${VERSION_QUESTION_A}'::uuid;`,
+    );
+
+    const newVersion = sqlMiniQuizVersion('MQ-REV');
+    expect(newVersion).not.toBe(storedVersion);
+    expect(sqlMiniQuizMet(SPIRAL_PG_TEST_USER, 'MQ-REV')).toBe('f');
+    expect(sqlRecomputeAndReadStatus(SPIRAL_PG_TEST_USER, 'MQ-REV')).toBe('IN_PROGRESS');
+
+    const attempts = JSON.parse(
+      psql(`
+SELECT coalesce(json_agg(row_to_json(ua)), '[]'::json)
+FROM (
+  SELECT passed, score, mini_quiz_version
+  FROM public.user_attempts
+  WHERE user_id = '${SPIRAL_PG_TEST_USER}'::uuid AND node_id = 'MQ-REV'
+) ua;
+`),
+    ) as Array<{ passed: boolean; score: number; mini_quiz_version: string }>;
+
+    expect(isSpiralMiniQuizEverPassedForCurrentVersion(attempts, 80, newVersion)).toBe(false);
+    expect(isSpiralMiniQuizPassCountedForVersion(attempts[0], 80, newVersion)).toBe(false);
+  });
+
+  it('ever_passed hides results until pass on current version', () => {
+    upsertNode({ id: 'MQ-HIDE', z_level: 1, passing_score: 80 });
+    insertMiniQuizStem('MQ-HIDE', VERSION_QUESTION_A);
+
+    const passClient = randomUUID();
+    submitMiniQuiz('MQ-HIDE', VERSION_QUESTION_A, 'a', passClient);
+
+    psql(
+      `UPDATE public.node_mini_quiz_questions SET prompt = 'rev2' WHERE id = '${VERSION_QUESTION_A}'::uuid;`,
+    );
+
+    const wrongClient = randomUUID();
+    const wrongJson = submitMiniQuiz('MQ-HIDE', VERSION_QUESTION_A, 'b', wrongClient);
+    expect(wrongJson.passed).toBe(false);
+    expect(wrongJson.results).toBeNull();
+    expect(wrongJson.score).toBeUndefined();
   });
 });

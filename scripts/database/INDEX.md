@@ -81,6 +81,8 @@
 | **螺旋マトリックス LMS（MVP PR ②）** slug 対応表 | [`20261012_spiral_lms_content_slug_map.sql`](20261012_spiral_lms_content_slug_map.sql) — `content_slug` ↔ `learning_contents.id`（L1/L2 シード参照分を MDX と明示対応）。`is_published` は `learning_contents` を正とする。RLS + SELECT のみ（#85 同様）。 |
 | **螺旋マトリックス LMS（MVP PR ②）** `record_attempt` RPC | [`20261012_spiral_lms_record_attempt.sql`](20261012_spiral_lms_record_attempt.sql) — `user_attempts` に `content_slug` / `attempt_kind` / `client_attempt_id`（冪等）。合否は **サーバのみ**（`score` 0–100 の有限値、`p_passed` なし）。`content_view` は `score=100` で合格。**PR ④ 適用後** `mini_quiz` は `record_attempt` 不可（`submit_mini_quiz` を使用）。必須 `node_contents` が 0 本のノードは `MASTERED` 不可。厳格 **Z 階層ゲート**（L(n) は L(n−1) の公開ノードがすべて `MASTERED` までロック；`unlock_config.z_level_gate = 'off'` で解除）。`MAINTENANCE` / 遡及は別 PR — 再計算は既存 `MAINTENANCE` を上書きしない（TODO: MAINTENANCE 遷移 PR）。`opens_at` 未来は RPC 拒否・進捗 `LOCKED`。**表示上の `opens_at` 解除は PR ③ フック**（`opens_at` と `now()` を読み出し側で比較）。未公開記事（`learning_contents.is_published=false`）への `content_view` は拒否。結合テスト: [`spiral_lms_record_attempt_integration.sh`](spiral_lms_record_attempt_integration.sh)（Docker Postgres / mekiki-ci）。**本番適用は上様承認後のみ**。 |
 | **螺旋マトリックス LMS（MVP PR ④）** MDX ミニクイズ | [`20261012_spiral_lms_mdx_mini_quiz.sql`](20261012_spiral_lms_mdx_mini_quiz.sql) — `get_node_mini_quiz_questions`（**authenticated**・`opens_at`/前提は `node_locked` 等） / `submit_mini_quiz`（正解は `private.node_mini_quiz_answer_keys`・RLS は公開ノードの直接条件のみ）。**不合格時は `passed: false` のみ**（`score` / 設問別正誤は合格後のみ）。5 回/時/ノードのレート制限（本人×ノードで `pg_advisory_xact_lock`・冪等再送除外）。**複数アカウント・合格者による口外は設計上受容**（総当たり抑止は点数・正誤の非開示とレート制限）。ミニクイズのみノードはクイズ合格で `MASTERED` 可。結合: [`spiral_lms_mini_quiz_integration.sh`](spiral_lms_mini_quiz_integration.sh)（単独実行可）。**TODO（別 PR）**: `publishedAt` なし記事の一般向け対策（既存記事への影響あり）。**本番適用は上様承認後のみ**。 |
+| **螺旋マトリックス LMS** ミニクイズ版つき合格 | [`20261013_spiral_lms_mini_quiz_version_pass.sql`](20261013_spiral_lms_mini_quiz_version_pass.sql) — `user_attempts.mini_quiz_version`（設問 stem + 正解キーの MD5）と `spiral_lms_node_mini_quiz_version`。合格・`ever_passed`・`MASTERED` は**現行版のみ**有効（設問改訂後は再受験）。`submit_mini_quiz` / `record_attempt_core` が版を記録。Vitest: `spiralLmsRecomputeSqlParity.integration.test.ts`（mini-quiz version セクション）。**本番適用は上様承認後のみ**。 |
+| **螺旋マトリックス LMS** FK 補助 index | [`20261013_spiral_lms_fk_support_indexes.sql`](20261013_spiral_lms_fk_support_indexes.sql) — `spiral_content_slug_map.learning_content_id`・`user_attempts.node_id`。**本番適用は上様承認後のみ**。 |
 | **螺旋マトリックス LMS（開発のみ・本番非適用）** | [`dev/20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql`](dev/20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql) — CI / ローカル用 `SPIRAL-DEV-MINI`（`exclude_from_z_gate`）。MDX: `src/dev/mdx/SPIRAL-DEV-MiniQuizSample.mdx`（dev バンドルのみ）。 |
 | **USAF 編隊飛行（操縦）** ep.1 | `20260616_learning_contents_fmt_wingman_vfr.sql`（`FMT-1-1_WingmanVFR`、`order_index` 601） |
 | **USAF 編隊飛行（操縦）** ep.2 | `20260617_learning_contents_fmt_runway_lineup_takeoff.sql`（`FMT-1-2_RunwayLineupTakeoff`、`order_index` 602） |
@@ -158,12 +160,36 @@
 3. [`20261012_spiral_lms_record_attempt.sql`](20261012_spiral_lms_record_attempt.sql) — `record_attempt` RPC
 4. [`20261012_spiral_lms_mdx_mini_quiz.sql`](20261012_spiral_lms_mdx_mini_quiz.sql) — PR ④（MDX ミニクイズ・`submit_mini_quiz`）
 5. [`20261012_spiral_lms_seed_l1_l2_nodes.sql`](20261012_spiral_lms_seed_l1_l2_nodes.sql) — PR ① #85（L1/L2 シード）
+6. [`20261013_spiral_lms_mini_quiz_version_pass.sql`](20261013_spiral_lms_mini_quiz_version_pass.sql) — ミニクイズ版つき合格
+7. [`20261013_spiral_lms_fk_support_indexes.sql`](20261013_spiral_lms_fk_support_indexes.sql) — FK 補助 index
+
+#### 戻し手順（down）— `20261013_spiral_lms_mini_quiz_version_pass.sql`
+
+本番で PR ④ 以降が入っている前提。**適用済み migration のファイル自体は書き換えない。** 次を**新しい** down 用 SQL として実行する（または手動で同等操作）。
+
+```sql
+BEGIN;
+-- record_attempt_core を版列なしの定義に戻すには、適用前の関数本体を git から復元して CREATE OR REPLACE する。
+-- 最低限の列削除だけ行う場合（関数は先に旧版へ戻すこと）:
+ALTER TABLE public.user_attempts DROP CONSTRAINT IF EXISTS user_attempts_mini_quiz_version_kind_check;
+ALTER TABLE public.user_attempts DROP COLUMN IF EXISTS mini_quiz_version;
+DROP FUNCTION IF EXISTS private.spiral_lms_node_mini_quiz_version(text);
+-- spiral_lms_mini_quiz_met / spiral_lms_user_node_mini_quiz_ever_passed / record_attempt_core も
+-- 20261012_spiral_lms_mdx_mini_quiz.sql および 20261012_spiral_lms_record_attempt.sql の定義で上書き。
+COMMIT;
+```
+
+#### 戻し手順（down）— `20261013_spiral_lms_fk_support_indexes.sql`
+
+```sql
+DROP INDEX IF EXISTS public.idx_user_attempts_node_id;
+DROP INDEX IF EXISTS public.idx_spiral_content_slug_map_learning_content_id;
+```
 
 ### TODO（螺旋マトリックス LMS）
 
 - 結合テストへロック・RLS/anon・opens_at未来・未公開記事拒否・MAINTENANCE非上書き・同時送信の試験を追加（別PR）
 - MAINTENANCE付与・遡及（別PR）
-- 合格判定をクイズ版ごとにする（合格後の設問改訂で新版の正誤が漏れるため、実設問投入前に別PR）
 - **開発 UI（PR ⑤）**: 完了判定は `user_progress` 保存値を信頼（表示は参考、サーバが正）。ロック解除後にサーバ再計算前のノードは UI 上 AVAILABLE になりうる
 - **開発 UI（PR ⑤）**: 「公開予定」は必須記事がすべて未公開のとき（MDX `publishedAt` 基準）。将来 `learning_contents.is_published` との統一を検討
 - **本番適用後**: Supabase MCP `generate_typescript_types` で `src/types/database.types.ts` を再生成し、`src/types/spiralLmsDatabase.ts` の暫定スキーマを統合する（PR ③ フックは暫定型を使用中）
