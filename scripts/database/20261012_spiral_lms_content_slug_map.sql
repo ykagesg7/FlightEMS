@@ -24,6 +24,8 @@ VALUES
   ('cp-2-1-deep-stall', 'CP-2-1_DeepStall'),
   ('cp-2-2-accelerated-stall', 'CP-2-2_AcceleratedStall'),
   ('cp-3-2-pattern-ats', 'CP-3-2_PatternATS'),
+  ('michizane-briefing', 'L1-Q4-1_MichizaneBriefing'),
+  ('path-to-pilot', 'L1-Q3-1_PathToPilot'),
   ('ppl-1-1-1-temperature-basics', 'PPL-1-1-1_TemperatureBasics'),
   ('ppl-1-1-10-takeoff-landing-performance', 'PPL-1-1-10_TakeoffLandingPerformance'),
   ('ppl-1-1-11-control-surfaces', 'PPL-1-1-11_ControlSurfaces'),
