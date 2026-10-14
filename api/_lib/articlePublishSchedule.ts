@@ -222,7 +222,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       {
         id: 'CP-3-2_PatternATS',
         publishDate: '2026-09-09',
-        title: '第11話：兆候を見たらリカバリー ～Pattern ATS～',
+        title: '第11話：兆候を見たらリカバリー ～Traffic Stall～',
         slug: '/articles/cp-3-2-pattern-ats',
         hook: 'buffet が増えたら即リカバリー。形じゃなか。',
       },

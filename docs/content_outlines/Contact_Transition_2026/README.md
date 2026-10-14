@@ -115,7 +115,7 @@ FN と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通�
 | # | stem | slug | order | 主題 | 所有 | Vol.2 | 状態 |
 |---|------|------|-------|------|------|-------|------|
 | 3-1 | `CP-3-1_ConfiguredHandling` | `cp-3-1-configured-handling` | 1 | Configured rudder / slow flight | **5.11, 5.20–5.21** | **32** Slow flight −3 / +5 | **精緻化済・W37 日 9/6** |
-| 3-2 | `CP-3-2_PatternATS` | `cp-3-2-pattern-ats` | 2 | Pattern approach-to-stall | **5.22–5.25** | **29** | **精緻化済・W37 水 9/9** |
+| 3-2 | `CP-3-2_PatternATS` | `cp-3-2-pattern-ats` | 2 | Pattern approach-to-stall（公開 MDX は **T-4 Traffic Stall** 版） | **5.22–5.25** | **29** | **精緻化済・W37 水 9/9** |
 
 `order_index`: **620–621**。
 
@@ -170,7 +170,7 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 | 5.16–5.17 | Pitchback / Sliceback | **S2-6** |
 | 5.19 | Supersonic | **対象外**（T-4 に超音速も AB もない。記事にしない） |
 | 5.20–5.21 | Slow flight | **S3-1** |
-| 5.22–5.25 | Pattern ATS | **S3-2** |
+| 5.22–5.25 | Pattern ATS（公開 MDX：**T-4 Traffic Stall**） | **S3-2** |
 | 5.26–5.27 | Nose-high | **S4-1** |
 | 5.28 | Nose-low | **S4-2** |
 | 5.29–5.32 | 曲技契約 | **S5-1** |
@@ -235,7 +235,7 @@ S2-4 の unload はここでは適用だけ。計器の Area **47a** は混ぜ�
 | Configured rudder | **gear down**、flaps 任意（full / **60%** / no-flap）。level、**AOA ≈0.8–0.85**。full rudder → すぐ neutral、スティック位置維持、エルロン中立。**1–2 秒後 ≈90°** ロール。near-full はすぐ中立。controlled rudder で level（T-38） | Fund 5.11 | 3-1 |
 | Slow flight | 形態後、**計算最終進入の 10 kt 下**。level（わずかな降下可）。indexer slow（red chevron / green donut、**≈0.7 AOA**）は T-38。各種バンクの協調旋回。滑らかな舵。速度公差 **−3 / +5**（T-38 採点） | Fund 5.20 | 3-1 |
 | Flap recovery demo | gear down、full flaps、slow flight、**パワー一定**。60% へ → 加速・AOA 減。フルアップへ → 60% 通過で加速、その後バフェット増・減速・失速接近（T-38。フレア手順は書かない） | Fund 5.21 | 3-1 |
-| Pattern ATS | 着陸形態、**80% rpm 以上**（T-38）。精密機動ではない。Turning: level / diving / overshot の意図的誤り。level はバンクほぼ一定で減速、**buffet の明らかな増加**で stall recovery。Landing attitude: グライドパスを伸ばす。回復完了は降下停止、plus climb（高度計と VVI 反転）、継続できる速度。低フラップは buffet が曖昧。no-flap は secondary stall 増 | Fund 5.22–5.25 | 3-2 |
+| Pattern ATS | 着陸形態、**80% rpm 以上**（T-38）。精密機動ではない。Turning: level / diving / overshot の意図的誤り。level はバンクほぼ一定で減速、**buffet の明らかな増加**で stall recovery。Landing attitude: グライドパスを伸ばす。回復完了は降下停止、plus climb（高度計と VVI 反転）、継続できる速度。低フラップは buffet が曖昧。no-flap は secondary stall 増。**公開 MDX（3-2）は T-4 Traffic Stall 版**（飛行規程・教官正本、回復完了2条件） | Fund 5.22–5.25 | 3-2 |
 
 ### Season 4
 
