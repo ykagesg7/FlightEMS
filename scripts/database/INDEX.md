@@ -106,6 +106,7 @@
 | **CP（操縦）** S2-6 ストック | [`20260817_learning_contents_cp_2_6_pitchback_sliceback.sql`](20260817_learning_contents_cp_2_6_pitchback_sliceback.sql)（`CP-2-6_PitchbackSliceback`、`order_index` **619**、`is_published: false`） |
 | **CP（操縦）** S3-1 ストック | [`20260818_learning_contents_cp_3_1_configured_handling.sql`](20260818_learning_contents_cp_3_1_configured_handling.sql)（`CP-3-1_ConfiguredHandling`、`order_index` **620**、`is_published: false`） |
 | **CP（操縦）** S3-2 ストック | [`20260818_learning_contents_cp_3_2_pattern_ats.sql`](20260818_learning_contents_cp_3_2_pattern_ats.sql)（`CP-3-2_PatternATS`、`order_index` **621**、`is_published: false`） |
+| **CP（操縦）** S3-2 T-4 メタ同期 | [`20261014_cp_3_2_t4_title.sql`](20261014_cp_3_2_t4_title.sql)（`CP-3-2_PatternATS` の title・description のみ。`is_published` は触らない） |
 | **CP（操縦）** S4-1 ストック | [`20260819_learning_contents_cp_4_1_nose_high.sql`](20260819_learning_contents_cp_4_1_nose_high.sql)（`CP-4-1_NoseHigh`、`order_index` **622**、`is_published: false`） |
 | **CP（操縦）** S4-2 ストック | [`20260819_learning_contents_cp_4_2_nose_low.sql`](20260819_learning_contents_cp_4_2_nose_low.sql)（`CP-4-2_NoseLow`、`order_index` **623**、`is_published: false`） |
 | **CP（操縦）** S5-1 ストック | [`20260820_learning_contents_cp_5_1_aerobatic_contract.sql`](20260820_learning_contents_cp_5_1_aerobatic_contract.sql)（`CP-5-1_AerobaticContract`、`order_index` **624**、`is_published: false`） |
