@@ -442,7 +442,7 @@ END;
 $$;
 
 -- ---------------------------------------------------------------------------
--- record_attempt_core: per-user/node lock + MAINTENANCE on mini_quiz failures.
+-- record_attempt_core: per-user lock before writes + MAINTENANCE on mini_quiz failures.
 -- ---------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION private.spiral_lms_record_attempt_core(
   p_user_id uuid,
@@ -500,7 +500,7 @@ BEGIN
 
   PERFORM pg_advisory_xact_lock(
     (hashtext(p_user_id::text) & 2147483647),
-    hashtext(p_node_id)
+    hashtext('spiral_lms_user_progress')
   );
 
   BEGIN
@@ -559,11 +559,6 @@ BEGIN
     attempts = user_progress.attempts + 1,
     last_attempt_at = now(),
     updated_at = now();
-
-  PERFORM pg_advisory_xact_lock(
-    (hashtext(p_user_id::text) & 2147483647),
-    hashtext('spiral_lms_user_progress')
-  );
 
   IF NOT p_passed AND p_attempt_kind = 'mini_quiz' THEN
     PERFORM private.spiral_lms_apply_maintenance_prerequisites(p_user_id, p_node_id);

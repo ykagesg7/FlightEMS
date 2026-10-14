@@ -47,4 +47,13 @@ describe('areSpiralPrerequisitesMet', () => {
     expect(areSpiralPrerequisitesMet(['pre'], progress)).toBe(true);
     expect(areSpiralPrerequisitesMet(['pre', 'other'], progress)).toBe(false);
   });
+
+  it('treats MAINTENANCE prerequisites as satisfied for display', () => {
+    const progress = {
+      pre: baseProgress('pre', 'MAINTENANCE'),
+      other: baseProgress('other', 'MASTERED'),
+    };
+    expect(areSpiralPrerequisitesMet(['pre'], progress)).toBe(true);
+    expect(areSpiralPrerequisitesMet(['pre', 'other'], progress)).toBe(true);
+  });
 });

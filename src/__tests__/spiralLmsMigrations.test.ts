@@ -455,7 +455,22 @@ describe('spiral LMS maintenance prerequisites migration (static)', () => {
     expect(maintenanceSql).toMatch(
       /PERFORM private\.spiral_lms_apply_maintenance_prerequisites/,
     );
-    expect(maintenanceSql).toMatch(/pg_advisory_xact_lock/);
+  });
+
+  it('serializes record_attempt_core writes with per-user lock before INSERTs', () => {
+    const start = maintenanceSql.indexOf(
+      'CREATE OR REPLACE FUNCTION private.spiral_lms_record_attempt_core',
+    );
+    expect(start).toBeGreaterThanOrEqual(0);
+    const end = maintenanceSql.indexOf('$$;', start);
+    const coreSql = maintenanceSql.slice(start, end);
+    const userLock = coreSql.indexOf("hashtext('spiral_lms_user_progress')");
+    const attemptInsert = coreSql.indexOf('INSERT INTO public.user_attempts');
+    const progressInsert = coreSql.indexOf('INSERT INTO public.user_progress');
+    expect(userLock).toBeGreaterThanOrEqual(0);
+    expect(attemptInsert).toBeGreaterThan(userLock);
+    expect(progressInsert).toBeGreaterThan(userLock);
+    expect(coreSql.indexOf('hashtext(p_node_id)')).toBe(-1);
   });
 
   it('clears MAINTENANCE via maintenance_recovery_met and maintenance_since', () => {
@@ -473,6 +488,7 @@ describe('spiral LMS maintenance prerequisites migration (static)', () => {
     expect(maintenanceSql).toMatch(
       /WHERE status = 'MAINTENANCE'\s+AND maintenance_since IS NULL/,
     );
+    expect(maintenanceSql).toMatch(/SET maintenance_since = now\(\)/);
     expect(maintenanceSql).toMatch(/IF v_required_count = 0 THEN\s+RETURN true;/);
     expect(maintenanceSql).not.toMatch(/maintenance_cleared_at = NULL/);
     expect(maintenanceSql).toMatch(/hashtext\('spiral_lms_user_progress'\)/);
@@ -480,6 +496,8 @@ describe('spiral LMS maintenance prerequisites migration (static)', () => {
 
   it('provides a down migration restoring version_pass-era functions', () => {
     const downSql = readFileSync(MAINTENANCE_DOWN_PATH, 'utf8');
+    expect(downSql).toMatch(/WHERE status = 'MAINTENANCE'/);
+    expect(downSql).toMatch(/status = 'MASTERED'/);
     expect(downSql).toMatch(/DROP FUNCTION IF EXISTS private\.spiral_lms_apply_maintenance_prerequisites/);
     expect(downSql).toMatch(/DROP COLUMN IF EXISTS maintenance_since/);
     expect(downSql).toMatch(/CREATE OR REPLACE FUNCTION private\.spiral_lms_record_attempt_core/);

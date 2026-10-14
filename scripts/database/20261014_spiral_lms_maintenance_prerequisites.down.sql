@@ -1,7 +1,16 @@
 -- Rollback: 20261014_spiral_lms_maintenance_prerequisites.sql
 -- Run before 20261013_spiral_lms_mini_quiz_version_pass.down.sql (see scripts/database/INDEX.md).
+--
+-- Clears MAINTENANCE rows first so post-down RPCs (MASTERED-only gates) do not strand nodes.
 
 BEGIN;
+
+UPDATE public.user_progress
+SET
+  status = 'MASTERED',
+  maintenance_since = NULL,
+  maintenance_cleared_at = NULL
+WHERE status = 'MAINTENANCE';
 
 DROP FUNCTION IF EXISTS private.spiral_lms_apply_maintenance_prerequisites(uuid, text);
 DROP FUNCTION IF EXISTS private.spiral_lms_maintenance_recovery_met(uuid, text);
