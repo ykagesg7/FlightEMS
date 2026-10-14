@@ -307,6 +307,7 @@ DECLARE
   v_prev_attempts integer;
   v_prev_status text;
   v_maint_since timestamptz;
+  v_maint_cleared timestamptz;
 BEGIN
   SELECT * INTO v_node
   FROM public.nodes
@@ -341,8 +342,8 @@ BEGIN
   );
 
   IF v_prev_status = 'MAINTENANCE' THEN
-    SELECT maintenance_since
-    INTO v_maint_since
+    SELECT maintenance_since, maintenance_cleared_at
+    INTO v_maint_since, v_maint_cleared
     FROM public.user_progress
     WHERE user_id = p_user_id
       AND node_id = p_node_id;
@@ -374,7 +375,7 @@ BEGIN
       NULL,
       CASE WHEN v_mastered THEN now() ELSE NULL END,
       CASE WHEN v_mastered THEN NULL ELSE v_maint_since END,
-      CASE WHEN v_mastered THEN now() ELSE NULL END
+      CASE WHEN v_mastered THEN now() ELSE v_maint_cleared END
     )
     ON CONFLICT (user_id, node_id) DO UPDATE SET
       status = EXCLUDED.status,
@@ -389,7 +390,7 @@ BEGIN
       END,
       maintenance_cleared_at = CASE
         WHEN EXCLUDED.status = 'MASTERED' THEN now()
-        ELSE NULL
+        ELSE user_progress.maintenance_cleared_at
       END,
       updated_at = now();
 
