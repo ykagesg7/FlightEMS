@@ -8,7 +8,10 @@ export function areSpiralPrerequisitesMet(
   if (prerequisiteNodeIds.length === 0) {
     return true;
   }
-  return prerequisiteNodeIds.every((id) => progressByNodeId[id]?.status === 'MASTERED');
+  return prerequisiteNodeIds.every((id) => {
+    const status = progressByNodeId[id]?.status;
+    return status === 'MASTERED' || status === 'MAINTENANCE';
+  });
 }
 
 /**

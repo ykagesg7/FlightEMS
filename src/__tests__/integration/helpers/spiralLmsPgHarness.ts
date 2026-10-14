@@ -121,6 +121,7 @@ ALTER TABLE public.learning_contents ADD COLUMN IF NOT EXISTS updated_at timesta
   runSqlFile('20261012_spiral_lms_mdx_mini_quiz.sql');
   runSqlFile('20261013_spiral_lms_mini_quiz_version_pass.sql');
   runSqlFile('20261013_spiral_lms_fk_support_indexes.sql');
+  runSqlFile('20261014_spiral_lms_maintenance_prerequisites.sql');
 
   migrationsApplied = true;
 }
@@ -341,6 +342,105 @@ INSERT INTO public.user_progress (user_id, node_id, status, attempts)
 VALUES ('${userId}'::uuid, '${nodeId}', '${status}', 0)
 ON CONFLICT (user_id, node_id) DO UPDATE SET status = EXCLUDED.status;
 `);
+}
+
+export function linkPrerequisite(nodeId: string, prerequisiteNodeId: string): void {
+  psql(`
+INSERT INTO public.node_prerequisites (node_id, prerequisite_node_id)
+VALUES ('${nodeId.replace(/'/g, "''")}', '${prerequisiteNodeId.replace(/'/g, "''")}')
+ON CONFLICT DO NOTHING;
+`);
+}
+
+export function readProgressStatus(userId: string, nodeId: string): SpiralLmsNodeStatus | null {
+  const status = psql(`
+SELECT status FROM public.user_progress
+WHERE user_id = '${userId}'::uuid AND node_id = '${nodeId.replace(/'/g, "''")}';
+`);
+  return status.length > 0 ? (status as SpiralLmsNodeStatus) : null;
+}
+
+export function readMasteredAt(userId: string, nodeId: string): string | null {
+  const raw = psql(`
+SELECT mastered_at::text
+FROM public.user_progress
+WHERE user_id = '${userId}'::uuid AND node_id = '${nodeId.replace(/'/g, "''")}';
+`);
+  if (raw.length === 0 || raw === '') {
+    return null;
+  }
+  return raw;
+}
+
+export function readMaintenanceClearedAt(userId: string, nodeId: string): string | null {
+  const raw = psql(`
+SELECT maintenance_cleared_at::text
+FROM public.user_progress
+WHERE user_id = '${userId}'::uuid AND node_id = '${nodeId.replace(/'/g, "''")}';
+`);
+  if (raw.length === 0 || raw === '') {
+    return null;
+  }
+  return raw;
+}
+
+export function readMaintenanceSince(userId: string, nodeId: string): string | null {
+  const raw = psql(`
+SELECT maintenance_since::text
+FROM public.user_progress
+WHERE user_id = '${userId}'::uuid AND node_id = '${nodeId.replace(/'/g, "''")}';
+`);
+  if (raw.length === 0) {
+    return null;
+  }
+  return raw;
+}
+
+export function seedPublishedContentSlug(slug: string): void {
+  const esc = slug.replace(/'/g, "''");
+  psql(`
+INSERT INTO public.learning_contents (id, title, category, is_published)
+VALUES ('${esc}', '${esc}', 'PPL', true)
+ON CONFLICT (id) DO UPDATE SET is_published = true;
+INSERT INTO public.spiral_content_slug_map (content_slug, learning_content_id)
+VALUES ('${esc}', '${esc}')
+ON CONFLICT (content_slug) DO UPDATE SET learning_content_id = EXCLUDED.learning_content_id;
+`);
+}
+
+export function linkNodeContent(
+  nodeId: string,
+  slug: string,
+  isRequired = true,
+  sortOrder = 1,
+): void {
+  const escSlug = slug.replace(/'/g, "''");
+  const escNode = nodeId.replace(/'/g, "''");
+  psql(`
+INSERT INTO public.node_contents (node_id, content_slug, content_type, is_required, sort_order)
+VALUES ('${escNode}', '${escSlug}', 'lesson', ${isRequired}, ${sortOrder})
+ON CONFLICT (node_id, content_slug) DO UPDATE SET is_required = EXCLUDED.is_required;
+`);
+}
+
+export function recordContentView(
+  nodeId: string,
+  slug: string,
+  score: number,
+  clientId: string,
+): { passed: boolean } {
+  const json = psqlLastLine(`
+SET request.jwt.claim.sub = '${SPIRAL_PG_TEST_USER}';
+SELECT public.record_attempt(
+  '${nodeId.replace(/'/g, "''")}',
+  'content_view',
+  '${clientId}'::uuid,
+  '${slug.replace(/'/g, "''")}',
+  ${score}
+)::text;
+`);
+  const parsed = JSON.parse(json) as { passed: boolean };
+  return parsed;
 }
 
 export function insertMiniQuizStem(

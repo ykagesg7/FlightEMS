@@ -3,6 +3,7 @@ import type { SpiralLmsNode, SpiralLmsUserProgress } from '../../types/spiralLms
 import {
   buildSpiralLmsRecomputeContext,
   isSpiralNodeRecomputeLocked,
+  isSpiralPublishedPrerequisitesMet,
   isSpiralZLevelGateMet,
   recomputeSpiralNodeStoredStatus,
 } from '../../utils/spiralLmsRecomputeStatus';
@@ -114,6 +115,26 @@ describe('spiralLmsRecomputeStatus (client locking)', () => {
     const ctx = buildSpiralLmsRecomputeContext([l1a, l2Off], {}, fixedNow);
     expect(isSpiralNodeRecomputeLocked(l2Off, ctx)).toBe(false);
     expect(recomputeSpiralNodeStoredStatus(l2Off, undefined, ctx)).toBe('AVAILABLE');
+  });
+
+  it('treats MAINTENANCE at previous z_level as satisfying the z gate', () => {
+    const l1Regular = makeNode({ id: 'L1-REG', z_level: 1, sort_order: 1 });
+    const l1Maint = makeNode({ id: 'L1-MNT', z_level: 1, sort_order: 2 });
+    const progressByNodeId = {
+      'L1-REG': progress('L1-REG', 'MASTERED'),
+      'L1-MNT': progress('L1-MNT', 'MAINTENANCE'),
+    };
+    expect(
+      isSpiralZLevelGateMet(2, [l1Regular, l1Maint], progressByNodeId),
+    ).toBe(true);
+  });
+
+  it('treats MAINTENANCE prerequisites as satisfied for unlock', () => {
+    const publishedIds = new Set(published.map((node) => node.id));
+    const progressByNodeId = {
+      'L1-Q1-1': progress('L1-Q1-1', 'MAINTENANCE'),
+    };
+    expect(isSpiralPublishedPrerequisitesMet(l1b, publishedIds, progressByNodeId)).toBe(true);
   });
 
   it('preserves MAINTENANCE without recomputing', () => {

@@ -21,7 +21,8 @@ export function isSpiralPublishedPrerequisitesMet(
     if (!publishedIds.has(prerequisiteNodeId)) {
       continue;
     }
-    if (progressByNodeId[prerequisiteNodeId]?.status !== 'MASTERED') {
+    const prereqStatus = progressByNodeId[prerequisiteNodeId]?.status;
+    if (prereqStatus !== 'MASTERED' && prereqStatus !== 'MAINTENANCE') {
       return false;
     }
   }
@@ -50,7 +51,8 @@ export function isSpiralZLevelGateMet(
     if (isNodeExcludedFromZGate(node)) {
       continue;
     }
-    if (progressByNodeId[node.id]?.status !== 'MASTERED') {
+    const levelStatus = progressByNodeId[node.id]?.status;
+    if (levelStatus !== 'MASTERED' && levelStatus !== 'MAINTENANCE') {
       return false;
     }
   }

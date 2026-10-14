@@ -26,6 +26,11 @@ const MINI_QUIZ_VERSION_DOWN_PATH = join(
 );
 const FK_INDEX_PATH = join(DB_DIR, '20261013_spiral_lms_fk_support_indexes.sql');
 const FK_INDEX_DOWN_PATH = join(DB_DIR, '20261013_spiral_lms_fk_support_indexes.down.sql');
+const MAINTENANCE_PATH = join(DB_DIR, '20261014_spiral_lms_maintenance_prerequisites.sql');
+const MAINTENANCE_DOWN_PATH = join(
+  DB_DIR,
+  '20261014_spiral_lms_maintenance_prerequisites.down.sql',
+);
 const CONTENT_ROOT = join(process.cwd(), 'src/content');
 
 const SPIRAL_TABLES = [
@@ -430,6 +435,72 @@ describe('spiral LMS mini-quiz version pass migration (static)', () => {
     expect(downSql).toMatch(/spiral_lms_user_node_mini_quiz_ever_passed/);
     expect(downSql).toMatch(/spiral_lms_record_attempt_core/);
     expect(downSql).toMatch(/DROP COLUMN IF EXISTS mini_quiz_version/);
+  });
+});
+
+describe('spiral LMS maintenance prerequisites migration (static)', () => {
+  const maintenanceSql = readFileSync(MAINTENANCE_PATH, 'utf8');
+
+  it('defines maintenance_since and prerequisite targeting up to one z_level back', () => {
+    expect(maintenanceSql).toMatch(/maintenance_since timestamptz/);
+    expect(maintenanceSql).toMatch(/spiral_lms_two_consecutive_failed_attempts/);
+    expect(maintenanceSql).toMatch(/spiral_lms_apply_maintenance_prerequisites/);
+    expect(maintenanceSql).toMatch(/attempt_kind = 'mini_quiz'/);
+    expect(maintenanceSql).toMatch(/prereq\.z_level <= v_node\.z_level/);
+    expect(maintenanceSql).toMatch(/prereq\.z_level >= v_node\.z_level - 1/);
+  });
+
+  it('hooks record_attempt_core after failed mini_quiz attempts only', () => {
+    expect(maintenanceSql).toMatch(/IF NOT p_passed AND p_attempt_kind = 'mini_quiz' THEN/);
+    expect(maintenanceSql).toMatch(
+      /PERFORM private\.spiral_lms_apply_maintenance_prerequisites/,
+    );
+  });
+
+  it('serializes record_attempt_core writes with per-user lock before INSERTs', () => {
+    const start = maintenanceSql.indexOf(
+      'CREATE OR REPLACE FUNCTION private.spiral_lms_record_attempt_core',
+    );
+    expect(start).toBeGreaterThanOrEqual(0);
+    const end = maintenanceSql.indexOf('$$;', start);
+    const coreSql = maintenanceSql.slice(start, end);
+    const userLock = coreSql.indexOf("hashtext('spiral_lms_user_progress')");
+    const attemptInsert = coreSql.indexOf('INSERT INTO public.user_attempts');
+    const progressInsert = coreSql.indexOf('INSERT INTO public.user_progress');
+    expect(userLock).toBeGreaterThanOrEqual(0);
+    expect(attemptInsert).toBeGreaterThan(userLock);
+    expect(progressInsert).toBeGreaterThan(userLock);
+    expect(coreSql.indexOf('hashtext(p_node_id)')).toBe(-1);
+  });
+
+  it('clears MAINTENANCE via maintenance_recovery_met and maintenance_since', () => {
+    expect(maintenanceSql).toMatch(/spiral_lms_maintenance_recovery_met/);
+    expect(maintenanceSql).toMatch(/IF v_prev_status = 'MAINTENANCE' THEN/);
+    expect(maintenanceSql).toMatch(/maintenance_since = CASE/);
+  });
+
+  it('tracks recovery for re-trigger and treats MAINTENANCE prereqs as met', () => {
+    expect(maintenanceSql).toMatch(/maintenance_cleared_at timestamptz/);
+    expect(maintenanceSql).toMatch(/ua\.created_at > v_cutoff/);
+    expect(maintenanceSql).toMatch(/max\(up\.maintenance_cleared_at\)/);
+    expect(maintenanceSql).toMatch(/ORDER BY np\.prerequisite_node_id/);
+    expect(maintenanceSql).toMatch(/up\.status IN \('MASTERED', 'MAINTENANCE'\)/);
+    expect(maintenanceSql).toMatch(
+      /WHERE status = 'MAINTENANCE'\s+AND maintenance_since IS NULL/,
+    );
+    expect(maintenanceSql).toMatch(/SET maintenance_since = now\(\)/);
+    expect(maintenanceSql).toMatch(/IF v_required_count = 0 THEN\s+RETURN true;/);
+    expect(maintenanceSql).not.toMatch(/maintenance_cleared_at = NULL/);
+    expect(maintenanceSql).toMatch(/hashtext\('spiral_lms_user_progress'\)/);
+  });
+
+  it('provides a down migration restoring version_pass-era functions', () => {
+    const downSql = readFileSync(MAINTENANCE_DOWN_PATH, 'utf8');
+    expect(downSql).toMatch(/WHERE status = 'MAINTENANCE'/);
+    expect(downSql).toMatch(/status = 'MASTERED'/);
+    expect(downSql).toMatch(/DROP FUNCTION IF EXISTS private\.spiral_lms_apply_maintenance_prerequisites/);
+    expect(downSql).toMatch(/DROP COLUMN IF EXISTS maintenance_since/);
+    expect(downSql).toMatch(/CREATE OR REPLACE FUNCTION private\.spiral_lms_record_attempt_core/);
   });
 });
 
