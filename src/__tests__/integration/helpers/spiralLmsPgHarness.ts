@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS public.learning_contents (
   runSqlFile('20261012_spiral_lms_mdx_mini_quiz.sql');
   runSqlFile('20261013_spiral_lms_mini_quiz_version_pass.sql');
   runSqlFile('20261013_spiral_lms_fk_support_indexes.sql');
+  runSqlFile('20261014_spiral_lms_maintenance_prerequisites.sql');
 
   migrationsApplied = true;
 }
@@ -326,6 +327,22 @@ INSERT INTO public.user_progress (user_id, node_id, status, attempts)
 VALUES ('${userId}'::uuid, '${nodeId}', '${status}', 0)
 ON CONFLICT (user_id, node_id) DO UPDATE SET status = EXCLUDED.status;
 `);
+}
+
+export function linkPrerequisite(nodeId: string, prerequisiteNodeId: string): void {
+  psql(`
+INSERT INTO public.node_prerequisites (node_id, prerequisite_node_id)
+VALUES ('${nodeId.replace(/'/g, "''")}', '${prerequisiteNodeId.replace(/'/g, "''")}')
+ON CONFLICT DO NOTHING;
+`);
+}
+
+export function readProgressStatus(userId: string, nodeId: string): SpiralLmsNodeStatus | null {
+  const status = psql(`
+SELECT status FROM public.user_progress
+WHERE user_id = '${userId}'::uuid AND node_id = '${nodeId.replace(/'/g, "''")}';
+`);
+  return status.length > 0 ? (status as SpiralLmsNodeStatus) : null;
 }
 
 export function insertMiniQuizStem(

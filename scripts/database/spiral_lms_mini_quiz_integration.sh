@@ -103,6 +103,7 @@ run_psql_file "$DB_DIR/20261012_spiral_lms_record_attempt.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_mdx_mini_quiz.sql"
 run_psql_file "$DB_DIR/20261013_spiral_lms_mini_quiz_version_pass.sql"
 run_psql_file "$DB_DIR/20261013_spiral_lms_fk_support_indexes.sql"
+run_psql_file "$DB_DIR/20261014_spiral_lms_maintenance_prerequisites.sql"
 run_psql_file "$DB_DIR/dev/20261012_spiral_lms_mdx_mini_quiz_dev_seed.sql"
 
 run_psql -f - <<'SQL'

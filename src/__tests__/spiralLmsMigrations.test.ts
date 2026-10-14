@@ -26,6 +26,7 @@ const MINI_QUIZ_VERSION_DOWN_PATH = join(
 );
 const FK_INDEX_PATH = join(DB_DIR, '20261013_spiral_lms_fk_support_indexes.sql');
 const FK_INDEX_DOWN_PATH = join(DB_DIR, '20261013_spiral_lms_fk_support_indexes.down.sql');
+const MAINTENANCE_PATH = join(DB_DIR, '20261014_spiral_lms_maintenance_prerequisites.sql');
 const CONTENT_ROOT = join(process.cwd(), 'src/content');
 
 const SPIRAL_TABLES = [
@@ -430,6 +431,28 @@ describe('spiral LMS mini-quiz version pass migration (static)', () => {
     expect(downSql).toMatch(/spiral_lms_user_node_mini_quiz_ever_passed/);
     expect(downSql).toMatch(/spiral_lms_record_attempt_core/);
     expect(downSql).toMatch(/DROP COLUMN IF EXISTS mini_quiz_version/);
+  });
+});
+
+describe('spiral LMS maintenance prerequisites migration (static)', () => {
+  const maintenanceSql = readFileSync(MAINTENANCE_PATH, 'utf8');
+
+  it('defines consecutive-fail detection and prerequisite MAINTENANCE apply', () => {
+    expect(maintenanceSql).toMatch(/spiral_lms_two_consecutive_failed_attempts/);
+    expect(maintenanceSql).toMatch(/spiral_lms_apply_maintenance_prerequisites/);
+    expect(maintenanceSql).toMatch(/prereq\.z_level = v_node\.z_level - 1/);
+  });
+
+  it('hooks record_attempt_core after failed attempts', () => {
+    expect(maintenanceSql).toMatch(/IF NOT p_passed THEN/);
+    expect(maintenanceSql).toMatch(
+      /PERFORM private\.spiral_lms_apply_maintenance_prerequisites/,
+    );
+  });
+
+  it('allows MAINTENANCE to clear via recompute when mastered', () => {
+    expect(maintenanceSql).toMatch(/IF v_prev_status = 'MAINTENANCE' THEN/);
+    expect(maintenanceSql).toMatch(/v_status := 'MASTERED'/);
   });
 });
 
