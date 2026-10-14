@@ -180,8 +180,6 @@ BEGIN
 
     IF v_mastered THEN
       v_status := 'MASTERED';
-    ELSIF private.spiral_lms_node_has_progress(p_user_id, p_node_id) THEN
-      v_status := 'IN_PROGRESS';
     ELSE
       v_status := 'MAINTENANCE';
     END IF;
