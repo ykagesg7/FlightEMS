@@ -21,7 +21,8 @@ export function isSpiralPublishedPrerequisitesMet(
     if (!publishedIds.has(prerequisiteNodeId)) {
       continue;
     }
-    if (progressByNodeId[prerequisiteNodeId]?.status !== 'MASTERED') {
+    const prereqStatus = progressByNodeId[prerequisiteNodeId]?.status;
+    if (prereqStatus !== 'MASTERED' && prereqStatus !== 'MAINTENANCE') {
       return false;
     }
   }

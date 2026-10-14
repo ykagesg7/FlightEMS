@@ -7,8 +7,19 @@ BEGIN;
 ALTER TABLE public.user_progress
   ADD COLUMN IF NOT EXISTS maintenance_since timestamptz;
 
+ALTER TABLE public.user_progress
+  ADD COLUMN IF NOT EXISTS maintenance_cleared_at timestamptz;
+
 COMMENT ON COLUMN public.user_progress.maintenance_since IS
   'Set when status becomes MAINTENANCE; cleared on recovery to MASTERED. Recovery attempts must be after this instant.';
+
+COMMENT ON COLUMN public.user_progress.maintenance_cleared_at IS
+  'Set when leaving MAINTENANCE for MASTERED. Downstream mini_quiz streaks ignore attempts at or before the latest prerequisite cleared_at.';
+
+UPDATE public.user_progress
+SET maintenance_since = now()
+WHERE status = 'MAINTENANCE'
+  AND maintenance_since IS NULL;
 
 -- ---------------------------------------------------------------------------
 -- Two consecutive failed mini_quiz attempts on the same node (most recent first).
@@ -18,24 +29,53 @@ CREATE OR REPLACE FUNCTION private.spiral_lms_two_consecutive_failed_attempts(
   p_node_id text
 )
 RETURNS boolean
-LANGUAGE sql
+LANGUAGE plpgsql
 STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  WITH last_two AS (
+DECLARE
+  v_node public.nodes%ROWTYPE;
+  v_cutoff timestamptz;
+  v_consecutive boolean;
+BEGIN
+  SELECT * INTO v_node
+  FROM public.nodes
+  WHERE id = p_node_id;
+
+  IF NOT FOUND THEN
+    RETURN false;
+  END IF;
+
+  SELECT max(up.maintenance_cleared_at)
+  INTO v_cutoff
+  FROM public.node_prerequisites np
+  INNER JOIN public.nodes prereq ON prereq.id = np.prerequisite_node_id
+  INNER JOIN public.user_progress up
+    ON up.user_id = p_user_id
+    AND up.node_id = np.prerequisite_node_id
+  WHERE np.node_id = p_node_id
+    AND prereq.is_published = true
+    AND prereq.z_level <= v_node.z_level
+    AND prereq.z_level >= v_node.z_level - 1;
+
+  SELECT
+    count(*) = 2
+    AND bool_and(NOT passed)
+  INTO v_consecutive
+  FROM (
     SELECT ua.passed
     FROM public.user_attempts ua
     WHERE ua.user_id = p_user_id
       AND ua.node_id = p_node_id
       AND ua.attempt_kind = 'mini_quiz'
+      AND (v_cutoff IS NULL OR ua.created_at > v_cutoff)
     ORDER BY ua.created_at DESC, ua.id DESC
     LIMIT 2
-  )
-  SELECT
-    count(*) = 2
-    AND bool_and(NOT passed)
-  FROM last_two;
+  ) last_two;
+
+  RETURN coalesce(v_consecutive, false);
+END;
 $$;
 
 -- ---------------------------------------------------------------------------
@@ -97,7 +137,7 @@ BEGIN
     AND nc.is_required = true;
 
   IF v_required_count = 0 THEN
-    RETURN false;
+    RETURN true;
   END IF;
 
   RETURN NOT EXISTS (
@@ -154,7 +194,13 @@ BEGIN
       AND prereq.is_published = true
       AND prereq.z_level <= v_node.z_level
       AND prereq.z_level >= v_node.z_level - 1
+    ORDER BY np.prerequisite_node_id
   LOOP
+    PERFORM pg_advisory_xact_lock(
+      (hashtext(p_user_id::text) & 2147483647),
+      hashtext(v_prereq_id)
+    );
+
     INSERT INTO public.user_progress (
       user_id,
       node_id,
@@ -162,7 +208,8 @@ BEGIN
       attempts,
       last_attempt_at,
       mastered_at,
-      maintenance_since
+      maintenance_since,
+      maintenance_cleared_at
     )
     VALUES (
       p_user_id,
@@ -175,11 +222,13 @@ BEGIN
       ),
       NULL,
       NULL,
-      now()
+      now(),
+      NULL
     )
     ON CONFLICT (user_id, node_id) DO UPDATE SET
       status = 'MAINTENANCE',
       mastered_at = NULL,
+      maintenance_cleared_at = NULL,
       maintenance_since = CASE
         WHEN user_progress.status = 'MAINTENANCE' THEN user_progress.maintenance_since
         ELSE now()
@@ -187,6 +236,33 @@ BEGIN
       updated_at = now();
   END LOOP;
 END;
+$$;
+
+-- Prerequisites in MAINTENANCE still unlock downstream nodes (no demotion).
+CREATE OR REPLACE FUNCTION private.spiral_lms_published_prerequisites_met(
+  p_user_id uuid,
+  p_node_id text
+)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT NOT EXISTS (
+    SELECT 1
+    FROM public.node_prerequisites np
+    INNER JOIN public.nodes prereq ON prereq.id = np.prerequisite_node_id
+    WHERE np.node_id = p_node_id
+      AND prereq.is_published = true
+      AND NOT EXISTS (
+        SELECT 1
+        FROM public.user_progress up
+        WHERE up.user_id = p_user_id
+          AND up.node_id = np.prerequisite_node_id
+          AND up.status IN ('MASTERED', 'MAINTENANCE')
+      )
+  );
 $$;
 
 -- ---------------------------------------------------------------------------
@@ -266,7 +342,8 @@ BEGIN
       attempts,
       last_attempt_at,
       mastered_at,
-      maintenance_since
+      maintenance_since,
+      maintenance_cleared_at
     )
     VALUES (
       p_user_id,
@@ -275,7 +352,8 @@ BEGIN
       coalesce(v_prev_attempts, 0),
       NULL,
       CASE WHEN v_mastered THEN now() ELSE NULL END,
-      CASE WHEN v_mastered THEN NULL ELSE v_maint_since END
+      CASE WHEN v_mastered THEN NULL ELSE v_maint_since END,
+      CASE WHEN v_mastered THEN now() ELSE NULL END
     )
     ON CONFLICT (user_id, node_id) DO UPDATE SET
       status = EXCLUDED.status,
@@ -287,6 +365,10 @@ BEGIN
       maintenance_since = CASE
         WHEN EXCLUDED.status = 'MASTERED' THEN NULL
         ELSE user_progress.maintenance_since
+      END,
+      maintenance_cleared_at = CASE
+        WHEN EXCLUDED.status = 'MASTERED' THEN now()
+        ELSE NULL
       END,
       updated_at = now();
 
@@ -484,12 +566,14 @@ $$;
 ALTER FUNCTION private.spiral_lms_two_consecutive_failed_attempts(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_maintenance_recovery_met(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_apply_maintenance_prerequisites(uuid, text) OWNER TO postgres;
+ALTER FUNCTION private.spiral_lms_published_prerequisites_met(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_recompute_node_progress(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.spiral_lms_record_attempt_core(uuid, text, text, uuid, text, numeric, boolean, jsonb, jsonb) OWNER TO postgres;
 
 REVOKE ALL ON FUNCTION private.spiral_lms_two_consecutive_failed_attempts(uuid, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_maintenance_recovery_met(uuid, text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.spiral_lms_apply_maintenance_prerequisites(uuid, text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.spiral_lms_published_prerequisites_met(uuid, text) FROM PUBLIC, anon, authenticated;
 
 COMMENT ON FUNCTION private.spiral_lms_apply_maintenance_prerequisites(uuid, text) IS
   'After two consecutive failed mini_quiz attempts on p_node_id, sets published prerequisites at same z_level or one below to MAINTENANCE.';

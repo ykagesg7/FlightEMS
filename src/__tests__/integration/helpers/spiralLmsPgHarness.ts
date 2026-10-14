@@ -360,6 +360,30 @@ WHERE user_id = '${userId}'::uuid AND node_id = '${nodeId.replace(/'/g, "''")}';
   return status.length > 0 ? (status as SpiralLmsNodeStatus) : null;
 }
 
+export function readMasteredAt(userId: string, nodeId: string): string | null {
+  const raw = psql(`
+SELECT mastered_at::text
+FROM public.user_progress
+WHERE user_id = '${userId}'::uuid AND node_id = '${nodeId.replace(/'/g, "''")}';
+`);
+  if (raw.length === 0 || raw === '') {
+    return null;
+  }
+  return raw;
+}
+
+export function readMaintenanceClearedAt(userId: string, nodeId: string): string | null {
+  const raw = psql(`
+SELECT maintenance_cleared_at::text
+FROM public.user_progress
+WHERE user_id = '${userId}'::uuid AND node_id = '${nodeId.replace(/'/g, "''")}';
+`);
+  if (raw.length === 0 || raw === '') {
+    return null;
+  }
+  return raw;
+}
+
 export function readMaintenanceSince(userId: string, nodeId: string): string | null {
   const raw = psql(`
 SELECT maintenance_since::text

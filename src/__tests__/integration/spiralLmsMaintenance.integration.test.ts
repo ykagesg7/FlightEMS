@@ -9,7 +9,10 @@ import {
   psql,
   psqlLastLine,
   readMaintenanceSince,
+  readMaintenanceClearedAt,
+  readMasteredAt,
   readProgressStatus,
+  sqlRecomputeAndReadStatus,
   recordContentView,
   resetSpiralCatalog,
   seedPublishedContentSlug,
@@ -227,6 +230,74 @@ describePg('spiral LMS MAINTENANCE prerequisites (Postgres)', () => {
       `SELECT private.spiral_lms_apply_maintenance_prerequisites('${SPIRAL_PG_TEST_USER}'::uuid, '${child}');`,
     );
     expect(readMaintenanceSince(SPIRAL_PG_TEST_USER, prereq)).toBe(sinceAfterTwo);
+    expect(readProgressStatus(SPIRAL_PG_TEST_USER, prereq)).toBe('MAINTENANCE');
+  });
+
+  it('does not demote downstream MASTERED nodes when a prerequisite enters MAINTENANCE', () => {
+    const prereq = 'L1-PRQ-DOWN';
+    const failer = 'L2-FAIL';
+    const downstream = 'L3-DOWN';
+    upsertNode({ id: prereq, z_level: 1, passing_score: 80 });
+    upsertNode({ id: failer, z_level: 2, passing_score: 80 });
+    upsertNode({
+      id: downstream,
+      z_level: 3,
+      passing_score: 80,
+      unlock_config: { z_level_gate: 'off' },
+    });
+    insertMiniQuizStem(prereq, PREREQ_QUESTION_ID);
+    insertMiniQuizStem(failer, CHILD_QUESTION_ID);
+    insertMiniQuizStem(downstream, 'cccccccc-cccc-cccc-cccc-cccccccccccc');
+    linkPrerequisite(failer, prereq);
+    linkPrerequisite(downstream, prereq);
+
+    masterNodeViaMiniQuiz(prereq, PREREQ_QUESTION_ID);
+    masterNodeViaMiniQuiz(failer, CHILD_QUESTION_ID);
+    masterNodeViaMiniQuiz(
+      downstream,
+      'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    );
+    const masteredAt = readMasteredAt(SPIRAL_PG_TEST_USER, downstream);
+    expect(masteredAt).not.toBeNull();
+
+    doubleQuizFailOnChild(failer, CHILD_QUESTION_ID);
+
+    expect(readProgressStatus(SPIRAL_PG_TEST_USER, prereq)).toBe('MAINTENANCE');
+    expect(readProgressStatus(SPIRAL_PG_TEST_USER, downstream)).toBe('MASTERED');
+    expect(readMasteredAt(SPIRAL_PG_TEST_USER, downstream)).toBe(masteredAt);
+  });
+
+  it('recovers immediately when MAINTENANCE node has no mini quiz and no required content', () => {
+    const empty = 'L1-EMPTY';
+    upsertNode({ id: empty, z_level: 1, passing_score: null });
+    psql(`
+INSERT INTO public.user_progress (user_id, node_id, status, attempts, maintenance_since)
+VALUES (
+  '${SPIRAL_PG_TEST_USER}'::uuid,
+  '${empty}',
+  'MAINTENANCE',
+  0,
+  now() - interval '1 hour'
+);
+`);
+    expect(sqlRecomputeAndReadStatus(SPIRAL_PG_TEST_USER, empty)).toBe('MASTERED');
+    expect(readMaintenanceSince(SPIRAL_PG_TEST_USER, empty)).toBeNull();
+    expect(readMaintenanceClearedAt(SPIRAL_PG_TEST_USER, empty)).not.toBeNull();
+  });
+
+  it('requires two new consecutive mini_quiz failures after prerequisite recovery', () => {
+    const { child, prereq } = seedL2WithL1Prereq();
+    doubleQuizFailOnChild(child, CHILD_QUESTION_ID);
+    expect(readProgressStatus(SPIRAL_PG_TEST_USER, prereq)).toBe('MAINTENANCE');
+
+    masterNodeViaMiniQuiz(prereq, PREREQ_QUESTION_ID);
+    expect(readProgressStatus(SPIRAL_PG_TEST_USER, prereq)).toBe('MASTERED');
+    expect(readMaintenanceClearedAt(SPIRAL_PG_TEST_USER, prereq)).not.toBeNull();
+
+    expect(submitMiniQuiz(child, CHILD_QUESTION_ID, 'b', randomUUID()).passed).toBe(false);
+    expect(readProgressStatus(SPIRAL_PG_TEST_USER, prereq)).toBe('MASTERED');
+
+    expect(submitMiniQuiz(child, CHILD_QUESTION_ID, 'b', randomUUID()).passed).toBe(false);
     expect(readProgressStatus(SPIRAL_PG_TEST_USER, prereq)).toBe('MAINTENANCE');
   });
 

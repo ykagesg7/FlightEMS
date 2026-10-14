@@ -459,6 +459,18 @@ describe('spiral LMS maintenance prerequisites migration (static)', () => {
     expect(maintenanceSql).toMatch(/IF v_prev_status = 'MAINTENANCE' THEN/);
     expect(maintenanceSql).toMatch(/maintenance_since = CASE/);
   });
+
+  it('tracks recovery for re-trigger and treats MAINTENANCE prereqs as met', () => {
+    expect(maintenanceSql).toMatch(/maintenance_cleared_at timestamptz/);
+    expect(maintenanceSql).toMatch(/ua\.created_at > v_cutoff/);
+    expect(maintenanceSql).toMatch(/max\(up\.maintenance_cleared_at\)/);
+    expect(maintenanceSql).toMatch(/ORDER BY np\.prerequisite_node_id/);
+    expect(maintenanceSql).toMatch(/up\.status IN \('MASTERED', 'MAINTENANCE'\)/);
+    expect(maintenanceSql).toMatch(
+      /WHERE status = 'MAINTENANCE'\s+AND maintenance_since IS NULL/,
+    );
+    expect(maintenanceSql).toMatch(/IF v_required_count = 0 THEN\s+RETURN true;/);
+  });
 });
 
 describe('spiral LMS FK support indexes migration (static)', () => {
