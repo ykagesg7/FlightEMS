@@ -124,11 +124,10 @@ SQL
 run_psql_file "$DB_DIR/20261012_spiral_lms_content_slug_map.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_record_attempt.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_mdx_mini_quiz.sql"
-run_psql_file "$DB_DIR/20261012_spiral_lms_seed_l1_l2_nodes.sql"
 run_psql_file "$DB_DIR/20261013_spiral_lms_mini_quiz_version_pass.sql"
-run_psql_file "$DB_DIR/20261014_spiral_lms_seed_quiz_l1_l2.sql"
 run_psql_file "$DB_DIR/20261013_spiral_lms_fk_support_indexes.sql"
 run_psql_file "$DB_DIR/20261014_spiral_lms_maintenance_prerequisites.sql"
+run_psql_file "$DB_DIR/20261012_spiral_lms_seed_l1_l2_nodes.sql"
 
 run_psql -f - <<'SQL'
 INSERT INTO public.learning_contents (id, title, category, is_published)
@@ -298,5 +297,8 @@ SQL
 else
   echo "OK: invalid score rejected"
 fi
+
+# Production apply order (INDEX.md): quiz seed runs after version_pass; verify idempotent apply here.
+run_psql_file "$DB_DIR/20261014_spiral_lms_seed_quiz_l1_l2.sql"
 
 echo "spiral_lms_record_attempt integration: all checks passed"

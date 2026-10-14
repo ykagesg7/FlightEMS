@@ -119,9 +119,7 @@ ALTER TABLE public.learning_contents ADD COLUMN IF NOT EXISTS updated_at timesta
   runSqlFile('20261012_spiral_lms_content_slug_map.sql');
   runSqlFile('20261012_spiral_lms_record_attempt.sql');
   runSqlFile('20261012_spiral_lms_mdx_mini_quiz.sql');
-  runSqlFile('20261012_spiral_lms_seed_l1_l2_nodes.sql');
   runSqlFile('20261013_spiral_lms_mini_quiz_version_pass.sql');
-  runSqlFile('20261014_spiral_lms_seed_quiz_l1_l2.sql');
   runSqlFile('20261013_spiral_lms_fk_support_indexes.sql');
   runSqlFile('20261014_spiral_lms_maintenance_prerequisites.sql');
 
