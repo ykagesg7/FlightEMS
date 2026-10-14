@@ -437,22 +437,27 @@ describe('spiral LMS mini-quiz version pass migration (static)', () => {
 describe('spiral LMS maintenance prerequisites migration (static)', () => {
   const maintenanceSql = readFileSync(MAINTENANCE_PATH, 'utf8');
 
-  it('defines consecutive-fail detection and prerequisite MAINTENANCE apply', () => {
+  it('defines maintenance_since and prerequisite targeting up to one z_level back', () => {
+    expect(maintenanceSql).toMatch(/maintenance_since timestamptz/);
     expect(maintenanceSql).toMatch(/spiral_lms_two_consecutive_failed_attempts/);
     expect(maintenanceSql).toMatch(/spiral_lms_apply_maintenance_prerequisites/);
-    expect(maintenanceSql).toMatch(/prereq\.z_level = v_node\.z_level - 1/);
+    expect(maintenanceSql).toMatch(/attempt_kind = 'mini_quiz'/);
+    expect(maintenanceSql).toMatch(/prereq\.z_level <= v_node\.z_level/);
+    expect(maintenanceSql).toMatch(/prereq\.z_level >= v_node\.z_level - 1/);
   });
 
-  it('hooks record_attempt_core after failed attempts', () => {
-    expect(maintenanceSql).toMatch(/IF NOT p_passed THEN/);
+  it('hooks record_attempt_core after failed mini_quiz attempts only', () => {
+    expect(maintenanceSql).toMatch(/IF NOT p_passed AND p_attempt_kind = 'mini_quiz' THEN/);
     expect(maintenanceSql).toMatch(
       /PERFORM private\.spiral_lms_apply_maintenance_prerequisites/,
     );
+    expect(maintenanceSql).toMatch(/pg_advisory_xact_lock/);
   });
 
-  it('allows MAINTENANCE to clear via recompute when mastered', () => {
+  it('clears MAINTENANCE via maintenance_recovery_met and maintenance_since', () => {
+    expect(maintenanceSql).toMatch(/spiral_lms_maintenance_recovery_met/);
     expect(maintenanceSql).toMatch(/IF v_prev_status = 'MAINTENANCE' THEN/);
-    expect(maintenanceSql).toMatch(/v_status := 'MASTERED'/);
+    expect(maintenanceSql).toMatch(/maintenance_since = CASE/);
   });
 });
 
