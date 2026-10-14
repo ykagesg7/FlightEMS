@@ -1,25 +1,36 @@
 import { describe, expect, it } from 'vitest';
 import {
-  imageDataIsAllGsiDemNoData,
+  gsiDemHeightGridIsOpenOceanWithoutNodata,
   isGsiDemNoDataRgb,
+  normalizeGsiDemHeightMeters,
+  sampleGsiDemHeightForTerrain,
 } from '../../pages/planning/components/flight/flightViewer3d/gsiDemPngAnalysis';
 
 describe('gsiDemPngAnalysis', () => {
-  it('detects GSI invalid RGB', () => {
+  it('detects GSI nodata RGB', () => {
     expect(isGsiDemNoDataRgb(128, 0, 0)).toBe(true);
-    expect(isGsiDemNoDataRgb(127, 0, 0)).toBe(false);
+    expect(isGsiDemNoDataRgb(0, 0, 0)).toBe(false);
   });
 
-  it('detects all-no-data image', () => {
-    const data = new Uint8ClampedArray(256 * 256 * 4);
-    for (let i = 0; i < data.length; i += 4) {
-      data[i] = 128;
-      data[i + 1] = 0;
-      data[i + 2] = 0;
-      data[i + 3] = 255;
-    }
-    expect(imageDataIsAllGsiDemNoData(data, 256, 256)).toBe(true);
-    data[0] = 100;
-    expect(imageDataIsAllGsiDemNoData(data, 256, 256)).toBe(false);
+  it('normalizes sea and nodata to 0m', () => {
+    expect(normalizeGsiDemHeightMeters(0, true)).toBe(0);
+    expect(normalizeGsiDemHeightMeters(-12, false)).toBe(0);
+    expect(normalizeGsiDemHeightMeters(42, false)).toBe(42);
+  });
+
+  it('clamps low sea samples on mixed nodata tiles', () => {
+    expect(sampleGsiDemHeightForTerrain(8, 0.5, 30, 40)).toBe(0);
+    expect(sampleGsiDemHeightForTerrain(8, 0.1, 30, 28)).toBe(8);
+    expect(sampleGsiDemHeightForTerrain(12.3, 0, 12.3, 42)).toBe(0);
+    expect(sampleGsiDemHeightForTerrain(22, 0, 12.3, 42)).toBe(0);
+    expect(sampleGsiDemHeightForTerrain(30, 0, 12.3, 42)).toBe(30);
+    expect(sampleGsiDemHeightForTerrain(Number.NaN, 0.5, 0, 10)).toBe(0);
+  });
+
+  it('detects open-ocean tiles without nodata pixels', () => {
+    const ocean = Array.from({ length: 8 }, () => [4.5, 12, 26]);
+    expect(gsiDemHeightGridIsOpenOceanWithoutNodata(ocean)).toBe(true);
+    const coastal = [[12, 43], [15, 40]];
+    expect(gsiDemHeightGridIsOpenOceanWithoutNodata(coastal)).toBe(false);
   });
 });
