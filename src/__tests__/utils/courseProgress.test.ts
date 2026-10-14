@@ -116,7 +116,8 @@ describe('courseProgress', () => {
       (series) =>
         !series.startsWith('CPL-') &&
         !series.startsWith('USAF-') &&
-        series !== 'PPL-Master-Syllabus'
+        series !== 'PPL-Master-Syllabus' &&
+        series !== 'Spiral-Matrix-LMS'
     );
 
     for (const series of mindsetSeries) {

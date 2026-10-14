@@ -103,6 +103,9 @@ SQL
 
 run_psql_file "$DB_DIR/20261012_spiral_lms_schema_rls.sql"
 
+# Spiral L1 lessons (FK targets); remaining slug-map ids are stubbed below.
+run_psql_file "$DB_DIR/20261014_learning_contents_spiral_l1_q3_q4.sql"
+
 # slug_map FK requires learning_contents rows (production already has them).
 slug_map_sql="$DB_DIR/20261012_spiral_lms_content_slug_map.sql"
 lc_values="$(
