@@ -153,6 +153,31 @@ BEGIN
   );
 
   IF v_prev_status = 'MAINTENANCE' THEN
+    -- Ignore quiz passes recorded before this maintenance episode (updated_at marks entry).
+    v_mastered := (
+      NOT v_locked
+      AND private.spiral_lms_required_content_met(p_user_id, p_node_id)
+      AND EXISTS (
+        SELECT 1
+        FROM public.user_attempts ua
+        INNER JOIN public.user_progress up
+          ON up.user_id = ua.user_id
+         AND up.node_id = ua.node_id
+        WHERE ua.user_id = p_user_id
+          AND ua.node_id = p_node_id
+          AND up.status = 'MAINTENANCE'
+          AND ua.attempt_kind = 'mini_quiz'
+          AND ua.passed = true
+          AND ua.score IS NOT NULL
+          AND ua.created_at >= up.updated_at
+          AND ua.score >= coalesce(v_node.passing_score, 0)
+          AND (
+            v_node.passing_score IS NULL
+            OR ua.mini_quiz_version IS NOT DISTINCT FROM private.spiral_lms_node_mini_quiz_version(p_node_id)
+          )
+      )
+    );
+
     IF v_mastered THEN
       v_status := 'MASTERED';
     ELSIF private.spiral_lms_node_has_progress(p_user_id, p_node_id) THEN
