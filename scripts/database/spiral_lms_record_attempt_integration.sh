@@ -103,6 +103,9 @@ SQL
 
 run_psql_file "$DB_DIR/20261012_spiral_lms_schema_rls.sql"
 
+# Spiral L1 lessons (FK targets); remaining slug-map ids are stubbed below.
+run_psql_file "$DB_DIR/20261014_learning_contents_spiral_l1_q3_q4.sql"
+
 # slug_map FK requires learning_contents rows (production already has them).
 slug_map_sql="$DB_DIR/20261012_spiral_lms_content_slug_map.sql"
 lc_values="$(
@@ -121,10 +124,11 @@ SQL
 run_psql_file "$DB_DIR/20261012_spiral_lms_content_slug_map.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_record_attempt.sql"
 run_psql_file "$DB_DIR/20261012_spiral_lms_mdx_mini_quiz.sql"
+run_psql_file "$DB_DIR/20261012_spiral_lms_seed_l1_l2_nodes.sql"
 run_psql_file "$DB_DIR/20261013_spiral_lms_mini_quiz_version_pass.sql"
+run_psql_file "$DB_DIR/20261014_spiral_lms_seed_quiz_l1_l2.sql"
 run_psql_file "$DB_DIR/20261013_spiral_lms_fk_support_indexes.sql"
 run_psql_file "$DB_DIR/20261014_spiral_lms_maintenance_prerequisites.sql"
-run_psql_file "$DB_DIR/20261012_spiral_lms_seed_l1_l2_nodes.sql"
 
 run_psql -f - <<'SQL'
 INSERT INTO public.learning_contents (id, title, category, is_published)

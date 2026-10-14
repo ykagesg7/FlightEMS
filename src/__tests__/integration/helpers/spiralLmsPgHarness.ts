@@ -95,16 +95,33 @@ CREATE TABLE IF NOT EXISTS public.learning_contents (
   id text PRIMARY KEY,
   title text NOT NULL,
   category text NOT NULL,
-  is_published boolean NOT NULL DEFAULT true
+  sub_category text,
+  description text,
+  order_index integer NOT NULL DEFAULT 0,
+  parent_id text,
+  content_type text NOT NULL DEFAULT 'text',
+  is_published boolean NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE public.learning_contents ADD COLUMN IF NOT EXISTS sub_category text;
+ALTER TABLE public.learning_contents ADD COLUMN IF NOT EXISTS description text;
+ALTER TABLE public.learning_contents ADD COLUMN IF NOT EXISTS order_index integer NOT NULL DEFAULT 0;
+ALTER TABLE public.learning_contents ADD COLUMN IF NOT EXISTS parent_id text;
+ALTER TABLE public.learning_contents ADD COLUMN IF NOT EXISTS content_type text NOT NULL DEFAULT 'text';
+ALTER TABLE public.learning_contents ADD COLUMN IF NOT EXISTS created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE public.learning_contents ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now();
 `);
 
   runSqlFile('20261012_spiral_lms_schema_rls.sql');
+  runSqlFile('20261014_learning_contents_spiral_l1_q3_q4.sql');
   seedLearningContentsForSlugMap();
   runSqlFile('20261012_spiral_lms_content_slug_map.sql');
   runSqlFile('20261012_spiral_lms_record_attempt.sql');
   runSqlFile('20261012_spiral_lms_mdx_mini_quiz.sql');
+  runSqlFile('20261012_spiral_lms_seed_l1_l2_nodes.sql');
   runSqlFile('20261013_spiral_lms_mini_quiz_version_pass.sql');
+  runSqlFile('20261014_spiral_lms_seed_quiz_l1_l2.sql');
   runSqlFile('20261013_spiral_lms_fk_support_indexes.sql');
   runSqlFile('20261014_spiral_lms_maintenance_prerequisites.sql');
 
