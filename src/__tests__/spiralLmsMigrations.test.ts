@@ -27,6 +27,10 @@ const MINI_QUIZ_VERSION_DOWN_PATH = join(
 const FK_INDEX_PATH = join(DB_DIR, '20261013_spiral_lms_fk_support_indexes.sql');
 const FK_INDEX_DOWN_PATH = join(DB_DIR, '20261013_spiral_lms_fk_support_indexes.down.sql');
 const MAINTENANCE_PATH = join(DB_DIR, '20261014_spiral_lms_maintenance_prerequisites.sql');
+const MAINTENANCE_DOWN_PATH = join(
+  DB_DIR,
+  '20261014_spiral_lms_maintenance_prerequisites.down.sql',
+);
 const CONTENT_ROOT = join(process.cwd(), 'src/content');
 
 const SPIRAL_TABLES = [
@@ -470,6 +474,15 @@ describe('spiral LMS maintenance prerequisites migration (static)', () => {
       /WHERE status = 'MAINTENANCE'\s+AND maintenance_since IS NULL/,
     );
     expect(maintenanceSql).toMatch(/IF v_required_count = 0 THEN\s+RETURN true;/);
+    expect(maintenanceSql).not.toMatch(/maintenance_cleared_at = NULL/);
+    expect(maintenanceSql).toMatch(/hashtext\('spiral_lms_user_progress'\)/);
+  });
+
+  it('provides a down migration restoring version_pass-era functions', () => {
+    const downSql = readFileSync(MAINTENANCE_DOWN_PATH, 'utf8');
+    expect(downSql).toMatch(/DROP FUNCTION IF EXISTS private\.spiral_lms_apply_maintenance_prerequisites/);
+    expect(downSql).toMatch(/DROP COLUMN IF EXISTS maintenance_since/);
+    expect(downSql).toMatch(/CREATE OR REPLACE FUNCTION private\.spiral_lms_record_attempt_core/);
   });
 });
 

@@ -908,7 +908,7 @@ AS $$
           FROM public.user_progress up
           WHERE up.user_id = p_user_id
             AND up.node_id = n.id
-            AND up.status = 'MASTERED'
+            AND up.status IN ('MASTERED', 'MAINTENANCE')
         )
     )
   END;

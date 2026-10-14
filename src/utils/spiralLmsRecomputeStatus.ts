@@ -51,7 +51,8 @@ export function isSpiralZLevelGateMet(
     if (isNodeExcludedFromZGate(node)) {
       continue;
     }
-    if (progressByNodeId[node.id]?.status !== 'MASTERED') {
+    const levelStatus = progressByNodeId[node.id]?.status;
+    if (levelStatus !== 'MASTERED' && levelStatus !== 'MAINTENANCE') {
       return false;
     }
   }

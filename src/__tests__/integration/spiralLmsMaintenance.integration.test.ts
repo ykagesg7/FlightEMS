@@ -233,6 +233,36 @@ describePg('spiral LMS MAINTENANCE prerequisites (Postgres)', () => {
     expect(readProgressStatus(SPIRAL_PG_TEST_USER, prereq)).toBe('MAINTENANCE');
   });
 
+  it('does not demote L2 MASTERED when L1 enters MAINTENANCE with z-level gate enabled', () => {
+    const l1Maint = 'L1-ZG-MAINT';
+    const l1Sibling = 'L1-ZG-SIB';
+    const l2Mastered = 'L2-ZG-OK';
+    const l2Failer = 'L2-ZG-FAIL';
+    const qSib = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
+    const qOk = 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee';
+    upsertNode({ id: l1Maint, z_level: 1, passing_score: 80 });
+    upsertNode({ id: l1Sibling, z_level: 1, passing_score: 80, sort_order: 2 });
+    upsertNode({ id: l2Mastered, z_level: 2, passing_score: 80, sort_order: 1 });
+    upsertNode({ id: l2Failer, z_level: 2, passing_score: 80, sort_order: 2 });
+    insertMiniQuizStem(l1Maint, PREREQ_QUESTION_ID);
+    insertMiniQuizStem(l1Sibling, qSib);
+    insertMiniQuizStem(l2Mastered, qOk);
+    insertMiniQuizStem(l2Failer, CHILD_QUESTION_ID);
+    linkPrerequisite(l2Failer, l1Maint);
+
+    masterNodeViaMiniQuiz(l1Maint, PREREQ_QUESTION_ID);
+    masterNodeViaMiniQuiz(l1Sibling, qSib);
+    masterNodeViaMiniQuiz(l2Mastered, qOk);
+    const masteredAt = readMasteredAt(SPIRAL_PG_TEST_USER, l2Mastered);
+    expect(masteredAt).not.toBeNull();
+
+    doubleQuizFailOnChild(l2Failer, CHILD_QUESTION_ID);
+
+    expect(readProgressStatus(SPIRAL_PG_TEST_USER, l1Maint)).toBe('MAINTENANCE');
+    expect(readProgressStatus(SPIRAL_PG_TEST_USER, l2Mastered)).toBe('MASTERED');
+    expect(readMasteredAt(SPIRAL_PG_TEST_USER, l2Mastered)).toBe(masteredAt);
+  });
+
   it('does not demote downstream MASTERED nodes when a prerequisite enters MAINTENANCE', () => {
     const prereq = 'L1-PRQ-DOWN';
     const failer = 'L2-FAIL';
@@ -283,6 +313,57 @@ VALUES (
     expect(sqlRecomputeAndReadStatus(SPIRAL_PG_TEST_USER, empty)).toBe('MASTERED');
     expect(readMaintenanceSince(SPIRAL_PG_TEST_USER, empty)).toBeNull();
     expect(readMaintenanceClearedAt(SPIRAL_PG_TEST_USER, empty)).not.toBeNull();
+  });
+
+  it('preserves maintenance_cleared_at when prerequisite re-enters MAINTENANCE', () => {
+    const prereq = 'L1-CLR';
+    const childA = 'L2-CLRA';
+    const childB = 'L2-CLRB';
+    const qB = 'ffffffff-ffff-ffff-ffff-ffffffffffff';
+    upsertNode({ id: prereq, z_level: 1, passing_score: 80 });
+    upsertNode({ id: childA, z_level: 2, passing_score: 80 });
+    upsertNode({ id: childB, z_level: 2, passing_score: 80, sort_order: 2 });
+    insertMiniQuizStem(prereq, PREREQ_QUESTION_ID);
+    insertMiniQuizStem(childA, CHILD_QUESTION_ID);
+    insertMiniQuizStem(childB, qB);
+    linkPrerequisite(childA, prereq);
+    linkPrerequisite(childB, prereq);
+    masterNodeViaMiniQuiz(prereq, PREREQ_QUESTION_ID);
+
+    doubleQuizFailOnChild(childA, CHILD_QUESTION_ID);
+    masterNodeViaMiniQuiz(prereq, PREREQ_QUESTION_ID);
+    const clearedAt = readMaintenanceClearedAt(SPIRAL_PG_TEST_USER, prereq);
+    expect(clearedAt).not.toBeNull();
+
+    expect(submitMiniQuiz(childA, CHILD_QUESTION_ID, 'b', randomUUID()).passed).toBe(false);
+    doubleQuizFailOnChild(childB, qB);
+    expect(readProgressStatus(SPIRAL_PG_TEST_USER, prereq)).toBe('MAINTENANCE');
+    expect(readMaintenanceClearedAt(SPIRAL_PG_TEST_USER, prereq)).toBe(clearedAt);
+
+    expect(submitMiniQuiz(childA, CHILD_QUESTION_ID, 'b', randomUUID()).passed).toBe(false);
+    expect(readProgressStatus(SPIRAL_PG_TEST_USER, prereq)).toBe('MAINTENANCE');
+  });
+
+  it('backfills maintenance_since for legacy MAINTENANCE rows', () => {
+    const legacy = 'L1-LEGACY';
+    upsertNode({ id: legacy, z_level: 1, passing_score: null });
+    psql(`
+INSERT INTO public.user_progress (user_id, node_id, status, attempts, maintenance_since)
+VALUES (
+  '${SPIRAL_PG_TEST_USER}'::uuid,
+  '${legacy}',
+  'MAINTENANCE',
+  0,
+  NULL
+);
+`);
+    psql(`
+UPDATE public.user_progress
+SET maintenance_since = now()
+WHERE status = 'MAINTENANCE'
+  AND maintenance_since IS NULL;
+`);
+    expect(readMaintenanceSince(SPIRAL_PG_TEST_USER, legacy)).not.toBeNull();
   });
 
   it('requires two new consecutive mini_quiz failures after prerequisite recovery', () => {
