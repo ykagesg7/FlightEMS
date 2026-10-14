@@ -60,6 +60,8 @@ export default defineConfig({
     },
     testTimeout: 10000,
     hookTimeout: 10000,
+    // Spiral LMS Postgres integration tests share one DB and call resetSpiralCatalog().
+    fileParallelism: process.env.SPIRAL_LMS_PG_URL ? false : undefined,
   },
   resolve: {
     alias: {
