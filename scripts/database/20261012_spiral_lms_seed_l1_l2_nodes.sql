@@ -79,6 +79,8 @@ VALUES
   ('L1-Q2-1', 'ppl-5-4-6-aerodrome-ground-operations-basics', 'lesson', true, 1),
   ('L1-Q2-2', 'ppl-4-1-1-air-traffic-services-overview', 'lesson', true, 1),
   ('L1-Q2-2', 'ppl-4-2-3-aerodrome-control-basics', 'lesson', false, 2),
+  ('L1-Q3-1', 'l1-q3-1-path-to-pilot', 'lesson', true, 1),
+  ('L1-Q4-1', 'l1-q4-1-michizane-briefing', 'lesson', true, 1),
   ('L1-Q3-2', 'ppl-5-3-2-medical-certificate-basics', 'lesson', true, 1),
   ('L1-Q3-3', 'ppl-1-1-7-vn-diagram', 'lesson', true, 1),
   ('L2-Q1-1', 'cp-3-2-pattern-ats', 'lesson', true, 1),
