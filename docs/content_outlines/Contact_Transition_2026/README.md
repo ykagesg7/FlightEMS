@@ -98,7 +98,7 @@ FN と同じ。Gemini は Markdown 本文のみ。YAML 禁止。レビュー通�
 | # | stem | slug | order | 主題 | 所有 | 状態 |
 |---|------|------|-------|------|------|------|
 | 2-1 | `CP-2-1_DeepStall` | `cp-2-1-deep-stall` | 1 | ポストストール（Post-stall） | **T-4 上様回答** | **T-4 リライト済・W35 月 8/24** |
-| 2-2 | `CP-2-2_AcceleratedStall` | `cp-2-2-accelerated-stall` | 2 | Accelerated stall | **5.14** | **精緻化済・W35 水 8/26** |
+| 2-2 | `CP-2-2_AcceleratedStall` | `cp-2-2-accelerated-stall` | 2 | 加速失速（低速域・高速域） | **T-4 上様回答** | **T-4 リライト済・W35 水 8/26** |
 | 2-3 | `CP-2-3_RollAuthority` | `cp-2-3-roll-authority` | 3 | Rudder / aileron / reversal | **5.10, 5.12, 5.15** | **精緻化済・W35 金 8/28** |
 | 2-4 | `CP-2-4_Unload` | `cp-2-4-unload` | 4 | Acceleration / stab demo | **5.13, 5.18** | **精緻化済・W36 日 8/30** |
 | 2-5 | `CP-2-5_TrimFailure` | `cp-2-5-trim-failure` | 5 | Simulated trim failure | **5.9** | **精緻化済・W36 水 9/2** |

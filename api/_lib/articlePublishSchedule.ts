@@ -166,7 +166,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         publishDate: '2026-08-26',
         title: '第5話：もっと引くな ～加速失速～',
         slug: '/articles/cp-2-2-accelerated-stall',
-        hook: '曲がりきれなくてもいい。失速に入れるな。',
+        hook: '低速域・高速域の2本。合図が来たら引きを緩める。オーバーGはするな。',
       },
       {
         id: 'CP-2-3_RollAuthority',
