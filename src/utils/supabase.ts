@@ -43,6 +43,24 @@ export const createBrowserSupabaseClient = () => {
 // ブラウザ用のデフォルトクライアント
 const supabase = createBrowserSupabaseClient();
 
+// 公開データ用（セッション JWT を付与しない。不正な localStorage セッションでも REST が 401 にならない）
+let publicSupabaseClient:
+  | SupabaseClient<Database, Database['__InternalSupabase'], 'public'>
+  | undefined;
+
+export const createPublicSupabaseClient = () => {
+  if (!publicSupabaseClient) {
+    publicSupabaseClient = createClient<Database>(supabaseUrl, supabaseKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
+      },
+    });
+  }
+  return publicSupabaseClient;
+};
+
 // 名前付きエクスポートとしても提供（互換性のため）
 export { supabase };
 

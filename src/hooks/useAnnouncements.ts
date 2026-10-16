@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../utils/supabase';
+import { createPublicSupabaseClient } from '../utils/supabase';
 import type { Database } from '../types/database.types';
 
 type Announcement = Database['public']['Tables']['announcements']['Row'];
@@ -27,7 +27,7 @@ export function useAnnouncements(): UseAnnouncementsReturn {
         setIsLoading(true);
         setError(null);
 
-        const { data, error: fetchError } = await supabase
+        const { data, error: fetchError } = await createPublicSupabaseClient()
           .from('announcements')
           .select('*')
           .order('date', { ascending: false })
