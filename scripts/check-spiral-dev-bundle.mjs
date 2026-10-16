@@ -12,6 +12,10 @@ const MARKERS = [
   '今日の1単元',
   '整備点検一覧',
   '螺旋マトリックス LMS（開発）',
+  '3D 螺旋ビュー',
+  'ドラッグで回転 · スクロールでズーム',
+  '@react-three/fiber',
+  'SpiralLms3dCanvas',
 ];
 
 function walkFiles(dir, acc = []) {
