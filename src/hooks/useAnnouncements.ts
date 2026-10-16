@@ -11,8 +11,8 @@ interface UseAnnouncementsReturn {
 }
 
 /**
- * Supabaseからお知らせを取得するフック
- * 最新5件を日付の降順で取得
+ * Supabase からお知らせを取得するフック（最新5件・date 降順）。
+ * 公開読み取りのみのため createPublicSupabaseClient（anon・セッション非永続）を使う。
  */
 export function useAnnouncements(): UseAnnouncementsReturn {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
