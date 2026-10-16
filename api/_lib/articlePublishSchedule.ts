@@ -152,14 +152,14 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W35',
     seriesTitle: 'CP（単機）',
     intro:
-      '来週は機体を感じる3本。月・水・金。Deep stall、加速失速、効く面。図形を描く前の feel たい。',
+      '来週は機体を感じる3本。月・水・金。ポストストール、加速失速、効く面。失速の先を身体で知る feel たい。',
     articles: [
       {
         id: 'CP-2-1_DeepStall',
         publishDate: '2026-08-24',
-        title: '第4話：引いたままは沈む ～Deep stall～',
+        title: '第4話：ポストストール ～Post-stall～',
         slug: '/articles/cp-2-1-deep-stall',
-        hook: '引いたままは沈む。戻すのは緩めること。',
+        hook: 'ハンズオフで戻す。回復操作は150kt（1.3Vs）から。',
       },
       {
         id: 'CP-2-2_AcceleratedStall',

@@ -4,10 +4,10 @@
 INSERT INTO learning_contents (id, title, category, sub_category, description, order_index, parent_id, content_type, is_published, updated_at)
 VALUES (
   'CP-2-1_DeepStall',
-  '【操縦】第4話：引いたままは沈む ～Deep stall～',
+  '【操縦】第4話：ポストストール ～Post-stall～',
   '操縦',
   '曲技飛行',
-  'Deep stallはfeelの演習。エルロン中立でaft to stop、回復は引きを緩める。演習は開始パワー維持。意図しない失速はまず迎え角、その先はその機の手順。140 kt / 6,000 fpmはT-38枠。学習記事であり実機手順ではない。',
+  'ポストストールは、失速の先で機体がどう暴れ、どう戻るかを身体で知る演習。20,000ft以上・クリーン形態で入り、戻すのはハンズオフ。回復操作は150kt（1.3Vs）から。学習記事であり実機手順ではない。',
   614,
   NULL,
   'text',
