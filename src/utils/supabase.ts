@@ -14,7 +14,11 @@ if (import.meta.env.MODE !== 'test' && (!supabaseUrl || !supabaseKey)) {
 // 環境設定
 const isDevelopment = import.meta.env.MODE === 'development';
 
-// シングルトンパターンによるクライアント管理（@supabase/supabase-js の 2 本目を作らず GoTrue の多重インスタンス警告を避ける）
+// ブラウザ用 Supabase はシングルトンで共有する（createClient の乱立を避ける）。
+// 例外: 下記 createPublicSupabaseClient のみ 2 体目を許可する — ゲスト向けお知らせ取得（useAnnouncements）専用。
+// persistSession:false の anon 専用で、共有クライアントの localStorage JWT を REST に載せないため。
+// supabase-js は createClient ごとに GoTrue を生成するため、初回利用時に devtools で
+// "Multiple GoTrueClient instances" が出ることがある。storageKey を分離し refresh/storage は共有しないので実害はない。
 let browserSupabaseClient:
   | SupabaseClient<Database, Database['__InternalSupabase'], 'public'>
   | undefined;
@@ -42,6 +46,27 @@ export const createBrowserSupabaseClient = () => {
 
 // ブラウザ用のデフォルトクライアント
 const supabase = createBrowserSupabaseClient();
+
+/** お知らせ取得（useAnnouncements）専用。呼び出し元を増やさない。 */
+let publicSupabaseClient:
+  | SupabaseClient<Database, Database['__InternalSupabase'], 'public'>
+  | undefined;
+
+/** persistSession:false の anon 専用クライアント（1 回だけ生成して使い回す）。 */
+export const createPublicSupabaseClient = () => {
+  if (!publicSupabaseClient) {
+    publicSupabaseClient = createClient<Database>(supabaseUrl, supabaseKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
+        // メインの flightacademy.auth.token と GoTrue ストレージを共有しない
+        storageKey: 'flightacademy.auth.public-readonly',
+      },
+    });
+  }
+  return publicSupabaseClient;
+};
 
 // 名前付きエクスポートとしても提供（互換性のため）
 export { supabase };
