@@ -43,7 +43,11 @@ npm ci
 cp .env.example .env.local
 ```
 
-`.env.local` に **本番以外** の `VITE_SUPABASE_URL` と `VITE_SUPABASE_ANON_KEY` を設定する（値はコミットしない）。F5 だけ追加で `VITE_SPIRAL_LMS_ENABLED=true`（dev のみ有効。`src/utils/spiralLmsFeature.ts`）。
+`.env.local` に設定する **変数名だけ**（値はコミット・ログ・PR に書かない）:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_SPIRAL_LMS_ENABLED`（F5 用。`npm run dev` かつ `src/utils/spiralLmsFeature.ts` で DEV のときだけ有効）
 
 **このリポジトリ単体では** ローカル Supabase スタックやシード SQL の自動適用はない〔計測〕。空のマシンから「DB 付きで全部動く」状態には、別途非本番 Supabase プロジェクトとシードが必要〔推定〕。資格情報が無いときは Doctor で止め、書き込み系はすべて **判断不能／未確認** とする。
 
@@ -61,11 +65,11 @@ npm run dev
 npm run build && npx vite preview --host 127.0.0.1 --port 5174 --strictPort
 ```
 
-`playwright.config.ts` の `webServer` と同じ〔計測〕。F5 の `/dev/spiral-lms` は **dev ビルドに含まれない**（`import.meta.env.DEV` でルート省略、`src/utils/spiralLmsDevRoutes.ts`）。
+`playwright.config.ts` の `webServer` と同じ〔計測〕。F5 の `/dev/spiral-lms` は **production のビルドに含まれない**（`!import.meta.env.DEV` のとき `buildSpiralLmsDevRoutes` はルートを返さず、`isSpiralLmsFeatureEnabled` も false — `src/utils/spiralLmsDevRoutes.ts`、`src/utils/spiralLmsFeature.ts`）。
 
 ### (c) Vercel Preview
 
-PR の Preview URL。接続先 Supabase は **実行前にホスト名で確認**（不明なら書き込み系は未確認）。
+PR の Preview URL。`vite.config.ts` はビルド時に `VITE_SUPABASE_*` をバンドルへ埋め込む〔計測〕。Preview デプロイが **どの Supabase プロジェクトを指すか**は、Vercel の Project → Settings → Environment Variables の **Preview** 行と、ビルドに使われたブランチの組み合わせで決まる。エージェントが Dashboard を見られない場合は **未確認** とし、書き込み系は未確認のままにする。確認できるときは、Preview を開いたブラウザの Network で最初の `*.supabase.co` リクエストのホストだけを記録し、本番 ref と一致するか Doctor の判定に使う（URL 全文・anon key は保存しない）。
 
 ### Teardown
 
@@ -86,7 +90,29 @@ PR の Preview URL。接続先 Supabase は **実行前にホスト名で確認*
 
 1. URL が `localhost` / `127.0.0.1` / 確認済み Preview で、検証用に起動したインスタンスである。
 2. `package.json` の `dev` / `build`+`preview` のどちらで起動したか（F5 は dev 必須）。
-3. **Supabase ホスト名**（`VITE_SUPABASE_URL` のホスト部分のみ。値全体はログに出さない）が `fstynltdfdetpyvbrswr` なら、上表の書き込み系は **未確認** で止める。
+3. **Supabase が本番か**（ホスト名だけ。URL や key は表示しない）。リポジトリルートで:
+
+```bash
+node --input-type=module -e "
+import { config } from 'dotenv';
+config({ path: '.env.local' });
+const raw = process.env.VITE_SUPABASE_URL ?? '';
+let host = '';
+try { host = new URL(raw).hostname; } catch { /* empty */ }
+const prodRef = 'fstynltdfdetpyvbrswr';
+const matchesProd =
+  host === prodRef ||
+  host === prodRef + '.supabase.co' ||
+  host.endsWith('.' + prodRef + '.supabase.co');
+console.log(
+  host
+    ? 'supabase_host_matches_production: ' + (matchesProd ? 'yes' : 'no')
+    : 'supabase_host_matches_production: unknown'
+);
+"
+```
+
+`yes` なら書き込み系は **未確認** で止める。Preview だけを触る場合は (c) の手順でホストを得て同じ判定をする（得られなければ **未確認**）。
 4. ヘッダーが未ログイン（LOGIN）かログイン済みか。
 5. （任意）`git rev-parse HEAD` が想定コミット付近か。
 

@@ -31,12 +31,23 @@ Preconditions:
 - **DB 読取（非本番のみ）。**
 
 ```sql
-SELECT id, user_id, mode, score, total_questions, created_at
+SELECT
+  id,
+  user_id,
+  session_type,
+  score_percentage,
+  questions_attempted,
+  questions_correct,
+  is_completed,
+  completed_at,
+  created_at
 FROM quiz_sessions
 WHERE user_id = :uid
 ORDER BY created_at DESC
 LIMIT 5;
 ```
+
+列名の典拠: `src/types/database.types.ts` の `quiz_sessions.Row`〔計測〕。本番 DB への操作は **SELECT とカタログ照会のみ**（軍師裁定 B・決まり事6）。
 
 直近セッションが画面・Network と一致すること。
 

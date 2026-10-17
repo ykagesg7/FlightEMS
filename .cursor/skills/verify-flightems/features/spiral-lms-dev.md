@@ -22,10 +22,32 @@ Preconditions:
 - ログイン + 非本番 DB。本番ホストは **未確認**（軍師裁定 B）。
 
 - **ハブ。** 見出し「螺旋マトリックス LMS」と開発プレビュー注記。
-- **単元。** 当日の単元から小テストを開く（例: L1-Q1-1 — 画面ラベルは実行時に〔計測〕）。**問題数・選択肢数は実行時に数える**（設計上の期待: 上様裁可 **2026-10-14 11:40 JST** で「4択5問・4問以上で合格」。リポジトリ内の L1-Q1-1 用ミニクイズ件数は **不明**）。
+- **単元。** 当日の単元から小テストを開く（例: L1-Q1-1 — 画面ラベルは実行時に〔計測〕）。設計上の期待: 上様裁可 **2026-10-14 11:40 JST** で「4択5問・4問以上で合格」。
+- **設問件数（非本番 DB・SELECT のみ）。** 対象 `node_id`（例: `L1-Q1-1`）で:
+
+```sql
+SELECT COUNT(*) AS question_count
+FROM public.node_mini_quiz_questions
+WHERE node_id = :nodeId;
+```
+
+件数を証拠に書き、画面で数えた問題数と突き合わせる。選択肢数は各問の `options` JSON 配列を Network または `SELECT id, jsonb_array_length(options) AS option_count FROM public.node_mini_quiz_questions WHERE node_id = :nodeId ORDER BY sort_order`（非本番のみ）で確認。
 - **漏洩チェック。** 設問取得レスポンスに正答・解説フィールドが無いこと（項目名は実行時に記録）。
 - **採点。** 1回目: 意図的に3問正解相当 → 不合格表示。2回目: 4問以上正解相当 → 合格表示。
-- **合否の実装。** DB 関数側で `score := round(100 * correct / total)`、`passed := score >= passing_score`。ノードの `passing_score` は **80**（百分率。4/5=80% で合格）〔計測〕`scripts/database/20261012_spiral_lms_mdx_mini_quiz.sql`。上記「4択5問」は **上様裁可**、「80%」は **実装**。
+- **合否の実装。** ノードの `passing_score = 80` はシード〔計測〕`scripts/database/20261014_spiral_lms_seed_quiz_l1_l2.sql` 19行付近の `SET passing_score = 80`。採点式は〔計測〕`scripts/database/20261012_spiral_lms_mdx_mini_quiz.sql` 423–425行: `score := round((100::numeric * v_correct::numeric) / v_total::numeric, 2)`、`passed := score >= v_passing_score`。上記「4択5問」は **上様裁可**、「80」は **実装**。
+- **受験記録の DB 読取（非本番のみ）。** F2 ログイン後の `user_id` と `node_id` で:
+
+```sql
+SELECT id, node_id, score, passed, attempt_kind, created_at
+FROM public.user_attempts
+WHERE user_id = :uid
+  AND node_id = :nodeId
+  AND attempt_kind = 'mini_quiz'
+ORDER BY created_at DESC
+LIMIT 5;
+```
+
+表形の典拠: `scripts/database/20261012_spiral_lms_schema_rls.sql`（`user_attempts` 初期列）、`scripts/database/20261012_spiral_lms_record_attempt.sql`（`attempt_kind` 等）。直近の `score`・`passed` が画面の合否と矛盾しないこと。
 
 ### 合格
 
