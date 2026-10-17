@@ -4,7 +4,6 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { loadEnv } from 'vite';
 
 const cwd = process.cwd();
 const argv = process.argv.slice(2);
@@ -73,28 +72,6 @@ function parseAllViteSupabaseUrlsFromFile(filePath) {
   return urls;
 }
 
-function collectCandidates() {
-  const candidates = [];
-
-  const fromProcess = process.env.VITE_SUPABASE_URL?.trim();
-  if (fromProcess) candidates.push(fromProcess);
-
-  const scannedFiles = new Set();
-  for (const mode of modesToScan) {
-    for (const rel of envFilesForMode(mode)) {
-      const abs = resolve(cwd, rel);
-      if (scannedFiles.has(abs)) continue;
-      scannedFiles.add(abs);
-      candidates.push(...parseAllViteSupabaseUrlsFromFile(abs));
-    }
-    const loaded = loadEnv(mode, cwd, '');
-    const fromLoadEnv = loaded.VITE_SUPABASE_URL?.trim();
-    if (fromLoadEnv) candidates.push(fromLoadEnv);
-  }
-
-  return candidates;
-}
-
 function extractProjectRef(hostname) {
   if (hostname === prodRef) return prodRef;
   const m = hostname.match(/^([a-z0-9]+)\.supabase\.co$/i);
@@ -116,19 +93,59 @@ function classifyUrl(url) {
   return 'unknown';
 }
 
-const candidates = collectCandidates();
-
-if (candidates.length === 0) {
+function emit(result) {
+  if (result === 'yes' || result === 'no' || result === 'unknown') {
+    console.log(result);
+    return;
+  }
   console.log('unknown');
-  process.exit(0);
 }
 
-const classes = candidates.map(classifyUrl);
+async function main() {
+  let loadEnvFn = null;
+  try {
+    const vite = await import('vite');
+    loadEnvFn = vite.loadEnv;
+  } catch {
+    console.error('verify-flightems: vite module unavailable; loadEnv skipped');
+    emit('unknown');
+    return;
+  }
 
-if (classes.includes('yes')) {
-  console.log('yes');
-} else if (classes.includes('unknown')) {
-  console.log('unknown');
-} else {
-  console.log('no');
+  const candidates = [];
+
+  const fromProcess = process.env.VITE_SUPABASE_URL?.trim();
+  if (fromProcess) candidates.push(fromProcess);
+
+  const scannedFiles = new Set();
+  for (const mode of modesToScan) {
+    for (const rel of envFilesForMode(mode)) {
+      const abs = resolve(cwd, rel);
+      if (scannedFiles.has(abs)) continue;
+      scannedFiles.add(abs);
+      candidates.push(...parseAllViteSupabaseUrlsFromFile(abs));
+    }
+    const loaded = loadEnvFn(mode, cwd, '');
+    const fromLoadEnv = loaded.VITE_SUPABASE_URL?.trim();
+    if (fromLoadEnv) candidates.push(fromLoadEnv);
+  }
+
+  if (candidates.length === 0) {
+    emit('unknown');
+    return;
+  }
+
+  const classes = candidates.map(classifyUrl);
+
+  if (classes.includes('yes')) {
+    emit('yes');
+  } else if (classes.includes('unknown')) {
+    emit('unknown');
+  } else {
+    emit('no');
+  }
 }
+
+main().catch(() => {
+  emit('unknown');
+});
