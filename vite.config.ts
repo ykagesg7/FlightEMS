@@ -17,6 +17,7 @@ import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
 import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
 import { articlesIndexPlugin } from './vite/articlesIndexPlugin';
 import { injectGoogleTagPlugin } from './vite/injectGoogleTagPlugin';
+import { DEFAULT_SITE_ORIGIN, resolveSiteOriginFromEnv } from './src/config/siteOriginEnv';
 import { prerenderArticlesPlugin } from './vite/prerenderArticlesPlugin';
 
 /** flight-lms Vercel Production 用 GA4 ストリーム（公開 ID）。環境変数が空でも本番デプロイでタグを挿す */
@@ -105,6 +106,13 @@ export default defineConfig(({ mode }) => {
     }
   }
 
+  const siteOrigin = resolveSiteOriginFromEnv({
+    VITE_SITE_ORIGIN: getEnv('VITE_SITE_ORIGIN'),
+    VITE_APP_URL: getEnv('VITE_APP_URL'),
+    APP_URL: getEnv('APP_URL'),
+    VERCEL_URL: process.env.VERCEL_URL,
+  });
+
   const cesiumDeploy = resolveCesiumBaseUrl({
     vercel: process.env.VERCEL,
     vercelEnv: process.env.VERCEL_ENV,
@@ -181,6 +189,9 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_VERCEL_DEV_API_ORIGIN': JSON.stringify(vercelDevApiOrigin),
       'import.meta.env.VITE_GA_MEASUREMENT_ID': JSON.stringify(gaMeasurementId),
       'import.meta.env.VITE_CESIUM_BASE_URL': JSON.stringify(cesiumDeploy.baseUrl),
+      'import.meta.env.VITE_SITE_ORIGIN': JSON.stringify(
+        getEnv('VITE_SITE_ORIGIN') || siteOrigin || DEFAULT_SITE_ORIGIN,
+      ),
     },
     build: {
       // Sentry のためソースマップを有効化（hidden: デプロイ先には公開しない）

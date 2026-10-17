@@ -6,6 +6,7 @@ import RelatedArticles from '../../pages/articles/components/RelatedArticles';
 import TableOfContents from '../../pages/articles/components/TableOfContents';
 import ArticleJsonLd from '../../pages/articles/components/seo/ArticleJsonLd';
 import ArticleMetaTags from '../../pages/articles/components/seo/ArticleMetaTags';
+import { buildAbsoluteUrl } from '../../config/siteOrigin';
 import type { ArticleMeta } from '../../types/articles';
 import { Callout, Footnote, FootnoteRef } from './CalloutComponents';
 import CalloutBox from './CalloutBox';
@@ -152,7 +153,10 @@ interface MDXContentProps {
 }
 
 const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId: _contentId }) => {
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const currentUrl =
+    typeof window !== 'undefined'
+      ? buildAbsoluteUrl(window.location.pathname + window.location.search)
+      : '';
 
   return (
     <>

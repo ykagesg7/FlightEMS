@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import type { LearningContent } from '../../types/learning';
 import type { ArticleMeta } from '../../types/articles';
+import { DEFAULT_SITE_ORIGIN } from '../../config/siteOriginEnv';
 import {
   generateArticleStructuredData,
   generateSearchActionStructuredData,
@@ -75,6 +76,11 @@ describe('structuredData generators', () => {
     const data = generateSiteStructuredData('https://x.test');
     expect(data['@type']).toBe('WebSite');
     expect(data.potentialAction['@type']).toBe('SearchAction');
+  });
+
+  it('generateArticleStructuredData defaults base URL to configured site origin', () => {
+    const data = generateArticleStructuredData(sampleContent, sampleMeta);
+    expect(data.url).toBe(`${DEFAULT_SITE_ORIGIN}/articles/CPL-1-1-1`);
   });
 });
 

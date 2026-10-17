@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
+import { resolveSiteOriginFromEnv, type SiteOriginEnv } from '../src/config/siteOriginEnv';
 import { collectArticleMetas, type ExtractedArticleMeta } from './articlesMeta';
 
 function isArticleReleased(publishedAt?: string): boolean {
@@ -17,7 +18,6 @@ function isArticleReleased(publishedAt?: string): boolean {
 }
 
 const SITE_NAME = 'FlightAcademy';
-const DEFAULT_ORIGIN = 'https://flightacademy.com';
 
 /** Client hubs with no prerendered index. `dist/articles/` exists for OG pages, so `/articles` 404s without this. */
 export const SPA_HUB_FALLBACK_PATHS = [
@@ -43,8 +43,8 @@ export function writeSpaHubFallbacks(distDir: string, template: string): number 
 }
 
 function resolveSiteOrigin(): string {
-  const fromEnv = String(process.env.VITE_SITE_ORIGIN ?? '').trim().replace(/\/$/, '');
-  return fromEnv || DEFAULT_ORIGIN;
+  const env = process.env as SiteOriginEnv;
+  return resolveSiteOriginFromEnv(env);
 }
 
 function escapeAttr(value: string): string {
