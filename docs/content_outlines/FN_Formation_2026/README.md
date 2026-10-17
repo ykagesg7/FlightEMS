@@ -78,7 +78,7 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**。W34 は CP。FN のド�
 | 1 | `FMT-1-1_WingmanVFR` | `fmt-1-1-wingman-vfr` | 1 | V.F.R | IFF §3.8、Vol.3 deconflict | **ストック** |
 | 2 | `FMT-1-2_RunwayLineupTakeoff` | `fmt-1-2-runway-lineup-takeoff` | 2 | Lineup / T/O | Vol.3 §3.6–3.8、Vol.2 Area 71 | **ストック** |
 | 3 | `FMT-1-3_FingertipRoute` | `fmt-1-3-fingertip-route` | 3 | Fingertip / Route | Fund **6.11–6.12**、Vol.2 Area 72 / 74 | **ストック** |
-| 4 | `FMT-1-4_OpsCheckFence` | `fmt-1-4-ops-check-fence` | 4 | Ops check / FENCE | IFF §3.8、Fund 6A、IFF Ch2 | **ストック** |
+| 4 | `FMT-1-4_OpsCheckFence` | `fmt-1-4-ops-check-fence` | 4 | Ops Check | IFF §3.8、Fund 6A、IFF Ch2 | **ストック** |
 | 5 | `FMT-1-5_LeadChange` | `fmt-1-5-lead-change` | 5 | Lead change | Fund 6A、IFF §3.12、AFPAM 11-205 | **ストック** |
 | 6 | `FMT-1-6_Spread` | `fmt-1-6-spread` | 6 | Spread | IFF §3.10、Fund 6.14 | **ストック** |
 | 7 | `FMT-1-7_TrailFamily` | `fmt-1-7-trail-family` | 7 | Close Trail / ET / Fighting Wing / Fluid | Fund 6.23–6.25、IFF §3.11 | **ストック** |
