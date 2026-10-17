@@ -6,7 +6,8 @@ import RelatedArticles from '../../pages/articles/components/RelatedArticles';
 import TableOfContents from '../../pages/articles/components/TableOfContents';
 import ArticleJsonLd from '../../pages/articles/components/seo/ArticleJsonLd';
 import ArticleMetaTags from '../../pages/articles/components/seo/ArticleMetaTags';
-import { buildAbsoluteUrl } from '../../config/siteOrigin';
+import { buildAbsoluteUrl, getSiteOrigin } from '../../config/siteOrigin';
+import { buildArticleCanonicalPath } from '../../utils/articleCanonicalPath';
 import type { ArticleMeta } from '../../types/articles';
 import { Callout, Footnote, FootnoteRef } from './CalloutComponents';
 import CalloutBox from './CalloutBox';
@@ -152,10 +153,10 @@ interface MDXContentProps {
   contentId?: string;
 }
 
-const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId: _contentId }) => {
+const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId }) => {
   const currentUrl =
-    typeof window !== 'undefined'
-      ? buildAbsoluteUrl(window.location.pathname + window.location.search)
+    meta && contentId
+      ? buildAbsoluteUrl(buildArticleCanonicalPath(meta, contentId), getSiteOrigin())
       : '';
 
   return (

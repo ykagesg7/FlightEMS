@@ -7,19 +7,19 @@ import {
 export {
   DEFAULT_SITE_ORIGIN,
   FORBIDDEN_SITE_ORIGIN_HOST,
+  InvalidSiteOriginError,
   normalizeSiteOrigin,
+  resolveAppBaseUrlFromEnv,
+  resolveCanonicalSiteOriginFromEnv,
   resolveSiteOriginFromEnv,
   type SiteOriginEnv,
 } from './siteOriginEnv';
 
-/** Browser / Vite client bundle. */
+/** Browser / Vite client bundle (embedded at build from canonical resolver). */
 export function getSiteOrigin(): string {
   const fromEnv = import.meta.env.VITE_SITE_ORIGIN;
-  if (fromEnv && String(fromEnv).trim()) {
+  if (fromEnv !== undefined && String(fromEnv).trim()) {
     return normalizeSiteOrigin(String(fromEnv));
-  }
-  if (typeof window !== 'undefined' && window.location?.origin) {
-    return normalizeSiteOrigin(window.location.origin);
   }
   return DEFAULT_SITE_ORIGIN;
 }

@@ -1,23 +1,25 @@
-#!/usr/bin/env node
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import {
+  FORBIDDEN_SITE_ORIGIN_HOST,
+  resolveCanonicalSiteOriginFromEnv,
+} from '../src/config/siteOriginEnv';
 
 const ROOT = process.cwd();
-const FORBIDDEN_DIST = 'flightacademy.com';
-const FORBIDDEN_SOURCE = 'https://flightacademy.com';
-const DEFAULT_ORIGIN = 'https://flight-lms.vercel.app';
-const EXPECTED_ORIGIN = (
-  process.env.VITE_SITE_ORIGIN ||
-  process.env.VITE_APP_URL ||
-  DEFAULT_ORIGIN
-)
-  .trim()
-  .replace(/\/$/, '');
+const FORBIDDEN_HOST_RE = new RegExp(FORBIDDEN_SITE_ORIGIN_HOST.replace('.', '\\.'), 'i');
+const EXPECTED_ORIGIN = resolveCanonicalSiteOriginFromEnv({
+  VITE_SITE_ORIGIN: process.env.VITE_SITE_ORIGIN,
+});
 
 const SOURCE_SCAN_DIRS = ['src', 'vite', 'api', 'scripts', 'e2e', 'public'];
 const SOURCE_EXT = /\.(ts|tsx|js|mjs|cjs|html|xml|txt|md|mdx|json|example)$/i;
+const SOURCE_EXCLUDE = new Set([
+  'scripts/check-site-origin.ts',
+  'scripts/check-site-origin.mjs',
+  'src/config/siteOriginEnv.ts',
+]);
 
-function walkFiles(dir, acc = []) {
+function walkFiles(dir: string, acc: string[] = []): string[] {
   for (const entry of readdirSync(dir)) {
     if (entry === 'node_modules' || entry === 'dist' || entry === '.git') continue;
     const full = join(dir, entry);
@@ -32,7 +34,7 @@ function walkFiles(dir, acc = []) {
 }
 
 function scanForbiddenInSources() {
-  const hits = [];
+  const hits: Array<{ file: string; line: number; text: string }> = [];
   for (const dir of SOURCE_SCAN_DIRS) {
     const abs = join(ROOT, dir);
     try {
@@ -42,14 +44,13 @@ function scanForbiddenInSources() {
     }
     for (const file of walkFiles(abs)) {
       const rel = relative(ROOT, file);
-      if (rel === 'scripts/check-site-origin.mjs') continue;
+      if (SOURCE_EXCLUDE.has(rel)) continue;
       const text = readFileSync(file, 'utf8');
-      if (!text.toLowerCase().includes(FORBIDDEN_SOURCE)) continue;
       const lines = text.split('\n');
       lines.forEach((line, index) => {
-        if (line.toLowerCase().includes(FORBIDDEN_SOURCE)) {
+        if (FORBIDDEN_HOST_RE.test(line)) {
           hits.push({
-            file: relative(ROOT, file),
+            file: rel,
             line: index + 1,
             text: line.trim(),
           });
@@ -62,8 +63,8 @@ function scanForbiddenInSources() {
 
 function scanDist() {
   const distDir = join(ROOT, 'dist');
-  const hits = [];
-  let files;
+  const forbiddenHits: Array<{ file: string }> = [];
+  let files: string[];
   try {
     files = walkFiles(distDir);
   } catch {
@@ -73,16 +74,16 @@ function scanDist() {
 
   for (const file of files) {
     const text = readFileSync(file, 'utf8');
-    if (text.toLowerCase().includes(FORBIDDEN_DIST)) {
-      hits.push({ file: relative(ROOT, file), kind: 'forbidden-domain' });
+    if (FORBIDDEN_HOST_RE.test(text)) {
+      forbiddenHits.push({ file: relative(ROOT, file) });
     }
   }
-  return { files, forbiddenHits: hits };
+  return { files, forbiddenHits };
 }
 
-function assertCanonicalAndOg(distFiles) {
-  const articleHtml = distFiles.filter(
-    (f) => /[/\\]dist[/\\]articles[/\\][^/\\]+[/\\]index\.html$/i.test(f),
+function assertCanonicalAndOg(distFiles: string[]) {
+  const articleHtml = distFiles.filter((f) =>
+    /[/\\]dist[/\\]articles[/\\][^/\\]+[/\\]index\.html$/i.test(f),
   );
   if (articleHtml.length === 0) {
     console.error('No prerendered article HTML under dist/articles/*/index.html');
@@ -90,7 +91,12 @@ function assertCanonicalAndOg(distFiles) {
   }
 
   const sample = articleHtml.slice(0, 5);
-  const mismatches = [];
+  const mismatches: Array<{
+    file: string;
+    label: string;
+    value: string;
+    expectedPrefix: string;
+  }> = [];
 
   for (const file of sample) {
     const html = readFileSync(file, 'utf8');
@@ -99,7 +105,7 @@ function assertCanonicalAndOg(distFiles) {
     for (const [label, value] of [
       ['canonical', canonical],
       ['og:url', ogUrl],
-    ]) {
+    ] as const) {
       if (!value || !value.startsWith(`${EXPECTED_ORIGIN}/`)) {
         mismatches.push({
           file: relative(ROOT, file),
@@ -117,7 +123,7 @@ function assertCanonicalAndOg(distFiles) {
 function main() {
   const sourceHits = scanForbiddenInSources();
   if (sourceHits.length > 0) {
-    console.error(`Forbidden URL "${FORBIDDEN_SOURCE}" found in source:`);
+    console.error(`Forbidden host "${FORBIDDEN_SITE_ORIGIN_HOST}" found in source:`);
     for (const hit of sourceHits) {
       console.error(`- ${hit.file}:${hit.line} ${hit.text}`);
     }
@@ -126,7 +132,7 @@ function main() {
 
   const { files, forbiddenHits } = scanDist();
   if (forbiddenHits.length > 0) {
-    console.error(`Forbidden host "${FORBIDDEN_DIST}" found in dist:`);
+    console.error(`Forbidden host "${FORBIDDEN_SITE_ORIGIN_HOST}" found in dist:`);
     for (const hit of forbiddenHits) {
       console.error(`- ${hit.file}`);
     }
