@@ -81,6 +81,9 @@ jobs:
       - name: 螺旋 LMS 開発サンプルが本番バンドルに含まれないこと
         run: npm run check:spiral-dev-bundle
 
+      - name: 正規 URL（flightacademy.com 禁止・canonical/og:url）
+        run: npm run check:site-origin
+
   golden-guard:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest

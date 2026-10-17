@@ -1,3 +1,4 @@
+import { resolveAppBaseUrlFromEnv, type SiteOriginEnv } from '../../src/config/siteOriginEnv';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { WeeklyArticleDigest } from './articlePublishSchedule';
 import { getJstDateString } from './articlePublishGate';
@@ -38,10 +39,7 @@ export function buildCohortDedupeKey(
 }
 
 export function getAppBaseUrl(): string {
-  const configured = process.env.VITE_APP_URL ?? process.env.APP_URL;
-  if (configured) return configured.replace(/\/$/, '');
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return 'https://flight-lms.vercel.app';
+  return resolveAppBaseUrlFromEnv(process.env as SiteOriginEnv);
 }
 
 export function isEmailAllowedForTemplate(

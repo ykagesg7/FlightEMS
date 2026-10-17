@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { buildAbsoluteUrl } from '../../../../config/siteOrigin';
 import type { ArticleMeta } from '../../../../types/articles';
 
 interface ArticleMetaTagsProps {
@@ -13,9 +14,7 @@ interface ArticleMetaTagsProps {
  */
 const ArticleMetaTags: React.FC<ArticleMetaTagsProps> = ({ meta, url }) => {
   const siteName = 'FlightAcademy';
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
-
-  const ogImage = meta.heroImage || `${siteUrl}/images/og-default.jpg`;
+  const ogImage = meta.heroImage || buildAbsoluteUrl('/images/og-default.jpg');
   const description = meta.excerpt || `${meta.title} - ${siteName}で学ぶ航空知識`;
 
   return (
