@@ -1,7 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
-  <title id="title">Fingertip h Route �!�</title>
-  <desc id="desc">w_h�����n Fingertip J�s Route �bn
-K��_!�0�o���գ�k�F</desc>
+  <title id="title">Fingertip と Route 編隊模式図</title>
+  <desc id="desc">長機とウイングマンの Fingertip および Route 隊形の上から見た模式図。細部はブリーフィングに従う。</desc>
   <defs>
     <style>
       .bg { fill: #1a1a2e; }
@@ -28,33 +28,32 @@ K��_!�0�o���գ�k�F</desc>
   <line class="divider" x1="600" y1="48" x2="600" y2="560"/>
 
   <!-- Fingertip panel -->
-  <text class="panel-title" x="72" y="64">Fingertipգ�����	</text>
-  <text class="note" x="72" y="92">
-K��_!�f�(	</text>
+  <text class="panel-title" x="72" y="64">Fingertip（フィンガーチップ）</text>
+  <text class="note" x="72" y="92">上から見た模式図（学習用）</text>
   <line class="guide" x1="200" y1="360" x2="430" y2="360"/>
   <use href="#aircraft-up" transform="translate(260,320)"/>
-  <text class="label" x="248" y="288">w_</text>
+  <text class="label" x="248" y="288">長機</text>
   <use href="#aircraft-up-wing" transform="translate(390,355)"/>
-  <text class="label" x="372" y="400">�����</text>
+  <text class="label" x="372" y="400">ウイングマン</text>
   <path class="guide" d="M 278 324 L 378 348"/>
-  <text class="note" x="72" y="470">;�Mn�wk�[������d���j�b</text>
+  <text class="note" x="72" y="470">主翅前縁の延長に合わせ、翅端クリアランスを保つタイトな隊形</text>
 
   <!-- Route panel -->
-  <text class="panel-title" x="648" y="64">Route���	</text>
-  <text class="note" x="648" y="92">����R_�n-nE4@</text>
+  <text class="panel-title" x="648" y="64">Route（ルート）</text>
+  <text class="note" x="648" y="92">間隔を広げた「箱」の中の居場所</text>
   <use href="#aircraft-up" transform="translate(720,260)"/>
-  <text class="label" x="708" y="228">w_</text>
+  <text class="label" x="708" y="228">長機</text>
   <use href="#aircraft-up-wing" transform="translate(980,330)"/>
-  <text class="label" x="952" y="378">�����</text>
+  <text class="label" x="952" y="378">ウイングマン</text>
   <rect class="guide" x="680" y="210" width="380" height="200" rx="8"/>
 
   <!-- Route turn / stack down inset -->
-  <text class="panel-title" x="648" y="430" font-size="18">��B�tn�����	</text>
+  <text class="panel-title" x="648" y="430" font-size="18">旋回時（内側のウイングマン）</text>
   <path class="pom" d="M 700 520 A 90 90 0 0 1 880 520"/>
   <use href="#aircraft-up" transform="translate(790,505) rotate(35)"/>
   <use href="#aircraft-up-wing" transform="translate(845,535) rotate(20)"/>
-  <text class="label" x="860" y="568" font-size="14">Stack down��ï���	</text>
-  <text class="note" x="648" y="598">Plane of Motion�������������	��kMnY�����</text>
+  <text class="label" x="860" y="568" font-size="14">Stack down（スタックダウン）</text>
+  <text class="note" x="648" y="598">Plane of Motion（プレーン・オブ・モーション）より下に位置するイメージ</text>
 
-  <text class="note" x="600" y="622" text-anchor="middle">0KDhS�o���գ�k�F</text>
+  <text class="note" x="600" y="622" text-anchor="middle">細かいところはブリーフィングに従う</text>
 </svg>
