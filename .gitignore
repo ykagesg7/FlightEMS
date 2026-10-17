@@ -120,6 +120,9 @@ supabase/.temp/
 # Vite temp (editor / dev-server scratch; any extension)
 vite.config.ts.timestamp-*
 
+# verify-flightems skill evidence (local only)
+artifacts/verify-flightems/
+
 # Playwright
 playwright-report/
 test-results/
