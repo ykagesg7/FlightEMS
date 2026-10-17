@@ -406,7 +406,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       {
         id: 'FMT-1-4_OpsCheckFence',
         publishDate: '2026-10-23',
-        title: '【操縦】第4話：下を向く順番 ～Ops Check～',
+        title: '第4話：下を向く順番 ～Ops Check～',
         slug: '/articles/fmt-1-4-ops-check-fence',
         hook: '居場所のあとで下を向く。編隊を見たうえで、計器は short glance で順に確かめろ。',
       },
