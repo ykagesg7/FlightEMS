@@ -9,6 +9,22 @@
 | いま運用・ドキュメントからリンクされる冪等 SQL | **このディレクトリ直下** | `YYYYMMDD_*.sql`、`insert_*.sql`、ドロップ系など。本番適用済みでも**参照オペマニュアル**になるものはここに残す。 |
 | **参照のない旧 SQL** | **置かない（削除）** | `docs/`・Skill・コードからファイル名で辿れないワンオフはリポジトリに残さない。必要なら **`git log --diff-filter=D -- scripts/database/`** や該当コミットのツリーから復元する。 |
 | 記事 1件登録用スクリプト | [`register_ppl_article.mjs`](register_ppl_article.mjs)、[`check_learning_contents.mjs`](check_learning_contents.mjs) | Skill [learning-contents-registration](../../.cursor/skills/learning-contents-registration/SKILL.md) と併読。 |
+| **`learning_contents` meta UPDATE の読み戻し検証** | [`verify_learning_contents_meta.mjs`](verify_learning_contents_meta.mjs) | 本番適用後の固定手順（下記）。 |
+
+### `learning_contents` meta UPDATE — 読み戻し手順
+
+CP 記事リライトなどで `*_learning_contents_*_meta.sql` を本番に手動適用したあと、カタログ行が SQL と一致していることを確認する。
+
+1. **承認後に UPDATE を実行**（Supabase SQL Editor 等）。リポジトリの `scripts/database/YYYYMMDD_learning_contents_*_meta.sql` を正本とする。
+2. **検証スクリプトを実行**（DB への書き込みはしない）:
+   - 本番から読む: `node scripts/database/verify_learning_contents_meta.mjs scripts/database/<meta>.sql --run`  
+     （`VITE_SUPABASE_URL` と `SUPABASE_SERVICE_ROLE_KEY` または `VITE_SUPABASE_ANON_KEY`）
+   - 別環境で SELECT した結果を比較:  
+     `node scripts/database/verify_learning_contents_meta.mjs scripts/database/<meta>.sql < result.json`  
+     （stdin は 1 行オブジェクト、`[row]`、または `{ "data": [row] }`）
+3. 出力が **`PASS`** であることを運用メモ／週次レポート等に記録する。`FAIL` の場合は差分を確認し、UPDATE の再実行または SQL 修正からやり直す。
+
+スクリプトは SQL から `id` と `SET` された `title` / `description` を抽出し、表示用の `SELECT id, title, description, updated_at ...` も出力する。`title` または `description` が SQL に無い項目は比較しない。
 
 **ルート `.gitignore` の `archive/*`**: ローカル用スタジング専用。SQL の「退避用サブディレクトリ」は設けず、不要ファイルは削除して履歴は Git に任せる。
 
