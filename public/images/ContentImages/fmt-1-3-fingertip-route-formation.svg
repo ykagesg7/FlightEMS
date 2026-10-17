@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 2280" role="img" aria-labelledby="title desc">
+  <title id="title">Fingertip と Route 編隊模式図</title>
+  <desc id="desc">長機とウイングマンの Fingertip および Route の上から見た模式図。</desc>
+  <defs>
+    <style>
+      .bg { fill: #1a1a2e; }
+      .panel-title { fill: #e8f4f8; font-family: system-ui, sans-serif; font-size: 48px; font-weight: 700; }
+      .panel-title-sub { fill: #e8f4f8; font-family: system-ui, sans-serif; font-size: 44px; font-weight: 700; }
+      .label { fill: #a8dadc; font-family: system-ui, sans-serif; font-size: 36px; font-weight: 600; }
+      .footnote { fill: #94a3b8; font-family: system-ui, sans-serif; font-size: 36px; }
+      .wing-extension { stroke: #4fd1c5; stroke-width: 2; stroke-dasharray: 8 6; fill: none; opacity: 0.65; }
+      .route-box { stroke: #4fd1c5; stroke-width: 2; stroke-dasharray: 8 6; fill: none; opacity: 0.45; }
+      .pom { stroke: #fbbf24; stroke-width: 2.5; fill: none; opacity: 0.8; }
+      .air-lead { fill: #38bdf8; }
+      .air-wing { fill: #2dd4bf; }
+      .wing-bar { stroke: #f8fafc; stroke-width: 2.4; stroke-linecap: round; }
+      .section-line { stroke: #334155; stroke-width: 2; }
+    </style>
+    <g id="aircraft-up">
+      <path class="air-lead" d="M0,-22 L9,18 L0,8 L-9,18 Z"/>
+      <line class="wing-bar" x1="-18" y1="5" x2="18" y2="5"/>
+    </g>
+    <g id="aircraft-up-wing">
+      <path class="air-wing" d="M0,-20 L8,16 L0,6 L-8,16 Z"/>
+      <line class="wing-bar" x1="-16" y1="4" x2="16" y2="4"/>
+    </g>
+  </defs>
+  <rect class="bg" width="1200" height="2280"/>
+
+  <text class="panel-title" x="72" y="88">Fingertip</text>
+  <text class="label" x="300" y="330">長機</text>
+  <text class="label" x="700" y="455">ウイングマン</text>
+  <use href="#aircraft-up" transform="translate(360,420)"/>
+  <use href="#aircraft-up-wing" transform="translate(620,500)"/>
+  <path class="wing-extension" d="M 396 425 L 608 488"/>
+
+  <line class="section-line" x1="48" y1="760" x2="1152" y2="760"/>
+
+  <text class="panel-title" x="72" y="848">Route</text>
+  <rect class="route-box" x="120" y="920" width="960" height="360" rx="12"/>
+  <text class="label" x="220" y="1000">長機</text>
+  <text class="label" x="860" y="1200">ウイングマン</text>
+  <use href="#aircraft-up" transform="translate(280,1080)"/>
+  <use href="#aircraft-up-wing" transform="translate(900,1140)"/>
+
+  <line class="section-line" x1="48" y1="1340" x2="1152" y2="1340"/>
+
+  <text class="panel-title-sub" x="72" y="1410">旋回時</text>
+  <path class="pom" d="M 320 1880 A 280 280 0 0 1 880 1880"/>
+  <use href="#aircraft-up" transform="translate(600,1855) rotate(12)"/>
+  <use href="#aircraft-up-wing" transform="translate(710,1765) rotate(28)"/>
+  <text class="label" x="920" y="1960">ウイングマン</text>
+  <text class="label" x="72" y="2035">Stack down</text>
+
+  <text class="footnote" x="600" y="2235" text-anchor="middle">細かいところはブリーフィングに従う</text>
+</svg>
