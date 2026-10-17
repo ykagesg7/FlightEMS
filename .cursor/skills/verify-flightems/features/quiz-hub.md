@@ -47,7 +47,7 @@ ORDER BY created_at DESC
 LIMIT 5;
 ```
 
-列名の典拠: `src/types/database.types.ts` の `quiz_sessions.Row`〔計測〕。本番 DB への操作は **SELECT とカタログ照会のみ**（軍師裁定 B・決まり事6）。
+列名の典拠: `src/types/database.types.ts` の `quiz_sessions.Row`〔計測〕。Doctor が `yes` または `unknown` のときは **F4 の SELECT も行わず未確認**（本番 DB・軍師裁定 B）。`no`（既知の非本番 ref）のときだけ上記 SELECT を実行する。
 
 直近セッションが画面・Network と一致すること。
 

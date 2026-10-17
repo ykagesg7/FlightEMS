@@ -34,7 +34,7 @@ WHERE node_id = :nodeId;
 件数を証拠に書き、画面で数えた問題数と突き合わせる。選択肢数は各問の `options` JSON 配列を Network または `SELECT id, jsonb_array_length(options) AS option_count FROM public.node_mini_quiz_questions WHERE node_id = :nodeId ORDER BY sort_order`（非本番のみ）で確認。
 - **漏洩チェック。** 設問取得レスポンスに正答・解説フィールドが無いこと（項目名は実行時に記録）。
 - **採点。** 1回目: 意図的に3問正解相当 → 不合格表示。2回目: 4問以上正解相当 → 合格表示。
-- **合否の実装。** ノードの `passing_score = 80` はシード〔計測〕`scripts/database/20261014_spiral_lms_seed_quiz_l1_l2.sql` 19行付近の `SET passing_score = 80`。採点式は〔計測〕`scripts/database/20261012_spiral_lms_mdx_mini_quiz.sql` 423–425行: `score := round((100::numeric * v_correct::numeric) / v_total::numeric, 2)`、`passed := score >= v_passing_score`。上記「4択5問」は **上様裁可**、「80」は **実装**。
+- **合否の実装。** ノードの `passing_score = 80` はシード〔計測〕`scripts/database/20261014_spiral_lms_seed_quiz_l1_l2.sql` 19行付近の `SET passing_score = 80`。採点式は〔計測〕`scripts/database/20261012_spiral_lms_mdx_mini_quiz.sql` 423–425行: `score := round((100::numeric * v_correct::numeric) / v_total::numeric, 2)`、424行 `score := private.spiral_lms_validate_score(score)`、`passed := score >= v_passing_score`。上記「4択5問」は **上様裁可**、「80」は **実装**。
 - **受験記録の DB 読取（非本番のみ）。** F2 ログイン後の `user_id` と `node_id` で:
 
 ```sql

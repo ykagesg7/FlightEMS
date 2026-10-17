@@ -90,29 +90,32 @@ PR の Preview URL。`vite.config.ts` はビルド時に `VITE_SUPABASE_*` を�
 
 1. URL が `localhost` / `127.0.0.1` / 確認済み Preview で、検証用に起動したインスタンスである。
 2. `package.json` の `dev` / `build`+`preview` のどちらで起動したか（F5 は dev 必須）。
-3. **Supabase が本番か**（ホスト名だけ。URL や key は表示しない）。リポジトリルートで:
+3. **Supabase が本番か**（URL・key は表示しない）。出力は **`yes` / `no` / `unknown` の一語だけ**。
+
+   **Vite の mode**（`vite.config.ts` の `loadEnv(mode, …)` と同じ）〔計測〕:
+   - `npm run dev` → `development`（`package.json` の `vite`）
+   - `npm run build` / `npm run vercel-build` / その後の `vite preview` → `production`
+   - `npm run build:dev` → `development`
+
+   **env ファイルの読み方**（Vite と同順。複数ファイルに `VITE_SUPABASE_URL` があり値が食い違うときは `unknown`）:
+   `.env.[mode].local` → `.env.[mode]` → `.env.local` → `.env`
+
+   **判定用の変数名**（値は `.env.local` 等にだけ書き、PR・ログに出さない）:
+   - `VERIFY_FLIGHTEMS_PROD_SUPABASE_PROJECT_REF` — 本番プロジェクト ref（省略時は docs の本番 ID と同じ扱い）
+   - `VERIFY_FLIGHTEMS_NON_PROD_SUPABASE_PROJECT_REFS` — カンマ区切りの **既知の非本番** ref だけ。ここに載った ref と一致したときだけ `no`
+   - `VERIFY_FLIGHTEMS_VITE_MODE` — 上記 mode（省略時 `development`）
+
+   リポジトリルートで:
 
 ```bash
-node --input-type=module -e "
-import { config } from 'dotenv';
-config({ path: '.env.local' });
-const raw = process.env.VITE_SUPABASE_URL ?? '';
-let host = '';
-try { host = new URL(raw).hostname; } catch { /* empty */ }
-const prodRef = 'fstynltdfdetpyvbrswr';
-const matchesProd =
-  host === prodRef ||
-  host === prodRef + '.supabase.co' ||
-  host.endsWith('.' + prodRef + '.supabase.co');
-console.log(
-  host
-    ? 'supabase_host_matches_production: ' + (matchesProd ? 'yes' : 'no')
-    : 'supabase_host_matches_production: unknown'
-);
-"
+VERIFY_FLIGHTEMS_VITE_MODE=development node .cursor/skills/verify-flightems/doctor-supabase-target.mjs
 ```
 
-`yes` なら書き込み系は **未確認** で止める。Preview だけを触る場合は (c) の手順でホストを得て同じ判定をする（得られなければ **未確認**）。
+   - `yes` … 本番 ref と判定 → **書き込み・DB 読取（裁定 B の対象）に進まず未確認で止める**
+   - `unknown` … 判定不能（env なし、独自ドメイン、未登録の ref、env 食い違いなど）→ **同様に進まず未確認で止める**
+   - `no` … **既知の非本番 ref のみ**。このときだけ F2〜F5 の書き込み／非本番 SELECT 手順に進める
+
+   Preview だけを触る場合は (c) で得たホストから ref を取り、上と同じ変数・ルールで分類する（分類できなければ `unknown`＝未確認）。
 4. ヘッダーが未ログイン（LOGIN）かログイン済みか。
 5. （任意）`git rev-parse HEAD` が想定コミット付近か。
 
@@ -139,7 +142,7 @@ production モードでは Terser の `compress.drop_console` が有効（`vite.
 
 ## Helpers
 
-初期版はヘルパースクリプトなし。足すときは SKILL 本文に実行方法を書く。
+- Doctor の Supabase 分類: [`doctor-supabase-target.mjs`](doctor-supabase-target.mjs)（上記 Doctor 3）
 
 ## 機能一覧
 
@@ -154,3 +157,5 @@ production モードでは Terser の `compress.drop_console` が有効（`vite.
 ## 初回セットアップ後の証明
 
 スキル追加・更新 PR では、上記 Launch → Doctor → F1〜F5 を **一度ずつ** 試し、PR 本文に合格／不合格／判断不能と証拠パス（コミットしない）を書く。DB 資格情報が無い項目は判断不能と明記する。
+
+**通しが済むまでは下書きにとどめ、マージしない**（Draft PR・上様承認前は本番運用の正本にしない）。
