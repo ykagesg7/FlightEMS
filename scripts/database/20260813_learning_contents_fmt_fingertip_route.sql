@@ -7,7 +7,7 @@ VALUES (
   '【操縦】第3話：空中の居場所 ～FingertipとRoute～',
   '操縦',
   '編隊飛行',
-  '離陸後の居場所をハック。Fingertipは helmet abeam slab bolt の見え方の目安、Routeは 2 ship widths〜500 ft の箱。Vol.2 Area 72 の U は継続的な枠超過に加え、安全間隔の喪失か急激な修正だけ。',
+  '離陸直後の空の広さに戸惑うウイングマンへ。FingertipとRouteの本質、そして「修正レート」を支配して Pilot Induced Oscillation（パイロット誘導振動、PIO）を防ぐ相対位置コントロールの極意を体得せよ。',
   603,
   NULL,
   'text',
