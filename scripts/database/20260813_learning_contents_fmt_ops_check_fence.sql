@@ -4,10 +4,10 @@
 INSERT INTO learning_contents (id, title, category, sub_category, description, order_index, parent_id, content_type, is_published, updated_at)
 VALUES (
   'FMT-1-4_OpsCheckFence',
-  '【操縦】第4話：下を向く順番 ～Ops checkとFENCE～',
+  '【操縦】第4話：下を向く順番 ～Ops Check～',
   '操縦',
   '編隊飛行',
-  '居場所のあとで初めて下を向く。Ops checkはfuelを含む定期確認、FENCEは空域IN/OUT。コックピットタスクは優先順位の4番目。',
+  '居場所のあとで初めて下を向く。Ops Checkはfuelを含む定期確認、項目はCabin altitude・Oxygen・Fuel・Engine。コックピットタスクは優先順位の4番目。',
   604,
   NULL,
   'text',
