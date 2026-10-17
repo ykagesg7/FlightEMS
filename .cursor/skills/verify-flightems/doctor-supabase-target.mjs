@@ -1,18 +1,32 @@
 /**
  * Doctor: classify Supabase target for verify-flightems.
- * Prints exactly one word: yes | no | unknown (no secrets, no dotenv chatter).
+ * Prints exactly one word on stdout: yes | no | unknown
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { loadEnv } from 'vite';
 
 const cwd = process.cwd();
+const argv = process.argv.slice(2);
 
-/** @see package.json: `vite` → development; `vite build` / `vercel-build` → production */
-const mode =
-  process.env.VERIFY_FLIGHTEMS_VITE_MODE?.trim() ||
-  process.env.MODE?.trim() ||
-  'development';
+function modeFromArgv() {
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === '--mode' && argv[i + 1]) return argv[i + 1].trim();
+    const m = argv[i].match(/^--mode=(.+)$/);
+    if (m) return m[1].trim();
+  }
+  return null;
+}
+
+const argvMode = modeFromArgv();
+const verifyMode = process.env.VERIFY_FLIGHTEMS_VITE_MODE?.trim();
+const modeEnv = process.env.MODE?.trim();
+
+const explicitMode = argvMode || verifyMode || modeEnv || null;
+const primaryMode = explicitMode ?? 'development';
+
+/** Default mode with no argv / env → scan both common Vite modes (conservative). */
+const modesToScan = explicitMode ? [primaryMode] : ['development', 'production'];
 
 const prodRef = (
   process.env.VERIFY_FLIGHTEMS_PROD_SUPABASE_PROJECT_REF ?? 'fstynltdfdetpyvbrswr'
@@ -25,19 +39,24 @@ const nonProdRefs = (
   .map((s) => s.trim())
   .filter(Boolean);
 
-const envFilesHighToLow = [
-  `.env.${mode}.local`,
-  `.env.${mode}`,
-  '.env.local',
-  '.env',
-];
+function envFilesForMode(mode) {
+  return [
+    `.env.${mode}.local`,
+    `.env.${mode}`,
+    '.env.local',
+    '.env',
+  ];
+}
 
-function parseViteSupabaseUrlFromFile(filePath) {
-  if (!existsSync(filePath)) return null;
-  const text = readFileSync(filePath, 'utf8');
-  for (const line of text.split('\n')) {
-    const trimmed = line.trim();
+function parseAllViteSupabaseUrlsFromFile(filePath) {
+  if (!existsSync(filePath)) return [];
+  const urls = [];
+  for (const rawLine of readFileSync(filePath, 'utf8').split('\n')) {
+    let trimmed = rawLine.trim();
     if (!trimmed || trimmed.startsWith('#')) continue;
+    if (trimmed.startsWith('export ')) trimmed = trimmed.slice(7).trim();
+    const hashIdx = trimmed.indexOf('#');
+    if (hashIdx >= 0) trimmed = trimmed.slice(0, hashIdx).trim();
     const eq = trimmed.indexOf('=');
     if (eq < 0) continue;
     const key = trimmed.slice(0, eq).trim();
@@ -49,58 +68,67 @@ function parseViteSupabaseUrlFromFile(filePath) {
     ) {
       value = value.slice(1, -1);
     }
-    if (value) return value;
+    if (value) urls.push(value);
   }
-  return null;
+  return urls;
 }
 
-const urlsFromFiles = [];
-for (const rel of envFilesHighToLow) {
-  const url = parseViteSupabaseUrlFromFile(resolve(cwd, rel));
-  if (url) urlsFromFiles.push(url);
+function collectCandidates() {
+  const candidates = [];
+
+  const fromProcess = process.env.VITE_SUPABASE_URL?.trim();
+  if (fromProcess) candidates.push(fromProcess);
+
+  const scannedFiles = new Set();
+  for (const mode of modesToScan) {
+    for (const rel of envFilesForMode(mode)) {
+      const abs = resolve(cwd, rel);
+      if (scannedFiles.has(abs)) continue;
+      scannedFiles.add(abs);
+      candidates.push(...parseAllViteSupabaseUrlsFromFile(abs));
+    }
+    const loaded = loadEnv(mode, cwd, '');
+    const fromLoadEnv = loaded.VITE_SUPABASE_URL?.trim();
+    if (fromLoadEnv) candidates.push(fromLoadEnv);
+  }
+
+  return candidates;
 }
 
-const distinctFileUrls = [...new Set(urlsFromFiles)];
-
-if (distinctFileUrls.length > 1) {
-  console.log('unknown');
-  process.exit(0);
-}
-
-const env = loadEnv(mode, cwd, '');
-const effective =
-  distinctFileUrls[0] ??
-  (env.VITE_SUPABASE_URL?.trim() || process.env.VITE_SUPABASE_URL?.trim() || '');
-
-if (!effective) {
-  console.log('unknown');
-  process.exit(0);
-}
-
-let hostname = '';
-try {
-  hostname = new URL(effective).hostname;
-} catch {
-  console.log('unknown');
-  process.exit(0);
-}
-
-function extractProjectRef(host) {
-  if (host === prodRef) return prodRef;
-  const m = host.match(/^([a-z0-9]+)\.supabase\.co$/i);
+function extractProjectRef(hostname) {
+  if (hostname === prodRef) return prodRef;
+  const m = hostname.match(/^([a-z0-9]+)\.supabase\.co$/i);
   return m ? m[1] : null;
 }
 
-const ref = extractProjectRef(hostname);
-if (!ref) {
+/** @returns {'yes' | 'no' | 'unknown'} */
+function classifyUrl(url) {
+  let hostname;
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    return 'unknown';
+  }
+  const ref = extractProjectRef(hostname);
+  if (!ref) return 'unknown';
+  if (ref === prodRef) return 'yes';
+  if (nonProdRefs.includes(ref)) return 'no';
+  return 'unknown';
+}
+
+const candidates = collectCandidates();
+
+if (candidates.length === 0) {
   console.log('unknown');
   process.exit(0);
 }
 
-if (ref === prodRef) {
+const classes = candidates.map(classifyUrl);
+
+if (classes.includes('yes')) {
   console.log('yes');
-} else if (nonProdRefs.includes(ref)) {
-  console.log('no');
-} else {
+} else if (classes.includes('unknown')) {
   console.log('unknown');
+} else {
+  console.log('no');
 }

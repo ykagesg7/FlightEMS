@@ -20,7 +20,7 @@
 Preconditions:
 
 - 1〜5 は匿名可（`e2e/test-exam-ppl.spec.ts` と同趣旨〔計測〕）。
-- 6 はログイン + 非本番 DB。本番ホストは **未確認**（`quiz_sessions` 等への書き込み。軍師裁定 B）。
+- 6 はログイン + 非本番 DB（Doctor が `no`）。Doctor が `yes` または `unknown` は **未確認**（`quiz_sessions` 等への書き込み。軍師裁定 B）。上様／FA 軍師が **その実行で**ログインモードを明示した場合のみ、本番 DB でもテスト学習者で許可（決まり事6の例外）。
 
 - **診断。** `/test` → URL に `tab=diagnostic`、「10問診断を開始」。
 - **エイリアス。** `/quiz?tab=diagnostic` 同画面。匿名で「結果の保存はアカウント登録後」系の案内。

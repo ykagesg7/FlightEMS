@@ -100,15 +100,25 @@ PR の Preview URL。`vite.config.ts` はビルド時に `VITE_SUPABASE_*` を�
    **env ファイルの読み方**（Vite と同順。複数ファイルに `VITE_SUPABASE_URL` があり値が食い違うときは `unknown`）:
    `.env.[mode].local` → `.env.[mode]` → `.env.local` → `.env`
 
-   **判定用の変数名**（値は `.env.local` 等にだけ書き、PR・ログに出さない）:
+   **mode の決め方**（優先順）〔計測〕:
+   1. スクリプト引数 `--mode <name>` または `--mode=<name>`（`vite --mode` と同形）
+   2. 実行シェルの `VERIFY_FLIGHTEMS_VITE_MODE`
+   3. 実行シェルの `MODE`
+   4. どれも無ければ `development`（このとき **候補収集は `development` と `production` の両方**の env ファイルを見る＝保守的）
+
+   **判定用の変数名**（値は **実行するシェルの環境変数**で渡す。ファイルからは読まない。PR・ログに値を出さない）:
    - `VERIFY_FLIGHTEMS_PROD_SUPABASE_PROJECT_REF` — 本番プロジェクト ref（省略時は docs の本番 ID と同じ扱い）
-   - `VERIFY_FLIGHTEMS_NON_PROD_SUPABASE_PROJECT_REFS` — カンマ区切りの **既知の非本番** ref だけ。ここに載った ref と一致したときだけ `no`
-   - `VERIFY_FLIGHTEMS_VITE_MODE` — 上記 mode（省略時 `development`）
+   - `VERIFY_FLIGHTEMS_NON_PROD_SUPABASE_PROJECT_REFS` — カンマ区切りの **既知の非本番** ref。候補 URL が **すべて** ここに載った ref と一致したときだけ `no`
+   - `VERIFY_FLIGHTEMS_VITE_MODE` — 上記 2 の mode 指定
+
+   候補は次を **すべて**集め、1つでも本番なら `yes`、1つでも判定不能なら `unknown`、候補が無ければ `unknown`。`process.env.VITE_SUPABASE_URL`、対象 mode の env ファイル内の **同名行すべて**（`export` 付き・重複行・行末 `#` コメント含む）、`loadEnv(mode, root, '')` の `VITE_SUPABASE_URL`（Vite 5.4.x〔計測〕`package.json` の `vite`）。
 
    リポジトリルートで:
 
 ```bash
-VERIFY_FLIGHTEMS_VITE_MODE=development node .cursor/skills/verify-flightems/doctor-supabase-target.mjs
+VERIFY_FLIGHTEMS_NON_PROD_SUPABASE_PROJECT_REFS=<refs> \
+VERIFY_FLIGHTEMS_VITE_MODE=development \
+node .cursor/skills/verify-flightems/doctor-supabase-target.mjs
 ```
 
    - `yes` … 本番 ref と判定 → **書き込み・DB 読取（裁定 B の対象）に進まず未確認で止める**

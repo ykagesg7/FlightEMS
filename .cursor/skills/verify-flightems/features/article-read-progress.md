@@ -18,7 +18,7 @@
 Preconditions:
 
 - 表示確認（1〜2）は匿名可。
-- 記録（3〜6）はログイン + **非本番 Supabase**。本番ホストのときは **記事を開く操作も未確認**（`learning_content_views` insert。軍師裁定 B）。
+- 記録（3〜6）はログイン + **非本番 Supabase**（Doctor が `no` のとき）。Doctor が `yes` または `unknown` のときは **記事を開く操作も未確認**（`learning_content_views` insert。軍師裁定 B）。上様／FA 軍師が **その実行で**ログインモードを明示した場合のみ、本番 DB でもテスト学習者で許可（決まり事6の例外）。
 
 - **一覧。** `page.goto('/articles')`。コース並びを記録。
 - **本文。** 公開済み1本を開き、見出し・本文。失敗文言が出ない。
