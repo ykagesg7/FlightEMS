@@ -387,7 +387,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W43',
     seriesTitle: 'FN（編隊）＋メンタリティ',
     intro:
-      '来週は７つの習慣その４（日）と編隊2本（水・金）。Win-Win、Fingertip / Route、Ops check / FENCE。',
+      '来週は７つの習慣その４（日）と編隊2本（水・金）。Win-Win、Fingertip / Route、Ops Check。',
     articles: [
       {
         id: '1.1.4_WinWinThinking',
@@ -406,9 +406,9 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       {
         id: 'FMT-1-4_OpsCheckFence',
         publishDate: '2026-10-23',
-        title: '第4話：下を向く順番 ～Ops checkとFENCE～',
+        title: '【操縦】第4話：下を向く順番 ～Ops Check～',
         slug: '/articles/fmt-1-4-ops-check-fence',
-        hook: '居場所のあとで下を向く。FENCEは空域IN/OUT。',
+        hook: '居場所のあとで下を向く。編隊を見たうえで、計器は short glance で順に確かめろ。',
       },
     ],
   },
