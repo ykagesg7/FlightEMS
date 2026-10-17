@@ -414,10 +414,17 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W44': {
     isoWeek: '2026-W44',
-    seriesTitle: 'FN（編隊）',
+    seriesTitle: 'FN（編隊）＋メンタリティ',
     intro:
-      '来週は Lead change と Spread（水・金）。リードは渡す、広げて見る。日曜メンタリティ枠は稿未承認のため空け。',
+      '来週は７つの習慣その５（日）と編隊2本（水・金）。まず理解に徹する、Lead change / Spread。',
     articles: [
+      {
+        id: '1.1.5_SeekFirstToUnderstand',
+        publishDate: '2026-10-25',
+        title: '【７つの習慣】その５、道真公と学ぶ「まず理解に徹し、そして理解される」',
+        slug: '/articles/seek-first-to-understand',
+        hook: '傾聴と確認から伝達へ。',
+      },
       {
         id: 'FMT-1-5_LeadChange',
         publishDate: '2026-10-28',
