@@ -84,7 +84,10 @@ function normalizeAppBaseUrl(value: string): string {
   return candidate;
 }
 
-/** App / email link base URL (unchanged precedence: app env vars, then Vercel host, then default). */
+/**
+ * App / email link base URL (unchanged precedence: app env vars, then Vercel host, then default).
+ * Serverless cron must not import this module (ESM); use `api/_lib/appBaseUrl.ts` instead.
+ */
 export function resolveAppBaseUrlFromEnv(env: SiteOriginEnv): string {
   const fromApp =
     env.VITE_APP_URL !== undefined && String(env.VITE_APP_URL).trim()
