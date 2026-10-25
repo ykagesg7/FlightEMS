@@ -4,6 +4,7 @@ import type { Plugin } from 'vite';
 import { resolveCanonicalSiteOriginFromEnv, type SiteOriginEnv } from '../src/config/siteOriginEnv';
 import { articlePrettySlug } from '../src/utils/articleCanonicalPath';
 import { collectArticleMetas, type ExtractedArticleMeta } from './articlesMeta';
+import { writeSitemapAndRobots } from './generateSitemap';
 
 function isArticleReleased(publishedAt?: string): boolean {
   if (!publishedAt) return false;
@@ -135,6 +136,8 @@ export function prerenderArticlesPlugin(): Plugin {
       console.log(`[prerender-articles] wrote ${count} article HTML files`);
       const hubs = writeSpaHubFallbacks(distDir, template);
       console.log(`[prerender-articles] wrote ${hubs} SPA hub fallback HTML files`);
+      writeSitemapAndRobots(distDir, origin);
+      console.log('[prerender-articles] wrote sitemap.xml and robots.txt');
     },
   };
 }
