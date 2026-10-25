@@ -139,7 +139,26 @@ async function main() {
 
   if (classes.includes('yes')) {
     emit('yes');
-  } else if (classes.includes('unknown')) {
+    return;
+  }
+
+  const distinctRefs = new Set();
+  for (const url of candidates) {
+    let hostname;
+    try {
+      hostname = new URL(url).hostname;
+    } catch {
+      continue;
+    }
+    const ref = extractProjectRef(hostname);
+    if (ref) distinctRefs.add(ref);
+  }
+  if (distinctRefs.size > 1) {
+    emit('unknown');
+    return;
+  }
+
+  if (classes.includes('unknown')) {
     emit('unknown');
   } else {
     emit('no');

@@ -111,7 +111,19 @@ PR の Preview URL。`vite.config.ts` はビルド時に `VITE_SUPABASE_*` を�
    - `VERIFY_FLIGHTEMS_NON_PROD_SUPABASE_PROJECT_REFS` — カンマ区切りの **既知の非本番** ref。候補 URL が **すべて** ここに載った ref と一致したときだけ `no`
    - `VERIFY_FLIGHTEMS_VITE_MODE` — 上記 2 の mode 指定
 
-   候補は次を **すべて**集め、1つでも本番なら `yes`、1つでも判定不能なら `unknown`、候補が無ければ `unknown`。`process.env.VITE_SUPABASE_URL`、対象 mode の env ファイル内の **同名行すべて**（`export` 付き・重複行・行末 `#` コメント含む）、`loadEnv(mode, root, '')` の `VITE_SUPABASE_URL`（Vite 5.4.x〔計測〕`package.json` の `vite`）。`vite` が読み込めないときは `loadEnv` を使わず **全体を `unknown`**（stderr に理由1行のみ。値は出さない）。
+   候補は次を **すべて**集める（mode 未指定時は上記 4 のとおり **`development` と `production` の両方**をスキャン）:
+   - `process.env.VITE_SUPABASE_URL`
+   - 各スキャン mode の env ファイル内の **同名行すべて**（`export` 付き・重複行・行末 `#` コメント含む）
+   - 各スキャン mode ごとの `loadEnv(mode, root, '')` の `VITE_SUPABASE_URL`（Vite 5.4.x〔計測〕`package.json` の `vite`）
+
+   集約（優先順）〔計測〕`doctor-supabase-target.mjs` と同じ:
+   1. 候補が無い → `unknown`
+   2. 1つでも本番 ref → `yes`
+   3. 候補 URL から取れる **project ref が2種類以上** → `unknown`（上記「値が食い違う」）
+   4. 1つでも判定不能（未登録 ref・パース不能など）→ `unknown`
+   5. それ以外（候補がすべて既知非本番 ref で ref は1種類）→ `no`
+
+   `vite` が読み込めないときは `loadEnv` を使わず stdout は **`unknown` のみ**（stderr に理由1行。値は出さない。`process.env` と env ファイル行も集めない）。
 
    出力が `yes` / `no` / `unknown` のいずれでもないとき（空、複数行、異常終了を含む）は **未確認として止める**（書き込み・DB 読取に進まない）。
 
