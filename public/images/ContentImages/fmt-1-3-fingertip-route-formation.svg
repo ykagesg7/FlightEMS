@@ -49,11 +49,11 @@
 
   <text class="panel-title-sub" x="72" y="1410">旋回時</text>
   <path class="pom" d="M 320 1880 A 280 280 0 0 1 880 1880"/>
-  <text class="arc-label" x="600" y="1610" text-anchor="middle">Plane of Motion（POM）</text>
-  <use href="#aircraft-up" transform="translate(600,1860) rotate(88)"/>
-  <text class="label" x="520" y="1810">長機</text>
-  <use href="#aircraft-up-wing" transform="translate(490,1785) rotate(78)"/>
-  <text class="label" x="300" y="1735">ウイングマン</text>
+  <text class="arc-label" x="600" y="1510" text-anchor="middle">Plane of Motion（POM）</text>
+  <use href="#aircraft-up" transform="translate(403,1681) rotate(45.4)"/>
+  <text class="label" x="468" y="1638">長機</text>
+  <use href="#aircraft-up-wing" transform="translate(389,1744) rotate(37.4)"/>
+  <text class="label" x="300" y="1795">ウイングマン</text>
   <text class="label" x="72" y="2035">Stack down</text>
 
   <text class="footnote" x="600" y="2235" text-anchor="middle">細かいところはブリーフィングに従う</text>
