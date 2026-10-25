@@ -1,5 +1,5 @@
-import { resolveAppBaseUrlFromEnv, type SiteOriginEnv } from '../../src/config/siteOriginEnv';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { resolveAppBaseUrlFromEnv, type AppBaseUrlEnv } from './appBaseUrl';
 import type { WeeklyArticleDigest } from './articlePublishSchedule';
 import { getJstDateString } from './articlePublishGate';
 import { getServiceSupabase } from './supabaseService';
@@ -39,7 +39,7 @@ export function buildCohortDedupeKey(
 }
 
 export function getAppBaseUrl(): string {
-  return resolveAppBaseUrlFromEnv(process.env as SiteOriginEnv);
+  return resolveAppBaseUrlFromEnv(process.env as AppBaseUrlEnv);
 }
 
 export function isEmailAllowedForTemplate(
