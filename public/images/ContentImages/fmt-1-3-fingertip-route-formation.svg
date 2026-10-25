@@ -6,9 +6,10 @@
     <style>
       .bg { fill: #1a1a2e; }
       .panel-title { fill: #e8f4f8; font-family: system-ui, sans-serif; font-size: 48px; font-weight: 700; }
-      .panel-title-sub { fill: #e8f4f8; font-family: system-ui, sans-serif; font-size: 44px; font-weight: 700; }
-      .label { fill: #a8dadc; font-family: system-ui, sans-serif; font-size: 36px; font-weight: 600; }
-      .footnote { fill: #94a3b8; font-family: system-ui, sans-serif; font-size: 36px; }
+      .panel-title-sub { fill: #e8f4f8; font-family: system-ui, sans-serif; font-size: 46px; font-weight: 700; }
+      .label { fill: #a8dadc; font-family: system-ui, sans-serif; font-size: 46px; font-weight: 600; }
+      .footnote { fill: #94a3b8; font-family: system-ui, sans-serif; font-size: 46px; }
+      .arc-label { fill: #fbbf24; font-family: system-ui, sans-serif; font-size: 46px; font-weight: 600; }
       .wing-extension { stroke: #4fd1c5; stroke-width: 2; stroke-dasharray: 8 6; fill: none; opacity: 0.65; }
       .route-box { stroke: #4fd1c5; stroke-width: 2; stroke-dasharray: 8 6; fill: none; opacity: 0.45; }
       .pom { stroke: #fbbf24; stroke-width: 2.5; fill: none; opacity: 0.8; }
@@ -29,28 +30,30 @@
   <rect class="bg" width="1200" height="2280"/>
 
   <text class="panel-title" x="72" y="88">Fingertip</text>
-  <text class="label" x="300" y="330">長機</text>
-  <text class="label" x="700" y="455">ウイングマン</text>
-  <use href="#aircraft-up" transform="translate(360,420)"/>
-  <use href="#aircraft-up-wing" transform="translate(620,500)"/>
-  <path class="wing-extension" d="M 396 425 L 608 488"/>
+  <text class="label" x="280" y="310">長機</text>
+  <text class="label" x="640" y="560">ウイングマン</text>
+  <use href="#aircraft-up" transform="translate(360,400)"/>
+  <use href="#aircraft-up-wing" transform="translate(600,530)"/>
+  <path class="wing-extension" d="M 396 405 L 584 518"/>
 
   <line class="section-line" x1="48" y1="760" x2="1152" y2="760"/>
 
   <text class="panel-title" x="72" y="848">Route</text>
   <rect class="route-box" x="120" y="920" width="960" height="360" rx="12"/>
-  <text class="label" x="220" y="1000">長機</text>
-  <text class="label" x="860" y="1200">ウイングマン</text>
-  <use href="#aircraft-up" transform="translate(280,1080)"/>
-  <use href="#aircraft-up-wing" transform="translate(900,1140)"/>
+  <text class="label" x="200" y="990">長機</text>
+  <text class="label" x="820" y="1240">ウイングマン</text>
+  <use href="#aircraft-up" transform="translate(280,1060)"/>
+  <use href="#aircraft-up-wing" transform="translate(900,1170)"/>
 
   <line class="section-line" x1="48" y1="1340" x2="1152" y2="1340"/>
 
   <text class="panel-title-sub" x="72" y="1410">旋回時</text>
   <path class="pom" d="M 320 1880 A 280 280 0 0 1 880 1880"/>
-  <use href="#aircraft-up" transform="translate(600,1855) rotate(12)"/>
-  <use href="#aircraft-up-wing" transform="translate(710,1765) rotate(28)"/>
-  <text class="label" x="920" y="1960">ウイングマン</text>
+  <text class="arc-label" x="600" y="1610" text-anchor="middle">Plane of Motion（POM）</text>
+  <use href="#aircraft-up" transform="translate(600,1860) rotate(88)"/>
+  <text class="label" x="520" y="1810">長機</text>
+  <use href="#aircraft-up-wing" transform="translate(490,1785) rotate(78)"/>
+  <text class="label" x="300" y="1735">ウイングマン</text>
   <text class="label" x="72" y="2035">Stack down</text>
 
   <text class="footnote" x="600" y="2235" text-anchor="middle">細かいところはブリーフィングに従う</text>
