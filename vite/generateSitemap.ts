@@ -1,8 +1,10 @@
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { COURSES } from '../src/data/courses';
 import { articlePrettySlug } from '../src/utils/articleCanonicalPath';
 import { collectArticleMetas } from './articlesMeta';
+
+/** Keep in sync with `COURSES[].id` in `src/data/courses.ts` (avoid importing courses in vite/node TS). */
+export const INDEXABLE_COURSE_IDS = ['ppl', 'cpl', 'cp', 'fn', 'mentality'] as const;
 
 /** Marketing / tool routes reachable without signing in (matches App.tsx public lazy routes). */
 export const INDEXABLE_STATIC_PATHS = [
@@ -50,8 +52,8 @@ export function buildSitemapUrlEntries(origin: string): string[] {
     urls.add(absoluteLoc(origin, path));
   }
 
-  for (const course of COURSES) {
-    urls.add(absoluteLoc(origin, `/courses/${course.id}`));
+  for (const courseId of INDEXABLE_COURSE_IDS) {
+    urls.add(absoluteLoc(origin, `/courses/${courseId}`));
   }
 
   const seenArticleSlugs = new Set<string>();
