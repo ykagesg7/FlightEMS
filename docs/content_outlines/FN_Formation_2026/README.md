@@ -78,7 +78,7 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**。W34 は CP。FN のド�
 | 1 | `FMT-1-1_WingmanVFR` | `fmt-1-1-wingman-vfr` | 1 | V.F.R | IFF §3.8、Vol.3 deconflict | **ストック** |
 | 2 | `FMT-1-2_RunwayLineupTakeoff` | `fmt-1-2-runway-lineup-takeoff` | 2 | Lineup / T/O | Vol.3 §3.6–3.8、Vol.2 Area 71 | **ストック** |
 | 3 | `FMT-1-3_FingertipRoute` | `fmt-1-3-fingertip-route` | 3 | Fingertip / Route | Fund **6.11–6.12**、Vol.2 Area 72 / 74 | **ストック** |
-| 4 | `FMT-1-4_OpsCheckFence` | `fmt-1-4-ops-check-fence` | 4 | Ops check / FENCE | IFF §3.8、Fund 6A、IFF Ch2 | **ストック** |
+| 4 | `FMT-1-4_OpsCheckFence` | `fmt-1-4-ops-check-fence` | 4 | Ops Check | IFF §3.8、Fund 6A、IFF Ch2 | **ストック** |
 | 5 | `FMT-1-5_LeadChange` | `fmt-1-5-lead-change` | 5 | Lead change | Fund 6A、IFF §3.12、AFPAM 11-205 | **ストック** |
 | 6 | `FMT-1-6_Spread` | `fmt-1-6-spread` | 6 | Spread | IFF §3.10、Fund 6.14 | **ストック** |
 | 7 | `FMT-1-7_TrailFamily` | `fmt-1-7-trail-family` | 7 | Close Trail / ET / Fighting Wing / Fluid | Fund 6.23–6.25、IFF §3.11 | **ストック** |
@@ -96,7 +96,7 @@ Season 1 全 **10 話**＝週3本なら約 **3.5 週**。W34 は CP。FN のド�
 | 4-ship（名前だけ） | **1-9** 末尾の短い注記 |
 | BD check / formation landing | **1-10** 末尾の短い注記 |
 
-**1-2 予告の扱い**: 1-2 末尾は **Fingertip / Route（1-3）**。FENCE は 1-4、Lead change は 1-5。1-3 冒頭は離陸の続き（旧予告の訂正劇にしない）。
+**1-2 予告の扱い**: 1-2 末尾は **Fingertip / Route（1-3）**。Ops Check は 1-4、Lead change は 1-5。1-3 冒頭は離陸の続き（旧予告の訂正劇にしない）。
 
 ---
 
@@ -228,7 +228,7 @@ Assessment Window 2500–4500 ft / 25–45° AA、EM 図 GW **10,000 LB** / 15,0
 - 読者は「パイロット学生のあんさん」。語りは道真、突っ込みは教官ジョー。博多弁。
 - フィクション注記と「立場の明確化」（AFMAN は学習比喩、公式試験・軍事訓練・実機手順の代替ではない）を毎話。
 - 1-1（2026-10-04 確定、タイトル副題は **V.F.Rの鉄則**）: 入口は編隊の**至近距離**と「計器を見るな、長機を見ろ」。**3 ft は翼端間隔ではなく** Fund 6.11 の Fingertip サイトピクチャ（helmet abeam slab bolt）で、**1-3 で扱う**。**V.F.R（Visual・Formation・Radar）は教範の頭字語ではなく本コースの記憶法**。優先順位の根拠は AFMAN 11-2T-38A-B §6.2.2（Clear → visual → formation position → cockpit tasks）。周波数は §6.3.2（リード指示・編隊位置維持・ヘッドダウン最小化）を一般化して口頭試問に反映。V → F → R（R は手元の計器・通信・チェック）。カントリー・バー開幕、教程焼却、梅ヶ枝餅を何個並べる入口は使わない。比喩はトレーラー1本。Holding はダイナーで視線が吸われる話。口頭試問は遅延ブルシット（空対空レーダー・ロックオンは使わない）。教官ジョーは標準語（道真のみ博多弁）。締めは椅子の上の明日の一手。
-- 1-2: 地上は的。周辺視野。T-4 に AB なし。次回は Fingertip / Route（1-3）。FENCE は 1-4。語りの密度は 1-1 に揃える。
+- 1-2: 地上は的。周辺視野。T-4 に AB なし。次回は Fingertip / Route（1-3）。Ops Check は 1-4。語りの密度は 1-1 に揃える。
 
 内部リンクは `/articles/{slug}`（例: `/articles/fmt-1-1-wingman-vfr`）。
 

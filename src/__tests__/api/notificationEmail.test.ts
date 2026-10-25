@@ -2,14 +2,39 @@ import { describe, expect, it } from 'vitest';
 import {
   buildCohortDedupeKey,
   digestArticleDayLabel,
+  getAppBaseUrl,
   getCohortEmailContent,
   getWeeklyArticleDigestEmailContent,
   isEmailAllowedForTemplate,
 } from '../../../api/_lib/notificationEmail';
+import { resolveCanonicalSiteOriginFromEnv } from '../../config/siteOriginEnv';
 import { getDigestForIsoWeek } from '../../../api/_lib/articlePublishSchedule';
 import type { WeeklyArticleDigest } from '../../../api/_lib/articlePublishSchedule';
 
 describe('api/lib/notificationEmail', () => {
+  it('getAppBaseUrl uses VERCEL_URL while canonical origin ignores it', () => {
+    expect(
+      resolveCanonicalSiteOriginFromEnv({
+        VERCEL_URL: 'preview-branch-xyz.vercel.app',
+      }),
+    ).toBe('https://flight-lms.vercel.app');
+
+    const prevVercel = process.env.VERCEL_URL;
+    const prevApp = process.env.VITE_APP_URL;
+    process.env.VERCEL_URL = 'preview-branch-xyz.vercel.app';
+    delete process.env.VITE_APP_URL;
+    delete process.env.VITE_SITE_ORIGIN;
+    try {
+      expect(getAppBaseUrl()).toBe('https://preview-branch-xyz.vercel.app');
+      expect(resolveCanonicalSiteOriginFromEnv(process.env)).toBe('https://flight-lms.vercel.app');
+    } finally {
+      if (prevVercel === undefined) delete process.env.VERCEL_URL;
+      else process.env.VERCEL_URL = prevVercel;
+      if (prevApp === undefined) delete process.env.VITE_APP_URL;
+      else process.env.VITE_APP_URL = prevApp;
+    }
+  });
+
   it('builds dedupe keys matching SQL enqueue logic', () => {
     expect(buildCohortDedupeKey('weekly_mission_start', '2026-W25', null)).toBe(
       'weekly_mission_start-2026-W25',

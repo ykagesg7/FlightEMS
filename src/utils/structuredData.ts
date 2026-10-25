@@ -1,3 +1,4 @@
+import { DEFAULT_SITE_ORIGIN } from '../config/siteOriginEnv';
 import { LearningContent } from '../types';
 import { ArticleMeta } from '../types/articles';
 
@@ -59,7 +60,7 @@ interface BreadcrumbStructuredData extends StructuredData {
 export const generateArticleStructuredData = (
   content: LearningContent,
   meta: ArticleMeta,
-  baseUrl: string = 'https://flightacademy.com'
+  baseUrl: string = DEFAULT_SITE_ORIGIN
 ): ArticleStructuredData => {
   const articleUrl = `${baseUrl}/articles/${content.id}`;
   const readingTime = meta.readingTime || 10;
@@ -96,7 +97,7 @@ export const generateArticleStructuredData = (
 
 // 検索アクションの構造化データを生成
 export const generateSearchActionStructuredData = (
-  baseUrl: string = 'https://flightacademy.com'
+  baseUrl: string = DEFAULT_SITE_ORIGIN
 ): SearchActionStructuredData => {
   return {
     '@context': 'https://schema.org',
@@ -113,7 +114,7 @@ export const generateSearchActionStructuredData = (
 export const generateBreadcrumbStructuredData = (
   category: string,
   articleTitle: string,
-  baseUrl: string = 'https://flightacademy.com'
+  baseUrl: string = DEFAULT_SITE_ORIGIN
 ): BreadcrumbStructuredData => {
   return {
     '@context': 'https://schema.org',
@@ -174,7 +175,7 @@ export const addMultipleStructuredData = (dataArray: Array<{ data: StructuredDat
 export const generateSearchResultsStructuredData = (
   searchQuery: string,
   results: Array<{ content: LearningContent; meta: ArticleMeta }>,
-  baseUrl: string = 'https://flightacademy.com'
+  baseUrl: string = DEFAULT_SITE_ORIGIN
 ): StructuredData => {
   return {
     '@context': 'https://schema.org',
@@ -207,7 +208,7 @@ export const generateSearchResultsStructuredData = (
 
 // サイト全体の構造化データを生成
 export const generateSiteStructuredData = (
-  baseUrl: string = 'https://flightacademy.com'
+  baseUrl: string = DEFAULT_SITE_ORIGIN
 ): StructuredData => {
   return {
     '@context': 'https://schema.org',

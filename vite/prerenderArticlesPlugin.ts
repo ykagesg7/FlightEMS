@@ -1,7 +1,10 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
+import { resolveCanonicalSiteOriginFromEnv, type SiteOriginEnv } from '../src/config/siteOriginEnv';
+import { articlePrettySlug } from '../src/utils/articleCanonicalPath';
 import { collectArticleMetas, type ExtractedArticleMeta } from './articlesMeta';
+import { writeSitemapAndRobots } from './generateSitemap';
 
 function isArticleReleased(publishedAt?: string): boolean {
   if (!publishedAt) return false;
@@ -17,7 +20,6 @@ function isArticleReleased(publishedAt?: string): boolean {
 }
 
 const SITE_NAME = 'FlightAcademy';
-const DEFAULT_ORIGIN = 'https://flightacademy.com';
 
 /** Client hubs with no prerendered index. `dist/articles/` exists for OG pages, so `/articles` 404s without this. */
 export const SPA_HUB_FALLBACK_PATHS = [
@@ -43,8 +45,8 @@ export function writeSpaHubFallbacks(distDir: string, template: string): number 
 }
 
 function resolveSiteOrigin(): string {
-  const fromEnv = String(process.env.VITE_SITE_ORIGIN ?? '').trim().replace(/\/$/, '');
-  return fromEnv || DEFAULT_ORIGIN;
+  const env = process.env as SiteOriginEnv;
+  return resolveCanonicalSiteOriginFromEnv(env);
 }
 
 function escapeAttr(value: string): string {
@@ -55,17 +57,12 @@ function escapeAttr(value: string): string {
     .replace(/>/g, '&gt;');
 }
 
-function prettySlug(meta: ExtractedArticleMeta, filename: string): string {
-  const raw = (meta.slug || filename).replace(/^\/articles\//, '').replace(/^\//, '');
-  return raw || filename;
-}
-
 function articleHeadTags(
   meta: ExtractedArticleMeta,
   filename: string,
   origin: string,
 ): string {
-  const pathSlug = prettySlug(meta, filename);
+  const pathSlug = articlePrettySlug(meta, filename);
   const url = `${origin}/articles/${pathSlug}`;
   const description =
     meta.excerpt || `${meta.title} - ${SITE_NAME}で学ぶ航空知識`;
@@ -125,7 +122,7 @@ export function prerenderArticlesPlugin(): Plugin {
         if (!entry.meta.publishedAt) continue;
         const tags = articleHeadTags(entry.meta, entry.filename, origin);
         const html = injectHead(template, tags);
-        const keys = new Set([entry.filename, prettySlug(entry.meta, entry.filename)]);
+        const keys = new Set([entry.filename, articlePrettySlug(entry.meta, entry.filename)]);
         for (const key of keys) {
           if (!key || written.has(key)) continue;
           const outDir = join(distDir, 'articles', key);
@@ -139,6 +136,8 @@ export function prerenderArticlesPlugin(): Plugin {
       console.log(`[prerender-articles] wrote ${count} article HTML files`);
       const hubs = writeSpaHubFallbacks(distDir, template);
       console.log(`[prerender-articles] wrote ${hubs} SPA hub fallback HTML files`);
+      writeSitemapAndRobots(distDir, origin);
+      console.log('[prerender-articles] wrote sitemap.xml and robots.txt');
     },
   };
 }
