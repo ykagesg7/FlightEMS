@@ -1,4 +1,5 @@
 import React from 'react';
+import { buildAbsoluteUrl } from '../../../../config/siteOrigin';
 import type { ArticleMeta } from '../../../../types/articles';
 
 interface ArticleJsonLdProps {
@@ -25,7 +26,7 @@ const ArticleJsonLd: React.FC<ArticleJsonLdProps> = ({ meta, url }) => {
       name: 'FlightAcademy',
       logo: {
         '@type': 'ImageObject',
-        url: `${typeof window !== 'undefined' ? window.location.origin : ''}/logo.png`, // ロゴのURL
+        url: buildAbsoluteUrl('/logo.png'),
       },
     },
     datePublished: meta.publishedAt,

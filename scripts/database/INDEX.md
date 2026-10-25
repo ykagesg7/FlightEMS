@@ -108,6 +108,7 @@ CP 記事リライトなどで `*_learning_contents_*_meta.sql` を本番に手�
 | **USAF 編隊飛行（操縦）** ep.3 | [`20260813_learning_contents_fmt_fingertip_route.sql`](20260813_learning_contents_fmt_fingertip_route.sql)（`FMT-1-3_FingertipRoute`、`order_index` **603**） |
 | **USAF 編隊 W34 ドリップ準備** | [`20260813_learning_contents_fmt_w34_unpublish.sql`](20260813_learning_contents_fmt_w34_unpublish.sql)（1-1〜1-3 を `is_published: false`。公開日は schedule） |
 | **USAF 編隊飛行（操縦）** ep.4 ストック | [`20260813_learning_contents_fmt_ops_check_fence.sql`](20260813_learning_contents_fmt_ops_check_fence.sql)（`FMT-1-4_OpsCheckFence`、`order_index` **604**、`is_published: false`） |
+| **USAF 編隊飛行（操縦）** ep.4 T-4 メタ同期 | [`20261017_learning_contents_fmt_1_4_ops_check_title.sql`](20261017_learning_contents_fmt_1_4_ops_check_title.sql)（`FMT-1-4_OpsCheckFence` の title・description のみ。`is_published` は触らない） |
 | **USAF 編隊飛行（操縦）** ep.5 ストック | [`20260813_learning_contents_fmt_lead_change.sql`](20260813_learning_contents_fmt_lead_change.sql)（`FMT-1-5_LeadChange`、`order_index` **605**、`is_published: false`） |
 | **USAF 編隊飛行（操縦）** ep.6 ストック | [`20260813_learning_contents_fmt_spread.sql`](20260813_learning_contents_fmt_spread.sql)（`FMT-1-6_Spread`、`order_index` **606**、`is_published: false`） |
 | **USAF 編隊飛行（操縦）** ep.7 ストック | [`20260813_learning_contents_fmt_trail_family.sql`](20260813_learning_contents_fmt_trail_family.sql)（`FMT-1-7_TrailFamily`、`order_index` **607**、`is_published: false`） |
