@@ -460,7 +460,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
       role="status"
     >
       <p className="font-medium text-whiskyPapa-yellow">まず出発地と到着地を選びましょう</p>
-      <p className="mt-1 text-xs text-gray-300">Route カードで空港を設定すると NavLog が生成されます。</p>
+      <p className="mt-1 text-xs text-gray-300">出発・到着を選ぶと NavLog が生成されます。</p>
     </div>
   ) : null;
 
@@ -696,7 +696,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         {learnArticleLink}
 
         {showRouteEditor && (
-        <PlanningCard title="Route">
+        <PlanningCard title="ルート">
           <FlightParameters layout={layout} flightPlan={flightPlan} setFlightPlan={setFlightPlan} variant="route" />
           <div className="mt-4">
             <RoutePlanning

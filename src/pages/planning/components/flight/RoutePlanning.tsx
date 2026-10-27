@@ -47,15 +47,11 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   const geomagGridLoadMode = useJapanMagneticVariationGridLoadMode();
   return (
     <div>
-      <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 text-white">経路計画</h2>
       <MagneticVariationFallbackNotice />
       <p className="text-2xs sm:text-xs text-gray-400 mb-2 sm:mb-3 md:mb-4 leading-relaxed">
-        磁気方位は教育用モデルです。レグ中点の偏差は国土地理院磁気図 {GSI_GEOMAG_2020_META.epoch} 年値（0.1°
-        格子・sample.cgi 由来）です。
-        {geomagGridLoadMode !== 'loaded'
-          ? ' 現在は格子データ未取得のため概算値です。'
-          : ''}
-        実運航の計画には使用しないでください。
+        磁気方位は教育用（GSI {GSI_GEOMAG_2020_META.epoch} 格子）。
+        {geomagGridLoadMode !== 'loaded' ? ' 格子未取得時は概算。' : ''}
+        実運航には使いません。
       </p>
 
       {/* 空港選択部 */}
