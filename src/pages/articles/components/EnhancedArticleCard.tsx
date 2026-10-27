@@ -74,6 +74,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
   const isCompleted = progress?.completed || false;
   const readingTime = articleMeta?.readingTime || 10;
   const statusLabel = ARTICLE_COMPREHENSION_STATUS_LABEL[comprehensionStatus];
+  const showReadDoneMark = isCompleted || comprehensionStatus === 'read' || comprehensionStatus === 'comprehended';
 
   const articleXp = useMemo(() => {
     if (!articleMeta) return 0;
@@ -94,10 +95,21 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
       ${highlightInProgress ? 'ring-2 ring-brand-primary ring-offset-2 ring-offset-[var(--bg)]' : ''}
     `}
     >
-      <div
-        className={`absolute right-3 top-3 z-10 rounded-full border px-3 py-1 text-xs font-bold ${STATUS_CHIP_CLASS[comprehensionStatus]}`}
-      >
-        {statusLabel}
+      <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5">
+        {showReadDoneMark && (
+          <span
+            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-hud-green/40 bg-hud-green/20 text-hud-green"
+            title="読了"
+            aria-label="読了"
+          >
+            ✓
+          </span>
+        )}
+        <span
+          className={`rounded-full border px-3 py-1 text-xs font-bold ${STATUS_CHIP_CLASS[comprehensionStatus]}`}
+        >
+          {statusLabel}
+        </span>
       </div>
 
       {shouldBlur && (

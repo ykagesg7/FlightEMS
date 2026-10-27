@@ -66,6 +66,7 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
   const { updateArticleProgress } = useArticleProgress();
   const { user } = useAuth();
   const [estimatedMinutes, setEstimatedMinutes] = useState<number | null>(null);
+  const [displayProgress, setDisplayProgress] = useState(0);
 
   const [articleBodyReady, setArticleBodyReady] = useState(false);
 
@@ -83,6 +84,7 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
     if (!user || !currentSlug) return;
     const metrics = computeWindowScrollMetrics();
     if (!metrics) return;
+    setDisplayProgress(metrics.scrollProgress);
     const completed = metrics.scrollProgress >= ARTICLE_READ_COMPLETE_PERCENT;
     void updateArticleProgress(currentSlug, {
       scrollProgress: metrics.scrollProgress,
@@ -162,5 +164,23 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
     return () => observer.disconnect();
   }, [articleBodyReady, currentSlug, endSentinelRef, updateArticleProgress, user]);
 
-  return null;
+  if (!currentSlug) {
+    return null;
+  }
+
+  return (
+    <div
+      className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-1 bg-brand-surface/80"
+      role="progressbar"
+      aria-valuenow={displayProgress}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label="記事の読了進捗"
+    >
+      <div
+        className="h-full bg-brand-primary motion-safe:transition-[width] motion-safe:duration-150"
+        style={{ width: `${displayProgress}%` }}
+      />
+    </div>
+  );
 };
