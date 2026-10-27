@@ -1,5 +1,3 @@
-import React from 'react';
-
 export type PlanningGuideStep = 1 | 2 | 3;
 
 interface PlanningGuidedFlowProps {
