@@ -4,11 +4,11 @@ import { toSitemapArticleEntry } from '../../../api/_lib/sitemapCore';
 import { buildRuntimeSitemapXml } from '../../../api/_lib/sitemapHttp';
 
 describe('runtime sitemap API', () => {
-  it('returns XML urlset with JST-filtered article locs', async () => {
+  it('returns XML urlset with JST-filtered article locs', () => {
     const articles = collectArticleMetas().map(({ filename, meta }) =>
       toSitemapArticleEntry(filename, meta),
     );
-    const xml = await buildRuntimeSitemapXml(
+    const xml = buildRuntimeSitemapXml(
       { VITE_APP_URL: 'https://flight-lms.vercel.app' },
       { articles },
     );

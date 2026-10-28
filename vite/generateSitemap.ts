@@ -20,9 +20,11 @@ export function writeSitemapAndRobots(distDir: string, origin: string): void {
   const articles = collectArticleMetas().map(({ filename, meta }) =>
     toSitemapArticleEntry(filename, meta),
   );
+  const manifestBody = `${JSON.stringify({ articles }, null, 0)}\n`;
+  writeFileSync(join(distDir, 'sitemap-article-manifest.json'), manifestBody, 'utf8');
   writeFileSync(
-    join(distDir, 'sitemap-article-manifest.json'),
-    `${JSON.stringify({ articles }, null, 0)}\n`,
+    join(process.cwd(), 'api/_generated/sitemapArticleManifest.json'),
+    manifestBody,
     'utf8',
   );
   writeFileSync(join(distDir, 'robots.txt'), renderRobotsTxt(origin), 'utf8');
