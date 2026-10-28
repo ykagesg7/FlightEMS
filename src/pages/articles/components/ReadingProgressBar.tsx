@@ -80,18 +80,26 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
     enabled: Boolean(user && currentSlug),
   });
 
+  const refreshDisplayProgress = useCallback(() => {
+    if (!currentSlug) return;
+    const metrics = computeWindowScrollMetrics();
+    if (metrics) {
+      setDisplayProgress(metrics.scrollProgress);
+    }
+  }, [currentSlug]);
+
   const persistViewportProgress = useCallback(() => {
+    refreshDisplayProgress();
     if (!user || !currentSlug) return;
     const metrics = computeWindowScrollMetrics();
     if (!metrics) return;
-    setDisplayProgress(metrics.scrollProgress);
     const completed = metrics.scrollProgress >= ARTICLE_READ_COMPLETE_PERCENT;
     void updateArticleProgress(currentSlug, {
       scrollProgress: metrics.scrollProgress,
       lastPosition: metrics.scrollY,
       ...(completed ? { completed: true } : {}),
     });
-  }, [currentSlug, updateArticleProgress, user]);
+  }, [currentSlug, refreshDisplayProgress, updateArticleProgress, user]);
 
   const compute = useTrailingThrottle(persistViewportProgress, 1000);
 
@@ -101,9 +109,11 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
 
   useEffect(() => {
     const onScroll = () => {
+      refreshDisplayProgress();
       compute();
     };
     const onResize = () => {
+      refreshDisplayProgress();
       compute();
     };
     const onLoaded = async (event: Event) => {
@@ -130,7 +140,7 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
     const onPageHide = () => {
       persistViewportProgress();
     };
-    persistViewportProgress();
+    refreshDisplayProgress();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
     window.addEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as EventListener);
@@ -144,7 +154,7 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
       window.removeEventListener('pagehide', onPageHide);
       document.removeEventListener('visibilitychange', onPageHide);
     };
-  }, [compute, persistViewportProgress, user, currentSlug]);
+  }, [compute, persistViewportProgress, refreshDisplayProgress, user, currentSlug]);
 
   useEffect(() => {
     const sentinel = endSentinelRef?.current;
@@ -153,6 +163,7 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
+        setDisplayProgress(100);
         void updateArticleProgress(currentSlug, {
           scrollProgress: 100,
           completed: true,
