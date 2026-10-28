@@ -38,16 +38,16 @@ export const PrevNextNav: React.FC<{ currentId: string; listPath?: string }> = (
 
   return (
     <nav aria-label="前後の記事" className="mt-10 border-t border-brand-primary/15 pt-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch sm:justify-between">
+      <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-stretch sm:justify-between sm:gap-3">
         {prev ? (
           <Link
             to={`/articles/${prev.id}`}
             aria-label={`前の記事: ${prev.title}`}
             onMouseEnter={() => prefetchMDX(prev.id)}
-            className="hud-border hud-surface flex min-h-[44px] flex-1 flex-col justify-center rounded-lg border px-4 py-3 text-left hover:border-brand-primary/40"
+            className="hud-border hud-surface flex min-h-[44px] min-w-0 max-w-full flex-1 flex-col justify-center rounded-lg border px-4 py-3 text-left hover:border-brand-primary/40"
           >
             <span className="text-xs text-[color:var(--text-muted)]">前の記事</span>
-            <span className="hud-text text-sm font-medium underline-offset-2 hover:underline">
+            <span className="hud-text line-clamp-2 break-words text-sm font-medium underline-offset-2 [overflow-wrap:anywhere] hover:underline">
               ← {prev.title}
             </span>
           </Link>
@@ -64,10 +64,10 @@ export const PrevNextNav: React.FC<{ currentId: string; listPath?: string }> = (
             to={`/articles/${next.id}`}
             aria-label={`次の記事: ${next.title}`}
             onMouseEnter={() => prefetchMDX(next.id)}
-            className="hud-border hud-surface flex min-h-[44px] flex-1 flex-col justify-center rounded-lg border px-4 py-3 text-right hover:border-brand-primary/40"
+            className="hud-border hud-surface flex min-h-[44px] min-w-0 max-w-full flex-1 flex-col justify-center rounded-lg border px-4 py-3 text-left sm:text-right hover:border-brand-primary/40"
           >
             <span className="text-xs text-[color:var(--text-muted)]">次の記事</span>
-            <span className="hud-text text-sm font-medium underline-offset-2 hover:underline">
+            <span className="hud-text line-clamp-2 break-words text-sm font-medium underline-offset-2 [overflow-wrap:anywhere] hover:underline">
               {next.title} →
             </span>
           </Link>
