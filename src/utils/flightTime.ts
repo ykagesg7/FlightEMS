@@ -37,6 +37,21 @@ export function parseFlightPlanTime(timeStr: string): Date {
 
 const JST_OFFSET_MS = 9 * 60 * 60 * 1000;
 
+export const JST_TIME_ZONE = 'Asia/Tokyo';
+
+/** Current wall clock in Asia/Tokyo as `HH:MM` (24h). */
+export function formatJstWallClockTime(now = new Date()): string {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: JST_TIME_ZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(now);
+  const hour = parts.find((part) => part.type === 'hour')?.value ?? '00';
+  const minute = parts.find((part) => part.type === 'minute')?.value ?? '00';
+  return `${hour}:${minute}`;
+}
+
 function parseHms(timeStr: string): { h: number; m: number; s: number } | null {
   if (!timeStr || timeStr === '--' || typeof timeStr !== 'string') return null;
   const parts = timeStr.split(':').map((p) => parseInt(p, 10));
@@ -60,6 +75,13 @@ export function flightPlanTimeJstToUtc(timeStr: string, now = new Date()): Date 
   const month = jstNow.getUTCMonth();
   const day = jstNow.getUTCDate();
   return new Date(Date.UTC(y, month, day, hms.h, hms.m, hms.s) - JST_OFFSET_MS);
+}
+
+/** UTC `HH:MM` for a JST departure wall time on the JST calendar day of `now`. */
+export function formatUtcWallClockFromJstDeparture(timeStr: string, now = new Date()): string {
+  const utc = flightPlanTimeJstToUtc(timeStr, now);
+  if (Number.isNaN(utc.getTime())) return '--:--';
+  return `${String(utc.getUTCHours()).padStart(2, '0')}:${String(utc.getUTCMinutes()).padStart(2, '0')}`;
 }
 
 export function addMinutesUtc(d: Date, minutes: number): Date {
