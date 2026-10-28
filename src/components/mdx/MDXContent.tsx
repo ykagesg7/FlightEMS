@@ -170,7 +170,9 @@ const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId }) =>
 
       {meta && <ArticleHeader meta={meta} />}
 
-      <div className="flex gap-8">
+      <TableOfContents mode="collapsible-top" compact={true} />
+
+      <div className="flex gap-6 lg:gap-8">
         <div className="min-w-0 w-full flex-1">
           <MDXContentWithTheme>{children}</MDXContentWithTheme>
 
@@ -181,13 +183,9 @@ const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId }) =>
           )}
         </div>
 
-        <div className="hidden flex-shrink-0 xl:block">
+        <aside className="hidden w-56 shrink-0 lg:block" aria-label="記事の目次">
           <TableOfContents mode="sidebar" compact={true} />
-        </div>
-      </div>
-
-      <div className="xl:hidden">
-        <TableOfContents mode="drawer" />
+        </aside>
       </div>
     </>
   );

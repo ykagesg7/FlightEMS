@@ -3,7 +3,7 @@ import { useTableOfContents } from '../../../hooks/useTableOfContents';
 
 interface TableOfContentsProps {
   /** 表示モード */
-  mode?: 'sidebar' | 'drawer' | 'inline';
+  mode?: 'sidebar' | 'drawer' | 'inline' | 'collapsible-top';
   /** 最大表示レベル */
   maxLevel?: number;
   /** コンパクト表示 */
@@ -123,6 +123,24 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
           </div>
         </div>
       </>
+    );
+  }
+
+  // モバイル上部・折りたたみ
+  if (mode === 'collapsible-top') {
+    return (
+      <details className="toc-collapsible-top mb-4 rounded-lg border border-brand-primary/20 bg-brand-secondary-dark lg:hidden">
+        <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-[color:var(--text-primary)] marker:content-none [&::-webkit-details-marker]:hidden">
+          <span className="flex items-center gap-2">
+            <svg className="h-4 w-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            目次
+            <span className="text-xs font-normal text-[color:var(--text-muted)]">({filteredItems.length})</span>
+          </span>
+        </summary>
+        <div className="border-t border-brand-primary/10 p-4">{tocContent}</div>
+      </details>
     );
   }
 
