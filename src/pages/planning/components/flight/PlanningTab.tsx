@@ -42,6 +42,7 @@ import { preloadFlightViewer3DModule } from './flightViewer3d/flightViewer3dLazy
 import { useFlightViewer3dProUser } from '../../hooks/useFlightViewer3dProUser';
 import { mergeWaypointSearchOptions } from '../../userWaypoints/mergeWaypointSearchOptions';
 import { useUserSavedWaypoints } from '../../userWaypoints/useUserSavedWaypoints';
+import { PlanningGuidedFlow, resolvePlanningGuideStep } from '../PlanningGuidedFlow';
 
 interface PlanningTabProps {
   layout?: PlanningPanelLayout;
@@ -454,6 +455,8 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
     return () => cancelAnimationFrame(raf1);
   }, [printRequested, flightPlan.routeSegments]);
 
+  const planningGuideStep = resolvePlanningGuideStep(routeReady, navLog.segments.length);
+
   const emptyStateBanner = !routeReady && (isLearn || isPlan) ? (
     <div
       className="rounded-md border border-whiskyPapa-yellow/40 bg-whiskyPapa-yellow/10 px-4 py-3 text-sm text-gray-100"
@@ -503,8 +506,11 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
       )}
 
       <div className={isSplitLayout ? 'space-y-3 sm:space-y-4 md:space-y-6' : 'lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6'}>
+        {isPlan && (
+          <PlanningGuidedFlow activeStep={planningGuideStep} />
+        )}
         {showSetup && (
-        <PlanningCard title="Setup">
+        <PlanningCard title="Setup" defaultOpen={false}>
         <div className="flex flex-col gap-3 print-hide">
           {draftNoticeVisible && (
             <div
@@ -696,7 +702,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         {learnArticleLink}
 
         {showRouteEditor && (
-        <PlanningCard title="Route">
+        <PlanningCard title="Route" defaultOpen={true}>
           <FlightParameters layout={layout} flightPlan={flightPlan} setFlightPlan={setFlightPlan} variant="route" />
           <div className="mt-4">
             <RoutePlanning
@@ -745,7 +751,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         )}
 
         {(isLearn || isPlan || isBrief) && (
-        <PlanningCard title="NavLog">
+        <PlanningCard title="NavLog" defaultOpen={true}>
           <FlightSummary
             layout={layout}
             flightPlan={flightPlan}
