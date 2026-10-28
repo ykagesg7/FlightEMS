@@ -30,7 +30,8 @@ export const useTableOfContents = (containerSelector: string = '.mdx-container')
         }
       });
 
-      headings.forEach((heading, index) => {
+      let headingOrdinal = 0;
+      headings.forEach((heading) => {
         const element = heading as HTMLElement;
         const level = parseInt(element.tagName.charAt(1));
         const text = element.textContent || '';
@@ -41,10 +42,13 @@ export const useTableOfContents = (containerSelector: string = '.mdx-container')
           return;
         }
 
-        // IDが未設定の場合は生成
+        const ordinal = headingOrdinal;
+        headingOrdinal += 1;
+
+        // Prefer existing #heading-N anchors; otherwise assign heading-N for stable TOC links.
         let id = element.id;
-        if (!id) {
-          id = generateSlug(text, index, existingIds);
+        if (!/^heading-\d+$/.test(id)) {
+          id = assignHeadingAnchorId(ordinal, existingIds);
           element.id = id;
         }
 
@@ -203,29 +207,13 @@ export const useTableOfContents = (containerSelector: string = '.mdx-container')
   };
 };
 
-/**
- * テキストからslugを生成（重複回避）
- */
-function generateSlug(text: string, index: number, existingIds: Set<string>): string {
-  let baseSlug = text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '') // 特殊文字を除去
-    .replace(/\s+/g, '-') // スペースをハイフンに
-    .replace(/-+/g, '-') // 連続するハイフンを単一に
-    .replace(/^-|-$/g, ''); // 前後のハイフンを除去
-
-  if (!baseSlug) {
-    baseSlug = `heading-${index}`;
+function assignHeadingAnchorId(ordinal: number, existingIds: Set<string>): string {
+  let candidate = `heading-${ordinal}`;
+  let counter = ordinal;
+  while (existingIds.has(candidate)) {
+    counter += 1;
+    candidate = `heading-${counter}`;
   }
-
-  // 重複チェックと回避
-  let finalSlug = baseSlug;
-  let counter = 1;
-  while (existingIds.has(finalSlug)) {
-    finalSlug = `${baseSlug}-${counter}`;
-    counter++;
-  }
-
-  existingIds.add(finalSlug);
-  return finalSlug;
+  existingIds.add(candidate);
+  return candidate;
 }

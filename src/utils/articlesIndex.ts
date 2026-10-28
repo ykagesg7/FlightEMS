@@ -136,6 +136,18 @@ export function normalizeArticleSlug(slug: string): string {
   return slug.replace(/^\/articles\//, '').replace(/^\//, '');
 }
 
+/** Filename stem before first `_` (e.g. `FMT-1-5` from `FMT-1-5_Title`). */
+export function articleFilenamePrefix(filename: string): string {
+  const underscore = filename.indexOf('_');
+  if (underscore <= 0) return filename;
+  return filename.slice(0, underscore);
+}
+
+function matchesArticleFilenamePrefix(param: string, filename: string): boolean {
+  const prefix = articleFilenamePrefix(filename);
+  return prefix.toLowerCase() === param.toLowerCase();
+}
+
 /**
  * Resolve a route param to an index entry by filename or pretty slug
  * (e.g. `4.1.1_ChoresAreTheJob` or `chores-are-the-job` / `/articles/chores-are-the-job`).
@@ -147,6 +159,11 @@ export async function findArticleByRouteParam(
   const index = await getArticleIndex();
   const rawKey = normalizeArticleSlug(param);
   const key = ARTICLE_ROUTE_ALIASES[rawKey] ?? ARTICLE_ROUTE_ALIASES[param] ?? rawKey;
+  const prefixMatches = index.filter((entry) => matchesArticleFilenamePrefix(key, entry.filename));
+  if (prefixMatches.length === 1) {
+    return prefixMatches[0];
+  }
+
   return (
     index.find((entry) => {
       const metaSlug = entry.meta.slug || '';
@@ -155,6 +172,7 @@ export async function findArticleByRouteParam(
         entry.filename === param ||
         entry.filename === key ||
         entry.filename === rawKey ||
+        matchesArticleFilenamePrefix(rawKey, entry.filename) ||
         metaSlug === param ||
         metaSlug === `/${key}` ||
         metaSlug === `/articles/${key}` ||

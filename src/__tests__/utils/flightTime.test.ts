@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { flightPlanTimeJstToUtc, parseFlightPlanTime } from '../../utils/flightTime';
+import {
+  flightPlanTimeJstToUtc,
+  formatJstWallClockTime,
+  formatUtcWallClockFromJstDeparture,
+  parseFlightPlanTime,
+} from '../../utils/flightTime';
 
 describe('parseFlightPlanTime', () => {
   it('parses hh:mm using today date', () => {
@@ -32,5 +37,20 @@ describe('flightPlanTimeJstToUtc', () => {
     const d = flightPlanTimeJstToUtc('10:00', new Date('2026-08-23T12:00:00Z'));
     expect(d.getUTCHours()).toBe(1);
     expect(d.getUTCMinutes()).toBe(0);
+  });
+});
+
+describe('formatJstWallClockTime', () => {
+  it('uses Asia/Tokyo regardless of runtime timezone', () => {
+    const label = formatJstWallClockTime(new Date('2026-10-28T13:42:00Z'));
+    expect(label).toBe('22:42');
+  });
+});
+
+describe('formatUtcWallClockFromJstDeparture', () => {
+  it('converts JST wall time to UTC HH:MM', () => {
+    expect(
+      formatUtcWallClockFromJstDeparture('22:42', new Date('2026-10-28T13:42:00Z')),
+    ).toBe('13:42');
   });
 });

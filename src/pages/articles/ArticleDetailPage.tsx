@@ -224,6 +224,7 @@ const ArticleDetailPage: React.FC = () => {
               nextMeta={nextMeta}
               currentMeta={resolvedCurrentMeta}
             />
+            <PrevNextNav currentId={articleId} listPath="/articles" />
             <RelatedTestsBlock contentId={articleId} />
             <CommentSection
               articleId={articleId}
@@ -237,8 +238,6 @@ const ArticleDetailPage: React.FC = () => {
             />
           </>
         )}
-
-        <PrevNextNav currentId={articleId} listPath="/articles" />
       </div>
       <ScrollToButtons />
       <KeyboardShortcuts prevId={prev?.id} nextId={next?.id} />

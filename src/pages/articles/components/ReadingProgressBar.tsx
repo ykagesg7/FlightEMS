@@ -66,6 +66,7 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
   const { updateArticleProgress } = useArticleProgress();
   const { user } = useAuth();
   const [estimatedMinutes, setEstimatedMinutes] = useState<number | null>(null);
+  const [displayProgress, setDisplayProgress] = useState(0);
 
   const [articleBodyReady, setArticleBodyReady] = useState(false);
 
@@ -79,7 +80,16 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
     enabled: Boolean(user && currentSlug),
   });
 
+  const refreshDisplayProgress = useCallback(() => {
+    if (!currentSlug) return;
+    const metrics = computeWindowScrollMetrics();
+    if (metrics) {
+      setDisplayProgress(metrics.scrollProgress);
+    }
+  }, [currentSlug]);
+
   const persistViewportProgress = useCallback(() => {
+    refreshDisplayProgress();
     if (!user || !currentSlug) return;
     const metrics = computeWindowScrollMetrics();
     if (!metrics) return;
@@ -89,7 +99,7 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
       lastPosition: metrics.scrollY,
       ...(completed ? { completed: true } : {}),
     });
-  }, [currentSlug, updateArticleProgress, user]);
+  }, [currentSlug, refreshDisplayProgress, updateArticleProgress, user]);
 
   const compute = useTrailingThrottle(persistViewportProgress, 1000);
 
@@ -99,9 +109,11 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
 
   useEffect(() => {
     const onScroll = () => {
+      refreshDisplayProgress();
       compute();
     };
     const onResize = () => {
+      refreshDisplayProgress();
       compute();
     };
     const onLoaded = async (event: Event) => {
@@ -128,7 +140,7 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
     const onPageHide = () => {
       persistViewportProgress();
     };
-    persistViewportProgress();
+    refreshDisplayProgress();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
     window.addEventListener(MDX_CONTENT_LOADED_EVENT, onLoaded as EventListener);
@@ -142,7 +154,7 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
       window.removeEventListener('pagehide', onPageHide);
       document.removeEventListener('visibilitychange', onPageHide);
     };
-  }, [compute, persistViewportProgress, user, currentSlug]);
+  }, [compute, persistViewportProgress, refreshDisplayProgress, user, currentSlug]);
 
   useEffect(() => {
     const sentinel = endSentinelRef?.current;
@@ -151,6 +163,7 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
+        setDisplayProgress(100);
         void updateArticleProgress(currentSlug, {
           scrollProgress: 100,
           completed: true,
@@ -162,5 +175,23 @@ export const ReadingProgressBar: React.FC<ReadingProgressBarProps> = ({
     return () => observer.disconnect();
   }, [articleBodyReady, currentSlug, endSentinelRef, updateArticleProgress, user]);
 
-  return null;
+  if (!currentSlug) {
+    return null;
+  }
+
+  return (
+    <div
+      className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-1 bg-brand-surface/80"
+      role="progressbar"
+      aria-valuenow={displayProgress}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label="記事の読了進捗"
+    >
+      <div
+        className="h-full bg-brand-primary motion-safe:transition-[width] motion-safe:duration-150"
+        style={{ width: `${displayProgress}%` }}
+      />
+    </div>
+  );
 };

@@ -80,7 +80,7 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
       const Tag = hasBlockChild(props.children) ? 'div' : 'p';
       return (
         <Tag
-          className={`mb-5 break-words text-base tracking-wide leading-7 sm:leading-8 ${textColor}`}
+          className={`mb-5 break-words text-base leading-[1.65] tracking-normal sm:leading-[1.65] ${textColor}`}
           {...props}
         />
       );
@@ -139,7 +139,7 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <MDXProvider components={components}>
       <div className="prose prose-invert w-full min-w-0 max-w-none overflow-x-auto rounded-lg bg-brand-secondary p-2 text-base leading-7 shadow-md transition-all duration-300 sm:p-4 sm:leading-8 md:p-6">
-        <div className="mx-auto w-full min-w-0 max-w-3xl">
+        <div className="mx-auto w-full min-w-0 max-w-[42.5rem]">
           {children}
         </div>
       </div>
@@ -170,7 +170,9 @@ const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId }) =>
 
       {meta && <ArticleHeader meta={meta} />}
 
-      <div className="flex gap-8">
+      <TableOfContents mode="collapsible-top" compact={true} />
+
+      <div className="flex gap-6 lg:gap-8">
         <div className="min-w-0 w-full flex-1">
           <MDXContentWithTheme>{children}</MDXContentWithTheme>
 
@@ -181,13 +183,9 @@ const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId }) =>
           )}
         </div>
 
-        <div className="hidden flex-shrink-0 xl:block">
+        <aside className="hidden w-56 shrink-0 lg:block" aria-label="記事の目次">
           <TableOfContents mode="sidebar" compact={true} />
-        </div>
-      </div>
-
-      <div className="xl:hidden">
-        <TableOfContents mode="drawer" />
+        </aside>
       </div>
     </>
   );
