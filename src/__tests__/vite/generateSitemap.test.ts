@@ -2,14 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   INDEXABLE_STATIC_PATHS,
   renderRobotsTxt,
-  renderSitemapXml,
+  renderSitemapXmlFromWorkspace,
 } from '../../../vite/generateSitemap';
 
 describe('generateSitemap', () => {
   const origin = 'https://flight-lms.vercel.app';
 
   it('renders valid sitemap xml with static hubs and course paths', () => {
-    const xml = renderSitemapXml(origin);
+    const xml = renderSitemapXmlFromWorkspace(origin);
     expect(xml).toMatch(/^<\?xml version="1.0" encoding="UTF-8"\?>/);
     expect(xml).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
     for (const path of INDEXABLE_STATIC_PATHS) {
