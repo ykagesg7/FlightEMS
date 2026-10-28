@@ -1,5 +1,6 @@
 import type { FlightPlan } from '../../types/index';
-import { calculateAirspeeds, formatTime } from '../../utils';
+import { calculateAirspeeds } from '../../utils';
+import { formatJstWallClockTime } from '../../utils/flightTime';
 
 /**
  * /planning の FlightPlan 初期状態（単一ソース）。
@@ -21,7 +22,7 @@ export function createInitialFlightPlan(): FlightPlan {
   );
   const initialTas = airspeedsResult?.tasKt ?? 0;
   const initialMach = airspeedsResult?.mach ?? 0;
-  const departureTime = formatTime(new Date().getHours() * 60 + new Date().getMinutes());
+  const departureTime = formatJstWallClockTime();
   return {
     departure: undefined,
     arrival: undefined,

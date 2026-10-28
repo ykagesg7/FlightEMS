@@ -1,4 +1,3 @@
-import { format, toZonedTime } from 'date-fns-tz';
 import { BarChart, ChevronDown, ChevronUp, Clock, Gauge, Thermometer } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CACHE_DURATION, useWeatherCache, type WeatherCache } from '../../../../contexts/WeatherCacheContext';
@@ -7,8 +6,8 @@ import { FlightPlan } from '../../../../types/index';
 import {
   calculateAirspeeds,
   calculateCASIncrementForMach,
-  parseTimeString,
 } from '../../../../utils';
+import { formatUtcWallClockFromJstDeparture } from '../../../../utils/flightTime';
 import { ALTITUDE_INCREMENT, SPEED_INCREMENT } from '../../../../utils/flightParametersConstants';
 import type { PlanningPanelLayout } from '../../planningPanelLayout';
 import { flightParametersGridClass } from '../../planningPanelLayout';
@@ -199,13 +198,10 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
     [airspeedResults]
   );
 
-  const utcTime = useMemo(() => {
-    return format(
-      toZonedTime(parseTimeString(flightPlan.departureTime), 'UTC'),
-      'HH:mm',
-      { timeZone: 'UTC' }
-    );
-  }, [flightPlan.departureTime]);
+  const utcTime = useMemo(
+    () => formatUtcWallClockFromJstDeparture(flightPlan.departureTime),
+    [flightPlan.departureTime],
+  );
 
   // 飛行場名の表示用
   const airportName = useMemo(() => {
