@@ -71,10 +71,11 @@ function PlanningMapPageInner({
   lastSavedAt,
 }: PlanningMapPageInnerProps) {
   const isXl = useMediaQuery('(min-width: 1280px)');
+  const isNarrowMobile = useMediaQuery('(max-width: 639px)');
   const [mobileTab, setMobileTab] = useState<'content' | 'map'>('content');
   const focusMapTab = useCallback(() => {
-    if (!isXl) setMobileTab('map');
-  }, [isXl]);
+    if (isNarrowMobile) setMobileTab('map');
+  }, [isNarrowMobile]);
 
   const mapProps = {
     layout: 'split' as const,
@@ -145,9 +146,42 @@ function PlanningMapPageInner({
     );
   }
 
+  if (!isNarrowMobile) {
+    return (
+      <PlanningNotamSheetProvider onFocusMapTab={focusMapTab}>
+        <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
+          <div className="px-4 pt-4 pb-2">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-whiskyPapa-yellow hover:text-whiskyPapa-yellow/80 border border-whiskyPapa-yellow/30 rounded-lg hover:border-whiskyPapa-yellow/50 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              HOMEへ戻る
+            </Link>
+          </div>
+          <div className="px-4 pb-2">
+            <PlanningModeSegment />
+          </div>
+          <div className="px-4 pb-2">
+            <PlanningContextNote />
+            <MagneticVariationFallbackNotice />
+          </div>
+          <div className="flex flex-col gap-4 px-2 pb-6 sm:px-4 md:px-6">
+            <div className="min-w-0">{leftPanelContent}</div>
+            <div className="min-h-[min(50vh,28rem)] min-w-0">
+              <Suspense fallback={<MapTabFallback />}>
+                <MapTab {...mapProps} />
+              </Suspense>
+            </div>
+          </div>
+        </div>
+      </PlanningNotamSheetProvider>
+    );
+  }
+
   return (
     <PlanningNotamSheetProvider onFocusMapTab={focusMapTab}>
-      <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white">
+      <div className="min-h-screen flex flex-col relative bg-whiskyPapa-black text-white pb-[calc(4.5rem+env(safe-area-inset-bottom))]">
         <div className="px-4 pt-4 pb-2">
           <Link
             to="/"
@@ -219,6 +253,35 @@ function PlanningMapPageInner({
               </div>
             </TabsContent>
           </Tabs>
+        </div>
+
+        <div
+          className="fixed inset-x-0 bottom-0 z-50 flex gap-2 border-t border-whiskyPapa-yellow/25 bg-whiskyPapa-black/95 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] print-hide"
+          role="toolbar"
+          aria-label="Planning モバイル操作"
+        >
+          <button
+            type="button"
+            onClick={() => setMobileTab('content')}
+            className={`min-h-[44px] flex-1 rounded-lg border px-3 text-sm font-medium ${
+              mobileTab === 'content'
+                ? 'border-whiskyPapa-yellow bg-whiskyPapa-yellow/15 text-whiskyPapa-yellow'
+                : 'border-whiskyPapa-yellow/20 text-gray-300'
+            }`}
+          >
+            入力
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab('map')}
+            className={`min-h-[44px] flex-1 rounded-lg border px-3 text-sm font-medium ${
+              mobileTab === 'map'
+                ? 'border-whiskyPapa-yellow bg-whiskyPapa-yellow/15 text-whiskyPapa-yellow'
+                : 'border-whiskyPapa-yellow/20 text-gray-300'
+            }`}
+          >
+            地図
+          </button>
         </div>
       </div>
     </PlanningNotamSheetProvider>
