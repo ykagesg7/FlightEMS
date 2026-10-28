@@ -22,6 +22,6 @@ describe('generateSitemap', () => {
 
   it('includes Sitemap directive in robots.txt', () => {
     const robots = renderRobotsTxt(origin);
-    expect(robots).toContain('Sitemap: https://flight-lms.vercel.app/sitemap.xml');
+    expect(robots).toContain('Sitemap: https://flight-lms.vercel.app/api/sitemap.xml');
   });
 });

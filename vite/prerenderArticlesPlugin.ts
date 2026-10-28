@@ -137,7 +137,7 @@ export function prerenderArticlesPlugin(): Plugin {
       const hubs = writeSpaHubFallbacks(distDir, template);
       console.log(`[prerender-articles] wrote ${hubs} SPA hub fallback HTML files`);
       writeSitemapAndRobots(distDir, origin);
-      console.log('[prerender-articles] wrote sitemap.xml and robots.txt');
+      console.log('[prerender-articles] wrote robots.txt (runtime sitemap: /api/sitemap.xml)');
     },
   };
 }

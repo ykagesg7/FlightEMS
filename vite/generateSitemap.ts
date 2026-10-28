@@ -1,5 +1,6 @@
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { isPublishDateReached } from '../api/_lib/articlePublishGate';
 import { articlePrettySlug } from '../src/utils/articleCanonicalPath';
 import { collectArticleMetas } from './articlesMeta';
 
@@ -18,17 +19,14 @@ export const INDEXABLE_STATIC_PATHS = [
   '/ranks',
 ] as const;
 
+/** Runtime sitemap served by `api/sitemap.xml.ts` (JST publish gate evaluated per request). */
+export const RUNTIME_SITEMAP_PATH = '/api/sitemap.xml' as const;
+
 function isArticleReleased(publishedAt?: string): boolean {
   if (!publishedAt) return false;
   const day = publishedAt.slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return false;
-  const now = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Tokyo',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date());
-  return day <= now;
+  return isPublishDateReached(day);
 }
 
 function escapeXml(value: string): string {
@@ -77,11 +75,11 @@ export function renderSitemapXml(origin: string): string {
 }
 
 export function renderRobotsTxt(origin: string): string {
-  const sitemap = absoluteLoc(origin, '/sitemap.xml');
+  const sitemap = absoluteLoc(origin, RUNTIME_SITEMAP_PATH);
   return `User-agent: *\nAllow: /\n\nSitemap: ${sitemap}\n`;
 }
 
+/** Writes robots.txt only. Article URLs are listed by the runtime sitemap API (no static sitemap.xml). */
 export function writeSitemapAndRobots(distDir: string, origin: string): void {
-  writeFileSync(join(distDir, 'sitemap.xml'), renderSitemapXml(origin), 'utf8');
   writeFileSync(join(distDir, 'robots.txt'), renderRobotsTxt(origin), 'utf8');
 }
