@@ -46,9 +46,13 @@ export function computeWindowScrollMetrics(): ScrollMetrics | null {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return null;
   }
+  const scrollElement = document.scrollingElement ?? document.documentElement;
+  const scrollY = window.scrollY ?? scrollElement.scrollTop;
+  const scrollHeight = Math.max(scrollElement.scrollHeight, document.body.scrollHeight);
+  const clientHeight = window.innerHeight;
   return computeScrollMetricsFromViewport({
-    scrollY: window.scrollY,
-    scrollHeight: document.documentElement.scrollHeight,
-    clientHeight: window.innerHeight,
+    scrollY,
+    scrollHeight,
+    clientHeight,
   });
 }
