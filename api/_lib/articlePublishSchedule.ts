@@ -549,11 +549,11 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W48': {
     isoWeek: '2026-W48',
-    seriesTitle: '螺旋L1＋学科再掲',
+    seriesTitle: '螺旋L1＋学科再掲＋計器',
     intro:
-      '来週はパイロットへの道（日）。水は V-n線図（G）の再掲。金の IF-1-2 は未執筆。',
+      '来週はパイロットへの道（日）。水は V-n線図（G）の再掲。金は部分パネル入口（IF-1-2・枠予約／本文執筆中）。',
     checklistNote:
-      'つながり: パイロットへの道 × V-n／G。L1-Q4-2 は W49 で即公開案内（syncPublish:false）。',
+      'IF-1-2 は枠予約（stub MDX・learning_contents 未投入）。メールは announceDate=2026-11-27。syncPublish:false。本文完成後に差し替え。',
     articles: [
       {
         id: 'L1-Q3-1_PathToPilot',
@@ -570,6 +570,15 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         title: '【航空工学】翼が折れる境界線：V-n線図と大分・団子汁のコシ',
         slug: '/articles/ppl-1-1-7-vn-diagram',
         hook: 'G のかけすぎは翼の根元から折れる。Va を守り切れ。',
+      },
+      {
+        id: 'IF-1-2_PartialPanel',
+        publishDate: '2026-11-27',
+        announceDate: '2026-11-27',
+        syncPublish: false,
+        title: '【操縦】計器飛行第2話：部分パネル／異常姿勢の入口（執筆中）',
+        slug: '/articles/if-1-2-partial-panel',
+        hook: '部分パネルと異常姿勢の入口。本文は執筆中の枠予約。',
       },
     ],
   },
