@@ -514,11 +514,11 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   // W47+: 日=心構え（ドリップ）+ 水=学科再掲（syncPublish:false）+ 金=実技（未執筆は docs）。
   '2026-W47': {
     isoWeek: '2026-W47',
-    seriesTitle: '螺旋L1＋学科再掲',
+    seriesTitle: '螺旋L1＋学科再掲＋計器',
     intro:
-      '来週は道真公のブリーフィング（日）。水は航空身体検査の基礎（再掲）。金の計器実技 IF-1-1 は未執筆。',
+      '来週は道真公のブリーフィング（日）。水は航空身体検査の基礎（再掲）。金は計器を信じろ（IF-1-1・即公開案内）。',
     checklistNote:
-      '金曜 IF は docs/content_outlines/Schedule_W47_plus_20261030.md。水曜再掲は syncPublish:false（公開状態は触らない）。',
+      'IF-1-1 は即公開（publishedAt＝マージ日）。メールは announceDate=2026-11-20。syncPublish:false。',
     articles: [
       {
         id: 'L1-Q4-1_MichizaneBriefing',
@@ -535,6 +535,15 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         title: '【航空法規】航空身体検査の基礎：耳抜きの地獄と「空の健康診断」のハック術',
         slug: '/articles/ppl-5-3-2-medical-certificate-basics',
         hook: '免許と健康のセット。風邪薬で空の上が拷問になる前に読め。',
+      },
+      {
+        id: 'IF-1-1_TrustInstruments',
+        publishDate: '2026-10-30',
+        announceDate: '2026-11-20',
+        syncPublish: false,
+        title: '【操縦】計器飛行第1話：計器を信じろ ～AIF / Cross-check～',
+        slug: '/articles/if-1-1-trust-instruments',
+        hook: '外が見えんときほど計器を信じろ。AIF と Cross-check の第一歩。',
       },
     ],
   },

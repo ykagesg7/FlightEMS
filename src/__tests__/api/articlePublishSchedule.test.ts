@@ -100,5 +100,16 @@ describe('api/lib/articlePublishSchedule', () => {
     expect(listArticlesForPublishSync().some((a) => a.id === 'L1-Q4-2_AviatorMindset')).toBe(
       false,
     );
+
+    // IF-1-1 immediate publish: Friday mail announce (W47), no drip sync
+    const if11 = listScheduledArticles().find((a) => a.id === 'IF-1-1_TrustInstruments');
+    expect(if11).toBeDefined();
+    expect(if11?.syncPublish).toBe(false);
+    expect(if11?.announceDate).toBe('2026-11-20');
+    expect(if11?.publishDate).toBe('2026-10-30');
+    expect(weekdayJstFromPublishDate(if11!.announceDate!)).toBe(5);
+    expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-1_TrustInstruments')).toBe(
+      false,
+    );
   });
 });
