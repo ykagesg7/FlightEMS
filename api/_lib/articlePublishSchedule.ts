@@ -443,10 +443,17 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W45': {
     isoWeek: '2026-W45',
-    seriesTitle: 'FN（編隊）',
+    seriesTitle: 'FN（編隊）＋メンタリティ',
     intro:
-      '来週は Trail 族と Rejoin（水・金）。後ろの箱と合流の型。日曜メンタリティ枠は稿未承認のため空け。',
+      '来週は７つの習慣その６（日）と編隊2本（水・金）。シナジー、Trail 族、Rejoin。',
     articles: [
+      {
+        id: '1.1.6_Synergize',
+        publishDate: '2026-11-01',
+        title: '【７つの習慣】その６、道真公と学ぶ「シナジーを創り出す」',
+        slug: '/articles/synergize',
+        hook: '違いを燃料にしろ。１＋１を２で終わらせるな。',
+      },
       {
         id: 'FMT-1-7_TrailFamily',
         publishDate: '2026-11-04',

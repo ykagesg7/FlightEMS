@@ -29,13 +29,13 @@ function mockContent(
 }
 
 describe('articleHubCategories', () => {
-  it('allows habits 1–5 and 7; habit 6 withheld until Sunday-slot approval', () => {
+  it('allows habits 1–7 (Sunday slots approved through 1.1.7)', () => {
     expect(isWithdrawnArticle('1.1.1_UnconsciousSuccess')).toBe(false);
     expect(isWithdrawnArticle('1.1.2_EndWithFuture')).toBe(false);
     expect(isWithdrawnArticle('1.1.3_PrioritizingMostImportant')).toBe(false);
     expect(isWithdrawnArticle('1.1.4_WinWinThinking')).toBe(false);
     expect(isWithdrawnArticle('1.1.5_SeekFirstToUnderstand')).toBe(false);
-    expect(isWithdrawnArticle('1.1.6_Synergize')).toBe(true);
+    expect(isWithdrawnArticle('1.1.6_Synergize')).toBe(false);
     expect(isWithdrawnArticle('1.1.7_SharpenTheSaw')).toBe(false);
     const contents = [
       mockContent('1.1.1_UnconsciousSuccess', 'メンタリティー', true),
@@ -43,7 +43,7 @@ describe('articleHubCategories', () => {
       mockContent('1.1.3_PrioritizingMostImportant', 'メンタリティー', true),
       mockContent('1.1.4_WinWinThinking', 'メンタリティー', true),
       mockContent('1.1.5_SeekFirstToUnderstand', 'メンタリティー', true),
-      mockContent('1.1.6_Synergize', 'メンタリティー', false),
+      mockContent('1.1.6_Synergize', 'メンタリティー', true),
       mockContent('1.1.7_SharpenTheSaw', 'メンタリティー', true),
     ];
     expect(filterPublishedArticleContents(contents).map((c) => c.id)).toEqual([
@@ -52,6 +52,7 @@ describe('articleHubCategories', () => {
       '1.1.3_PrioritizingMostImportant',
       '1.1.4_WinWinThinking',
       '1.1.5_SeekFirstToUnderstand',
+      '1.1.6_Synergize',
       '1.1.7_SharpenTheSaw',
     ]);
   });
