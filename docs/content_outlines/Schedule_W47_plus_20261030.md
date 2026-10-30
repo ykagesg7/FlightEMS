@@ -18,7 +18,7 @@
 |---|---|---|
 | **L1-Q4-1 / L1-Q3-1** | **schedule に登録**（本 PR） | MDX あり・seed で `is_published=false`（drip 待ち）。未来日登録は想定どおり。 |
 | **既に公開済みの PPL/CPL 等** | **schedule に載せない**。本 docs に再掲予定のみ書く | 未来日で載せる→到達前に cron が一時非公開にする。既形に「公開済み ID の再スケジュール」は無い（ID 重複ゼロ）。 |
-| **未執筆**（IF / NAV / NIGHT / IFF、L1-Q4-2） | **schedule に載せない**。本 docs に題案 | MDX が無いと `articlePublishSchedule` テストが落ちる。 |
+| **未執筆**（NAV / NIGHT / IFF 等） | **schedule に載せない**。本 docs に題案 | MDX が無いと `articlePublishSchedule` テストが落ちる。IF-1-2 は stub MDX で枠のみ登録可。 |
 
 編集上の「取り上げ直し」＝digest／アプリ内リンク／Wiki での再案内。`is_published` は触らない。
 
@@ -48,7 +48,7 @@ W45/W46 は本 PR では**未変更**（1.1.6 は main 済、1.1.7 は別 PR）�
 |---|---|---|---|---|
 | 日 | 11/22 | 心構え | L1-Q3-1 パイロットへの道 | **登録** |
 | 水 | 11/25 | 学科 | L1-Q3-3／`ppl-1-1-7` V-n線図（G） | 再掲・docs |
-| 金 | 11/27 | 実技 | **IF-1-2** 題案: 部分パネル／異常姿勢の入口 | 新規・docs |
+| 金 | 11/27 | 実技 | **IF-1-2** 部分パネル／異常姿勢の入口 | **登録**（枠予約 stub・announceDate=11/27・syncPublish:false・lc 未投入） |
 
 つながり: パイロットへの道 × G（機体と体の限界）× 計器で姿勢を立て直す実技。
 
