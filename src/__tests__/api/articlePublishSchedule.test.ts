@@ -90,8 +90,26 @@ describe('api/lib/articlePublishSchedule', () => {
       expect(row?.announceDate).toBe(want.announce);
       expect(weekdayJstFromPublishDate(row!.announceDate!)).toBe(3);
     }
-    // L1-Q4-2 not registered in this change
-    const allIds = listScheduledArticles().map((a) => a.id);
-    expect(allIds).not.toContain('L1-Q4-2_AviatorMindset');
+    // L1-Q4-2 immediate publish: Sunday mail announce, no drip sync
+    const l1q42 = listScheduledArticles().find((a) => a.id === 'L1-Q4-2_AviatorMindset');
+    expect(l1q42).toBeDefined();
+    expect(l1q42?.syncPublish).toBe(false);
+    expect(l1q42?.announceDate).toBe('2026-11-29');
+    expect(l1q42?.publishDate).toBe('2026-10-30');
+    expect(weekdayJstFromPublishDate(l1q42!.announceDate!)).toBe(0);
+    expect(listArticlesForPublishSync().some((a) => a.id === 'L1-Q4-2_AviatorMindset')).toBe(
+      false,
+    );
+
+    // IF-1-1 immediate publish: Friday mail announce (W47), no drip sync
+    const if11 = listScheduledArticles().find((a) => a.id === 'IF-1-1_TrustInstruments');
+    expect(if11).toBeDefined();
+    expect(if11?.syncPublish).toBe(false);
+    expect(if11?.announceDate).toBe('2026-11-20');
+    expect(if11?.publishDate).toBe('2026-10-30');
+    expect(weekdayJstFromPublishDate(if11!.announceDate!)).toBe(5);
+    expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-1_TrustInstruments')).toBe(
+      false,
+    );
   });
 });

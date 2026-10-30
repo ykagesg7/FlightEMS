@@ -7,7 +7,7 @@
  * Cadence from **2026-W47** (上様裁定 2026-10-30): **Sun 心構え** + **Wed 学科再掲** + **Fri 実技**.
  *   再掲・即公開案内は `syncPublish: false` + `announceDate`（メール曜日）。publish-sync の対象外。
  *   既存ドリップ（W46 まで・#139 の L1-Q4-1/L1-Q3-1）は従来どおり `publishDate` のみ。
- *   即公開の新記事（例 L1-Q4-2）は本ファイル登録を別 PR で。publishedAt＝マージ日。
+ *   即公開の新記事は publishedAt＝マージ日 + syncPublish:false + announceDate（メール曜日）。L1-Q4-2=W49。
  *   未執筆（IF/NAV/NIGHT/IFF）・12/25・1/1 は未決のまま docs。
  * Sunday mentality slots need Editorial approval; omit from schedule until approved.
  * Digest still anchors on Sunday.
@@ -514,11 +514,11 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   // W47+: 日=心構え（ドリップ）+ 水=学科再掲（syncPublish:false）+ 金=実技（未執筆は docs）。
   '2026-W47': {
     isoWeek: '2026-W47',
-    seriesTitle: '螺旋L1＋学科再掲',
+    seriesTitle: '螺旋L1＋学科再掲＋計器',
     intro:
-      '来週は道真公のブリーフィング（日）。水は航空身体検査の基礎（再掲）。金の計器実技 IF-1-1 は未執筆。',
+      '来週は道真公のブリーフィング（日）。水は航空身体検査の基礎（再掲）。金は計器を信じろ（IF-1-1・即公開案内）。',
     checklistNote:
-      '金曜 IF は docs/content_outlines/Schedule_W47_plus_20261030.md。水曜再掲は syncPublish:false（公開状態は触らない）。',
+      'IF-1-1 は即公開（publishedAt＝マージ日）。メールは announceDate=2026-11-20。syncPublish:false。',
     articles: [
       {
         id: 'L1-Q4-1_MichizaneBriefing',
@@ -536,6 +536,15 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         slug: '/articles/ppl-5-3-2-medical-certificate-basics',
         hook: '免許と健康のセット。風邪薬で空の上が拷問になる前に読め。',
       },
+      {
+        id: 'IF-1-1_TrustInstruments',
+        publishDate: '2026-10-30',
+        announceDate: '2026-11-20',
+        syncPublish: false,
+        title: '【操縦】計器飛行第1話：計器を信じろ ～AIF / Cross-check～',
+        slug: '/articles/if-1-1-trust-instruments',
+        hook: '外が見えんときほど計器を信じろ。AIF と Cross-check の第一歩。',
+      },
     ],
   },
   '2026-W48': {
@@ -544,7 +553,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     intro:
       '来週はパイロットへの道（日）。水は V-n線図（G）の再掲。金の IF-1-2 は未執筆。',
     checklistNote:
-      'つながり: パイロットへの道 × V-n／G。L1-Q4-2 は別 PR（#140）— 本仕組みマージ後に announceDate 登録。',
+      'つながり: パイロットへの道 × V-n／G。L1-Q4-2 は W49 で即公開案内（syncPublish:false）。',
     articles: [
       {
         id: 'L1-Q3-1_PathToPilot',
@@ -566,12 +575,21 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W49': {
     isoWeek: '2026-W49',
-    seriesTitle: '学科再掲＋計器実技（予定）',
+    seriesTitle: '螺旋L1＋学科再掲',
     intro:
-      '来週水は METAR・TAF の再掲。日曜 L1-Q4-2・金曜 IF-1-3 は別途（L1-Q4-2 は #140 後に登録）。',
+      '来週はアビエーターの心構え（日・即公開案内）。水は METAR・TAF の再掲。金の IF-1-3 は未執筆。',
     checklistNote:
-      '本 PR では L1-Q4-2 を登録しない。仕組みマージ後、#140 の公開日をマージ日にし announceDate=2026-11-29 で載せる。',
+      'L1-Q4-2 は即公開（publishedAt＝マージ日）。メールは announceDate=2026-11-29。syncPublish:false。',
     articles: [
+      {
+        id: 'L1-Q4-2_AviatorMindset',
+        publishDate: '2026-10-30',
+        announceDate: '2026-11-29',
+        syncPublish: false,
+        title: 'アビエーターの心構え',
+        slug: '/articles/l1-q4-2-aviator-mindset',
+        hook: '操縦の技だけに溺れず、準備・決断・振り返りを己の責務として引き受ける。',
+      },
       {
         id: 'PPL-2-3-2_MetarTafAndWeatherReports',
         publishDate: '2026-07-06',
