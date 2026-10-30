@@ -106,6 +106,16 @@ describe('courseProgress', () => {
         .map((module) => module.source.series)
     );
 
+    const nonMentalitySeries = new Set(
+      COURSES.filter((course) => course.id !== 'mentality')
+        .flatMap((course) => course.modules)
+        .filter(
+          (module) =>
+            module.source.kind === 'series' || module.source.kind === 'series_prefix',
+        )
+        .map((module) => module.source.series),
+    );
+
     const articleSeries = new Set(
       Object.values(articleMetas)
         .map((meta) => meta.series)
@@ -117,7 +127,8 @@ describe('courseProgress', () => {
         !series.startsWith('CPL-') &&
         !series.startsWith('USAF-') &&
         series !== 'PPL-Master-Syllabus' &&
-        series !== 'Spiral-Matrix-LMS'
+        series !== 'Spiral-Matrix-LMS' &&
+        !nonMentalitySeries.has(series)
     );
 
     for (const series of mindsetSeries) {
