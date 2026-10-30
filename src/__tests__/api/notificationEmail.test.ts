@@ -218,4 +218,19 @@ describe('api/lib/notificationEmail', () => {
     expect(w42Sunday.htmlContent).toMatch(/<strong>日<\/strong>.*最優先事項を優先する/);
     expect(w42Sunday.htmlContent).not.toContain('Planning のお知らせ');
   });
+
+  it('labels email-only refeatures by announceDate (水) not past publishDate', () => {
+    const w47 = getDigestForIsoWeek('2026-W47');
+    expect(w47).not.toBeNull();
+    const preview = getWeeklyArticleDigestEmailContent(
+      w47!,
+      'https://example.test',
+      null,
+      'sunday_preview',
+      '2026-11-09',
+    );
+    expect(preview.htmlContent).toMatch(/<strong>水<\/strong>.*航空身体検査/);
+    expect(preview.htmlContent).toContain('水は学科・金は実技');
+    expect(preview.htmlContent).not.toContain('水・金は操縦記事');
+  });
 });

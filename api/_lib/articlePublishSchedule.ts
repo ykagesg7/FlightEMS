@@ -4,22 +4,29 @@
  * One series per ISO week (訓練の当たり前 / Contact / FMT).
  * Default drip (W39 and earlier CP): 3/week Sun·Wed·Fri.
  * Cadence from **2026-W41**: **Sun mentality** (when scheduled) + **Wed·Fri CP/FN**.
- * Cadence from **2026-W47** (上様裁定 2026-10-30): **Sun 心構え**（1.1.x / 螺旋 L1）+
- *   **Wed 学科（既存の取り上げ直し）** + **Fri 実技（計器→航法→夜間→IFF）**.
- *   既に is_published=true の PPL/CPL を未来日で schedule に載せると cron が一時非公開にするため、
- *   取り上げ直しは docs（Schedule_W47_plus）に書き、MDX がある未公開 ID のみここに載せる。
- *   未執筆（IF/NAV/NIGHT/IFF、L1-Q4-2）も docs。正式シリーズ ID・12/25・1/1 は未決。
+ * Cadence from **2026-W47** (上様裁定 2026-10-30): **Sun 心構え** + **Wed 学科再掲** + **Fri 実技**.
+ *   再掲・即公開案内は `syncPublish: false` + `announceDate`（メール曜日）。publish-sync の対象外。
+ *   既存ドリップ（W46 まで・#139 の L1-Q4-1/L1-Q3-1）は従来どおり `publishDate` のみ。
+ *   即公開の新記事（例 L1-Q4-2）は本ファイル登録を別 PR で。publishedAt＝マージ日。
+ *   未執筆（IF/NAV/NIGHT/IFF）・12/25・1/1 は未決のまま docs。
  * Sunday mentality slots need Editorial approval; omit from schedule until approved.
  * Digest still anchors on Sunday.
- * Stock unpublished IDs until listed here; cron only flips IDs in this file.
+ * Stock unpublished IDs until listed here; cron only flips IDs with syncPublish !== false.
  */
 
 export interface ScheduledArticle {
   id: string;
-  publishDate: string; // YYYY-MM-DD (JST)
+  publishDate: string; // YYYY-MM-DD (JST); for drip sync when syncPublish !== false
   title: string;
   slug: string; // pretty path used in digest email, e.g. /articles/chores-are-the-job (resolved to MDX id in app)
   hook: string; // X-style one-liner
+  /** Email weekday label. Defaults to publishDate. */
+  announceDate?: string; // YYYY-MM-DD (JST)
+  /**
+   * When false, article-publish-sync ignores this row (already published / email-only).
+   * Omit or true = legacy drip (due → publish, not due → unpublish).
+   */
+  syncPublish?: boolean;
 }
 
 export interface WeeklyArticleDigest {
@@ -504,15 +511,14 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
     ],
   },
-  // W47+: 心構え（日）+ 学科取り上げ直し（水・docs）+ 実技新規（金・docs）。
-  // 登録は MDX があり、かつ cron で未公開のままドリップできる ID のみ。
+  // W47+: 日=心構え（ドリップ）+ 水=学科再掲（syncPublish:false）+ 金=実技（未執筆は docs）。
   '2026-W47': {
     isoWeek: '2026-W47',
-    seriesTitle: '螺旋L1＋計器実技（予定）',
+    seriesTitle: '螺旋L1＋学科再掲',
     intro:
-      '来週は道真公のブリーフィング（日）。水は学科取り上げ直し（身体検査・docs）、金は計器実技 IF-1-1（未執筆・docs）。',
+      '来週は道真公のブリーフィング（日）。水は航空身体検査の基礎（再掲）。金の計器実技 IF-1-1 は未執筆。',
     checklistNote:
-      '水曜・金曜の予定は docs/content_outlines/Schedule_W47_plus_20261030.md。既公開 PPL は schedule 非登録（cron の一時非公開を避ける）。',
+      '金曜 IF は docs/content_outlines/Schedule_W47_plus_20261030.md。水曜再掲は syncPublish:false（公開状態は触らない）。',
     articles: [
       {
         id: 'L1-Q4-1_MichizaneBriefing',
@@ -521,15 +527,24 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         slug: '/articles/l1-q4-1-michizane-briefing',
         hook: '4象限と螺旋。空を学ぶ前の最初のブリーフィング。',
       },
+      {
+        id: 'PPL-5-3-2_MedicalCertificateBasics',
+        publishDate: '2026-05-12',
+        announceDate: '2026-11-18',
+        syncPublish: false,
+        title: '【航空法規】航空身体検査の基礎：耳抜きの地獄と「空の健康診断」のハック術',
+        slug: '/articles/ppl-5-3-2-medical-certificate-basics',
+        hook: '免許と健康のセット。風邪薬で空の上が拷問になる前に読め。',
+      },
     ],
   },
   '2026-W48': {
     isoWeek: '2026-W48',
-    seriesTitle: '螺旋L1＋計器実技（予定）',
+    seriesTitle: '螺旋L1＋学科再掲',
     intro:
-      '来週はパイロットへの道（日）。水は V-n／G（docs）、金は IF-1-2（未執筆）。L1-Q4-2 は 11/29 予定だが未執筆のため未登録。',
+      '来週はパイロットへの道（日）。水は V-n線図（G）の再掲。金の IF-1-2 は未執筆。',
     checklistNote:
-      'つながり: パイロットへの道 × V-n／G × IF-1-2。詳細は Schedule_W47_plus_20261030.md。',
+      'つながり: パイロットへの道 × V-n／G。L1-Q4-2 は別 PR（#140）— 本仕組みマージ後に announceDate 登録。',
     articles: [
       {
         id: 'L1-Q3-1_PathToPilot',
@@ -538,19 +553,74 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         slug: '/articles/l1-q3-1-path-to-pilot',
         hook: 'ルートと技能証明。計器飛行証明までの航路図。',
       },
+      {
+        id: 'PPL-1-1-7_VnDiagram',
+        publishDate: '2026-01-16',
+        announceDate: '2026-11-25',
+        syncPublish: false,
+        title: '【航空工学】翼が折れる境界線：V-n線図と大分・団子汁のコシ',
+        slug: '/articles/ppl-1-1-7-vn-diagram',
+        hook: 'G のかけすぎは翼の根元から折れる。Va を守り切れ。',
+      },
     ],
   },
-  // 2026-W49〜: 日曜 L1-Q4-2・新規心構え、水曜 PPL 再掲、金曜 IF/NAV は未執筆 → docs のみ。
+  '2026-W49': {
+    isoWeek: '2026-W49',
+    seriesTitle: '学科再掲＋計器実技（予定）',
+    intro:
+      '来週水は METAR・TAF の再掲。日曜 L1-Q4-2・金曜 IF-1-3 は別途（L1-Q4-2 は #140 後に登録）。',
+    checklistNote:
+      '本 PR では L1-Q4-2 を登録しない。仕組みマージ後、#140 の公開日をマージ日にし announceDate=2026-11-29 で載せる。',
+    articles: [
+      {
+        id: 'PPL-2-3-2_MetarTafAndWeatherReports',
+        publishDate: '2026-07-06',
+        announceDate: '2026-12-02',
+        syncPublish: false,
+        title: '【航空気象】METAR・TAF・気象通報の読み方：空港の「今」と「予報」のハック術',
+        slug: '/articles/ppl-2-3-2-metar-taf-and-weather-reports',
+        hook: 'METAR は現況、TAF は予報。暗号から空の景色を立体で読め。',
+      },
+    ],
+  },
+  '2026-W50': {
+    isoWeek: '2026-W50',
+    seriesTitle: '学科再掲＋計器実技（予定）',
+    intro:
+      '来週水はジャイロの基礎（PPL-1-2 ①）。日・金の心構え／IF は docs または後続 PR。',
+    checklistNote: 'PPL-1-2 番号順の再掲開始。syncPublish:false。',
+    articles: [
+      {
+        id: 'PPL-1-2-1_GyroBasics',
+        publishDate: '2026-01-20',
+        announceDate: '2026-12-09',
+        syncPublish: false,
+        title: '【航空工学】回転する神秘「ジャイロ」 ～博多独楽と宇宙の法則～',
+        slug: '/articles/ppl-1-2-1-gyro-basics',
+        hook: '剛性と歳差。雲の中で天地がわかる命綱ばい。',
+      },
+    ],
+  },
 };
 
 export function getDigestForIsoWeek(isoWeek: string): WeeklyArticleDigest | null {
   return WEEKLY_ARTICLE_DIGESTS[isoWeek] ?? null;
 }
 
+/** Label date for weekly digest email (announceDate wins). */
+export function getArticleAnnounceDate(article: ScheduledArticle): string {
+  return article.announceDate ?? article.publishDate;
+}
+
 export function listScheduledArticles(): ScheduledArticle[] {
   return Object.values(WEEKLY_ARTICLE_DIGESTS).flatMap((d) => d.articles);
 }
 
+/** Rows that article-publish-sync may flip is_published for. */
+export function listArticlesForPublishSync(): ScheduledArticle[] {
+  return listScheduledArticles().filter((a) => a.syncPublish !== false);
+}
+
 export function articlesDueOnOrBefore(jstDate: string): ScheduledArticle[] {
-  return listScheduledArticles().filter((a) => a.publishDate <= jstDate);
+  return listArticlesForPublishSync().filter((a) => a.publishDate <= jstDate);
 }

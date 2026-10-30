@@ -1,10 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getJstDateString, isPublishDateReached } from './articlePublishGate';
-import { listScheduledArticles } from './articlePublishSchedule';
+import { listArticlesForPublishSync } from './articlePublishSchedule';
 import { getServiceSupabase } from './supabaseService';
 
 /**
- * Flip learning_contents.is_published for scheduled drip articles (JST calendar day).
+ * Flip learning_contents.is_published for drip articles (JST calendar day).
+ * Skips rows with syncPublish === false (email-only / already-published refeatures).
  * Cron: daily ~00:10 JST (15:10 UTC previous calendar day).
  */
 export async function handleArticlePublishSync(req: VercelRequest, res: VercelResponse) {
@@ -22,7 +23,7 @@ export async function handleArticlePublishSync(req: VercelRequest, res: VercelRe
     const supabase = getServiceSupabase();
     const now = new Date();
     const jstToday = getJstDateString(now);
-    const scheduled = listScheduledArticles();
+    const scheduled = listArticlesForPublishSync();
     const dueIds = scheduled.filter((a) => isPublishDateReached(a.publishDate, now)).map((a) => a.id);
     const notDueIds = scheduled
       .filter((a) => !isPublishDateReached(a.publishDate, now))

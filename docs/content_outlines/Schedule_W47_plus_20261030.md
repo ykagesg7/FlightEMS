@@ -120,3 +120,7 @@ W45/W46 は本 PR では**未変更**（1.1.6 は main 済、1.1.7 は別 PR）�
 **非登録（docs のみ）:** 水曜 PPL 再掲一式、金曜 IF/NAV/NIGHT/IFF、日曜 L1-Q4-2 およびその他新規心構え、12/25・1/1 枠。
 
 **未変更:** W45（1.1.6）／W46（FMT-1-9/1-10；1.1.7 は別 PR）。
+
+## 更新（2026-10-30 12:04 裁定）
+
+水曜再掲は `syncPublish: false` + `announceDate` で `articlePublishSchedule.ts` に登録（W47–W50）。publish-sync は触らない。L1-Q4-2 は本仕組みマージ後に #140 側で登録。
