@@ -3,12 +3,11 @@
  * while content is reviewed (legal: 夢をかなえるゾウ character usage).
  * After legal clearance: clear this list and run republish SQL (see docs/05_Content_Pipeline.md §6).
  * 1.1.1_UnconsciousSuccess stays readable; series redrip from 2026-09-27 (JST).
- * 1.1.2 drips from 2026-10-04 (W41 Sun). 1.1.3 from 2026-10-11 (W42 Sun). 1.1.4 from 2026-10-18 (W43 Sun). 1.1.5 from 2026-10-25 (W44 Sun). 1.1.6–1.1.7 withheld until Editorial approves Sunday slots.
+ * 1.1.2 drips from 2026-10-04 (W41 Sun). 1.1.3 from 2026-10-11 (W42 Sun). 1.1.4 from 2026-10-18 (W43 Sun). 1.1.5 from 2026-10-25 (W44 Sun). 1.1.6 withheld until Editorial approves Sunday slots. 1.1.7 from 2026-11-08 (W46 Sun).
  * mindset tab auto-appears when published mindset articles exist (getVisibleTabs).
  */
 export const WITHDRAWN_ARTICLE_IDS: readonly string[] = [
   '1.1.6_Synergize',
-  '1.1.7_SharpenTheSaw',
   '1.2.5_RightPeopleOnBoard',
   '1.2.6_GiveAndTake',
   '1.2.7_GiveAndTake2',

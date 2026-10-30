@@ -465,10 +465,17 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W46': {
     isoWeek: '2026-W46',
-    seriesTitle: 'FN（編隊）',
+    seriesTitle: 'FN（編隊）＋メンタリティ',
     intro:
-      '来週は FN Season 1 の締め2本（水・金）。LAB と Lost Wingman。日曜メンタリティ枠は稿未承認のため空け。',
+      '来週は７つの習慣その７（日）と編隊2本（水・金）。刃を研ぐ、LAB、Lost Wingman。',
     articles: [
+      {
+        id: '1.1.7_SharpenTheSaw',
+        publishDate: '2026-11-08',
+        title: '【７つの習慣】その７、道真公と学ぶ「刃を研ぐ」',
+        slug: '/articles/sharpen-the-saw',
+        hook: '切れぬ刃で木を伐るな。四つの刃を毎日少しずつ研げ。',
+      },
       {
         id: 'FMT-1-9_TacticalLAB',
         publishDate: '2026-11-11',
