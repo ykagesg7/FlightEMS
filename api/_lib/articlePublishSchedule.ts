@@ -4,6 +4,11 @@
  * One series per ISO week (訓練の当たり前 / Contact / FMT).
  * Default drip (W39 and earlier CP): 3/week Sun·Wed·Fri.
  * Cadence from **2026-W41**: **Sun mentality** (when scheduled) + **Wed·Fri CP/FN**.
+ * Cadence from **2026-W47** (上様裁定 2026-10-30): **Sun 心構え**（1.1.x / 螺旋 L1）+
+ *   **Wed 学科（既存の取り上げ直し）** + **Fri 実技（計器→航法→夜間→IFF）**.
+ *   既に is_published=true の PPL/CPL を未来日で schedule に載せると cron が一時非公開にするため、
+ *   取り上げ直しは docs（Schedule_W47_plus）に書き、MDX がある未公開 ID のみここに載せる。
+ *   未執筆（IF/NAV/NIGHT/IFF、L1-Q4-2）も docs。正式シリーズ ID・12/25・1/1 は未決。
  * Sunday mentality slots need Editorial approval; omit from schedule until approved.
  * Digest still anchors on Sunday.
  * Stock unpublished IDs until listed here; cron only flips IDs in this file.
@@ -492,6 +497,43 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
     ],
   },
+  // W47+: 心構え（日）+ 学科取り上げ直し（水・docs）+ 実技新規（金・docs）。
+  // 登録は MDX があり、かつ cron で未公開のままドリップできる ID のみ。
+  '2026-W47': {
+    isoWeek: '2026-W47',
+    seriesTitle: '螺旋L1＋計器実技（予定）',
+    intro:
+      '来週は道真公のブリーフィング（日）。水は学科取り上げ直し（身体検査・docs）、金は計器実技 IF-1-1（未執筆・docs）。',
+    checklistNote:
+      '水曜・金曜の予定は docs/content_outlines/Schedule_W47_plus_20261030.md。既公開 PPL は schedule 非登録（cron の一時非公開を避ける）。',
+    articles: [
+      {
+        id: 'L1-Q4-1_MichizaneBriefing',
+        publishDate: '2026-11-15',
+        title: '道真公のブリーフィング',
+        slug: '/articles/l1-q4-1-michizane-briefing',
+        hook: '4象限と螺旋。空を学ぶ前の最初のブリーフィング。',
+      },
+    ],
+  },
+  '2026-W48': {
+    isoWeek: '2026-W48',
+    seriesTitle: '螺旋L1＋計器実技（予定）',
+    intro:
+      '来週はパイロットへの道（日）。水は V-n／G（docs）、金は IF-1-2（未執筆）。L1-Q4-2 は 11/29 予定だが未執筆のため未登録。',
+    checklistNote:
+      'つながり: パイロットへの道 × V-n／G × IF-1-2。詳細は Schedule_W47_plus_20261030.md。',
+    articles: [
+      {
+        id: 'L1-Q3-1_PathToPilot',
+        publishDate: '2026-11-22',
+        title: 'パイロットへの道',
+        slug: '/articles/l1-q3-1-path-to-pilot',
+        hook: 'ルートと技能証明。計器飛行証明までの航路図。',
+      },
+    ],
+  },
+  // 2026-W49〜: 日曜 L1-Q4-2・新規心構え、水曜 PPL 再掲、金曜 IF/NAV は未執筆 → docs のみ。
 };
 
 export function getDigestForIsoWeek(isoWeek: string): WeeklyArticleDigest | null {

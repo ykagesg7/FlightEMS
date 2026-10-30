@@ -14,6 +14,7 @@
 - **週3本**（W39 以前の CP ドリップ）: 日・水・金に操縦記事3本。digest は日曜 17:00 JST と同時。
 - **1週1シリーズ**を基本にする。メンタリティ枠は操縦と同週に置く。水増しして週4本以上にしない。
 - 公開は MDX の `meta.publishedAt`（JST）と `learning_contents.is_published` を cron `article-publish-sync`（毎日 00:10 JST）が揃える。schedule 正本は [`api/_lib/articlePublishSchedule.ts`](../api/_lib/articlePublishSchedule.ts)。
+- **W47+（2026-10-30 裁定）**: 日＝心構え／水＝学科の既存取り上げ直し／金＝実技（計器→航法→夜間→IFF）。公開済み ID の再掲は schedule に載せない（cron の一時非公開を避ける）。予定表は [`docs/content_outlines/Schedule_W47_plus_20261030.md`](content_outlines/Schedule_W47_plus_20261030.md)。
 - schedule に載せるのは **MDX が main にある話だけ**。MDX と schedule は同じ PR に入れる。
 - 公開確認は Skill `article-publish-check`。人手で `is_published` を回さない。
 
