@@ -111,6 +111,19 @@ export const COURSES: CourseDef[] = [
     ],
   },
   {
+    id: 'if',
+    title: 'IF（計器飛行）',
+    audience: 'Instrument',
+    description: 'Instrument Flying シリーズ。',
+    modules: [
+      {
+        id: 'if-instruments',
+        title: '計器飛行',
+        source: { kind: 'series', series: 'Instrument-Flying' },
+      },
+    ],
+  },
+  {
     id: 'mentality',
     title: 'メンタリティ',
     audience: 'Pilot mindset',
