@@ -56,12 +56,10 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
           <title>Flight Academy</title>
         </Helmet>
         <EnhancedErrorBoundary>
-          <ProgressProvider>
-            <WeatherCacheProvider>
-              {children}
-              <ReactQueryDevtools initialIsOpen={false} />
-            </WeatherCacheProvider>
-          </ProgressProvider>
+          <WeatherCacheProvider>
+            {children}
+            <ReactQueryDevtools initialIsOpen={false} />
+          </WeatherCacheProvider>
         </EnhancedErrorBoundary>
       </HelmetProvider>
     </QueryClientProvider>
@@ -70,14 +68,14 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 function AppShell() {
   return (
-    <>
+    <ProgressProvider>
       {import.meta.env.PROD && getGa4MeasurementId() ? (
         <GoogleAnalyticsTracker />
       ) : null}
       <ScrollManager />
       <PasswordRecoveryGuard />
       <Outlet />
-    </>
+    </ProgressProvider>
   );
 }
 
