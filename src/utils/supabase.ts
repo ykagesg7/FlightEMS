@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { AUTH_STORAGE_KEY } from '../auth/clearLocalAuthSession';
+import { readStoredRefreshToken } from '../auth/readStoredRefreshToken';
 import type { Database } from '../types/database.types';
 
 // Supabaseの設定（環境変数から取得）
@@ -34,7 +36,13 @@ export const createBrowserSupabaseClient = () => {
         detectSessionInUrl: true,
         storageKey: 'flightacademy.auth.token', // プロジェクト固有のストレージキー
         storage: {
-          getItem: (key: string) => localStorage.getItem(key),
+          getItem: (key: string) => {
+            if (key === AUTH_STORAGE_KEY && !readStoredRefreshToken()) {
+              localStorage.removeItem(key);
+              return null;
+            }
+            return localStorage.getItem(key);
+          },
           setItem: (key: string, value: string) => localStorage.setItem(key, value),
           removeItem: (key: string) => localStorage.removeItem(key),
         },
@@ -184,7 +192,15 @@ export const refreshAuthState = async () => {
     if (isDevelopment) {
       console.log('Supabase認証状態をリフレッシュ中...');
     }
-    await supabase.auth.refreshSession();
+    const { data: before } = await supabase.auth.getSession();
+    if (!before.session?.refresh_token) {
+      return { success: true, session: null };
+    }
+    const { error } = await supabase.auth.refreshSession();
+    if (error) {
+      await supabase.auth.signOut({ scope: 'local' });
+      return { success: false, error };
+    }
     const { data } = await supabase.auth.getSession();
     if (isDevelopment) {
       console.log('認証状態リフレッシュ完了:', data.session ? '認証済み' : '未認証');

@@ -2,9 +2,9 @@ import './instrument'; // Sentry 初期化（最初のインポート）
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import { bootstrapAuthSession } from './auth/bootstrapAuthSession';
 import { initAuthListener } from './auth/initAuthListener';
 import { primePasswordRecoveryFromUrl } from './auth/passwordRecovery';
-import { useAuthStore } from './stores/authStore';
 import { markAppBooted, registerVitePreloadErrorHandler } from './utils/chunkLoadRecovery';
 
 registerVitePreloadErrorHandler();
@@ -13,7 +13,7 @@ registerVitePreloadErrorHandler();
 
 primePasswordRecoveryFromUrl();
 initAuthListener();
-void useAuthStore.getState().refreshSession();
+void bootstrapAuthSession();
 
 markAppBooted();
 createRoot(document.getElementById('root')!).render(
