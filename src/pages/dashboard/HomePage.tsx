@@ -15,6 +15,8 @@ import { InAppNotificationBell } from '../../components/learning/InAppNotificati
 import { SubjectAccuracyChart } from './components/SubjectAccuracyChart';
 import { buildWeakSubjectHref } from '../test/testHubFilters';
 import { DashboardCourseSection } from './components/DashboardCourseSection';
+import { LoggedInHomeLatestNews } from './components/LoggedInHomeLatestNews';
+import { useDashboardCourseNext } from '../../hooks/useDashboardCourseNext';
 import {
   GUEST_CTA_PRIMARY_CLASS,
   GUEST_CTA_SECONDARY_CLASS,
@@ -62,6 +64,7 @@ const DashboardSkeleton: React.FC = () => {
  */
 const DashboardContent: React.FC = () => {
   const { user } = useAuthStore();
+  const courseState = useDashboardCourseNext();
   const [metrics, setMetrics] = React.useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -124,7 +127,7 @@ const DashboardContent: React.FC = () => {
           </div>
         )}
 
-        <DashboardCourseSection forceFallback={Boolean(error)} />
+        <DashboardCourseSection forceFallback={Boolean(error)} courseState={courseState} />
         <LearningJourneyCard />
         <div className="mb-6">
           <DailyTasks variant="inline" limit={2} />
@@ -207,6 +210,10 @@ const DashboardContent: React.FC = () => {
           </Card>
         </div>
         )}
+
+        <LoggedInHomeLatestNews
+          excludeContentId={courseState.next?.articleId ?? null}
+        />
 
         <ProfileCompletionNudge
           dismissStorageKey="profile_completion_nudge_home_v1"
