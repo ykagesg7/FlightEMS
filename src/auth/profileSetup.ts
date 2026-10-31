@@ -14,6 +14,16 @@ export function needsWelcomeSetup(profile: Profile | null): boolean {
   return true;
 }
 
+/** Fetch the latest profile and backfill onboarding for returning engaged learners. */
+export async function syncLearnerProfileAfterSignIn(userId: string): Promise<Profile | null> {
+  await useAuthStore.getState().fetchProfile(userId);
+  const profile = useAuthStore.getState().profile;
+  if (!profile) {
+    return null;
+  }
+  return reconcileOnboardingForReturningUser(userId, profile);
+}
+
 /** Persist onboarding completion for returning users who skipped the wizard. */
 export async function reconcileOnboardingForReturningUser(
   userId: string,
