@@ -32,6 +32,7 @@ export async function fetchDashboardMetrics(
   const defaults: DashboardMetrics = {
     overallProgressPct: 0,
     testAccuracyPct: 0,
+    testTotalAttempts: 0,
     todayStudyMinutes: 0,
     weeklyStudyMinutes: 0,
     streakDays: 0,
@@ -80,6 +81,7 @@ export async function fetchDashboardMetrics(
     ...defaults,
     overallProgressPct: learningProgress.progressPct ?? 0,
     testAccuracyPct: testResults.accuracyPct ?? 0,
+    testTotalAttempts: testResults.totalAttempts ?? 0,
     todayStudyMinutes: studyTime.todayMinutes ?? 0,
     weeklyStudyMinutes: studyTime.weeklyMinutes ?? 0,
     streakDays: streakDays ?? 0,

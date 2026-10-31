@@ -12,11 +12,13 @@ import { InAppNotificationBell } from '../../components/learning/InAppNotificati
 import { SubjectAccuracyChart } from './components/SubjectAccuracyChart';
 import { buildWeakSubjectHref } from '../test/testHubFilters';
 import { DashboardCourseSection } from './components/DashboardCourseSection';
+import { HomeFirstStepCta } from './components/HomeFirstStepCta';
 import { LoggedInHomeLatestNews } from './components/LoggedInHomeLatestNews';
 import { useDashboardCourseNext } from '../../hooks/useDashboardCourseNext';
+import { hasDashboardLearningProgress } from '../../utils/dashboardProgress';
 
 const LoggedInHomeDashboard: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user, profile } = useAuthStore();
   const courseState = useDashboardCourseNext();
   const [metrics, setMetrics] = React.useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -44,6 +46,10 @@ const LoggedInHomeDashboard: React.FC = () => {
 
   const borderColor = 'border-brand-primary/60';
   const weakest = metrics?.weakTopics[0];
+  const showFirstStepCta =
+    !loading &&
+    metrics != null &&
+    !hasDashboardLearningProgress(metrics, { xpPoints: profile?.xp_points });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -80,6 +86,8 @@ const LoggedInHomeDashboard: React.FC = () => {
             </button>
           </div>
         )}
+
+        {showFirstStepCta ? <HomeFirstStepCta /> : null}
 
         <DashboardCourseSection forceFallback={Boolean(error)} courseState={courseState} />
         <LearningJourneyCard />

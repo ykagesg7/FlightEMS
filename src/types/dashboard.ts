@@ -33,6 +33,9 @@ export interface DashboardMetrics {
   /** 模試正答率 (0-100) - テスト問題の正確性 */
   testAccuracyPct: number;
 
+  /** クイズ・模試の総解答数（進捗有無の判定用） */
+  testTotalAttempts: number;
+
   /** 今日（JST）の学習時間（分） */
   todayStudyMinutes: number;
 

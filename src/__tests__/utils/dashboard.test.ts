@@ -35,6 +35,7 @@ describe('dashboard utils', () => {
     expect(metrics).toMatchObject({
       overallProgressPct: 0,
       testAccuracyPct: 0,
+      testTotalAttempts: 0,
       todayStudyMinutes: 0,
       weeklyStudyMinutes: 0,
       streakDays: 0,
