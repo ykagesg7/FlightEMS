@@ -1,7 +1,14 @@
+import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { DashboardCourseSection } from '@/pages/dashboard/components/DashboardCourseSection';
+import { useDashboardCourseNext } from '@/hooks/useDashboardCourseNext';
+import { ProgressProvider } from '@/contexts/ProgressContext';
+
+vi.mock('@/hooks/useAuth', () => ({
+  useAuth: () => ({ user: null }),
+}));
 
 vi.mock('@/hooks/useCohortProfile', () => ({
   useCohortProfile: vi.fn(),
@@ -28,6 +35,13 @@ const mockUseCohortProfile = vi.mocked(useCohortProfile);
 const mockUseLearningProgress = vi.mocked(useLearningProgress);
 const mockUseArticleProgress = vi.mocked(useArticleProgress);
 const mockGetArticleIndex = vi.mocked(getArticleIndex);
+
+function DashboardCourseSectionHarness(
+  props: Omit<React.ComponentProps<typeof DashboardCourseSection>, 'courseState'>,
+) {
+  const courseState = useDashboardCourseNext();
+  return <DashboardCourseSection {...props} courseState={courseState} />;
+}
 
 describe('DashboardCourseSection', () => {
   beforeEach(() => {
@@ -64,7 +78,9 @@ describe('DashboardCourseSection', () => {
 
     render(
       <MemoryRouter>
-        <DashboardCourseSection />
+        <ProgressProvider>
+          <DashboardCourseSectionHarness />
+        </ProgressProvider>
       </MemoryRouter>
     );
 
@@ -80,7 +96,9 @@ describe('DashboardCourseSection', () => {
   it('shows continue link for the next course article', async () => {
     render(
       <MemoryRouter>
-        <DashboardCourseSection />
+        <ProgressProvider>
+          <DashboardCourseSectionHarness />
+        </ProgressProvider>
       </MemoryRouter>
     );
 
@@ -93,7 +111,9 @@ describe('DashboardCourseSection', () => {
   it('forces fallback card when metrics failed', async () => {
     render(
       <MemoryRouter>
-        <DashboardCourseSection forceFallback />
+        <ProgressProvider>
+          <DashboardCourseSectionHarness forceFallback />
+        </ProgressProvider>
       </MemoryRouter>
     );
 

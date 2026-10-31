@@ -4,6 +4,7 @@ import {
   purgeInvalidAuthStorage,
   readStoredRefreshToken,
 } from '../../auth/readStoredRefreshToken';
+import { selectDashboardLatestNewsItems } from '../../utils/guestHomeLatestItems';
 
 describe('readStoredRefreshToken', () => {
   beforeEach(() => {
@@ -67,5 +68,25 @@ describe('getGuestHomeLatestItems', () => {
     }
 
     vi.useRealTimers();
+  });
+});
+
+describe('selectDashboardLatestNewsItems', () => {
+  const sample = [
+    { id: 'a', title: 'A', date: '2026-10-01', href: '/articles/a' },
+    { id: 'b', title: 'B', date: '2026-09-01', href: '/articles/b' },
+    { id: 'c', title: 'C', date: '2026-08-01', href: '/articles/c' },
+    { id: 'd', title: 'D', date: '2026-07-01', href: '/articles/d' },
+  ];
+
+  it('returns up to three items by default', () => {
+    expect(selectDashboardLatestNewsItems(sample)).toHaveLength(3);
+    expect(selectDashboardLatestNewsItems(sample).map((i) => i.id)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('excludes the course continue article and still fills three slots', () => {
+    const picked = selectDashboardLatestNewsItems(sample, { excludeContentId: 'a' });
+    expect(picked).toHaveLength(3);
+    expect(picked.map((i) => i.id)).toEqual(['b', 'c', 'd']);
   });
 });
