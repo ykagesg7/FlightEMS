@@ -15,11 +15,13 @@ import { InAppNotificationBell } from '../../components/learning/InAppNotificati
 import { SubjectAccuracyChart } from './components/SubjectAccuracyChart';
 import { buildWeakSubjectHref } from '../test/testHubFilters';
 import { DashboardCourseSection } from './components/DashboardCourseSection';
+import { HomeFirstStepCta } from './components/HomeFirstStepCta';
 import {
   GUEST_CTA_PRIMARY_CLASS,
   GUEST_CTA_SECONDARY_CLASS,
   GUEST_CTA_TERTIARY_CLASS,
 } from '../../constants/guestSurfaceCta';
+import { hasDashboardLearningProgress } from '../../utils/dashboardProgress';
 
 const useReveal = useRevealOnScroll;
 
@@ -57,7 +59,7 @@ const DashboardSkeleton: React.FC = () => {
  * ダッシュボードページ本体
  */
 const DashboardContent: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user, profile } = useAuthStore();
   const [metrics, setMetrics] = React.useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -84,6 +86,10 @@ const DashboardContent: React.FC = () => {
 
   const borderColor = 'border-brand-primary/60';
   const weakest = metrics?.weakTopics[0];
+  const showFirstStepCta =
+    !loading &&
+    metrics != null &&
+    !hasDashboardLearningProgress(metrics, { xpPoints: profile?.xp_points });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -119,6 +125,8 @@ const DashboardContent: React.FC = () => {
             </button>
           </div>
         )}
+
+        {showFirstStepCta ? <HomeFirstStepCta /> : null}
 
         <DashboardCourseSection forceFallback={Boolean(error)} />
         <LearningJourneyCard />
