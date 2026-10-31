@@ -1,12 +1,12 @@
 /** Guest-surface CTA class strings — see DESIGN.md §CTA の順 */
 export const GUEST_CTA_PRIMARY_CLASS =
-  'inline-flex items-center justify-center rounded-lg bg-white px-8 py-4 text-sm font-semibold text-brand-secondary shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-white/90';
+  'inline-flex items-center justify-center rounded-lg bg-white px-8 py-4 text-base font-semibold text-brand-secondary shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-white/90';
 
 export const GUEST_CTA_SECONDARY_CLASS =
-  'inline-flex items-center justify-center rounded-lg border-2 border-brand-primary bg-transparent px-8 py-4 text-sm font-semibold text-brand-primary transition-all duration-300 hover:scale-[1.02] hover:bg-brand-primary/10';
+  'inline-flex items-center justify-center rounded-lg border-2 border-brand-primary bg-transparent px-8 py-4 text-base font-semibold text-brand-primary transition-all duration-300 hover:scale-[1.02] hover:bg-brand-primary/10';
 
 export const GUEST_CTA_TERTIARY_CLASS =
-  'inline-flex items-center text-sm font-semibold text-brand-primary transition-all duration-300 hover:underline';
+  'inline-flex items-center text-base font-semibold text-brand-primary transition-all duration-300 hover:underline';
 
 /** Compact primary for inline panels (e.g. article progress header). */
 export const GUEST_CTA_PRIMARY_COMPACT_CLASS =

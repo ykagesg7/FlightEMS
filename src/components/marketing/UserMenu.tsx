@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { isAdminUser } from '../../utils/isAdminUser';
-import { Button } from '../ui';
+import { GUEST_CTA_TERTIARY_CLASS } from '../../constants/guestSurfaceCta';
 
 /**
  * UserMenu Component
@@ -64,17 +64,11 @@ export const UserMenu: React.FC = () => {
     );
   };
 
-  // 未ログイン時: LOGINボタンを表示
+  // 未ログイン時: ヒーローと同じ tertiary CTA（テキストリンク）
   if (!user) {
     return (
-      <Link to="/auth">
-        <Button
-          variant="brand"
-          size="sm"
-          className="!px-3 !py-1.5 text-xs font-semibold uppercase tracking-wide shadow-md hover:shadow-lg"
-        >
-          LOGIN
-        </Button>
+      <Link to="/auth" className={`${GUEST_CTA_TERTIARY_CLASS} shrink-0 px-2 py-1`}>
+        ログイン
       </Link>
     );
   }

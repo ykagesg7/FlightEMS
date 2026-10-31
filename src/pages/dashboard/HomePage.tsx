@@ -20,6 +20,10 @@ import {
   GUEST_CTA_SECONDARY_CLASS,
   GUEST_CTA_TERTIARY_CLASS,
 } from '../../constants/guestSurfaceCta';
+import {
+  GUEST_HOME_SECTION_HEADING_CLASS,
+  GUEST_HOME_SECTION_LEAD_CLASS,
+} from '../../constants/marketingNavLabels';
 
 const useReveal = useRevealOnScroll;
 
@@ -266,7 +270,7 @@ const GuestHomeContent: React.FC = () => {
       id: 'quiz',
       title: 'クイズ',
       summary: 'Practice、Exam、Review を切り替えながら、理解度と弱点を継続的に把握できます。',
-      href: '/test',
+      href: '/quiz',
       cta: '問題を解く',
     },
     {
@@ -310,7 +314,7 @@ const GuestHomeContent: React.FC = () => {
       step: '02',
       title: '解く',
       desc: 'クイズで理解を確認し、モード別に弱点を切り分けながら復習します。',
-      href: '/test',
+      href: '/quiz',
     },
     {
       step: '03',
@@ -338,10 +342,10 @@ const GuestHomeContent: React.FC = () => {
               <div className="mb-4 inline-flex items-center rounded-full border border-brand-primary/20 bg-brand-primary/10 px-4 py-2 text-xs font-semibold tracking-[0.12em] text-brand-primary">
                 PPL/CPL 学科試験対策
               </div>
-              <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+              <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
                 Learn Smart.
               </h1>
-              <p className="mb-8 max-w-2xl text-lg leading-relaxed text-[color:var(--text-muted)] sm:text-xl">
+              <p className="mb-8 max-w-2xl text-lg leading-relaxed text-[var(--text-primary)]/90 sm:text-xl">
                 PPL/CPL 学科試験対策とフライトプランニングを、ひとつの流れで。
               </p>
 
@@ -365,7 +369,7 @@ const GuestHomeContent: React.FC = () => {
                     className="rounded-xl border border-brand-primary/30 bg-[var(--panel)]/80 px-4 py-4 transition-colors hover:border-brand-primary/50 hover:bg-brand-primary/5"
                   >
                     <div className="mb-1 text-sm font-semibold text-brand-primary">{course.label}</div>
-                    <div className="text-sm leading-relaxed text-[color:var(--text-muted)]">
+                    <div className="text-sm leading-relaxed text-[var(--text-primary)]/85">
                       {course.description}
                     </div>
                   </Link>
@@ -376,7 +380,7 @@ const GuestHomeContent: React.FC = () => {
                 {guestHighlights.map((highlight) => (
                   <div
                     key={highlight}
-                    className="rounded-xl border border-brand-primary/20 bg-[var(--panel)]/80 px-4 py-4 text-sm leading-relaxed text-[color:var(--text-muted)] backdrop-blur-sm"
+                    className="rounded-xl border border-brand-primary/20 bg-[var(--panel)]/80 px-4 py-4 text-sm leading-relaxed text-[var(--text-primary)]/85 backdrop-blur-sm"
                   >
                     {highlight}
                   </div>
@@ -391,7 +395,7 @@ const GuestHomeContent: React.FC = () => {
                   alt="Pilot training visual"
                   className="h-[420px] w-full object-cover opacity-75"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/35 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/75 to-[var(--bg)]/25" />
                 <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
                   <div className="mb-4 text-xs font-semibold tracking-[0.12em] text-brand-primary">
                     主要機能
@@ -400,10 +404,10 @@ const GuestHomeContent: React.FC = () => {
                     {corePillars.map((pillar) => (
                       <div
                         key={pillar.id}
-                        className="rounded-2xl border border-brand-primary/20 bg-[var(--bg)]/70 px-4 py-4 backdrop-blur-sm"
+                        className="rounded-2xl border border-brand-primary/20 bg-[var(--bg)]/85 px-4 py-4 backdrop-blur-sm"
                       >
                         <div className="mb-1 text-sm font-semibold text-brand-primary">{pillar.title}</div>
-                        <div className="text-sm leading-relaxed text-[color:var(--text-muted)]">{pillar.summary}</div>
+                        <div className="text-sm leading-relaxed text-[var(--text-primary)]/85">{pillar.summary}</div>
                       </div>
                     ))}
                   </div>
@@ -416,11 +420,11 @@ const GuestHomeContent: React.FC = () => {
 
       {/* Announcements */}
       <section className="relative container mx-auto px-4 pb-16">
-        <div className="mb-8 pt-16 text-center">
-          <h2 className="mb-3 text-3xl font-bold text-brand-primary sm:text-4xl">
+        <div className="mb-8 pt-16">
+          <h2 className={GUEST_HOME_SECTION_HEADING_CLASS}>
             最新情報
           </h2>
-          <p className="text-sm text-[color:var(--text-muted)]">
+          <p className={GUEST_HOME_SECTION_LEAD_CLASS}>
             新記事や試験対策のヒントなど、学習者向けのお知らせを掲載しています。
           </p>
         </div>
@@ -447,7 +451,7 @@ const GuestHomeContent: React.FC = () => {
                 bg-[var(--panel)] border-brand-primary/50
               `}
           >
-            <p className="text-sm text-[color:var(--text-muted)]">
+            <p className="text-base text-[var(--text-primary)]/85">
               お知らせの読み込み中にエラーが発生しました。
             </p>
             {process.env.NODE_ENV === 'development' && error && (
@@ -469,7 +473,7 @@ const GuestHomeContent: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-sm text-[color:var(--text-muted)]">現在お知らせはありません</p>
+            <p className="text-base text-[var(--text-primary)]/85">現在お知らせはありません</p>
           </div>
         )}
       </section>
@@ -492,7 +496,7 @@ const GuestHomeContent: React.FC = () => {
               学習から実践まで、
               <span className="text-brand-primary">迷わない流れ</span>
             </h2>
-            <p className="mb-8 text-sm leading-relaxed text-[color:var(--text-muted)]">
+            <p className="mb-8 text-base leading-relaxed text-[var(--text-primary)]/85">
               読む、解く、計画する、の順で自然に進められる構成にしています。
               登録なしでも記事とクイズから始められます。
             </p>
@@ -507,7 +511,7 @@ const GuestHomeContent: React.FC = () => {
                     ステップ {item.step}
                   </div>
                   <div className="mb-2 text-lg font-semibold text-[var(--text-primary)]">{item.title}</div>
-                  <div className="text-sm leading-relaxed text-[color:var(--text-muted)]">{item.desc}</div>
+                  <div className="text-base leading-relaxed text-[var(--text-primary)]/85">{item.desc}</div>
                 </Link>
               ))}
             </div>
@@ -515,7 +519,7 @@ const GuestHomeContent: React.FC = () => {
               <Link to="/articles" className={GUEST_CTA_SECONDARY_CLASS}>
                 記事を読む
               </Link>
-              <Link to="/auth?mode=signup" className={GUEST_CTA_TERTIARY_CLASS}>
+              <Link to="/auth?mode=signup" className={GUEST_CTA_PRIMARY_CLASS}>
                 登録して進捗を保存する
               </Link>
             </div>
@@ -525,11 +529,11 @@ const GuestHomeContent: React.FC = () => {
 
       {/* Use cases */}
       <section className="relative container mx-auto px-4 pb-20">
-        <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold text-brand-primary sm:text-4xl">
+        <div className="mb-12">
+          <h2 className={GUEST_HOME_SECTION_HEADING_CLASS}>
             このプラットフォームでできること
           </h2>
-          <p className="text-sm text-[color:var(--text-muted)]">
+          <p className={GUEST_HOME_SECTION_LEAD_CLASS}>
             教材の閲覧、問題演習、フライト前準備を同じ文脈で進められます。
           </p>
         </div>
@@ -561,7 +565,7 @@ const GuestHomeContent: React.FC = () => {
                 0{i + 1}
               </div>
               <h3 className="mb-3 text-xl font-semibold text-[var(--text-primary)]">{item.title}</h3>
-              <p className="text-sm leading-relaxed text-[color:var(--text-muted)]">{item.desc}</p>
+              <p className="text-base leading-relaxed text-[var(--text-primary)]/85">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -570,10 +574,10 @@ const GuestHomeContent: React.FC = () => {
       {/* Final CTA */}
       <section className="relative container mx-auto px-4 pb-24">
         <div className="reveal mx-auto max-w-2xl translate-y-0 rounded-2xl border-2 border-brand-primary/60 bg-[var(--panel)] p-8 text-center opacity-100 shadow-lg backdrop-blur-md transition-all duration-700 ease-out sm:p-10">
-          <h3 className="mb-4 text-2xl font-bold text-brand-primary sm:text-3xl">
+          <h3 className="mb-4 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
             学習と準備を、毎日のルーティンに。
           </h3>
-          <p className="mb-8 leading-relaxed text-[color:var(--text-muted)]">
+          <p className="mb-8 leading-relaxed text-[var(--text-primary)]/85">
             アカウントを作成すると、学習進捗、テスト結果、次に進むべきコンテンツをホームからまとめて確認できます。
           </p>
           <Link to="/auth?mode=signup" className={GUEST_CTA_PRIMARY_CLASS}>

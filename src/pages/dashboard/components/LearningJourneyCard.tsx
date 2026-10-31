@@ -43,7 +43,7 @@ const STAGE_ACTIONS: Record<
     to: '/test?tab=diagnostic',
   },
   written_complete: {
-    label: '次の訓練を確認',
+    label: 'プロフィールで確認',
     description: '第1期のゴール達成です。実技課程など第2期の導線は順次追加します。',
     to: '/profile',
   },
@@ -86,7 +86,7 @@ function LearningJourneyPreparationFallback() {
           </div>
           <Link
             to={PREPARATION_FALLBACK.to}
-            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-brand-primary/50 px-4 py-3 text-sm font-semibold text-brand-primary transition hover:bg-brand-primary/10"
+            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-brand-primary/50 px-4 py-3 text-base font-semibold text-brand-primary transition hover:bg-brand-primary/10"
           >
             {PREPARATION_FALLBACK.label}
           </Link>
@@ -143,7 +143,7 @@ export const LearningJourneyCard: React.FC = () => {
           </div>
           <Link
             to={action.to}
-            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-brand-primary/50 px-4 py-3 text-sm font-semibold text-brand-primary transition hover:bg-brand-primary/10"
+            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-brand-primary/50 px-4 py-3 text-base font-semibold text-brand-primary transition hover:bg-brand-primary/10"
           >
             {action.label}
           </Link>
