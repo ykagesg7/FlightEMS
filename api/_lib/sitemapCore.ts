@@ -1,3 +1,4 @@
+import { isWithdrawnArticle } from '../../src/constants/withdrawnArticleIds';
 import { isPublishDateReached } from './articlePublishGate';
 
 /** Keep in sync with `COURSES[].id` in `src/data/courses.ts`. */
@@ -79,6 +80,7 @@ export function buildSitemapUrlEntries(
 
   const seenArticleSlugs = new Set<string>();
   for (const entry of articles) {
+    if (isWithdrawnArticle(entry.filename)) continue;
     if (!entry.publishedAt || !isArticleReleased(entry.publishedAt)) continue;
     const slug = entry.slug;
     if (!slug || seenArticleSlugs.has(slug)) continue;

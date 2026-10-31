@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
+import { isWithdrawnArticle } from '../src/constants/withdrawnArticleIds';
 import { resolveCanonicalSiteOriginFromEnv, type SiteOriginEnv } from '../src/config/siteOriginEnv';
 import { articlePrettySlug } from '../src/utils/articleCanonicalPath';
 import { collectArticleMetas, type ExtractedArticleMeta } from './articlesMeta';
@@ -119,6 +120,7 @@ export function prerenderArticlesPlugin(): Plugin {
       let count = 0;
 
       for (const entry of collected) {
+        if (isWithdrawnArticle(entry.filename)) continue;
         if (!entry.meta.publishedAt) continue;
         const tags = articleHeadTags(entry.meta, entry.filename, origin);
         const html = injectHead(template, tags);
