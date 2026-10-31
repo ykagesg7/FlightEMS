@@ -2,6 +2,8 @@ import { AuthError, Session, User } from '@supabase/supabase-js'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { getAuthRedirectUrl, getPasswordRecoveryRedirectUrl } from '../auth/authRedirectUrl'
+import { clearLocalAuthSession } from '../auth/clearLocalAuthSession'
+import { purgeInvalidAuthStorage, readStoredRefreshToken } from '../auth/readStoredRefreshToken'
 import { rememberLastAuthMethod } from '../auth/lastAuthMethod'
 import { clearPasswordRecoveryPending } from '../auth/passwordRecovery'
 import { deriveOAuthUsername } from '../auth/deriveOAuthUsername'
@@ -267,19 +269,28 @@ export const useAuthStore = create<AuthState>()(
       refreshSession: async () => {
         try {
           set({ loading: true });
-          const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-          if (sessionError) {
+          purgeInvalidAuthStorage();
+
+          if (!readStoredRefreshToken()) {
+            await clearLocalAuthSession();
             set({ loading: false, initialized: true });
             return;
           }
-          // sessionData.userがnullの場合、session.userから取得を試みる
-          const user = sessionData.session?.user ?? null;
+
+          const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+          if (sessionError || !sessionData.session) {
+            await clearLocalAuthSession();
+            set({ loading: false, initialized: true });
+            return;
+          }
+          const user = sessionData.session.user ?? null;
           set({ session: sessionData.session, user });
           if (user) {
             await get().fetchProfile(user.id);
           }
           set({ loading: false, initialized: true });
         } catch (err) {
+          await clearLocalAuthSession();
           set({ loading: false, initialized: true });
           console.error('セッション更新処理中に不明なエラーが発生しました:', err);
         }

@@ -1,8 +1,9 @@
 import React, { Suspense, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, Typography } from '../../components/ui';
-import { useAnnouncements } from '../../hooks/useAnnouncements';
 import { useAuthStore } from '../../stores/authStore';
+import { useGuestHomeLatestItems } from '../../hooks/useGuestHomeLatestItems';
+import { useRevealOnScroll } from '../../hooks/useRevealOnScroll';
 import type { DashboardMetrics } from '../../types/dashboard';
 import { fetchDashboardMetrics } from '../../utils/dashboard';
 import { AnnouncementCard } from './components/AnnouncementCard';
@@ -19,55 +20,8 @@ import {
   GUEST_CTA_SECONDARY_CLASS,
   GUEST_CTA_TERTIARY_CLASS,
 } from '../../constants/guestSurfaceCta';
-import { filterGuestAnnouncements } from '../../utils/guestAnnouncements';
 
-const useReveal = (deps?: React.DependencyList) => {
-  useEffect(() => {
-    let io: IntersectionObserver | null = null;
-
-    // 少し遅延を待って、DOMが更新された後に実行
-    const timer = setTimeout(() => {
-      const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
-
-      // アニメーション設定を最適化（prefers-reduced-motion対応）
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const threshold = prefersReducedMotion ? 0.1 : 0.15;
-
-      io = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const target = entry.target as HTMLElement;
-
-            // スタイルアニメーション用の遅延を取得（style属性から取得）
-            const delay = target.style.transitionDelay ?
-              parseInt(target.style.transitionDelay.replace('ms', '')) : 0;
-
-            // アニメーション適用
-            setTimeout(() => {
-              target.classList.add('opacity-100', 'translate-y-0');
-              target.classList.remove('opacity-0', 'translate-y-4');
-            }, prefersReducedMotion ? 0 : delay);
-
-            // 一度表示された要素は監視を停止
-            io?.unobserve(target);
-          }
-        });
-      }, {
-        threshold,
-        rootMargin: '0px 0px -50px 0px' // 少し早めにアニメーション開始
-      });
-
-      els.forEach((el) => io?.observe(el));
-    }, 100); // 100ms遅延でDOM更新を待つ
-
-    return () => {
-      clearTimeout(timer);
-      if (io) {
-        io.disconnect();
-      }
-    };
-  }, deps || []);
-};
+const useReveal = useRevealOnScroll;
 
 /**
  * ダッシュボードページのスケルトンローダー
@@ -296,11 +250,9 @@ const DashboardContent: React.FC = () => {
  * ゲスト向けホームページ（未ログイン時）
  */
 const GuestHomeContent: React.FC = () => {
-  const { announcements, isLoading, error } = useAnnouncements();
-  const guestAnnouncements = filterGuestAnnouncements(announcements);
+  const { items: latestItems, isLoading, error } = useGuestHomeLatestItems();
 
-  // お知らせデータが読み込まれた後にrevealアニメーションを実行
-  useReveal([guestAnnouncements.length, isLoading]);
+  useReveal([latestItems.length, isLoading]);
 
   const corePillars = [
     {
@@ -432,7 +384,7 @@ const GuestHomeContent: React.FC = () => {
               </div>
             </div>
 
-            <div className="reveal opacity-0 translate-y-4 transition-all duration-700 ease-out">
+            <div className="reveal translate-y-0 opacity-100 transition-all duration-700 ease-out">
               <div className="relative overflow-hidden rounded-3xl border border-brand-primary/20 bg-[var(--panel)] shadow-2xl">
                 <img
                   src="/images/ContentImages/WorryVsThink4.jpg"
@@ -502,20 +454,18 @@ const GuestHomeContent: React.FC = () => {
               <p className="text-xs text-red-400 mt-2">{error.message}</p>
             )}
           </div>
-        ) : guestAnnouncements.length > 0 ? (
+        ) : latestItems.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {guestAnnouncements.map((announcement, index) => {
-              if (process.env.NODE_ENV === 'development') {
-                console.log('AnnouncementCard レンダリング:', { id: announcement.id, title: announcement.title, index });
-              }
-              return (
-                <AnnouncementCard
-                  key={announcement.id}
-                  announcement={announcement}
-                  index={index}
-                />
-              );
-            })}
+            {latestItems.map((item, index) => (
+              <AnnouncementCard
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                date={item.date}
+                href={item.href}
+                index={index}
+              />
+            ))}
           </div>
         ) : (
           <div className="text-center py-8">
@@ -527,14 +477,14 @@ const GuestHomeContent: React.FC = () => {
       {/* Training flow */}
       <section className="relative container mx-auto px-4 pb-20">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="reveal opacity-0 translate-y-4 transition-all duration-700 ease-out overflow-hidden rounded-3xl border border-brand-primary/20 bg-[var(--panel)] shadow-xl">
+          <div className="reveal translate-y-0 opacity-100 transition-all duration-700 ease-out overflow-hidden rounded-3xl border border-brand-primary/20 bg-[var(--panel)] shadow-xl">
             <img
               src="/images/ContentImages/image3.png"
               alt="Training flow visual"
               className="h-full min-h-[320px] w-full object-cover opacity-70"
             />
           </div>
-          <div className="reveal opacity-0 translate-y-4 transition-all duration-700 ease-out rounded-3xl border border-brand-primary/20 bg-[var(--panel)] p-8 shadow-xl">
+          <div className="reveal translate-y-0 opacity-100 transition-all duration-700 ease-out rounded-3xl border border-brand-primary/20 bg-[var(--panel)] p-8 shadow-xl">
             <div className="mb-3 text-xs font-semibold tracking-[0.12em] text-brand-primary">
               学習の流れ
             </div>
@@ -619,7 +569,7 @@ const GuestHomeContent: React.FC = () => {
 
       {/* Final CTA */}
       <section className="relative container mx-auto px-4 pb-24">
-        <div className="reveal opacity-0 translate-y-4 transition-all duration-700 ease-out text-center max-w-2xl mx-auto rounded-2xl border-2 border-brand-primary/60 backdrop-blur-md shadow-lg p-8 sm:p-10 bg-[var(--panel)]">
+        <div className="reveal mx-auto max-w-2xl translate-y-0 rounded-2xl border-2 border-brand-primary/60 bg-[var(--panel)] p-8 text-center opacity-100 shadow-lg backdrop-blur-md transition-all duration-700 ease-out sm:p-10">
           <h3 className="mb-4 text-2xl font-bold text-brand-primary sm:text-3xl">
             学習と準備を、毎日のルーティンに。
           </h3>

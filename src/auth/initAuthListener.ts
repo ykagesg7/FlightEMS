@@ -1,4 +1,5 @@
 import supabase from '../utils/supabase';
+import { clearLocalAuthSession } from './clearLocalAuthSession';
 import { useAuthStore } from '../stores/authStore';
 import { clearLoginMfaCache } from './mfaAuth';
 import {
@@ -18,15 +19,27 @@ export function initAuthListener(): void {
 
   supabase.auth.onAuthStateChange((event, session) => {
     const store = useAuthStore.getState();
-    store.setSession(session);
-    store.setUser(session?.user ?? null);
 
     if (event === 'SIGNED_OUT') {
+      store.setSession(null);
+      store.setUser(null);
       store.setProfile(null);
       clearPasswordRecoveryPending();
       clearLoginMfaCache();
+      store.setInitialized(true);
+      store.setLoading(false);
       return;
     }
+
+    if (event === 'TOKEN_REFRESHED' && !session) {
+      void clearLocalAuthSession();
+      store.setInitialized(true);
+      store.setLoading(false);
+      return;
+    }
+
+    store.setSession(session);
+    store.setUser(session?.user ?? null);
 
     if (event === 'PASSWORD_RECOVERY') {
       markPasswordRecoveryPending();
