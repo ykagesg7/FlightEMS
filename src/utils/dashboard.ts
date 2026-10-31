@@ -187,8 +187,9 @@ async function getLearningProgress(userId: string) {
 
   const { count: totalContentCount, error: countError } = await supabase
     .from('learning_contents')
-    .select('*', { count: 'exact', head: true })
-    .eq('is_published', true);
+    .select('id', { count: 'exact', head: false })
+    .eq('is_published', true)
+    .limit(0);
 
   if (countError) {
     console.error('学習コンテンツ総数取得エラー:', countError);

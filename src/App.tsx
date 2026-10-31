@@ -16,6 +16,7 @@ import { WeatherCacheProvider } from './contexts/WeatherCacheContext';
 
 // Enhanced Error Boundary and Layout
 import { GoogleAnalyticsTracker } from './components/GoogleAnalyticsTracker';
+import { getGa4MeasurementId } from './lib/googleAnalytics';
 import { PasswordRecoveryGuard } from './components/auth/PasswordRecoveryGuard';
 import ScrollManager from './components/ScrollManager';
 import { RouteErrorElement } from './components/RouteErrorElement';
@@ -70,7 +71,7 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 function AppShell() {
   return (
     <>
-      {import.meta.env.PROD && import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ? (
+      {import.meta.env.PROD && getGa4MeasurementId() ? (
         <GoogleAnalyticsTracker />
       ) : null}
       <ScrollManager />

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { LearningContent } from '../types';
-import supabase from '../utils/supabase';
+import supabase, { createPublicSupabaseClient } from '../utils/supabase';
 import { syncStreakToUserLearningProfile } from '../utils/streak';
 
 interface LearningProgress {
@@ -19,6 +20,7 @@ interface LearningProgress {
 
 export const useLearningProgress = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const stableUser = useMemo(() => user, [user]);
   const [userProgress, setUserProgress] = useState<Record<string, LearningProgress>>({});
   const [learningContents, setLearningContents] = useState<LearningContent[]>([]);
@@ -28,7 +30,9 @@ export const useLearningProgress = () => {
   // 学習コンテンツをロード
   const loadLearningContents = useCallback(async () => {
     try {
-      const { data, error } = await supabase
+      // 公開カタログは anon 専用クライアントで読む（期限切れ JWT 付き REST で 401 にならない）
+      const client = createPublicSupabaseClient();
+      const { data, error } = await client
         .from('learning_contents')
         .select(
           'id, title, category, sub_category, description, order_index, parent_id, content_type, created_at, updated_at, is_published',
@@ -93,12 +97,19 @@ export const useLearningProgress = () => {
   useEffect(() => {
     const loadInitialData = async () => {
       setIsLoading(true);
-      await Promise.all([loadLearningContents(), loadUserProgress()]);
+      const skipGuestHomeCatalog = !stableUser && location.pathname === '/';
+      const tasks: Promise<void>[] = [loadUserProgress()];
+      if (!skipGuestHomeCatalog) {
+        tasks.unshift(loadLearningContents());
+      } else {
+        setLearningContents([]);
+      }
+      await Promise.all(tasks);
       setIsLoading(false);
     };
 
     loadInitialData();
-  }, [loadLearningContents, loadUserProgress]);
+  }, [loadLearningContents, loadUserProgress, stableUser, location.pathname]);
 
   // 進捗の更新
   const updateProgress = useCallback(async (contentId: string, position: number) => {
