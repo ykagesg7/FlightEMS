@@ -4,7 +4,7 @@ import { mapAuthErrorToMessage } from '../../auth/authErrorMessages';
 import { describeLastAuthMethod, getLastAuthMethod } from '../../auth/lastAuthMethod';
 import { shouldPromptLoginMfa } from '../../auth/mfaAuth';
 import { isPasswordRecoveryActive } from '../../auth/passwordRecovery';
-import { getPostAuthPath, reconcileOnboardingForReturningUser } from '../../auth/profileSetup';
+import { getPostAuthPath, syncLearnerProfileAfterSignIn } from '../../auth/profileSetup';
 import { EmailDeliveryHint } from '../../components/auth/EmailDeliveryHint';
 import { LoginMfaChallenge } from '../../components/auth/LoginMfaChallenge';
 import { TurnstileWidget } from '../../components/auth/TurnstileWidget';
@@ -95,16 +95,10 @@ const AuthPage: React.FC = () => {
 
     let cancelled = false;
     void (async () => {
-      await useAuthStore.getState().fetchProfile(user.id);
-      if (cancelled) return;
-
-      let profileForNav = useAuthStore.getState().profile;
-      if (!profileForNav) {
+      const profileForNav = await syncLearnerProfileAfterSignIn(user.id);
+      if (cancelled || !profileForNav) {
         return;
       }
-
-      profileForNav = await reconcileOnboardingForReturningUser(user.id, profileForNav);
-      if (cancelled) return;
 
       const { required, factorId, error: mfaError } = await shouldPromptLoginMfa(profileForNav);
       if (cancelled) return;
@@ -150,10 +144,8 @@ const AuthPage: React.FC = () => {
     if (!user) return;
     const from = state?.from?.pathname || '/';
     void (async () => {
-      await useAuthStore.getState().fetchProfile(user.id);
-      let profileForNav = useAuthStore.getState().profile;
+      const profileForNav = await syncLearnerProfileAfterSignIn(user.id);
       if (!profileForNav) return;
-      profileForNav = await reconcileOnboardingForReturningUser(user.id, profileForNav);
       navigate(getPostAuthPath(profileForNav, from), { replace: true });
     })();
   }, [navigate, user, state?.from?.pathname]);

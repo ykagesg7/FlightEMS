@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAuthCallbackType } from '../../../auth/authRedirectUrl';
+import { isAuthCallbackPending } from '../../../auth/authCallbackPending';
 import { rememberLastAuthMethod } from '../../../auth/lastAuthMethod';
 import {
   clearPasswordRecoveryPending,
@@ -15,11 +16,7 @@ interface UseAuthCallbackOptions {
 }
 
 function hasAuthCallbackParams(): boolean {
-  if (typeof window === 'undefined') return false;
-  const { hash, search } = window.location;
-  if (hash.includes('access_token') || hash.includes('error=')) return true;
-  const params = new URLSearchParams(search);
-  return params.has('code') || params.has('error') || params.has('error_description');
+  return isAuthCallbackPending();
 }
 
 /** implicit flow ではエラーもハッシュ側に載る（期限切れリンク等） */
@@ -109,9 +106,13 @@ export function useAuthCallback({ onError, onSessionReady }: UseAuthCallbackOpti
             user.app_metadata?.provider === 'google' ? 'google' : 'magic-link',
           );
           await store.ensureProfileAfterOAuth(user);
+          store.setInitialized(true);
+          store.setLoading(false);
           onSessionReadyRef.current?.();
         } else if (user && isPasswordRecovery) {
           await store.fetchProfile(user.id);
+          store.setInitialized(true);
+          store.setLoading(false);
         }
 
         cleanAuthCallbackUrl();

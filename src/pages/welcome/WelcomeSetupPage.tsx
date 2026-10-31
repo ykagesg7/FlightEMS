@@ -8,6 +8,7 @@ import {
   getWelcomeRedirectTarget,
   isCohortOnlyWelcomeMode,
   needsWelcomeSetup,
+  syncLearnerProfileAfterSignIn,
 } from '../../auth/profileSetup';
 import { Button } from '../../components/ui';
 import { useAuthStore } from '../../stores/authStore';
@@ -67,10 +68,9 @@ const WelcomeSetupPage: React.FC = () => {
   } = useNotificationSettings(user?.id);
 
   useEffect(() => {
-    if (user && !profile) {
-      void fetchProfile(user.id);
-    }
-  }, [user, profile, fetchProfile]);
+    if (!user) return;
+    void syncLearnerProfileAfterSignIn(user.id);
+  }, [user]);
 
   useEffect(() => {
     if (cohortOnlyMode) return;

@@ -1,7 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { AUTH_STORAGE_KEY } from '../auth/clearLocalAuthSession';
-import { readStoredRefreshToken } from '../auth/readStoredRefreshToken';
 import type { Database } from '../types/database.types';
 
 // Supabaseの設定（環境変数から取得）
@@ -37,10 +35,6 @@ export const createBrowserSupabaseClient = () => {
         storageKey: 'flightacademy.auth.token', // プロジェクト固有のストレージキー
         storage: {
           getItem: (key: string) => {
-            if (key === AUTH_STORAGE_KEY && !readStoredRefreshToken()) {
-              localStorage.removeItem(key);
-              return null;
-            }
             return localStorage.getItem(key);
           },
           setItem: (key: string, value: string) => localStorage.setItem(key, value),

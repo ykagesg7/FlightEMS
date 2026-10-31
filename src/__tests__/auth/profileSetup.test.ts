@@ -1,11 +1,25 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   getPostAuthPath,
   getWelcomeRedirectTarget,
   needsWelcomeSetup,
   profileHasPriorEngagement,
+  syncLearnerProfileAfterSignIn,
 } from '@/auth/profileSetup';
 import type { Profile } from '@/stores/authStore';
+import * as authStore from '@/stores/authStore';
+
+vi.mock('@/stores/authStore', () => ({
+  useAuthStore: {
+    getState: vi.fn(),
+  },
+}));
+
+vi.mock('@/utils/supabase', () => ({
+  default: {
+    from: vi.fn(),
+  },
+}));
 
 function createProfile(overrides: Partial<Profile> = {}): Profile {
   return {
@@ -84,10 +98,44 @@ describe('profileSetup', () => {
       );
     });
 
+    it('keeps engaged users without onboarding timestamp on requested path', () => {
+      expect(
+        getPostAuthPath(
+          createProfile({ onboarding_completed_at: null, xp_points: 15 }),
+          '/',
+        ),
+      ).toBe('/');
+    });
+
     it('sends completed users to original destination', () => {
       expect(getPostAuthPath(createProfile({ onboarding_completed_at: '2026-01-01T00:00:00Z' }), '/mission')).toBe(
         '/mission',
       );
+    });
+  });
+
+  describe('syncLearnerProfileAfterSignIn', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('always refetches profile from the server before navigation decisions', async () => {
+      const fetchProfile = vi.fn().mockResolvedValue(undefined);
+      const engaged = createProfile({ xp_points: 15, onboarding_completed_at: null });
+      const updateEq = vi.fn().mockResolvedValue({ error: null });
+      const update = vi.fn().mockReturnValue({ eq: updateEq });
+      const supabase = await import('@/utils/supabase');
+      vi.mocked(supabase.default.from).mockReturnValue({ update } as never);
+
+      vi.mocked(authStore.useAuthStore.getState).mockReturnValue({
+        fetchProfile,
+        profile: engaged,
+      });
+
+      const result = await syncLearnerProfileAfterSignIn('user-1');
+
+      expect(fetchProfile).toHaveBeenCalledWith('user-1');
+      expect(result?.xp_points).toBe(15);
     });
   });
 });
