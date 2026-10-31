@@ -3,6 +3,7 @@ import {
   getPostAuthPath,
   getWelcomeRedirectTarget,
   needsWelcomeSetup,
+  profileHasPriorEngagement,
 } from '@/auth/profileSetup';
 import type { Profile } from '@/stores/authStore';
 
@@ -42,6 +43,23 @@ describe('profileSetup', () => {
 
     it('returns false when onboarding_completed_at is set', () => {
       expect(needsWelcomeSetup(createProfile({ onboarding_completed_at: '2026-01-01T00:00:00Z' }))).toBe(false);
+    });
+
+    it('returns false when user already has XP (skipped welcome)', () => {
+      expect(
+        needsWelcomeSetup(createProfile({ onboarding_completed_at: null, xp_points: 160 })),
+      ).toBe(false);
+    });
+  });
+
+  describe('profileHasPriorEngagement', () => {
+    it('returns true when xp_points is positive', () => {
+      expect(profileHasPriorEngagement(createProfile({ xp_points: 1 }))).toBe(true);
+    });
+
+    it('returns false when xp_points is null or zero', () => {
+      expect(profileHasPriorEngagement(createProfile({ xp_points: null }))).toBe(false);
+      expect(profileHasPriorEngagement(createProfile({ xp_points: 0 }))).toBe(false);
     });
   });
 

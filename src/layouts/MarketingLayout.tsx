@@ -8,10 +8,11 @@ import { HUDTimeDisplay } from '../components/ui/HUDDashboard';
 import { useMobileNavFocusTrap } from '../hooks/useMobileNavFocusTrap';
 import { useAuthStore } from '../stores/authStore';
 import { isAdminUser } from '../utils/isAdminUser';
+import { MARKETING_FOOTER, MARKETING_NAV_ITEMS } from '../constants/marketingNavLabels';
 
 const navLinkDesktop = ({ isActive }: { isActive: boolean }) =>
   [
-    'rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors lg:px-4 lg:text-sm',
+    'rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors lg:px-4 lg:text-base',
     isActive
       ? 'bg-brand-primary/15 text-brand-primary'
       : 'text-[var(--text-primary)] hover:bg-brand-primary/10',
@@ -19,7 +20,7 @@ const navLinkDesktop = ({ isActive }: { isActive: boolean }) =>
 
 const navLinkMobile = ({ isActive }: { isActive: boolean }) =>
   [
-    'block rounded-lg px-4 py-3 transition-colors',
+    'block rounded-lg px-4 py-3 text-base font-semibold normal-case transition-colors',
     isActive
       ? 'bg-brand-primary/15 text-brand-primary'
       : 'text-[var(--text-primary)] hover:bg-brand-primary/10',
@@ -35,7 +36,11 @@ export const MarketingLayout: React.FC = () => {
   const mobileNavPanelRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const profile = useAuthStore((state) => state.profile);
+  const user = useAuthStore((state) => state.user);
   const showAdminNav = isAdminUser(profile);
+  const headerNavItems = MARKETING_NAV_ITEMS.filter(
+    (item) => !item.adminOnly || showAdminNav,
+  );
 
   useMobileNavFocusTrap({
     open: isMobileMenuOpen,
@@ -109,23 +114,16 @@ export const MarketingLayout: React.FC = () => {
 
             {/* Navigation — ヘッダー帯と同じコンパクトなタップ領域 */}
             <nav className="hidden items-center gap-1 md:flex lg:gap-2" aria-label="Main">
-              <NavLink to="/" end className={navLinkDesktop}>
-                HOME
-              </NavLink>
-              <NavLink to="/articles" className={navLinkDesktop}>
-                ARTICLES
-              </NavLink>
-              <NavLink to="/planning" className={navLinkDesktop}>
-                PLANNING
-              </NavLink>
-              <NavLink to="/quiz" className={navLinkDesktop}>
-                QUIZ
-              </NavLink>
-              {showAdminNav ? (
-                <NavLink to="/admin" className={navLinkDesktop}>
-                  ADMIN
+              {headerNavItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  className={navLinkDesktop}
+                >
+                  {item.label}
                 </NavLink>
-              ) : null}
+              ))}
             </nav>
 
             {/* User Menu / Login Button */}
@@ -180,74 +178,23 @@ export const MarketingLayout: React.FC = () => {
                   <HUDTimeDisplay />
                 </motion.div>
                 <nav className="flex flex-col gap-2" aria-label="Mobile main">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 }}
-                  >
-                    <NavLink
-                      to="/"
-                      end
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={navLinkMobile}
-                    >
-                      HOME
-                    </NavLink>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.15 }}
-                  >
-                    <NavLink
-                      to="/articles"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={navLinkMobile}
-                    >
-                      ARTICLES
-                    </NavLink>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <NavLink
-                      to="/planning"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={navLinkMobile}
-                    >
-                      PLANNING
-                    </NavLink>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.25 }}
-                  >
-                    <NavLink
-                      to="/quiz"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={navLinkMobile}
-                    >
-                      QUIZ
-                    </NavLink>
-                  </motion.div>
-                  {showAdminNav ? (
+                  {headerNavItems.map((item, index) => (
                     <motion.div
+                      key={item.to}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 }}
+                      transition={{ delay: 0.1 + index * 0.05 }}
                     >
                       <NavLink
-                        to="/admin"
+                        to={item.to}
+                        end={item.end}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={navLinkMobile}
                       >
-                        ADMIN
+                        {item.label}
                       </NavLink>
                     </motion.div>
-                  ) : null}
+                  ))}
                 </nav>
               </div>
             </motion.div>
@@ -277,54 +224,56 @@ export const MarketingLayout: React.FC = () => {
             </div>
             <div>
               <Typography variant="h4" className="mb-4">
-                Platform
+                {MARKETING_FOOTER.platformHeading}
               </Typography>
               <ul className="space-y-2">
-                <li>
-                  <NavLink
-                    to="/auth"
-                    className="text-sm text-gray-400 transition-colors hover:text-brand-primary"
-                  >
-                    Login / Sign up
-                  </NavLink>
-                </li>
+                {!user ? (
+                  <li>
+                    <NavLink
+                      to="/auth"
+                      className="text-base text-[color:var(--text-primary)]/85 transition-colors hover:text-brand-primary"
+                    >
+                      {MARKETING_FOOTER.loginSignup}
+                    </NavLink>
+                  </li>
+                ) : null}
                 <li>
                   <NavLink
                     to="/profile"
-                    className="text-sm text-gray-400 transition-colors hover:text-brand-primary"
+                    className="text-base text-[color:var(--text-primary)]/85 transition-colors hover:text-brand-primary"
                   >
-                    Profile
+                    {MARKETING_FOOTER.profile}
                   </NavLink>
                 </li>
               </ul>
             </div>
             <div>
               <Typography variant="h4" className="mb-4">
-                Core Modules
+                {MARKETING_FOOTER.modulesHeading}
               </Typography>
               <ul className="space-y-2">
                 <li>
                   <NavLink
                     to="/planning"
-                    className="text-sm text-gray-400 transition-colors hover:text-brand-primary"
+                    className="text-base text-[color:var(--text-primary)]/85 transition-colors hover:text-brand-primary"
                   >
-                    Flight Planning
+                    {MARKETING_FOOTER.flightPlanning}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink
                     to="/articles"
-                    className="text-sm text-gray-400 transition-colors hover:text-brand-primary"
+                    className="text-base text-[color:var(--text-primary)]/85 transition-colors hover:text-brand-primary"
                   >
-                    Articles
+                    {MARKETING_FOOTER.articles}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink
                     to="/quiz"
-                    className="text-sm text-gray-400 transition-colors hover:text-brand-primary"
+                    className="text-base text-[color:var(--text-primary)]/85 transition-colors hover:text-brand-primary"
                   >
-                    Quiz
+                    {MARKETING_FOOTER.quiz}
                   </NavLink>
                 </li>
               </ul>
