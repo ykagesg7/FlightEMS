@@ -4,7 +4,7 @@ import { mapAuthErrorToMessage } from '../../auth/authErrorMessages';
 import { describeLastAuthMethod, getLastAuthMethod } from '../../auth/lastAuthMethod';
 import { shouldPromptLoginMfa } from '../../auth/mfaAuth';
 import { isPasswordRecoveryActive } from '../../auth/passwordRecovery';
-import { getPostAuthPath } from '../../auth/profileSetup';
+import { getPostAuthPath, reconcileOnboardingForReturningUser } from '../../auth/profileSetup';
 import { EmailDeliveryHint } from '../../components/auth/EmailDeliveryHint';
 import { LoginMfaChallenge } from '../../components/auth/LoginMfaChallenge';
 import { TurnstileWidget } from '../../components/auth/TurnstileWidget';
@@ -92,14 +92,21 @@ const AuthPage: React.FC = () => {
       setLoginMfaCheckDone(false);
       return;
     }
-    if (profile === null) {
-      void useAuthStore.getState().fetchProfile(user.id);
-      return;
-    }
 
     let cancelled = false;
     void (async () => {
-      const { required, factorId, error: mfaError } = await shouldPromptLoginMfa(profile);
+      await useAuthStore.getState().fetchProfile(user.id);
+      if (cancelled) return;
+
+      let profileForNav = useAuthStore.getState().profile;
+      if (!profileForNav) {
+        return;
+      }
+
+      profileForNav = await reconcileOnboardingForReturningUser(user.id, profileForNav);
+      if (cancelled) return;
+
+      const { required, factorId, error: mfaError } = await shouldPromptLoginMfa(profileForNav);
       if (cancelled) return;
 
       if (mfaError) {
@@ -115,13 +122,13 @@ const AuthPage: React.FC = () => {
       setLoginMfaFactorId(null);
       setLoginMfaCheckDone(true);
       const from = state?.from?.pathname || '/';
-      navigate(getPostAuthPath(profile, from), { replace: true });
+      navigate(getPostAuthPath(profileForNav, from), { replace: true });
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [user, session, profile, initialized, navigate, state]);
+  }, [user, session, initialized, navigate, state]);
 
   // プロフィール取得が返ってこないと「リダイレクトします...」のまま固まるため、手動の逃げ道を出す
   useEffect(() => {
@@ -140,10 +147,16 @@ const AuthPage: React.FC = () => {
   }, [user]);
 
   const completeLoginAfterMfa = useCallback(() => {
-    if (!profile) return;
+    if (!user) return;
     const from = state?.from?.pathname || '/';
-    navigate(getPostAuthPath(profile, from), { replace: true });
-  }, [navigate, profile, state?.from?.pathname]);
+    void (async () => {
+      await useAuthStore.getState().fetchProfile(user.id);
+      let profileForNav = useAuthStore.getState().profile;
+      if (!profileForNav) return;
+      profileForNav = await reconcileOnboardingForReturningUser(user.id, profileForNav);
+      navigate(getPostAuthPath(profileForNav, from), { replace: true });
+    })();
+  }, [navigate, user, state?.from?.pathname]);
 
   const toggleForm = () => {
     setIsLogin(!isLogin);

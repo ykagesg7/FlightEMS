@@ -2,8 +2,33 @@ import type { Profile } from '../stores/authStore';
 import { useAuthStore } from '../stores/authStore';
 import supabase from '../utils/supabase';
 
+/** Users with XP already earned the app without finishing the welcome wizard. */
+export function profileHasPriorEngagement(profile: Profile): boolean {
+  return (profile.xp_points ?? 0) > 0;
+}
+
 export function needsWelcomeSetup(profile: Profile | null): boolean {
-  return profile != null && profile.onboarding_completed_at == null;
+  if (profile == null) return false;
+  if (profile.onboarding_completed_at != null) return false;
+  if (profileHasPriorEngagement(profile)) return false;
+  return true;
+}
+
+/** Persist onboarding completion for returning users who skipped the wizard. */
+export async function reconcileOnboardingForReturningUser(
+  userId: string,
+  profile: Profile,
+): Promise<Profile> {
+  if (profile.onboarding_completed_at != null || !profileHasPriorEngagement(profile)) {
+    return profile;
+  }
+
+  const { error } = await completeWelcomeSetup(userId);
+  if (error) {
+    return profile;
+  }
+
+  return useAuthStore.getState().profile ?? profile;
 }
 
 export function isCohortOnlyWelcomeMode(searchParams: URLSearchParams): boolean {
