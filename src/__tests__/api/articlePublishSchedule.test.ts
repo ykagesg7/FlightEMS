@@ -111,5 +111,14 @@ describe('api/lib/articlePublishSchedule', () => {
     expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-1_TrustInstruments')).toBe(
       false,
     );
+
+    // IF-1-2 slot reservation: Friday announce (W48), no drip sync (stub until body ready)
+    const if12 = listScheduledArticles().find((a) => a.id === 'IF-1-2_PartialPanel');
+    expect(if12).toBeDefined();
+    expect(if12?.syncPublish).toBe(false);
+    expect(if12?.announceDate).toBe('2026-11-27');
+    expect(if12?.publishDate).toBe('2026-11-27');
+    expect(weekdayJstFromPublishDate(if12!.announceDate!)).toBe(5);
+    expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-2_PartialPanel')).toBe(false);
   });
 });
