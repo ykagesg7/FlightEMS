@@ -8,7 +8,7 @@ import { HUDTimeDisplay } from '../components/ui/HUDDashboard';
 import { useMobileNavFocusTrap } from '../hooks/useMobileNavFocusTrap';
 import { useAuthStore } from '../stores/authStore';
 import { isAdminUser } from '../utils/isAdminUser';
-import { MARKETING_FOOTER, MARKETING_NAV } from '../constants/marketingNavLabels';
+import { MARKETING_FOOTER, MARKETING_NAV_ITEMS } from '../constants/marketingNavLabels';
 
 const navLinkDesktop = ({ isActive }: { isActive: boolean }) =>
   [
@@ -20,7 +20,7 @@ const navLinkDesktop = ({ isActive }: { isActive: boolean }) =>
 
 const navLinkMobile = ({ isActive }: { isActive: boolean }) =>
   [
-    'block rounded-lg px-4 py-3 transition-colors',
+    'block rounded-lg px-4 py-3 text-base font-semibold normal-case transition-colors',
     isActive
       ? 'bg-brand-primary/15 text-brand-primary'
       : 'text-[var(--text-primary)] hover:bg-brand-primary/10',
@@ -38,6 +38,9 @@ export const MarketingLayout: React.FC = () => {
   const profile = useAuthStore((state) => state.profile);
   const user = useAuthStore((state) => state.user);
   const showAdminNav = isAdminUser(profile);
+  const headerNavItems = MARKETING_NAV_ITEMS.filter(
+    (item) => !item.adminOnly || showAdminNav,
+  );
 
   useMobileNavFocusTrap({
     open: isMobileMenuOpen,
@@ -111,23 +114,16 @@ export const MarketingLayout: React.FC = () => {
 
             {/* Navigation — ヘッダー帯と同じコンパクトなタップ領域 */}
             <nav className="hidden items-center gap-1 md:flex lg:gap-2" aria-label="Main">
-              <NavLink to="/" end className={navLinkDesktop}>
-                {MARKETING_NAV.home}
-              </NavLink>
-              <NavLink to="/articles" className={navLinkDesktop}>
-                {MARKETING_NAV.articles}
-              </NavLink>
-              <NavLink to="/planning" className={navLinkDesktop}>
-                {MARKETING_NAV.planning}
-              </NavLink>
-              <NavLink to="/quiz" className={navLinkDesktop}>
-                {MARKETING_NAV.quiz}
-              </NavLink>
-              {showAdminNav ? (
-                <NavLink to="/admin" className={navLinkDesktop}>
-                  {MARKETING_NAV.admin}
+              {headerNavItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  className={navLinkDesktop}
+                >
+                  {item.label}
                 </NavLink>
-              ) : null}
+              ))}
             </nav>
 
             {/* User Menu / Login Button */}
@@ -182,74 +178,23 @@ export const MarketingLayout: React.FC = () => {
                   <HUDTimeDisplay />
                 </motion.div>
                 <nav className="flex flex-col gap-2" aria-label="Mobile main">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 }}
-                  >
-                    <NavLink
-                      to="/"
-                      end
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={navLinkMobile}
-                    >
-                      {MARKETING_NAV.home}
-                    </NavLink>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.15 }}
-                  >
-                    <NavLink
-                      to="/articles"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={navLinkMobile}
-                    >
-                      {MARKETING_NAV.articles}
-                    </NavLink>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <NavLink
-                      to="/planning"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={navLinkMobile}
-                    >
-                      {MARKETING_NAV.planning}
-                    </NavLink>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.25 }}
-                  >
-                    <NavLink
-                      to="/quiz"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={navLinkMobile}
-                    >
-                      {MARKETING_NAV.quiz}
-                    </NavLink>
-                  </motion.div>
-                  {showAdminNav ? (
+                  {headerNavItems.map((item, index) => (
                     <motion.div
+                      key={item.to}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 }}
+                      transition={{ delay: 0.1 + index * 0.05 }}
                     >
                       <NavLink
-                        to="/admin"
+                        to={item.to}
+                        end={item.end}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={navLinkMobile}
                       >
-                        {MARKETING_NAV.admin}
+                        {item.label}
                       </NavLink>
                     </motion.div>
-                  ) : null}
+                  ))}
                 </nav>
               </div>
             </motion.div>

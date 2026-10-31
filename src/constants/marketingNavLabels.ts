@@ -7,6 +7,22 @@ export const MARKETING_NAV = {
   admin: '管理',
 } as const;
 
+export type MarketingNavItem = {
+  to: string;
+  label: string;
+  end?: boolean;
+  adminOnly?: boolean;
+};
+
+/** Single source for desktop + mobile header nav (same Japanese labels). */
+export const MARKETING_NAV_ITEMS: MarketingNavItem[] = [
+  { to: '/', label: MARKETING_NAV.home, end: true },
+  { to: '/articles', label: MARKETING_NAV.articles },
+  { to: '/planning', label: MARKETING_NAV.planning },
+  { to: '/quiz', label: MARKETING_NAV.quiz },
+  { to: '/admin', label: MARKETING_NAV.admin, adminOnly: true },
+];
+
 export const MARKETING_FOOTER = {
   platformHeading: 'アカウント',
   modulesHeading: '主要機能',
