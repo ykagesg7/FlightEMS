@@ -4,6 +4,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { DashboardCourseSection } from '@/pages/dashboard/components/DashboardCourseSection';
 import { useDashboardCourseNext } from '@/hooks/useDashboardCourseNext';
+import { ProgressProvider } from '@/contexts/ProgressContext';
+
+vi.mock('@/hooks/useAuth', () => ({
+  useAuth: () => ({ user: null }),
+}));
 
 vi.mock('@/hooks/useCohortProfile', () => ({
   useCohortProfile: vi.fn(),
@@ -73,7 +78,9 @@ describe('DashboardCourseSection', () => {
 
     render(
       <MemoryRouter>
-        <DashboardCourseSectionHarness />
+        <ProgressProvider>
+          <DashboardCourseSectionHarness />
+        </ProgressProvider>
       </MemoryRouter>
     );
 
@@ -89,7 +96,9 @@ describe('DashboardCourseSection', () => {
   it('shows continue link for the next course article', async () => {
     render(
       <MemoryRouter>
-        <DashboardCourseSectionHarness />
+        <ProgressProvider>
+          <DashboardCourseSectionHarness />
+        </ProgressProvider>
       </MemoryRouter>
     );
 
@@ -102,7 +111,9 @@ describe('DashboardCourseSection', () => {
   it('forces fallback card when metrics failed', async () => {
     render(
       <MemoryRouter>
-        <DashboardCourseSectionHarness forceFallback />
+        <ProgressProvider>
+          <DashboardCourseSectionHarness forceFallback />
+        </ProgressProvider>
       </MemoryRouter>
     );
 

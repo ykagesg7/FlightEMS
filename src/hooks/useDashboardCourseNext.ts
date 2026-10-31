@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { filterReleasedArticleContents } from '../constants/articleHubCategories';
+import { useProgress } from '../contexts/ProgressContext';
 import { useArticleProgress } from './useArticleProgress';
 import { useCohortProfile } from './useCohortProfile';
-import { useLearningProgress } from './useLearningProgress';
 import type { ArticleMeta } from '../types/articles';
 import { getArticleIndex } from '../utils/articlesIndex';
 import {
@@ -20,10 +20,10 @@ export interface UseDashboardCourseNextResult {
   metasLoading: boolean;
 }
 
-/** ログイン HOME の学科コース「続き」行（レッスンバナー）用。 */
+/** ログイン HOME の学科コース「続き」行（レッスンバナー）用（ProgressProvider 配下）。 */
 export function useDashboardCourseNext(): UseDashboardCourseNextResult {
   const { profile } = useCohortProfile();
-  const { learningContents } = useLearningProgress();
+  const { learningContents } = useProgress();
   const { getArticleProgress } = useArticleProgress();
   const [metas, setMetas] = useState<Record<string, ArticleMeta>>({});
   const [metasLoading, setMetasLoading] = useState(true);
