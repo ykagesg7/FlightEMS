@@ -11,14 +11,14 @@ test.describe('Planning leftover navigation', () => {
       timeout: 60_000,
     });
 
-    await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'HOME', exact: true }).click();
+    await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'ホーム', exact: true }).click();
     await expect(page).toHaveURL('/');
     await expect(page.getByRole('link', { name: 'HOMEへ戻る' })).toHaveCount(0);
     await expect(page.locator('.leaflet-container')).toHaveCount(0);
 
     await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'PLANNING' }).click();
     await expect(page).toHaveURL(/\/planning$/);
-    await page.getByRole('link', { name: 'LOGIN', exact: true }).click();
+    await page.getByRole('link', { name: 'ログイン', exact: true }).click();
     await expect(page).toHaveURL(/\/auth$/);
     await expect(page.getByRole('link', { name: 'HOMEへ戻る' })).toHaveCount(0);
     await expect(page.locator('.leaflet-container')).toHaveCount(0);
