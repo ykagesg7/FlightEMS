@@ -35,3 +35,18 @@ export async function getGuestHomeLatestItems(
       href: buildArticleCanonicalPath(entry.meta, entry.filename),
     }));
 }
+
+const DASHBOARD_LATEST_NEWS_LIMIT = 3;
+
+/** ログイン HOME「最新情報」: コース続きと重複しないよう除外して先頭 N 件。 */
+export function selectDashboardLatestNewsItems(
+  items: GuestHomeLatestItem[],
+  options?: { excludeContentId?: string | null; limit?: number },
+): GuestHomeLatestItem[] {
+  const limit = options?.limit ?? DASHBOARD_LATEST_NEWS_LIMIT;
+  const exclude = options?.excludeContentId?.trim();
+  const filtered = exclude
+    ? items.filter((item) => item.id !== exclude)
+    : items;
+  return filtered.slice(0, limit);
+}

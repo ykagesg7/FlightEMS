@@ -1,3 +1,4 @@
+import { isAuthCallbackPending } from './authCallbackPending';
 import supabase from '../utils/supabase';
 import { clearLocalAuthSession } from './clearLocalAuthSession';
 import { useAuthStore } from '../stores/authStore';
@@ -32,7 +33,9 @@ export function initAuthListener(): void {
     }
 
     if (event === 'TOKEN_REFRESHED' && !session) {
-      void clearLocalAuthSession();
+      if (!isAuthCallbackPending()) {
+        void clearLocalAuthSession();
+      }
       store.setInitialized(true);
       store.setLoading(false);
       return;

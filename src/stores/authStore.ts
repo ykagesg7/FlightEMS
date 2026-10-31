@@ -6,7 +6,9 @@ import { clearLocalAuthSession } from '../auth/clearLocalAuthSession'
 import { purgeInvalidAuthStorage, readStoredRefreshToken } from '../auth/readStoredRefreshToken'
 import { rememberLastAuthMethod } from '../auth/lastAuthMethod'
 import { clearPasswordRecoveryPending } from '../auth/passwordRecovery'
+import { isAuthCallbackPending } from '../auth/authCallbackPending'
 import { deriveOAuthUsername } from '../auth/deriveOAuthUsername'
+import { syncLearnerProfileAfterSignIn } from '../auth/profileSetup'
 import { importOAuthAvatarIfAvailable } from '../utils/importOAuthAvatar'
 import { Database } from '../types/database.types'
 import supabase from '../utils/supabase'
@@ -192,9 +194,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       ensureProfileAfterOAuth: async (user) => {
-        if (get().profile?.id !== user.id) {
-          await get().fetchProfile(user.id);
-        }
+        await syncLearnerProfileAfterSignIn(user.id);
 
         if (!get().profile) {
           const username = deriveOAuthUsername(user);
@@ -203,7 +203,7 @@ export const useAuthStore = create<AuthState>()(
           if (error) {
             return;
           }
-          await get().fetchProfile(user.id);
+          await syncLearnerProfileAfterSignIn(user.id);
         }
 
         const profile = get().profile;
@@ -271,26 +271,29 @@ export const useAuthStore = create<AuthState>()(
           set({ loading: true });
           purgeInvalidAuthStorage();
 
-          if (!readStoredRefreshToken()) {
-            await clearLocalAuthSession();
+          if (isAuthCallbackPending()) {
             set({ loading: false, initialized: true });
             return;
           }
 
           const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
           if (sessionError || !sessionData.session) {
-            await clearLocalAuthSession();
+            if (!readStoredRefreshToken()) {
+              await clearLocalAuthSession();
+            }
             set({ loading: false, initialized: true });
             return;
           }
           const user = sessionData.session.user ?? null;
           set({ session: sessionData.session, user });
           if (user) {
-            await get().fetchProfile(user.id);
+            await syncLearnerProfileAfterSignIn(user.id);
           }
           set({ loading: false, initialized: true });
         } catch (err) {
-          await clearLocalAuthSession();
+          if (!isAuthCallbackPending()) {
+            await clearLocalAuthSession();
+          }
           set({ loading: false, initialized: true });
           console.error('セッション更新処理中に不明なエラーが発生しました:', err);
         }
@@ -444,9 +447,9 @@ export const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => sessionStorage),
       // session は Supabase 側（localStorage の GoTrue ストレージ）が正本。
       // ここに複製すると refreshSession 前の古いトークンで描画してしまう。
+      // profile は sessionStorage に載せない（rehydrate が fetch 後の正しい行を古い snapshot で上書きするため）
       partialize: (state) => ({
         user: state.user,
-        profile: state.profile
       }),
     }
   )

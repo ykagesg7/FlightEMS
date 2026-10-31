@@ -24,6 +24,7 @@ vi.mock('@/auth/profileSetup', async (importOriginal) => {
   return {
     ...actual,
     completeWelcomeSetup: vi.fn().mockResolvedValue({ error: null }),
+    syncLearnerProfileAfterSignIn: vi.fn().mockResolvedValue(null),
   };
 });
 vi.mock('@/utils/cohortApi', () => ({

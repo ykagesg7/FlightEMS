@@ -1,58 +1,21 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { filterReleasedArticleContents } from '../../../constants/articleHubCategories';
-import { useArticleProgress } from '../../../hooks/useArticleProgress';
-import { useCohortProfile } from '../../../hooks/useCohortProfile';
-import { useLearningProgress } from '../../../hooks/useLearningProgress';
-import type { ArticleMeta } from '../../../types/articles';
-import { getArticleIndex } from '../../../utils/articlesIndex';
+import type { UseDashboardCourseNextResult } from '../../../hooks/useDashboardCourseNext';
 import {
-  findNextCourseArticle,
   formatCoursePositionLine,
-  isPrimaryCourseComplete,
-  resolvePrimaryCourseId,
 } from '../../../utils/dashboardCourse';
 import { Card, CardContent, Typography } from '../../../components/ui';
 
 interface DashboardCourseSectionProps {
   forceFallback?: boolean;
+  courseState: UseDashboardCourseNextResult;
 }
 
 export const DashboardCourseSection: React.FC<DashboardCourseSectionProps> = ({
   forceFallback = false,
+  courseState,
 }) => {
-  const { profile } = useCohortProfile();
-  const { learningContents } = useLearningProgress();
-  const { getArticleProgress } = useArticleProgress();
-  const [metas, setMetas] = useState<Record<string, ArticleMeta>>({});
-  const [metasLoading, setMetasLoading] = useState(true);
-
-  useEffect(() => {
-    let mounted = true;
-    getArticleIndex()
-      .then((index) => {
-        if (!mounted) return;
-        const map: Record<string, ArticleMeta> = {};
-        index.forEach((entry) => {
-          map[entry.filename] = entry.meta;
-        });
-        setMetas(map);
-      })
-      .finally(() => {
-        if (mounted) setMetasLoading(false);
-      });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  const courseId = resolvePrimaryCourseId(profile);
-  const courseDef = useMemo(() => {
-    const contents = filterReleasedArticleContents(learningContents, metas);
-    const next = findNextCourseArticle(courseId, contents, metas, getArticleProgress);
-    const complete = isPrimaryCourseComplete(courseId, contents, metas, getArticleProgress);
-    return { contents, next, complete };
-  }, [courseId, learningContents, metas, getArticleProgress]);
+  const { courseId, next, complete, metasLoading } = courseState;
 
   if (metasLoading) {
     return (
@@ -60,7 +23,6 @@ export const DashboardCourseSection: React.FC<DashboardCourseSectionProps> = ({
     );
   }
 
-  const { next, complete } = courseDef;
   const showFallback = forceFallback || (!next && !complete);
   const courseLabel = courseId === 'cpl' ? 'CPL 学科コース' : 'PPL 学科コース';
 

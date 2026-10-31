@@ -11,6 +11,14 @@ vi.mock('@/utils/dashboard', () => ({
   fetchDashboardMetrics: vi.fn(),
 }));
 
+vi.mock('@/hooks/useDashboardCourseNext', () => ({
+  useDashboardCourseNext: vi.fn(),
+}));
+
+vi.mock('@/pages/dashboard/components/LoggedInHomeLatestNews', () => ({
+  LoggedInHomeLatestNews: () => null,
+}));
+
 vi.mock('@/pages/dashboard/components/DashboardCourseSection', () => ({
   DashboardCourseSection: () => <div data-testid="dashboard-course-section" />,
 }));
@@ -33,10 +41,12 @@ vi.mock('@/components/learning/InAppNotificationBell', () => ({
 
 import { useAuthStore } from '@/stores/authStore';
 import { fetchDashboardMetrics } from '@/utils/dashboard';
+import { useDashboardCourseNext } from '@/hooks/useDashboardCourseNext';
 import HomePage from '@/pages/dashboard/HomePage';
 
 const mockUseAuthStore = vi.mocked(useAuthStore);
 const mockFetchDashboardMetrics = vi.mocked(fetchDashboardMetrics);
+const mockUseDashboardCourseNext = vi.mocked(useDashboardCourseNext);
 
 const freshMetrics = (): DashboardMetrics => ({
   overallProgressPct: 0,
@@ -56,6 +66,12 @@ describe('HomePage logged-in first-step CTA', () => {
       profile: { xp_points: 0 },
     } as never);
     mockFetchDashboardMetrics.mockResolvedValue(freshMetrics());
+    mockUseDashboardCourseNext.mockReturnValue({
+      courseId: 'ppl',
+      next: null,
+      complete: false,
+      metasLoading: false,
+    });
   });
 
   it('shows first-step CTA for users with no learning progress', async () => {
