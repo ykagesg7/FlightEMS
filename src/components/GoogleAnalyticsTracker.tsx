@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { sendGa4PageView } from '../lib/googleAnalytics';
+import { getGa4MeasurementId, sendGa4PageView } from '../lib/googleAnalytics';
 
-const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ?? '';
+const measurementId = getGa4MeasurementId();
 
 /**
  * RouterProvider 配下でマウントすること。ルート（pathname + search）が変わるたびに GA4 に page_view を送る。

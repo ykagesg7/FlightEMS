@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import React from 'react';
 import { renderHook, waitFor, act } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 interface MockResponse {
   data: unknown;
@@ -40,6 +42,9 @@ vi.mock('../../utils/supabase', () => ({
   default: {
     from: (tableName: string) => createMockChain(tableName),
   },
+  createPublicSupabaseClient: () => ({
+    from: (tableName: string) => createMockChain(tableName),
+  }),
 }));
 
 vi.mock('../../utils/streak', () => ({
@@ -54,6 +59,13 @@ import { useLearningProgress } from '../../hooks/useLearningProgress';
 import { useAuth } from '../../hooks/useAuth';
 
 const mockUseAuth = vi.mocked(useAuth);
+
+function renderProgressHook(initialPath = '/') {
+  return renderHook(() => useLearningProgress(), {
+    wrapper: ({ children }) =>
+      React.createElement(MemoryRouter, { initialEntries: [initialPath] }, children),
+  });
+}
 
 const sampleContent = {
   id: 'c1',
@@ -96,7 +108,7 @@ describe('useLearningProgress', () => {
   });
 
   it('loads published learning contents and empty progress when user has no rows', async () => {
-    const { result } = renderHook(() => useLearningProgress());
+    const { result } = renderProgressHook();
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -114,7 +126,7 @@ describe('useLearningProgress', () => {
       error: null,
     };
 
-    const { result } = renderHook(() => useLearningProgress());
+    const { result } = renderProgressHook();
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -135,19 +147,32 @@ describe('useLearningProgress', () => {
   it('clears progress map when user is not logged in', async () => {
     mockUseAuth.mockReturnValue({ user: null } as ReturnType<typeof useAuth>);
 
-    const { result } = renderHook(() => useLearningProgress());
+    const { result } = renderProgressHook('/');
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
     expect(result.current.userProgress).toEqual({});
+    expect(result.current.learningContents).toEqual([]);
+  });
+
+  it('loads guest catalog off home when navigating articles routes', async () => {
+    mockUseAuth.mockReturnValue({ user: null } as ReturnType<typeof useAuth>);
+
+    const { result } = renderProgressHook('/articles');
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.learningContents).toHaveLength(1);
   });
 
   it('sets error when learning_contents query fails', async () => {
     tableResponses.learning_contents = { data: null, error: { message: 'fail' } };
 
-    const { result } = renderHook(() => useLearningProgress());
+    const { result } = renderProgressHook();
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -158,7 +183,7 @@ describe('useLearningProgress', () => {
   });
 
   it('returns helpers for categories', async () => {
-    const { result } = renderHook(() => useLearningProgress());
+    const { result } = renderProgressHook();
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -182,7 +207,7 @@ describe('useLearningProgress', () => {
       error: null,
     };
 
-    const { result } = renderHook(() => useLearningProgress());
+    const { result } = renderProgressHook();
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -200,7 +225,7 @@ describe('useLearningProgress', () => {
   it('resetProgress removes row from local state', async () => {
     tableResponses.learning_progress = { data: [sampleProgressRow], error: null };
 
-    const { result } = renderHook(() => useLearningProgress());
+    const { result } = renderProgressHook();
 
     await waitFor(() => {
       expect(result.current.userProgress.c1).toBeDefined();
@@ -223,7 +248,7 @@ describe('useLearningProgress', () => {
       value: 500,
     });
 
-    const { result } = renderHook(() => useLearningProgress());
+    const { result } = renderProgressHook();
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -250,7 +275,7 @@ describe('useLearningProgress', () => {
   it('updateProgress is no-op when not authenticated', async () => {
     mockUseAuth.mockReturnValue({ user: null } as ReturnType<typeof useAuth>);
 
-    const { result } = renderHook(() => useLearningProgress());
+    const { result } = renderProgressHook();
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
