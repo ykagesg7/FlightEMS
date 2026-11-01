@@ -16,6 +16,13 @@ function weekdayJstFromPublishDate(publishDate: string): number {
   return getJstWeekday(new Date(Date.UTC(y, m - 1, d, 3, 0, 0)));
 }
 
+function weekdayJstFromScheduledArticle(article: {
+  publishDate: string;
+  announceDate?: string;
+}): number {
+  return weekdayJstFromPublishDate(getArticleAnnounceDate(article));
+}
+
 function mentalityArticleIds(): Set<string> {
   return new Set(
     collectArticleMetas()
@@ -48,7 +55,7 @@ describe('api/lib/articlePublishSchedule', () => {
       const digest = WEEKLY_ARTICLE_DIGESTS[weekKey];
       expect(digest, weekKey).toBeDefined();
       for (const article of digest.articles) {
-        const wd = weekdayJstFromPublishDate(article.publishDate);
+        const wd = weekdayJstFromScheduledArticle(article);
         if (wd === 0) {
           expect(mentality.has(article.id)).toBe(true);
         } else {
@@ -68,10 +75,22 @@ describe('api/lib/articlePublishSchedule', () => {
       expect(article.announceDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(getArticleAnnounceDate(article)).toBe(article.announceDate);
     }
-    // Existing drip reservations stay on the sync list
-    expect(syncIds.has('L1-Q4-1_MichizaneBriefing')).toBe(true);
-    expect(syncIds.has('L1-Q3-1_PathToPilot')).toBe(true);
-    expect(syncIds.has('1.1.7_SharpenTheSaw')).toBe(true);
+    // Existing drip reservations stay on the sync list (W41–W44 mentality + CP/FN only)
+    expect(syncIds.has('1.1.5_SeekFirstToUnderstand')).toBe(true);
+    expect(syncIds.has('FMT-1-5_LeadChange')).toBe(true);
+    // W45–W48 immediate publish: excluded from publish-sync
+    for (const id of [
+      'FMT-1-7_TrailFamily',
+      'FMT-1-8_Rejoin',
+      '1.1.7_SharpenTheSaw',
+      'FMT-1-9_TacticalLAB',
+      'FMT-1-10_LostWingman',
+      'L1-Q4-1_MichizaneBriefing',
+      'L1-Q3-1_PathToPilot',
+      'IF-1-2_PartialPanel',
+    ]) {
+      expect(syncIds.has(id)).toBe(false);
+    }
   });
 
   it('keeps W47–W50 Wednesday refeatures on announceDate (not drip publishDate)', () => {
@@ -112,13 +131,46 @@ describe('api/lib/articlePublishSchedule', () => {
       false,
     );
 
-    // IF-1-2 slot reservation: Friday announce (W48), no drip sync (stub until body ready)
+    // IF-1-2 immediate publish: Friday mail announce (W48), no drip sync
     const if12 = listScheduledArticles().find((a) => a.id === 'IF-1-2_PartialPanel');
     expect(if12).toBeDefined();
     expect(if12?.syncPublish).toBe(false);
     expect(if12?.announceDate).toBe('2026-11-27');
-    expect(if12?.publishDate).toBe('2026-11-27');
+    expect(if12?.publishDate).toBe('2026-11-01');
     expect(weekdayJstFromPublishDate(if12!.announceDate!)).toBe(5);
     expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-2_PartialPanel')).toBe(false);
+  });
+
+  it('keeps Sunday digest announce dates for W46–W49 after W45–W48 immediate publish', () => {
+    const expectedByWeek: Record<string, Record<string, string>> = {
+      '2026-W46': {
+        '1.1.7_SharpenTheSaw': '2026-11-08',
+        'FMT-1-9_TacticalLAB': '2026-11-11',
+        'FMT-1-10_LostWingman': '2026-11-13',
+      },
+      '2026-W47': {
+        'L1-Q4-1_MichizaneBriefing': '2026-11-15',
+        'PPL-5-3-2_MedicalCertificateBasics': '2026-11-18',
+        'IF-1-1_TrustInstruments': '2026-11-20',
+      },
+      '2026-W48': {
+        'L1-Q3-1_PathToPilot': '2026-11-22',
+        'PPL-1-1-7_VnDiagram': '2026-11-25',
+        'IF-1-2_PartialPanel': '2026-11-27',
+      },
+      '2026-W49': {
+        'L1-Q4-2_AviatorMindset': '2026-11-29',
+        'PPL-2-3-2_MetarTafAndWeatherReports': '2026-12-02',
+      },
+    };
+    for (const [week, wantById] of Object.entries(expectedByWeek)) {
+      const digest = WEEKLY_ARTICLE_DIGESTS[week];
+      expect(digest, week).toBeDefined();
+      for (const [id, announce] of Object.entries(wantById)) {
+        const row = digest!.articles.find((a) => a.id === id);
+        expect(row, `${week} ${id}`).toBeDefined();
+        expect(getArticleAnnounceDate(row!)).toBe(announce);
+      }
+    }
   });
 });
