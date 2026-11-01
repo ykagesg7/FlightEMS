@@ -243,6 +243,11 @@ export function sanitizeMdxBodyForDevCodes(
   );
 
   text = text.replace(
+    new RegExp(`\\*\\*「\\s*${codeAlt}\\s*[：:]\\s*([^」]+?)」\\*\\*`, 'g'),
+    (_full, inlineTitle: string) => `**「${inlineTitle.trim()}」**`,
+  );
+
+  text = text.replace(
     /「\s*(L1-Q\d-\d|L2-Q\d-\d|PPL-\d-\d-\d|CP-\d-\d|FMT-\d-\d|IF-\d-\d)\s*[：:]\s*([^」]+?)」/g,
     (full, code: string, inlineTitle: string) => {
       const res = resolveDevCode(code, catalog);

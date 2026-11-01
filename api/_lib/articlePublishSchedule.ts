@@ -6,7 +6,7 @@
  * Cadence from **2026-W41**: **Sun mentality** (when scheduled) + **Wed·Fri CP/FN**.
  * Cadence from **2026-W47** (上様裁定 2026-10-30): **Sun 心構え** + **Wed 学科再掲** + **Fri 実技**.
  *   再掲・即公開案内は `syncPublish: false` + `announceDate`（メール曜日）。publish-sync の対象外。
- *   既存ドリップ（W46 まで・#139 の L1-Q4-1/L1-Q3-1）は従来どおり `publishDate` のみ。
+ *   W45–W48 完成済み8本（上様承認 2026-11-01）は即公開（publishedAt＝2026-11-01・syncPublish:false・announceDate＝旧ドリップ日）。
  *   即公開の新記事は publishedAt＝マージ日 + syncPublish:false + announceDate（メール曜日）。L1-Q4-2=W49。
  *   未執筆（IF/NAV/NIGHT/IFF）・12/25・1/1 は未決のまま docs。
  * Sunday mentality slots need Editorial approval; omit from schedule until approved.
@@ -468,14 +468,18 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
       {
         id: 'FMT-1-7_TrailFamily',
-        publishDate: '2026-11-04',
+        publishDate: '2026-11-01',
+        announceDate: '2026-11-04',
+        syncPublish: false,
         title: '第7話：後ろなら全部同じはブルシット ～Trail族～',
         slug: '/articles/fmt-1-7-trail-family',
         hook: 'Close TrailとETは別箱。Fluid≠FM。',
       },
       {
         id: 'FMT-1-8_Rejoin',
-        publishDate: '2026-11-06',
+        publishDate: '2026-11-01',
+        announceDate: '2026-11-06',
+        syncPublish: false,
         title: '第8話：合流ば救うな ～Pitchout / Rejoin / Overshoot / Breakout～',
         slug: '/articles/fmt-1-8-rejoin',
         hook: '合流を救うな。Overshootは早く。Breakoutは4条件。',
@@ -490,21 +494,27 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     articles: [
       {
         id: '1.1.7_SharpenTheSaw',
-        publishDate: '2026-11-08',
+        publishDate: '2026-11-01',
+        announceDate: '2026-11-08',
+        syncPublish: false,
         title: '【７つの習慣】その７、道真公と学ぶ「刃を研ぐ」',
         slug: '/articles/sharpen-the-saw',
         hook: '切れぬ刃で木を伐るな。四つの刃を毎日少しずつ研げ。',
       },
       {
         id: 'FMT-1-9_TacticalLAB',
-        publishDate: '2026-11-11',
+        publishDate: '2026-11-01',
+        announceDate: '2026-11-11',
+        syncPublish: false,
         title: '第9話：見せ場じゃない ～LAB / Tactical Turns～',
         slug: '/articles/fmt-1-9-tactical-lab',
         hook: 'LABは4,000–6,000 ft。合図なしはdelayed 90。',
       },
       {
         id: 'FMT-1-10_LostWingman',
-        publishDate: '2026-11-13',
+        publishDate: '2026-11-01',
+        announceDate: '2026-11-13',
+        syncPublish: false,
         title: '第10話：探すな、離れろ ～Lost Wingman / KIO～',
         slug: '/articles/fmt-1-10-lost-wingman',
         hook: '見失ったら探すな。wings-levelはinformと15°×15 s。',
@@ -522,7 +532,9 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     articles: [
       {
         id: 'L1-Q4-1_MichizaneBriefing',
-        publishDate: '2026-11-15',
+        publishDate: '2026-11-01',
+        announceDate: '2026-11-15',
+        syncPublish: false,
         title: '道真公のブリーフィング',
         slug: '/articles/l1-q4-1-michizane-briefing',
         hook: '4象限と螺旋。空を学ぶ前の最初のブリーフィング。',
@@ -557,7 +569,9 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     articles: [
       {
         id: 'L1-Q3-1_PathToPilot',
-        publishDate: '2026-11-22',
+        publishDate: '2026-11-01',
+        announceDate: '2026-11-22',
+        syncPublish: false,
         title: 'パイロットへの道',
         slug: '/articles/l1-q3-1-path-to-pilot',
         hook: 'ルートと技能証明。計器飛行証明までの航路図。',
@@ -573,7 +587,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
       {
         id: 'IF-1-2_PartialPanel',
-        publishDate: '2026-11-27',
+        publishDate: '2026-11-01',
         announceDate: '2026-11-27',
         syncPublish: false,
         title:

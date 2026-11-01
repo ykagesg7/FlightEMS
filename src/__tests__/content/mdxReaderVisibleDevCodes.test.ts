@@ -45,6 +45,16 @@ describe('MDX reader-visible dev codes', () => {
     expect(unresolved.size).toBe(0);
   });
 
+  it('sanitizer strips dev code prefix inside bold Japanese quotes', () => {
+    const catalog = buildArticleCatalog(collectArticleMetas());
+    const unresolved = new Set<string>();
+    const input =
+      '次回 **「IF-1-3：雲中・IMCでの scan（スキャン）維持」** へ。';
+    const out = sanitizeMdxBodyForDevCodes(input, catalog, unresolved);
+    expect(out).not.toMatch(/\bIF-\d-\d\b/);
+    expect(out).toContain('**「雲中・IMCでの scan（スキャン）維持」**');
+  });
+
   it('has no reader-visible dev codes in src/content MDX bodies', () => {
     const files = loadMdxContentFiles();
     const violations = findDevCodesInMdxFiles(files);
