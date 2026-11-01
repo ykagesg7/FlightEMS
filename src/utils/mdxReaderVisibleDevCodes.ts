@@ -243,6 +243,19 @@ export function sanitizeMdxBodyForDevCodes(
   );
 
   text = text.replace(
+    new RegExp(`\\*\\*「\\s*${codeAlt}\\s*[：:]\\s*([^」]+?)」\\*\\*`, 'g'),
+    (_full, code: string, inlineTitle: string) => {
+      const res = resolveDevCode(code, catalog);
+      const title = res?.title ?? inlineTitle.trim();
+      if (!res && !inlineTitle.trim()) {
+        unresolved.add(code);
+        return _full;
+      }
+      return `**「${title}」**`;
+    },
+  );
+
+  text = text.replace(
     /「\s*(L1-Q\d-\d|L2-Q\d-\d|PPL-\d-\d-\d|CP-\d-\d|FMT-\d-\d|IF-\d-\d)\s*[：:]\s*([^」]+?)」/g,
     (full, code: string, inlineTitle: string) => {
       const res = resolveDevCode(code, catalog);
@@ -323,25 +336,18 @@ export function extractReaderVisibleText(source: string): string {
   return text;
 }
 
-export function findReaderVisibleDevCodes(
-  source: string,
-  catalog: ArticleCatalog,
-): string[] {
-  const { body } = splitMdxMetaAndBody(source);
-  const unresolved = new Set<string>();
-  const sanitizedBody = sanitizeMdxBodyForDevCodes(body, catalog, unresolved);
-  const text = extractReaderVisibleText(sanitizedBody);
+export function findReaderVisibleDevCodes(source: string): string[] {
+  const text = extractReaderVisibleText(source);
   const matches = text.match(DEV_CODE_PATTERN);
   return matches ? [...matches] : [];
 }
 
 export function findDevCodesInMdxFiles(
   files: ReadonlyArray<{ path: string; source: string }>,
-  catalog: ArticleCatalog,
 ): Array<{ path: string; codes: string[] }> {
   const violations: Array<{ path: string; codes: string[] }> = [];
   for (const file of files) {
-    const codes = [...new Set(findReaderVisibleDevCodes(file.source, catalog))];
+    const codes = [...new Set(findReaderVisibleDevCodes(file.source))];
     if (codes.length > 0) {
       violations.push({ path: file.path, codes });
     }
