@@ -551,9 +551,9 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W48',
     seriesTitle: '螺旋L1＋学科再掲＋計器',
     intro:
-      '来週はパイロットへの道（日）。水は V-n線図（G）の再掲。金は部分パネル入口（IF-1-2・枠予約／本文執筆中）。',
+      '来週はパイロットへの道（日）。水は V-n線図（G）の再掲。金は部分パネルと異常姿勢の入口（IF-1-2）。',
     checklistNote:
-      'IF-1-2 は枠予約（stub MDX・learning_contents 未投入）。メールは announceDate=2026-11-27。syncPublish:false。本文完成後に差し替え。',
+      'IF-1-2 は MDX 完成・learning_contents SQL 同梱（本番は承認後適用）。メール announceDate=2026-11-27。syncPublish:false。',
     articles: [
       {
         id: 'L1-Q3-1_PathToPilot',
@@ -576,9 +576,10 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         publishDate: '2026-11-27',
         announceDate: '2026-11-27',
         syncPublish: false,
-        title: '【操縦】計器飛行第2話：部分パネル／異常姿勢の入口（執筆中）',
+        title:
+          '【操縦】計器飛行第2話：欠けても型を守れ ～部分パネルと異常姿勢の入口～',
         slug: '/articles/if-1-2-partial-panel',
-        hook: '部分パネルと異常姿勢の入口。本文は執筆中の枠予約。',
+        hook: '主計器が欠けても走査の型を崩すな。崩れた姿勢は感覚を捨て、計器で立て直せ。',
       },
     ],
   },
