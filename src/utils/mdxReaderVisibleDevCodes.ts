@@ -244,15 +244,7 @@ export function sanitizeMdxBodyForDevCodes(
 
   text = text.replace(
     new RegExp(`\\*\\*「\\s*${codeAlt}\\s*[：:]\\s*([^」]+?)」\\*\\*`, 'g'),
-    (_full, code: string, inlineTitle: string) => {
-      const res = resolveDevCode(code, catalog);
-      const title = res?.title ?? inlineTitle.trim();
-      if (!res && !inlineTitle.trim()) {
-        unresolved.add(code);
-        return _full;
-      }
-      return `**「${title}」**`;
-    },
+    (_full, inlineTitle: string) => `**「${inlineTitle.trim()}」**`,
   );
 
   text = text.replace(
