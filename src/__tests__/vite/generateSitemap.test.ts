@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { isWithdrawnArticle } from '../../constants/withdrawnArticleIds';
+import { collectArticleMetas } from '../../../vite/articlesMeta';
 import {
   INDEXABLE_STATIC_PATHS,
   renderRobotsTxt,
@@ -23,5 +25,14 @@ describe('generateSitemap', () => {
   it('includes Sitemap directive in robots.txt', () => {
     const robots = renderRobotsTxt(origin);
     expect(robots).toContain('Sitemap: https://flight-lms.vercel.app/api/sitemap.xml');
+  });
+
+  it('does not emit prerender paths for withdrawn MDX filenames', () => {
+    const collected = collectArticleMetas();
+    const wouldPrerender = collected.filter(
+      (entry) => !isWithdrawnArticle(entry.filename) && Boolean(entry.meta.publishedAt),
+    );
+    expect(wouldPrerender.some((e) => isWithdrawnArticle(e.filename))).toBe(false);
+    expect(wouldPrerender.length).toBeGreaterThan(0);
   });
 });
