@@ -3,6 +3,7 @@ import {
   getIsoWeekJst,
   getPreviousIsoWeekJst,
   getPreviousIsoWeekKey,
+  resolveArticleDigestRemindWeek,
 } from '../../../api/_lib/cohortWeek';
 
 describe('api/lib/cohortWeek', () => {
@@ -18,5 +19,10 @@ describe('api/lib/cohortWeek', () => {
   it('returns previous digest key (W41 → W40; W01 → prior year)', () => {
     expect(getPreviousIsoWeekKey('2026-W41')).toBe('2026-W40');
     expect(getPreviousIsoWeekKey('2026-W01')).toBe('2025-W52');
+  });
+
+  it('resolveArticleDigestRemindWeek is prior digest ISO week (W45 → W44)', () => {
+    expect(resolveArticleDigestRemindWeek('2026-W45')).toBe('2026-W44');
+    expect(resolveArticleDigestRemindWeek('2026-W46')).toBe('2026-W45');
   });
 });
