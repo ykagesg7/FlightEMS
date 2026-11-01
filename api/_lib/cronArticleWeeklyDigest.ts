@@ -1,11 +1,30 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getDigestForIsoWeek } from './articlePublishSchedule';
-import { getIsoWeekJst, getPreviousIsoWeekKey, resolveArticleDigestIsoWeek } from './cohortWeek';
+import {
+  getIsoWeekJst,
+  resolveArticleDigestIsoWeek,
+  resolveArticleDigestRemindWeek,
+} from './cohortWeek';
 import {
   dispatchWeeklyArticleDigestEmails,
   type WeeklyArticleDigestTiming,
 } from './notificationEmail';
 import { getServiceSupabase } from './supabaseService';
+
+export function resolveWeeklyArticleDigestPlan(
+  now: Date = new Date(),
+  forcedIsoWeek: string | null = null,
+): {
+  isoWeek: string;
+  remindWeek: string;
+  timing: WeeklyArticleDigestTiming;
+} {
+  const isoWeek = forcedIsoWeek ?? resolveArticleDigestIsoWeek(now);
+  const remindWeek = resolveArticleDigestRemindWeek(isoWeek);
+  const timing: WeeklyArticleDigestTiming =
+    isoWeek === getIsoWeekJst(now) ? 'week_start' : 'sunday_preview';
+  return { isoWeek, remindWeek, timing };
+}
 
 /**
  * Weekly article digest (X-style).
@@ -29,7 +48,7 @@ export async function handleArticleWeeklyDigest(req: VercelRequest, res: VercelR
       typeof req.query.isoWeek === 'string' && /^\d{4}-W\d{2}$/.test(req.query.isoWeek)
         ? req.query.isoWeek
         : null;
-    const isoWeek = forced ?? resolveArticleDigestIsoWeek(now);
+    const { isoWeek, remindWeek, timing } = resolveWeeklyArticleDigestPlan(now, forced);
     const digest = getDigestForIsoWeek(isoWeek);
 
     if (!digest) {
@@ -40,10 +59,6 @@ export async function handleArticleWeeklyDigest(req: VercelRequest, res: VercelR
       });
     }
 
-    const timing: WeeklyArticleDigestTiming =
-      isoWeek === getIsoWeekJst(now) ? 'week_start' : 'sunday_preview';
-
-    const remindWeek = getPreviousIsoWeekKey(isoWeek);
     const previousDigest = getDigestForIsoWeek(remindWeek);
 
     if (!process.env.BREVO_API_KEY) {

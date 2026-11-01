@@ -43,6 +43,15 @@ export function getPreviousIsoWeekKey(isoWeek: string): string {
   return getIsoWeekJst(new Date(anchor.getTime() - 7 * 86400000));
 }
 
+/**
+ * “今週の振り返り” week for a digest target ISO week.
+ * Derived from the digest bundle key, not from first article publishDate
+ * (Sunday mentality on digest week boundary would skew −7 days to W−2).
+ */
+export function resolveArticleDigestRemindWeek(digestIsoWeek: string): string {
+  return getPreviousIsoWeekKey(digestIsoWeek);
+}
+
 /** Next ISO week in JST calendar (Sunday evening digest → coming Mon–Fri week). */
 export function getNextIsoWeekJst(date: Date = new Date()): string {
   return getIsoWeekJst(new Date(date.getTime() + 7 * 86400000));
