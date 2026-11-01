@@ -39,7 +39,7 @@ const unresolved = new Map<string, Set<string>>();
 
 for (const filePath of paths) {
   const source = readFileSync(filePath, 'utf8');
-  const beforeCodes = findReaderVisibleDevCodes(source);
+  const beforeCodes = findReaderVisibleDevCodes(source, catalog);
   if (beforeCodes.length === 0) continue;
 
   const { body: next, unresolvedCodes } = sanitizeMdxSource(source, catalog);
@@ -50,7 +50,7 @@ for (const filePath of paths) {
     unresolved.get(code)?.add(filePath);
   }
 
-  const afterCodes = findReaderVisibleDevCodes(next);
+  const afterCodes = findReaderVisibleDevCodes(next, catalog);
   writeFileSync(filePath, next, 'utf8');
   filesChanged += 1;
   linkParenStripped += beforeCodes.length;

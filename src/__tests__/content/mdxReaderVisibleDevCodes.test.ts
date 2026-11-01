@@ -47,7 +47,8 @@ describe('MDX reader-visible dev codes', () => {
 
   it('has no reader-visible dev codes in src/content MDX bodies', () => {
     const files = loadMdxContentFiles();
-    const violations = findDevCodesInMdxFiles(files);
+    const catalog = buildArticleCatalog(collectArticleMetas());
+    const violations = findDevCodesInMdxFiles(files, catalog);
     expect(violations).toEqual([]);
   });
 });

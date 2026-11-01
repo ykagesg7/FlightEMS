@@ -323,18 +323,25 @@ export function extractReaderVisibleText(source: string): string {
   return text;
 }
 
-export function findReaderVisibleDevCodes(source: string): string[] {
-  const text = extractReaderVisibleText(source);
+export function findReaderVisibleDevCodes(
+  source: string,
+  catalog: ArticleCatalog,
+): string[] {
+  const { body } = splitMdxMetaAndBody(source);
+  const unresolved = new Set<string>();
+  const sanitizedBody = sanitizeMdxBodyForDevCodes(body, catalog, unresolved);
+  const text = extractReaderVisibleText(sanitizedBody);
   const matches = text.match(DEV_CODE_PATTERN);
   return matches ? [...matches] : [];
 }
 
 export function findDevCodesInMdxFiles(
   files: ReadonlyArray<{ path: string; source: string }>,
+  catalog: ArticleCatalog,
 ): Array<{ path: string; codes: string[] }> {
   const violations: Array<{ path: string; codes: string[] }> = [];
   for (const file of files) {
-    const codes = [...new Set(findReaderVisibleDevCodes(file.source))];
+    const codes = [...new Set(findReaderVisibleDevCodes(file.source, catalog))];
     if (codes.length > 0) {
       violations.push({ path: file.path, codes });
     }
