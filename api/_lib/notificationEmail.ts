@@ -5,6 +5,7 @@ import {
   type WeeklyArticleDigest,
 } from './articlePublishSchedule';
 import { getJstDateString } from './articlePublishGate';
+import { withNewsletterEmailUtm } from './newsletterLinkUtm';
 import { getServiceSupabase } from './supabaseService';
 
 export type CohortNotificationTemplateKey =
@@ -136,11 +137,13 @@ export function getWeeklyArticleDigestEmailContent(
   timing: WeeklyArticleDigestTiming = 'sunday_preview',
   sendDateJst: string = getJstDateString(),
 ): { subject: string; htmlContent: string } {
+  const track = (href: string) => withNewsletterEmailUtm(href, baseUrl, digest.isoWeek);
+
   const renderItems = (articles: WeeklyArticleDigest['articles']) =>
     articles
       .map((a) => {
         const day = digestArticleDayLabel(getArticleAnnounceDate(a), sendDateJst);
-        const href = `${baseUrl}${a.slug.startsWith('/') ? a.slug : `/${a.slug}`}`;
+        const href = track(`${baseUrl}${a.slug.startsWith('/') ? a.slug : `/${a.slug}`}`);
         return `<li style="margin-bottom:12px;">
         <strong>${day}</strong> <a href="${href}">${a.title}</a><br/>
         <span style="color:#444;">${a.hook}</span>
@@ -173,7 +176,7 @@ export function getWeeklyArticleDigestEmailContent(
     ? `
       <h2 style="font-size:16px;margin:24px 0 8px;">${digest.productNoteTitle ?? 'お知らせ'}</h2>
       <p style="color:#444;">${digest.productNote}</p>
-      <p><a href="${baseUrl}/planning">Planning を開く</a></p>`
+      <p><a href="${track(`${baseUrl}/planning`)}">Planning を開く</a></p>`
     : '';
 
   return {
@@ -187,7 +190,7 @@ export function getWeeklyArticleDigestEmailContent(
       <ul style="padding-left:18px;list-style:disc;">
         ${upcomingItems}
       </ul>
-      <p><a href="${baseUrl}/articles">Articles を開く</a></p>
+      <p><a href="${track(`${baseUrl}/articles`)}">Articles を開く</a></p>
       ${productAnnouncement}
       ${checklist}
       <hr style="border:none;border-top:1px solid #ddd;margin:24px 0;" />
