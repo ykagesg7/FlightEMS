@@ -168,12 +168,16 @@ describe('api/lib/notificationEmail', () => {
     expect(content.subject).toContain('来週の案内');
     expect(content.subject).toContain('2026-W32');
     expect(content.htmlContent).toContain('後始末までが仕事ばい。');
-    expect(content.htmlContent).toContain('https://example.test/articles/chores-are-the-job');
+    expect(content.htmlContent).toContain(
+      'https://example.test/articles/chores-are-the-job?utm_source=newsletter&utm_medium=email&utm_campaign=2026-W32',
+    );
     expect(content.htmlContent).toContain('今週の振り返り');
     expect(content.htmlContent).toContain('前回フック');
     expect(content.htmlContent).toContain('新着コンテンツ');
     expect(content.htmlContent).toContain('<strong>今すぐ</strong>');
     expect(content.htmlContent).toContain('週3枠。');
+    expect(content.htmlContent).toContain('https://example.test/profile');
+    expect(content.htmlContent).not.toMatch(/profile\?utm_source=/);
 
     const monday = getWeeklyArticleDigestEmailContent(
       digest,
@@ -205,7 +209,9 @@ describe('api/lib/notificationEmail', () => {
     expect(sundayPreview.htmlContent).toMatch(/<strong>水<\/strong>.*Cloverleaf/);
     expect(sundayPreview.htmlContent).toContain('Planning のお知らせ');
     expect(sundayPreview.htmlContent).toContain('3D ルートプレビュー');
-    expect(sundayPreview.htmlContent).toContain('https://example.test/planning');
+    expect(sundayPreview.htmlContent).toContain(
+      'https://example.test/planning?utm_source=newsletter&utm_medium=email&utm_campaign=2026-W41',
+    );
 
     const w42 = getDigestForIsoWeek('2026-W42');
     const w42Sunday = getWeeklyArticleDigestEmailContent(
