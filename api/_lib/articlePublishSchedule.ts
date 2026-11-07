@@ -630,7 +630,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         syncPublish: false,
         title: '【操縦】計器飛行第3話：雲中・IMC での scan 維持',
         slug: '/articles/if-1-3-imc-scan',
-        hook: '外景が消えた雲中、頼れるのは走査のリズムだけ。視線が止まると錯覚が忍び寄りうる。',
+        hook: '外景が消えた雲中、頼れるのは走査のリズムだけ。視線が止まると錯覚が忍び寄る。',
       },
     ],
   },
