@@ -146,7 +146,7 @@ describe('api/lib/articlePublishSchedule', () => {
     expect(if13).toBeDefined();
     expect(if13?.syncPublish).toBe(false);
     expect(if13?.announceDate).toBe('2026-12-04');
-    expect(if13?.publishDate).toBe('2026-11-07');
+    expect(if13?.publishDate).toBe('2026-11-08');
     expect(weekdayJstFromPublishDate(if13!.announceDate!)).toBe(5);
     expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-3_IMC_Scan')).toBe(false);
   });

@@ -625,7 +625,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
       {
         id: 'IF-1-3_IMC_Scan',
-        publishDate: '2026-11-07',
+        publishDate: '2026-11-08',
         announceDate: '2026-12-04',
         syncPublish: false,
         title: '【操縦】計器飛行第3話：雲中・IMC での scan 維持',

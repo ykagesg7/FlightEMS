@@ -1,4 +1,4 @@
--- Instrument-Flying IF-1-3_IMC_Scan（publishedAt 2026-11-07）。
+-- Instrument-Flying IF-1-3_IMC_Scan（publishedAt 2026-11-08）。
 -- 本番未適用。Approve 後に適用（この PR では DB を書かない）。
 -- syncPublish:false のため cron は is_published を触らない → is_published=true で投入。
 -- Sibling: 20261127_learning_contents_if_1_2_partial_panel.sql（order_index 702）
