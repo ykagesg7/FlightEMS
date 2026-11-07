@@ -599,11 +599,11 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W49': {
     isoWeek: '2026-W49',
-    seriesTitle: '螺旋L1＋学科再掲',
+    seriesTitle: '螺旋L1＋学科再掲＋計器',
     intro:
-      '来週はアビエーターの心構え（日・即公開案内）。水は METAR・TAF の再掲。金の IF-1-3 は未執筆。',
+      '来週はアビエーターの心構え（日・即公開案内）。水は METAR・TAF の再掲。金は雲中・IMC での scan 維持（IF-1-3）。',
     checklistNote:
-      'L1-Q4-2 は即公開（publishedAt＝マージ日）。メールは announceDate=2026-11-29。syncPublish:false。',
+      'IF-1-3 は MDX 完成・learning_contents SQL 同梱（本番は承認後適用）。メール announceDate=2026-12-04。syncPublish:false。',
     articles: [
       {
         id: 'L1-Q4-2_AviatorMindset',
@@ -622,6 +622,15 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         title: '【航空気象】METAR・TAF・気象通報の読み方：空港の「今」と「予報」のハック術',
         slug: '/articles/ppl-2-3-2-metar-taf-and-weather-reports',
         hook: 'METAR は現況、TAF は予報。暗号から空の景色を立体で読め。',
+      },
+      {
+        id: 'IF-1-3_IMC_Scan',
+        publishDate: '2026-11-07',
+        announceDate: '2026-12-04',
+        syncPublish: false,
+        title: '【操縦】計器飛行第3話：雲中・IMC での scan 維持',
+        slug: '/articles/if-1-3-imc-scan',
+        hook: '外景が消えた雲中、頼れるのは走査のリズムだけ。視線が止まると錯覚が忍び寄りうる。',
       },
     ],
   },
