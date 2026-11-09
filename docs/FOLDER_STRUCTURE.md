@@ -32,7 +32,7 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **目的**: Cursor IDE のルール・スキル・サブエージェント。**旧ルート `.cursorrules` は廃止**し、粒度の細かい **`.cursor/rules/*.mdc`** とルート [**AGENTS.md**](../AGENTS.md) に寄せる。
 - **内容**:
   - `rules/*.mdc`: **常時は `core-project` のみ**。他は glob または Agent Decide（例: `mdx-article-guide`, `docs-sync` ポインタ, `git-conventions` ポインタ）
-  - `skills/<name>/SKILL.md`: オンデマンド手順（`docs-sync`, `git-commit-en`, `weekly-telemetry-review`, 記事登録, フライトプラン棚卸し等）
+  - `skills/<name>/SKILL.md`: オンデマンド手順（`docs-sync`, `git-commit-en`, 記事登録, フライトプラン棚卸し等）
   - `agents/*.md`: 委譲用サブエージェント（`mdx-content`, `aviation-safety-review`, `deep-analysis`, `verifier`）
   - `hooks.json` + `hooks/*.mjs`: Agent シェル実行前の最小ガード（force-push to main 等）
 - **ルート**: [AGENTS.md](../AGENTS.md)（エージェント要約・コスト運用）、[DESIGN.md](../DESIGN.md)（UI トークン）
@@ -43,7 +43,7 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **内容**:
   - `workflows/test.yml`: テスト専用ワークフロー
   - `workflows/verify-build.yml`: ビルド検証ワークフロー
-  - `workflows/weekly-telemetry-ga4.yml` / `weekly-telemetry-notify.yml` / `weekly-telemetry-draft-pr.yml` / `weekly-telemetry-approve.yml`: 火曜 ISO 週の数字取得・Slack Facts・正本 PR 自動作成・L0 承認（フェーズ1 に Slack を足さない）
+  - **廃止（2026-11-10）**: 旧火曜 GA4 週次テレメトリ用 workflow 一式は削除済み（週次 GA4 は My将軍）
 - **削除済み**: `cursor-cli.yml`（使用頻度が低いため削除）
 
 #### `.vercel/` / `.vscode/`
@@ -60,7 +60,6 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
   - `weather.ts`: 一般気象・METAR/TAF・RainViewer プロキシ（`?action=`。旧 URL は rewrite）
   - `cron.ts`: 週次 cron 3 ジョブ（`?job=`。旧 `/api/cron/...` は rewrite）
   - `swim-notam-search.ts`: **SWIM デジタルノータム検索**プロキシ（`GET`、認証はサーバのみ）
-  - `telemetry-approve.ts`: 週次テレメトリ 2c。Slack Events（`message.channels`）を署名検証し `weekly-telemetry-approve` を `workflow_dispatch`。ACK は notify の Incoming Webhook。Slash Command は使わない。notify アプリには Event Subscriptions を付けない
   - `lib/swimNotamCore.ts`: ログイン・検索・AIXM 要約・`geometry` / `rawXml` 付与の共有ロジック
   - `lib/swimNotamHttpShared.ts`: Vercel ハンドラ・Vite プラグイン・`dev-weather-server` で共有するディスパッチ
   - `lib/swimNotamGeometry.ts`: GML `posList` / `pos` から GeoJSON を推定（日本域ヒューリスティック・参考表示）
@@ -102,7 +101,6 @@ AI・新規参加者は **下表 → 各節の詳細** の順で辿ると迷い�
 - **目的**: 開発・運用スクリプト（索引は [scripts/README.md](../scripts/README.md)）
 - **内容**:
   - `database/`: **総索引は [INDEX.md](../scripts/database/INDEX.md)**。マイグレーション類は直下に置く。**`docs/` 等から参照されない旧 SQL はリポジトリに残さない**（復元は Git 履歴）。
-  - `telemetry/`: 週次 GA4 ISO 週レポート、Slack Facts、2c 承認。仕様は [ops/Weekly_Telemetry_Review.md](ops/Weekly_Telemetry_Review.md)
   - `docs-auto-update/`: **実行しない**（手順は Skill `docs-sync`）
   - `sync-public-docs.mjs`: `docs/` → `public/docs/` ホワイトリスト同期（`npm run sync:public-docs`、`prebuild`）
   - `vercel-ignore-build.mjs`: docs 専用コミットで本番ビルドをスキップ（`vercel.json` の `ignoreCommand`）。テスト: `src/__tests__/config/vercelIgnoreBuild.test.ts`

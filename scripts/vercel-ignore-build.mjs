@@ -19,7 +19,6 @@ const SKIP_PREFIXES = [
   '.github/',
   'artifacts/',
   'e2e/',
-  'scripts/telemetry/',
 ];
 
 const SKIP_EXACT = new Set(['AGENTS.md', 'DESIGN.md', 'README.md']);

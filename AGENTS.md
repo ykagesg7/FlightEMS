@@ -26,7 +26,7 @@
 | **GrokBot（家老・斥候）** | GitHub（Issue / PR / Checks の読み取りとラベル・Issue 操作）、Slack `#fa-gungi`、Cursor クラウドエージェント起動 | `gungi-task` Issue の起票と進行管理、三振管理、法令・通達の巡回。コード・SQL・マージはしない |
 
 - クラウドから Obsidian の Vault は見えない。クリップや Ideas を捏造せず、ローカル Editorial の結果だけを前提にする。
-- GA4 の週次数値はクラウドでは読まない。GitHub Actions の `weekly-telemetry-ga4` artifact を使う。
+- **廃止（2026-11-10）**: 旧 GA4 週次 Slack 承認パイプラインは撤去済み。週次 GA4 報告は **My将軍** が担当する。
 - MCP の設定手順は [`docs/Cursor_MCP_Setup.md`](docs/Cursor_MCP_Setup.md)。
 
 ## プロジェクト概要
@@ -81,7 +81,7 @@ npm run type-check   # tsc -b
 5. 週末クリップ整理／週次発信弧 → Skill [`weekend-ingest`](.cursor/skills/weekend-ingest/SKILL.md) / [`weekend-editorial`](.cursor/skills/weekend-editorial/SKILL.md)（正本 [`docs/ops/Weekend_Content_Pipeline.md`](docs/ops/Weekend_Content_Pipeline.md)）。**Skill＝手順、Context＝その週の材料**。公式 Obsidian スキルの丸設置はしない（うちのルールはフォルダ契約）
 6. 週次記事メール文案 → Skill [`weekly-article-digest`](.cursor/skills/weekly-article-digest/SKILL.md)（送信は明示時のみ）
 7. 記事ドリップ公開確認 → Skill [`article-publish-check`](.cursor/skills/article-publish-check/SKILL.md)
-8. 火曜・GA4+Sentry 週次レビュー（ISO 週） → 正本 [`docs/ops/Weekly_Telemetry_Review.md`](docs/ops/Weekly_Telemetry_Review.md)。数字は `weekly-telemetry-ga4` の artifact。Facts 通知は `weekly-telemetry-notify`（日本語・`@` なし）。正本 PR は `weekly-telemetry-draft-pr`（自動）。Skill [`weekly-telemetry-review`](.cursor/skills/weekly-telemetry-review/SKILL.md) は任意（Sentry 追記）。L0 マージは `weekly-telemetry-approve`（`APPROVE-DOC`）。L1 許可リストは空。認証は [`docs/Cursor_MCP_Setup.md`](docs/Cursor_MCP_Setup.md)
+8. **廃止（2026-11-10）**: 火曜の旧 GA4+Slack 週次テレメトリ CI は撤去。履歴とボードは [`docs/ops/Weekly_Telemetry_Review.md`](docs/ops/Weekly_Telemetry_Review.md)。新運用の週次 GA4 は **My将軍**。
 
 ## サブエージェント / Skills
 
@@ -95,7 +95,6 @@ npm run type-check   # tsc -b
 | 完了検証（テスト・抜け漏れ） | agent `verifier` |
 | 土曜 Ingest / 日曜 Editorial | `weekend-ingest` / `weekend-editorial` |
 | 週次 digest 文案 / 公開確認 | `weekly-article-digest` / `article-publish-check` |
-| 火曜テレメトリ Sentry 追記（任意） | `weekly-telemetry-review` |
 
 組み込み Explore / Bash / Browser は設定不要（ノイズ隔離用）。
 
