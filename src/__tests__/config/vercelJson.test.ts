@@ -7,8 +7,15 @@ type VercelRewrite = {
   destination: string;
 };
 
+type VercelRedirect = {
+  source: string;
+  destination: string;
+  permanent: boolean;
+};
+
 type VercelConfig = {
   routes?: unknown;
+  redirects?: VercelRedirect[];
   rewrites?: VercelRewrite[];
   cleanUrls?: boolean;
   ignoreCommand?: string;
@@ -49,5 +56,23 @@ describe('vercel.json SPA fallback', () => {
   it('skips docs-only git deploys without changing SPA fallback or crons', () => {
     expect(config.ignoreCommand).toBe('node scripts/vercel-ignore-build.mjs');
     expect(Array.isArray(config.crons)).toBe(true);
+  });
+
+  it('applies permanent article legacy redirects before the SPA catch-all rewrite', () => {
+    const redirects = config.redirects ?? [];
+    expect(redirects.length).toBeGreaterThan(0);
+    expect(redirects.every((rule) => rule.permanent === true)).toBe(true);
+    expect(redirects.every((rule) => rule.source.startsWith('/articles/'))).toBe(true);
+    expect(redirects.every((rule) => rule.destination.startsWith('/articles/'))).toBe(true);
+
+    const rewrites = config.rewrites ?? [];
+    const spa = rewrites.find((rule) => rule.destination === '/');
+    expect(spa?.source).toBe('/((?!assets/).*)');
+
+    const raw = readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf8');
+    const redirectsIndex = raw.indexOf('"redirects"');
+    const rewritesIndex = raw.indexOf('"rewrites"');
+    expect(redirectsIndex).toBeGreaterThanOrEqual(0);
+    expect(rewritesIndex).toBeGreaterThan(redirectsIndex);
   });
 });

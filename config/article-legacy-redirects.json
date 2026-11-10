@@ -1,0 +1,837 @@
+[
+  {
+    "source": "/articles/1.1.1_UnconsciousSuccess",
+    "destination": "/articles/unconscious-success",
+    "permanent": true
+  },
+  {
+    "source": "/articles/1.1.2_EndWithFuture",
+    "destination": "/articles/end-with-future",
+    "permanent": true
+  },
+  {
+    "source": "/articles/1.1.3_PrioritizingMostImportant",
+    "destination": "/articles/prioritizing-most-important",
+    "permanent": true
+  },
+  {
+    "source": "/articles/1.1.4_WinWinThinking",
+    "destination": "/articles/win-win-thinking",
+    "permanent": true
+  },
+  {
+    "source": "/articles/1.1.5_SeekFirstToUnderstand",
+    "destination": "/articles/seek-first-to-understand",
+    "permanent": true
+  },
+  {
+    "source": "/articles/1.1.6_Synergize",
+    "destination": "/articles/synergize",
+    "permanent": true
+  },
+  {
+    "source": "/articles/1.1.7_SharpenTheSaw",
+    "destination": "/articles/sharpen-the-saw",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.1.1_AviationLegal0",
+    "destination": "/articles/3-1-1-aviation-legal-0",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.1.2_AviationLegal1",
+    "destination": "/articles/3-1-2-aviation-legal-skill-review",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.1.3_AviationLegal2",
+    "destination": "/articles/3-1-3-medical-certificate-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.1.4_AviationLegal3",
+    "destination": "/articles/3-1-4-aviation-legal-3",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.1.5_AirspaceClassification",
+    "destination": "/articles/3-1-5-airspace-classification",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.1.6_IFRMinimumAltitude",
+    "destination": "/articles/3-1-6-ifr-minimum-altitude",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.1.7_FlightRules",
+    "destination": "/articles/3-1-7-flight-rules",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.1.8_AirportOperations",
+    "destination": "/articles/3-1-8-airport-operations",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.1_PropellerTheory",
+    "destination": "/articles/3-2-1-propeller-theory",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.10_WeightAndBalance",
+    "destination": "/articles/3-2-10-weight-and-balance",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.11_StallAndSpin",
+    "destination": "/articles/3-2-11-stall-and-spin",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.12_EngineSystems",
+    "destination": "/articles/3-2-12-engine-systems",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.2_WingTheory",
+    "destination": "/articles/3-2-2-wing-theory",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.3_StabilityControl",
+    "destination": "/articles/3-2-3-stability-control",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.4_HydraulicElectrical",
+    "destination": "/articles/3-2-4-hydraulic-electrical",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.5_EngineTheory",
+    "destination": "/articles/3-2-5-engine-theory",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.6_InstrumentSystem",
+    "destination": "/articles/3-2-6-instrument-system",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.7_LiftAndDrag",
+    "destination": "/articles/3-2-7-lift-and-drag",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.8_PowerAndPerformance",
+    "destination": "/articles/3-2-8-power-and-performance",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.2.9_PitotStaticSystem",
+    "destination": "/articles/3-2-9-pitot-static-system",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.1_StandardAtmosphere",
+    "destination": "/articles/3-3-1-standard-atmosphere",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.10_CloudTypes",
+    "destination": "/articles/3-3-10-cloud-types",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.11_VisibilityAndFog",
+    "destination": "/articles/3-3-11-visibility-and-fog",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.12_Turbulence",
+    "destination": "/articles/3-3-12-turbulence",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.2_CloudsAndPrecipitation",
+    "destination": "/articles/3-3-2-clouds-and-precipitation",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.3_FrontsAndWeatherSystems",
+    "destination": "/articles/3-3-3-fronts-and-weather-systems",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.4_LowPressureSystems",
+    "destination": "/articles/3-3-4-low-pressure-systems",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.5_AtmosphericStability",
+    "destination": "/articles/3-3-5-atmospheric-stability",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.6_AtmosphericComposition",
+    "destination": "/articles/3-3-6-atmospheric-composition",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.7_WesterliesAndWind",
+    "destination": "/articles/3-3-7-westerlies-and-wind",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.8_ICAOStandardAtmosphere",
+    "destination": "/articles/3-3-8-icao-standard-atmosphere",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.3.9_WeatherHazards",
+    "destination": "/articles/3-3-9-weather-hazards",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.4.1_DeadReckoning",
+    "destination": "/articles/3-4-1-dead-reckoning",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.4.2_VORNavigation",
+    "destination": "/articles/3-4-2-vor-navigation",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.4.3_GPSNavigation",
+    "destination": "/articles/3-4-3-gps-navigation",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.4.4_FlightPlanning",
+    "destination": "/articles/3-4-4-flight-planning",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.4.5_NDBNavigation",
+    "destination": "/articles/3-4-5-ndb-navigation",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.4.6_DMENavigation",
+    "destination": "/articles/3-4-6-dme-navigation",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.4.7_DeadReckoningAdvanced",
+    "destination": "/articles/3-4-7-dead-reckoning-advanced",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.5.1_AirTrafficServices",
+    "destination": "/articles/3-5-1-air-traffic-services",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.5.2_AeronauticalInformation",
+    "destination": "/articles/3-5-2-aeronautical-information",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.5.3_RadioCommunication",
+    "destination": "/articles/3-5-3-radio-communication",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.5.4_EmergencyProcedures",
+    "destination": "/articles/3-5-4-emergency-procedures",
+    "permanent": true
+  },
+  {
+    "source": "/articles/3.5.5_ATCPhraseology",
+    "destination": "/articles/3-5-5-atc-phraseology",
+    "permanent": true
+  },
+  {
+    "source": "/articles/4.1.1_ChoresAreTheJob",
+    "destination": "/articles/chores-are-the-job",
+    "permanent": true
+  },
+  {
+    "source": "/articles/4.1.2_SpeakBeforeAsked",
+    "destination": "/articles/speak-before-asked",
+    "permanent": true
+  },
+  {
+    "source": "/articles/4.1.3_AnswerFirstWord",
+    "destination": "/articles/answer-first-word",
+    "permanent": true
+  },
+  {
+    "source": "/articles/4.1.4_SayExpectations",
+    "destination": "/articles/say-expectations",
+    "permanent": true
+  },
+  {
+    "source": "/articles/4.1.5_JustEnoughIsNotEnough",
+    "destination": "/articles/just-enough-is-not-enough",
+    "permanent": true
+  },
+  {
+    "source": "/articles/4.2.1_TurnFeedbackIntoAction",
+    "destination": "/articles/turn-feedback-into-action",
+    "permanent": true
+  },
+  {
+    "source": "/articles/4.2.2_PutAFrameOnFailure",
+    "destination": "/articles/put-a-frame-on-failure",
+    "permanent": true
+  },
+  {
+    "source": "/articles/4.2.3_TakeTheGainFromFeedback",
+    "destination": "/articles/take-the-gain-from-feedback",
+    "permanent": true
+  },
+  {
+    "source": "/articles/4.2.4_YesHasAShortShelfLife",
+    "destination": "/articles/yes-has-a-short-shelf-life",
+    "permanent": true
+  },
+  {
+    "source": "/articles/4.2.5_ThinkingStamina",
+    "destination": "/articles/thinking-stamina",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-1-1_AreaAndPurpose",
+    "destination": "/articles/cp-1-1-area-and-purpose",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-1-2_Energy",
+    "destination": "/articles/cp-1-2-energy",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-1-3_ControlsGPio",
+    "destination": "/articles/cp-1-3-controls-g-pio",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-2-1_DeepStall",
+    "destination": "/articles/cp-2-1-deep-stall",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-2-2_AcceleratedStall",
+    "destination": "/articles/cp-2-2-accelerated-stall",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-2-3_RollAuthority",
+    "destination": "/articles/cp-2-3-roll-authority",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-2-4_Unload",
+    "destination": "/articles/cp-2-4-unload",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-2-5_TrimFailure",
+    "destination": "/articles/cp-2-5-trim-failure",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-2-6_PitchbackSliceback",
+    "destination": "/articles/cp-2-6-pitchback-sliceback",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-3-1_ConfiguredHandling",
+    "destination": "/articles/cp-3-1-configured-handling",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-3-2_PatternATS",
+    "destination": "/articles/cp-3-2-pattern-ats",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-4-1_NoseHigh",
+    "destination": "/articles/cp-4-1-nose-high",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-4-2_NoseLow",
+    "destination": "/articles/cp-4-2-nose-low",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-5-1_AerobaticContract",
+    "destination": "/articles/cp-5-1-aerobatic-contract",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-5-2_AileronRoll",
+    "destination": "/articles/cp-5-2-aileron-roll",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-5-3_LazyEight",
+    "destination": "/articles/cp-5-3-lazy-eight",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-5-4_BarrelRoll",
+    "destination": "/articles/cp-5-4-barrel-roll",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-5-5_Loop",
+    "destination": "/articles/cp-5-5-loop",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-5-6_SplitSImmelmann",
+    "destination": "/articles/cp-5-6-split-s-immelmann",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-5-7_CubanEight",
+    "destination": "/articles/cp-5-7-cuban-eight",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-5-8_Cloverleaf",
+    "destination": "/articles/cp-5-8-cloverleaf",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CP-5-9_Chandelle",
+    "destination": "/articles/cp-5-9-chandelle",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CPL-Hub-Communication",
+    "destination": "/articles/cpl-hub-communication",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CPL-Hub-Meteorology",
+    "destination": "/articles/cpl-hub-meteorology",
+    "permanent": true
+  },
+  {
+    "source": "/articles/CPL-Hub-Navigation",
+    "destination": "/articles/cpl-hub-navigation",
+    "permanent": true
+  },
+  {
+    "source": "/articles/engineering_basics",
+    "destination": "/articles/engineering-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/FMT-1-1_WingmanVFR",
+    "destination": "/articles/fmt-1-1-wingman-vfr",
+    "permanent": true
+  },
+  {
+    "source": "/articles/FMT-1-10_LostWingman",
+    "destination": "/articles/fmt-1-10-lost-wingman",
+    "permanent": true
+  },
+  {
+    "source": "/articles/FMT-1-2_RunwayLineupTakeoff",
+    "destination": "/articles/fmt-1-2-runway-lineup-takeoff",
+    "permanent": true
+  },
+  {
+    "source": "/articles/FMT-1-3_FingertipRoute",
+    "destination": "/articles/fmt-1-3-fingertip-route",
+    "permanent": true
+  },
+  {
+    "source": "/articles/FMT-1-4_OpsCheckFence",
+    "destination": "/articles/fmt-1-4-ops-check-fence",
+    "permanent": true
+  },
+  {
+    "source": "/articles/FMT-1-5_LeadChange",
+    "destination": "/articles/fmt-1-5-lead-change",
+    "permanent": true
+  },
+  {
+    "source": "/articles/FMT-1-6_Spread",
+    "destination": "/articles/fmt-1-6-spread",
+    "permanent": true
+  },
+  {
+    "source": "/articles/FMT-1-7_TrailFamily",
+    "destination": "/articles/fmt-1-7-trail-family",
+    "permanent": true
+  },
+  {
+    "source": "/articles/FMT-1-8_Rejoin",
+    "destination": "/articles/fmt-1-8-rejoin",
+    "permanent": true
+  },
+  {
+    "source": "/articles/FMT-1-9_TacticalLAB",
+    "destination": "/articles/fmt-1-9-tactical-lab",
+    "permanent": true
+  },
+  {
+    "source": "/articles/IF-1-1_TrustInstruments",
+    "destination": "/articles/if-1-1-trust-instruments",
+    "permanent": true
+  },
+  {
+    "source": "/articles/IF-1-2_PartialPanel",
+    "destination": "/articles/if-1-2-partial-panel",
+    "permanent": true
+  },
+  {
+    "source": "/articles/IF-1-3_IMC_Scan",
+    "destination": "/articles/if-1-3-imc-scan",
+    "permanent": true
+  },
+  {
+    "source": "/articles/L1-Q3-1_PathToPilot",
+    "destination": "/articles/l1-q3-1-path-to-pilot",
+    "permanent": true
+  },
+  {
+    "source": "/articles/L1-Q4-1_MichizaneBriefing",
+    "destination": "/articles/l1-q4-1-michizane-briefing",
+    "permanent": true
+  },
+  {
+    "source": "/articles/L1-Q4-2_AviatorMindset",
+    "destination": "/articles/l1-q4-2-aviator-mindset",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-1_TemperatureBasics",
+    "destination": "/articles/ppl-1-1-1-temperature-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-10_TakeoffLandingPerformance",
+    "destination": "/articles/ppl-1-1-10-takeoff-landing-performance",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-11_ControlSurfaces",
+    "destination": "/articles/ppl-1-1-11-control-surfaces",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-2_AirspeedBasics",
+    "destination": "/articles/ppl-1-1-2-airspeed-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-3_BernoulliPrinciple",
+    "destination": "/articles/ppl-1-1-3-bernoulli-principle",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-4_DragBasics",
+    "destination": "/articles/ppl-1-1-4-drag-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-5_AxesStability",
+    "destination": "/articles/ppl-1-1-5-axes-stability",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-6_StallSpin",
+    "destination": "/articles/ppl-1-1-6-stall-spin",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-7_VnDiagram",
+    "destination": "/articles/ppl-1-1-7-vn-diagram",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-8_PropellerBasics",
+    "destination": "/articles/ppl-1-1-8-propeller-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-1-9_FlightPerformance",
+    "destination": "/articles/ppl-1-1-9-flight-performance",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-2-1_GyroBasics",
+    "destination": "/articles/ppl-1-2-1-gyro-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-2-2_PitotStatic",
+    "destination": "/articles/ppl-1-2-2-pitot-static",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-2-3_MagneticCompass",
+    "destination": "/articles/ppl-1-2-3-magnetic-compass",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-2-4_ReciprocatingEngine",
+    "destination": "/articles/ppl-1-2-4-reciprocating-engine",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-2-5_CarburetorMixture",
+    "destination": "/articles/ppl-1-2-5-carburetor-mixture",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-2-6_IgnitionMagneto",
+    "destination": "/articles/ppl-1-2-6-ignition-magneto",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-2-7_LubricationCooling",
+    "destination": "/articles/ppl-1-2-7-lubrication-cooling",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-2-8_FuelSystemVaporLock",
+    "destination": "/articles/ppl-1-2-8-fuel-system-vapor-lock",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-1-2-9_TScanInstrumentScan",
+    "destination": "/articles/ppl-1-2-9-t-scan-instrument-scan",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-1-1_AtmosphereAndIsaBasics",
+    "destination": "/articles/ppl-2-1-1-atmosphere-and-isa-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-1-2_TemperatureLapseAndInversion",
+    "destination": "/articles/ppl-2-1-2-temperature-lapse-and-inversion",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-1-3_PressureAltimeterSettings",
+    "destination": "/articles/ppl-2-1-3-pressure-altimeter-settings",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-1-4_MoistureHumidityDewpoint",
+    "destination": "/articles/ppl-2-1-4-moisture-humidity-dewpoint",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-1-5_AtmosphericStabilityBasics",
+    "destination": "/articles/ppl-2-1-5-atmospheric-stability-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-1-6_CloudTypesAndFormation",
+    "destination": "/articles/ppl-2-1-6-cloud-types-and-formation",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-1-7_FogTypesAndFormation",
+    "destination": "/articles/ppl-2-1-7-fog-types-and-formation",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-2-1_WindObservationBasics",
+    "destination": "/articles/ppl-2-2-1-wind-observation-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-2-2_AirMassesAndFronts",
+    "destination": "/articles/ppl-2-2-2-air-masses-and-fronts",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-2-3_PressureSystemsAndJapanWeather",
+    "destination": "/articles/ppl-2-2-3-pressure-systems-and-japan-weather",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-3-1_FlightWeatherHazardsBasics",
+    "destination": "/articles/ppl-2-3-1-flight-weather-hazards-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-2-3-2_MetarTafAndWeatherReports",
+    "destination": "/articles/ppl-2-3-2-metar-taf-and-weather-reports",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-3-1-1_EarthCoordinatesAndTime",
+    "destination": "/articles/ppl-3-1-1-earth-coordinates-and-time",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-3-1-2_NavigationElementsAndAltitude",
+    "destination": "/articles/ppl-3-1-2-navigation-elements-and-altitude",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-3-1-3_AeronauticalChartsBasics",
+    "destination": "/articles/ppl-3-1-3-aeronautical-charts-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-3-1-4_WindTriangleAndFlightComputer",
+    "destination": "/articles/ppl-3-1-4-wind-triangle-and-flight-computer",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-3-1-5_FlightPlanningBasics",
+    "destination": "/articles/ppl-3-1-5-flight-planning-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-3-2-1_PilotageAndPositionFix",
+    "destination": "/articles/ppl-3-2-1-pilotage-and-position-fix",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-3-2-2_RadioNavigationOverview",
+    "destination": "/articles/ppl-3-2-2-radio-navigation-overview",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-3-3-1_VfrOperationsAndAirspace",
+    "destination": "/articles/ppl-3-3-1-vfr-operations-and-airspace",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-3-3-2_SpatialDisorientationBasics",
+    "destination": "/articles/ppl-3-3-2-spatial-disorientation-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-4-1-1_AirTrafficServicesOverview",
+    "destination": "/articles/ppl-4-1-1-air-traffic-services-overview",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-4-1-2_SearchAndRescueBasics",
+    "destination": "/articles/ppl-4-1-2-search-and-rescue-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-4-2-1_RadioPhraseologyBasics",
+    "destination": "/articles/ppl-4-2-1-radio-phraseology-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-4-2-2_ClearanceReadbackBasics",
+    "destination": "/articles/ppl-4-2-2-clearance-readback-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-4-2-3_AerodromeControlBasics",
+    "destination": "/articles/ppl-4-2-3-aerodrome-control-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-4-2-4_FlightPlanFilingBasics",
+    "destination": "/articles/ppl-4-2-4-flight-plan-filing-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-4-3-1_CommFailureAndLightSignals",
+    "destination": "/articles/ppl-4-3-1-comm-failure-and-light-signals",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-4-3-2_MaydayPanPanBasics",
+    "destination": "/articles/ppl-4-3-2-mayday-pan-pan-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-1-1_AviationLawDefinitions",
+    "destination": "/articles/ppl-5-1-1-aviation-law-definitions",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-1-2_ChicagoConventionOverview",
+    "destination": "/articles/ppl-5-1-2-chicago-convention-overview",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-2-1_AircraftNationalityAndRegistration",
+    "destination": "/articles/ppl-5-2-1-aircraft-nationality-and-registration",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-2-2_AirworthinessAndMaintenanceOverview",
+    "destination": "/articles/ppl-5-2-2-airworthiness-and-maintenance-overview",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-3-1_PilotCertificateBasics",
+    "destination": "/articles/ppl-5-3-1-pilot-certificate-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-3-2_MedicalCertificateBasics",
+    "destination": "/articles/ppl-5-3-2-medical-certificate-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-3-3_AviationEnglishRequirements",
+    "destination": "/articles/ppl-5-3-3-aviation-english-requirements",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-4-1_AirspaceAndFacilitiesOverview",
+    "destination": "/articles/ppl-5-4-1-airspace-and-facilities-overview",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-4-2_CaptainAuthorityAndPreflight",
+    "destination": "/articles/ppl-5-4-2-captain-authority-and-preflight",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-4-3_RecurrentProficiencyOverview",
+    "destination": "/articles/ppl-5-4-3-recurrent-proficiency-overview",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-4-4_SafetyEndangeringProhibitions",
+    "destination": "/articles/ppl-5-4-4-safety-endangering-prohibitions",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-4-5_AccidentIncidentReportingBasics",
+    "destination": "/articles/ppl-5-4-5-accident-incident-reporting-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-4-6_AerodromeGroundOperationsBasics",
+    "destination": "/articles/ppl-5-4-6-aerodrome-ground-operations-basics",
+    "permanent": true
+  },
+  {
+    "source": "/articles/PPL-5-4-7_IFRMinimumAltitudeIntroForPPL",
+    "destination": "/articles/ppl-5-4-7-ifr-minimum-altitude-intro-for-ppl",
+    "permanent": true
+  },
+  {
+    "source": "/articles/weather_basics",
+    "destination": "/articles/weather-basics",
+    "permanent": true
+  }
+]
