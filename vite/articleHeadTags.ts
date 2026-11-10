@@ -1,4 +1,4 @@
-import { shouldEmitRobotsNoindex } from '../src/utils/articleSeoNoindex';
+import { shouldEmitRobotsNoindex } from '../api/_lib/articleSeoNoindex';
 import { articlePrettySlug } from '../src/utils/articleCanonicalPath';
 import type { ExtractedArticleMeta } from './articlesMeta';
 
