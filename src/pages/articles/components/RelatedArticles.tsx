@@ -2,6 +2,7 @@ import React, { useEffect, useId, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ArticleIndexEntry } from '../../../types/articles';
 import { getRelatedArticles } from '../../../utils/articlesIndex';
+import { buildArticleCanonicalPath } from '../../../utils/articleCanonicalPath';
 
 interface RelatedArticlesProps {
   currentSlug: string;
@@ -121,7 +122,7 @@ function RelatedArticleList({
           className="rounded-lg border border-brand-primary/30 bg-brand-surface p-4 transition-all duration-200 hover:border-brand-primary/50 hover:shadow-md motion-reduce:transition-none"
         >
           <Link
-            to={`/articles/${article.filename}`}
+            to={buildArticleCanonicalPath(article.meta, article.filename)}
             className="block space-y-2 no-underline"
           >
             <h4 className="line-clamp-2 font-medium text-[var(--text-primary)] hover:text-brand-primary">

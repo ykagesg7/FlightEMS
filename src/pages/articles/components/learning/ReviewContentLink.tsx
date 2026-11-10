@@ -4,6 +4,8 @@ import { LEARNING_ARTICLE_CTA_LABEL } from '../../../../constants/learningArticl
 import { trackReviewArticleClick } from '../../../../lib/quizAnalytics';
 import { useAuth } from '../../../../hooks/useAuth';
 import supabase from '../../../../utils/supabase';
+import articleMetas from 'virtual:articles-index';
+import { articleHrefForContentId } from '../../../../utils/articleCanonicalPath';
 
 /** セッション設問 ID とマッピング行の重なり数（同一 UUID は二重に数えない） */
 function overlapCount(
@@ -302,7 +304,7 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
         {recommendedContents.map((content) => (
           <Link
             key={content.id}
-            to={`/articles/${content.id}`}
+            to={articleHrefForContentId(content.id, articleMetas)}
             onClick={() => trackReviewArticleClick(content.id, 'results')}
             aria-label={`${LEARNING_ARTICLE_CTA_LABEL}: ${content.title}`}
             className={linkCardClass}

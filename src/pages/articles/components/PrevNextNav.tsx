@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { filterReleasedArticleContents } from '../../../constants/articleHubCategories';
 import { useLearningProgress } from '../../../hooks/useLearningProgress';
 import { getArticleNavigationNeighbors } from '../../../utils/articleNavigation';
+import { articleHrefForContentId } from '../../../utils/articleCanonicalPath';
 
 function prefetchMDX(id: string) {
   import(`../../../content/articles/${id}.mdx`)
@@ -41,7 +42,7 @@ export const PrevNextNav: React.FC<{ currentId: string; listPath?: string }> = (
       <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-stretch sm:justify-between sm:gap-3">
         {prev ? (
           <Link
-            to={`/articles/${prev.id}`}
+            to={articleHrefForContentId(prev.id, articleMetas)}
             aria-label={`前の記事: ${prev.title}`}
             onMouseEnter={() => prefetchMDX(prev.id)}
             className="hud-border hud-surface flex min-h-[44px] min-w-0 max-w-full flex-1 flex-col justify-center rounded-lg border px-4 py-3 text-left hover:border-brand-primary/40"
@@ -61,7 +62,7 @@ export const PrevNextNav: React.FC<{ currentId: string; listPath?: string }> = (
         )}
         {next ? (
           <Link
-            to={`/articles/${next.id}`}
+            to={articleHrefForContentId(next.id, articleMetas)}
             aria-label={`次の記事: ${next.title}`}
             onMouseEnter={() => prefetchMDX(next.id)}
             className="hud-border hud-surface flex min-h-[44px] min-w-0 max-w-full flex-1 flex-col justify-center rounded-lg border px-4 py-3 text-left sm:text-right hover:border-brand-primary/40"

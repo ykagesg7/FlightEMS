@@ -11,6 +11,7 @@ import { useArticleStats } from '../../../hooks/useArticleStats';
 import { LearningContent } from '../../../types';
 import { ArticleMeta } from '../../../types/articles';
 import { getArticleIndex } from '../../../utils/articlesIndex';
+import { articleHrefForContentId } from '../../../utils/articleCanonicalPath';
 import {
   buildArticleHubSearchParams,
   computeNextToReadIds,
@@ -445,7 +446,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                 meta={getMetaForArticle(heroArticle, articleMetas)}
                 onRead={() => {
                   handleArticleClick(heroArticle.id);
-                  navigate(`/articles/${heroArticle.id}`);
+                  navigate(articleHrefForContentId(heroArticle.id, articleMetas));
                 }}
               />
             )}

@@ -10,6 +10,8 @@ import {
 import { normalizeSubSubjectLabel } from '../utils/normalizeSubSubject';
 import { LEARNING_ARTICLE_CTA_LABEL, LEARNING_ARTICLES_HUB_LABEL } from '../../../constants/learningArticleNav';
 import ReviewContentLink from '../../articles/components/learning/ReviewContentLink';
+import articleMetas from 'virtual:articles-index';
+import { articleHrefForContentId } from '../../../utils/articleCanonicalPath';
 import { QuestionReportTrigger } from './QuestionReportTrigger';
 import type { QuestionReportContext } from '../utils/questionReportTypes';
 
@@ -352,7 +354,7 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
             </button>
           ) : contentId ? (
             <Link
-              to={`/articles/${contentId}`}
+              to={articleHrefForContentId(contentId, articleMetas)}
               className="px-6 py-3 rounded-xl bg-brand-primary/20 border border-brand-primary text-brand-primary text-center font-semibold hover:bg-brand-primary/30 transition-all duration-200"
             >
               {LEARNING_ARTICLE_CTA_LABEL}
@@ -404,7 +406,7 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
               )}
               {contentId && incorrectCount > 0 && (
                 <Link
-                  to={`/articles/${contentId}`}
+                  to={articleHrefForContentId(contentId, articleMetas)}
                   className="px-4 py-2 rounded-lg border border-brand-primary/40 text-brand-primary text-sm hover:bg-brand-primary/10"
                 >
                   {LEARNING_ARTICLE_CTA_LABEL}

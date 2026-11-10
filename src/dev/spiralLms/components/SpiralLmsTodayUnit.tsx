@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui';
 import type { SpiralLmsNode } from '../../../types/spiralLms';
+import articleMetas from 'virtual:articles-index';
+import { articleHrefForContentId } from '../../../utils/articleCanonicalPath';
 import {
   pickTodaySpiralUnit,
   resolveSpiralNodeDisplayStatus,
@@ -22,7 +24,7 @@ function articleHref(slug: string, slugToArticleId: Readonly<Record<string, stri
   if (!contentId) {
     return null;
   }
-  return `/articles/${contentId}`;
+  return articleHrefForContentId(contentId, articleMetas);
 }
 
 export const SpiralLmsTodayUnit: React.FC<SpiralLmsTodayUnitProps> = ({
