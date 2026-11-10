@@ -6,6 +6,8 @@ import { useArticleStats } from '../../hooks/useArticleStats';
 import { useAuth } from '../../hooks/useAuth';
 import { ArticleMeta } from '../../types/articles';
 import { isArticlePreviewAllowed, isArticleReadable, isArticleReleased } from '../../utils/articlePublishGate';
+import { articleHrefForContentId, canonicalArticlePathIfNeeded } from '../../utils/articleCanonicalPath';
+import buildTimeArticleMetas from 'virtual:articles-index';
 import { findArticleByRouteParam, getArticleIndex } from '../../utils/articlesIndex';
 import { filterReleasedArticleContents } from '../../constants/articleHubCategories';
 import { useArticleProgress } from '../../hooks/useArticleProgress';
@@ -65,11 +67,17 @@ const ArticleDetailPage: React.FC = () => {
 
         const matched = await findArticleByRouteParam(contentId);
         if (cancelled) return;
-        if (matched && matched.filename !== contentId) {
-          // Resolve immediately so content loads even if URL rewrite is delayed.
+        if (matched) {
+          const canonicalPath = canonicalArticlePathIfNeeded(
+            contentId,
+            matched.meta,
+            matched.filename,
+          );
           setCanonicalId(matched.filename);
-          navigate(`/articles/${matched.filename}`, { replace: true });
-          return;
+          if (canonicalPath) {
+            navigate(canonicalPath, { replace: true });
+            return;
+          }
         }
         setCanonicalId(matched?.filename ?? contentId);
       } catch (error) {
@@ -240,7 +248,10 @@ const ArticleDetailPage: React.FC = () => {
         )}
       </div>
       <ScrollToButtons />
-      <KeyboardShortcuts prevId={prev?.id} nextId={next?.id} />
+      <KeyboardShortcuts
+        prevHref={prev ? articleHrefForContentId(prev.id, buildTimeArticleMetas) : undefined}
+        nextHref={next ? articleHrefForContentId(next.id, buildTimeArticleMetas) : undefined}
+      />
     </div>
   );
 };

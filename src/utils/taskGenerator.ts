@@ -5,6 +5,8 @@
 
 import { supabase } from './supabase';
 import type { DailyTask, TaskType } from '../types/tasks';
+import articleMetas from 'virtual:articles-index';
+import { articleHrefForContentId } from './articleCanonicalPath';
 
 /**
  * 今日の学習タスクを生成（最大3件）
@@ -170,7 +172,7 @@ async function getContinueTasks(userId: string): Promise<DailyTask[]> {
         title: content.title,
         estimatedMinutes: 25,
         priority: 50 + (p.progress_percentage || 0) / 2, // 進捗が高いほど優先
-        linkTo: `/articles/${p.content_id}`,
+        linkTo: articleHrefForContentId(p.content_id, articleMetas),
         completed: false,
       };
     })

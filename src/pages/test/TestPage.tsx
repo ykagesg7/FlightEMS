@@ -22,6 +22,8 @@ import { useTestSubjectFilters } from './hooks/useTestSubjectFilters';
 import { LeaderboardOptInCta } from '../../components/learning/LeaderboardOptInCta';
 import { LEARNING_ARTICLES_HUB_LABEL } from '../../constants/learningArticleNav';
 import { useAuthStore } from '../../stores/authStore';
+import articleMetas from 'virtual:articles-index';
+import { articleHrefForContentId } from '../../utils/articleCanonicalPath';
 import {
   trackQuizFilterOpen,
   trackQuizHubView,
@@ -479,7 +481,7 @@ const TestPage: React.FC = () => {
         </Link>
         {contentId && (
           <Link
-            to={`/articles/${contentId}`}
+            to={articleHrefForContentId(contentId, articleMetas)}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-brand-primary hover:text-brand-primary/80 border border-brand-primary/40 rounded-lg hover:border-brand-primary/60 transition-colors"
           >
             <BookOpen className="w-4 h-4" aria-hidden />

@@ -5,6 +5,8 @@ import {
   formatCoursePositionLine,
 } from '../../../utils/dashboardCourse';
 import { Card, CardContent, Typography } from '../../../components/ui';
+import articleMetas from 'virtual:articles-index';
+import { articleHrefForContentId } from '../../../utils/articleCanonicalPath';
 
 interface DashboardCourseSectionProps {
   forceFallback?: boolean;
@@ -37,7 +39,7 @@ export const DashboardCourseSection: React.FC<DashboardCourseSectionProps> = ({
       {next && (
         <Typography variant="body-sm" color="muted">
           <Link
-            to={`/articles/${next.articleId}`}
+            to={articleHrefForContentId(next.articleId, articleMetas)}
             className="font-semibold text-brand-primary underline decoration-brand-primary/40 hover:decoration-brand-primary"
             data-testid="dashboard-course-continue"
           >

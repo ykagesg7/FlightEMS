@@ -25,6 +25,8 @@ import { MarketingLayout } from './layouts/MarketingLayout';
 import { lazyProtectedRoute, lazyRoute } from './layouts/routeLazy';
 import { importWithChunkRetry } from './utils/lazyWithRetry';
 import { buildSpiralLmsDevRoutes } from './utils/spiralLmsDevRoutes';
+import articleMetas from 'virtual:articles-index';
+import { articleHrefForContentId } from './utils/articleCanonicalPath';
 
 const LearningRedirect: React.FC = () => {
   return <Navigate to="/articles" replace />;
@@ -32,7 +34,8 @@ const LearningRedirect: React.FC = () => {
 
 const LearningContentRedirect: React.FC = () => {
   const { contentId } = useParams<{ contentId: string }>();
-  return <Navigate to={`/articles/${contentId}`} replace />;
+  if (!contentId) return <Navigate to="/articles" replace />;
+  return <Navigate to={articleHrefForContentId(contentId, articleMetas)} replace />;
 };
 
 const NotFoundPage = () => <div className="text-center text-red-500 py-12">ページが見つかりません</div>;

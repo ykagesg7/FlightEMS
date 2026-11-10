@@ -5,6 +5,8 @@ import { PPL_CATEGORY } from '../../../constants/articleHubCategories';
 import { trackArticleToQuizClick } from '../../../lib/quizAnalytics';
 import type { LearningContent } from '../../../types';
 import { buildContentTestHref } from '../../test/testHubFilters';
+import articleMetas from 'virtual:articles-index';
+import { articleHrefForContentId } from '../../../utils/articleCanonicalPath';
 
 interface NextComprehensionCTAProps {
   article: LearningContent;
@@ -25,7 +27,7 @@ export const NextComprehensionCTA: React.FC<NextComprehensionCTAProps> = ({
     });
   }, [article]);
 
-  const articleHref = `/articles/${article.id}`;
+  const articleHref = articleHrefForContentId(article.id, articleMetas);
 
   return (
     <section

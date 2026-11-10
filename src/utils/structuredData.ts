@@ -1,6 +1,7 @@
 import { DEFAULT_SITE_ORIGIN } from '../config/siteOriginEnv';
 import { LearningContent } from '../types';
 import { ArticleMeta } from '../types/articles';
+import { buildArticleCanonicalPath } from './articleCanonicalPath';
 
 // 構造化データの型定義
 interface StructuredData {
@@ -62,7 +63,7 @@ export const generateArticleStructuredData = (
   meta: ArticleMeta,
   baseUrl: string = DEFAULT_SITE_ORIGIN
 ): ArticleStructuredData => {
-  const articleUrl = `${baseUrl}/articles/${content.id}`;
+  const articleUrl = `${baseUrl}${buildArticleCanonicalPath(meta, content.id)}`;
   const readingTime = meta.readingTime || 10;
 
   return {
@@ -193,7 +194,7 @@ export const generateSearchResultsStructuredData = (
           '@type': 'Article',
           headline: result.content.title,
           description: result.content.description || result.meta.excerpt,
-          url: `${baseUrl}/articles/${result.content.id}`,
+          url: `${baseUrl}${buildArticleCanonicalPath(result.meta, result.content.id)}`,
           author: {
             '@type': 'Person',
             name: 'Flight Academy Team'

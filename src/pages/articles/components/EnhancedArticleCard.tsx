@@ -9,6 +9,7 @@ import {
   ARTICLE_COMPREHENSION_STATUS_LABEL,
   type ArticleComprehensionUiStatus,
 } from '../../../utils/articleComprehensionStatus';
+import { buildArticleCanonicalPath } from '../../../utils/articleCanonicalPath';
 
 interface EnhancedArticleCardProps {
   article: LearningContent;
@@ -130,7 +131,7 @@ export const EnhancedArticleCard: React.FC<EnhancedArticleCardProps> = ({
       )}
 
       <Link
-        to={`/articles/${article.id}`}
+        to={buildArticleCanonicalPath(articleMeta ?? {}, article.id)}
         onClick={onArticleClick}
         className={`relative block overflow-hidden rounded-xl border-2 border-brand-primary/20 bg-brand-secondary-dark p-5 shadow-lg motion-safe:transition-shadow hover:border-brand-primary/40 hover:shadow-xl ${shouldBlur ? 'blur-[1px]' : ''}`}
       >

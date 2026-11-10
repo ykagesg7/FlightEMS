@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import type { LearningContent } from '../../../types';
 import type { ArticleMeta } from '../../../types/articles';
+import { buildArticleCanonicalPath } from '../../../utils/articleCanonicalPath';
 
 interface SeriesNextChapterCtaProps {
   next?: LearningContent;
@@ -39,7 +40,7 @@ export const SeriesNextChapterCta: React.FC<SeriesNextChapterCtaProps> = ({
         {nextMeta?.title ?? next.title}
       </h3>
       <Link
-        to={`/articles/${next.id}`}
+        to={buildArticleCanonicalPath(nextMeta ?? {}, next.id)}
         className="inline-flex items-center rounded-lg bg-brand-primary px-5 py-2.5 text-sm font-semibold text-[var(--bg)] hover:bg-brand-primary-dark"
       >
         次の章を読む →

@@ -13,6 +13,7 @@ import {
   type CourseModuleProgress,
 } from '../../../utils/courseProgress';
 import { getMetaForArticle } from '../articleHubFilters';
+import { buildArticleCanonicalPath } from '../../../utils/articleCanonicalPath';
 
 interface CourseDetailViewProps {
   course: CourseDef;
@@ -151,7 +152,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                     return (
                       <li key={item.contentId}>
                         <Link
-                          to={`/articles/${item.contentId}`}
+                          to={buildArticleCanonicalPath(meta ?? {}, item.contentId)}
                           onClick={() => onArticleClick(item.contentId)}
                           className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors ${
                             isNext
