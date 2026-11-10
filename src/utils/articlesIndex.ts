@@ -2,6 +2,7 @@ import articleMetas from 'virtual:articles-index';
 import { isWithdrawnArticle } from '../constants/withdrawnArticleIds';
 import type { ArticleIndexEntry, ArticleMeta, ArticleNavigation, ArticleSearchOptions, MDXModule } from '../types/articles';
 import { isArticleReadable } from './articlePublishGate';
+import { isArticleListedForLearners } from './articleSeoNoindex';
 
 /**
  * MDX 本文ローダーのみ。メタは virtual:articles-index（ビルド時抽出）から読む。
@@ -215,7 +216,8 @@ export async function getArticles(options: ArticleSearchOptions = {}): Promise<A
     articles = articles.filter(
       (article) =>
         article.meta.publishedAt &&
-        isArticleReadable(article.meta.publishedAt, article.filename),
+        isArticleReadable(article.meta.publishedAt, article.filename) &&
+        isArticleListedForLearners(article.meta),
     );
   }
 

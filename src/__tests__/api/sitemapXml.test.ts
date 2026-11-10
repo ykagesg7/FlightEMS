@@ -54,4 +54,19 @@ describe('runtime sitemap API', () => {
       '<loc>https://flight-lms.vercel.app/articles/unconscious-success</loc>',
     );
   });
+
+  it('excludes meta.noindex stub hubs from sitemap locs', () => {
+    const articles = collectArticleMetas().map(({ filename, meta }) =>
+      toSitemapArticleEntry(filename, meta),
+    );
+    const locs = buildSitemapUrlEntries(origin, articles);
+  const xml = buildRuntimeSitemapXml({ VITE_APP_URL: origin }, { articles });
+
+    for (const stub of ['cpl-hub-meteorology', 'cpl-hub-communication'] as const) {
+      const loc = `${origin}/articles/${stub}`;
+      expect(locs).not.toContain(loc);
+      expect(xml).not.toContain(`<loc>${loc}</loc>`);
+    }
+    expect(locs).toContain(`${origin}/articles/cpl-hub-navigation`);
+  });
 });

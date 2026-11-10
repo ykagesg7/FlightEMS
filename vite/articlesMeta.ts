@@ -13,6 +13,7 @@ export interface ExtractedArticleMeta {
   type?: 'article' | 'lesson';
   author?: string;
   heroImage?: string;
+  noindex?: boolean;
 }
 
 export interface CollectedArticleMeta {
@@ -107,6 +108,7 @@ function normalizeMeta(raw: Record<string, unknown>): ExtractedArticleMeta | nul
     type: raw.type === 'lesson' || raw.type === 'article' ? raw.type : undefined,
     author: typeof raw.author === 'string' ? raw.author : undefined,
     heroImage: typeof raw.heroImage === 'string' ? raw.heroImage : undefined,
+    noindex: raw.noindex === true ? true : undefined,
   };
 }
 

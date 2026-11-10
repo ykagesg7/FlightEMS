@@ -1,3 +1,4 @@
+import { isArticleNoindexMeta } from './articleSeoNoindex';
 import { isWithdrawnArticle } from './withdrawnArticleIds';
 import { isPublishDateReached } from './articlePublishGate';
 
@@ -25,6 +26,7 @@ export interface SitemapArticleEntry {
   filename: string;
   slug: string;
   publishedAt?: string;
+  noindex?: boolean;
 }
 
 function articlePrettySlug(meta: { slug?: string }, filename: string): string {
@@ -34,12 +36,13 @@ function articlePrettySlug(meta: { slug?: string }, filename: string): string {
 
 export function toSitemapArticleEntry(
   filename: string,
-  meta: { slug?: string; publishedAt?: string },
+  meta: { slug?: string; publishedAt?: string; noindex?: boolean },
 ): SitemapArticleEntry {
   return {
     filename,
     slug: articlePrettySlug(meta, filename),
     publishedAt: meta.publishedAt,
+    noindex: meta.noindex === true ? true : undefined,
   };
 }
 
@@ -81,6 +84,7 @@ export function buildSitemapUrlEntries(
   const seenArticleSlugs = new Set<string>();
   for (const entry of articles) {
     if (isWithdrawnArticle(entry.filename)) continue;
+    if (isArticleNoindexMeta(entry)) continue;
     if (!entry.publishedAt || !isArticleReleased(entry.publishedAt)) continue;
     const slug = entry.slug;
     if (!slug || seenArticleSlugs.has(slug)) continue;

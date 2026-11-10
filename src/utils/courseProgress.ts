@@ -2,6 +2,7 @@ import type { CourseDef, CourseModuleDef, CourseModuleSource } from '../data/cou
 import { COURSES } from '../data/courses';
 import type { LearningContent } from '../types';
 import type { ArticleMeta } from '../types/articles';
+import { isArticleListedForLearners } from './articleSeoNoindex';
 
 export interface ArticleProgressSnapshot {
   completed?: boolean;
@@ -77,6 +78,7 @@ export function getModuleArticles(
 ): LearningContent[] {
   return contents
     .filter((content) => matchesModuleSource(content, metas[content.id], module.source))
+    .filter((content) => isArticleListedForLearners(metas[content.id]))
     .sort((a, b) => compareCourseItems(a, b, metas));
 }
 
