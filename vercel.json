@@ -32,10 +32,6 @@
     "api/cron.ts": {
       "memory": 1024,
       "maxDuration": 60
-    },
-    "api/telemetry-approve.ts": {
-      "memory": 1024,
-      "maxDuration": 15
     }
   },
   "rewrites": [

@@ -1,9 +1,11 @@
 # 週次テレメトリ・レビュー（GA4 + Sentry）
 
+> **廃止（2026-11-10）**: GitHub Actions + Slack + Vercel による旧 GA4 週次承認パイプラインは撤去済み。**週次 GA4 報告は My将軍** が担当する。以下は履歴・ボード・週次ログの正本（数値は上書きしない）。
+
 **正本**: 本書（別チャットの Agent はここを先に読む）  
 **作成**: 2026-08-08  
-**最終更新**: 2026-10-13（2026-W41 正本 L0 マージ待ち）  
-**実施ペース**: **火曜 09:00 JST**（ISO 週: 月曜 00:00〜日曜 23:59、プロパティ TZ = Asia/Tokyo）。欠席週は行を飛ばさず「スキップ」理由を1行残す。**土曜に別窓で埋めない。**
+**最終更新**: 2026-11-10（旧 Slack 承認経路廃止）  
+**実施ペース（履歴）**: **火曜 09:00 JST**（ISO 週: 月曜 00:00〜日曜 23:59、プロパティ TZ = Asia/Tokyo）。欠席週は行を飛ばさず「スキップ」理由を1行残す。**土曜に別窓で埋めない。**
 
 関連:
 
@@ -15,39 +17,25 @@
 | 週末コンテンツ | [ops/Weekend_Content_Pipeline.md](Weekend_Content_Pipeline.md)（土曜 Ingest / 日曜 Editorial。テレメトリとは分離） |
 | Slack | `#fa-telemetry`（`C0BQ5R19QDV`） |
 
-### 契約切替（2026-08-17）
+### 契約切替（2026-08-17・履歴）
 
 - **旧窓**（W32/W33 ログ）: 土曜レビューのまま残す。数値を ISO 週で上書きしない。
 - **新窓**: 初回は **2026-W34（2026-08-17〜08-23）を 2026-08-25 火** に記入。
 - 旧窓と新窓を **前週比しない**。
-- 数字取得は GitHub Actions（クラウドはローカル SA JSON を読まない）。要約・正本 PR はフェーズ2b（**CI 自動が必須**。Cursor は任意）。承認実行はフェーズ2c（L0 のみ。L1 許可リストは空）。人の L0 は Facts スレッドへの **`APPROVE-DOC` のみ**。
-- **フェーズ1（完了）**: [`.github/workflows/weekly-telemetry-ga4.yml`](../../.github/workflows/weekly-telemetry-ga4.yml) が ISO 週 JSON を artifact に置く。Secret `GA4_SA_JSON`。ドライラン W33: [run 31998682755](https://github.com/ykagesg7/FlightEMS/actions/runs/31998682755)（正本には未記入）。
-- **フェーズ2a（実装・検証済）**: [`.github/workflows/weekly-telemetry-notify.yml`](../../.github/workflows/weekly-telemetry-notify.yml) が GA4 成功後に `#fa-telemetry` へ **日本語** Facts を投稿する。`@` メンションなし。Secret `SLACK_WEBHOOK_URL`（必須）。`SLACK_BOT_TOKEN` があると投稿末尾に **スレッド Permalink** を付ける。
-- **フェーズ2b（実装）**: [`.github/workflows/weekly-telemetry-draft-pr.yml`](../../.github/workflows/weekly-telemetry-draft-pr.yml) が Facts 成功後に docs-only PR を自動作成する（merge しない。**非 Draft**）。適用は [`apply_week_review.py`](../../scripts/telemetry/apply_week_review.py)。Cursor Skill [`weekly-telemetry-review`](../../.cursor/skills/weekly-telemetry-review/SKILL.md) は任意（Sentry 追記）。Facts 下書きは `scripts/telemetry/format_ga4_review.py`。
-- **フェーズ2c（L0 実装・配線済）**: スレッドの一行コマンドを [`.github/workflows/weekly-telemetry-approve.yml`](../../.github/workflows/weekly-telemetry-approve.yml) が実行する。`APPROVE-DOC` は `telemetry/YYYY-Www` かつ docs のみの PR を squash merge（**Draft なら自動で Ready**）。`APPROVE T-xx` は **許可リスト空**のため no-op。受信は Vercel [`api/telemetry-approve.ts`](../../api/telemetry-approve.ts)（Slack Events `message.channels`。notify アプリには付けない）。ACK は `fa-telemetry-notify` の Incoming Webhook。**マージ成功後のみ**成功 ACK。失敗時は再送を促す ACK。Slash Command は使わない。未配線でも `gh workflow run weekly-telemetry-approve.yml` で人手起動できる。
-- **フェーズ2d（CI 失敗通知）**: [`.github/workflows/weekly-telemetry-failure-notify.yml`](../../.github/workflows/weekly-telemetry-failure-notify.yml) が GA4 / notify / draft-pr / approve のいずれかが **failure** で終了したとき `#fa-telemetry` に日本語アラートを投稿する（週・失敗ステップ・実行ログ URL）。Secret はフェーズ2a と同じ **`SLACK_WEBHOOK_URL`**（または `SLACK_BOT_TOKEN`）。未設定ならステップはスキップ（ログに理由を残す）。
 
-### Slack 承認コマンド
+### 旧 GA4 週次パイプライン（2026-08-17〜2026-11-09・**2026-11-10 撤去**）
 
-レポート投稿の **スレッドに返信**する。一行・大文字。絵文字だけでは判定しない。人の必須操作は **`APPROVE-DOC` のみ**（正本 PR は CI が用意する）。**`@Cursor` やその他のメンションを付けない**（旧 `@Cursor APPROVE-DOC` は受け付けない）。未承認のまま次の火曜が来たら **実行しない**（fail-closed）。
+2026-11-10 まで、火曜に GitHub Actions（GA4 ISO 週 JSON）→ Slack `#fa-telemetry` Facts → docs-only PR → スレッド `APPROVE-DOC`（L0 squash）の自動化があった。workflow・Vercel 受信 API・`scripts/` 配下 Python は **リポジトリから削除済み**（詳細は当該コミット以前の Git 履歴）。**以降の週次 GA4 は My将軍**。
 
-| コマンド | 意味 | 段階 |
-|----------|------|------|
-| `APPROVE-DOC` | その週の正本 PR をマージしてよい | L0 |
-| `APPROVE T-xx` | 許可リストの項目を実行してよい（例: `APPROVE T-03`） | L1（L2 は後段） |
-| `SKIP T-xx` | その項目は今週やらない | — |
-| `HOLD` | 今週は実行しない | — |
-| `REJECT T-xx` | 提案を否定（ボードは open のまま） | — |
+### Slack 承認コマンド（履歴・**無効**）
 
-ボットが投稿するチャンネルを「全メッセージで発火」にしない。承認はキーワード付きスレッド返信のみ。2c の ACK はコマンド語を再掲せず、**`fa-telemetry-notify` の投稿**としてスレッドに付く（**`APPROVE-DOC` の成功 ACK はマージ完了後**）。Slash Command は作らない。
+旧パイプライン時代のコマンド表（現行では反応しない）。
 
-### フェーズ2c の配線（一度）
-
-1. **GitHub** に workflow `weekly-telemetry-approve` がある（L0）。手動なら `gh workflow run weekly-telemetry-approve.yml -f command=HOLD`。
-2. **Slack アプリは notify と分ける。** Incoming Webhook の `fa-telemetry-notify` に Event Subscriptions を付けない。
-3. 本番 Vercel に `SLACK_SIGNING_SECRET` と `GITHUB_TELEMETRY_DISPATCH_TOKEN`（fine-grained、`actions:write` のみ。contents は付けない）。
-4. Request URL: `https://flight-lms.vercel.app/api/telemetry-approve`。Bot event は **`message.channels` のみ**。チャンネルは `#fa-telemetry`。Facts **スレッドに** `HOLD` / `APPROVE-DOC` 等を一行返信する。ACK は Incoming Webhook のため **`fa-telemetry-notify` の投稿**として付く。`fa-telemetry-notify` には Event Subscriptions を付けない。Slash Command は使わない。Socket Mode は Off。
-5. L1 を足すときは [`scripts/telemetry/l1_allowlist.json`](../../scripts/telemetry/l1_allowlist.json) を PR してから。T-03 の自動 resolve は再発中のため入れない。
+| コマンド | 意味（当時） |
+|----------|----------------|
+| `APPROVE-DOC` | その週の正本 PR をマージしてよい（L0） |
+| `APPROVE T-xx` | 許可リストの項目（L1・当時は空） |
+| `SKIP T-xx` / `HOLD` / `REJECT T-xx` | スキップ・保留・却下 |
 
 ---
 
@@ -70,11 +58,11 @@
 | SA 鍵パス（ローカル） | `%APPDATA%\FlightAcademy\secrets\ga-mcp-readonly.json` |
 | Sentry org / project | `yusuke-kage` / `flight-academy` |
 
-### 火曜の最小チェックリスト
+### 火曜の最小チェックリスト（現行）
 
-1. **GA4**: Actions の artifact `ga4-<ISO週>`（なければローカル SA + Data API）。今週・前週の users / sessions / screenPageViews / engagedSessions。日次。上位 `pagePath`・記事パス・source/medium・device・landing。
+1. **GA4**: **My将軍**（ローカル SA + MCP または Data API）。今週・前週の users / sessions / screenPageViews / engagedSessions。日次。上位 `pagePath`・記事パス・source/medium・device・landing。
 2. **Sentry**: 直近 7d の error 件数、`is:unresolved lastSeen:-7d`、チャンク系（`FLIGHT-ACADEMY-4` 等）の最終発生。
-3. **文書**: CI `weekly-telemetry-draft-pr` が週節・ボードを自動追記して docs-only PR を出す。任意で Skill `weekly-telemetry-review` が Sentry 等を追記。L0 はスレッドの `APPROVE-DOC`（2c）のみ。運用変更は本書 §2c と [05_Content_Pipeline.md](../05_Content_Pipeline.md) にのみ追記する。
+3. **文書**: 必要なら本書に週節・ボードを手動または別経路で追記。運用変更は [05_Content_Pipeline.md](../05_Content_Pipeline.md) と本書にのみ書く。
 
 ---
 
@@ -126,7 +114,7 @@
 
 ### 2026-W41（2026-10-05〜2026-10-11 / レビュー 2026-10-13）
 
-**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 38356622311](https://github.com/ykagesg7/FlightEMS/actions/runs/38356622311) / Sentry MCP（未取得）
+**データ取得**: GitHub Actions（旧 GA4 週次 CI）artifact [run 38356622311](https://github.com/ykagesg7/FlightEMS/actions/runs/38356622311) / Sentry MCP（未取得）
 **比較**: 直前 ISO 週 2026-W40 のみ（旧土曜窓とは比べない）
 
 #### 現状（Facts）
@@ -167,7 +155,7 @@
 
 ### 2026-W40（2026-09-28〜2026-10-04 / レビュー 2026-10-06）
 
-**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 37420797734](https://github.com/ykagesg7/FlightEMS/actions/runs/37420797734) / Sentry MCP（未取得）
+**データ取得**: GitHub Actions（旧 GA4 週次 CI）artifact [run 37420797734](https://github.com/ykagesg7/FlightEMS/actions/runs/37420797734) / Sentry MCP（未取得）
 **比較**: 直前 ISO 週 2026-W39 のみ（旧土曜窓とは比べない）
 
 #### 現状（Facts）
@@ -208,7 +196,7 @@
 
 ### 2026-W39（2026-09-21〜2026-09-27 / レビュー 2026-09-29）
 
-**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 36525513631](https://github.com/ykagesg7/FlightEMS/actions/runs/36525513631) / Sentry MCP（未取得）
+**データ取得**: GitHub Actions（旧 GA4 週次 CI）artifact [run 36525513631](https://github.com/ykagesg7/FlightEMS/actions/runs/36525513631) / Sentry MCP（未取得）
 **比較**: 直前 ISO 週 2026-W38 のみ（旧土曜窓とは比べない）
 
 #### 現状（Facts）
@@ -249,7 +237,7 @@
 
 ### 2026-W38（2026-09-14〜2026-09-20 / レビュー 2026-09-22）
 
-**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 35686630776](https://github.com/ykagesg7/FlightEMS/actions/runs/35686630776) / Sentry MCP（未取得）
+**データ取得**: GitHub Actions（旧 GA4 週次 CI）artifact [run 35686630776](https://github.com/ykagesg7/FlightEMS/actions/runs/35686630776) / Sentry MCP（未取得）
 **比較**: 直前 ISO 週 2026-W37 のみ（旧土曜窓とは比べない）
 
 #### 現状（Facts）
@@ -290,7 +278,7 @@
 
 ### 2026-W37（2026-09-07〜2026-09-13 / レビュー 2026-09-15）
 
-**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 34928863203](https://github.com/ykagesg7/FlightEMS/actions/runs/34928863203) / Sentry MCP（未取得）
+**データ取得**: GitHub Actions（旧 GA4 週次 CI）artifact [run 34928863203](https://github.com/ykagesg7/FlightEMS/actions/runs/34928863203) / Sentry MCP（未取得）
 **比較**: 直前 ISO 週 2026-W36 のみ（旧土曜窓とは比べない）
 
 #### 現状（Facts）
@@ -331,7 +319,7 @@
 
 ### 2026-W36（2026-08-31〜2026-09-06 / レビュー 2026-09-09）
 
-**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 34185730754](https://github.com/ykagesg7/FlightEMS/actions/runs/34185730754) / Sentry MCP（未取得）  
+**データ取得**: GitHub Actions（旧 GA4 週次 CI）artifact [run 34185730754](https://github.com/ykagesg7/FlightEMS/actions/runs/34185730754) / Sentry MCP（未取得）  
 **比較**: 直前 ISO 週 2026-W35 のみ（旧土曜窓とは比べない）  
 **文脈**: W35 の静穏週からさらに PV が落ち込み。トップ `/` のみ。記事・planning 上位なし。users は 2 に微増。
 
@@ -374,7 +362,7 @@
 
 ### 2026-W35（2026-08-24〜08-30 / レビュー 2026-09-06）
 
-**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 33470547714](https://github.com/ykagesg7/FlightEMS/actions/runs/33470547714) / Sentry MCP（未取得）  
+**データ取得**: GitHub Actions（旧 GA4 週次 CI）artifact [run 33470547714](https://github.com/ykagesg7/FlightEMS/actions/runs/33470547714) / Sentry MCP（未取得）  
 **比較**: 直前 ISO 週 2026-W34 のみ（旧土曜窓とは比べない）  
 **文脈**: W34 の記事回遊スパイク後の静穏週。トップは `/` と `/planning`。`/explore/airspace-3d` が初めて上位に入る。
 
@@ -417,7 +405,7 @@
 
 ### 2026-W34（2026-08-17〜08-23 / レビュー 2026-08-30）
 
-**データ取得**: GitHub Actions `weekly-telemetry-ga4` artifact [run 32798351523](https://github.com/ykagesg7/FlightEMS/actions/runs/32798351523) / Sentry MCP（未取得）  
+**データ取得**: GitHub Actions（旧 GA4 週次 CI）artifact [run 32798351523](https://github.com/ykagesg7/FlightEMS/actions/runs/32798351523) / Sentry MCP（未取得）  
 **比較**: 直前 ISO 週 2026-W33 のみ（旧土曜窓とは比べない）  
 **文脈**: 初回 ISO 火曜窓の正本記入。08/17（日）と 08/22（金）に PV スパイク。記事一覧と CP 系・4.x 系の回遊が中心。
 
@@ -550,9 +538,9 @@
 | 2026-09-29 | 自動追記 **2026-W39**（フェーズ2b CI）。Sentry は CI 未取得。 |
 | 2026-09-22 | 自動追記 **2026-W38**（フェーズ2b CI）。Sentry は CI 未取得。 |
 | 2026-09-15 | 自動追記 **2026-W37**（フェーズ2b CI）。Sentry は CI 未取得。 |
-| 2026-09-12 | フェーズ2b を CI 自動 PR（`weekly-telemetry-draft-pr`）に変更。人の L0 は `APPROVE-DOC` のみ。Cursor Skill は任意。 |
+| 2026-09-12 | フェーズ2b を CI 自動 PR（旧 CI draft-pr）に変更。人の L0 は `APPROVE-DOC` のみ。Cursor Skill は任意。 |
 | 2026-09-09 | **2026-W36** を追記（フェーズ2b）。PV 2 の極小週。A2-a ベースライン週だが quiz イベント 0。 |
 | 2026-09-06 | **2026-W35** を追記（フェーズ2b）。W34 記事スパイク後の静穏週。2c self-test を `merge_failed` ACK 文言と整合。 |
 | 2026-08-30 | 初回 ISO 正本 **2026-W34** を追記（フェーズ2b PR #6）。Sentry MCP はクラウド未認証のため GA のみ。2c: Draft 自動 Ready + マージ成功後 ACK。2a: Bot token 時 Permalink。 |
-| 2026-08-17 | ISO 週・火曜切替。フェーズ1 GA4 artifact。フェーズ2a 日本語 Facts（メンションなし）。フェーズ2b Skill `weekly-telemetry-review`（正本 PR・未マージ）。フェーズ2c L0（`APPROVE-DOC` squash merge、L1 リスト空）。 |
+| 2026-08-17 | ISO 週・火曜切替。フェーズ1 GA4 artifact。フェーズ2a 日本語 Facts（メンションなし）。フェーズ2b Skill 旧 Skill（正本 PR・未マージ）。フェーズ2c L0（`APPROVE-DOC` squash merge、L1 リスト空）。 |
 | 2026-08-08 | 初版。土曜午前運用・テンプレ・オープン課題ボード・W32 記入。 |

@@ -22,7 +22,7 @@
 | エージェント規約 | `AGENTS.md`、`.cursor/rules/*.mdc` 8本（core-project 常時適用ほか）、`.cursor/agents/{verifier,aviation-safety-review,...}`、`.cursor/skills/*` 10本、`.cursor/hooks.json`（危険シェル拒否） | `.cursorrules` ではなく `.cursor/rules` 方式で既に整備済み |
 | 実装担当の実績 | 直近の PR は **Cursor クラウドエージェント**（GitHub App `cursor`）が `cursor/<slug>-<id>` ブランチで作成 → ユーザーがマージ | 「侍大将＝クラウド Cursor」は既に稼働中 |
 | ラベル / Issue テンプレ | GitHub 既定ラベルのみ。`.github/ISSUE_TEMPLATE` なし | 新設が必要 |
-| Slack | 既存 `#fa-telemetry`（`C0BQ5R19QDV`）、Secrets `SLACK_WEBHOOK_URL` / `SLACK_BOT_TOKEN` は週次テレメトリで使用中 | Discord 不要 |
+| Slack | 既存 `#fa-telemetry`（`C0BQ5R19QDV`）。旧週次テレメトリ bot は 2026-11-10 廃止 | Discord 不要 |
 | 役割分担の正本 | `docs/ops/Work_Allocation.md`：**GrokBot は Inspector / Growth の2役のみ、「3本目を足さない」、コード・SQL・マージはしない** | 家老・斥候の追加は**この正本と衝突** → 改訂が必要 |
 | データ | クイズ設問（verified 2,129問）・学習カタログは **Supabase** 上。法令条文に絡む設問修正は SQL 作業 | CI では検証できない領域がある |
 | ブランチ保護 | API で確認できず（要確認）。マージは手動 | 必須チェック設定が必要 |
