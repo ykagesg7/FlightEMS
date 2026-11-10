@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { buildAbsoluteUrl } from '../../../../config/siteOrigin';
 import type { ArticleMeta } from '../../../../types/articles';
+import { shouldEmitRobotsNoindex } from '../../../../utils/articleSeoNoindex';
 
 interface ArticleMetaTagsProps {
   meta: ArticleMeta;
@@ -16,10 +17,12 @@ const ArticleMetaTags: React.FC<ArticleMetaTagsProps> = ({ meta, url }) => {
   const siteName = 'FlightAcademy';
   const ogImage = meta.heroImage || buildAbsoluteUrl('/images/og-default.jpg');
   const description = meta.excerpt || `${meta.title} - ${siteName}で学ぶ航空知識`;
+  const noindex = shouldEmitRobotsNoindex(meta);
 
   return (
     <Helmet>
       <title>{meta.title} | {siteName}</title>
+      {noindex ? <meta name="robots" content="noindex" /> : null}
       <meta name="description" content={description} />
       <meta name="keywords" content={meta.tags?.join(', ')} />
       <meta name="author" content={meta.author || siteName} />

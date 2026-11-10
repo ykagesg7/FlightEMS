@@ -45,6 +45,31 @@ describe('courseProgress', () => {
     expect(matchesModuleSource(contents[2], metas.c, module.source)).toBe(false);
   });
 
+  it('omits noindex articles from module listings', () => {
+    const stubContents = [
+      mockContent({ id: 'CPL-Hub-Meteorology', category: 'CPL', order_index: 0 }),
+      mockContent({ id: 'CPL-Hub-Navigation', category: 'CPL', order_index: 1 }),
+    ];
+    const stubMetas = {
+      'CPL-Hub-Meteorology': {
+        title: 'Meteo stub',
+        slug: 'cpl-hub-meteorology',
+        tags: [],
+        series: 'CPL-Learning-Stub',
+        noindex: true,
+      },
+      'CPL-Hub-Navigation': {
+        title: 'Nav hub',
+        slug: 'cpl-hub-navigation',
+        tags: [],
+        series: 'CPL-Learning-Stub',
+      },
+    };
+    const module = getCourseById('cpl')!.modules[0];
+    const articles = getModuleArticles(module, stubContents, stubMetas);
+    expect(articles.map((a) => a.id)).toEqual(['CPL-Hub-Navigation']);
+  });
+
   it('sorts module articles by meta.order then order_index', () => {
     const module = {
       id: 'test',

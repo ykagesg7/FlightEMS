@@ -3,62 +3,36 @@ import React from 'react'
 
 export const meta = {
   type: 'lesson',
-  title: '【空中航法】CPL 学習ハブ（テスト連携）',
+  title: '【空中航法】CPL 学習ハブ：読む順番ガイド',
   slug: 'cpl-hub-navigation',
   date: '2026-03-29',
   author: 'Michizane (Shadow)',
   tags: ['CPL', '学科試験', '空中航法', 'ハブ'],
-  series: 'CPL-Learning-Stub',
+  series: 'CPL-Navigation',
   order: 0,
   readingTime: 4,
-  excerpt: 'ナビゲーター「道真」のフィクション設定と、空中航法シリーズ（3.4.x）への入口。テスト結果からの関連記事リンク用ハブ。',
+  excerpt:
+    'CPL 空中航法（3.4.x）シリーズの読み順と各記事への入口。計器や手順の正本は最新の教材・公布資料に従ってください。',
   publishedAt: '2026-03-29'
 };
 
 <Image
   src="/images/ContentImages/Michizane1.png"
-  alt="道真（フィクション）：滑走路と戦闘機をバックにバイクで駆ける、パロディ風のビジュアルイメージ"
+  alt="ナビゲーション学習のビジュアルイメージ（フィクション演出）"
   width={1200}
   height={960}
 />
 
-## このハブの役割
-
-このページは **テスト結果からの学習記事リンク**（`ReviewContentLink`）や、**空中航法シリーズ全体の入口**として使うハブです。個々の単元は下記の記事へ進んでください。
-
----
-
-## 道真より（自己紹介）
-
-おっ、初めましてのあんさんも、おかえりのあんさんも、どうもたい。
-
-上の画像はワシの「空を愛するオッサンのフィクション人格・道真（みちざね）」のビジュアルイメージや。**歴史上の菅原道真とも、特定の実在人物とも無関係**たい。映画やミリタリーのノリを借りた **パロディ寄りの見た目**で、学科の「怖い話」を少しだけ楽に読むためのマスコットやと思ってくれればええ。
-
-ワシの仕事は単純や。**ナビを盲信したらロスポジ（迷子）で詰む**ってことを、笑いと比喩で腹に落としてもらうこと。計器もGPSも道具や。最後にブレーキ踏むのは、あんさん自身の判断力たい。
-
----
+空中航法の CPL 記事は、下の順で読むと基礎から実務寄りの話につながるばい。試験対策の最終確認は、教官や最新の公布資料を正本としてな。
 
 ## 空中航法シリーズ（読み順）
 
-`meta.series: CPL-Navigation` でつながっとるばい。
-
-1. [推測航法（DR）の基礎](/articles/3.4.1_DeadReckoning)
-2. [VOR 航法](/articles/3.4.2_VORNavigation)
-3. [GNSS／GPS 航法の基礎](/articles/3.4.3_GPSNavigation)
-4. [飛行計画と航法計算](/articles/3.4.4_FlightPlanning)
-5. [NDB航法](/articles/3.4.5_NDBNavigation)
-6. [DME航法](/articles/3.4.6_DMENavigation)
-7. [推測航法の応用](/articles/3.4.7_DeadReckoningAdvanced)
-
----
-
-## 関連ドキュメント
-
-- [段階1 完了サマリ](/docs/Closed_Sprints.md)（シリーズ索引・DB 同期メモ）
-- [記事パイプライン](/docs/05_Content_Pipeline.md)
-
----
-
-> **注:** 画像・キャラクター・会話調は **フィクション用の演出**です。実運航・試験対策の正本は **最新の公布資料・教材・教官の指示**に従ってください。
+1. [推測航法（DR）の基礎](/articles/3-4-1-dead-reckoning)
+2. [VOR 航法](/articles/3-4-2-vor-navigation)
+3. [GNSS／GPS 航法の基礎](/articles/3-4-3-gps-navigation)
+4. [飛行計画と航法計算](/articles/3-4-4-flight-planning)
+5. [NDB航法](/articles/3-4-5-ndb-navigation)
+6. [DME航法](/articles/3-4-6-dme-navigation)
+7. [推測航法の応用](/articles/3-4-7-dead-reckoning-advanced)
 
 export default ({ children }) => <>{children}</>

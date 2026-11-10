@@ -24,6 +24,8 @@ export interface ArticleMeta {
   author?: string;
   /** ヒーロー画像URL（任意） */
   heroImage?: string;
+  /** true: reachable by URL but omit from sitemap and emit robots noindex */
+  noindex?: boolean;
 }
 
 /**

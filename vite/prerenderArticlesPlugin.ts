@@ -4,23 +4,9 @@ import type { Plugin } from 'vite';
 import { isWithdrawnArticle } from '../src/constants/withdrawnArticleIds';
 import { resolveCanonicalSiteOriginFromEnv, type SiteOriginEnv } from '../src/config/siteOriginEnv';
 import { articlePrettySlug } from '../src/utils/articleCanonicalPath';
-import { collectArticleMetas, type ExtractedArticleMeta } from './articlesMeta';
+import { articleHeadTags } from './articleHeadTags';
+import { collectArticleMetas } from './articlesMeta';
 import { writeSitemapAndRobots } from './generateSitemap';
-
-function isArticleReleased(publishedAt?: string): boolean {
-  if (!publishedAt) return false;
-  const day = publishedAt.slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return false;
-  const now = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Tokyo',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date());
-  return day <= now;
-}
-
-const SITE_NAME = 'FlightAcademy';
 
 /** Client hubs with no prerendered index. `dist/articles/` exists for OG pages, so `/articles` 404s without this. */
 export const SPA_HUB_FALLBACK_PATHS = [
@@ -48,48 +34,6 @@ export function writeSpaHubFallbacks(distDir: string, template: string): number 
 function resolveSiteOrigin(): string {
   const env = process.env as SiteOriginEnv;
   return resolveCanonicalSiteOriginFromEnv(env);
-}
-
-function escapeAttr(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-function articleHeadTags(
-  meta: ExtractedArticleMeta,
-  filename: string,
-  origin: string,
-): string {
-  const pathSlug = articlePrettySlug(meta, filename);
-  const url = `${origin}/articles/${pathSlug}`;
-  const description =
-    meta.excerpt || `${meta.title} - ${SITE_NAME}で学ぶ航空知識`;
-  const ogImage = meta.heroImage || `${origin}/images/og-default.jpg`;
-  const released = isArticleReleased(meta.publishedAt);
-  const robots = released ? '' : '\n    <meta data-rh="true" name="robots" content="noindex" />';
-
-  const tagLines = (meta.tags ?? [])
-    .map((tag) => `    <meta data-rh="true" property="article:tag" content="${escapeAttr(tag)}" />`)
-    .join('\n');
-
-  return `    <title data-rh="true">${escapeAttr(meta.title)} | ${SITE_NAME}</title>
-    <meta data-rh="true" name="description" content="${escapeAttr(description)}" />
-    <link data-rh="true" rel="canonical" href="${escapeAttr(url)}" />
-    <meta data-rh="true" property="og:type" content="article" />
-    <meta data-rh="true" property="og:title" content="${escapeAttr(meta.title)}" />
-    <meta data-rh="true" property="og:description" content="${escapeAttr(description)}" />
-    <meta data-rh="true" property="og:url" content="${escapeAttr(url)}" />
-    <meta data-rh="true" property="og:site_name" content="${SITE_NAME}" />
-    <meta data-rh="true" property="og:image" content="${escapeAttr(ogImage)}" />
-    <meta data-rh="true" property="og:locale" content="ja_JP" />
-    <meta data-rh="true" name="twitter:card" content="summary_large_image" />
-    <meta data-rh="true" name="twitter:title" content="${escapeAttr(meta.title)}" />
-    <meta data-rh="true" name="twitter:description" content="${escapeAttr(description)}" />
-    <meta data-rh="true" name="twitter:image" content="${escapeAttr(ogImage)}" />${robots}
-${tagLines}`;
 }
 
 function injectHead(html: string, tags: string): string {

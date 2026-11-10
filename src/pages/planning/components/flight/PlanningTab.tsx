@@ -470,7 +470,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
   const learnArticleLink = isLearn ? (
     <p className="text-xs text-gray-400">
       航法の理論は{' '}
-      <Link to="/articles/CPL-Hub-Navigation" className="text-whiskyPapa-yellow underline hover:text-whiskyPapa-yellow/80">
+      <Link to="/articles/cpl-hub-navigation" className="text-whiskyPapa-yellow underline hover:text-whiskyPapa-yellow/80">
         CPL 空中航法ハブ
       </Link>
       {' '}から読めます。Planning 学習モードで計算を試してください。
