@@ -37,8 +37,7 @@ export function sendGa4PageView(measurementId: string, pagePath: string): void {
   if (!id || typeof window.gtag !== 'function') return;
   const title = typeof document !== 'undefined' ? document.title : '';
   const locationHref = typeof window !== 'undefined' ? window.location.href : '';
-  // send_page_view: false 時は config 更新で SPA の page_view を送る（collect 失敗を減らす）
-  window.gtag('config', id, {
+  window.gtag('event', 'page_view', {
     page_path: pagePath,
     page_title: title,
     page_location: locationHref,
