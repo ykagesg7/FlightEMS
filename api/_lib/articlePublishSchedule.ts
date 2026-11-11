@@ -662,6 +662,25 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
     ],
   },
+  '2026-W51': {
+    isoWeek: '2026-W51',
+    seriesTitle: '学科再掲＋計器実技（予定）',
+    intro:
+      '来週水はピトー静圧・3つの計器（PPL-1-2-2 再掲案）。金は高度・速度・昇降のクロスチェック（IF-1-5）。',
+    checklistNote:
+      'IF-1-5 は MDX 完成・learning_contents SQL 同梱（本番は承認後適用）。メール announceDate=2026-12-18。syncPublish:false。',
+    articles: [
+      {
+        id: 'IF-1-5_AirData_CrossCheck',
+        publishDate: '2026-12-18',
+        announceDate: '2026-12-18',
+        syncPublish: false,
+        title: '【操縦】計器飛行第5話：高度・速度・昇降のクロスチェック',
+        slug: '/articles/if-1-5-air-data-cross-check',
+        hook: '針を追うな、姿勢を直せ。ALT・A/S・VV が同じ物語を語っているかを見抜け。',
+      },
+    ],
+  },
 };
 
 export function getDigestForIsoWeek(isoWeek: string): WeeklyArticleDigest | null {

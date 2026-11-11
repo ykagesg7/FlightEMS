@@ -505,6 +505,11 @@
     "permanent": true
   },
   {
+    "source": "/articles/IF-1-5_AirData_CrossCheck",
+    "destination": "/articles/if-1-5-air-data-cross-check",
+    "permanent": true
+  },
+  {
     "source": "/articles/L1-Q3-1_PathToPilot",
     "destination": "/articles/l1-q3-1-path-to-pilot",
     "permanent": true

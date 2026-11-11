@@ -45,6 +45,16 @@ describe('MDX reader-visible dev codes', () => {
     expect(unresolved.size).toBe(0);
   });
 
+  it('sanitizer replaces scheduled IF teaser codes in 次の話の予告', () => {
+    const catalog = buildArticleCatalog(collectArticleMetas());
+    const unresolved = new Set<string>();
+    const input = 'その先の実技枠では IF-1-6 へ駒を進めるけん';
+    const out = sanitizeMdxBodyForDevCodes(input, catalog, unresolved);
+    expect(out).not.toMatch(/\bIF-1-6\b/);
+    expect(out).toContain('コンパス・ターン／方位の維持');
+    expect(unresolved.size).toBe(0);
+  });
+
   it('sanitizer strips dev code prefix inside bold Japanese quotes', () => {
     const catalog = buildArticleCatalog(collectArticleMetas());
     const unresolved = new Set<string>();
