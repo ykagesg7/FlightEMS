@@ -31,6 +31,13 @@ export const BASE_LAYER_CATALOG: { id: MapBaseLayerId; label: string }[] = [
 export const STATIC_MAP_LAYER_CATALOG: MapLayerCatalogEntry[] = [
   { id: 'airport', label: '空港', group: 'aviation', overlayGroup: 'Common Layers', layerKey: '空港' },
   { id: 'navaids', label: 'Navaids', group: 'aviation', overlayGroup: 'Common Layers', layerKey: 'Navaids' },
+  {
+    id: 'navaids_italy',
+    label: 'Navaids (Italy)',
+    group: 'aviation',
+    overlayGroup: 'Common Layers',
+    layerKey: 'Navaids (Italy)',
+  },
   { id: 'restricted_airspace', label: '制限空域', group: 'aviation', overlayGroup: 'Common Layers', layerKey: '制限空域' },
   { id: 'training_high', label: '高高度訓練空域', group: 'aviation', overlayGroup: 'Common Layers', layerKey: '高高度訓練空域' },
   { id: 'training_low', label: '低高度訓練空域', group: 'aviation', overlayGroup: 'Common Layers', layerKey: '低高度訓練空域' },

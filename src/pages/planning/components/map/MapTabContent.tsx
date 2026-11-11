@@ -4,6 +4,10 @@ import { CACHE_DURATION, useWeatherCache } from '../../../../contexts/WeatherCac
 import { fetchWeatherData } from '../../../../services/weather';
 import { FlightPlan } from '../../../../types/index';
 import { fetchAirportWeather as fetchAirportWeatherLayer } from './layers/airports';
+import {
+  parseBundledGeojsonMetadata,
+  unverifiedCoordinateNoteForNavaid,
+} from './bundledGeojsonMetadata';
 import { bindNavaidPopup, navaidMarkerOptions } from './layers/navaids';
 import { bindWaypointPopup } from './layers/waypoints';
 import {
@@ -36,6 +40,7 @@ import { useWindGridOverlaySetter } from './windGridOverlayContext';
 import { TrackLayer } from './TrackLayer';
 import type { PlanningMapNavaid, PlanningMapRegion } from './planningMapTypes';
 import type { PlanningMapOverlayGroups } from './mapLayerUtils';
+import type { BundledGeojsonMetadata } from './bundledGeojsonMetadata';
 import type { AirportProps, NavaidProps } from './types';
 import type { FlightTrack } from '../../tracks/types';
 import { calculateMagneticBearing } from '../../../../utils/magneticBearing';
@@ -51,11 +56,12 @@ export interface MapTabContentProps {
   onLayerControllerChange?: (controller: PlanningMapLayerController | null) => void;
   onAirspaceSelection?: (selection: AirspaceSelection) => void;
   onRainViewerFetched?: (fetchedAtIso: string) => void;
+  onItalyNavaidsMetadata?: (metadata: BundledGeojsonMetadata | null) => void;
   navaidData?: PlanningMapNavaid[];
   radialGridStationId?: string;
 }
 
-export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange, onAirspaceSelection, onRainViewerFetched, navaidData = [], radialGridStationId = 'AHT' }) => {
+export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange, onAirspaceSelection, onRainViewerFetched, onItalyNavaidsMetadata, navaidData = [], radialGridStationId = 'AHT' }) => {
   const rainViewerLayerRef = useRef<L.LayerGroup | null>(null);
   if (!rainViewerLayerRef.current) {
     rainViewerLayerRef.current = L.layerGroup();
@@ -159,6 +165,12 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
     };
   }, []);
 
+  const italyNavaidNotesRef = useRef<string[] | undefined>(undefined);
+  const onItalyNavaidsMetadataRef = useRef(onItalyNavaidsMetadata);
+  useEffect(() => {
+    onItalyNavaidsMetadataRef.current = onItalyNavaidsMetadata;
+  }, [onItalyNavaidsMetadata]);
+
   // Common / Local Layers は ref で 1 回だけ生成（regions 変更で再生成しない）
   const commonLayersRef = useRef<Record<string, L.Layer> | null>(null);
   if (!commonLayersRef.current) {
@@ -182,6 +194,19 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
           L.circleMarker(latlng, navaidMarkerOptions((feature.properties as NavaidProps).type)),
         onEachFeature: (feature, layer) =>
           bindNavaidPopup(feature, layer, setFlightPlan, mapRef.current),
+      }),
+      "Navaids (Italy)": L.geoJSON(null, {
+        pointToLayer: (feature, latlng) =>
+          L.circleMarker(latlng, navaidMarkerOptions((feature.properties as NavaidProps).type)),
+        onEachFeature: (feature, layer) => {
+          const props = feature.properties as NavaidProps;
+          bindNavaidPopup(feature, layer, setFlightPlan, mapRef.current, {
+            coordinateCaveat: unverifiedCoordinateNoteForNavaid(
+              props.id ?? '',
+              italyNavaidNotesRef.current,
+            ),
+          });
+        },
       }),
       "制限空域": L.geoJSON(null, {
         style: { color: 'red', weight: 2, opacity: 0.7, dashArray: '4' },
@@ -397,6 +422,21 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
         navaidsLayer.addData(data);
       })
       .catch(console.error);
+
+    fetch('/geojson/Navaids_ITALY.geojson')
+      .then((res) => res.json())
+      .then((data: GeoJSON.FeatureCollection) => {
+        const metadata = parseBundledGeojsonMetadata(data);
+        italyNavaidNotesRef.current = metadata?.notes;
+        onItalyNavaidsMetadataRef.current?.(metadata ?? null);
+        const italyLayer = common['Navaids (Italy)'] as L.GeoJSON;
+        italyLayer.clearLayers();
+        italyLayer.addData(data);
+      })
+      .catch((err) => {
+        console.error(err);
+        onItalyNavaidsMetadataRef.current?.(null);
+      });
 
     // Airports レイヤーのデータ取得
     fetch('/geojson/Airports.geojson')
