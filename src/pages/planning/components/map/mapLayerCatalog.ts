@@ -38,7 +38,6 @@ export const STATIC_MAP_LAYER_CATALOG: MapLayerCatalogEntry[] = [
   { id: 'rapcon', label: 'RAPCON', group: 'aviation', overlayGroup: 'Common Layers', layerKey: 'RAPCON' },
   { id: 'acc_sector_high', label: 'ACC-Sector High', group: 'aviation', overlayGroup: 'Common Layers', layerKey: 'ACC-Sector High' },
   { id: 'acc_sector_low', label: 'ACC-Sector Low', group: 'aviation', overlayGroup: 'Common Layers', layerKey: 'ACC-Sector Low' },
-  { id: 'opensky_traffic', label: '航空機（参考・OpenSky）', group: 'reference', overlayGroup: 'Common Layers', layerKey: '航空機（参考・OpenSky）', referenceOnly: true },
   { id: 'rainviewer_radar', label: '降水レーダー（参考・RainViewer）', group: 'reference', overlayGroup: 'Common Layers', layerKey: '降水レーダー（参考・RainViewer）', referenceOnly: true },
   { id: 'wind_barbs', label: '上層風バーブ（参考・Open-Meteo）', group: 'reference', overlayGroup: 'Common Layers', layerKey: '上層風バーブ（参考・Open-Meteo）', referenceOnly: true },
   { id: 'navaid_radial_grid', label: 'ラジアル／DME網（参考）', group: 'reference', overlayGroup: 'Common Layers', layerKey: 'ラジアル／DME網（参考）', referenceOnly: true },

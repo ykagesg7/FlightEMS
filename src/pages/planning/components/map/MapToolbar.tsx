@@ -1,17 +1,12 @@
 import React from 'react';
 import { Layers } from 'lucide-react';
 import { usePlanningMapLayerControllerContext } from './planningMapLayerControllerContext';
-import type { LiveTrafficLayerControls } from './hooks/useLiveTrafficLayer';
-import { LiveTrafficRefreshButton } from './LiveTrafficRefreshButton';
-
 type Props = {
   hintVisible: boolean;
   onDismissHint: () => void;
   onOpenHelp: () => void;
   onOpenLayers: () => void;
   layersOpen: boolean;
-  liveTrafficEnabled: boolean;
-  liveTrafficControls: LiveTrafficLayerControls | null;
 };
 
 const MAX_VISIBLE_CHIPS = 3;
@@ -22,8 +17,6 @@ export const MapToolbar: React.FC<Props> = ({
   onOpenHelp,
   onOpenLayers,
   layersOpen,
-  liveTrafficEnabled,
-  liveTrafficControls,
 }) => {
   const controller = usePlanningMapLayerControllerContext();
   const labels = controller?.activeLayerLabels ?? [];
@@ -55,9 +48,6 @@ export const MapToolbar: React.FC<Props> = ({
           >
             +{overflow}
           </button>
-        ) : null}
-        {liveTrafficEnabled && liveTrafficControls ? (
-          <LiveTrafficRefreshButton controls={liveTrafficControls} compact />
         ) : null}
         <button
           type="button"

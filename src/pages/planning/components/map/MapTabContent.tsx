@@ -25,8 +25,8 @@ import {
 } from './mapAirspaceLayerStyle';
 import { bindPlanningSwimNotamChip, swimNotamOpenChip } from './popups/swimNotamPopup';
 import { FlightPlanRouteLayer } from './FlightPlanRouteLayer';
-import { useLiveTrafficLayer, type LiveTrafficLayerControls } from './hooks/useLiveTrafficLayer';
 import { usePlanningMapLayerController } from './hooks/usePlanningMapLayerController';
+import { createGsiPaleMapTileLayer, createGsiSeamlessPhotoTileLayer } from './gsiLeafletBaseLayers';
 import type { PlanningMapLayerController } from './hooks/usePlanningMapLayerController';
 import { useRainViewerRadarLayer } from './hooks/useRainViewerRadarLayer';
 import { usePlanningMapWindGrid } from './hooks/usePlanningMapWindGrid';
@@ -49,22 +49,17 @@ export interface MapTabContentProps {
   tracks: FlightTrack[];
   currentTrackTime: number | null;
   onLayerControllerChange?: (controller: PlanningMapLayerController | null) => void;
-  onLiveTrafficControlsChange?: (controls: LiveTrafficLayerControls | null) => void;
   onAirspaceSelection?: (selection: AirspaceSelection) => void;
+  onRainViewerFetched?: (fetchedAtIso: string) => void;
   navaidData?: PlanningMapNavaid[];
   radialGridStationId?: string;
 }
 
-export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange, onLiveTrafficControlsChange, onAirspaceSelection, navaidData = [], radialGridStationId = 'AHT' }) => {
-  const liveTrafficLayerRef = useRef<L.LayerGroup | null>(null);
-  if (!liveTrafficLayerRef.current) {
-    liveTrafficLayerRef.current = L.layerGroup();
-  }
+export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightPlan, map, setFlightPlan, regions, tracks, currentTrackTime, onLayerControllerChange, onAirspaceSelection, onRainViewerFetched, navaidData = [], radialGridStationId = 'AHT' }) => {
   const rainViewerLayerRef = useRef<L.LayerGroup | null>(null);
   if (!rainViewerLayerRef.current) {
     rainViewerLayerRef.current = L.layerGroup();
   }
-  const [liveTrafficEnabled, setLiveTrafficEnabled] = useState(false);
   const [rainViewerEnabled, setRainViewerEnabled] = useState(false);
   const windBarbsLayerRef = useRef<L.LayerGroup | null>(null);
   if (!windBarbsLayerRef.current) {
@@ -219,7 +214,6 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
         onEachFeature: (feature, layer) =>
           bindAirspaceFeatureSheetSelect(feature, layer, 'ACC_Sector_Low', airspaceInteractionRef),
       }),
-      "航空機（参考・OpenSky）": liveTrafficLayerRef.current,
       "降水レーダー（参考・RainViewer）": rainViewerLayerRef.current,
       "上層風バーブ（参考・Open-Meteo）": windBarbsLayerRef.current,
       "ラジアル／DME網（参考）": navaidRadialGridLayerRef.current,
@@ -812,32 +806,18 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
       .catch(console.error);
   }, [map, setFlightPlan, setWeatherCache]);
 
-  // OpenStreetMapレイヤー
-  const osmLayer = useMemo(() => L.tileLayer(
-    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }
-  ), []);
-
-  // 衛星写真レイヤー
-  const esriLayer = useMemo(() => L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    {
-      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-    }
-  ), []);
+  const mapBaseLayer = useMemo(() => createGsiPaleMapTileLayer(), []);
+  const satelliteBaseLayer = useMemo(() => createGsiSeamlessPhotoTileLayer(), []);
 
   const layerController = usePlanningMapLayerController({
     map,
     overlayLayers,
-    osmLayer,
-    esriLayer,
+    mapBaseLayer,
+    satelliteBaseLayer,
     regions,
     loadRegionWaypointsData,
     loadAllWaypointsData,
     referenceLayerSetters: {
-      setLiveTrafficEnabled,
       setRainViewerEnabled,
       setWindBarbsEnabled,
       setNavaidRadialGridEnabled,
@@ -849,12 +829,11 @@ export const MapTabContent: React.FC<MapTabContentProps> = React.memo(({ flightP
     return () => onLayerControllerChange?.(null);
   }, [layerController, onLayerControllerChange]);
 
-  const liveTrafficControls = useLiveTrafficLayer(map, liveTrafficLayerRef.current, liveTrafficEnabled);
-
   useEffect(() => {
-    onLiveTrafficControlsChange?.(liveTrafficControls);
-    return () => onLiveTrafficControlsChange?.(null);
-  }, [liveTrafficControls, onLiveTrafficControlsChange]);
+    if (rainViewerEnabled) {
+      onRainViewerFetched?.(new Date().toISOString());
+    }
+  }, [rainViewerEnabled, onRainViewerFetched]);
 
   useRainViewerRadarLayer(map, rainViewerLayerRef.current, rainViewerEnabled);
 

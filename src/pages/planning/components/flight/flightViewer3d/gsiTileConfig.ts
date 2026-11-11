@@ -8,11 +8,22 @@ export const GSI_DEM5A_MAX_LEVEL = 15;
 /** 教育用 3D プレビュー — dem5a z15 まで取りに行かず z14 で十分 */
 export const GSI_PREVIEW_MAX_FETCH_LEVEL = GSI_DEM_PNG_MAX_LEVEL;
 
+/**
+ * 淡色地図（2D ベース）— 地理院タイル一覧（標準／淡色 ZL5〜18）
+ * @see https://maps.gsi.go.jp/development/ichiran.html
+ */
+export const GSI_PALE_MAP_URL = 'https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png';
+export const GSI_RASTER_MAP_MIN_LEVEL = 5;
+export const GSI_RASTER_MAP_MAX_LEVEL = 18;
+
 /** 全国最新写真（シームレス）— maps.gsi.go.jp layers1.txt minZoom 2 */
 export const GSI_SEAMLESS_PHOTO_URL =
   'https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg';
 export const GSI_SEAMLESS_PHOTO_MIN_LEVEL = 2;
 export const GSI_SEAMLESS_PHOTO_MAX_LEVEL = 18;
+
+/** Leaflet／Cesium 共通の出典表記（地理院コンテンツ利用規約） */
+export const GSI_TILE_ATTRIBUTION_JA = '出典：国土地理院';
 
 /** 日本域おおよそ（低ズームの海外タイル要求を抑える） */
 export const GSI_JAPAN_IMAGERY_RECTANGLE = Rectangle.fromDegrees(122.0, 20.0, 154.0, 46.5);
