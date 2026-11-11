@@ -10,14 +10,20 @@ export type StaticAirspaceProvenanceState = {
  * 空域レイヤー用 GeoJSON の HTTP Last-Modified（取得日の目安）。
  * AIRAC 版は GeoJSON に含まれないため返さない。
  */
-export function useStaticAirspaceGeojsonProvenance(enabled: boolean): StaticAirspaceProvenanceState {
+/** 空域 GeoJSON の取得日（A1）。`alwaysFetch` でレイヤー未選択でも取得する。 */
+export function useStaticAirspaceGeojsonProvenance(
+  enabled: boolean,
+  alwaysFetch = false,
+): StaticAirspaceProvenanceState {
   const [state, setState] = useState<StaticAirspaceProvenanceState>({
     loading: false,
     lastModifiedIso: null,
   });
 
+  const shouldFetch = enabled || alwaysFetch;
+
   useEffect(() => {
-    if (!enabled) return;
+    if (!shouldFetch) return;
     let cancelled = false;
     setState((s) => ({ ...s, loading: true }));
     void (async () => {
@@ -38,7 +44,7 @@ export function useStaticAirspaceGeojsonProvenance(enabled: boolean): StaticAirs
     return () => {
       cancelled = true;
     };
-  }, [enabled]);
+  }, [shouldFetch]);
 
   return state;
 }

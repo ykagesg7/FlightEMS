@@ -28,6 +28,14 @@ export const GSI_TILE_ATTRIBUTION_JA = '出典：国土地理院';
 /** 日本域おおよそ（低ズームの海外タイル要求を抑える） */
 export const GSI_JAPAN_IMAGERY_RECTANGLE = Rectangle.fromDegrees(122.0, 20.0, 154.0, 46.5);
 
+/** Leaflet 用（Cesium Rectangle に依存しない） */
+export const GSI_JAPAN_BOUNDS = {
+  south: 20.0,
+  west: 122.0,
+  north: 46.5,
+  east: 154.0,
+} as const;
+
 export function shouldFetchGsiDemNetworkTile(level: number): boolean {
   return level >= GSI_DEM_PNG_MIN_LEVEL && level <= GSI_DEM5A_MAX_LEVEL;
 }

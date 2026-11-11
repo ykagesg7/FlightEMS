@@ -8,24 +8,13 @@ import { DEFAULT_CENTER, DEFAULT_ZOOM } from '../../../../utils';
 import type { FlightTrack } from '../../tracks/types';
 import icon from '/images/marker-icon.png';
 import iconShadow from '/images/marker-shadow.png';
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-const AVIATION_OVERLAY_IDS = new Set([
-  'airport',
-  'navaids',
-  'restricted_airspace',
-  'training_high',
-  'training_low',
-  'training_civil',
-  'rapcon',
-  'acc_sector_high',
-  'acc_sector_low',
-  'pending_airspace',
-]);
 import type { WindGridMapOverlayModel } from './hooks/usePlanningMapWindGrid';
 import type { PlanningMapLayerController } from './hooks/usePlanningMapLayerController';
-import { MapGsiAttribution } from './MapGsiAttribution';
+import { MapPlanningDataStatusBar } from './MapPlanningDataStatusBar';
 import { useStaticAirspaceGeojsonProvenance } from './hooks/useStaticAirspaceGeojsonProvenance';
+import { usePlanningMapResizeSync } from './hooks/usePlanningMapResizeSync';
 import {
   buildAirspaceProvenance,
   buildRainViewerProvenance,
@@ -154,22 +143,14 @@ const MapTab: React.FC<MapTabProps> = ({
   }, []);
 
   const radialGridEnabled = layerController?.enabledOverlayIds.has('navaid_radial_grid') ?? false;
-  const airspaceLayersEnabled = useMemo(() => {
-    if (!layerController) return false;
-    for (const id of layerController.enabledOverlayIds) {
-      if (AVIATION_OVERLAY_IDS.has(id)) return true;
-    }
-    return false;
-  }, [layerController]);
-  const airspaceProv = useStaticAirspaceGeojsonProvenance(airspaceLayersEnabled);
+  const airspaceProv = useStaticAirspaceGeojsonProvenance(false, true);
   const weatherRainEnabled = layerController?.enabledOverlayIds.has('rainviewer_radar') ?? false;
   const weatherWindEnabled = layerController?.enabledOverlayIds.has('wind_barbs') ?? false;
 
   const provenanceLines = useMemo((): DataProvenanceLine[] => {
-    const lines: DataProvenanceLine[] = [];
-    if (airspaceLayersEnabled) {
-      lines.push(buildAirspaceProvenance(airspaceProv.lastModifiedIso ?? undefined));
-    }
+    const lines: DataProvenanceLine[] = [
+      buildAirspaceProvenance(airspaceProv.lastModifiedIso ?? undefined),
+    ];
     if (weatherRainEnabled) {
       lines.push(buildRainViewerProvenance(rainViewerFetchedAtIso ?? undefined));
     }
@@ -184,13 +165,15 @@ const MapTab: React.FC<MapTabProps> = ({
     }
     return lines;
   }, [
-    airspaceLayersEnabled,
     airspaceProv.lastModifiedIso,
     weatherRainEnabled,
     rainViewerFetchedAtIso,
     weatherWindEnabled,
     windGridLegend?.refTimeUtc,
   ]);
+
+  const mapSurfaceRef = useRef<HTMLDivElement | null>(null);
+  usePlanningMapResizeSync(map, mapSurfaceRef);
 
   const regions = useRegionsIndex();
   const navaidData = useNavaidGeojson();
@@ -325,13 +308,13 @@ const MapTab: React.FC<MapTabProps> = ({
         <WindGridOverlaySetterContext.Provider value={setWindGridLegend}>
           <div className="relative flex min-h-0 flex-1">
             <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
-              <div className="relative min-h-0 flex-1">
+              <div ref={mapSurfaceRef} className="relative min-h-0 flex-1">
                 <MapContainer
                   center={[DEFAULT_CENTER.lat, DEFAULT_CENTER.lng]}
                   zoom={DEFAULT_ZOOM}
                   className="absolute inset-0 h-full w-full"
                   ref={setMap}
-                  worldCopyJump={true}
+                  worldCopyJump={false}
                 >
                   <MapTabContent
                     flightPlan={flightPlan}
@@ -353,7 +336,11 @@ const MapTab: React.FC<MapTabProps> = ({
                   cruiseAltitudeFt={flightPlan.altitude}
                   onClearSelection={clearAirspaceSelection}
                 />
-                <MapGsiAttribution />
+                <MapPlanningDataStatusBar
+                  airspaceLastModifiedIso={airspaceProv.lastModifiedIso}
+                  airspaceLoading={airspaceProv.loading}
+                  stackAboveFooter={isCoarsePointer}
+                />
                 {isCoarsePointer ? <MapCenterCrosshair /> : null}
                 {pinnedPosition ? (
                   <MapCursorDetailSheet

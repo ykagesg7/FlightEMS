@@ -121,6 +121,10 @@ export function usePlanningMapLayerController({
       if (!map.hasLayer(target)) {
         target.addTo(map);
       }
+      window.requestAnimationFrame(() => {
+        map.invalidateSize({ pan: false });
+        target.redraw?.();
+      });
     },
     [map, mapBaseLayer, satelliteBaseLayer],
   );

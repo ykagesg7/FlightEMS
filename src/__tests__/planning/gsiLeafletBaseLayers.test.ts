@@ -20,8 +20,9 @@ describe('gsiLeafletBaseLayers (config)', () => {
   });
 
   it('uses GSI seamlessphoto for satellite base', () => {
-    expect(GSI_SEAMLESS_PHOTO_URL).toContain('seamlessphoto');
+    expect(GSI_SEAMLESS_PHOTO_URL).toMatch(/seamlessphoto\/\{z\}\/\{x\}\/\{y\}\.jpg$/);
     expect(GSI_SEAMLESS_PHOTO_MIN_LEVEL).toBe(2);
     expect(GSI_SEAMLESS_PHOTO_MAX_LEVEL).toBe(18);
   });
 });
+
