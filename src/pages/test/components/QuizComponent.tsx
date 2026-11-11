@@ -5,6 +5,8 @@ import { scrollToQuizAnchorDeferred } from '../utils/scrollToQuizAnchor';
 import { QUIZ_FLAG_HELP_MESSAGE } from '../constants/quizSaveCopy';
 
 /** モバイル sticky サイトヘッダー分（md 以上はパレット inline のため scroll-margin を抑える） */
+const QUIZ_SCROLL_TITLE_CLASS =
+  'scroll-mt-[calc(5rem+env(safe-area-inset-top,0px))] md:scroll-mt-24';
 const QUIZ_SCROLL_QUESTION_CLASS =
   'scroll-mt-[calc(5rem+env(safe-area-inset-top,0px))] scroll-mb-4 md:scroll-mt-24';
 const QUIZ_SCROLL_ACTION_CLASS =
@@ -50,6 +52,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   const flaggedRef = useRef<{ [key: string]: boolean }>({});
   const lastTimerThresholdAnnouncedRef = useRef<number | null>(null);
   const examTimeExpiredSubmittedRef = useRef(false);
+  const quizTitleAnchorRef = useRef<HTMLDivElement>(null);
   const quizProgressAnchorRef = useRef<HTMLDivElement>(null);
   const questionBlockRef = useRef<HTMLDivElement>(null);
   const feedbackRegionRef = useRef<HTMLDivElement>(null);
@@ -130,7 +133,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
     if (questions.length === 0 || initialQuestionScrollRef.current) return;
     initialQuestionScrollRef.current = true;
     return scrollToQuizAnchorDeferred(
-      questionBlockRef.current ?? quizProgressAnchorRef.current,
+      quizTitleAnchorRef.current ?? quizProgressAnchorRef.current,
       { block: 'start' },
       120,
     );
@@ -219,7 +222,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
     prevFeedbackKeyRef.current = null;
 
     return scrollToQuizAnchorDeferred(
-      questionBlockRef.current ?? quizProgressAnchorRef.current,
+      quizTitleAnchorRef.current ?? quizProgressAnchorRef.current,
       { block: 'start' },
       60,
     );
@@ -338,7 +341,10 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {timerLiveMessage}
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+      <div
+        ref={quizTitleAnchorRef}
+        className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4 ${QUIZ_SCROLL_TITLE_CLASS}`}
+      >
         <h2 className="text-2xl font-bold text-brand-primary">{quizTitle}</h2>
         {mode === 'exam' && timeLeft !== null && (
           <div
