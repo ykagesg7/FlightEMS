@@ -38,7 +38,9 @@ test.describe('/test Quiz Hub', () => {
     await page.goto('/test?tab=diagnostic');
     await page.getByRole('button', { name: /10問診断を開始/ }).click();
     await expect(page).toHaveURL(/tab=diagnostic/);
-    const loadingOrQuiz = page.getByText(/問題を取得中|実力診断|出題できる問題が見つかりませんでした/);
+    const loadingOrQuiz = page.getByText(/問題を読み込み中|実力診断|出題できる問題が見つかりませんでした/).or(
+      page.getByTestId('quiz-question-loading-skeleton'),
+    );
     await expect(loadingOrQuiz.first()).toBeVisible({ timeout: 60_000 });
   });
 

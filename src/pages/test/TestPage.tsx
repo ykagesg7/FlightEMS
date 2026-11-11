@@ -34,12 +34,18 @@ import {
 import type { Database } from '../../types/database.types';
 import { ALL_OPTION_VALUE, type FilterSortOrder } from './testFilterOptionUtils';
 import {
-  fetchDiagnosticQuestionsPool,
-  fetchMappedQuestionsPool,
   fetchQuestionPreviewById,
   fetchReviewQuestionsPool,
-  fetchSubjectQuestionsPool,
 } from './testQuizFetch';
+import {
+  fetchDiagnosticQuestionsPoolWithCache,
+  fetchMappedQuestionsPoolWithCache,
+  fetchSubjectQuestionsPoolWithCache,
+  prefetchDiagnosticQuestionsPool,
+  prefetchMappedQuestionsPool,
+  prefetchSubjectQuestionsPool,
+} from './quizQuestionsPrefetchCache';
+import { QuizQuestionLoadingSkeleton } from './components/QuizQuestionLoadingSkeleton';
 import {
   applyPartialTestHubState,
   areTestHubSearchParamsEqual,
@@ -166,6 +172,41 @@ const TestPage: React.FC = () => {
     });
   }, [hubState.tab, hubState.exam, hubState.contentId]);
 
+  const prefetchCurrentPool = useCallback(() => {
+    if (previewQuestionId) return;
+    if (hubState.tab === 'diagnostic' && !diagnosticStarted) {
+      prefetchDiagnosticQuestionsPool(questionCount, examLevel);
+    } else if (contentId) {
+      prefetchMappedQuestionsPool(contentId, questionCount);
+    } else if (subjectSelected && hubState.tab === 'subject') {
+      prefetchSubjectQuestionsPool(
+        selectedSubject,
+        selectedSubSubjectRawValues,
+        questionCount,
+        examLevel,
+      );
+    }
+  }, [
+    previewQuestionId,
+    hubState.tab,
+    diagnosticStarted,
+    questionCount,
+    examLevel,
+    contentId,
+    subjectSelected,
+    selectedSubject,
+    selectedSubSubjectRawValues,
+  ]);
+
+  useEffect(() => {
+    prefetchCurrentPool();
+  }, [prefetchCurrentPool]);
+
+  useEffect(() => {
+    if (!quizFinished) return;
+    prefetchCurrentPool();
+  }, [quizFinished, prefetchCurrentPool]);
+
   useEffect(() => {
     setDiagnosticStarted(hubState.tab !== 'diagnostic');
   }, [hubState.tab]);
@@ -185,7 +226,8 @@ const TestPage: React.FC = () => {
     scrollToQuizAnchor(quizContentAnchorRef.current);
   }, [loading, hubState.tab, diagnosticStarted, questions.length, error]);
 
-  const runFetch = useCallback(async () => {
+  const runFetch = useCallback(async (options?: { forceFresh?: boolean }) => {
+    const forceFresh = options?.forceFresh === true;
     setLoading(true);
     setError(null);
     setFetchFailure(false);
@@ -194,17 +236,18 @@ const TestPage: React.FC = () => {
       if (previewQuestionId) {
         result = await fetchQuestionPreviewById(previewQuestionId);
       } else if (hubState.tab === 'diagnostic') {
-        result = await fetchDiagnosticQuestionsPool(questionCount, examLevel);
+        result = await fetchDiagnosticQuestionsPoolWithCache(questionCount, examLevel, { forceFresh });
       } else if (mode === 'review' || hubState.tab === 'review') {
         result = await fetchReviewQuestionsPool(questionCount, examLevel);
       } else if (contentId) {
-        result = await fetchMappedQuestionsPool(contentId, questionCount);
+        result = await fetchMappedQuestionsPoolWithCache(contentId, questionCount, { forceFresh });
       } else if (subjectSelected) {
-        result = await fetchSubjectQuestionsPool(
+        result = await fetchSubjectQuestionsPoolWithCache(
           selectedSubject,
           selectedSubSubjectRawValues,
           questionCount,
           examLevel,
+          { forceFresh },
         );
       } else {
         setQuestions([]);
@@ -461,7 +504,7 @@ const TestPage: React.FC = () => {
     setSessionRewards(null);
     setUserAnswers([]);
     setFlaggedQuestionIds([]);
-    void runFetch();
+    void runFetch({ forceFresh: true });
   };
 
   return (
@@ -532,6 +575,7 @@ const TestPage: React.FC = () => {
           requestScrollToQuiz();
           setDiagnosticStarted(true);
         }}
+        onPrefetchDiagnostic={prefetchCurrentPool}
         diagnosticDisabled={diagnosticStarted && loading}
         diagnosticInProgress={questions.length > 0 && !quizFinished && !loading}
       />
@@ -612,7 +656,7 @@ const TestPage: React.FC = () => {
 
       <div ref={quizContentAnchorRef} className="scroll-mt-20 md:scroll-mt-24">
       {loading ? (
-        <div className="p-8 text-center text-lg">問題を取得中...</div>
+        <QuizQuestionLoadingSkeleton />
       ) : quizFinished ? (
         <div ref={quizResultsAnchorRef} className="scroll-mt-20 md:scroll-mt-24">
           <QuizResultsView

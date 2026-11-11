@@ -14,6 +14,8 @@ interface QuizHubToolbarProps {
   onOpenFilters: () => void;
   activeFilterCount: number;
   onStartDiagnostic?: () => void;
+  /** 診断開始ボタンの hover/focus で問題プールを先読み */
+  onPrefetchDiagnostic?: () => void;
   diagnosticDisabled?: boolean;
   /** 診断セッション進行中はクイック診断カードを隠す（上の開始ボタン誤タップ防止） */
   diagnosticInProgress?: boolean;
@@ -32,6 +34,7 @@ export const QuizHubToolbar: React.FC<QuizHubToolbarProps> = ({
   onOpenFilters,
   activeFilterCount,
   onStartDiagnostic,
+  onPrefetchDiagnostic,
   diagnosticDisabled = false,
   diagnosticInProgress = false,
 }) => (
@@ -50,6 +53,8 @@ export const QuizHubToolbar: React.FC<QuizHubToolbarProps> = ({
         <button
           type="button"
           onClick={onStartDiagnostic}
+          onMouseEnter={onPrefetchDiagnostic}
+          onFocus={onPrefetchDiagnostic}
           disabled={diagnosticDisabled}
           className="rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-semibold text-[var(--bg)] transition hover:bg-brand-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
         >
