@@ -15,6 +15,8 @@ interface QuizHubToolbarProps {
   activeFilterCount: number;
   onStartDiagnostic?: () => void;
   diagnosticDisabled?: boolean;
+  /** 診断セッション進行中はクイック診断カードを隠す（上の開始ボタン誤タップ防止） */
+  diagnosticInProgress?: boolean;
 }
 
 const SORT_OPTIONS: { value: TestHubSort; label: string }[] = [
@@ -31,9 +33,10 @@ export const QuizHubToolbar: React.FC<QuizHubToolbarProps> = ({
   activeFilterCount,
   onStartDiagnostic,
   diagnosticDisabled = false,
+  diagnosticInProgress = false,
 }) => (
   <div className="mb-6 space-y-4">
-    {state.tab === 'diagnostic' && onStartDiagnostic && (
+    {state.tab === 'diagnostic' && onStartDiagnostic && !diagnosticInProgress && (
       <div className="rounded-xl border-2 border-brand-primary/40 bg-brand-secondary-dark p-5 shadow-lg ring-1 ring-brand-primary/20">
         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-primary">
           クイック実力診断

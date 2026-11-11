@@ -24,6 +24,7 @@ interface QuestionComponentProps {
   showAnswer: boolean;
   toggleShowAnswer: () => void;
   feedbackRegionRef?: React.RefObject<HTMLDivElement | null>;
+  feedbackScrollMarginClass?: string;
   reportContext?: QuestionReportContext;
   mainSubject?: string;
   generalMessages: {
@@ -43,6 +44,7 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
   showAnswer,
   toggleShowAnswer,
   feedbackRegionRef,
+  feedbackScrollMarginClass = 'scroll-mb-[min(40vh,11rem)] md:scroll-mb-4',
   reportContext,
   mainSubject,
   generalMessages
@@ -238,7 +240,7 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
           role="status"
           aria-live="polite"
           aria-atomic="true"
-          className={`scroll-mt-4 scroll-mb-[min(40vh,11rem)] md:scroll-mb-4 p-4 rounded-xl mt-4 border ${feedback.isCorrect
+          className={`scroll-mt-4 p-4 rounded-xl mt-4 border ${feedbackScrollMarginClass} ${feedback.isCorrect
             ? 'bg-green-500/10 border-green-400'
             : 'bg-red-500/10 border-red-400'
             }`}
