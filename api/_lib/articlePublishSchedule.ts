@@ -636,12 +636,19 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W50': {
     isoWeek: '2026-W50',
-    seriesTitle: '学科再掲＋計器実技',
+    seriesTitle: '心構え＋学科再掲＋計器実技',
     intro:
-      '来週水はジャイロの基礎（PPL-1-2 ①）。金は計器実技（IF-1-4・IF-1-5）。',
+      '来週日は OODA で判断の輪を回す心構え。水はジャイロの基礎（PPL-1-2 ①）。金は計器実技（IF-1-4・IF-1-5）。',
     checklistNote:
-      'IF-1-4・IF-1-5 は即公開（publishedAt＝2026-11-11）。learning_contents SQL 同梱（本番は承認後適用）。メール announceDate=2026-11-11。syncPublish:false。',
+      '1.3.7 は MDX 完成・learning_contents SQL 同梱（本番は承認後適用）。日曜ドリップ publishDate=2026-12-06。IF-1-4・IF-1-5 は即公開（publishedAt＝2026-11-11）。メール announceDate=2026-11-11。syncPublish:false。',
     articles: [
+      {
+        id: '1.3.7_OodaKeepTheLoopMoving',
+        publishDate: '2026-12-06',
+        title: '【思考法】判断を止めんな ～OODAを空と仕事で回す～',
+        slug: '/articles/ooda-keep-the-loop-moving',
+        hook: '見ることを止めるな。情勢を直し、決めて動け。ループを止めんな。',
+      },
       {
         id: 'PPL-1-2-1_GyroBasics',
         publishDate: '2026-01-20',
