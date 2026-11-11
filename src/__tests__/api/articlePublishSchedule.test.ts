@@ -151,13 +151,13 @@ describe('api/lib/articlePublishSchedule', () => {
     expect(weekdayJstFromPublishDate(if13!.announceDate!)).toBe(5);
     expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-3_IMC_Scan')).toBe(false);
 
-    // IF-1-4 scheduled publish: Friday mail announce (W50), no drip sync
+    // IF-1-4 immediate publish: mail announce same day (W50), no drip sync
     const if14 = listScheduledArticles().find((a) => a.id === 'IF-1-4_Attitude_Turns');
     expect(if14).toBeDefined();
     expect(if14?.syncPublish).toBe(false);
-    expect(if14?.announceDate).toBe('2026-12-11');
-    expect(if14?.publishDate).toBe('2026-12-11');
-    expect(weekdayJstFromPublishDate(if14!.announceDate!)).toBe(5);
+    expect(if14?.announceDate).toBe('2026-11-11');
+    expect(if14?.publishDate).toBe('2026-11-11');
+    expect(weekdayJstFromPublishDate(if14!.announceDate!)).toBe(3);
     expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-4_Attitude_Turns')).toBe(
       false,
     );
@@ -187,7 +187,7 @@ describe('api/lib/articlePublishSchedule', () => {
       },
       '2026-W50': {
         'PPL-1-2-1_GyroBasics': '2026-12-09',
-        'IF-1-4_Attitude_Turns': '2026-12-11',
+        'IF-1-4_Attitude_Turns': '2026-11-11',
       },
     };
     for (const [week, wantById] of Object.entries(expectedByWeek)) {

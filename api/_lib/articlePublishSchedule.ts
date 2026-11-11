@@ -640,7 +640,7 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     intro:
       '来週水はジャイロの基礎（PPL-1-2 ①）。金は姿勢指示とターンの型（IF-1-4）。',
     checklistNote:
-      'IF-1-4 は MDX 完成・learning_contents SQL 同梱（本番は承認後適用）。メール announceDate=2026-12-11。syncPublish:false。',
+      'IF-1-4 は即公開（publishedAt＝2026-11-11）。learning_contents SQL 同梱（本番は承認後適用）。メール announceDate=2026-11-11。syncPublish:false。',
     articles: [
       {
         id: 'PPL-1-2-1_GyroBasics',
@@ -653,8 +653,8 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
       },
       {
         id: 'IF-1-4_Attitude_Turns',
-        publishDate: '2026-12-11',
-        announceDate: '2026-12-11',
+        publishDate: '2026-11-11',
+        announceDate: '2026-11-11',
         syncPublish: false,
         title: '【操縦】計器飛行第4話：姿勢指示とターンの型',
         slug: '/articles/if-1-4-attitude-turns',

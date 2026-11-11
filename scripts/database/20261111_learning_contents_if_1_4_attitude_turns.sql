@@ -1,4 +1,4 @@
--- Instrument-Flying IF-1-4_Attitude_Turns（publishedAt 2026-12-11）。
+-- Instrument-Flying IF-1-4_Attitude_Turns（publishedAt 2026-11-11）。
 -- 本番未適用。Approve 後に適用（この PR では DB を書かない）。
 -- syncPublish:false のため cron は is_published を触らない → is_published=true で投入。
 -- Sibling: 20261107_learning_contents_if_1_3_imc_scan.sql（order_index 703）
