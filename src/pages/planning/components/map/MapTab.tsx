@@ -8,10 +8,19 @@ import { DEFAULT_CENTER, DEFAULT_ZOOM } from '../../../../utils';
 import type { FlightTrack } from '../../tracks/types';
 import icon from '/images/marker-icon.png';
 import iconShadow from '/images/marker-shadow.png';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import type { WindGridMapOverlayModel } from './hooks/usePlanningMapWindGrid';
-import type { LiveTrafficLayerControls } from './hooks/useLiveTrafficLayer';
 import type { PlanningMapLayerController } from './hooks/usePlanningMapLayerController';
+import { MapPlanningDataStatusBar } from './MapPlanningDataStatusBar';
+import { useStaticAirspaceGeojsonProvenance } from './hooks/useStaticAirspaceGeojsonProvenance';
+import { usePlanningMapResizeSync } from './hooks/usePlanningMapResizeSync';
+import {
+  buildAirspaceProvenance,
+  buildRainViewerProvenance,
+  buildWindProvenance,
+  type DataProvenanceLine,
+} from './mapDataProvenance';
 import { useCloseLayersOnMapClick } from './hooks/useCloseLayersOnMapClick';
 import { useMapLayersOpenMapLock } from './hooks/useMapLayersOpenMapLock';
 import { WindGridOverlaySetterContext } from './windGridOverlayContext';
@@ -68,8 +77,8 @@ const MapTab: React.FC<MapTabProps> = ({
   const [map, setMap] = useState<L.Map | null>(null);
   const [windGridLegend, setWindGridLegend] = useState<WindGridMapOverlayModel | null>(null);
   const [layerController, setLayerController] = useState<PlanningMapLayerController | null>(null);
-  const [liveTrafficControls, setLiveTrafficControls] = useState<LiveTrafficLayerControls | null>(null);
   const [layersOpen, setLayersOpen] = useState(false);
+  const [rainViewerFetchedAtIso, setRainViewerFetchedAtIso] = useState<string | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const [cursorDetailOpen, setCursorDetailOpen] = useState(false);
   const [radialGridStationId, setRadialGridStationId] = useState('AHT');
@@ -129,12 +138,42 @@ const MapTab: React.FC<MapTabProps> = ({
     if (preset) layerController.applyPreset(preset);
   }, [layerController, planningMode]);
 
-  const handleLiveTrafficControlsChange = useCallback((controls: LiveTrafficLayerControls | null) => {
-    setLiveTrafficControls(controls);
+  const handleRainViewerFetched = useCallback((fetchedAtIso: string) => {
+    setRainViewerFetchedAtIso(fetchedAtIso);
   }, []);
 
-  const liveTrafficEnabled = layerController?.enabledOverlayIds.has('opensky_traffic') ?? false;
   const radialGridEnabled = layerController?.enabledOverlayIds.has('navaid_radial_grid') ?? false;
+  const airspaceProv = useStaticAirspaceGeojsonProvenance(false, true);
+  const weatherRainEnabled = layerController?.enabledOverlayIds.has('rainviewer_radar') ?? false;
+  const weatherWindEnabled = layerController?.enabledOverlayIds.has('wind_barbs') ?? false;
+
+  const provenanceLines = useMemo((): DataProvenanceLine[] => {
+    const lines: DataProvenanceLine[] = [
+      buildAirspaceProvenance(airspaceProv.lastModifiedIso ?? undefined),
+    ];
+    if (weatherRainEnabled) {
+      lines.push(buildRainViewerProvenance(rainViewerFetchedAtIso ?? undefined));
+    }
+    if (weatherWindEnabled && windGridLegend?.refTimeUtc) {
+      const d = windGridLegend.refTimeUtc;
+      const utc = `${d.getUTCHours().toString().padStart(2, '0')}:${d.getUTCMinutes().toString().padStart(2, '0')} UTC`;
+      lines.push(
+        buildWindProvenance(d.toISOString(), `予報参照：${utc}`),
+      );
+    } else if (weatherWindEnabled) {
+      lines.push(buildWindProvenance(undefined));
+    }
+    return lines;
+  }, [
+    airspaceProv.lastModifiedIso,
+    weatherRainEnabled,
+    rainViewerFetchedAtIso,
+    weatherWindEnabled,
+    windGridLegend?.refTimeUtc,
+  ]);
+
+  const mapSurfaceRef = useRef<HTMLDivElement | null>(null);
+  usePlanningMapResizeSync(map, mapSurfaceRef);
 
   const regions = useRegionsIndex();
   const navaidData = useNavaidGeojson();
@@ -171,8 +210,6 @@ const MapTab: React.FC<MapTabProps> = ({
           onOpenHelp={() => setHelpOpen(true)}
           onOpenLayers={() => setLayersOpen((v) => !v)}
           layersOpen={layersOpen}
-          liveTrafficEnabled={liveTrafficEnabled}
-          liveTrafficControls={liveTrafficControls}
         />
 
         <Transition appear show={helpOpen} as={Fragment}>
@@ -204,11 +241,9 @@ const MapTab: React.FC<MapTabProps> = ({
                     <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-300">
                       <li>
                         ツールバーの<strong className="text-gray-200">「レイヤー」</strong>
-                        ボタンから、ベース地図や空域などの表示を切り替えられます。レイヤーパネル表示中は
+                        ボタンから、ベース地図（国土地理院タイル）や空域などの表示を切り替えられます。レイヤーパネル表示中は
                         <strong className="text-gray-200">地図をタップ</strong>
-                        するとパネルが閉じます（複数レイヤーの連続操作のため、選択後の自動クローズはありません）。オーバーレイ
-                        <strong className="text-gray-200">「航空機（参考・OpenSky）」</strong>
-                        は日本域に限定した ADS-B 参考位置（airplanes.live）です。マーカーは上視の航空機シルエット画像（機首が真方位の進行方向、欠損時は北向き）。地上機はグレースケール表示です。レイヤー ON 中は 3 分ごとに自動更新されますが、ツールバーまたはレイヤーパネルの<strong className="text-gray-200">「更新」</strong>ボタンで即時再取得もできます。欠損・遅延があり、実運航・航空交通管制には使用できません。
+                        するとパネルが閉じます。空域・気象レイヤー ON 時は出典・取得日（目安）をパネル内に表示します。
                       </li>
                       <li>
                         <strong className="text-gray-200">「降水レーダー（参考・RainViewer）」</strong>
@@ -273,13 +308,13 @@ const MapTab: React.FC<MapTabProps> = ({
         <WindGridOverlaySetterContext.Provider value={setWindGridLegend}>
           <div className="relative flex min-h-0 flex-1">
             <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
-              <div className="relative min-h-0 flex-1">
+              <div ref={mapSurfaceRef} className="relative min-h-0 flex-1">
                 <MapContainer
                   center={[DEFAULT_CENTER.lat, DEFAULT_CENTER.lng]}
                   zoom={DEFAULT_ZOOM}
                   className="absolute inset-0 h-full w-full"
                   ref={setMap}
-                  worldCopyJump={true}
+                  worldCopyJump={false}
                 >
                   <MapTabContent
                     flightPlan={flightPlan}
@@ -289,8 +324,8 @@ const MapTab: React.FC<MapTabProps> = ({
                     tracks={tracks}
                     currentTrackTime={currentTrackTime}
                     onLayerControllerChange={handleLayerControllerChange}
-                    onLiveTrafficControlsChange={handleLiveTrafficControlsChange}
                     onAirspaceSelection={handleAirspaceSelection}
+                    onRainViewerFetched={handleRainViewerFetched}
                     navaidData={navaidData}
                     radialGridStationId={radialGridStationId}
                   />
@@ -300,6 +335,11 @@ const MapTab: React.FC<MapTabProps> = ({
                   selection={airspaceSelection}
                   cruiseAltitudeFt={flightPlan.altitude}
                   onClearSelection={clearAirspaceSelection}
+                />
+                <MapPlanningDataStatusBar
+                  airspaceLastModifiedIso={airspaceProv.lastModifiedIso}
+                  airspaceLoading={airspaceProv.loading}
+                  stackAboveFooter={isCoarsePointer}
                 />
                 {isCoarsePointer ? <MapCenterCrosshair /> : null}
                 {pinnedPosition ? (
@@ -330,8 +370,7 @@ const MapTab: React.FC<MapTabProps> = ({
               open={layersOpen}
               onClose={closeLayers}
               windGridLegend={windGridLegend}
-              liveTrafficControls={liveTrafficControls}
-              liveTrafficEnabled={liveTrafficEnabled}
+              provenanceLines={provenanceLines}
               useInlineSidebar={useInlineLayersSidebar}
               radialGridEnabled={radialGridEnabled}
               radialGridStationId={radialGridStationId}

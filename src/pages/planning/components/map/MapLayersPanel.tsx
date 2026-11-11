@@ -8,9 +8,9 @@ import { MAP_LAYER_PRESETS } from './mapLayerPresets';
 import { MapLayersCollapsibleBlock } from './MapLayersCollapsibleBlock';
 import { MapLayersPanelSection } from './MapLayersPanelSection';
 import { usePlanningMapLayerControllerContext } from './planningMapLayerControllerContext';
-import type { LiveTrafficLayerControls } from './hooks/useLiveTrafficLayer';
-import { LiveTrafficRefreshPanel } from './LiveTrafficRefreshPanel';
 import { NavaidRadialGridPanel } from './NavaidRadialGridPanel';
+import { MapDataProvenancePanel } from './MapDataProvenancePanel';
+import type { DataProvenanceLine } from './mapDataProvenance';
 import type { PlanningMapNavaid } from './planningMapTypes';
 
 const GROUP_ORDER: MapLayerGroupId[] = ['aviation', 'waypoints', 'local', 'reference'];
@@ -19,8 +19,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   windGridLegend: WindGridMapOverlayModel | null;
-  liveTrafficControls: LiveTrafficLayerControls | null;
-  liveTrafficEnabled: boolean;
+  provenanceLines?: DataProvenanceLine[];
   /** false のとき lg でもボトムシート（split 左列が狭いときの地図圧迫回避） */
   useInlineSidebar?: boolean;
   radialGridEnabled?: boolean;
@@ -52,8 +51,7 @@ export const MapLayersPanel: React.FC<Props> = ({
   open,
   onClose,
   windGridLegend,
-  liveTrafficControls,
-  liveTrafficEnabled,
+  provenanceLines = [],
   useInlineSidebar = true,
   radialGridEnabled = false,
   radialGridStationId = 'AHT',
@@ -187,9 +185,9 @@ export const MapLayersPanel: React.FC<Props> = ({
         </div>
       ) : null}
 
-      {liveTrafficEnabled && liveTrafficControls ? (
+      {provenanceLines.length > 0 ? (
         <div className="border-b border-whiskyPapa-yellow/20 px-3 py-2">
-          <LiveTrafficRefreshPanel controls={liveTrafficControls} />
+          <MapDataProvenancePanel lines={provenanceLines} compact />
         </div>
       ) : null}
 

@@ -6,6 +6,13 @@ const RAINVIEWER_UPSTREAM = 'https://api.rainviewer.com/public/weather-maps.json
 
 export type WeatherAction = 'forecast' | 'aviation' | 'rainviewer';
 
+/** METAR 90s / TAF 600s — AWC 高頻度更新と上流レート制限のバランス */
+export function resolveAviationCacheControl(wxType: string | undefined): string | undefined {
+  if (wxType === 'taf') return 'public, max-age=600, s-maxage=600';
+  if (wxType === 'metar') return 'public, max-age=90, s-maxage=90';
+  return undefined;
+}
+
 export function resolveWeatherAction(req: VercelRequest): WeatherAction {
   const raw = req.query.action;
   const value = Array.isArray(raw) ? raw[0] : raw;
@@ -70,9 +77,13 @@ export default async function handler(request: VercelRequest, response: VercelRe
     if (request.method !== 'GET') {
       return response.status(405).json({ error: 'Method Not Allowed' });
     }
+    const typeRaw = request.query.type;
+    const wxType = Array.isArray(typeRaw) ? typeRaw[0] : typeRaw;
     const result = await proxyAviationWeather(
       request.query as Record<string, string | string[] | undefined>,
     );
+    const cacheControl = result.status === 200 ? resolveAviationCacheControl(wxType) : undefined;
+    if (cacheControl) response.setHeader('Cache-Control', cacheControl);
     return response.status(result.status).json(result.body);
   }
 

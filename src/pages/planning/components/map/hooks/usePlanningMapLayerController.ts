@@ -36,7 +36,6 @@ export type PlanningMapLayerController = {
 };
 
 type ReferenceLayerSetters = {
-  setLiveTrafficEnabled: (enabled: boolean) => void;
   setRainViewerEnabled: (enabled: boolean) => void;
   setWindBarbsEnabled: (enabled: boolean) => void;
   setNavaidRadialGridEnabled: (enabled: boolean) => void;
@@ -45,8 +44,8 @@ type ReferenceLayerSetters = {
 export type UsePlanningMapLayerControllerParams = {
   map: L.Map | null;
   overlayLayers: PlanningMapOverlayGroups;
-  osmLayer: L.TileLayer;
-  esriLayer: L.TileLayer;
+  mapBaseLayer: L.TileLayer;
+  satelliteBaseLayer: L.TileLayer;
   regions: PlanningMapRegion[];
   loadRegionWaypointsData: (regionId: string) => void;
   loadAllWaypointsData: () => void;
@@ -58,9 +57,7 @@ function syncReferenceLayerState(
   enabled: boolean,
   setters: ReferenceLayerSetters,
 ): void {
-  if (overlayId === 'opensky_traffic') {
-    setters.setLiveTrafficEnabled(enabled);
-  } else if (overlayId === 'rainviewer_radar') {
+  if (overlayId === 'rainviewer_radar') {
     setters.setRainViewerEnabled(enabled);
   } else if (overlayId === 'wind_barbs') {
     setters.setWindBarbsEnabled(enabled);
@@ -72,8 +69,8 @@ function syncReferenceLayerState(
 export function usePlanningMapLayerController({
   map,
   overlayLayers,
-  osmLayer,
-  esriLayer,
+  mapBaseLayer,
+  satelliteBaseLayer,
   regions,
   loadRegionWaypointsData,
   loadAllWaypointsData,
@@ -116,16 +113,20 @@ export function usePlanningMapLayerController({
   const applyBaseLayerToMap = useCallback(
     (id: MapBaseLayerId) => {
       if (!map) return;
-      const target = id === 'satellite' ? esriLayer : osmLayer;
-      const other = id === 'satellite' ? osmLayer : esriLayer;
+      const target = id === 'satellite' ? satelliteBaseLayer : mapBaseLayer;
+      const other = id === 'satellite' ? mapBaseLayer : satelliteBaseLayer;
       if (map.hasLayer(other)) {
         map.removeLayer(other);
       }
       if (!map.hasLayer(target)) {
         target.addTo(map);
       }
+      window.requestAnimationFrame(() => {
+        map.invalidateSize({ pan: false });
+        target.redraw?.();
+      });
     },
-    [map, osmLayer, esriLayer],
+    [map, mapBaseLayer, satelliteBaseLayer],
   );
 
   const addOverlayToMap = useCallback(

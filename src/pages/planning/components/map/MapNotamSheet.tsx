@@ -9,6 +9,8 @@ import type { NotamSheetRequest } from './planningNotamSheetContext';
 import { useSnapSheet } from './hooks/useSnapSheet';
 import { cycleSnap, type SnapPoint } from './snapSheetUtils';
 import { clearSwimNotamMapOverlay } from './popups/swimNotamMapOverlay';
+import { MapDataProvenancePanel } from './MapDataProvenancePanel';
+import { buildNotamProvenance } from './mapDataProvenance';
 
 type Props = {
   map: L.Map | null;
@@ -223,6 +225,13 @@ export const MapNotamSheet: React.FC<Props> = ({
         >
           <X className="h-4 w-4" />
         </button>
+      </div>
+
+      <div className="shrink-0 border-b border-whiskyPapa-yellow/15 px-2 py-2 sm:px-3">
+        <MapDataProvenancePanel
+          lines={[buildNotamProvenance(fetchState.fetchedAtIso ?? undefined)]}
+          compact
+        />
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
