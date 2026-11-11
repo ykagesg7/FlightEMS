@@ -93,3 +93,23 @@ export function buildWindProvenance(
     note: forecastLabel,
   };
 }
+
+export const ITALY_NAVAIDS_GEOJSON_PATH = '/geojson/Navaids_ITALY.geojson';
+
+/** イタリア NAVAID 同梱 GeoJSON（metadata 出典・AIRAC シート） */
+export function buildItalyNavaidsProvenance(input: {
+  sourceLabel: string;
+  fetchedAtIso?: string;
+  airacLabel?: string;
+  extraNote?: string;
+}): DataProvenanceLine {
+  return {
+    category: 'airspace',
+    sourceLabel: input.sourceLabel,
+    fetchedAtIso: input.fetchedAtIso,
+    airacLabel: input.airacLabel,
+    note:
+      input.extraNote ??
+      '実運航は最新 AIP Italia・NOTAM を確認してください。日本向け SWIM NOTAM リンクは参考です。',
+  };
+}

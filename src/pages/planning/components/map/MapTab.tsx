@@ -16,7 +16,13 @@ import { MapPlanningDataStatusBar } from './MapPlanningDataStatusBar';
 import { useStaticAirspaceGeojsonProvenance } from './hooks/useStaticAirspaceGeojsonProvenance';
 import { usePlanningMapResizeSync } from './hooks/usePlanningMapResizeSync';
 import {
+  metadataGeneratedToIso,
+  summarizeAiracLabel,
+  type BundledGeojsonMetadata,
+} from './bundledGeojsonMetadata';
+import {
   buildAirspaceProvenance,
+  buildItalyNavaidsProvenance,
   buildRainViewerProvenance,
   buildWindProvenance,
   type DataProvenanceLine,
@@ -142,7 +148,15 @@ const MapTab: React.FC<MapTabProps> = ({
     setRainViewerFetchedAtIso(fetchedAtIso);
   }, []);
 
+  const [italyNavaidsMetadata, setItalyNavaidsMetadata] = useState<BundledGeojsonMetadata | null>(
+    null,
+  );
+  const handleItalyNavaidsMetadata = useCallback((metadata: BundledGeojsonMetadata | null) => {
+    setItalyNavaidsMetadata(metadata);
+  }, []);
+
   const radialGridEnabled = layerController?.enabledOverlayIds.has('navaid_radial_grid') ?? false;
+  const italyNavaidsEnabled = layerController?.enabledOverlayIds.has('navaids_italy') ?? false;
   const airspaceProv = useStaticAirspaceGeojsonProvenance(false, true);
   const weatherRainEnabled = layerController?.enabledOverlayIds.has('rainviewer_radar') ?? false;
   const weatherWindEnabled = layerController?.enabledOverlayIds.has('wind_barbs') ?? false;
@@ -151,6 +165,17 @@ const MapTab: React.FC<MapTabProps> = ({
     const lines: DataProvenanceLine[] = [
       buildAirspaceProvenance(airspaceProv.lastModifiedIso ?? undefined),
     ];
+    if (italyNavaidsEnabled && italyNavaidsMetadata) {
+      lines.push(
+        buildItalyNavaidsProvenance({
+          sourceLabel:
+            italyNavaidsMetadata.source?.trim() ||
+            'AIP Italia ENR 4.1（public/geojson/Navaids_ITALY.geojson）',
+          fetchedAtIso: metadataGeneratedToIso(italyNavaidsMetadata.generated),
+          airacLabel: summarizeAiracLabel(italyNavaidsMetadata.airac),
+        }),
+      );
+    }
     if (weatherRainEnabled) {
       lines.push(buildRainViewerProvenance(rainViewerFetchedAtIso ?? undefined));
     }
@@ -166,6 +191,8 @@ const MapTab: React.FC<MapTabProps> = ({
     return lines;
   }, [
     airspaceProv.lastModifiedIso,
+    italyNavaidsEnabled,
+    italyNavaidsMetadata,
     weatherRainEnabled,
     rainViewerFetchedAtIso,
     weatherWindEnabled,
@@ -326,6 +353,7 @@ const MapTab: React.FC<MapTabProps> = ({
                     onLayerControllerChange={handleLayerControllerChange}
                     onAirspaceSelection={handleAirspaceSelection}
                     onRainViewerFetched={handleRainViewerFetched}
+                    onItalyNavaidsMetadata={handleItalyNavaidsMetadata}
                     navaidData={navaidData}
                     radialGridStationId={radialGridStationId}
                   />
