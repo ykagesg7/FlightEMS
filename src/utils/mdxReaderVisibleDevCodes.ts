@@ -185,13 +185,6 @@ function formatDevCodeReplacement(res: DevCodeResolution): string {
   return res.title;
 }
 
-const NEXT_EPISODE_IF_PREFIX = /次回は\s+IF-\d-\d\s*[：:]\s*/g;
-
-/** Strip IF dev id after 「次回は」 (on-disk MDX may keep id; compile/test use this). */
-export function stripNextEpisodeIfDevCodePrefix(text: string): string {
-  return text.replace(NEXT_EPISODE_IF_PREFIX, '次回は ');
-}
-
 function stripDevCodesFromLinkLabel(label: string): string {
   let text = label;
   const code = '(?:L1-Q\\d-\\d|L2-Q\\d-\\d|PPL-\\d-\\d-\\d|CP-\\d-\\d|FMT-\\d-\\d|IF-\\d-\\d)';
@@ -207,7 +200,7 @@ export function sanitizeMdxBodyForDevCodes(
   catalog: ArticleCatalog,
   unresolved: Set<string>,
 ): string {
-  let text = stripNextEpisodeIfDevCodePrefix(body);
+  let text = body;
 
   text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (full, label: string, href: string) => {
     const articleId = articleIdFromHref(href);
@@ -343,15 +336,10 @@ export function findReaderVisibleDevCodes(source: string): string[] {
 
 export function findDevCodesInMdxFiles(
   files: ReadonlyArray<{ path: string; source: string }>,
-  catalog: ArticleCatalog,
 ): Array<{ path: string; codes: string[] }> {
   const violations: Array<{ path: string; codes: string[] }> = [];
   for (const file of files) {
-    const { body } = splitMdxMetaAndBody(file.source);
-    const sanitized = sanitizeMdxBodyForDevCodes(body, catalog, new Set());
-    const visible = extractReaderVisibleText(sanitized);
-    const matches = visible.match(DEV_CODE_PATTERN);
-    const codes = matches ? [...new Set(matches)] : [];
+    const codes = [...new Set(findReaderVisibleDevCodes(file.source))];
     if (codes.length > 0) {
       violations.push({ path: file.path, codes });
     }

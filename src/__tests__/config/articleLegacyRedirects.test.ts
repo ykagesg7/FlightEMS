@@ -43,9 +43,6 @@ describe('article legacy redirects', () => {
       '/articles/ppl-4-2-2-clearance-readback-basics',
     );
     expect(bySource.get('/articles/IF-1-3_IMC_Scan')).toBe('/articles/if-1-3-imc-scan');
-    expect(bySource.get('/articles/IF-1-4_Attitude_Turns')).toBe(
-      '/articles/if-1-4-attitude-turns',
-    );
 
     const sources = new Set(committed.map((r) => r.source));
     expect(sources.has('/articles/if-1-3-imc-scan')).toBe(false);

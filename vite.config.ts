@@ -16,7 +16,6 @@ import {
 import { devOpenskyApiPlugin } from './vite/devOpenskyApiPlugin';
 import { devWeatherApiPlugin } from './vite/devWeatherApiPlugin';
 import { articlesIndexPlugin } from './vite/articlesIndexPlugin';
-import { remarkStripNextEpisodeIfDevCodes } from './vite/remarkStripNextEpisodeIfDevCodes';
 import { injectGoogleTagPlugin } from './vite/injectGoogleTagPlugin';
 import { resolveCanonicalSiteOriginFromEnv } from './src/config/siteOriginEnv';
 import { prerenderArticlesPlugin } from './vite/prerenderArticlesPlugin';
@@ -132,7 +131,7 @@ export default defineConfig(({ mode }) => {
     }),
     mdx({
       providerImportSource: '@mdx-js/react',
-      remarkPlugins: [remarkGfm, remarkMath, remarkStripNextEpisodeIfDevCodes],
+      remarkPlugins: [remarkGfm, remarkMath],
       rehypePlugins: [rehypeKatex],
     }),
     injectGoogleTagPlugin(gaMeasurementId, mode === 'production'),
