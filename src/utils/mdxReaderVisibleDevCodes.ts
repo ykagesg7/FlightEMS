@@ -1,5 +1,3 @@
-import { join } from 'node:path';
-import { collectArticleMetas } from '../../vite/articlesMeta';
 import { isWithdrawnArticle } from '../constants/withdrawnArticleIds';
 import { isArticleReleased } from './articlePublishGate';
 
@@ -31,11 +29,6 @@ export const SPIRAL_NODE_TITLES: Readonly<Record<string, string>> = {
   'L2-Q3-3': '基本航空法',
   'L2-Q4-1': '「自分で飛ばす」責任感',
   'L2-Q4-2': '基本手順の徹底',
-};
-
-/** Scheduled IF lesson titles (outline only; not yet in catalog). Used to strip reader-visible dev ids in teasers. */
-export const INSTRUMENT_FLYING_TEASER_TITLES: Readonly<Record<string, string>> = {
-  'IF-1-6': 'コンパス・ターン／方位の維持',
 };
 
 /** Primary required lesson slug per spiral node (sort_order = 1, is_required). */
@@ -176,17 +169,6 @@ export function resolveDevCode(
     if (nodeTitle) {
       return {
         title: nodeTitle,
-        published: false,
-        linkable: false,
-      };
-    }
-  }
-
-  if (/^IF-\d-\d$/.test(code)) {
-    const teaserTitle = INSTRUMENT_FLYING_TEASER_TITLES[code];
-    if (teaserTitle) {
-      return {
-        title: teaserTitle,
         published: false,
         linkable: false,
       };
@@ -354,15 +336,10 @@ export function findReaderVisibleDevCodes(source: string): string[] {
 
 export function findDevCodesInMdxFiles(
   files: ReadonlyArray<{ path: string; source: string }>,
-  contentRoot?: string,
 ): Array<{ path: string; codes: string[] }> {
-  const catalog = buildArticleCatalog(
-    collectArticleMetas(contentRoot ?? join(process.cwd(), 'src/content')),
-  );
   const violations: Array<{ path: string; codes: string[] }> = [];
   for (const file of files) {
-    const { body: sanitized } = sanitizeMdxSource(file.source, catalog);
-    const codes = [...new Set(findReaderVisibleDevCodes(sanitized))];
+    const codes = [...new Set(findReaderVisibleDevCodes(file.source))];
     if (codes.length > 0) {
       violations.push({ path: file.path, codes });
     }
