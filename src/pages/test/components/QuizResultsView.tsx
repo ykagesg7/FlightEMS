@@ -35,6 +35,9 @@ interface QuizResultsViewProps {
   selectedSubjectForFallback?: string | null;
   reportMeta?: Pick<QuestionReportContext, 'mode' | 'tab' | 'content_id'>;
   rewards?: QuizSessionRewardSummary | null;
+  /** ログイン時の弱点復習タブへの導線 */
+  onGoToReviewTab?: () => void;
+  isLoggedIn?: boolean;
 }
 
 export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
@@ -53,6 +56,8 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
   selectedSubjectForFallback = null,
   reportMeta,
   rewards = null,
+  onGoToReviewTab,
+  isLoggedIn = false,
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showMoreActions, setShowMoreActions] = useState(false);
@@ -199,6 +204,15 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
               </li>
             ))}
           </ul>
+          {isLoggedIn && onGoToReviewTab && (
+            <button
+              type="button"
+              onClick={onGoToReviewTab}
+              className="mt-4 w-full rounded-xl border border-brand-primary/50 bg-brand-primary/10 px-4 py-3 text-sm font-semibold text-brand-primary transition hover:bg-brand-primary/20"
+            >
+              弱点復習タブで続ける
+            </button>
+          )}
         </div>
       )}
 
@@ -217,7 +231,7 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
       )}
 
       {(subjectArticleBlocks.withIncorrect.length > 0 || subjectArticleBlocks.allCorrect) && (
-        <div className="mb-6">
+        <div className="mb-6 min-h-[14rem]">
           <div className="mb-4 rounded-xl border-2 border-brand-primary/40 bg-brand-secondary-dark p-5 shadow-lg ring-1 ring-brand-primary/20">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-primary">
               次に読む記事
@@ -284,7 +298,7 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
 
       <div className="mb-6">
         <h3 className="text-sm font-semibold text-[var(--text-muted)] mb-3">問題別レビュー</h3>
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+        <div className="space-y-2">
           {questions.map((q, idx) => {
             const ans = answerMap.get(String(q.id));
             const isCorrect = ans?.isCorrect ?? false;
@@ -303,7 +317,9 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
                   onClick={() => setExpandedId(isExpanded ? null : q.id)}
                 >
                   {isExpanded ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />}
-                  <span className="text-sm font-medium">{idx + 1}. {(q.text ?? q.question_text ?? '').slice(0, 60)}...</span>
+                  <span className="min-w-0 flex-1 text-sm font-medium break-words">
+                    {idx + 1}. {q.text ?? q.question_text ?? ''}
+                  </span>
                   <span className={`ml-auto text-xs font-semibold ${isCorrect ? 'text-hud-green' : 'text-hud-red'}`}>
                     {isCorrect ? '正解' : '不正解'}
                   </span>
@@ -375,7 +391,9 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
             onClick={() => setShowMoreActions((v) => !v)}
             aria-expanded={showMoreActions}
           >
-            {showMoreActions ? 'その他の操作を閉じる' : 'その他の操作'}
+            {showMoreActions
+              ? 'もう一度・フラグ復習などを閉じる'
+              : 'もう一度・フラグ復習・記事リンク'}
           </button>
 
           {showMoreActions && (

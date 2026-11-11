@@ -72,6 +72,31 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   }, [questions]);
 
   useEffect(() => {
+    const root = document.documentElement;
+    const desktopMq = window.matchMedia('(min-width: 768px)');
+    const clear = () => {
+      root.classList.remove('quiz-active-session');
+      root.style.removeProperty('--quiz-scroll-pad-bottom');
+    };
+    if (!showQuestionPalette || desktopMq.matches) {
+      clear();
+      return;
+    }
+    root.classList.add('quiz-active-session');
+    if (mobilePaletteOffsetPx > 0) {
+      root.style.setProperty('--quiz-scroll-pad-bottom', `${mobilePaletteOffsetPx}px`);
+    }
+    const onBp = () => {
+      if (desktopMq.matches) clear();
+    };
+    desktopMq.addEventListener('change', onBp);
+    return () => {
+      desktopMq.removeEventListener('change', onBp);
+      clear();
+    };
+  }, [showQuestionPalette, mobilePaletteOffsetPx]);
+
+  useEffect(() => {
     if (!showQuestionPalette) {
       setMobilePaletteOffsetPx(0);
       return;
@@ -358,7 +383,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
             aria-label="問題一覧"
             className="fixed bottom-0 left-0 right-0 z-20 border-t border-brand-primary/20 bg-[var(--panel)]/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] backdrop-blur-md md:static md:border-0 md:bg-transparent md:p-0 md:pb-0 md:backdrop-blur-none"
           >
-            <div className="mb-4 flex gap-2 overflow-x-auto flex-nowrap justify-start snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] md:mb-4 md:flex-wrap md:justify-center md:overflow-visible [&::-webkit-scrollbar]:hidden">
+            <div className="mb-4 grid grid-cols-5 gap-2 md:mb-4 md:flex md:flex-wrap md:justify-center">
             {questions.map((q, idx) => {
               const answered = userAnswers.some(a => a.questionId === q.id);
               const isCurrent = idx === currentQuestionIndex;
@@ -375,7 +400,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
                   onClick={() => {
                     setCurrentQuestionIndex(idx);
                   }}
-                  className={`relative flex h-11 min-w-[2.75rem] shrink-0 snap-start items-center justify-center rounded-lg border-2 px-1 text-sm font-semibold transition-colors
+                  className={`relative flex h-11 min-w-0 w-full md:min-w-[2.75rem] md:w-auto md:shrink-0 items-center justify-center rounded-lg border-2 px-1 text-sm font-semibold transition-colors
                     ${isCurrent
                       ? 'bg-brand-primary text-[var(--bg)] border-brand-primary ring-2 ring-brand-primary/50'
                       : status === 'correct'

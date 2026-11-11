@@ -29,9 +29,10 @@ describe('QuizHubStatusPanel', () => {
     expect(screen.getByRole('button', { name: '10問診断へ' })).toBeInTheDocument();
   });
 
-  it('prompts diagnostic start before the session begins', () => {
+  it('does not duplicate diagnostic start CTA before the session begins', () => {
     renderPanel({ tab: 'diagnostic', diagnosticStarted: false });
-    expect(screen.getByRole('button', { name: '10問診断を開始' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '10問診断を開始' })).not.toBeInTheDocument();
+    expect(screen.queryByTestId('quiz-hub-status-panel')).not.toBeInTheDocument();
   });
 
   it('suggests diagnostic when weak-area data is missing', () => {

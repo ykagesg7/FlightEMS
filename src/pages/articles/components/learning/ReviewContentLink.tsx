@@ -26,7 +26,7 @@ function overlapCount(
   return hit.size;
 }
 
-export type ReviewContentLinkVariant = 'default' | 'panel';
+export type ReviewContentLinkVariant = 'default' | 'panel' | 'inline';
 
 interface ReviewContentLinkProps {
   subjectCategory: string;
@@ -191,8 +191,15 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
   }, [subjectCategory, questionIdsKey, questionIds, excludeContentId]);
 
   if (loading) {
+    if (variant === 'inline') {
+      return (
+        <div className="mt-3 min-h-[2.75rem] rounded-lg border border-brand-primary/10 bg-[var(--panel)]/40" aria-hidden />
+      );
+    }
+    const reserveClass =
+      variant === 'panel' ? 'min-h-[14rem]' : variant === 'default' ? 'min-h-[10rem]' : '';
     return (
-      <div className="flex justify-center py-4">
+      <div className={`flex justify-center py-4 ${reserveClass}`} aria-busy="true">
         <div
           className={`animate-spin rounded-full h-6 w-6 border-2 ${
             variant === 'panel'
@@ -206,6 +213,27 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
 
   if (!recommendedContents.length) {
     return null;
+  }
+
+  if (variant === 'inline') {
+    return (
+      <div className="mt-3 border-t border-brand-primary/10 pt-3">
+        <p className="mb-2 text-xs font-semibold text-[var(--text-muted)]">関連記事</p>
+        <ul className="space-y-2">
+          {recommendedContents.map((content) => (
+            <li key={content.id}>
+              <Link
+                to={articleHrefForContentId(content.id, articleMetas)}
+                onClick={() => trackReviewArticleClick(content.id, 'quiz_active')}
+                className="text-sm font-medium text-brand-primary underline-offset-2 hover:underline"
+              >
+                {content.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
   }
 
   const needsReview = accuracy < 70; // 70%未満の場合、復習推奨

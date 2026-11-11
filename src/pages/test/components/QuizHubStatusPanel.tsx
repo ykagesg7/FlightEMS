@@ -75,6 +75,12 @@ function resolveCopy(props: QuizHubStatusPanelProps): { title: string; descripti
 export const QuizHubStatusPanel: React.FC<QuizHubStatusPanelProps> = (props) => {
   const { tab, diagnosticStarted, subjectSelected, message, isFetchFailure, onStartDiagnostic, onGoToDiagnosticTab, onGoToSubjectTab, onRetry } =
     props;
+
+  /** 診断未開始時はツールバーのクイック診断カードに開始ボタンがあるため二重表示を避ける */
+  if (tab === 'diagnostic' && !diagnosticStarted && !isFetchFailure) {
+    return null;
+  }
+
   const { title, description } = resolveCopy(props);
 
   const showLoginCta = Boolean(message?.includes('ログインが必須'));
