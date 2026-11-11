@@ -533,7 +533,7 @@ const TestPage: React.FC = () => {
           setDiagnosticStarted(true);
         }}
         diagnosticDisabled={diagnosticStarted && loading}
-        diagnosticInProgress={questions.length > 0 && !quizFinished && !loading}
+        diagnosticInProgress={questions.length > 0 && !loading}
       />
 
       <QuizActiveFilterChips

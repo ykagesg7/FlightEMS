@@ -5,10 +5,14 @@ import { scrollToQuizAnchorDeferred } from '../utils/scrollToQuizAnchor';
 import { QUIZ_FLAG_HELP_MESSAGE } from '../constants/quizSaveCopy';
 
 /** モバイル sticky サイトヘッダー分（md 以上はパレット inline のため scroll-margin を抑える） */
+const QUIZ_SCROLL_TITLE_CLASS =
+  'scroll-mt-[calc(5rem+env(safe-area-inset-top,0px))] md:scroll-mt-24';
 const QUIZ_SCROLL_QUESTION_CLASS =
   'scroll-mt-[calc(5rem+env(safe-area-inset-top,0px))] scroll-mb-4 md:scroll-mt-24';
 const QUIZ_SCROLL_ACTION_CLASS =
-  'scroll-mt-4 scroll-mb-[calc(var(--quiz-palette-offset,0px)+1rem)] md:scroll-mb-6';
+  'scroll-mt-4 scroll-mb-[calc(var(--quiz-palette-offset,0px)+5rem)] md:scroll-mb-6';
+const QUIZ_FOCUS_SAFE_BOTTOM =
+  'max-md:scroll-mb-[calc(var(--quiz-palette-offset,0px)+5rem)]';
 
 interface QuizComponentProps {
   quizTitle: string;
@@ -50,6 +54,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   const flaggedRef = useRef<{ [key: string]: boolean }>({});
   const lastTimerThresholdAnnouncedRef = useRef<number | null>(null);
   const examTimeExpiredSubmittedRef = useRef(false);
+  const quizTitleAnchorRef = useRef<HTMLDivElement>(null);
   const quizProgressAnchorRef = useRef<HTMLDivElement>(null);
   const questionBlockRef = useRef<HTMLDivElement>(null);
   const feedbackRegionRef = useRef<HTMLDivElement>(null);
@@ -130,7 +135,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
     if (questions.length === 0 || initialQuestionScrollRef.current) return;
     initialQuestionScrollRef.current = true;
     return scrollToQuizAnchorDeferred(
-      questionBlockRef.current ?? quizProgressAnchorRef.current,
+      quizTitleAnchorRef.current ?? quizProgressAnchorRef.current,
       { block: 'start' },
       120,
     );
@@ -219,7 +224,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
     prevFeedbackKeyRef.current = null;
 
     return scrollToQuizAnchorDeferred(
-      questionBlockRef.current ?? quizProgressAnchorRef.current,
+      quizTitleAnchorRef.current ?? quizProgressAnchorRef.current,
       { block: 'start' },
       60,
     );
@@ -338,7 +343,10 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {timerLiveMessage}
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+      <div
+        ref={quizTitleAnchorRef}
+        className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4 ${QUIZ_SCROLL_TITLE_CLASS}`}
+      >
         <h2 className="text-2xl font-bold text-brand-primary">{quizTitle}</h2>
         {mode === 'exam' && timeLeft !== null && (
           <div
@@ -463,7 +471,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
       />
       </div>
 
-      <div className="mt-4 flex items-start justify-between gap-4">
+      <div className={`mt-4 flex items-start justify-between gap-4 ${QUIZ_FOCUS_SAFE_BOTTOM}`}>
         <div className="space-y-2">
           <button
             onClick={() => toggleFlag(currentQuestion.id)}
@@ -486,7 +494,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
         <div ref={nextActionRef} className={QUIZ_SCROLL_ACTION_CLASS}>
         <button
           onClick={handleNextQuestion}
-          className="mt-6 w-full bg-brand-primary hover:bg-brand-primary-dark text-[var(--bg)] font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-[var(--bg)]"
+          className={`mt-6 w-full bg-brand-primary hover:bg-brand-primary-dark text-[var(--bg)] font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-[var(--bg)] ${QUIZ_FOCUS_SAFE_BOTTOM}`}
         >
           {currentQuestionIndex < questions.length - 1
             ? generalMessages.nextQuestion

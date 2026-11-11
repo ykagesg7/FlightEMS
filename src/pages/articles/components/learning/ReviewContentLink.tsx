@@ -193,20 +193,49 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
   if (loading) {
     if (variant === 'inline') {
       return (
-        <div className="mt-3 min-h-[2.75rem] rounded-lg border border-brand-primary/10 bg-[var(--panel)]/40" aria-hidden />
+        <div
+          className="mt-3 min-h-[7rem] border-t border-brand-primary/10 pt-3 md:min-h-[8.5rem]"
+          aria-busy="true"
+          aria-label="関連記事を読み込み中"
+        >
+          <div className="animate-pulse space-y-2">
+            <div className="h-3 w-16 rounded bg-brand-primary/15" />
+            <div className="h-4 w-full rounded bg-brand-primary/10" />
+            <div className="h-4 w-11/12 rounded bg-brand-primary/10" />
+            <div className="h-4 w-4/5 rounded bg-brand-primary/10" />
+          </div>
+        </div>
       );
     }
-    const reserveClass =
-      variant === 'panel' ? 'min-h-[14rem]' : variant === 'default' ? 'min-h-[10rem]' : '';
+
+    if (variant === 'panel') {
+      return (
+        <div
+          className="mt-6 min-h-[16rem] rounded-xl border border-brand-primary/15 bg-[var(--panel)]/80 p-6 text-[var(--text-primary)] md:min-h-[38rem]"
+          aria-busy="true"
+          aria-label="おすすめ記事を読み込み中"
+        >
+          <div className="animate-pulse space-y-4">
+            <div className="h-28 rounded-lg bg-brand-primary/10" aria-hidden />
+            <div className="flex gap-3">
+              <div className="h-8 w-8 shrink-0 rounded-full bg-brand-primary/15" />
+              <div className="flex-1 space-y-2">
+                <div className="h-5 w-28 rounded bg-brand-primary/15" />
+                <div className="h-4 w-full max-w-md rounded bg-brand-primary/10" />
+              </div>
+            </div>
+            <div className="h-24 rounded-lg bg-brand-primary/10" />
+            <div className="h-28 rounded-lg bg-brand-primary/10" />
+            <div className="h-28 rounded-lg bg-brand-primary/10" />
+          </div>
+        </div>
+      );
+    }
+
+    const reserveClass = variant === 'default' ? 'min-h-[10rem]' : '';
     return (
       <div className={`flex justify-center py-4 ${reserveClass}`} aria-busy="true">
-        <div
-          className={`animate-spin rounded-full h-6 w-6 border-2 ${
-            variant === 'panel'
-              ? 'border-brand-primary/25 border-t-brand-primary'
-              : 'border-green-500/30 border-t-green-500'
-          }`}
-        />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-green-500/30 border-t-green-500" />
       </div>
     );
   }
