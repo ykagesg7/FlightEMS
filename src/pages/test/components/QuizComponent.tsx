@@ -2,10 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { QuestionType, QuizQuestion, UserQuizAnswer } from '../../../types/quiz';
 import { QuestionComponent } from './QuestionComponent'; // Reusing for individual question rendering
 import { scrollToQuizAnchorDeferred } from '../utils/scrollToQuizAnchor';
+import { QUIZ_FLAG_HELP_MESSAGE } from '../constants/quizSaveCopy';
 
-/** モバイル固定パレット + sticky ヘッダー分の scroll-margin（md 以上はパレット inline） */
-const QUIZ_SCROLL_QUESTION_CLASS = 'scroll-mt-20 scroll-mb-4 md:scroll-mt-24';
-const QUIZ_SCROLL_ACTION_CLASS = 'scroll-mt-4 scroll-mb-[min(40vh,11rem)] md:scroll-mb-6';
+/** モバイル sticky サイトヘッダー分（md 以上はパレット inline のため scroll-margin を抑える） */
+const QUIZ_SCROLL_QUESTION_CLASS =
+  'scroll-mt-[calc(5rem+env(safe-area-inset-top,0px))] scroll-mb-4 md:scroll-mt-24';
+const QUIZ_SCROLL_ACTION_CLASS =
+  'scroll-mt-4 scroll-mb-[calc(var(--quiz-palette-offset,0px)+1rem)] md:scroll-mb-6';
 
 interface QuizComponentProps {
   quizTitle: string;
@@ -54,6 +57,9 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   const questionsIdentityRef = useRef<string>('');
   const prevQuestionIndexRef = useRef(-1);
   const prevFeedbackKeyRef = useRef<string | null>(null);
+  const initialQuestionScrollRef = useRef(false);
+  const mobilePaletteNavRef = useRef<HTMLDivElement>(null);
+  const [mobilePaletteOffsetPx, setMobilePaletteOffsetPx] = useState(0);
 
   useEffect(() => {
     const key = questions.map((q) => String(q.id)).join('|');
@@ -61,8 +67,49 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
       questionsIdentityRef.current = key;
       prevQuestionIndexRef.current = -1;
       prevFeedbackKeyRef.current = null;
+      initialQuestionScrollRef.current = false;
     }
   }, [questions]);
+
+  useEffect(() => {
+    if (!showQuestionPalette) {
+      setMobilePaletteOffsetPx(0);
+      return;
+    }
+    const nav = mobilePaletteNavRef.current;
+    if (!nav) return;
+
+    const desktopMq = window.matchMedia('(min-width: 768px)');
+    const syncOffset = () => {
+      if (desktopMq.matches) {
+        setMobilePaletteOffsetPx(0);
+        return;
+      }
+      setMobilePaletteOffsetPx(Math.ceil(nav.getBoundingClientRect().height));
+    };
+
+    syncOffset();
+    const ro = new ResizeObserver(syncOffset);
+    ro.observe(nav);
+    desktopMq.addEventListener('change', syncOffset);
+    window.addEventListener('resize', syncOffset);
+    return () => {
+      ro.disconnect();
+      desktopMq.removeEventListener('change', syncOffset);
+      window.removeEventListener('resize', syncOffset);
+    };
+  }, [showQuestionPalette, questions.length]);
+
+  /** セッション開始時に 1 問目の問題文がヘッダー下に収まるようスクロール */
+  useEffect(() => {
+    if (questions.length === 0 || initialQuestionScrollRef.current) return;
+    initialQuestionScrollRef.current = true;
+    return scrollToQuizAnchorDeferred(
+      questionBlockRef.current ?? quizProgressAnchorRef.current,
+      { block: 'start' },
+      120,
+    );
+  }, [questions.length]);
 
   useEffect(() => {
     questionStartedAtRef.current = Date.now();
@@ -164,9 +211,9 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
     prevFeedbackKeyRef.current = feedbackKey;
 
     return scrollToQuizAnchorDeferred(
-      nextActionRef.current ?? feedbackRegionRef.current,
-      { block: 'nearest' },
-      120,
+      feedbackRegionRef.current ?? nextActionRef.current,
+      { block: 'end' },
+      160,
     );
   }, [feedback, currentQuestion, mode, showImmediateFeedback]);
 
@@ -247,11 +294,21 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
   const examTimerLow = mode === 'exam' && timeLeft !== null && timeLeft > 0 && timeLeft <= 60;
   const examTimerCritical = mode === 'exam' && timeLeft !== null && timeLeft > 0 && timeLeft <= 30;
 
+  const paletteCssVar =
+    mobilePaletteOffsetPx > 0
+      ? ({ '--quiz-palette-offset': `${mobilePaletteOffsetPx}px` } as React.CSSProperties)
+      : undefined;
+
   return (
     <div
-      className={`p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn bg-[var(--panel)] border border-brand-primary/20 ${
-        showQuestionPalette ? 'pb-[min(42vh,12rem)] md:pb-8' : ''
-      }`}
+      className="p-6 md:p-8 rounded-xl shadow-xl animate-fadeIn bg-[var(--panel)] border border-brand-primary/20 md:pb-8"
+      style={{
+        ...paletteCssVar,
+        paddingBottom:
+          showQuestionPalette && mobilePaletteOffsetPx > 0
+            ? mobilePaletteOffsetPx + 16
+            : undefined,
+      }}
     >
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {timerLiveMessage}
@@ -277,7 +334,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
       </div>
       <div
         ref={quizProgressAnchorRef}
-        className="scroll-mt-20 md:scroll-mt-24"
+        className="scroll-mt-[calc(5rem+env(safe-area-inset-top,0px))] md:scroll-mt-24"
       >
         <p className={`text-center mb-2 text-[color:var(--text-muted)]`}>問題 {currentQuestionIndex + 1} / {questions.length}</p>
         <div
@@ -296,11 +353,12 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
 
         {showQuestionPalette && (
           <div
+            ref={mobilePaletteNavRef}
             role="navigation"
             aria-label="問題一覧"
-            className="fixed bottom-0 left-0 right-0 z-20 max-h-[40vh] overflow-y-auto border-t border-brand-primary/20 bg-[var(--panel)]/95 p-3 backdrop-blur-md md:static md:max-h-none md:overflow-visible md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none"
+            className="fixed bottom-0 left-0 right-0 z-20 border-t border-brand-primary/20 bg-[var(--panel)]/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] backdrop-blur-md md:static md:border-0 md:bg-transparent md:p-0 md:pb-0 md:backdrop-blur-none"
           >
-            <div className="flex flex-wrap gap-2 justify-center mb-4 md:mb-4">
+            <div className="mb-4 flex gap-2 overflow-x-auto flex-nowrap justify-start snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] md:mb-4 md:flex-wrap md:justify-center md:overflow-visible [&::-webkit-scrollbar]:hidden">
             {questions.map((q, idx) => {
               const answered = userAnswers.some(a => a.questionId === q.id);
               const isCurrent = idx === currentQuestionIndex;
@@ -317,7 +375,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
                   onClick={() => {
                     setCurrentQuestionIndex(idx);
                   }}
-                  className={`relative flex h-11 min-w-[2.75rem] items-center justify-center rounded-lg border-2 px-1 text-sm font-semibold transition-colors
+                  className={`relative flex h-11 min-w-[2.75rem] shrink-0 snap-start items-center justify-center rounded-lg border-2 px-1 text-sm font-semibold transition-colors
                     ${isCurrent
                       ? 'bg-brand-primary text-[var(--bg)] border-brand-primary ring-2 ring-brand-primary/50'
                       : status === 'correct'
@@ -369,6 +427,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
         showAnswer={showTextAnswers[currentQuestion.id] || false}
         toggleShowAnswer={() => toggleShowTextAnswer(currentQuestion.id)}
         feedbackRegionRef={feedbackRegionRef}
+        feedbackScrollMarginClass="scroll-mb-[calc(var(--quiz-palette-offset,0px)+1rem)] md:scroll-mb-4"
         reportContext={{
           mode,
           tab: reportMeta?.tab,
@@ -388,9 +447,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
           >
             {flagged[currentQuestion.id] ? 'フラグ解除' : 'フラグ'}
           </button>
-          <p className="max-w-md text-xs leading-5 text-[var(--text-muted)]">
-            このセッション内で見返したい問題に印を付けます。テスト終了後、結果画面からフラグ付き問題だけを再挑戦できます。結果保存や Review モードへの自動反映はまだありません。
-          </p>
+          <p className="max-w-md text-xs leading-5 text-[var(--text-muted)]">{QUIZ_FLAG_HELP_MESSAGE}</p>
         </div>
         {!showImmediateFeedback && hasAnsweredCurrent && mode !== 'exam' && (
           <button

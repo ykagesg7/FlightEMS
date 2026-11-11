@@ -56,6 +56,7 @@ import {
 import { scrollToQuizAnchor } from './utils/scrollToQuizAnchor';
 import { buildQuizLearningSessionInsert } from './utils/buildQuizLearningSession';
 import { buildQuizSessionTitle } from './utils/quizSessionTitle';
+import { QUIZ_GUEST_SAVE_MESSAGE, QUIZ_SAVE_LOGIN_REQUIRED_MESSAGE } from './constants/quizSaveCopy';
 
 /** Supabase / PostgREST エラーをユーザー向け文言に変換 */
 function formatQuizSaveError(err: unknown): string {
@@ -290,7 +291,7 @@ const TestPage: React.FC = () => {
     try {
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData?.user) {
-        setSaveError('結果を保存するにはログインが必須です。');
+        setSaveError(QUIZ_SAVE_LOGIN_REQUIRED_MESSAGE);
         setSaving(false);
         return;
       }
@@ -492,7 +493,7 @@ const TestPage: React.FC = () => {
 
       {!user && (
         <p className="mb-4 rounded-xl border border-brand-primary/20 bg-brand-primary/5 px-4 py-3 text-center text-sm text-[var(--text-muted)]">
-          クイズは登録不要で試せます。結果の保存はアカウント登録後に利用できます。
+          {QUIZ_GUEST_SAVE_MESSAGE}
         </p>
       )}
 
@@ -521,6 +522,7 @@ const TestPage: React.FC = () => {
           setDiagnosticStarted(true);
         }}
         diagnosticDisabled={diagnosticStarted && loading}
+        diagnosticInProgress={questions.length > 0 && !quizFinished && !loading}
       />
 
       <QuizActiveFilterChips

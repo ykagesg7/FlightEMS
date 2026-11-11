@@ -14,6 +14,7 @@ import articleMetas from 'virtual:articles-index';
 import { articleHrefForContentId } from '../../../utils/articleCanonicalPath';
 import { QuestionReportTrigger } from './QuestionReportTrigger';
 import type { QuestionReportContext } from '../utils/questionReportTypes';
+import { QUIZ_SAVE_LOGIN_REQUIRED_MESSAGE } from '../constants/quizSaveCopy';
 
 const CHOICE_LABELS = ['A', 'B', 'C', 'D'] as const;
 
@@ -267,11 +268,11 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
 
       {saveError && (
         <div className="text-hud-red text-base mb-4 font-semibold text-center">
-          {saveError.includes('ログインが必須') ? (
+          {saveError === QUIZ_SAVE_LOGIN_REQUIRED_MESSAGE || saveError.includes('ログイン') ? (
             <>
               {saveError}
               <div className="mt-2">
-                <a href="/auth" className="inline-block px-6 py-2 rounded-lg border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10 font-bold transition">ログイン/新規登録</a>
+                <a href="/auth" className="inline-block px-6 py-2 rounded-lg border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10 font-bold transition">ログイン / 新規登録</a>
               </div>
             </>
           ) : (
