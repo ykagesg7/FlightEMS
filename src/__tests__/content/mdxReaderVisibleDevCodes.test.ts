@@ -45,6 +45,16 @@ describe('MDX reader-visible dev codes', () => {
     expect(unresolved.size).toBe(0);
   });
 
+  it('sanitizer strips IF dev id after 次回は', () => {
+    const catalog = buildArticleCatalog(collectArticleMetas());
+    const unresolved = new Set<string>();
+    const input = '次回は IF-1-5：高度・速度・昇降のクロスチェック をお届けするばい。';
+    const out = sanitizeMdxBodyForDevCodes(input, catalog, unresolved);
+    expect(out).not.toMatch(/\bIF-\d-\d\b/);
+    expect(out).toContain('次回は 高度・速度・昇降のクロスチェック');
+    expect(unresolved.size).toBe(0);
+  });
+
   it('sanitizer strips dev code prefix inside bold Japanese quotes', () => {
     const catalog = buildArticleCatalog(collectArticleMetas());
     const unresolved = new Set<string>();
@@ -56,8 +66,9 @@ describe('MDX reader-visible dev codes', () => {
   });
 
   it('has no reader-visible dev codes in src/content MDX bodies', () => {
+    const catalog = buildArticleCatalog(collectArticleMetas());
     const files = loadMdxContentFiles();
-    const violations = findDevCodesInMdxFiles(files);
+    const violations = findDevCodesInMdxFiles(files, catalog);
     expect(violations).toEqual([]);
   });
 });

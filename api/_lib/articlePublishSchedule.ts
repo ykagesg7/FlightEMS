@@ -636,10 +636,11 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
   },
   '2026-W50': {
     isoWeek: '2026-W50',
-    seriesTitle: '学科再掲＋計器実技（予定）',
+    seriesTitle: '学科再掲＋計器実技',
     intro:
-      '来週水はジャイロの基礎（PPL-1-2 ①）。日・金の心構え／IF は docs または後続 PR。',
-    checklistNote: 'PPL-1-2 番号順の再掲開始。syncPublish:false。',
+      '来週水はジャイロの基礎（PPL-1-2 ①）。金は姿勢指示とターンの型（IF-1-4）。',
+    checklistNote:
+      'IF-1-4 は MDX 完成・learning_contents SQL 同梱（本番は承認後適用）。メール announceDate=2026-12-11。syncPublish:false。',
     articles: [
       {
         id: 'PPL-1-2-1_GyroBasics',
@@ -649,6 +650,15 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         title: '【航空工学】回転する神秘「ジャイロ」 ～博多独楽と宇宙の法則～',
         slug: '/articles/ppl-1-2-1-gyro-basics',
         hook: '剛性と歳差。雲の中で天地がわかる命綱ばい。',
+      },
+      {
+        id: 'IF-1-4_Attitude_Turns',
+        publishDate: '2026-12-11',
+        announceDate: '2026-12-11',
+        syncPublish: false,
+        title: '【操縦】計器飛行第4話：姿勢指示とターンの型',
+        slug: '/articles/if-1-4-attitude-turns',
+        hook: '旋回でもピッチの型は変えない。ロール中の操縦桿の力の変化を AI で見逃すな。',
       },
     ],
   },

@@ -89,6 +89,7 @@ describe('api/lib/articlePublishSchedule', () => {
       'L1-Q3-1_PathToPilot',
       'IF-1-2_PartialPanel',
       'IF-1-3_IMC_Scan',
+      'IF-1-4_Attitude_Turns',
     ]) {
       expect(syncIds.has(id)).toBe(false);
     }
@@ -149,6 +150,17 @@ describe('api/lib/articlePublishSchedule', () => {
     expect(if13?.publishDate).toBe('2026-11-08');
     expect(weekdayJstFromPublishDate(if13!.announceDate!)).toBe(5);
     expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-3_IMC_Scan')).toBe(false);
+
+    // IF-1-4 scheduled publish: Friday mail announce (W50), no drip sync
+    const if14 = listScheduledArticles().find((a) => a.id === 'IF-1-4_Attitude_Turns');
+    expect(if14).toBeDefined();
+    expect(if14?.syncPublish).toBe(false);
+    expect(if14?.announceDate).toBe('2026-12-11');
+    expect(if14?.publishDate).toBe('2026-12-11');
+    expect(weekdayJstFromPublishDate(if14!.announceDate!)).toBe(5);
+    expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-4_Attitude_Turns')).toBe(
+      false,
+    );
   });
 
   it('keeps Sunday digest announce dates for W46–W49 after W45–W48 immediate publish', () => {
@@ -172,6 +184,10 @@ describe('api/lib/articlePublishSchedule', () => {
         'L1-Q4-2_AviatorMindset': '2026-11-29',
         'PPL-2-3-2_MetarTafAndWeatherReports': '2026-12-02',
         'IF-1-3_IMC_Scan': '2026-12-04',
+      },
+      '2026-W50': {
+        'PPL-1-2-1_GyroBasics': '2026-12-09',
+        'IF-1-4_Attitude_Turns': '2026-12-11',
       },
     };
     for (const [week, wantById] of Object.entries(expectedByWeek)) {

@@ -514,6 +514,11 @@
       "permanent": true
     },
     {
+      "source": "/articles/IF-1-4_Attitude_Turns",
+      "destination": "/articles/if-1-4-attitude-turns",
+      "permanent": true
+    },
+    {
       "source": "/articles/L1-Q3-1_PathToPilot",
       "destination": "/articles/l1-q3-1-path-to-pilot",
       "permanent": true
