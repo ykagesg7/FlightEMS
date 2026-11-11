@@ -196,6 +196,7 @@ describe('api/lib/articlePublishSchedule', () => {
         'IF-1-3_IMC_Scan': '2026-12-04',
       },
       '2026-W50': {
+        '1.3.7_OodaKeepTheLoopMoving': '2026-12-06',
         'PPL-1-2-1_GyroBasics': '2026-12-09',
         'IF-1-4_Attitude_Turns': '2026-11-11',
         'IF-1-5_AirData_CrossCheck': '2026-11-11',

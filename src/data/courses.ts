@@ -32,6 +32,7 @@ const CP_PHASES = [
 ] as const;
 
 const MENTALITY_SERIES = [
+  'Mentality',
   '訓練の当たり前',
   '戦闘機乗りの心構え',
   '７つの習慣',

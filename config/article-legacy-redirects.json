@@ -35,6 +35,11 @@
     "permanent": true
   },
   {
+    "source": "/articles/1.3.7_OodaKeepTheLoopMoving",
+    "destination": "/articles/ooda-keep-the-loop-moving",
+    "permanent": true
+  },
+  {
     "source": "/articles/3.1.1_AviationLegal0",
     "destination": "/articles/3-1-1-aviation-legal-0",
     "permanent": true
