@@ -7,6 +7,11 @@ import { roleLabelJa } from '../../briefing/preflightNotamBriefing';
 import { usePreflightNotamBriefing } from '../../briefing/usePreflightNotamBriefing';
 import { usePreflightAviationWeather } from '../../briefing/usePreflightAviationWeather';
 import { usePlanningNotamSheetOptional } from '../map/planningNotamSheetContext';
+import {
+  NOTAM_SWIM_BRIEFING_SOURCE,
+  WEATHER_AWC_BRIEFING_SOURCE,
+} from '../map/mapDataProvenance';
+import { PreflightBriefingProvenance } from './PreflightBriefingProvenance';
 
 import type { PlanningPanelLayout } from '../../planningPanelLayout';
 
@@ -71,6 +76,12 @@ function PreflightMetarSection({ flightPlan }: { flightPlan: FlightPlan }) {
             {roleLabelJa(snap.role)} — {snap.label}
             {snap.fltCat ? ` · ${snap.fltCat}` : ''}
           </p>
+          {!snap.loading && !snap.error ? (
+            <PreflightBriefingProvenance
+              fetchedAtIso={snap.fetchedAtIso}
+              sourceLabel={WEATHER_AWC_BRIEFING_SOURCE}
+            />
+          ) : null}
           {snap.error ? (
             <p className="text-sm text-red-300">{snap.error}</p>
           ) : (
@@ -129,6 +140,12 @@ function PreflightNotamSection({ flightPlan }: { flightPlan: FlightPlan }) {
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               <p className="text-xs text-gray-400">{roleLabelJa(snap.role)} — {snap.label}</p>
+              {!snap.loading && !snap.error ? (
+                <PreflightBriefingProvenance
+                  fetchedAtIso={snap.fetchedAtIso}
+                  sourceLabel={NOTAM_SWIM_BRIEFING_SOURCE}
+                />
+              ) : null}
               <p
                 className={
                   snap.error

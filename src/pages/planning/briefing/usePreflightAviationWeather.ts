@@ -20,6 +20,7 @@ type AirportFetchState = {
   loading: boolean;
   error: string | null;
   data: AviationWeatherData | null;
+  fetchedAtIso: string | null;
 };
 
 type CacheEntry = {
@@ -33,32 +34,43 @@ function cacheKeyForIcao(icao: string): string {
   return icao.trim().toUpperCase();
 }
 
-function readCache(icao: string): AviationWeatherData | null {
+function readCacheEntry(icao: string): CacheEntry | null {
   const entry = responseCache.get(cacheKeyForIcao(icao));
   if (!entry) return null;
   if (Date.now() - entry.fetchedAt > CACHE_TTL_MS) {
     responseCache.delete(cacheKeyForIcao(icao));
     return null;
   }
-  return entry.data;
+  return entry;
 }
 
-function writeCache(icao: string, data: AviationWeatherData): void {
-  responseCache.set(cacheKeyForIcao(icao), { fetchedAt: Date.now(), data });
+function fetchedAtIsoFromEntry(entry: CacheEntry): string {
+  return new Date(entry.fetchedAt).toISOString();
 }
 
 async function fetchAirportWeather(icao: string): Promise<AirportFetchState> {
-  const cached = readCache(icao);
+  const cached = readCacheEntry(icao);
   if (cached) {
-    return { loading: false, error: null, data: cached };
+    return {
+      loading: false,
+      error: null,
+      data: cached.data,
+      fetchedAtIso: fetchedAtIsoFromEntry(cached),
+    };
   }
   try {
     const data = await fetchAviationWeather(icao);
-    writeCache(icao, data);
-    return { loading: false, error: null, data };
+    const entry = { fetchedAt: Date.now(), data };
+    responseCache.set(cacheKeyForIcao(icao), entry);
+    return {
+      loading: false,
+      error: null,
+      data,
+      fetchedAtIso: fetchedAtIsoFromEntry(entry),
+    };
   } catch (err) {
     const message = err instanceof Error ? err.message : 'METAR/TAF の取得に失敗しました';
-    return { loading: false, error: message, data: null };
+    return { loading: false, error: message, data: null, fetchedAtIso: null };
   }
 }
 
@@ -83,10 +95,15 @@ export function usePreflightAviationWeather(flightPlan: FlightPlan): PreflightAv
 
     const initial: Record<string, AirportFetchState> = {};
     for (const t of list) {
-      const cached = readCache(t.icao);
+      const cached = readCacheEntry(t.icao);
       initial[t.icao] = cached
-        ? { loading: false, error: null, data: cached }
-        : { loading: true, error: null, data: null };
+        ? {
+            loading: false,
+            error: null,
+            data: cached.data,
+            fetchedAtIso: fetchedAtIsoFromEntry(cached),
+          }
+        : { loading: true, error: null, data: null, fetchedAtIso: null };
     }
     setStates(initial);
 
@@ -128,6 +145,7 @@ export function usePreflightAviationWeather(flightPlan: FlightPlan): PreflightAv
             loading: true,
             error: null,
             data: null,
+            fetchedAtIso: null,
           },
         ),
       ),

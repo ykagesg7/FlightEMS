@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildAirspaceProvenance,
   buildNotamProvenance,
+  formatBriefingAcquiredLabel,
   formatProvenanceTimestamp,
 } from '../../pages/planning/components/map/mapDataProvenance';
 
@@ -20,5 +21,11 @@ describe('mapDataProvenance', () => {
 
   it('formatProvenanceTimestamp returns dash for missing value', () => {
     expect(formatProvenanceTimestamp(undefined)).toBe('—');
+  });
+
+  it('formatBriefingAcquiredLabel formats JST acquisition time', () => {
+    const label = formatBriefingAcquiredLabel('2026-11-11T10:30:00.000Z');
+    expect(label).toMatch(/^取得 \d{1,2}:\d{2} JST$/);
+    expect(label).toContain('JST');
   });
 });

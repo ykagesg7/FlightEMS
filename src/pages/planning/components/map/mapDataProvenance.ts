@@ -19,6 +19,12 @@ export const WEATHER_RAINVIEWER_SOURCE = 'RainViewer（https://www.rainviewer.co
 export const WEATHER_OPEN_METEO_SOURCE =
   'Open-Meteo（https://open-meteo.com/・非商用・参考）';
 
+/** Preflight Briefing の METAR/TAF 自動取得（画面表示用） */
+export const WEATHER_AWC_BRIEFING_SOURCE = 'NOAA AWC（aviationweather.gov）';
+
+/** Preflight Briefing の SWIM NOTAM 自動取得（画面表示用） */
+export const NOTAM_SWIM_BRIEFING_SOURCE = '国交省 AIS・SWIM デジタル NOTAM';
+
 export const STATIC_AIRSPACE_GEOJSON_PATH = '/geojson/RestrictedAirspace.geojson';
 
 export function formatProvenanceTimestamp(iso: string | undefined): string {
@@ -31,6 +37,22 @@ export function formatProvenanceTimestamp(iso: string | undefined): string {
     }).format(new Date(iso));
   } catch {
     return iso;
+  }
+}
+
+/** Briefing 欄用（例: 取得 19:06 JST） */
+export function formatBriefingAcquiredLabel(iso: string | undefined): string | null {
+  if (!iso) return null;
+  try {
+    const time = new Intl.DateTimeFormat('ja-JP', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+      timeZone: 'Asia/Tokyo',
+    }).format(new Date(iso));
+    return `取得 ${time} JST`;
+  } catch {
+    return null;
   }
 }
 

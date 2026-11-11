@@ -45,10 +45,16 @@ describe('buildAirportWeatherSnapshot', () => {
     };
     const snap = buildAirportWeatherSnapshot(
       { role: 'departure', icao: 'RJFA', label: 'Kanoya' },
-      { loading: false, error: null, data },
+      {
+        loading: false,
+        error: null,
+        data,
+        fetchedAtIso: '2026-08-17T09:00:00.000Z',
+      },
     );
     expect(snap.metarFull).toContain('RJFA');
     expect(snap.tafFull).toContain('TEMPO');
     expect(snap.fltCat).toContain('VFR');
+    expect(snap.fetchedAtIso).toBe('2026-08-17T09:00:00.000Z');
   });
 });

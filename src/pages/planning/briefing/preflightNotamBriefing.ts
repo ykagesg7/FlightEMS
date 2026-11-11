@@ -68,6 +68,8 @@ export type AirportNotamBriefingSnapshot = {
   role: PreflightAirportRole;
   loading: boolean;
   error: string | null;
+  /** クライアントが SWIM API から取得した時刻（ISO） */
+  fetchedAtIso: string | null;
   currentCount: number;
   futureCount: number;
   peekSummary: string;
@@ -126,6 +128,7 @@ export function buildAirportNotamBriefingSnapshot(
     loading: boolean;
     error: string | null;
     data: SwimNotamFetchOk | null;
+    fetchedAtIso: string | null;
   },
 ): AirportNotamBriefingSnapshot {
   const current = state.data?.current ?? [];
@@ -139,6 +142,7 @@ export function buildAirportNotamBriefingSnapshot(
     role: target.role,
     loading: state.loading,
     error: state.error,
+    fetchedAtIso: state.fetchedAtIso,
     currentCount: current.length,
     futureCount: future.length,
     peekSummary: state.loading

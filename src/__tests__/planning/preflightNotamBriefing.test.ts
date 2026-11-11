@@ -69,7 +69,9 @@ describe('preflightNotamBriefing', () => {
       loading: false,
       error: null,
       data: { ok: true, current: items, future: [] },
+      fetchedAtIso: '2026-11-11T10:00:00.000Z',
     });
+    expect(snap.fetchedAtIso).toBe('2026-11-11T10:00:00.000Z');
     expect(snap.peekSummary).toContain('現在1件');
     expect(snap.highlights[0]?.preview).toContain('16L');
     expect(snap.highlights[0]?.fullText).toContain('滑走路16L');
@@ -99,6 +101,7 @@ describe('preflightNotamBriefing', () => {
       loading: false,
       error: null,
       data: { ok: true, current: items, future: [] },
+      fetchedAtIso: null,
     });
     expect(snap.highlights[0]?.preview).toContain('グライドパス');
     expect(snap.highlights[1]?.preview).toContain('VOR');
@@ -118,6 +121,7 @@ describe('preflightNotamBriefing', () => {
           current: [{ key: 'long-1', summary: 's', impactLabel: '施設', primaryText: longBody }],
           future: [],
         },
+        fetchedAtIso: null,
       },
     );
     expect(snap.highlights[0]?.preview.endsWith('…')).toBe(true);

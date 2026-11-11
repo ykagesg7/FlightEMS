@@ -10,6 +10,8 @@ export type AirportWeatherSnapshot = {
   role: PreflightAirportRole;
   loading: boolean;
   error: string | null;
+  /** クライアントが API から取得した時刻（ISO） */
+  fetchedAtIso: string | null;
   fltCat: string | null;
   metarPreview: string | null;
   metarFull: string | null;
@@ -28,6 +30,7 @@ export function buildAirportWeatherSnapshot(
     loading: boolean;
     error: string | null;
     data: AviationWeatherData | null;
+    fetchedAtIso: string | null;
   },
 ): AirportWeatherSnapshot {
   const metarRaw = state.data?.metar?.rawOb
@@ -44,6 +47,7 @@ export function buildAirportWeatherSnapshot(
     role: target.role,
     loading: state.loading,
     error: state.error,
+    fetchedAtIso: state.fetchedAtIso,
     fltCat,
     metarPreview: metarRaw ? previewText(metarRaw) : null,
     metarFull: metarRaw,

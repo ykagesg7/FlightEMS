@@ -17,6 +17,7 @@ type AirportFetchState = {
   loading: boolean;
   error: string | null;
   data: SwimNotamFetchOk | null;
+  fetchedAtIso: string | null;
 };
 
 type CacheEntry = {
@@ -30,31 +31,42 @@ function cacheKeyForIcao(icao: string): string {
   return icao.trim().toUpperCase();
 }
 
-function readCache(icao: string): SwimNotamFetchOk | null {
+function readCacheEntry(icao: string): CacheEntry | null {
   const entry = responseCache.get(cacheKeyForIcao(icao));
   if (!entry) return null;
   if (Date.now() - entry.fetchedAt > CACHE_TTL_MS) {
     responseCache.delete(cacheKeyForIcao(icao));
     return null;
   }
-  return entry.data;
+  return entry;
 }
 
-function writeCache(icao: string, data: SwimNotamFetchOk): void {
-  responseCache.set(cacheKeyForIcao(icao), { fetchedAt: Date.now(), data });
+function fetchedAtIsoFromEntry(entry: CacheEntry): string {
+  return new Date(entry.fetchedAt).toISOString();
 }
 
 async function fetchAirportNotam(icao: string): Promise<AirportFetchState> {
-  const cached = readCache(icao);
+  const cached = readCacheEntry(icao);
   if (cached) {
-    return { loading: false, error: null, data: cached };
+    return {
+      loading: false,
+      error: null,
+      data: cached.data,
+      fetchedAtIso: fetchedAtIsoFromEntry(cached),
+    };
   }
   const res = await fetchSwimNotams({ location: icao });
   if (!res.ok) {
-    return { loading: false, error: res.error, data: null };
+    return { loading: false, error: res.error, data: null, fetchedAtIso: null };
   }
-  writeCache(icao, res);
-  return { loading: false, error: null, data: res };
+  const entry = { fetchedAt: Date.now(), data: res };
+  responseCache.set(cacheKeyForIcao(icao), entry);
+  return {
+    loading: false,
+    error: null,
+    data: res,
+    fetchedAtIso: fetchedAtIsoFromEntry(entry),
+  };
 }
 
 export type PreflightNotamBriefingResult = {
@@ -78,10 +90,15 @@ export function usePreflightNotamBriefing(flightPlan: FlightPlan): PreflightNota
 
     const initial: Record<string, AirportFetchState> = {};
     for (const t of list) {
-      const cached = readCache(t.icao);
+      const cached = readCacheEntry(t.icao);
       initial[t.icao] = cached
-        ? { loading: false, error: null, data: cached }
-        : { loading: true, error: null, data: null };
+        ? {
+            loading: false,
+            error: null,
+            data: cached.data,
+            fetchedAtIso: fetchedAtIsoFromEntry(cached),
+          }
+        : { loading: true, error: null, data: null, fetchedAtIso: null };
     }
     setStates(initial);
 
@@ -121,6 +138,7 @@ export function usePreflightNotamBriefing(flightPlan: FlightPlan): PreflightNota
           loading: true,
           error: null,
           data: null,
+          fetchedAtIso: null,
         }),
       ),
     [targets, states],
