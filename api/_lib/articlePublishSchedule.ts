@@ -638,9 +638,9 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
     isoWeek: '2026-W50',
     seriesTitle: '学科再掲＋計器実技',
     intro:
-      '来週水はジャイロの基礎（PPL-1-2 ①）。金は姿勢指示とターンの型（IF-1-4）。',
+      '来週水はジャイロの基礎（PPL-1-2 ①）。金は計器実技（IF-1-4・IF-1-5）。',
     checklistNote:
-      'IF-1-4 は即公開（publishedAt＝2026-11-11）。learning_contents SQL 同梱（本番は承認後適用）。メール announceDate=2026-11-11。syncPublish:false。',
+      'IF-1-4・IF-1-5 は即公開（publishedAt＝2026-11-11）。learning_contents SQL 同梱（本番は承認後適用）。メール announceDate=2026-11-11。syncPublish:false。',
     articles: [
       {
         id: 'PPL-1-2-1_GyroBasics',
@@ -659,6 +659,15 @@ export const WEEKLY_ARTICLE_DIGESTS: Record<string, WeeklyArticleDigest> = {
         title: '【操縦】計器飛行第4話：姿勢指示とターンの型',
         slug: '/articles/if-1-4-attitude-turns',
         hook: '旋回でもピッチの型は変えない。ロール中の操縦桿の力の変化を AI で見逃すな。',
+      },
+      {
+        id: 'IF-1-5_AirData_CrossCheck',
+        publishDate: '2026-11-11',
+        announceDate: '2026-11-11',
+        syncPublish: false,
+        title: '【操縦】計器飛行第5話：高度・速度・昇降のクロスチェック',
+        slug: '/articles/if-1-5-air-data-cross-check',
+        hook: '針を追うな、姿勢を直せ。ALT・A/S・VV が同じ物語を語っているかを見抜け。',
       },
     ],
   },
