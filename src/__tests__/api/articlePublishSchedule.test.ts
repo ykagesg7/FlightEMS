@@ -161,13 +161,13 @@ describe('api/lib/articlePublishSchedule', () => {
     expect(weekdayJstFromPublishDate(if14!.announceDate!)).toBe(3);
     expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-4_Attitude_Turns')).toBe(false);
 
-    // IF-1-5 immediate publish: Friday mail announce (W51), no drip sync
+    // IF-1-5 immediate publish: mail announce same day (W50), no drip sync
     const if15 = listScheduledArticles().find((a) => a.id === 'IF-1-5_AirData_CrossCheck');
     expect(if15).toBeDefined();
     expect(if15?.syncPublish).toBe(false);
-    expect(if15?.announceDate).toBe('2026-12-18');
-    expect(if15?.publishDate).toBe('2026-12-18');
-    expect(weekdayJstFromPublishDate(if15!.announceDate!)).toBe(5);
+    expect(if15?.announceDate).toBe('2026-11-11');
+    expect(if15?.publishDate).toBe('2026-11-11');
+    expect(weekdayJstFromPublishDate(if15!.announceDate!)).toBe(3);
     expect(listArticlesForPublishSync().some((a) => a.id === 'IF-1-5_AirData_CrossCheck')).toBe(
       false,
     );
@@ -198,9 +198,7 @@ describe('api/lib/articlePublishSchedule', () => {
       '2026-W50': {
         'PPL-1-2-1_GyroBasics': '2026-12-09',
         'IF-1-4_Attitude_Turns': '2026-11-11',
-      },
-      '2026-W51': {
-        'IF-1-5_AirData_CrossCheck': '2026-12-18',
+        'IF-1-5_AirData_CrossCheck': '2026-11-11',
       },
     };
     for (const [week, wantById] of Object.entries(expectedByWeek)) {

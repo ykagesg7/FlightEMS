@@ -1,7 +1,7 @@
--- Instrument-Flying IF-1-5_AirData_CrossCheck（publishedAt 2026-12-18）。
+-- Instrument-Flying IF-1-5_AirData_CrossCheck（publishedAt 2026-11-11）。
 -- 本番未適用。Approve 後に適用（この PR では DB を書かない）。
 -- syncPublish:false のため cron は is_published を触らない → is_published=true で投入。
--- Sibling: IF-1-4 用 SQL は別 PR（order_index 704 想定）。本行は 705。
+-- Sibling: 20261111_learning_contents_if_1_4_attitude_turns.sql（order_index 704）。本行は 705。
 
 BEGIN;
 
