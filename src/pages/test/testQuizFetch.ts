@@ -96,6 +96,40 @@ function uniqueQuestionIds(rows: Array<{ question_id: string } | null> | null | 
   return [...seen];
 }
 
+async function fetchSrsDueQuestionIdsForUser(
+  uid: string,
+  rowLimit = 200,
+): Promise<string[]> {
+  const [{ data: dueList, error: dueErr }, { data: lapsedList, error: lapsedErr }] = await Promise.all([
+    supabase
+      .from('user_unified_srs_status')
+      .select('question_id')
+      .lte('next_review_date', new Date().toISOString())
+      .eq('user_id', uid)
+      .limit(rowLimit),
+    // Failed / reset cards are written with repetitions=0. Older syncs also
+    // scheduled them for +1 day, so due-date-only Review looked empty.
+    supabase
+      .from('user_unified_srs_status')
+      .select('question_id')
+      .eq('user_id', uid)
+      .eq('repetitions', 0)
+      .limit(rowLimit),
+  ]);
+  if (dueErr) throw dueErr;
+  if (lapsedErr) throw lapsedErr;
+  return uniqueQuestionIds([...(dueList ?? []), ...(lapsedList ?? [])]);
+}
+
+/** SRS の期限到来＋lapse カード件数（復習タブと同じ集合）。未ログインは null。 */
+export async function fetchSrsDueReviewCount(): Promise<number | null> {
+  const { data: authData } = await supabase.auth.getUser();
+  const uid = authData?.user?.id;
+  if (!uid) return null;
+  const ids = await fetchSrsDueQuestionIdsForUser(uid, 500);
+  return ids.length;
+}
+
 export async function fetchReviewQuestionsPool(
   count: number,
   examLevel: ExamLevelFilter,
@@ -105,25 +139,7 @@ export async function fetchReviewQuestionsPool(
   if (!uid) {
     return { questions: [], error: '弱点復習にはログインが必須です' };
   }
-  const [{ data: dueList, error: dueErr }, { data: lapsedList, error: lapsedErr }] = await Promise.all([
-    supabase
-      .from('user_unified_srs_status')
-      .select('question_id')
-      .lte('next_review_date', new Date().toISOString())
-      .eq('user_id', uid)
-      .limit(200),
-    // Failed / reset cards are written with repetitions=0. Older syncs also
-    // scheduled them for +1 day, so due-date-only Review looked empty.
-    supabase
-      .from('user_unified_srs_status')
-      .select('question_id')
-      .eq('user_id', uid)
-      .eq('repetitions', 0)
-      .limit(200),
-  ]);
-  if (dueErr) throw dueErr;
-  if (lapsedErr) throw lapsedErr;
-  let ids = uniqueQuestionIds([...(dueList ?? []), ...(lapsedList ?? [])]);
+  let ids = await fetchSrsDueQuestionIdsForUser(uid);
 
   if (ids.length === 0) {
     const { data: weakAreas, error: weakErr } = await supabase

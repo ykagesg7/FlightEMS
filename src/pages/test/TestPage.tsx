@@ -14,6 +14,7 @@ import { QuizActiveFilterChips } from './components/QuizActiveFilterChips';
 import { QuizComponent } from './components/QuizComponent';
 import { QuizFilterDrawer } from './components/QuizFilterDrawer';
 import { QuizHubStatusPanel } from './components/QuizHubStatusPanel';
+import { QuizHubLoggedInSummary } from './components/QuizHubLoggedInSummary';
 import { QuizHubToolbar } from './components/QuizHubToolbar';
 import { QuizResultsView } from './components/QuizResultsView';
 import { TestSubjectFilterSection } from './components/TestSubjectFilterSection';
@@ -497,6 +498,16 @@ const TestPage: React.FC = () => {
         </p>
       )}
 
+      {user?.id && !quizFinished && (
+        <QuizHubLoggedInSummary
+          userId={user.id}
+          onStartReview={() => {
+            requestScrollToQuiz();
+            updateHubState({ tab: 'review' });
+          }}
+        />
+      )}
+
       {(hubState.tab === 'review' || hubState.tab === 'diagnostic') && (
         <WeakAreasHero
           userId={user?.id}
@@ -653,6 +664,15 @@ const TestPage: React.FC = () => {
             selectedSubjectForFallback={subjectSelected ? selectedSubject : null}
             reportMeta={{ mode, tab: hubState.tab, content_id: contentId ?? null }}
             rewards={sessionRewards}
+            isLoggedIn={Boolean(user)}
+            onGoToReviewTab={() => {
+              setQuizFinished(false);
+              setUserAnswers([]);
+              setSessionRewards(null);
+              setQuestions([]);
+              requestScrollToQuiz();
+              updateHubState({ tab: 'review' });
+            }}
           />
           {profile && profile.leaderboard_opt_in !== true && !saveError && !saving ? (
             <div className="mt-4 max-w-2xl mx-auto px-2">

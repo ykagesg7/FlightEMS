@@ -3,6 +3,7 @@ import { Option, Question, QuestionType } from '../../../types/quiz';
 import { QuizQuestionText } from './QuizQuestionText';
 import { QuestionReportTrigger } from './QuestionReportTrigger';
 import type { QuestionReportContext } from '../utils/questionReportTypes';
+import ReviewContentLink from '../../articles/components/learning/ReviewContentLink';
 
 const CHOICE_LABELS = ['A', 'B', 'C', 'D'] as const;
 const RESPONSE_FIELD_CLASS =
@@ -50,8 +51,17 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
   generalMessages
 }) => {
   const [currentAnswer, setCurrentAnswer] = useState<number | string>('');
+  const [mobileMcAutoSubmit, setMobileMcAutoSubmit] = useState(false);
   const currentAnswerRef = useRef<number | string>('');
   const questionTextId = `question-text-${question.id}`;
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const sync = () => setMobileMcAutoSubmit(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
 
   useEffect(() => {
     if (initialUserAnswer !== undefined) {
@@ -174,6 +184,9 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
                       if (!disabled) {
                         currentAnswerRef.current = index;
                         setCurrentAnswer(index);
+                        if (mobileMcAutoSubmit) {
+                          onSubmit(index);
+                        }
                       }
                     }}
                     className="sr-only"
@@ -252,6 +265,12 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
             <p className={`text-sm mt-1 text-[color:var(--text-muted)]`}>あなたの回答: 「{feedback.userAnswer.toString()}」</p>
           )}
           <p className={`mt-2 whitespace-pre-line leading-relaxed text-[color:var(--text-primary)]`}>{feedback.explanation}</p>
+          <ReviewContentLink
+            subjectCategory={mainSubject ?? 'その他'}
+            accuracy={feedback.isCorrect ? 100 : 0}
+            questionIds={[String(question.id)]}
+            variant="inline"
+          />
           <div className="mt-3 pt-3 border-t border-brand-primary/10">
             <QuestionReportTrigger
               questionId={String(question.id)}
@@ -266,14 +285,21 @@ export const QuestionComponent: React.FC<QuestionComponentProps> = ({
         </div>
       )}
 
-      {!feedback && (
+      {!feedback &&
+        !(mobileMcAutoSubmit && question.type === QuestionType.MULTIPLE_CHOICE) && (
         <button
           type="submit"
           disabled={question.type === QuestionType.MULTIPLE_CHOICE && (currentAnswer === '' || currentAnswer === undefined)}
           className="w-full bg-brand-primary hover:bg-brand-primary-dark disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-brand-primary text-[var(--bg)] font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-75"
         >
-          {generalMessages.submitAnswer} {question.type === QuestionType.MULTIPLE_CHOICE && '(1-4 / Enter)'}
+          {generalMessages.submitAnswer}{' '}
+          {question.type === QuestionType.MULTIPLE_CHOICE && (mobileMcAutoSubmit ? '(Enter)' : '(1-4 / Enter)')}
         </button>
+      )}
+      {!feedback && mobileMcAutoSubmit && question.type === QuestionType.MULTIPLE_CHOICE && (
+        <p className="text-center text-xs text-[var(--text-muted)]">
+          選択肢をタップすると解答します。キーボードは 1–4 で選択、Enter で送信。
+        </p>
       )}
       {feedback && question.type === QuestionType.TEXT_INPUT && !feedback.isCorrect && (
         <button
