@@ -211,11 +211,12 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
     if (variant === 'panel') {
       return (
         <div
-          className="mt-6 min-h-[16rem] rounded-xl border border-brand-primary/15 bg-[var(--panel)]/80 p-6 text-[var(--text-primary)] md:min-h-[30rem]"
+          className="mt-6 min-h-[16rem] rounded-xl border border-brand-primary/15 bg-[var(--panel)]/80 p-6 text-[var(--text-primary)] md:min-h-[38rem]"
           aria-busy="true"
           aria-label="おすすめ記事を読み込み中"
         >
           <div className="animate-pulse space-y-4">
+            <div className="h-28 rounded-lg bg-brand-primary/10" aria-hidden />
             <div className="flex gap-3">
               <div className="h-8 w-8 shrink-0 rounded-full bg-brand-primary/15" />
               <div className="flex-1 space-y-2">
@@ -223,9 +224,9 @@ const ReviewContentLink: React.FC<ReviewContentLinkProps> = ({
                 <div className="h-4 w-full max-w-md rounded bg-brand-primary/10" />
               </div>
             </div>
-            <div className="h-20 rounded-lg bg-brand-primary/10" />
             <div className="h-24 rounded-lg bg-brand-primary/10" />
-            <div className="h-24 rounded-lg bg-brand-primary/10" />
+            <div className="h-28 rounded-lg bg-brand-primary/10" />
+            <div className="h-28 rounded-lg bg-brand-primary/10" />
           </div>
         </div>
       );

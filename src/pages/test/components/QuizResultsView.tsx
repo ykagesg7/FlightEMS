@@ -147,6 +147,19 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
     return { withIncorrect, allCorrect, allSessionIds, firstSubject };
   }, [userAnswers, questions]);
 
+  const articleBlockMinRem =
+    16 +
+    (Math.max(
+      1,
+      subjectArticleBlocks.withIncorrect.length > 0
+        ? subjectArticleBlocks.withIncorrect.length
+        : subjectArticleBlocks.allCorrect
+          ? 1
+          : 0,
+    ) -
+      1) *
+      22;
+
   return (
     <div className="max-w-2xl mx-auto p-8 bg-[var(--panel)] border border-brand-primary/20 rounded-2xl shadow-2xl">
       <h2 className="text-3xl font-bold mb-6 text-brand-primary drop-shadow text-center">テスト結果</h2>
@@ -231,7 +244,7 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
       )}
 
       {(subjectArticleBlocks.withIncorrect.length > 0 || subjectArticleBlocks.allCorrect) && (
-        <div className="mb-6 min-h-[16rem] md:min-h-[30rem]">
+        <div className="mb-6 md:min-h-[38rem]" style={{ minHeight: `${articleBlockMinRem}rem` }}>
           <div className="mb-4 rounded-xl border-2 border-brand-primary/40 bg-brand-secondary-dark p-5 shadow-lg ring-1 ring-brand-primary/20">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-primary">
               次に読む記事
