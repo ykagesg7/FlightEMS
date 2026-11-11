@@ -59,7 +59,7 @@ export async function dispatchSwimNotamSearch(
   if (result.ok === true) {
     return {
       status: 200,
-      cacheControl: 'private, no-store',
+      cacheControl: 'public, max-age=60, s-maxage=60',
       body: {
         ok: true,
         current: result.current,

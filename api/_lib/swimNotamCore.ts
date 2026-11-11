@@ -12,6 +12,16 @@ import type { ClientRequest, IncomingHttpHeaders } from 'node:http';
 import type { Geometry } from 'geojson';
 import { XMLParser } from 'fast-xml-parser';
 import { extractGeometryFromDigitalNotamXml } from './swimNotamGeometry';
+import {
+  invalidateSwimLoginSession,
+  readSwimLoginSession,
+  writeSwimLoginSession,
+} from './swimNotamLoginSession';
+import { buildSwimNotamQueryCacheKey } from './swimNotamQueryCacheKey';
+import {
+  readSwimNotamSearchCache,
+  writeSwimNotamSearchCache,
+} from './swimNotamSearchResultCache';
 
 try {
   if (typeof dns.setDefaultResultOrder === 'function') {
@@ -845,26 +855,14 @@ function swimSearchErrorMessage(code: string): string {
  * 環境変数: SWIM_LOGIN_ID, SWIM_LOGIN_PASSWORD 必須。
  * SWIM_SEARCH_USER_ID があれば検索の userId に使用（なければ SWIM_LOGIN_ID）。
  */
-export async function searchSwimDigitalNotam(query: SwimNotamQuery): Promise<SwimNotamSearchResult> {
+async function swimLoginFresh(): Promise<
+  { ok: true; cookie: string } | (SwimNotamSearchErr & { ok: false })
+> {
   const loginId = process.env.SWIM_LOGIN_ID?.trim();
   const password = process.env.SWIM_LOGIN_PASSWORD;
-  const userId = (process.env.SWIM_SEARCH_USER_ID?.trim() || loginId) ?? '';
-
   if (!loginId || !password) {
     return { ok: false, error: 'サーバに SWIM 認証が設定されていません' };
   }
-
-  const loc = query.location?.trim();
-  const kw = query.keyword?.trim();
-  if (!loc && !kw) {
-    return { ok: false, error: 'location または keyword のいずれかが必要です' };
-  }
-  if (kw && query.andOrCondition !== '0' && query.andOrCondition !== '1') {
-    /* 呼び出し側でデフォルト付与するが、型上はここでも保険 */
-    query.andOrCondition = '0';
-  }
-
-  let cookie: string;
   try {
     const loginRes = await httpsRequestTextIpv4({
       urlStr: SWIM_LOGIN_URL,
@@ -905,7 +903,8 @@ export async function searchSwimDigitalNotam(query: SwimNotamQuery): Promise<Swi
     if (!c) {
       return { ok: false, error: 'SWIM セッション Cookie を取得できませんでした' };
     }
-    cookie = c;
+    writeSwimLoginSession(c);
+    return { ok: true, cookie: c };
   } catch (e: unknown) {
     const name = e instanceof Error ? e.name : '';
     if (name === 'TimeoutError') {
@@ -916,6 +915,41 @@ export async function searchSwimDigitalNotam(query: SwimNotamQuery): Promise<Swi
       error: e instanceof Error ? e.message : 'SWIM ログイン要求に失敗しました',
     };
   }
+}
+
+async function ensureSwimSessionCookie(): Promise<
+  { ok: true; cookie: string } | (SwimNotamSearchErr & { ok: false })
+> {
+  const cached = readSwimLoginSession();
+  if (cached) return { ok: true, cookie: cached };
+  return swimLoginFresh();
+}
+
+export async function searchSwimDigitalNotam(query: SwimNotamQuery): Promise<SwimNotamSearchResult> {
+  const loginId = process.env.SWIM_LOGIN_ID?.trim();
+  const password = process.env.SWIM_LOGIN_PASSWORD;
+  const userId = (process.env.SWIM_SEARCH_USER_ID?.trim() || loginId) ?? '';
+
+  if (!loginId || !password) {
+    return { ok: false, error: 'サーバに SWIM 認証が設定されていません' };
+  }
+
+  const loc = query.location?.trim();
+  const kw = query.keyword?.trim();
+  if (!loc && !kw) {
+    return { ok: false, error: 'location または keyword のいずれかが必要です' };
+  }
+  if (kw && query.andOrCondition !== '0' && query.andOrCondition !== '1') {
+    /* 呼び出し側でデフォルト付与するが、型上はここでも保険 */
+    query.andOrCondition = '0';
+  }
+
+  const cacheKey = buildSwimNotamQueryCacheKey(query);
+  const cachedResult = readSwimNotamSearchCache(cacheKey);
+  if (cachedResult) return cachedResult;
+
+  let session = await ensureSwimSessionCookie();
+  if (!session.ok) return session;
 
   const now = new Date();
   const validEnd = new Date(now.getTime() + 366 * 24 * 60 * 60 * 1000);
@@ -935,31 +969,53 @@ export async function searchSwimDigitalNotam(query: SwimNotamQuery): Promise<Swi
 
   const searchUrl = `${SWIM_SEARCH_BASE}?${qs.toString()}`;
 
-  let searchText: string;
-  let searchStatus: number;
-  try {
-    const searchRes = await httpsRequestTextIpv4({
-      urlStr: searchUrl,
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        Cookie: cookie,
-        'User-Agent': 'FlightAcademyTsx/1.0',
-        'Cache-Control': 'no-cache',
-      },
-      timeoutMs: SEARCH_TIMEOUT_MS,
-    });
-    searchStatus = searchRes.statusCode;
-    searchText = searchRes.text;
-  } catch (e: unknown) {
-    const name = e instanceof Error ? e.name : '';
-    if (name === 'TimeoutError') {
-      return { ok: false, error: 'デジタルノータム検索がタイムアウトしました' };
+  async function runSearchWithCookie(
+    cookie: string,
+  ): Promise<
+    | { ok: true; searchStatus: number; searchText: string }
+    | (SwimNotamSearchErr & { ok: false })
+  > {
+    try {
+      const searchRes = await httpsRequestTextIpv4({
+        urlStr: searchUrl,
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          Cookie: cookie,
+          'User-Agent': 'FlightAcademyTsx/1.0',
+          'Cache-Control': 'no-cache',
+        },
+        timeoutMs: SEARCH_TIMEOUT_MS,
+      });
+      return {
+        ok: true,
+        searchStatus: searchRes.statusCode,
+        searchText: searchRes.text,
+      };
+    } catch (e: unknown) {
+      const name = e instanceof Error ? e.name : '';
+      if (name === 'TimeoutError') {
+        return { ok: false, error: 'デジタルノータム検索がタイムアウトしました' };
+      }
+      return {
+        ok: false,
+        error: e instanceof Error ? e.message : 'デジタルノータム検索に失敗しました',
+      };
     }
-    return {
-      ok: false,
-      error: e instanceof Error ? e.message : 'デジタルノータム検索に失敗しました',
-    };
+  }
+
+  let searchRun = await runSearchWithCookie(session.cookie);
+  if (!searchRun.ok) return searchRun;
+
+  let { searchStatus, searchText } = searchRun;
+  if (searchStatus === 403) {
+    invalidateSwimLoginSession();
+    session = await swimLoginFresh();
+    if (!session.ok) return session;
+    searchRun = await runSearchWithCookie(session.cookie);
+    if (!searchRun.ok) return searchRun;
+    searchStatus = searchRun.searchStatus;
+    searchText = searchRun.searchText;
   }
 
   if (searchStatus === 403) {
@@ -1007,11 +1063,13 @@ export async function searchSwimDigitalNotam(query: SwimNotamQuery): Promise<Swi
   );
   const { current, future } = classifyNotams(summaries, now);
 
-  return {
+  const success: SwimNotamSearchResult = {
     ok: true,
     current: sortNotamSummaries(current),
     future: sortNotamSummaries(future),
     swimErrorCode: swimCode || '0',
     totalCount,
   };
+  writeSwimNotamSearchCache(cacheKey, success);
+  return success;
 }

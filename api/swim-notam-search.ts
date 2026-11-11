@@ -7,11 +7,12 @@
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { dispatchSwimNotamSearch } from './_lib/swimNotamHttpShared';
+import { applySwimNotamCors } from './_lib/swimNotamCors';
+import { checkSwimNotamRateLimit } from './_lib/swimNotamRateLimit';
+import { getSwimNotamClientKey } from './_lib/swimNotamRequest';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  applySwimNotamCors(req, res);
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -20,6 +21,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method !== 'GET') {
     res.status(405).json({ ok: false, error: 'Method Not Allowed' });
+    return;
+  }
+
+  const rate = checkSwimNotamRateLimit(getSwimNotamClientKey(req));
+  if (!rate.ok) {
+    res.setHeader('Retry-After', String(rate.retryAfterSeconds));
+    res.status(429).json({
+      ok: false,
+      error: 'リクエストが多すぎます。しばらくしてから再度お試しください。',
+      retryAfterSeconds: rate.retryAfterSeconds,
+    });
     return;
   }
 

@@ -86,9 +86,27 @@ export async function fetchSwimNotams(params: {
       method: 'GET',
       headers: { Accept: 'application/json' },
     });
+    if (res.status === 429) {
+      const retryHeader = res.headers.get('Retry-After');
+      const retryAfterSeconds = retryHeader ? Number(retryHeader) : undefined;
+      const suffix =
+        retryAfterSeconds && Number.isFinite(retryAfterSeconds)
+          ? `（約 ${Math.ceil(retryAfterSeconds)} 秒後）`
+          : '';
+      return {
+        ok: false,
+        error: `NOTAM 検索が混み合っています。しばらくしてから再度お試しください${suffix}`,
+      };
+    }
     const json: unknown = await res.json().catch(() => null);
     if (!json || typeof json !== 'object') {
-      return { ok: false, error: '応答の解析に失敗しました' };
+      return {
+        ok: false,
+        error:
+          res.status >= 500
+            ? 'NOTAM サービスが一時的に利用できません。画面はそのまま操作できます。'
+            : '応答の解析に失敗しました',
+      };
     }
     const o = json as Record<string, unknown>;
     if (o.ok === true) {
