@@ -218,7 +218,13 @@ html {
 /* クイズ出題中: 固定ヘッダー＋モバイル番号ナビの裏にフォーカスが隠れない（WCAG 2.4.11） */
 html.quiz-active-session {
   scroll-padding-top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
-  scroll-padding-bottom: var(--quiz-scroll-pad-bottom, 5.75rem);
+  scroll-padding-bottom: calc(var(--quiz-scroll-pad-bottom, 5.75rem) + 1.25rem);
+}
+
+html.quiz-active-session
+  :is(button, a, input, select, textarea, [role='radio'], [role='tab']):focus-visible {
+  scroll-margin-top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+  scroll-margin-bottom: calc(var(--quiz-scroll-pad-bottom, 5.75rem) + 1.25rem);
 }
 
 :where(h1, h2, h3, h4, h5, h6)[id] {

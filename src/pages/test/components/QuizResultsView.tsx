@@ -231,7 +231,7 @@ export const QuizResultsView: React.FC<QuizResultsViewProps> = ({
       )}
 
       {(subjectArticleBlocks.withIncorrect.length > 0 || subjectArticleBlocks.allCorrect) && (
-        <div className="mb-6 min-h-[14rem]">
+        <div className="mb-6 min-h-[16rem] md:min-h-[30rem]">
           <div className="mb-4 rounded-xl border-2 border-brand-primary/40 bg-brand-secondary-dark p-5 shadow-lg ring-1 ring-brand-primary/20">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-primary">
               次に読む記事

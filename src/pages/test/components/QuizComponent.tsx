@@ -10,7 +10,9 @@ const QUIZ_SCROLL_TITLE_CLASS =
 const QUIZ_SCROLL_QUESTION_CLASS =
   'scroll-mt-[calc(5rem+env(safe-area-inset-top,0px))] scroll-mb-4 md:scroll-mt-24';
 const QUIZ_SCROLL_ACTION_CLASS =
-  'scroll-mt-4 scroll-mb-[calc(var(--quiz-palette-offset,0px)+1rem)] md:scroll-mb-6';
+  'scroll-mt-4 scroll-mb-[calc(var(--quiz-palette-offset,0px)+5rem)] md:scroll-mb-6';
+const QUIZ_FOCUS_SAFE_BOTTOM =
+  'max-md:scroll-mb-[calc(var(--quiz-palette-offset,0px)+5rem)]';
 
 interface QuizComponentProps {
   quizTitle: string;
@@ -469,7 +471,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
       />
       </div>
 
-      <div className="mt-4 flex items-start justify-between gap-4">
+      <div className={`mt-4 flex items-start justify-between gap-4 ${QUIZ_FOCUS_SAFE_BOTTOM}`}>
         <div className="space-y-2">
           <button
             onClick={() => toggleFlag(currentQuestion.id)}
@@ -492,7 +494,7 @@ export const QuizComponent: React.FC<QuizComponentProps> = ({ quizTitle, questio
         <div ref={nextActionRef} className={QUIZ_SCROLL_ACTION_CLASS}>
         <button
           onClick={handleNextQuestion}
-          className="mt-6 w-full bg-brand-primary hover:bg-brand-primary-dark text-[var(--bg)] font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-[var(--bg)]"
+          className={`mt-6 w-full bg-brand-primary hover:bg-brand-primary-dark text-[var(--bg)] font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-[var(--bg)] ${QUIZ_FOCUS_SAFE_BOTTOM}`}
         >
           {currentQuestionIndex < questions.length - 1
             ? generalMessages.nextQuestion
