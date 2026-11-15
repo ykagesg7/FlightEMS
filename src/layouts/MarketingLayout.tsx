@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useRef, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import { UserMenu } from '../components/marketing/UserMenu';
 import { LocationKeyedOutlet } from './LocationKeyedOutlet';
 import { Typography } from '../components/ui';
@@ -31,7 +32,14 @@ const navLinkMobile = ({ isActive }: { isActive: boolean }) =>
  * Flight Academy Cockpit Academy テーマ
  * ネイビー×エアフォースブルー基調
  */
+/** Matches PlanningMapPage narrow layout + fixed mobile tab bar height */
+const PLANNING_MOBILE_CHROME_PADDING = 'pb-[calc(4.5rem+env(safe-area-inset-bottom))]';
+
 export const MarketingLayout: React.FC = () => {
+  const location = useLocation();
+  const isNarrowMobile = useMediaQuery('(max-width: 639px)');
+  const planningMobileFooterPad =
+    isNarrowMobile && location.pathname === '/planning' ? PLANNING_MOBILE_CHROME_PADDING : '';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const mobileNavPanelRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -208,7 +216,9 @@ export const MarketingLayout: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-brand-primary/20 bg-[var(--panel)] py-8">
+      <footer
+        className={`border-t border-brand-primary/20 bg-[var(--panel)] py-8 ${planningMobileFooterPad}`}
+      >
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <div>

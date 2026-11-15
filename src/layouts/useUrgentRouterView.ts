@@ -1,5 +1,5 @@
 import { useContext, useSyncExternalStore, type ContextType } from 'react';
-import { UNSAFE_DataRouterContext, useLocation } from 'react-router-dom';
+import { UNSAFE_DataRouterContext, useLocation, type Location } from 'react-router-dom';
 
 type DataRouter = NonNullable<
   ContextType<typeof UNSAFE_DataRouterContext>
@@ -55,4 +55,32 @@ export function useUrgentRouterView(): {
     leaving,
     locationKey: storeKey || reactLocation.key,
   };
+}
+
+function subscribeRouter(router: DataRouter | undefined, onStoreChange: () => void): () => void {
+  if (!router) {
+    return () => {};
+  }
+  return router.subscribe(onStoreChange);
+}
+
+function readRouterLocation(router: DataRouter | undefined, fallback: Location): Location {
+  return router?.state.location ?? fallback;
+}
+
+/**
+ * Same-path search/hash updates are wrapped in startTransition, so useLocation and
+ * useSearchParams can lag behind the address bar until POP or the transition commits.
+ * Read router.state.location for query-driven UI (e.g. Planning ?mode=).
+ */
+export function useCommittedRouterLocation(): Location {
+  const dataRouter = useContext(UNSAFE_DataRouterContext);
+  const reactLocation = useLocation();
+  const router = dataRouter?.router;
+
+  return useSyncExternalStore(
+    (onStoreChange) => subscribeRouter(router, onStoreChange),
+    () => readRouterLocation(router, reactLocation),
+    () => readRouterLocation(router, reactLocation),
+  );
 }

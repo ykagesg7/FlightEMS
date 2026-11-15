@@ -1,5 +1,5 @@
 import React, { Suspense, useCallback, useState, lazy } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   parsePlanningMode,
   trackPlanningModeView,
@@ -10,7 +10,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs';
 import { WeatherCacheProvider } from '../../contexts/WeatherCacheContext';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
-import { useUrgentRouterView } from '../../layouts/useUrgentRouterView';
+import { useCommittedRouterLocation, useUrgentRouterView } from '../../layouts/useUrgentRouterView';
 import { FlightPlan } from '../../types/index';
 import { importWithChunkRetry } from '../../utils/lazyWithRetry';
 import type { FlightTrack } from './tracks/types';
@@ -290,8 +290,8 @@ function PlanningMapPageInner({
 
 function PlanningMapPage() {
   const { leaving } = useUrgentRouterView();
-  const [searchParams] = useSearchParams();
-  const mode = parsePlanningMode(searchParams.get('mode'));
+  const committedLocation = useCommittedRouterLocation();
+  const mode = parsePlanningMode(new URLSearchParams(committedLocation.search).get('mode'));
   const [flightPlan, setFlightPlan] = React.useState<FlightPlan>(() => {
     const draft = loadFlightPlanDraft();
     return draft ?? createInitialFlightPlan();
