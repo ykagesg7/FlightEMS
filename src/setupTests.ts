@@ -58,6 +58,20 @@ function installJsdomAbortSignalRequestCompat(): void {
 
 installJsdomAbortSignalRequestCompat();
 
+/** jsdom does not implement matchMedia; hooks like useMediaQuery need a stub. */
+if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
+  window.matchMedia = (query: string): MediaQueryList => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+  });
+}
+
 // 環境変数のモック設定（テスト環境用）
 Object.defineProperty(import.meta, 'env', {
   value: {

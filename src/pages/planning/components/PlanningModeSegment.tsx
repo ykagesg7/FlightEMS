@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useCommittedRouterLocation } from '../../../layouts/useUrgentRouterView';
 import {
   parsePlanningMode,
   PLANNING_MODES,
@@ -24,7 +25,8 @@ export const PlanningModeSegment: React.FC<PlanningModeSegmentProps> = ({
   useSelectOnMobile = true,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const mode = parsePlanningMode(searchParams.get('mode'));
+  const committedLocation = useCommittedRouterLocation();
+  const mode = parsePlanningMode(new URLSearchParams(committedLocation.search).get('mode'));
 
   const setMode = (next: PlanningMode) => {
     const params = new URLSearchParams(searchParams);
