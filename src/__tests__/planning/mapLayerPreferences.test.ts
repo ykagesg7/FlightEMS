@@ -12,9 +12,10 @@ const knownIds = getKnownOverlayIds(STATIC_MAP_LAYER_CATALOG);
 
 describe('planningMapLayerPreferences', () => {
   it('filters unknown overlay ids', () => {
-    expect(filterValidOverlayIds(['airport', 'unknown_layer', 'navaids'], knownIds)).toEqual([
+    expect(filterValidOverlayIds(['airport', 'unknown_layer', 'navaids', 'navaids_italy'], knownIds)).toEqual([
       'airport',
       'navaids',
+      'navaids_italy',
     ]);
   });
 

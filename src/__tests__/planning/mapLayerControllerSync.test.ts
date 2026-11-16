@@ -34,10 +34,12 @@ function buildOverlayGroups(layerByKey: Record<string, L.Layer>): PlanningMapOve
 
 describe('mapLayerControllerSync helpers', () => {
   it('mergeCatalogEntries deduplicates by id and keeps latest entry', () => {
+    const restricted = STATIC_MAP_LAYER_CATALOG.find((e) => e.id === 'restricted_airspace');
+    expect(restricted).toBeDefined();
     const prev = STATIC_MAP_LAYER_CATALOG.slice(0, 2);
     const next = [
       ...STATIC_MAP_LAYER_CATALOG.slice(0, 2),
-      { ...STATIC_MAP_LAYER_CATALOG[2], label: 'updated restricted' },
+      { ...restricted!, label: 'updated restricted' },
     ];
     const merged = mergeCatalogEntries(prev, next);
     expect(merged).toHaveLength(3);

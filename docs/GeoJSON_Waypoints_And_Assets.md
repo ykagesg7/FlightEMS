@@ -10,7 +10,7 @@
 |----|----------------|------------------------|------|
 | **編集時の入力（アルファベット別）** | `public/geojson/waypoints/waypoints_[A-Z].json`, `public/geojson/waypoints/index.json` | **しない** (`src/` にパス無し） | 部分編集・ソート用。`scripts/waypoints/mergeWaypoints.cjs` で結合される。 |
 | **結合正本・地図用分割** | `public/geojson/Waypoints.json`（全件）, `public/geojson/waypoints/waypoints_region_*.json`, `public/geojson/waypoints/regions_index.json` | **する** | マップは地域タイル読込＋フォールバックで全件。計画タブでも全件取得。 |
-| **その他レイヤ GeoJSON** | `Airports.geojson`, `Navaids.geojson`, `ACC_*`, `TrainingArea*` 等 | **する** | 計画／地図タブ共通。 |
+| **その他レイヤ GeoJSON** | `Airports.geojson`, `Navaids.geojson`, `Navaids_ITALY.geojson`, `ACC_*`, `TrainingArea*` 等 | **する** | 計画／地図タブ共通。 |
 
 **実行時フェッチの正本コード**: [`PlanningTab.tsx`](../src/pages/planning/components/flight/PlanningTab.tsx)（`/geojson/Waypoints.json` 等）、[`MapTabContent.tsx`](../src/pages/planning/components/map/MapTabContent.tsx)、[`useRegionsIndex.ts`](../src/pages/planning/components/map/hooks/useRegionsIndex.ts)。
 
@@ -176,7 +176,8 @@ scripts/waypoints/
 - `ACC_Sector_High.geojson` - 高高度セクター情報
 - `ACC_Sector_Low.geojson` - 低高度セクター情報
 - `Airports.geojson` - 空港データ
-- `Navaids.geojson` - 航法援助施設データ
+- `Navaids.geojson` - 航法援助施設データ（日本）
+- `Navaids_ITALY.geojson` - 航法援助施設データ（イタリア・AIP ENR 4.1 照合済み。点検記録は `docs/data/Italy_Navaids_ENR41_Verification.md`）
 - `RAPCON.geojson` - レーダー進入管制データ
 - `RestrictedAirspace.geojson` - 制限空域データ
 - `TrainingAreaCivil.geojson` - 民間訓練区域

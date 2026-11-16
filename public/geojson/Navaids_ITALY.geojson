@@ -1,0 +1,933 @@
+{
+ "type": "FeatureCollection",
+ "crs": {
+  "type": "name",
+  "properties": {
+   "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+  }
+ },
+ "metadata": {
+  "source": "AIP Italia ENR 4.1.1 RADIO NAVIGATION AIDS - ENROUTE; ENR 4.1.2 MILITARY RADIO AIDS NOT INCLUDED IN AD SECTION",
+  "source_file": "AIS_ITALY_ENR_4.pdf",
+  "source_pages": [
+   "ENR 4.1.1-1 (PDF p.1, AIRAC 07 AUG 2025, (A08/25))",
+   "ENR 4.1.1-2 (PDF p.2, AIRAC 07 AUG 2025, (A08/25))",
+   "ENR 4.1.1-3 (PDF p.3, AIRAC 16 APR 2026, (A04/26))",
+   "ENR 4.1.1-4 (PDF p.4, AIRAC 16 APR 2026, (A04/26))",
+   "ENR 4.1.1-5 (PDF p.5, AIRAC 06 AUG 2026, (A08/26))",
+   "ENR 4.1.1-6 (PDF p.6, AIRAC 06 AUG 2026, (A08/26))",
+   "ENR 4.1.1-7 (PDF p.7, AIRAC 11 JUN 2026, (A06/26))",
+   "ENR 4.1.1-8 (PDF p.8, AIRAC 11 JUN 2026, (A06/26))",
+   "ENR 4.1.1-9 (PDF p.9, AIRAC 11 JUN 2026, (A06/26))",
+   "ENR 4.1.1-10 (PDF p.10, AIRAC 11 JUN 2026, (A06/26))",
+   "ENR 4.1.1-11 (PDF p.11, AIRAC 11 JUN 2026, (A06/26))",
+   "ENR 4.1.1-12 (PDF p.12, AIRAC 11 JUN 2026, (A06/26))",
+   "ENR 4.1.2-1 (PDF p.13, AIRAC 06 AUG 2026, (A08/26))",
+   "ENR 4.1.2-2 (PDF p.14, AIRAC 06 AUG 2026, (A08/26))",
+   "ENR 4.1.2-3 (PDF p.15, AIRAC 28 NOV 2024, (A12/24))",
+   "ENR 4.1.2-4 (PDF p.16, AIRAC 28 NOV 2024, (A12/24))",
+   "ENR 4.1.2-5 (PDF p.17, AIRAC 26 DEC 2024, (A13/24))",
+   "ENR 4.1.2-6 (PDF p.18, AIRAC 26 DEC 2024, (A13/24))"
+  ],
+  "airac": "Compiled pAIP: ENR 4.1 sheets have different AIRAC effective dates (see source_pages). Newest ENR 4.1 sheets in this file: 06 AUG 2026 (A08/26). Oldest ENR 4.1.2 sheets: 28 NOV 2024 (A12/24).",
+  "generated": "2026-11-11",
+  "coordinate_policy": "WGS84. For VOR/DME, DVOR/DME, TVOR/DME and VORTAC, the VOR/DVOR/TVOR antenna is used when a second DME or TACAN antenna is published. Rounded to 4 decimal degrees.",
+  "type_policy": "Map 'type' follows Navaids_JAPAN.geojson: VOR (including VOR/DME, DVOR/DME, TVOR/DME, DVOR), VORTAC, TACAN, NDB (including Locator 'L'). AIP published type is not stored on the feature.",
+  "counts": {
+   "features": 56,
+   "by_map_type": {
+    "VORTAC": 6,
+    "VOR": 31,
+    "NDB": 7,
+    "TACAN": 12
+   },
+   "by_aip_type": {
+    "VORTAC": 6,
+    "VOR/DME": 23,
+    "DVOR/DME": 6,
+    "NDB": 5,
+    "DVOR": 1,
+    "L": 2,
+    "TVOR/DME": 1,
+    "TACAN": 12
+   }
+  },
+  "notes": [
+   "PISA (PIS) 379 kHz and GRAZZANISE (GRA) 343 kHz are published as L (Locator); typed as NDB for the map.",
+   "No standalone DME is published in ENR 4.1.1 or ENR 4.1.2.",
+   "GRO (GROSSETO DVOR): coordinates not published in ENR 4.1.1-4; filled from submitted values (not in AIP) as [11.0717, 42.7597] (unverified).",
+   "ENR 4.1.2 lists only military radio aids that are not in the AD section. Aids published solely in AD are outside this extract."
+  ]
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VORTAC",
+    "name1": "アルゲーロ",
+    "name2": "ALGHERO",
+    "id": "ALG",
+    "ch": "85x",
+    "freq": 113.8
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.2439,
+     40.6281
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "アンコーナ",
+    "name2": "ANCONA",
+    "id": "ANC",
+    "ch": "43y",
+    "freq": 110.65
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     13.4711,
+     43.5864
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "バーリ",
+    "name2": "BARI",
+    "id": "BAR",
+    "ch": "111x",
+    "freq": 116.4
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.7764,
+     41.1442
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ボローニャ",
+    "name2": "BOLOGNA",
+    "id": "BOA",
+    "ch": "118x",
+    "freq": 117.1
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.2906,
+     44.5369
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ボルツァーノ",
+    "name2": "BOLZANO",
+    "id": "OZE",
+    "ch": "117y",
+    "freq": 117.05
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.2922,
+     46.4053
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VORTAC",
+    "name1": "カラッファ・ディ・カタンザーロ",
+    "name2": "CARAFFA DI CATANZARO",
+    "id": "CDC",
+    "ch": "120x",
+    "freq": 117.3
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.3692,
+     38.7558
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "カルボナーラ",
+    "name2": "CARBONARA",
+    "id": "CAR",
+    "ch": "98x",
+    "freq": 115.1
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.5081,
+     39.1114
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "カターニア",
+    "name2": "CATANIA/Fontanarossa",
+    "id": "CTF",
+    "ch": "109y",
+    "freq": 116.25
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     15.0622,
+     37.4644
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "キオッジャ",
+    "name2": "CHIOGGIA",
+    "id": "CHI",
+    "ch": "88x",
+    "freq": 114.1
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.2814,
+     45.0711
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "クロトーネ",
+    "name2": "CROTONE",
+    "id": "CRN",
+    "ch": "118x",
+    "freq": 117.1
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     17.0831,
+     38.9961
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VORTAC",
+    "name1": "エルバ",
+    "name2": "ELBA",
+    "id": "ELB",
+    "ch": "94x",
+    "freq": 114.7
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.3958,
+     42.7306
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "グロッセート",
+    "name2": "GROSSETO",
+    "id": "GRO",
+    "freq": 109.85
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.0717,
+     42.7597
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ラメーツィア・テルメ",
+    "name2": "LAMEZIA TERME",
+    "id": "LMT",
+    "ch": "72x",
+    "freq": 112.5
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.2656,
+     38.9044
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ラティーナ",
+    "name2": "LATINA",
+    "id": "LAT",
+    "ch": "49x",
+    "freq": 111.2
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.9181,
+     41.5411
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "マルペンサ",
+    "name2": "MALPENSA",
+    "id": "MMP",
+    "ch": "80y",
+    "freq": 113.35
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7347,
+     45.6408
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "オスティア",
+    "name2": "OSTIA",
+    "id": "OST",
+    "ch": "96x",
+    "freq": 114.9
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.2375,
+     41.8039
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "パレルモ",
+    "name2": "PALERMO/Punta Raisi",
+    "id": "PAL",
+    "ch": "70x",
+    "freq": 112.3
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     13.1775,
+     38.0336
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "パンテッレリーア",
+    "name2": "PANTELLERIA",
+    "id": "PAN",
+    "ch": "108x",
+    "freq": 116.1
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.9658,
+     36.8144
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ペレートラ",
+    "name2": "PERETOLA",
+    "id": "PRT",
+    "ch": "72x",
+    "freq": 112.5
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.2006,
+     43.8097
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ペスカーラ",
+    "name2": "PESCARA",
+    "id": "PES",
+    "ch": "106x",
+    "freq": 115.9
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.1842,
+     42.4358
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ピサ",
+    "name2": "PISA",
+    "id": "PIS",
+    "ch": "58x",
+    "freq": 112.1
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.3917,
+     43.6767
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VORTAC",
+    "name1": "ポンツァ",
+    "name2": "PONZA",
+    "id": "PNZ",
+    "ch": "93x",
+    "freq": 114.6
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.9575,
+     40.9119
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "レッジョ・カラブリア",
+    "name2": "REGGIO CALABRIA",
+    "id": "RCA",
+    "ch": "47x",
+    "freq": 111.0
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     15.6453,
+     38.0767
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ローマ",
+    "name2": "ROMA",
+    "id": "RMC",
+    "ch": "45x",
+    "freq": 110.8
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.5881,
+     41.8047
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ロンキ・デイ・レジョナーリ",
+    "name2": "RONCHI DEI LEGIONARI",
+    "id": "RCH",
+    "ch": "89x",
+    "freq": 114.2
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     13.4803,
+     45.8297
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "サロンノ",
+    "name2": "SARONNO",
+    "id": "SRN",
+    "ch": "84x",
+    "freq": 113.7
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.0217,
+     45.6461
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ソレント",
+    "name2": "SORRENTO",
+    "id": "SOR",
+    "ch": "59x",
+    "freq": 112.2
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.335,
+     40.5825
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "タルクイーニア",
+    "name2": "TARQUINIA",
+    "id": "TAQ",
+    "ch": "55x",
+    "freq": 111.8
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.7325,
+     42.215
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "テアーノ",
+    "name2": "TEANO",
+    "id": "TEA",
+    "ch": "76x",
+    "freq": 112.9
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     13.9706,
+     41.2967
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "トリノ",
+    "name2": "TORINO",
+    "id": "TOP",
+    "ch": "92x",
+    "freq": 114.5
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     7.8617,
+     44.9253
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VORTAC",
+    "name1": "トラーパニ",
+    "name2": "TRAPANI",
+    "id": "TRP",
+    "ch": "25x",
+    "freq": 108.8
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.5131,
+     37.8958
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "トレント",
+    "name2": "TRENTO",
+    "id": "TNT",
+    "ch": "100y",
+    "freq": 115.35
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.14,
+     46.0203
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "トレッツォ",
+    "name2": "TREZZO",
+    "id": "TZO",
+    "ch": "119y",
+    "freq": 117.25
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.5069,
+     45.5592
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ヴィチェンツァ",
+    "name2": "VICENZA",
+    "id": "VIC",
+    "ch": "81x",
+    "freq": 113.4
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.6764,
+     45.6372
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ヴィエステ",
+    "name2": "VIESTE",
+    "id": "VIE",
+    "ch": "73x",
+    "freq": 112.6
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.0492,
+     41.9128
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VOR",
+    "name1": "ヴォゲーラ",
+    "name2": "VOGHERA",
+    "id": "VOG",
+    "ch": "41y",
+    "freq": 110.45
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.9703,
+     44.9647
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "アメンドラ",
+    "name2": "AMENDOLA",
+    "id": "MNL",
+    "ch": "99y"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     15.6897,
+     41.5478
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "アヴィアーノ",
+    "name2": "AVIANO",
+    "id": "AVI",
+    "ch": "111x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.5869,
+     46.0278
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "カメリ",
+    "name2": "CAMERI",
+    "id": "CAM",
+    "ch": "97x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.6575,
+     45.5703
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "チェルヴィア",
+    "name2": "CERVIA",
+    "id": "CEV",
+    "ch": "83x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.3572,
+     44.2064
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "ゲーディ",
+    "name2": "GHEDI",
+    "id": "GHE",
+    "ch": "46x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.2639,
+     45.4403
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "ジョーイア・デル・コッレ",
+    "name2": "GIOIA DEL COLLE",
+    "id": "GIO",
+    "ch": "125x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.9014,
+     40.8014
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "グラッザニーゼ",
+    "name2": "GRAZZANISE",
+    "id": "GRA",
+    "ch": "122x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.0886,
+     41.06
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "イストラーナ",
+    "name2": "ISTRANA",
+    "id": "ISA",
+    "ch": "80x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.1169,
+     45.6875
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "VORTAC",
+    "name1": "レッチェ",
+    "name2": "LECCE",
+    "id": "LCC",
+    "ch": "75x",
+    "freq": 112.8
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     18.1308,
+     40.2472
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "ピアチェンツァ",
+    "name2": "PIACENZA",
+    "id": "PIA",
+    "ch": "121x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.7208,
+     44.9178
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "プラティカ・ディ・マーレ",
+    "name2": "PRATICA DI MARE",
+    "id": "TPR",
+    "ch": "24x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.4939,
+     41.6217
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "リヴォルト",
+    "name2": "RIVOLTO",
+    "id": "RIV",
+    "ch": "37x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     13.0883,
+     45.9958
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "type": "TACAN",
+    "name1": "シゴネラ",
+    "name2": "SIGONELLA",
+    "id": "SIG",
+    "ch": "53x"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.9711,
+     37.3958
+    ]
+   }
+  }
+ ]
+}
