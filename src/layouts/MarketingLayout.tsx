@@ -59,6 +59,12 @@ export const MarketingLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)]">
+      <a
+        href="#main"
+        className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-[100] focus-visible:rounded-lg focus-visible:bg-brand-primary focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-semibold focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
+      >
+        本文へスキップ
+      </a>
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-brand-primary/20 bg-[var(--bg)]/95 backdrop-blur-md">
         <div className="container mx-auto px-3 py-2 sm:px-4 md:py-2.5">
@@ -211,7 +217,7 @@ export const MarketingLayout: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1">
+      <main id="main" tabIndex={-1} className="flex-1 outline-none">
         <LocationKeyedOutlet />
       </main>
 
