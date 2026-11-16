@@ -414,7 +414,7 @@ const AuthPage: React.FC = () => {
               name="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
+              autoComplete="nickname"
               spellCheck={false}
             />
           )}

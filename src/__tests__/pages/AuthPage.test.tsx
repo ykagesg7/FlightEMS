@@ -177,7 +177,9 @@ describe('AuthPage', () => {
     );
     fireEvent.click(screen.getByText('登録'));
     expect(screen.getByLabelText('メールアドレス')).toHaveAttribute('name', 'email');
+    expect(screen.getByLabelText('メールアドレス')).toHaveAttribute('autocomplete', 'username');
     expect(screen.getByLabelText('ユーザー名')).toHaveAttribute('name', 'username');
+    expect(screen.getByLabelText('ユーザー名')).toHaveAttribute('autocomplete', 'nickname');
     expect(screen.getByLabelText('パスワード')).toHaveAttribute('name', 'new-password');
     expect(screen.getByLabelText('パスワード')).toHaveAttribute('autocomplete', 'new-password');
     expect(screen.getByLabelText('パスワード（確認）')).toHaveAttribute('name', 'new-password');
