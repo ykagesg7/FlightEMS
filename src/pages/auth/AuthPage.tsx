@@ -330,6 +330,7 @@ const AuthPage: React.FC = () => {
             label="メールアドレス"
             type="email"
             id="reset-email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
@@ -398,9 +399,11 @@ const AuthPage: React.FC = () => {
             label="メールアドレス"
             type="email"
             id="email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
+            autoComplete="username"
+            spellCheck={false}
           />
 
           {!isLogin && (
@@ -408,16 +411,19 @@ const AuthPage: React.FC = () => {
               label="ユーザー名"
               type="text"
               id="username"
+              name="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
+              spellCheck={false}
             />
           )}
 
           <AuthInput
             label="パスワード"
             type="password"
-            id="password"
+            id={isLogin ? 'current-password' : 'new-password'}
+            name={isLogin ? 'password' : 'new-password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete={isLogin ? 'current-password' : 'new-password'}
@@ -428,7 +434,8 @@ const AuthPage: React.FC = () => {
               <AuthInput
                 label="パスワード（確認）"
                 type="password"
-                id="confirmPassword"
+                id="confirm-password"
+                name="new-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 autoComplete="new-password"

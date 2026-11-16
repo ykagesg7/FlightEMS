@@ -148,6 +148,41 @@ describe('AuthPage', () => {
     });
   });
 
+  it('ログインフォームの入力に autofill 向けの name / autocomplete を付与する', () => {
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState()),
+    );
+    render(
+      <BrowserRouter>
+        <AuthPage />
+      </BrowserRouter>,
+    );
+    const emailInput = screen.getByLabelText('メールアドレス');
+    expect(emailInput).toHaveAttribute('name', 'email');
+    expect(emailInput).toHaveAttribute('autocomplete', 'username');
+    const passwordInput = screen.getByLabelText('パスワード');
+    expect(passwordInput).toHaveAttribute('name', 'password');
+    expect(passwordInput).toHaveAttribute('id', 'current-password');
+    expect(passwordInput).toHaveAttribute('autocomplete', 'current-password');
+  });
+
+  it('登録フォームの入力に autofill 向けの name / autocomplete を付与する', () => {
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState()),
+    );
+    render(
+      <BrowserRouter>
+        <AuthPage />
+      </BrowserRouter>,
+    );
+    fireEvent.click(screen.getByText('登録'));
+    expect(screen.getByLabelText('メールアドレス')).toHaveAttribute('name', 'email');
+    expect(screen.getByLabelText('ユーザー名')).toHaveAttribute('name', 'username');
+    expect(screen.getByLabelText('パスワード')).toHaveAttribute('name', 'new-password');
+    expect(screen.getByLabelText('パスワード')).toHaveAttribute('autocomplete', 'new-password');
+    expect(screen.getByLabelText('パスワード（確認）')).toHaveAttribute('name', 'new-password');
+  });
+
   it('パスワードリセットフォームのバリデーションとresetPassword呼び出し', async () => {
     const resetPassword = vi.fn().mockResolvedValue({ error: null });
     vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
