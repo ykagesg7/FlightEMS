@@ -26,7 +26,7 @@ const Planning3dPopoutPage: React.FC = () => {
       </Helmet>
       <header className="shrink-0 border-b border-brand-primary/25 px-3 py-2">
         <h1 className="text-sm font-semibold text-brand-primary">3D ルートプレビュー（別ウィンドウ）</h1>
-        <p className="text-2xs text-gray-400">
+        <p className="text-gray-400">
           Planning ページのルート編集と同期します。このウィンドウを閉じると Planning 内の 3D プレビューが再開します。
         </p>
       </header>

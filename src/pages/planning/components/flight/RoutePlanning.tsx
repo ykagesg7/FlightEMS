@@ -48,7 +48,7 @@ const RoutePlanning: React.FC<RoutePlanningProps> = ({
   return (
     <div>
       <MagneticVariationFallbackNotice />
-      <p className="text-2xs sm:text-xs text-gray-400 mb-2 sm:mb-3 md:mb-4 leading-relaxed">
+      <p className="sm:text-xs text-gray-400 mb-2 sm:mb-3 md:mb-4 leading-relaxed">
         磁気方位は教育用（GSI {GSI_GEOMAG_2020_META.epoch} 格子）。
         {geomagGridLoadMode !== 'loaded' ? ' 格子未取得時は概算。' : ''}
         実運航には使いません。

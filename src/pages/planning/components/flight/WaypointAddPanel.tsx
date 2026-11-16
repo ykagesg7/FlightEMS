@@ -189,7 +189,7 @@ const WaypointAddPanel: React.FC<WaypointAddPanelProps> = ({
   return (
     <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg border border-whiskyPapa-yellow/20">
       <h3 className="text-sm sm:text-md font-medium text-white mb-2 sm:mb-3">ウェイポイントを追加</h3>
-      <p className="text-2xs text-gray-500 mb-3">
+      <p className="text-gray-500 mb-3">
         モードを選び、入力後に「ルートに追加」を押してください。計画タブの座標モードではキーボードで座標を入力できます。
       </p>
 

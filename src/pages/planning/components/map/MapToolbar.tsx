@@ -35,7 +35,7 @@ export const MapToolbar: React.FC<Props> = ({
             key={label}
             type="button"
             onClick={onOpenLayers}
-            className="rounded border border-whiskyPapa-yellow/25 bg-whiskyPapa-yellow/10 px-1.5 py-0.5 text-2xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/20"
+            className="rounded border border-whiskyPapa-yellow/25 bg-whiskyPapa-yellow/10 px-1.5 py-0.5 text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/20"
           >
             {label}
           </button>
@@ -44,7 +44,7 @@ export const MapToolbar: React.FC<Props> = ({
           <button
             type="button"
             onClick={onOpenLayers}
-            className="rounded border border-whiskyPapa-yellow/25 px-1.5 py-0.5 text-2xs text-gray-300 hover:bg-whiskyPapa-yellow/10"
+            className="rounded border border-whiskyPapa-yellow/25 px-1.5 py-0.5 text-gray-300 hover:bg-whiskyPapa-yellow/10"
           >
             +{overflow}
           </button>
@@ -53,7 +53,7 @@ export const MapToolbar: React.FC<Props> = ({
           type="button"
           onClick={onOpenLayers}
           aria-expanded={layersOpen}
-          className={`inline-flex min-h-[36px] items-center gap-1 rounded border px-2.5 text-2xs sm:text-xs ${
+          className={`inline-flex min-h-[36px] items-center gap-1 rounded border px-2.5 sm:text-xs ${
             layersOpen
               ? 'border-whiskyPapa-yellow bg-whiskyPapa-yellow/15 text-whiskyPapa-yellow'
               : 'border-whiskyPapa-yellow/40 text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10'
@@ -65,13 +65,13 @@ export const MapToolbar: React.FC<Props> = ({
         <button
           type="button"
           onClick={onOpenHelp}
-          className="min-h-[36px] rounded border border-whiskyPapa-yellow/40 px-2.5 text-2xs sm:text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10"
+          className="min-h-[36px] rounded border border-whiskyPapa-yellow/40 px-2.5 sm:text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10"
         >
           地図の使い方
         </button>
       </div>
       {hintVisible ? (
-        <div className="flex flex-wrap items-center gap-2 text-2xs sm:text-xs text-gray-200">
+        <div className="flex flex-wrap items-center gap-2 sm:text-xs text-gray-200">
           <span role="status">
             地図上を<strong className="text-whiskyPapa-yellow font-medium">ダブルクリック</strong>
             すると、その位置にウェイポイントを追加できます。

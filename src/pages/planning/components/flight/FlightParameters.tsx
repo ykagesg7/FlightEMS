@@ -254,7 +254,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 </button>
               </div>
             </div>
-            <div className="mt-1 text-2xs sm:text-xs text-gray-300">
+            <div className="mt-1 sm:text-xs text-gray-300">
               TAS: {displayTAS} kt | EAS: {displayEAS} kt
             </div>
           </div>
@@ -318,7 +318,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 </button>
               </div>
             </div>
-            <div className="mt-1 text-2xs sm:text-xs text-gray-300">
+            <div className="mt-1 sm:text-xs text-gray-300">
               気温(高度): {displayAltitudeTemp}℃
             </div>
           </div>
@@ -377,7 +377,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
                 onChange={handleGroundElevationChange}
               />
             </div>
-            <div className="mt-1 text-2xs sm:text-xs text-[color:var(--text-primary)]">
+            <div className="mt-1 sm:text-xs text-[color:var(--text-primary)]">
               空港: {airportName}
             </div>
           </div>
@@ -397,7 +397,7 @@ const FlightParameters: React.FC<FlightParametersProps> = ({
               Open-Meteo の上層風をセグメント ETE・燃料に反映する（参考・非商用 API）
             </span>
           </label>
-          <p className="mt-1 text-2xs text-gray-400 pl-6 leading-relaxed">
+          <p className="mt-1 text-gray-400 pl-6 leading-relaxed">
             ルート中点の予報風（真方位）と真コースで風三角形を解きます。取得失敗時は TAS を地速として計算します。
           </p>
         </div>

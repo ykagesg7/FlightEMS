@@ -98,7 +98,7 @@ export function AircraftPerformancePanel({
     <div key={field.key}>
       <label
         htmlFor={`perf-${field.key}`}
-        className="mb-1 block text-2xs text-gray-300 sm:text-xs"
+        className="mb-1 block text-gray-300 sm:text-xs"
       >
         {field.label} ({field.unit})
       </label>
@@ -118,7 +118,7 @@ export function AircraftPerformancePanel({
 
   if (!preset) {
     return (
-      <p className="text-2xs text-gray-400 sm:text-xs">
+      <p className="text-gray-400 sm:text-xs">
         機体プリセットを選ぶと上昇・降下の性能値を編集できます。
       </p>
     );
@@ -127,7 +127,7 @@ export function AircraftPerformancePanel({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <p className="max-w-prose text-2xs leading-relaxed text-gray-400">
+        <p className="max-w-prose leading-relaxed text-gray-400">
           プリセットは教育用モックです。空欄はプリセット既定（薄字）を使います。値を入れると
           この計画だけ上書きされ、保存・読み込みにも引き継がれます。
         </p>
@@ -152,7 +152,7 @@ export function AircraftPerformancePanel({
           {DESCENT_FIELDS.map(renderField)}
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          <span className="text-2xs text-gray-300 sm:text-xs">計算に使う降下率</span>
+          <span className="text-gray-300 sm:text-xs">計算に使う降下率</span>
           {(['standard', 'idle'] as const).map((mode) => (
             <button
               key={mode}

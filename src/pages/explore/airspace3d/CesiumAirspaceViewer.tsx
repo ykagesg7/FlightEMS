@@ -354,7 +354,7 @@ export const CesiumAirspaceViewer: React.FC = () => {
         </button>
         <span
           data-testid="airspace3d-source"
-          className="rounded bg-brand-secondary px-2 py-0.5 text-2xs text-gray-400"
+          className="rounded bg-brand-secondary px-2 py-0.5 text-gray-400"
         >
           {sourceLabel}
         </span>
@@ -369,10 +369,10 @@ export const CesiumAirspaceViewer: React.FC = () => {
         >
           {occupancyLabel}
         </span>
-        <span className="text-2xs text-gray-500" data-testid="airspace3d-status">
+        <span className="text-gray-500" data-testid="airspace3d-status">
           {status}
         </span>
-        <div className="ml-auto flex flex-wrap gap-2 text-2xs text-gray-300">
+        <div className="ml-auto flex flex-wrap gap-2 text-gray-300">
           <label className="inline-flex items-center gap-1">
             <input
               type="checkbox"
