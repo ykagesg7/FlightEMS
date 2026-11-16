@@ -4,6 +4,10 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      fontSize: {
+        // HUD / map compact copy: ~10px at default root (0.625rem); scales with OS text-scale
+        '2xs': ['0.625rem', { lineHeight: '1rem' }],
+      },
       colors: {
         // Flight Academy Cockpit Academy (USAF-inspired)
         brand: {
