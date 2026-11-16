@@ -74,6 +74,12 @@ describe('MarketingLayout header nav', () => {
     mockAuthStore(createGuestAuthState());
   });
 
+  it('provides a skip link that targets the main landmark', () => {
+    renderMarketingLayout();
+    const skipLink = screen.getByRole('link', { name: '本文へスキップ' });
+    expect(skipLink).toHaveAttribute('href', '#main');
+  });
+
   it('uses Japanese labels in the mobile hamburger menu', async () => {
     const user = userEvent.setup();
     renderMarketingLayout();
