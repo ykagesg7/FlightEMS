@@ -25,7 +25,7 @@ npx -y modern-web-guidance@latest search "<query>" --skill-version 2026_11_09-5b
 
 > **Note**: Returns `[{ "id", "description" }, ...]`. Judge results by their `description` fields:
 > - **Match found**: Call `retrieve` directly—do not also run `list`.
-> - **Weak or empty results**: If `search` returns `[]` or unrelated descriptions, **rephrase `search` once** using the concrete HTML/CSS/UI component noun or synonym (e.g., `dialog`, `modal`, `popover`, `table`, `form`) before falling back to `list` (or use `list` once for broad UI audits).
+> - **Weak or empty results**: If `search` returns `[]` or unrelated descriptions, **rephrase `search` once** using the concrete HTML/CSS/UI component noun or synonym (e.g., `dialog`, `modal`, `popover`, `table`, `form`) before falling back to `npx -y modern-web-guidance@latest list` (or use it once for broad UI audits).
 > - **Topic not covered**: If no `description` matches after rephrasing, proceed without retrieving unrelated guides.
 
 ### Step 2. Retrieve Best Practices
@@ -63,11 +63,11 @@ When you consult `modern-web-guidance` for a task, end the response where you de
 npx -y modern-web-guidance@latest legacy-scan <path> --json
 ```
 
-1. Scan: Run `legacy-scan <path> --json` to detect legacy web platform patterns across the project or directory.
+1. Scan: Run `npx -y modern-web-guidance@latest legacy-scan <path> --json` to detect legacy web platform patterns across the project or directory.
 2. Verify: Check each finding against its `keepWhen` / `dropWhen` rubric; drop false positives (fallbacks, cross-file helpers, vendor code, lookalikes).
 3. Report: Summarize verified findings (and the modernization plan, if editing) for the user, noting that `legacy-scan` only checks the subset of guides (~20% of the catalog) that have deterministic legacy rules.
-4. Modernize (when the user asked to modernize rather than only audit/report): Retrieve each finding's guide (`retrieve "<guide-id>"` via Step 2), apply the replacement (keeping existing libraries as fallbacks where the guide requires one), and re-run `legacy-scan <path>` on the modified files to confirm resolution.
-   - Dropped findings and kept fallbacks still match static scans; do not edit safe code or inspect `legacy-scan.mjs` to force 0 findings.
+4. Modernize (when the user asked to modernize rather than only audit/report): Retrieve each finding's guide (`npx -y modern-web-guidance@latest retrieve "<guide-id>"` via Step 2), apply the replacement (keeping existing libraries as fallbacks where the guide requires one), and re-run `npx -y modern-web-guidance@latest legacy-scan <path> --json` on the modified files to confirm resolution.
+   - Dropped findings and kept fallbacks still match static scans; do not edit safe code solely to force 0 findings.
 
 ## Using npx / pnpx
 
@@ -88,3 +88,10 @@ npx -y modern-web-guidance@latest legacy-scan <path> --json
 * **Default Behavior**: All guides assume **Baseline Widely available** features are safe to use without fallbacks. For features that are not Baseline widely available, you **MUST** follow the fallback recommendations in the guide, unless the user has specified a custom browser support policy.
 * **Custom Policies**: If the user defines explicit browser support requirements, use the guide's compatibility data to determine if a fallback can be ignored (for `Baseline YYYY` targets, a feature satisfies the target if its "Baseline since" date is `<= YYYY`). Examples: _"Do not implement feature fallbacks"_, _"Safari 17.4+"_, _"Never implement polyfills; use a lightweight custom fallback or redesign"_, or _"Allow Newly Available features if feature-detected with graceful degradation"_.
 * **Reactive Policy Discovery**: Suggest documenting a policy in `AGENTS.md` or `CLAUDE.md` (e.g., `**Browser Support:** Allow Newly Available features, but only adopt custom fallback code that adds <= 20 lines and no external dependencies`) if the developer targets a restricted runtime (Electron/Tauri), excludes specific browsers, hesitates over polyfill size/complexity, or asks if a feature is safe without fallbacks.
+
+## FlightEMS vendoring note
+
+- **Source**: https://github.com/GoogleChrome/modern-web-guidance
+- **Version**: npm `modern-web-guidance@1.0.0`; skill-version `2026_11_09-5bcc021b`
+- **License**: Apache-2.0 (CLI/software); guide text retrieved via CLI is CC BY 4.0 per upstream README
+- **Edits in this file**: Pointer-only install—no bundled `guides/`, `gen/`, or CLI binaries. `list` / `legacy-scan` steps and modernization `retrieve` use full `npx -y modern-web-guidance@latest …`; removed reference to vendored `legacy-scan.mjs`.
