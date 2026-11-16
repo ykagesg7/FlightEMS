@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ARTICLE_HUB_TAB_LABELS,
   type ArticleHubSort,
@@ -6,6 +6,7 @@ import {
   type ArticleHubTab,
 } from '../articleHubFilters';
 import { handleArticleHubTablistKeyDown } from '../articleHubTablistKeyboard';
+import { useArticleHubTablistFocus } from '../useArticleHubTablistFocus';
 
 interface ArticleHubToolbarProps {
   state: ArticleHubState;
@@ -37,6 +38,12 @@ export const ArticleHubToolbar: React.FC<ArticleHubToolbarProps> = ({
 }) => {
   const [localQuery, setLocalQuery] = useState(state.query);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const activeTabIndex = visibleTabs.indexOf(state.tab);
+  const tabElementIds = useMemo(
+    () => visibleTabs.map((tab) => `article-hub-tab-${tab}`),
+    [visibleTabs],
+  );
+  const { scheduleFocus } = useArticleHubTablistFocus(tabRefs, activeTabIndex, tabElementIds);
 
   useEffect(() => {
     setLocalQuery(state.query);
@@ -92,7 +99,7 @@ export const ArticleHubToolbar: React.FC<ArticleHubToolbarProps> = ({
                     index,
                     visibleTabs.length,
                     (nextIndex) => onTabChange(visibleTabs[nextIndex]),
-                    (nextIndex) => tabRefs.current[nextIndex]?.focus(),
+                    scheduleFocus,
                   )
                 }
                 className={`rounded-lg px-4 py-2 text-sm font-medium motion-safe:transition-all ${

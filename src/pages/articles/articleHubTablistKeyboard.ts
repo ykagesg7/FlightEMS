@@ -8,7 +8,7 @@ export function handleArticleHubTablistKeyDown(
   index: number,
   tabCount: number,
   onSelectIndex: (nextIndex: number) => void,
-  focusIndex: (nextIndex: number) => void,
+  scheduleFocus: (nextIndex: number) => void,
 ): void {
   if (tabCount <= 0) return;
 
@@ -26,6 +26,6 @@ export function handleArticleHubTablistKeyDown(
   if (nextIndex === null) return;
 
   event.preventDefault();
+  scheduleFocus(nextIndex);
   onSelectIndex(nextIndex);
-  focusIndex(nextIndex);
 }

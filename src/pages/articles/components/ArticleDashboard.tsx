@@ -335,7 +335,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
 
         <ArticleHubViewTabs
           activeView={hubState.view}
-          onViewChange={(view) => updateHubState({ view, course: null })}
+          onViewChange={(view) => updateHubState({ view, course: null }, { replace: true })}
         />
 
         {showCourseDetail && activeCourse && (
@@ -404,7 +404,7 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                   visibleTabs={visibleTabs}
                   tabCounts={tabCounts}
                   onQueryChange={(query) => updateHubState({ query }, { replace: true })}
-                  onTabChange={(tab) => updateHubState({ tab })}
+                  onTabChange={(tab) => updateHubState({ tab }, { replace: true })}
                   onSortChange={(sort: ArticleHubSort) => updateHubState({ sort })}
                   onOpenFilters={() => setFilterDrawerOpen(true)}
                   activeFilterCount={activeFilterCount}
