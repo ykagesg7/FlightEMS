@@ -148,6 +148,38 @@ describe('AuthPage', () => {
     });
   });
 
+  it('ログインパスワード欄で表示切替しても name / autocomplete / id を変えない', () => {
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState()),
+    );
+    render(
+      <BrowserRouter>
+        <AuthPage />
+      </BrowserRouter>,
+    );
+    const passwordInput = screen.getByLabelText('パスワード');
+    const toggle = screen.getByRole('button', { name: 'パスワードを表示' });
+    fireEvent.click(toggle);
+    expect(passwordInput).toHaveAttribute('type', 'text');
+    expect(passwordInput).toHaveAttribute('name', 'password');
+    expect(passwordInput).toHaveAttribute('id', 'current-password');
+    expect(passwordInput).toHaveAttribute('autocomplete', 'current-password');
+  });
+
+  it('登録フォームのパスワード欄それぞれに表示切替がある', () => {
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState()),
+    );
+    render(
+      <BrowserRouter>
+        <AuthPage />
+      </BrowserRouter>,
+    );
+    fireEvent.click(screen.getByText('登録'));
+    const showToggles = screen.getAllByRole('button', { name: 'パスワードを表示' });
+    expect(showToggles).toHaveLength(2);
+  });
+
   it('ログインフォームの入力に autofill 向けの name / autocomplete を付与する', () => {
     vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
       selector(createAuthState()),
