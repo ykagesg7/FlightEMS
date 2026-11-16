@@ -5,6 +5,7 @@ import {
   type ArticleHubState,
   type ArticleHubTab,
 } from '../articleHubFilters';
+import { handleArticleHubTablistKeyDown } from '../articleHubTablistKeyboard';
 
 interface ArticleHubToolbarProps {
   state: ArticleHubState;
@@ -50,12 +51,6 @@ export const ArticleHubToolbar: React.FC<ArticleHubToolbarProps> = ({
     return () => window.clearTimeout(timer);
   }, [localQuery, onQueryChange, state.query]);
 
-  const moveTab = (index: number, direction: 1 | -1) => {
-    const nextIndex = (index + direction + visibleTabs.length) % visibleTabs.length;
-    onTabChange(visibleTabs[nextIndex]);
-    tabRefs.current[nextIndex]?.focus();
-  };
-
   return (
     <div className="mb-6 space-y-4">
       <div className="relative">
@@ -91,15 +86,15 @@ export const ArticleHubToolbar: React.FC<ArticleHubToolbarProps> = ({
                   tabRefs.current[index] = el;
                 }}
                 onClick={() => onTabChange(tab)}
-                onKeyDown={(e) => {
-                  if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    moveTab(index, 1);
-                  } else if (e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    moveTab(index, -1);
-                  }
-                }}
+                onKeyDown={(event) =>
+                  handleArticleHubTablistKeyDown(
+                    event,
+                    index,
+                    visibleTabs.length,
+                    (nextIndex) => onTabChange(visibleTabs[nextIndex]),
+                    (nextIndex) => tabRefs.current[nextIndex]?.focus(),
+                  )
+                }
                 className={`rounded-lg px-4 py-2 text-sm font-medium motion-safe:transition-all ${
                   isActive
                     ? 'bg-brand-primary text-[var(--bg)] shadow-lg'
