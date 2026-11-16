@@ -73,6 +73,7 @@ describe('PasswordRecoveryPage', () => {
     expect(newPassword).toHaveAttribute('autocomplete', 'new-password');
     expect(confirmPassword).toHaveAttribute('name', 'new-password');
     expect(newPassword.closest('form')).not.toHaveAttribute('autocomplete', 'off');
+    expect(screen.getAllByRole('button', { name: 'パスワードを表示' })).toHaveLength(2);
     fireEvent.change(screen.getByLabelText('新しいパスワード'), { target: { value: 'newpass123' } });
     fireEvent.change(screen.getByLabelText('新しいパスワード（確認）'), { target: { value: 'newpass123' } });
     fireEvent.click(screen.getByRole('button', { name: 'パスワードを保存' }));
