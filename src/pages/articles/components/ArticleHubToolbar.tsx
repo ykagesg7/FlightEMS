@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ARTICLE_HUB_TAB_LABELS,
   type ArticleHubSort,
   type ArticleHubState,
   type ArticleHubTab,
 } from '../articleHubFilters';
+import { handleArticleHubTablistKeyDown } from '../articleHubTablistKeyboard';
+import { useArticleHubTablistFocus } from '../useArticleHubTablistFocus';
 
 interface ArticleHubToolbarProps {
   state: ArticleHubState;
@@ -36,6 +38,12 @@ export const ArticleHubToolbar: React.FC<ArticleHubToolbarProps> = ({
 }) => {
   const [localQuery, setLocalQuery] = useState(state.query);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const activeTabIndex = visibleTabs.indexOf(state.tab);
+  const tabElementIds = useMemo(
+    () => visibleTabs.map((tab) => `article-hub-tab-${tab}`),
+    [visibleTabs],
+  );
+  const { scheduleFocus } = useArticleHubTablistFocus(tabRefs, activeTabIndex, tabElementIds);
 
   useEffect(() => {
     setLocalQuery(state.query);
@@ -49,12 +57,6 @@ export const ArticleHubToolbar: React.FC<ArticleHubToolbarProps> = ({
     }, 280);
     return () => window.clearTimeout(timer);
   }, [localQuery, onQueryChange, state.query]);
-
-  const moveTab = (index: number, direction: 1 | -1) => {
-    const nextIndex = (index + direction + visibleTabs.length) % visibleTabs.length;
-    onTabChange(visibleTabs[nextIndex]);
-    tabRefs.current[nextIndex]?.focus();
-  };
 
   return (
     <div className="mb-6 space-y-4">
@@ -91,15 +93,15 @@ export const ArticleHubToolbar: React.FC<ArticleHubToolbarProps> = ({
                   tabRefs.current[index] = el;
                 }}
                 onClick={() => onTabChange(tab)}
-                onKeyDown={(e) => {
-                  if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    moveTab(index, 1);
-                  } else if (e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    moveTab(index, -1);
-                  }
-                }}
+                onKeyDown={(event) =>
+                  handleArticleHubTablistKeyDown(
+                    event,
+                    index,
+                    visibleTabs.length,
+                    (nextIndex) => onTabChange(visibleTabs[nextIndex]),
+                    scheduleFocus,
+                  )
+                }
                 className={`rounded-lg px-4 py-2 text-sm font-medium motion-safe:transition-all ${
                   isActive
                     ? 'bg-brand-primary text-[var(--bg)] shadow-lg'

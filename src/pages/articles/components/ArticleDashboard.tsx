@@ -44,6 +44,10 @@ import { NextComprehensionCTA } from './NextComprehensionCTA';
 import { ProgressSidebar } from './ProgressSidebar';
 import { GUEST_CTA_PRIMARY_CLASS } from '../../../constants/guestSurfaceCta';
 import { ProgressSummaryHeader } from './ProgressSummaryHeader';
+import {
+  ARTICLE_HUB_VIEW_PANEL_IDS,
+  ArticleHubViewTabs,
+} from './ArticleHubViewTabs';
 
 interface ArticleDashboardProps {
   learningContents: LearningContent[];
@@ -329,34 +333,10 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
           <NextComprehensionCTA article={nextComprehensionArticle} />
         )}
 
-        <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="記事ハブ表示">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={showCourseList || showCourseDetail}
-            onClick={() => updateHubState({ view: 'courses', course: null })}
-            className={`rounded-lg px-4 py-2 text-sm font-medium ${
-              showCourseList || showCourseDetail
-                ? 'bg-brand-primary text-[var(--bg)]'
-                : 'border border-brand-primary/25 text-[var(--text-primary)] hover:bg-brand-primary/10'
-            }`}
-          >
-            コース一覧
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={showArticleGrid}
-            onClick={() => updateHubState({ view: 'articles', course: null })}
-            className={`rounded-lg px-4 py-2 text-sm font-medium ${
-              showArticleGrid
-                ? 'bg-brand-primary text-[var(--bg)]'
-                : 'border border-brand-primary/25 text-[var(--text-primary)] hover:bg-brand-primary/10'
-            }`}
-          >
-            すべての記事
-          </button>
-        </div>
+        <ArticleHubViewTabs
+          activeView={hubState.view}
+          onViewChange={(view) => updateHubState({ view, course: null }, { replace: true })}
+        />
 
         {showCourseDetail && activeCourse && (
           <div className="mb-4">
@@ -386,78 +366,87 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
           )}
 
           <div className={`order-1 xl:order-2 ${showArticleGrid ? 'xl:col-span-3' : 'xl:col-span-4'}`}>
-            {showCourseList && (
-              <CourseListView
-                articleContents={articleContents}
-                articleMetas={articleMetas}
-                getArticleProgress={getArticleProgress}
-              />
-            )}
+            {(showCourseList || showCourseDetail) && (
+              <div
+                role="tabpanel"
+                id={ARTICLE_HUB_VIEW_PANEL_IDS.courses}
+                aria-labelledby="article-hub-view-tab-courses"
+              >
+                {showCourseList && (
+                  <CourseListView
+                    articleContents={articleContents}
+                    articleMetas={articleMetas}
+                    getArticleProgress={getArticleProgress}
+                  />
+                )}
 
-            {showCourseDetail && activeCourse && (
-              <CourseDetailView
-                course={activeCourse}
-                articleContents={articleContents}
-                articleMetas={articleMetas}
-                getArticleProgress={getArticleProgress}
-                onArticleClick={handleArticleClick}
-                isGuest={isDemo}
-              />
-            )}
-
-            {showArticleGrid && (
-            <>
-            <ArticleHubToolbar
-              state={hubState}
-              visibleTabs={visibleTabs}
-              tabCounts={tabCounts}
-              onQueryChange={(query) => updateHubState({ query }, { replace: true })}
-              onTabChange={(tab) => updateHubState({ tab })}
-              onSortChange={(sort: ArticleHubSort) => updateHubState({ sort })}
-              onOpenFilters={() => setFilterDrawerOpen(true)}
-              activeFilterCount={activeFilterCount}
-            />
-
-            <ArticleActiveFilterChips
-              state={hubState}
-              onClearQuery={() => updateHubState({ query: '' })}
-              onClearTag={(tag) =>
-                updateHubState({ tags: hubState.tags.filter((t) => t !== tag) })
-              }
-              onClearStatus={() => updateHubState({ status: 'all' })}
-              onClearTab={() => updateHubState({ tab: 'continue' })}
-            />
-
-            <ArticleFilterDrawer
-              isOpen={filterDrawerOpen}
-              onClose={() => setFilterDrawerOpen(false)}
-              selectedTags={hubState.tags}
-              availableTags={drawerTags}
-              status={hubState.status}
-              onTagsChange={(tags) => updateHubState({ tags })}
-              onStatusChange={(status: ArticleHubStatus) => updateHubState({ status })}
-            />
-            </>
-            )}
-
-            {showArticleGrid && heroArticle && (
-              <ContinueReadingHero
-                article={heroArticle}
-                meta={getMetaForArticle(heroArticle, articleMetas)}
-                onRead={() => {
-                  handleArticleClick(heroArticle.id);
-                  navigate(articleHrefForContentId(heroArticle.id, articleMetas));
-                }}
-              />
+                {showCourseDetail && activeCourse && (
+                  <CourseDetailView
+                    course={activeCourse}
+                    articleContents={articleContents}
+                    articleMetas={articleMetas}
+                    getArticleProgress={getArticleProgress}
+                    onArticleClick={handleArticleClick}
+                    isGuest={isDemo}
+                  />
+                )}
+              </div>
             )}
 
             {showArticleGrid && (
-            <div
-              className="space-y-8"
-              role="tabpanel"
-              id={`article-hub-panel-${hubState.tab}`}
-              aria-labelledby={`article-hub-tab-${hubState.tab}`}
-            >
+              <div
+                role="tabpanel"
+                id={ARTICLE_HUB_VIEW_PANEL_IDS.articles}
+                aria-labelledby="article-hub-view-tab-articles"
+              >
+                <ArticleHubToolbar
+                  state={hubState}
+                  visibleTabs={visibleTabs}
+                  tabCounts={tabCounts}
+                  onQueryChange={(query) => updateHubState({ query }, { replace: true })}
+                  onTabChange={(tab) => updateHubState({ tab }, { replace: true })}
+                  onSortChange={(sort: ArticleHubSort) => updateHubState({ sort })}
+                  onOpenFilters={() => setFilterDrawerOpen(true)}
+                  activeFilterCount={activeFilterCount}
+                />
+
+                <ArticleActiveFilterChips
+                  state={hubState}
+                  onClearQuery={() => updateHubState({ query: '' })}
+                  onClearTag={(tag) =>
+                    updateHubState({ tags: hubState.tags.filter((t) => t !== tag) })
+                  }
+                  onClearStatus={() => updateHubState({ status: 'all' })}
+                  onClearTab={() => updateHubState({ tab: 'continue' })}
+                />
+
+                <ArticleFilterDrawer
+                  isOpen={filterDrawerOpen}
+                  onClose={() => setFilterDrawerOpen(false)}
+                  selectedTags={hubState.tags}
+                  availableTags={drawerTags}
+                  status={hubState.status}
+                  onTagsChange={(tags) => updateHubState({ tags })}
+                  onStatusChange={(status: ArticleHubStatus) => updateHubState({ status })}
+                />
+
+                {heroArticle && (
+                  <ContinueReadingHero
+                    article={heroArticle}
+                    meta={getMetaForArticle(heroArticle, articleMetas)}
+                    onRead={() => {
+                      handleArticleClick(heroArticle.id);
+                      navigate(articleHrefForContentId(heroArticle.id, articleMetas));
+                    }}
+                  />
+                )}
+
+                <div
+                  className="space-y-8"
+                  role="tabpanel"
+                  id={`article-hub-panel-${hubState.tab}`}
+                  aria-labelledby={`article-hub-tab-${hubState.tab}`}
+                >
               {showGridSkeleton ? (
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   {Array.from({ length: 4 }).map((_, i) => (
@@ -516,25 +505,26 @@ export const ArticleDashboard: React.FC<ArticleDashboardProps> = ({
                   </button>
                 </div>
               )}
-            </div>
-            )}
+                </div>
 
-            {showArticleGrid && isDemo && gridContents.length > 0 && !showGridSkeleton && (
-              <div className="mt-12 rounded-xl border-2 border-dashed border-brand-primary/40 bg-brand-primary/10 p-6 text-center">
-                <h3 className="mb-2 text-xl font-bold text-[var(--text-primary)]">
-                  さらに詳しい学習分析を体験
-                </h3>
-                <p className="mb-4 text-[var(--text-muted)]">
-                  登録すると、学習パターン分析、パーソナライズされた推薦、
-                  詳細な成績レポートなどが利用できます。
-                </p>
-                <button
-                  type="button"
-                  onClick={showRegistrationModal}
-                  className={GUEST_CTA_PRIMARY_CLASS}
-                >
-                  登録
-                </button>
+                {isDemo && gridContents.length > 0 && !showGridSkeleton && (
+                  <div className="mt-12 rounded-xl border-2 border-dashed border-brand-primary/40 bg-brand-primary/10 p-6 text-center">
+                    <h3 className="mb-2 text-xl font-bold text-[var(--text-primary)]">
+                      さらに詳しい学習分析を体験
+                    </h3>
+                    <p className="mb-4 text-[var(--text-muted)]">
+                      登録すると、学習パターン分析、パーソナライズされた推薦、
+                      詳細な成績レポートなどが利用できます。
+                    </p>
+                    <button
+                      type="button"
+                      onClick={showRegistrationModal}
+                      className={GUEST_CTA_PRIMARY_CLASS}
+                    >
+                      登録
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
