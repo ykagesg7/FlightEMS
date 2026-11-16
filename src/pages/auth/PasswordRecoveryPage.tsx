@@ -104,29 +104,25 @@ const PasswordRecoveryPage: React.FC = () => {
         メールのリンクから開いています。新しいパスワードを入力して保存してください。
       </p>
 
-      <form onSubmit={handleSubmit} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
+      <form onSubmit={handleSubmit}>
         <AuthInput
           label="新しいパスワード"
           type="password"
-          id="recovery-new-password"
-          name="recovery-new-password"
+          id="new-password"
+          name="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           autoComplete="new-password"
-          data-lpignore="true"
-          data-1p-ignore="true"
         />
 
         <AuthInput
           label="新しいパスワード（確認）"
           type="password"
-          id="recovery-confirm-password"
-          name="recovery-confirm-password"
+          id="confirm-password"
+          name="new-password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           autoComplete="new-password"
-          data-lpignore="true"
-          data-1p-ignore="true"
         />
 
         <Button type="submit" variant="brand" size="md" disabled={loading || !session} className="w-full">

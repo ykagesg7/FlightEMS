@@ -67,6 +67,12 @@ describe('PasswordRecoveryPage', () => {
       </BrowserRouter>,
     );
     expect(screen.getByText('新しいパスワードを設定')).toBeInTheDocument();
+    const newPassword = screen.getByLabelText('新しいパスワード');
+    const confirmPassword = screen.getByLabelText('新しいパスワード（確認）');
+    expect(newPassword).toHaveAttribute('name', 'new-password');
+    expect(newPassword).toHaveAttribute('autocomplete', 'new-password');
+    expect(confirmPassword).toHaveAttribute('name', 'new-password');
+    expect(newPassword.closest('form')).not.toHaveAttribute('autocomplete', 'off');
     fireEvent.change(screen.getByLabelText('新しいパスワード'), { target: { value: 'newpass123' } });
     fireEvent.change(screen.getByLabelText('新しいパスワード（確認）'), { target: { value: 'newpass123' } });
     fireEvent.click(screen.getByRole('button', { name: 'パスワードを保存' }));
