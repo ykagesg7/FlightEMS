@@ -1,4 +1,5 @@
 import React from 'react';
+import { getPreferredScrollBehavior } from '@/utils/preferredScrollBehavior';
 
 type CalloutType = 'info' | 'warning' | 'error' | 'success' | 'tip' | 'note';
 
@@ -156,8 +157,8 @@ export const FootnoteRef: React.FC<FootnoteRefProps> = ({ id, children }) => {
     const footnote = document.getElementById(`footnote-${id}`);
     if (footnote) {
       footnote.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
+        behavior: getPreferredScrollBehavior(),
+        block: 'center',
       });
       // 一時的にハイライト
       footnote.style.backgroundColor = 'var(--hud-primary)';

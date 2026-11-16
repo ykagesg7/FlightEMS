@@ -12,6 +12,7 @@ import {
   generateMfaRecoveryCodes,
 } from '../../../utils/mfaRecoveryCodesApi';
 import supabase from '../../../utils/supabase';
+import { getPreferredScrollBehavior } from '@/utils/preferredScrollBehavior';
 
 type MfaFactor = {
   id: string;
@@ -109,7 +110,10 @@ export const ProfileMfaSection: React.FC<{
 
   useEffect(() => {
     if (recoveryCodes) {
-      recoveryPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      recoveryPanelRef.current?.scrollIntoView({
+        behavior: getPreferredScrollBehavior(),
+        block: 'nearest',
+      });
     }
   }, [recoveryCodes]);
 

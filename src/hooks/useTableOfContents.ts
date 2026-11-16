@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getPreferredScrollBehavior } from '@/utils/preferredScrollBehavior';
 
 export interface TocItem {
   id: string;
@@ -192,7 +193,7 @@ export const useTableOfContents = (containerSelector: string = '.mdx-container')
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: 'smooth'
+        behavior: getPreferredScrollBehavior(),
       });
 
       // URLを更新（履歴には追加しない）

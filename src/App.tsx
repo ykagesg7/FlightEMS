@@ -1,3 +1,4 @@
+import { MotionConfig } from 'framer-motion';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React from 'react';
@@ -148,7 +149,9 @@ const router = createBrowserRouter([
 const App: React.FC = () => {
   return (
     <AppProviders>
-      <RouterProvider router={router} />
+      <MotionConfig reducedMotion="user">
+        <RouterProvider router={router} />
+      </MotionConfig>
     </AppProviders>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { getPreferredScrollBehavior } from '@/utils/preferredScrollBehavior';
 
 type AuthAlertVariant = 'error' | 'success' | 'timeout';
 
@@ -20,7 +21,7 @@ export const AuthAlert: React.FC<AuthAlertProps> = ({ variant, children, classNa
   useEffect(() => {
     const el = alertRef.current;
     if (typeof el?.scrollIntoView === 'function') {
-      el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      el.scrollIntoView({ block: 'nearest', behavior: getPreferredScrollBehavior() });
     }
   }, [children, variant]);
 

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getPreferredScrollBehavior } from '@/utils/preferredScrollBehavior';
 
 export const KeyboardShortcuts: React.FC<{ prevHref?: string; nextHref?: string }> = ({
   prevHref,
@@ -12,8 +13,11 @@ export const KeyboardShortcuts: React.FC<{ prevHref?: string; nextHref?: string 
       if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName))) return;
       if ((e.key === 'ArrowLeft' || e.key === 'k') && prevHref) navigate(prevHref);
       if ((e.key === 'ArrowRight' || e.key === 'j') && nextHref) navigate(nextHref);
-      if (e.key === 'g') window.scrollTo({ top: 0, behavior: 'smooth' });
-      if (e.key === 'G') window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+      const scrollBehavior = getPreferredScrollBehavior();
+      if (e.key === 'g') window.scrollTo({ top: 0, behavior: scrollBehavior });
+      if (e.key === 'G') {
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: scrollBehavior });
+      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);

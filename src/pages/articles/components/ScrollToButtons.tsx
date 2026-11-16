@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getPreferredScrollBehavior } from '@/utils/preferredScrollBehavior';
 
 export const ScrollToButtons: React.FC = () => {
   const [show, setShow] = useState(false);
@@ -17,14 +18,19 @@ export const ScrollToButtons: React.FC = () => {
       <button
         aria-label="ページ上部へ"
         className="px-3 py-2 rounded-md border hud-border hud-surface hud-text shadow hover:shadow-lg focus:outline-none focus:ring"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        onClick={() => window.scrollTo({ top: 0, behavior: getPreferredScrollBehavior() })}
       >
         ページ上へ
       </button>
       <button
         aria-label="ページ下部へ"
         className="px-3 py-2 rounded-md border hud-border hud-surface hud-text shadow hover:shadow-lg focus:outline-none focus:ring"
-        onClick={() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })}
+        onClick={() =>
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: getPreferredScrollBehavior(),
+          })
+        }
       >
         ページ下へ
       </button>
