@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { mapAuthErrorToMessage } from '../../auth/authErrorMessages';
 import { describeLastAuthMethod, getLastAuthMethod } from '../../auth/lastAuthMethod';
@@ -17,6 +17,12 @@ import { AuthLayout } from './components/AuthLayout';
 import { AuthTextLink } from './components/AuthTextLink';
 import { GoogleSignInButton } from './components/GoogleSignInButton';
 import { MagicLinkForm } from './components/MagicLinkForm';
+import {
+  AUTH_LOGIN_FIELD_ORDER,
+  AUTH_SIGNUP_FIELD_ORDER,
+  firstInvalidFieldId,
+  focusFieldById,
+} from './authFieldValidation';
 import { useAuthCallback } from './hooks/useAuthCallback';
 
 interface LocationState {
@@ -53,6 +59,9 @@ const AuthPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [postSubmitFocus, setPostSubmitFocus] = useState<'alert' | string | null>(null);
+  const formErrorAlertRef = useRef<HTMLDivElement>(null);
   const [signupCaptchaToken, setSignupCaptchaToken] = useState<string | null>(null);
   const [resetCaptchaToken, setResetCaptchaToken] = useState<string | null>(null);
 
@@ -66,8 +75,33 @@ const AuthPage: React.FC = () => {
   const mfaRequiredFromQuery = params.get('mfa') === 'required';
 
   useAuthCallback({
-    onError: (message) => setError(message),
+    onError: (message) => {
+      setFieldErrors({});
+      setError(message);
+      setPostSubmitFocus('alert');
+    },
   });
+
+  const hasFieldLevelErrors = Object.keys(fieldErrors).length > 0;
+
+  const clearFieldError = useCallback((key: string) => {
+    setFieldErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!postSubmitFocus) return;
+    if (postSubmitFocus === 'alert') {
+      formErrorAlertRef.current?.focus();
+    } else {
+      focusFieldById(postSubmitFocus);
+    }
+    setPostSubmitFocus(null);
+  }, [postSubmitFocus, fieldErrors, error]);
 
   useEffect(() => {
     const p = new URLSearchParams(location.search);
@@ -157,6 +191,7 @@ const AuthPage: React.FC = () => {
     setError(null);
     setSuccess(null);
     setPendingEmailKind(null);
+    setFieldErrors({});
   };
 
   const toggleForgotPassword = () => {
@@ -164,27 +199,43 @@ const AuthPage: React.FC = () => {
     setShowMagicLink(false);
     setError(null);
     setSuccess(null);
+    setFieldErrors({});
   };
 
   const handleLoginSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+    setFieldErrors({});
 
     if (!email || !password) {
+      const nextFieldErrors: Record<string, string> = {};
+      if (!email) {
+        nextFieldErrors.email = 'メールアドレスを入力してください';
+      }
+      if (!password) {
+        nextFieldErrors.password = 'パスワードを入力してください';
+      }
+      setFieldErrors(nextFieldErrors);
       setError('メールアドレスとパスワードを入力してください');
+      const focusId = firstInvalidFieldId(AUTH_LOGIN_FIELD_ORDER, nextFieldErrors);
+      setPostSubmitFocus(focusId ?? 'alert');
       return;
     }
 
     try {
       const { error: signInError } = await signIn(email, password);
       if (signInError) {
+        setFieldErrors({});
         setError(mapAuthErrorToMessage(signInError, 'ログインに失敗しました。認証情報を確認してください。'));
+        setPostSubmitFocus('alert');
       } else {
         setSuccess('ログインに成功しました。リダイレクトします...');
       }
     } catch {
+      setFieldErrors({});
       setError('ログイン処理中にエラーが発生しました。');
+      setPostSubmitFocus('alert');
     }
   }, [email, password, signIn]);
 
@@ -193,19 +244,41 @@ const AuthPage: React.FC = () => {
     setError(null);
     setSuccess(null);
     setPendingEmailKind(null);
+    setFieldErrors({});
 
     if (!email || !password || !username) {
+      const nextFieldErrors: Record<string, string> = {};
+      if (!email) {
+        nextFieldErrors.email = 'メールアドレスを入力してください';
+      }
+      if (!username) {
+        nextFieldErrors.username = 'ユーザー名を入力してください';
+      }
+      if (!password) {
+        nextFieldErrors.password = 'パスワードを入力してください';
+      }
+      setFieldErrors(nextFieldErrors);
       setError('すべての必須項目を入力してください');
+      const focusId = firstInvalidFieldId(AUTH_SIGNUP_FIELD_ORDER, nextFieldErrors);
+      setPostSubmitFocus(focusId ?? 'alert');
       return;
     }
 
     if (password.length < 8) {
+      const nextFieldErrors = { password: 'パスワードは8文字以上にしてください' };
+      setFieldErrors(nextFieldErrors);
       setError('パスワードは8文字以上にしてください');
+      setPostSubmitFocus('new-password');
       return;
     }
 
     if (password !== confirmPassword) {
+      const nextFieldErrors = {
+        'confirm-password': 'パスワードと確認用パスワードが一致しません',
+      };
+      setFieldErrors(nextFieldErrors);
       setError('パスワードと確認用パスワードが一致しません');
+      setPostSubmitFocus('confirm-password');
       return;
     }
 
@@ -218,7 +291,9 @@ const AuthPage: React.FC = () => {
       );
 
       if (signUpError) {
+        setFieldErrors({});
         setError(mapAuthErrorToMessage(signUpError, 'アカウント登録に失敗しました。'));
+        setPostSubmitFocus('alert');
       } else if (emailConfirmRequired) {
         setPendingEmailKind('signup');
         setSuccess('アカウント登録に成功しました。メールの確認をお願いします。');
@@ -226,7 +301,9 @@ const AuthPage: React.FC = () => {
         setSuccess('アカウント登録に成功しました。リダイレクトします...');
       }
     } catch {
+      setFieldErrors({});
       setError('アカウント登録処理中にエラーが発生しました。');
+      setPostSubmitFocus('alert');
     }
   }, [confirmPassword, email, password, signUp, signupCaptchaToken, username]);
 
@@ -234,22 +311,30 @@ const AuthPage: React.FC = () => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+    setFieldErrors({});
 
     if (!email) {
+      const nextFieldErrors = { email: 'メールアドレスを入力してください' };
+      setFieldErrors(nextFieldErrors);
       setError('メールアドレスを入力してください');
+      setPostSubmitFocus('reset-email');
       return;
     }
 
     try {
       const { error: resetError } = await resetPassword(email, resetCaptchaToken ?? undefined);
       if (resetError) {
+        setFieldErrors({});
         setError(mapAuthErrorToMessage(resetError, 'パスワードリセットに失敗しました。メールアドレスを確認してください。'));
+        setPostSubmitFocus('alert');
       } else {
         setPendingEmailKind('password-reset');
         setSuccess('パスワードリセット手順をメールで送信しました。');
       }
     } catch {
+      setFieldErrors({});
       setError('パスワードリセット処理中にエラーが発生しました。');
+      setPostSubmitFocus('alert');
     }
   }, [email, resetCaptchaToken, resetPassword]);
 
@@ -269,7 +354,11 @@ const AuthPage: React.FC = () => {
             セキュリティのため、二要素認証の確認が必要です。
           </AuthAlert>
         ) : null}
-        {error && <AuthAlert variant="error">{error}</AuthAlert>}
+        {error && (
+          <AuthAlert ref={formErrorAlertRef} variant="error" suppressScreenReader={hasFieldLevelErrors}>
+            {error}
+          </AuthAlert>
+        )}
         <LoginMfaChallenge
           factorId={loginMfaFactorId}
           onError={setError}
@@ -295,7 +384,11 @@ const AuthPage: React.FC = () => {
 
     return (
       <AuthLayout title={title}>
-        {error && <AuthAlert variant="error">{error}</AuthAlert>}
+        {error && (
+          <AuthAlert ref={formErrorAlertRef} variant="error" suppressScreenReader={hasFieldLevelErrors}>
+            {error}
+          </AuthAlert>
+        )}
         {success && <AuthAlert variant="success">{success}</AuthAlert>}
 
         <div className="mb-4 p-4 border border-brand-primary/30 rounded bg-brand-secondary-dark">
@@ -322,7 +415,11 @@ const AuthPage: React.FC = () => {
   if (isForgotPassword) {
     return (
       <AuthLayout title="パスワードリセット">
-        {error && <AuthAlert variant="error">{error}</AuthAlert>}
+        {error && (
+          <AuthAlert ref={formErrorAlertRef} variant="error" suppressScreenReader={hasFieldLevelErrors}>
+            {error}
+          </AuthAlert>
+        )}
         {success && <AuthAlert variant="success">{success}</AuthAlert>}
 
         <form onSubmit={handleResetPasswordSubmit}>
@@ -332,7 +429,11 @@ const AuthPage: React.FC = () => {
             id="reset-email"
             name="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            errorMessage={fieldErrors.email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              clearFieldError('email');
+            }}
             autoComplete="email"
           />
 
@@ -359,7 +460,11 @@ const AuthPage: React.FC = () => {
       {showTimeoutBanner && (
         <AuthAlert variant="timeout">認証がタイムアウトしました。再度ログインしてください。</AuthAlert>
       )}
-      {error && <AuthAlert variant="error">{error}</AuthAlert>}
+      {error && (
+        <AuthAlert ref={formErrorAlertRef} variant="error" suppressScreenReader={hasFieldLevelErrors}>
+          {error}
+        </AuthAlert>
+      )}
       {success && <AuthAlert variant="success">{success}</AuthAlert>}
       {profileFetchStalled && (
         <AuthAlert variant="timeout">
@@ -401,7 +506,11 @@ const AuthPage: React.FC = () => {
             id="email"
             name="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            errorMessage={fieldErrors.email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              clearFieldError('email');
+            }}
             autoComplete="username"
             spellCheck={false}
           />
@@ -413,7 +522,11 @@ const AuthPage: React.FC = () => {
               id="username"
               name="username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              errorMessage={fieldErrors.username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                clearFieldError('username');
+              }}
               autoComplete="nickname"
               spellCheck={false}
             />
@@ -425,7 +538,11 @@ const AuthPage: React.FC = () => {
             id={isLogin ? 'current-password' : 'new-password'}
             name={isLogin ? 'password' : 'new-password'}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            errorMessage={fieldErrors.password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              clearFieldError('password');
+            }}
             autoComplete={isLogin ? 'current-password' : 'new-password'}
           />
 
@@ -437,7 +554,11 @@ const AuthPage: React.FC = () => {
                 id="confirm-password"
                 name="new-password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                errorMessage={fieldErrors['confirm-password']}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  clearFieldError('confirm-password');
+                }}
                 autoComplete="new-password"
               />
 

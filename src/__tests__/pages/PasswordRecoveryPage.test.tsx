@@ -53,6 +53,28 @@ describe('PasswordRecoveryPage', () => {
     vi.clearAllMocks();
   });
 
+  it('確認パスワード不一致で確認欄にフォーカスし update は呼ばない', () => {
+    const updatePasswordFromRecovery = vi.fn();
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState({
+        session: { user: { id: 'u1' } } as AuthState['session'],
+        updatePasswordFromRecovery,
+      })),
+    );
+    render(
+      <BrowserRouter>
+        <PasswordRecoveryPage />
+      </BrowserRouter>,
+    );
+    fireEvent.change(screen.getByLabelText('新しいパスワード'), { target: { value: 'newpass123' } });
+    fireEvent.change(screen.getByLabelText('新しいパスワード（確認）'), { target: { value: 'other' } });
+    fireEvent.click(screen.getByRole('button', { name: 'パスワードを保存' }));
+    const confirm = screen.getByLabelText('新しいパスワード（確認）');
+    expect(confirm).toHaveAttribute('aria-invalid', 'true');
+    expect(document.activeElement).toBe(confirm);
+    expect(updatePasswordFromRecovery).not.toHaveBeenCalled();
+  });
+
   it('新パスワードフォームから updatePasswordFromRecovery を呼ぶ', async () => {
     const updatePasswordFromRecovery = vi.fn().mockResolvedValue({ error: null });
     vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>

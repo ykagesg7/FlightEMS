@@ -50,6 +50,50 @@ describe('AuthAlert', () => {
     vi.unstubAllGlobals();
   });
 
+  it('success と timeout に aria-live polite を付与する', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    );
+  const { rerender } = render(<AuthAlert variant="success">保存しました</AuthAlert>);
+    const success = screen.getByRole('status');
+    expect(success).toHaveAttribute('aria-live', 'polite');
+    rerender(<AuthAlert variant="timeout">タイムアウト</AuthAlert>);
+    expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
+    vi.unstubAllGlobals();
+  });
+
+  it('suppressScreenReader でエラー枠を AT から隠す', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    );
+    render(
+      <AuthAlert variant="error" suppressScreenReader>
+        フィールドと重複しないエラー
+      </AuthAlert>,
+    );
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.getByText('フィールドと重複しないエラー').closest('[aria-hidden]')).toBeTruthy();
+    vi.unstubAllGlobals();
+  });
+
   it('does not throw when scrollIntoView is missing (jsdom)', () => {
     const proto = HTMLElement.prototype;
     const original = proto.scrollIntoView;

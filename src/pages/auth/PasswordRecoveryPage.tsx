@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mapAuthErrorToMessage } from '../../auth/authErrorMessages';
 import { clearPasswordRecoveryPending, isPasswordRecoveryActive } from '../../auth/passwordRecovery';
 import { Button } from '../../components/ui';
 import { useAuthStore } from '../../stores/authStore';
 import { toAppError } from '../../types/error';
+import { focusFieldById } from './authFieldValidation';
 import { AuthAlert } from './components/AuthAlert';
 import { AuthInput } from './components/AuthInput';
 import { AuthLayout } from './components/AuthLayout';
@@ -24,11 +25,39 @@ const PasswordRecoveryPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [postSubmitFocus, setPostSubmitFocus] = useState<'alert' | string | null>(null);
+  const formErrorAlertRef = useRef<HTMLDivElement>(null);
   const [linkVerifyTimedOut, setLinkVerifyTimedOut] = useState(false);
 
+  const hasFieldLevelErrors = Object.keys(fieldErrors).length > 0;
+
+  const clearFieldError = useCallback((key: string) => {
+    setFieldErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }, []);
+
   useAuthCallback({
-    onError: (message) => setError(message),
+    onError: (message) => {
+      setFieldErrors({});
+      setError(message);
+      setPostSubmitFocus('alert');
+    },
   });
+
+  useEffect(() => {
+    if (!postSubmitFocus) return;
+    if (postSubmitFocus === 'alert') {
+      formErrorAlertRef.current?.focus();
+    } else {
+      focusFieldById(postSubmitFocus);
+    }
+    setPostSubmitFocus(null);
+  }, [postSubmitFocus, fieldErrors, error]);
 
   useEffect(() => {
     if (!isPasswordRecoveryActive() && !session) {
@@ -60,26 +89,40 @@ const PasswordRecoveryPage: React.FC = () => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+    setFieldErrors({});
 
     if (!password) {
+      const nextFieldErrors = { password: '新しいパスワードを入力してください' };
+      setFieldErrors(nextFieldErrors);
       setError('新しいパスワードを入力してください');
+      setPostSubmitFocus('new-password');
       return;
     }
 
     if (password.length < 8) {
+      const nextFieldErrors = { password: 'パスワードは8文字以上にしてください' };
+      setFieldErrors(nextFieldErrors);
       setError('パスワードは8文字以上にしてください');
+      setPostSubmitFocus('new-password');
       return;
     }
 
     if (password !== confirmPassword) {
+      const nextFieldErrors = {
+        'confirm-password': 'パスワードと確認用パスワードが一致しません',
+      };
+      setFieldErrors(nextFieldErrors);
       setError('パスワードと確認用パスワードが一致しません');
+      setPostSubmitFocus('confirm-password');
       return;
     }
 
     try {
       const { error: updateError } = await updatePasswordFromRecovery(password);
       if (updateError) {
+        setFieldErrors({});
         setError(mapAuthErrorToMessage(updateError, 'パスワードの更新に失敗しました。リンクの有効期限が切れている可能性があります。'));
+        setPostSubmitFocus('alert');
         return;
       }
 
@@ -91,13 +134,19 @@ const PasswordRecoveryPage: React.FC = () => {
         navigate('/', { replace: true });
       }, 1500);
     } catch (err: unknown) {
+      setFieldErrors({});
       setError(toAppError(err).message || 'パスワード更新処理中にエラーが発生しました。');
+      setPostSubmitFocus('alert');
     }
   }, [confirmPassword, navigate, password, updatePasswordFromRecovery]);
 
   return (
     <AuthLayout title="新しいパスワードを設定">
-      {error && <AuthAlert variant="error">{error}</AuthAlert>}
+      {error && (
+        <AuthAlert ref={formErrorAlertRef} variant="error" suppressScreenReader={hasFieldLevelErrors}>
+          {error}
+        </AuthAlert>
+      )}
       {success && <AuthAlert variant="success">{success}</AuthAlert>}
 
       <p className="mb-4 text-sm text-[var(--text-muted)]">
@@ -111,7 +160,11 @@ const PasswordRecoveryPage: React.FC = () => {
           id="new-password"
           name="new-password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          errorMessage={fieldErrors.password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            clearFieldError('password');
+          }}
           autoComplete="new-password"
         />
 
@@ -121,7 +174,11 @@ const PasswordRecoveryPage: React.FC = () => {
           id="confirm-password"
           name="new-password"
           value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          errorMessage={fieldErrors['confirm-password']}
+          onChange={(e) => {
+            setConfirmPassword(e.target.value);
+            clearFieldError('confirm-password');
+          }}
           autoComplete="new-password"
         />
 
