@@ -11,12 +11,23 @@ const toggleButtonClassName =
 
 interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  /** Screen-reader field error; visible feedback remains on AuthAlert. */
+  errorMessage?: string;
 }
 
-export const AuthInput: React.FC<AuthInputProps> = ({ label, id, className, type, ...props }) => {
+export const AuthInput: React.FC<AuthInputProps> = ({
+  label,
+  id,
+  className,
+  type,
+  errorMessage,
+  'aria-describedby': ariaDescribedBy,
+  ...props
+}) => {
   const isPasswordField = type === 'password';
   const [passwordVisible, setPasswordVisible] = useState(false);
   const toggleId = useId();
+  const errorId = useId();
 
   const resolvedType = isPasswordField ? (passwordVisible ? 'text' : 'password') : type;
   const resolvedInputClassName = className
@@ -36,6 +47,16 @@ export const AuthInput: React.FC<AuthInputProps> = ({ label, id, className, type
   const togglePressed = passwordVisible;
   const toggleLabel = togglePressed ? 'パスワードを隠す' : 'パスワードを表示';
 
+  const hasError = Boolean(errorMessage);
+  const describedBy = [ariaDescribedBy, hasError ? errorId : undefined]
+    .filter(Boolean)
+    .join(' ') || undefined;
+
+  const inputA11y = {
+    'aria-invalid': hasError ? true : false,
+    'aria-describedby': describedBy,
+  } as const;
+
   return (
     <div className="mb-4">
       <label htmlFor={id} className="block mb-2 text-sm font-medium text-[var(--text-primary)]">
@@ -43,7 +64,13 @@ export const AuthInput: React.FC<AuthInputProps> = ({ label, id, className, type
       </label>
       {isPasswordField ? (
         <div className="relative">
-          <input id={id} type={resolvedType} className={resolvedInputClassName} {...props} />
+          <input
+            id={id}
+            type={resolvedType}
+            className={resolvedInputClassName}
+            {...inputA11y}
+            {...props}
+          />
           <button
             id={toggleId}
             type="button"
@@ -62,8 +89,13 @@ export const AuthInput: React.FC<AuthInputProps> = ({ label, id, className, type
           </button>
         </div>
       ) : (
-        <input id={id} type={type} className={resolvedInputClassName} {...props} />
+        <input id={id} type={type} className={resolvedInputClassName} {...inputA11y} {...props} />
       )}
+      {hasError ? (
+        <span id={errorId} className="sr-only">
+          {errorMessage}
+        </span>
+      ) : null}
     </div>
   );
 };

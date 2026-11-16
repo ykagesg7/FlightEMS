@@ -60,6 +60,41 @@ describe('AuthInput', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+  it('エラー時に aria-invalid と sr-only の aria-describedby を付与する', () => {
+    render(
+      <AuthInput
+        label="メールアドレス"
+        id="email"
+        name="email"
+        type="email"
+        value=""
+        onChange={() => undefined}
+        errorMessage="メールアドレスを入力してください"
+      />,
+    );
+    const input = screen.getByLabelText('メールアドレス');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    const describedBy = input.getAttribute('aria-describedby');
+    expect(describedBy).toBeTruthy();
+    const errorNode = document.getElementById(describedBy!);
+    expect(errorNode).toHaveClass('sr-only');
+    expect(errorNode).toHaveTextContent('メールアドレスを入力してください');
+  });
+
+  it('エラーがないとき aria-invalid は false', () => {
+    render(
+      <AuthInput
+        label="メールアドレス"
+        id="email"
+        name="email"
+        type="email"
+        value=""
+        onChange={() => undefined}
+      />,
+    );
+    expect(screen.getByLabelText('メールアドレス')).toHaveAttribute('aria-invalid', 'false');
+  });
+
   it('text 入力には表示切替ボタンを付けない', () => {
     render(
       <AuthInput

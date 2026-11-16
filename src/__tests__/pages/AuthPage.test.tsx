@@ -68,11 +68,37 @@ describe('AuthPage', () => {
       </BrowserRouter>,
     );
     fireEvent.click(screen.getByRole('button', { name: 'ログイン' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'メールアドレスとパスワードを入力してください',
-    );
+    expect(await screen.findByText('メールアドレスとパスワードを入力してください')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    const email = screen.getByLabelText('メールアドレス');
+    const password = screen.getByLabelText('パスワード');
+    expect(email).toHaveAttribute('aria-invalid', 'true');
+    expect(password).toHaveAttribute('aria-invalid', 'true');
+    expect(document.activeElement).toBe(email);
     expect(signIn).not.toHaveBeenCalled();
     expect(scrollIntoView).toHaveBeenCalled();
+  });
+
+  it('登録で確認パスワードが不一致のとき確認欄にフォーカスする', async () => {
+    const signUp = vi.fn();
+    vi.mocked(authStore.useAuthStore).mockImplementation((selector) =>
+      selector(createAuthState({ signUp })),
+    );
+    render(
+      <BrowserRouter>
+        <AuthPage />
+      </BrowserRouter>,
+    );
+    fireEvent.click(screen.getByText('登録'));
+    fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'new@example.com' } });
+    fireEvent.change(screen.getByLabelText('ユーザー名'), { target: { value: 'newuser' } });
+    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByLabelText('パスワード（確認）'), { target: { value: 'mismatch' } });
+    fireEvent.click(screen.getByText('登録'));
+    const confirm = screen.getByLabelText('パスワード（確認）');
+    expect(confirm).toHaveAttribute('aria-invalid', 'true');
+    expect(document.activeElement).toBe(confirm);
+    expect(signUp).not.toHaveBeenCalled();
   });
 
   it('ログインフォームのバリデーションとsignIn呼び出し', async () => {
