@@ -275,7 +275,11 @@ const WaypointList: React.FC<WaypointListProps> = ({ layout = 'full', flightPlan
                     value={editingWaypointName}
                     onChange={handleWaypointNameChange}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") {
+                      if (
+                        e.key === "Enter" &&
+                        !e.nativeEvent.isComposing &&
+                        e.keyCode !== 229
+                      ) {
                         const updatedWaypoints = [...flightPlan.waypoints];
                         updatedWaypoints[index].name = editingWaypointName;
                         setFlightPlan({ ...flightPlan, waypoints: updatedWaypoints });
