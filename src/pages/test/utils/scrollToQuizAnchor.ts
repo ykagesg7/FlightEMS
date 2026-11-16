@@ -1,3 +1,5 @@
+import { getPreferredScrollBehavior } from '@/utils/preferredScrollBehavior';
+
 export type ScrollToQuizOptions = {
   block?: ScrollLogicalPosition;
   inline?: ScrollLogicalPosition;
@@ -10,11 +12,11 @@ export function scrollToQuizAnchor(
 ): void {
   if (!element) return;
   const { block = 'start', inline = 'nearest' } = options;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const behavior = getPreferredScrollBehavior();
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
       element.scrollIntoView({
-        behavior: reducedMotion ? 'auto' : 'smooth',
+        behavior,
         block,
         inline,
       });

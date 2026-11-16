@@ -25,6 +25,7 @@ import { LEARNING_ARTICLES_HUB_LABEL } from '../../constants/learningArticleNav'
 import { useAuthStore } from '../../stores/authStore';
 import articleMetas from 'virtual:articles-index';
 import { articleHrefForContentId } from '../../utils/articleCanonicalPath';
+import { getPreferredScrollBehavior } from '@/utils/preferredScrollBehavior';
 import {
   trackQuizFilterOpen,
   trackQuizHubView,
@@ -273,8 +274,7 @@ const TestPage: React.FC = () => {
     if (!quizFinished) return;
     const el = quizResultsAnchorRef.current;
     if (!el) return;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const behavior: ScrollBehavior = reducedMotion ? 'auto' : 'smooth';
+    const behavior = getPreferredScrollBehavior();
     const raf = window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         el.scrollIntoView({ behavior, block: 'start' });

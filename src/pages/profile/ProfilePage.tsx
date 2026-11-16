@@ -21,6 +21,7 @@ import { ProfileIdentityHeader } from './components/ProfileIdentityHeader';
 import { ProfileStickySaveBar } from './components/ProfileStickySaveBar';
 import { getProfileHubSectionMeta } from './components/profileHubSections';
 import { useUnsavedFormGuard } from './hooks/useUnsavedFormGuard';
+import { getPreferredScrollBehavior } from '@/utils/preferredScrollBehavior';
 
 const ProfilePage: React.FC = () => {
   const user = useAuthStore((state) => state.user);
@@ -59,7 +60,7 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     if (!error && !success) return;
-    feedbackRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    feedbackRef.current?.scrollIntoView({ block: 'nearest', behavior: getPreferredScrollBehavior() });
   }, [error, success]);
 
   const setSectionDirty = useCallback((key: string, dirty: boolean) => {
