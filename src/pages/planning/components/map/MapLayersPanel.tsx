@@ -96,14 +96,14 @@ export const MapLayersPanel: React.FC<Props> = ({
       {showInlineSidebar ? (
         <>
           <div className="border-b border-whiskyPapa-yellow/20 px-3 py-2">
-            <p className="mb-1.5 text-2xs font-semibold uppercase tracking-wide text-gray-400">プリセット</p>
+            <p className="mb-1.5 font-semibold uppercase tracking-wide text-gray-400">プリセット</p>
             <div className="flex flex-wrap gap-1.5">
               {MAP_LAYER_PRESETS.map((preset) => (
                 <button
                   key={preset.id}
                   type="button"
                   onClick={() => controller.applyPreset(preset.id)}
-                  className={`rounded border px-2 py-1 text-2xs sm:text-xs transition-colors ${
+                  className={`rounded border px-2 py-1 sm:text-xs transition-colors ${
                     controller.activePresetId === preset.id
                       ? 'border-whiskyPapa-yellow bg-whiskyPapa-yellow/15 text-whiskyPapa-yellow'
                       : 'border-whiskyPapa-yellow/30 text-gray-200 hover:border-whiskyPapa-yellow/50 hover:bg-whiskyPapa-yellow/5'
@@ -116,7 +116,7 @@ export const MapLayersPanel: React.FC<Props> = ({
             </div>
           </div>
           <div className="border-b border-whiskyPapa-yellow/20 px-3 py-2">
-            <p className="mb-1.5 text-2xs font-semibold uppercase tracking-wide text-gray-400">ベース地図</p>
+            <p className="mb-1.5 font-semibold uppercase tracking-wide text-gray-400">ベース地図</p>
             <div className="flex flex-col gap-1">
               {BASE_LAYER_CATALOG.map((base) => (
                 <label
@@ -130,7 +130,7 @@ export const MapLayersPanel: React.FC<Props> = ({
                     checked={controller.baseLayerId === base.id}
                     onChange={() => controller.setBaseLayer(base.id)}
                   />
-                  <span className="text-2xs sm:text-xs text-gray-200">{base.label}</span>
+                  <span className="sm:text-xs text-gray-200">{base.label}</span>
                 </label>
               ))}
             </div>
@@ -145,7 +145,7 @@ export const MapLayersPanel: React.FC<Props> = ({
                   key={preset.id}
                   type="button"
                   onClick={() => controller.applyPreset(preset.id)}
-                  className={`rounded border px-2 py-1 text-2xs transition-colors ${
+                  className={`rounded border px-2 py-1 transition-colors ${
                     controller.activePresetId === preset.id
                       ? 'border-whiskyPapa-yellow bg-whiskyPapa-yellow/15 text-whiskyPapa-yellow'
                       : 'border-whiskyPapa-yellow/30 text-gray-200 hover:border-whiskyPapa-yellow/50 hover:bg-whiskyPapa-yellow/5'
@@ -171,7 +171,7 @@ export const MapLayersPanel: React.FC<Props> = ({
                     checked={controller.baseLayerId === base.id}
                     onChange={() => controller.setBaseLayer(base.id)}
                   />
-                  <span className="text-2xs text-gray-200">{base.label}</span>
+                  <span className="text-gray-200">{base.label}</span>
                 </label>
               ))}
             </div>

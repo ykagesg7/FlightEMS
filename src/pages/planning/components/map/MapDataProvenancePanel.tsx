@@ -13,7 +13,7 @@ export const MapDataProvenancePanel: React.FC<Props> = ({ lines, compact = false
   return (
     <div
       className={`rounded border border-whiskyPapa-yellow/25 bg-whiskyPapa-black-dark/90 text-gray-300 ${
-        compact ? 'px-2 py-1.5 text-2xs' : 'px-3 py-2 text-xs'
+        compact ? 'px-2 py-1.5' : 'px-3 py-2 text-xs'
       }`}
     >
       <p className="mb-1 font-semibold text-whiskyPapa-yellow/90">データ出典・取得日（参考）</p>

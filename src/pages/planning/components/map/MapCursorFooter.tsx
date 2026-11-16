@@ -51,7 +51,7 @@ export const MapCursorFooter: React.FC<Props> = ({
             {statusLabel}
           </span>
         ) : null}
-        <span className="min-w-0 truncate text-2xs sm:text-xs font-mono hud-text hud-readout">
+        <span className="min-w-0 truncate sm:text-xs font-mono hud-text hud-readout">
           {dms}
         </span>
       </div>
@@ -61,7 +61,7 @@ export const MapCursorFooter: React.FC<Props> = ({
             <button
               type="button"
               onClick={onClearPin}
-              className="rounded border border-whiskyPapa-yellow/40 px-2 py-0.5 text-2xs sm:text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10"
+              className="rounded border border-whiskyPapa-yellow/40 px-2 py-0.5 sm:text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10"
             >
               解除
             </button>
@@ -70,7 +70,7 @@ export const MapCursorFooter: React.FC<Props> = ({
               type="button"
               onClick={onPinCenter}
               disabled={!cursorPosition}
-              className="rounded border border-whiskyPapa-yellow/40 px-2 py-0.5 text-2xs sm:text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded border border-whiskyPapa-yellow/40 px-2 py-0.5 sm:text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10 disabled:cursor-not-allowed disabled:opacity-40"
             >
               この位置を固定
             </button>
@@ -79,7 +79,7 @@ export const MapCursorFooter: React.FC<Props> = ({
           <button
             type="button"
             onClick={onClearPin}
-            className="rounded border border-whiskyPapa-yellow/40 px-2 py-0.5 text-2xs sm:text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10"
+            className="rounded border border-whiskyPapa-yellow/40 px-2 py-0.5 sm:text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10"
           >
             解除
           </button>
@@ -89,7 +89,7 @@ export const MapCursorFooter: React.FC<Props> = ({
           onClick={onToggleDetail}
           disabled={!cursorPosition || (!isPinned && isCoarsePointer)}
           aria-expanded={detailOpen}
-          className="rounded border border-whiskyPapa-yellow/40 px-2 py-0.5 text-2xs sm:text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10 disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded border border-whiskyPapa-yellow/40 px-2 py-0.5 sm:text-xs text-whiskyPapa-yellow hover:bg-whiskyPapa-yellow/10 disabled:cursor-not-allowed disabled:opacity-40"
           title={
             !isPinned && isCoarsePointer
               ? '詳細を開くには位置を固定してください'

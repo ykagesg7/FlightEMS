@@ -61,7 +61,7 @@ export const MapCursorDetailSheet: React.FC<Props> = ({
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-3 py-2 space-y-2 text-2xs sm:text-xs">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-3 py-2 space-y-2 sm:text-xs">
         <div className="font-mono text-gray-200">
           <div className="text-gray-400">十進度 (DD)</div>
           <div className="hud-text hud-readout">

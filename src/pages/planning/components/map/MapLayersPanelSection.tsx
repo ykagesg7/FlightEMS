@@ -39,7 +39,7 @@ export const MapLayersPanelSection: React.FC<Props> = ({
       >
         {open ? <ChevronDown className="h-3.5 w-3.5 shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 shrink-0" />}
         {MAP_LAYER_GROUP_LABELS[groupId]}
-        <span className="ml-auto text-2xs font-normal text-gray-400">{filtered.length}</span>
+        <span className="ml-auto font-normal text-gray-400">{filtered.length}</span>
       </button>
       {open ? (
         <ul className="space-y-0.5 px-3 pb-2">
@@ -52,10 +52,10 @@ export const MapLayersPanelSection: React.FC<Props> = ({
                   checked={enabledOverlayIds.has(entry.id)}
                   onChange={(e) => onToggle(entry.id, e.target.checked)}
                 />
-                <span className="min-w-0 text-2xs sm:text-xs leading-snug text-gray-200">
+                <span className="min-w-0 sm:text-xs leading-snug text-gray-200">
                   {entry.label}
                   {entry.referenceOnly ? (
-                    <span className="ml-1 rounded border border-amber-500/40 px-1 text-2xs text-amber-300/90">
+                    <span className="ml-1 rounded border border-amber-500/40 px-1 text-amber-300/90">
                       参考
                     </span>
                   ) : null}

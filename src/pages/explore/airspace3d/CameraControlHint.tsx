@@ -106,7 +106,7 @@ export const CameraControlHint: React.FC = () => {
           }
           setHidden(false);
         }}
-        className="absolute left-2 top-2 z-20 rounded border border-brand-primary/40 bg-brand-secondary/80 px-2 py-1 text-2xs text-brand-primary hover:bg-brand-primary/10"
+        className="absolute left-2 top-2 z-20 rounded border border-brand-primary/40 bg-brand-secondary/80 px-2 py-1 text-brand-primary hover:bg-brand-primary/10"
       >
         操作
       </button>
@@ -134,7 +134,7 @@ export const CameraControlHint: React.FC = () => {
       className="absolute left-2 top-2 z-20 max-w-[11.5rem] rounded border border-brand-primary/35 bg-brand-secondary/90 px-2 py-1.5 shadow-lg backdrop-blur-sm"
     >
       <div className="mb-1 flex items-center justify-between gap-2">
-        <span className="text-2xs font-medium text-brand-primary">カメラ</span>
+        <span className="font-medium text-brand-primary">カメラ</span>
         <button
           type="button"
           aria-label="操作ヒントを閉じる"
@@ -156,11 +156,11 @@ export const CameraControlHint: React.FC = () => {
         {rows.map((row) => (
           <div key={row.key} className="flex flex-1 flex-col items-center gap-0.5">
             {row.glyph}
-            <span className="text-2xs text-gray-300">{row.label}</span>
+            <span className="text-gray-300">{row.label}</span>
           </div>
         ))}
       </div>
-      <p className="mt-1 text-center text-2xs leading-tight text-gray-500">{sub}</p>
+      <p className="mt-1 text-center leading-tight text-gray-500">{sub}</p>
     </div>
   );
 };

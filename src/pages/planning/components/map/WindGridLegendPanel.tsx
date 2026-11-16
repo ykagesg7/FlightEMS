@@ -30,7 +30,7 @@ export const WindGridLegendPanel: React.FC<Props> = ({ model }) => {
 
   return (
     <div
-      className="pointer-events-none w-full max-w-[16.5rem] rounded border border-sky-400/40 bg-whiskyPapa-black-dark/90 px-2 py-1 text-2xs sm:text-xs text-gray-200 shadow-md leading-snug"
+      className="pointer-events-none w-full max-w-[16.5rem] rounded border border-sky-400/40 bg-whiskyPapa-black-dark/90 px-2 py-1 sm:text-xs text-gray-200 shadow-md leading-snug"
       role="status"
       aria-live="polite"
     >

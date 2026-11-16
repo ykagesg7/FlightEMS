@@ -30,14 +30,14 @@ export const NavaidRadialGridPanel: React.FC<Props> = ({
 
   return (
     <div className="space-y-1.5">
-      <p className="text-2xs font-semibold uppercase tracking-wide text-gray-400">
+      <p className="font-semibold uppercase tracking-wide text-gray-400">
         ラジアル／DME 網（参考）
       </p>
-      <p className="text-2xs text-gray-500">
+      <p className="text-gray-500">
         磁方位 {NAVAID_RADIAL_STEP_DEG}°・距離 {NAVAID_DME_STEP_NM} nm（最大{' '}
         {NAVAID_RADIAL_MAX_NM} nm）。国土地理院 磁気図2020.0年値に基づく教育用参考表示。実運航用ではありません。
       </p>
-      <div className="text-2xs text-gray-300">
+      <div className="text-gray-300">
         基準:{' '}
         <span className="font-mono text-whiskyPapa-yellow">
           {selected ? `${selected.id}` : selectedId || '—'}
@@ -51,13 +51,13 @@ export const NavaidRadialGridPanel: React.FC<Props> = ({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="ID または名称で検索…（例: AHT）"
-        className="w-full rounded border border-whiskyPapa-yellow/30 bg-whiskyPapa-black px-2 py-1.5 text-2xs text-white placeholder:text-gray-500 focus:border-whiskyPapa-yellow/60 focus:outline-none"
+        className="w-full rounded border border-whiskyPapa-yellow/30 bg-whiskyPapa-black px-2 py-1.5 text-white placeholder:text-gray-500 focus:border-whiskyPapa-yellow/60 focus:outline-none"
         aria-label="ラジアル網の基準 NAVAID 検索"
         autoComplete="off"
       />
       <ul className="max-h-36 overflow-y-auto rounded border border-whiskyPapa-yellow/20 divide-y divide-whiskyPapa-yellow/10">
         {suggestions.length === 0 ? (
-          <li className="px-2 py-1.5 text-2xs text-gray-500">該当なし</li>
+          <li className="px-2 py-1.5 text-gray-500">該当なし</li>
         ) : (
           suggestions.map((n) => {
             const selectedRow = n.id === selectedId;
@@ -69,7 +69,7 @@ export const NavaidRadialGridPanel: React.FC<Props> = ({
                     onSelectId(n.id);
                     setQuery('');
                   }}
-                  className={`flex w-full items-center justify-between gap-2 px-2 py-1.5 text-left text-2xs hover:bg-whiskyPapa-yellow/10 ${
+                  className={`flex w-full items-center justify-between gap-2 px-2 py-1.5 text-left hover:bg-whiskyPapa-yellow/10 ${
                     selectedRow
                       ? 'bg-whiskyPapa-yellow/15 text-whiskyPapa-yellow'
                       : 'text-gray-200'

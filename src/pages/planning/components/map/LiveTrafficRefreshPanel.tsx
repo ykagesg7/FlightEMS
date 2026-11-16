@@ -33,10 +33,10 @@ export const LiveTrafficRefreshPanel: React.FC<Props> = ({ controls }) => {
       aria-live="polite"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-2xs text-gray-300">航空機（参考）</p>
+        <p className="text-gray-300">航空機（参考）</p>
         <LiveTrafficRefreshButton controls={controls} />
       </div>
-      <p className="mt-1 text-2xs text-gray-400">{statusText}</p>
+      <p className="mt-1 text-gray-400">{statusText}</p>
     </div>
   );
 };

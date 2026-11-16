@@ -120,7 +120,7 @@ export const FlightViewer3DControls: React.FC<FlightViewer3DControlsProps> = ({
           プレビュー高度（ft）
           <span className="ml-1 tabular-nums text-gray-400">{viewControls.previewAltitudeFt}</span>
         </span>
-        <span className="text-2xs text-gray-500">3D 表示のみ（フライトプランの高度は変更しません）</span>
+        <span className="text-gray-500">3D 表示のみ（フライトプランの高度は変更しません）</span>
         <input
           type="range"
           min={previewAltitudeMinFt}

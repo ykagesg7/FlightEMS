@@ -29,11 +29,11 @@ export const MapPlanningDataStatusBar: React.FC<Props> = ({
       }`}
       aria-live="polite"
     >
-      <div className="rounded bg-black/70 px-2 py-1 text-2xs text-gray-100 shadow-sm">
+      <div className="rounded bg-black/70 px-2 py-1 text-gray-100 shadow-sm">
         {GSI_TILE_ATTRIBUTION_JA}
       </div>
       <div
-        className="max-w-[min(100%,18rem)] rounded bg-black/70 px-2 py-1 text-2xs text-gray-200 shadow-sm"
+        className="max-w-[min(100%,18rem)] rounded bg-black/70 px-2 py-1 text-gray-200 shadow-sm"
         title={airspace.sourceLabel}
       >
         <span className="text-whiskyPapa-yellow/90">空域データ</span>

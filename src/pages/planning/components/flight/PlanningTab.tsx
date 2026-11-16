@@ -514,7 +514,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
         <div className="flex flex-col gap-3 print-hide">
           {draftNoticeVisible && (
             <div
-              className="flex flex-wrap items-start gap-2 rounded-md border border-whiskyPapa-yellow/30 bg-whiskyPapa-black/80 px-3 py-2 text-2xs sm:text-xs text-gray-200"
+              className="flex flex-wrap items-start gap-2 rounded-md border border-whiskyPapa-yellow/30 bg-whiskyPapa-black/80 px-3 py-2 sm:text-xs text-gray-200"
               role="status"
             >
               <span className="flex-1 min-w-[200px]">
@@ -548,7 +548,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
                   <option key={preset.id} value={preset.id}>{preset.name}</option>
                 ))}
               </select>
-              <div className="mt-1 text-2xs text-gray-300">
+              <div className="mt-1 text-gray-300">
                 巡航FF: {selectedPreset?.cruiseFuelFlowLbPerHr ?? '--'} lb/hr / 予備: {selectedPreset?.reserveFuelLb ?? '--'} lb / タキシー: {selectedPreset?.taxiFuelLb ?? '--'} lb
               </div>
             </div>
@@ -575,7 +575,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
                     className="inline-flex min-h-[44px] items-center justify-center gap-1 rounded border border-whiskyPapa-yellow/30 bg-gray-800 px-3 py-2 text-sm text-white hover:bg-gray-700"
                   >
                     ファイル
-                    <span className="text-2xs text-gray-400" aria-hidden>
+                    <span className="text-gray-400" aria-hidden>
                       ▼
                     </span>
                   </button>
@@ -604,7 +604,7 @@ const PlanningTab: React.FC<PlanningTabProps> = ({
                 印刷
               </button>
               {lastSavedAt ? (
-                <span className="text-2xs sm:text-xs text-gray-400 whitespace-nowrap self-center">
+                <span className="sm:text-xs text-gray-400 whitespace-nowrap self-center">
                   最終保存{' '}
                   {lastSavedAt.toLocaleTimeString('ja-JP', {
                     hour: '2-digit',

@@ -228,7 +228,7 @@ export const DebriefPanel: React.FC<DebriefPanelProps> = ({
       />
       <DebriefSummary summaries={summaries} />
 
-      <p className="mt-3 text-2xs text-gray-500">参考表示です。実運航・航法・管制用途には使用せず、公式資料と機上計器を正としてください。</p>
+      <p className="mt-3 text-gray-500">参考表示です。実運航・航法・管制用途には使用せず、公式資料と機上計器を正としてください。</p>
     </section>
   );
 };

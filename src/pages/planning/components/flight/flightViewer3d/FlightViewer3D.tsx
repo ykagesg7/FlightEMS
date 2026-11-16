@@ -124,7 +124,7 @@ export const FlightViewer3D: React.FC<FlightViewer3DProps> = ({
       </div>
 
       {usingDemo ? (
-        <p className="absolute left-2 top-2 z-10 max-w-[min(100%,14rem)] rounded bg-brand-secondary/90 px-2 py-1 text-2xs text-gray-300">
+        <p className="absolute left-2 top-2 z-10 max-w-[min(100%,14rem)] rounded bg-brand-secondary/90 px-2 py-1 text-gray-300">
           デモ: 福岡 VFR（RJFF→志賀島→壱岐→RJFR）
         </p>
       ) : null}

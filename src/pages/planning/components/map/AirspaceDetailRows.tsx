@@ -23,7 +23,7 @@ export const AirspaceDetailRows: React.FC<Props> = ({ hit, compact = false }) =>
 
   if (compact) {
     return (
-      <div className="min-w-0 text-2xs sm:text-xs text-gray-200">
+      <div className="min-w-0 sm:text-xs text-gray-200">
         <span className="font-semibold text-whiskyPapa-yellow">{label}</span>
         <span className="text-gray-300">
           {' '}
@@ -36,7 +36,7 @@ export const AirspaceDetailRows: React.FC<Props> = ({ hit, compact = false }) =>
   const callsignLabel = hit.kind === 'rapcon' ? 'エリア / 呼称' : 'Callsign';
 
   return (
-    <dl className="space-y-1 text-2xs sm:text-xs text-gray-200">
+    <dl className="space-y-1 sm:text-xs text-gray-200">
       <div className="flex gap-2">
         <dt className="shrink-0 text-whiskyPapa-yellow/90">{callsignLabel}</dt>
         <dd className="min-w-0">{callsign}</dd>
