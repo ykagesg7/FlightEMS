@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { Typography } from '../ui';
 import type { PublicUserBadge } from '../../utils/cohort';
 import { formatCohortWeeklyBadgeLabel } from '../../utils/cohort';
 import { fetchPublicUserBadges } from '../../utils/cohortApi';
+import { useModalDialog } from '../../hooks/useModalDialog';
 
 interface PublicUserBadgesPanelProps {
   userId: string;
@@ -19,9 +20,13 @@ export const PublicUserBadgesPanel: React.FC<PublicUserBadgesPanelProps> = ({
   displayName,
   onClose,
 }) => {
+  const titleId = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [badges, setBadges] = useState<PublicUserBadge[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useModalDialog({ open: true, onClose, containerRef: dialogRef });
 
   useEffect(() => {
     let cancelled = false;
@@ -40,14 +45,15 @@ export const PublicUserBadgesPanel: React.FC<PublicUserBadgesPanelProps> = ({
   }, [userId]);
 
   return (
-    <div
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="public-badges-title"
-    >
-      <div className="max-w-md w-full rounded-xl border border-brand-primary/30 bg-[var(--panel)] p-6 shadow-xl">
-        <Typography variant="h3" color="brand" className="text-lg font-bold mb-1" id="public-badges-title">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center overscroll-contain bg-black/60 p-4">
+      <div
+        ref={dialogRef}
+        className="max-w-md w-full overscroll-contain rounded-xl border border-brand-primary/30 bg-[var(--panel)] p-6 shadow-xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+      >
+        <Typography variant="h3" color="brand" className="text-lg font-bold mb-1" id={titleId}>
           {displayName} のバッジ
         </Typography>
         <Typography variant="body-sm" color="muted" className="mb-4">
