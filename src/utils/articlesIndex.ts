@@ -1,5 +1,6 @@
 import articleMetas from 'virtual:articles-index';
 import { ARTICLE_ROUTE_ALIASES } from '../config/articleRouteAliases';
+import { reservedContentIdFromSlug } from './articleCanonicalPath';
 import { isWithdrawnArticle } from '../constants/withdrawnArticleIds';
 import type { ArticleIndexEntry, ArticleMeta, ArticleNavigation, ArticleSearchOptions, MDXModule } from '../types/articles';
 import { isArticleReadable } from './articlePublishGate';
@@ -150,6 +151,8 @@ export function findArticleByRouteParamInIndex(
   index: ArticleIndexEntry[],
 ): ArticleIndexEntry | null {
   const rawKey = normalizeArticleSlug(param);
+  const reservedId = reservedContentIdFromSlug(rawKey);
+  if (reservedId) return null;
   const key = ARTICLE_ROUTE_ALIASES[rawKey] ?? ARTICLE_ROUTE_ALIASES[param] ?? rawKey;
   const prefixMatches = index.filter((entry) => matchesArticleFilenamePrefix(key, entry.filename));
   if (prefixMatches.length === 1) {

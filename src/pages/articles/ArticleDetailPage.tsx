@@ -6,7 +6,13 @@ import { useArticleStats } from '../../hooks/useArticleStats';
 import { useAuth } from '../../hooks/useAuth';
 import { ArticleMeta } from '../../types/articles';
 import { isArticlePreviewAllowed, isArticleReadable, isArticleReleased } from '../../utils/articlePublishGate';
-import { articleHrefForContentId, canonicalArticlePathIfNeeded } from '../../utils/articleCanonicalPath';
+import {
+  articleHrefForContentId,
+  buildReservedCatalogArticleMeta,
+  canonicalArticlePathIfNeeded,
+  isReservedCatalogContentId,
+  resolveArticleMdxContentId,
+} from '../../utils/articleCanonicalPath';
 import buildTimeArticleMetas from 'virtual:articles-index';
 import { findArticleByRouteParam, getArticleIndex } from '../../utils/articlesIndex';
 import { filterReleasedArticleContents } from '../../constants/articleHubCategories';
@@ -23,6 +29,7 @@ import { RelatedTestsBlock } from './components/RelatedTestsBlock';
 import { ScrollToButtons } from './components/ScrollToButtons';
 import { SeriesNextChapterCta } from './components/SeriesNextChapterCta';
 import { usePrevNext } from './components/usePrevNext';
+import { CatalogOnlyArticlePanel } from './components/CatalogOnlyArticlePanel';
 
 const ArticleDetailPage: React.FC = () => {
   const { contentId } = useParams<{ contentId: string }>();
@@ -79,10 +86,10 @@ const ArticleDetailPage: React.FC = () => {
             return;
           }
         }
-        setCanonicalId(matched?.filename ?? contentId);
+        setCanonicalId(matched?.filename ?? resolveArticleMdxContentId(contentId));
       } catch (error) {
         console.error('記事メタデータの読み込みエラー:', error);
-        if (!cancelled) setCanonicalId(contentId);
+        if (!cancelled) setCanonicalId(resolveArticleMdxContentId(contentId));
       } finally {
         if (!cancelled) setIsLoadingMetas(false);
       }
@@ -98,7 +105,24 @@ const ArticleDetailPage: React.FC = () => {
 
   const { prev, next } = usePrevNext(articleId);
 
-  const resolvedCurrentMeta = articleId ? articleMetas[articleId] : undefined;
+  const learningRecord = useMemo(
+    () => learningContents.find((entry) => entry.id === articleId) ?? null,
+    [learningContents, articleId],
+  );
+
+  const isCatalogOnlyArticle =
+    Boolean(articleId) &&
+    isReservedCatalogContentId(articleId) &&
+    !buildTimeArticleMetas[articleId];
+
+  const catalogArticleMeta = useMemo(() => {
+    if (!isCatalogOnlyArticle || !articleId) return null;
+    return buildReservedCatalogArticleMeta(articleId, learningRecord ?? undefined);
+  }, [isCatalogOnlyArticle, articleId, learningRecord]);
+
+  const resolvedCurrentMeta = articleId
+    ? articleMetas[articleId] ?? catalogArticleMeta ?? undefined
+    : undefined;
 
   const releasedContents = useMemo(
     () => filterReleasedArticleContents(learningContents, articleMetas),
@@ -164,6 +188,7 @@ const ArticleDetailPage: React.FC = () => {
   const articleComments = comments[articleId] || [];
   const withdrawn = isWithdrawnArticle(articleId);
   const notYetReleased =
+    !isCatalogOnlyArticle &&
     !withdrawn &&
     !isLoadingMetas &&
     Boolean(resolvedCurrentMeta?.publishedAt) &&
@@ -220,7 +245,15 @@ const ArticleDetailPage: React.FC = () => {
             )}
             {coursePosition && <ArticleCoursePositionBanner position={coursePosition} />}
             <ReadingProgressBar contentId={articleId} endSentinelRef={articleReadEndRef} />
-            <MDXLoader contentId={articleId} />
+            {isCatalogOnlyArticle && catalogArticleMeta ? (
+              <CatalogOnlyArticlePanel
+                meta={catalogArticleMeta}
+                contentId={articleId}
+                learning={learningRecord}
+              />
+            ) : (
+              <MDXLoader contentId={articleId} />
+            )}
             <div
               ref={articleReadEndRef}
               data-testid="article-read-end"

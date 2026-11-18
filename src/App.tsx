@@ -1,7 +1,7 @@
 import { MotionConfig } from 'framer-motion';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import {
   Navigate,
@@ -26,8 +26,10 @@ import { MarketingLayout } from './layouts/MarketingLayout';
 import { lazyProtectedRoute, lazyRoute } from './layouts/routeLazy';
 import { importWithChunkRetry } from './utils/lazyWithRetry';
 import { buildSpiralLmsDevRoutes } from './utils/spiralLmsDevRoutes';
+import { applyGa4CanonicalPageContext } from './lib/ga4CanonicalBootstrap';
 import articleMetas from 'virtual:articles-index';
 import { articleHrefForContentId } from './utils/articleCanonicalPath';
+import { canonicalizeAnalyticsPagePath } from './utils/articleRouteResolve';
 
 const LearningRedirect: React.FC = () => {
   return <Navigate to="/articles" replace />;
@@ -35,8 +37,22 @@ const LearningRedirect: React.FC = () => {
 
 const LearningContentRedirect: React.FC = () => {
   const { contentId } = useParams<{ contentId: string }>();
+  const targetPath = contentId ? articleHrefForContentId(contentId, articleMetas) : null;
+
+  useLayoutEffect(() => {
+    if (!targetPath) return;
+    const canonical = canonicalizeAnalyticsPagePath(
+      `${targetPath}${window.location.search}`,
+    );
+    applyGa4CanonicalPageContext(canonical);
+    const current = `${window.location.pathname}${window.location.search}`;
+    if (current !== canonical) {
+      window.history.replaceState(window.history.state, '', canonical);
+    }
+  }, [targetPath]);
+
   if (!contentId) return <Navigate to="/articles" replace />;
-  return <Navigate to={articleHrefForContentId(contentId, articleMetas)} replace />;
+  return <Navigate to={targetPath ?? '/articles'} replace />;
 };
 
 const NotFoundPage = () => <div className="text-center text-red-500 py-12">ページが見つかりません</div>;
