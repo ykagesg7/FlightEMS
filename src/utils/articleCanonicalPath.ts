@@ -1,4 +1,5 @@
 import reservedSlugByContentId from '../../config/article-reserved-slugs.json';
+import type { ArticleMeta } from '../types/articles';
 
 const reservedSlugByContentIdMap = reservedSlugByContentId as Record<string, string>;
 
