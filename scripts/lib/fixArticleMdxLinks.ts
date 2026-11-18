@@ -2,14 +2,8 @@ import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { buildArticleLegacyRedirects } from './articleLegacyRedirects.ts';
 
-/** Skipped while other PRs touch these files (keep in sync with articleMdxLinks.test.ts). */
-export const MDX_LINK_FIX_ALLOWLIST = new Set([
-  'src/content/lessons/3.3.10_CloudTypes.mdx',
-  'src/content/lessons/PPL-2-1-6_CloudTypesAndFormation.mdx',
-  'src/content/lessons/CPL-Hub-Navigation.mdx',
-  'src/content/lessons/CPL-Hub-Meteorology.mdx',
-  'src/content/lessons/CPL-Hub-Communication.mdx',
-]);
+/** Temporary skip list for MDX link rewrites (normally empty). */
+export const MDX_LINK_FIX_ALLOWLIST = new Set<string>();
 
 function walkMdxFiles(dir: string, acc: string[] = []): string[] {
   for (const name of readdirSync(dir, { withFileTypes: true })) {

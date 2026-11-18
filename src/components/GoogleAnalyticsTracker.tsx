@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getGa4MeasurementId, sendGa4PageView } from '../lib/googleAnalytics';
+import { canonicalizeAnalyticsPagePath } from '../utils/articleRouteResolve';
 
 const measurementId = getGa4MeasurementId();
 
@@ -12,7 +13,7 @@ export function GoogleAnalyticsTracker() {
 
   useEffect(() => {
     if (!measurementId) return;
-    const path = `${location.pathname}${location.search}`;
+    const path = canonicalizeAnalyticsPagePath(`${location.pathname}${location.search}`);
     sendGa4PageView(measurementId, path);
   }, [location.pathname, location.search]);
 

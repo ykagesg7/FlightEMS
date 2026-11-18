@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { getArticleNavigation, getSeriesNavigation } from '../utils/articlesIndex';
+import { articlePrefetchHref } from '../utils/articleRouteResolve';
 
 /**
  * 記事のプリフェッチフック
@@ -50,7 +51,7 @@ async function prefetchArticle(slug: string): Promise<void> {
       if (!existingLink) {
         const link = document.createElement('link');
         link.rel = 'prefetch';
-        link.href = `/articles/${slug}`;
+        link.href = articlePrefetchHref(slug);
         link.setAttribute('data-slug', slug);
         document.head.appendChild(link);
       }

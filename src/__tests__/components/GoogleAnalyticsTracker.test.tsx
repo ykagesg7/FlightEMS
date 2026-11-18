@@ -70,7 +70,7 @@ describe('GoogleAnalyticsTracker', () => {
     await waitFor(() => expect(sendGa4PageView).toHaveBeenCalledTimes(2));
     expect(sendGa4PageView).toHaveBeenLastCalledWith(
       'G-TEST123',
-      '/articles/IF-1-3_IMC_Scan',
+      '/articles/if-1-3-imc-scan',
     );
 
     unmount();

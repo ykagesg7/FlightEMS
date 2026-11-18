@@ -126,7 +126,7 @@ const router = createBrowserRouter([
           { path: 'learning', element: <LearningRedirect /> },
           { path: 'learning/:contentId', element: <LearningContentRedirect /> },
           { path: 'articles', ...lazyRoute(() => import('./pages/articles/ArticlesPage'), true) },
-          { path: 'articles/:contentId', ...lazyRoute(() => import('./pages/articles/ArticleDetailPage'), true) },
+          { path: 'articles/:contentId', ...lazyRoute(() => import('./pages/articles/ArticleDetailRoute'), true) },
           { path: 'courses/:courseId', ...lazyRoute(() => import('./pages/courses/CourseRedirectPage')) },
           { path: 'account', element: <Navigate to="/profile" replace /> },
           { path: 'test', ...lazyRoute(() => import('./pages/test/TestPage'), true) },
