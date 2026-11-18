@@ -1,6 +1,15 @@
+import reservedSlugByContentId from '../../config/article-reserved-slugs.json';
+
+/** MDX 未整備だが `learning_contents.id` だけ先に存在する記事の予約 slug。 */
+export function reservedArticleSlug(contentId: string): string | undefined {
+  return (reservedSlugByContentId as Record<string, string>)[contentId];
+}
+
 /** Same slug segment as prerender (`vite/prerenderArticlesPlugin.ts`). */
 export function articlePrettySlug(meta: { slug?: string }, filename: string): string {
-  const raw = (meta.slug || filename).replace(/^\/articles\//, '').replace(/^\//, '');
+  const raw = (meta.slug || reservedArticleSlug(filename) || filename)
+    .replace(/^\/articles\//, '')
+    .replace(/^\//, '');
   return raw || filename;
 }
 

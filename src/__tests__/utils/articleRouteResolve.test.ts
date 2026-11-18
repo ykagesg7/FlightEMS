@@ -3,6 +3,7 @@ import {
   canonicalizeAnalyticsPagePath,
   resolveInAppArticleRedirectPath,
 } from '../../utils/articleRouteResolve';
+import { articleHrefForContentId } from '../../utils/articleCanonicalPath';
 
 describe('articleRouteResolve', () => {
   it('maps legacy filename segments to canonical paths for GA4', () => {
@@ -33,6 +34,27 @@ describe('articleRouteResolve', () => {
   it('returns redirect target for in-app legacy params', () => {
     expect(resolveInAppArticleRedirectPath('IF-1-3_IMC_Scan')).toBe('/articles/if-1-3-imc-scan');
     expect(resolveInAppArticleRedirectPath('if-1-3-imc-scan')).toBeNull();
+  });
+
+  it('maps /learning/:contentId to canonical article path for GA4', () => {
+    expect(canonicalizeAnalyticsPagePath('/learning/IF-1-3_IMC_Scan')).toBe(
+      '/articles/if-1-3-imc-scan',
+    );
+    expect(canonicalizeAnalyticsPagePath('/learning/CPL-Hub-Navigation')).toBe(
+      '/articles/cpl-hub-navigation',
+    );
+    expect(canonicalizeAnalyticsPagePath('/learning/IF-1-3_IMC_Scan?from=email')).toBe(
+      '/articles/if-1-3-imc-scan?from=email',
+    );
+  });
+
+  it('maps reserved catalog slugs without MDX', () => {
+    expect(canonicalizeAnalyticsPagePath('/articles/PPL-2-3-3_WindShearAndVolcanicAsh')).toBe(
+      '/articles/ppl-2-3-3-wind-shear-and-volcanic-ash',
+    );
+    expect(resolveInAppArticleRedirectPath('PPL-2-3-3_WindShearAndVolcanicAsh')).toBe(
+      '/articles/ppl-2-3-3-wind-shear-and-volcanic-ash',
+    );
   });
 
   it('does not collapse distinct PPL and CPL cloud articles', () => {

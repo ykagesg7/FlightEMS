@@ -77,7 +77,7 @@
 
 ## 別名 → 正本 対応表（全件）
 
-対応行数（別名あり）: **198** / 記事数: **192** / 恒久リダイレクト: **170**
+対応行数（別名あり）: **200** / 記事数: **193** / 恒久リダイレクト: **170**
 
 | 正本 URL | 別名 URL | 根拠 |
 |----------|----------|------|
@@ -228,6 +228,8 @@
 | /articles/ppl-2-2-3-pressure-systems-and-japan-weather | /articles/PPL-2-2-3_PressureSystemsAndJapanWeather | MDX basename (`PPL-2-2-3_PressureSystemsAndJapanWeather.mdx`) |
 | /articles/ppl-2-3-1-flight-weather-hazards-basics | /articles/PPL-2-3-1_FlightWeatherHazardsBasics | MDX basename (`PPL-2-3-1_FlightWeatherHazardsBasics.mdx`) |
 | /articles/ppl-2-3-2-metar-taf-and-weather-reports | /articles/PPL-2-3-2_MetarTafAndWeatherReports | MDX basename (`PPL-2-3-2_MetarTafAndWeatherReports.mdx`) |
+| /articles/ppl-2-3-3-wind-shear-and-volcanic-ash | /articles/PPL-2-3-3_WindShearAndVolcanicAsh | 予約 slug（`config/article-reserved-slugs.json`、MDX 未整備） |
+| /articles/ppl-2-3-3-wind-shear-and-volcanic-ash | /learning/PPL-2-3-3_WindShearAndVolcanicAsh | learning_contents 導線（MDX 未整備） |
 | /articles/ppl-3-1-1-earth-coordinates-and-time | /articles/PPL-3-1-1_EarthCoordinatesAndTime | MDX basename (`PPL-3-1-1_EarthCoordinatesAndTime.mdx`) |
 | /articles/ppl-3-1-2-navigation-elements-and-altitude | /articles/PPL-3-1-2_NavigationElementsAndAltitude | MDX basename (`PPL-3-1-2_NavigationElementsAndAltitude.mdx`) |
 | /articles/ppl-3-1-3-aeronautical-charts-basics | /articles/PPL-3-1-3_AeronauticalChartsBasics | MDX basename (`PPL-3-1-3_AeronauticalChartsBasics.mdx`) |

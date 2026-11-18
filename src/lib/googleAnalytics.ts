@@ -30,17 +30,33 @@ function canSendGa4(): boolean {
   );
 }
 
-/** ルート変更後に呼ぶ（本番・gtag 読み込み後のみ送信） */
+function buildGa4PageLocation(pagePath: string): string {
+  if (typeof window === 'undefined') return '';
+  const origin = window.location.origin;
+  return `${origin}${pagePath.startsWith('/') ? pagePath : `/${pagePath}`}`;
+}
+
+/**
+ * ルート変更後に呼ぶ（本番・gtag 読み込み後のみ送信）。
+ * `page_path` / `page_location` は呼び出し元で正本 URL に正規化済みであること。
+ * スクロール等の自動計測が参照する `dl` も正本に揃えるため、直前に `gtag('config')` で同期する。
+ */
 export function sendGa4PageView(measurementId: string, pagePath: string): void {
   if (typeof window === 'undefined' || !import.meta.env.PROD) return;
   const id = measurementId.trim();
   if (!id || typeof window.gtag !== 'function') return;
   const title = typeof document !== 'undefined' ? document.title : '';
-  const locationHref = typeof window !== 'undefined' ? window.location.href : '';
+  const pageLocation = buildGa4PageLocation(pagePath);
+
+  window.gtag('config', id, {
+    page_path: pagePath,
+    page_location: pageLocation,
+  });
+
   window.gtag('event', 'page_view', {
     page_path: pagePath,
     page_title: title,
-    page_location: locationHref,
+    page_location: pageLocation,
   });
 }
 

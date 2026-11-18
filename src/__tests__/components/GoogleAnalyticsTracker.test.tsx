@@ -76,6 +76,31 @@ describe('GoogleAnalyticsTracker', () => {
     unmount();
   });
 
+  it('canonicalizes /learning/:id before sending page_view', async () => {
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/*',
+          element: (
+            <>
+              <GoogleAnalyticsTracker />
+              <div />
+            </>
+          ),
+        },
+      ],
+      { initialEntries: ['/learning/IF-1-3_IMC_Scan'] },
+    );
+    render(<RouterProvider router={router} />);
+
+    await waitFor(() => {
+      expect(sendGa4PageView).toHaveBeenCalledWith(
+        'G-TEST123',
+        '/articles/if-1-3-imc-scan',
+      );
+    });
+  });
+
   it('includes search in page_path on route change', async () => {
     const router = createMemoryRouter(
       [

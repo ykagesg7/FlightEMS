@@ -11,6 +11,7 @@ import {
   buildArticleCanonicalPath,
 } from '../src/utils/articleCanonicalPath.ts';
 import { ARTICLE_ROUTE_ALIASES } from '../src/config/articleRouteAliases.ts';
+import reservedSlugs from '../config/article-reserved-slugs.json' with { type: 'json' };
 
 const root = process.cwd();
 const redirects = buildArticleLegacyRedirects();
@@ -38,6 +39,20 @@ for (const { filename, meta } of metas) {
   }
 }
 
+for (const [contentId, slug] of Object.entries(reservedSlugs)) {
+  const canonical = `/articles/${slug}`;
+  const rows = aliasesByCanonical.get(canonical) ?? [];
+  rows.push({
+    alias: `/articles/${contentId}`,
+    reason: '予約 slug（`config/article-reserved-slugs.json`、MDX 未整備）',
+  });
+  rows.push({
+    alias: `/learning/${contentId}`,
+    reason: 'learning_contents 導線（MDX 未整備）',
+  });
+  aliasesByCanonical.set(canonical, rows);
+}
+
 for (const rule of redirects) {
   const rows = aliasesByCanonical.get(rule.destination) ?? [];
   if (!rows.some((row) => row.alias === rule.source)) {
@@ -49,13 +64,18 @@ for (const rule of redirects) {
   aliasesByCanonical.set(rule.destination, rows);
 }
 
-const mappingRows = [...metas]
-  .map(({ filename, meta }) => {
+const mappingRows = [
+  ...metas.map(({ filename, meta }) => {
     const canonical = buildArticleCanonicalPath(meta, filename);
     const aliases = aliasesByCanonical.get(canonical) ?? [];
     return { filename, canonical, aliases };
-  })
-  .sort((a, b) => a.canonical.localeCompare(b.canonical));
+  }),
+  ...Object.entries(reservedSlugs).map(([contentId, slug]) => ({
+    filename: contentId,
+    canonical: `/articles/${slug}`,
+    aliases: aliasesByCanonical.get(`/articles/${slug}`) ?? [],
+  })),
+].sort((a, b) => a.canonical.localeCompare(b.canonical));
 
 let aliasCount = 0;
 const tableLines = mappingRows.flatMap(({ filename, canonical, aliases }) => {
