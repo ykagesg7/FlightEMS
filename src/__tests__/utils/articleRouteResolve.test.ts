@@ -3,7 +3,6 @@ import {
   canonicalizeAnalyticsPagePath,
   resolveInAppArticleRedirectPath,
 } from '../../utils/articleRouteResolve';
-import { articleHrefForContentId } from '../../utils/articleCanonicalPath';
 
 describe('articleRouteResolve', () => {
   it('maps legacy filename segments to canonical paths for GA4', () => {
