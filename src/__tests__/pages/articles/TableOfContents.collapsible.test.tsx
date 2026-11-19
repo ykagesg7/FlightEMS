@@ -62,7 +62,7 @@ describe('TableOfContents collapsible-top', () => {
 describe('runAfterDomLayoutSettle', () => {
   it('invokes callback after two animation frames', () => {
     const cb = vi.fn();
-    let stored: FrameRequestCallback[] = [];
+    const stored: FrameRequestCallback[] = [];
     vi.spyOn(window, 'requestAnimationFrame').mockImplementation((fn: FrameRequestCallback) => {
       stored.push(fn);
       return stored.length;
