@@ -14,6 +14,7 @@ import CalloutBox from './CalloutBox';
 import CodeBlock from './CodeBlock';
 import Highlight from './Highlight';
 import ImageWithOptimization from './ImageWithOptimization';
+import { MdxHeadingIdProvider, useMdxHeadingId } from './MdxHeadingIdContext';
 
 const DiagramComponent = React.lazy(() => import('./DiagramComponent'));
 const QuizComponent = React.lazy(() => import('./QuizComponent'));
@@ -60,7 +61,19 @@ const diagramFallback = (
   <div className="my-6 h-32 animate-pulse rounded-lg bg-brand-surface" aria-hidden />
 );
 
-const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+function MdxThemeHeading({
+  tag: Tag,
+  className,
+  ...props
+}: HeadingProps & { tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'; className: string }) {
+  const id = useMdxHeadingId(props);
+  return <Tag className={className} {...props} id={id} />;
+}
+
+const MDXContentWithTheme: React.FC<{ children: React.ReactNode; contentKey?: string }> = ({
+  children,
+  contentKey,
+}) => {
   const textColor = 'text-[var(--text-primary)]';
   const headingColor = 'text-brand-primary';
   const linkColor = 'text-brand-primary';
@@ -68,13 +81,25 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
 
   const components = {
     h1: (props: HeadingProps) => (
-      <h1 className={`mb-6 break-words border-b-2 border-brand-primary/40 pb-2 text-2xl font-bold tracking-tight sm:text-3xl ${headingColor}`} {...props} />
+      <MdxThemeHeading
+        tag="h1"
+        className={`mb-6 break-words border-b-2 border-brand-primary/40 pb-2 text-2xl font-bold tracking-tight sm:text-3xl ${headingColor}`}
+        {...props}
+      />
     ),
     h2: (props: HeadingProps) => (
-      <h2 className={`mb-4 mt-8 break-words text-xl font-bold tracking-tight sm:text-2xl ${headingColor}`} {...props} />
+      <MdxThemeHeading
+        tag="h2"
+        className={`mb-4 mt-8 break-words text-xl font-bold tracking-tight sm:text-2xl ${headingColor}`}
+        {...props}
+      />
     ),
     h3: (props: HeadingProps) => (
-      <h3 className={`mb-3 mt-6 break-words text-lg font-bold tracking-tight sm:text-xl ${headingColor}`} {...props} />
+      <MdxThemeHeading
+        tag="h3"
+        className={`mb-3 mt-6 break-words text-lg font-bold tracking-tight sm:text-xl ${headingColor}`}
+        {...props}
+      />
     ),
     p: (props: ParagraphProps) => {
       const Tag = hasBlockChild(props.children) ? 'div' : 'p';
@@ -137,13 +162,15 @@ const MDXContentWithTheme: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <MDXProvider components={components}>
-      <div className="prose prose-invert w-full min-w-0 max-w-none overflow-x-auto rounded-lg bg-brand-secondary p-2 text-base leading-7 shadow-md transition-all duration-300 sm:p-4 sm:leading-8 md:p-6">
-        <div className="mx-auto w-full min-w-0 max-w-[42.5rem]">
-          {children}
+    <MdxHeadingIdProvider resetKey={contentKey}>
+      <MDXProvider components={components}>
+        <div className="prose prose-invert w-full min-w-0 max-w-none overflow-x-auto rounded-lg bg-brand-secondary p-2 text-base leading-7 shadow-md transition-all duration-300 sm:p-4 sm:leading-8 md:p-6">
+          <div className="mx-auto w-full min-w-0 max-w-[42.5rem]">
+            {children}
+          </div>
         </div>
-      </div>
-    </MDXProvider>
+      </MDXProvider>
+    </MdxHeadingIdProvider>
   );
 };
 
@@ -174,7 +201,7 @@ const MDXContent: React.FC<MDXContentProps> = ({ children, meta, contentId }) =>
 
       <div className="flex gap-6 lg:gap-8">
         <div className="min-w-0 w-full flex-1">
-          <MDXContentWithTheme>{children}</MDXContentWithTheme>
+          <MDXContentWithTheme contentKey={contentId ?? meta?.slug}>{children}</MDXContentWithTheme>
 
           {meta && (
             <div className="mt-12">
