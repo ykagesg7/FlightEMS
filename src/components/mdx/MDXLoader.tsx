@@ -1,7 +1,8 @@
 import { MDXProvider } from '@mdx-js/react';
 import React, { useEffect, useState } from 'react';
 import { isChunkLoadFailure, reloadOnceForStaleChunk } from '../../utils/chunkLoadRecovery';
-import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
+import { WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
+import { resolveWithdrawnArticleBasename } from '../../utils/withdrawnArticleRoute';
 import type { ArticleMeta, MDXModule } from '../../types/articles';
 import { getArticleBySlug } from '../../utils/articlesIndex';
 import { loadDevMdxModule } from '../../utils/spiralDevMdx';
@@ -39,7 +40,7 @@ const MDXLoader: React.FC<MDXLoaderProps> = ({ contentId, slug, showPath }) => {
         let module: MDXModule;
         let articleMeta: ArticleMeta | null = null;
 
-        if (!slug && isWithdrawnArticle(contentId)) {
+        if (!slug && resolveWithdrawnArticleBasename(contentId)) {
           setError(WITHDRAWN_ARTICLE_MESSAGE);
           setContent(null);
           setMeta(null);
