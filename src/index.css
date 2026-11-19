@@ -358,3 +358,11 @@ html.quiz-active-session
     flex: 1 1 auto;
   }
 }
+
+html[data-modal-scroll-locked] {
+  overflow: hidden;
+}
+
+html[data-modal-scroll-locked] body {
+  overscroll-behavior: none;
+}

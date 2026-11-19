@@ -1,4 +1,5 @@
-import React, { useEffect, useId, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useModalDialog } from '../../../hooks/useModalDialog';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import {
@@ -34,6 +35,7 @@ export const QuestionReportDialog: React.FC<QuestionReportDialogProps> = ({
   onSuccess,
 }) => {
   const titleId = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [reportType, setReportType] = useState<QuestionReportType>('wrong_explanation');
   const [comment, setComment] = useState('');
   const { submitting, errorMessage, submitReport, clearMessages } = useQuestionReport();
@@ -53,6 +55,13 @@ export const QuestionReportDialog: React.FC<QuestionReportDialogProps> = ({
     setComment('');
     clearMessages();
   }, [open, questionId, clearMessages]);
+
+  useModalDialog({
+    open,
+    onClose,
+    containerRef: dialogRef,
+    closeOnEscape: !submitting,
+  });
 
   if (!open) return null;
 
@@ -74,18 +83,19 @@ export const QuestionReportDialog: React.FC<QuestionReportDialogProps> = ({
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center overscroll-contain sm:items-center">
       <button
         type="button"
-        className="absolute inset-0 bg-black/60 backdrop-blur-[1px]"
+        className="absolute inset-0 bg-black/60 backdrop-blur-[1px] overscroll-contain"
         aria-label="報告ダイアログを閉じる"
         onClick={onClose}
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative z-10 w-full max-w-md rounded-t-2xl border border-brand-primary/25 bg-[var(--panel)] p-6 shadow-xl sm:rounded-2xl"
+        className="relative z-10 w-full max-w-md overscroll-contain rounded-t-2xl border border-brand-primary/25 bg-[var(--panel)] p-6 shadow-xl sm:rounded-2xl"
       >
         <h2 id={titleId} className="mb-3 text-lg font-bold text-brand-primary">
           問題を報告

@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useId, useMemo, useRef, useState } from 'react';
 import type { ArticleHubStatus } from '../articleHubFilters';
+import { useModalDialog } from '../../../hooks/useModalDialog';
 
 interface ArticleFilterDrawerProps {
   isOpen: boolean;
@@ -27,6 +28,10 @@ export const ArticleFilterDrawer: React.FC<ArticleFilterDrawerProps> = ({
   onStatusChange,
 }) => {
   const [tagQuery, setTagQuery] = useState('');
+  const titleId = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useModalDialog({ open: isOpen, onClose, containerRef: dialogRef });
 
   const filteredTags = useMemo(() => {
     const q = tagQuery.trim().toLowerCase();
@@ -48,17 +53,21 @@ export const ArticleFilterDrawer: React.FC<ArticleFilterDrawerProps> = ({
     <>
       <button
         type="button"
-        className="fixed inset-0 z-40 bg-black/50"
+        className="fixed inset-0 z-40 bg-black/50 overscroll-contain"
         aria-label="フィルタを閉じる"
         onClick={onClose}
       />
       <div
-        className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-brand-primary/20 bg-brand-secondary-dark p-5 shadow-xl sm:inset-x-auto sm:right-4 sm:top-24 sm:bottom-auto sm:w-96 sm:rounded-xl"
+        ref={dialogRef}
+        className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto overscroll-contain rounded-t-2xl border border-brand-primary/20 bg-brand-secondary-dark p-5 shadow-xl sm:inset-x-auto sm:right-4 sm:top-24 sm:bottom-auto sm:w-96 sm:rounded-xl"
         role="dialog"
-        aria-label="詳細フィルタ"
+        aria-modal="true"
+        aria-labelledby={titleId}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[var(--text-primary)]">詳細フィルタ</h3>
+          <h3 id={titleId} className="text-lg font-semibold text-[var(--text-primary)]">
+            詳細フィルタ
+          </h3>
           <button
             type="button"
             onClick={onClose}

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import type { ExamLevelFilter } from '../examLevelFilter';
 import type { TestHubMode, TestHubState } from '../testHubFilters';
+import { useModalDialog } from '../../../hooks/useModalDialog';
 
 interface QuizFilterDrawerProps {
   open: boolean;
@@ -25,21 +26,26 @@ export const QuizFilterDrawer: React.FC<QuizFilterDrawerProps> = ({
   questionCountOptions,
   children,
 }) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useModalDialog({ open, onClose, containerRef: dialogRef });
+
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center overscroll-contain sm:items-center">
       <button
         type="button"
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-black/50 overscroll-contain"
         aria-label="フィルタを閉じる"
         onClick={onClose}
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="quiz-filter-drawer-title"
-        className="relative z-10 max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-brand-primary/20 bg-[var(--panel)] p-6 shadow-2xl sm:rounded-2xl"
+        className="relative z-10 max-h-[85vh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-2xl border border-brand-primary/20 bg-[var(--panel)] p-6 shadow-2xl sm:rounded-2xl"
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 id="quiz-filter-drawer-title" className="text-lg font-semibold text-[var(--text-primary)]">
