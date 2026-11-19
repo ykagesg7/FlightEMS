@@ -1,4 +1,9 @@
 import type { HtmlTagDescriptor, Plugin } from 'vite';
+import {
+  buildArticleAnalyticsBootstrapInlineScript,
+  buildArticleAnalyticsBootstrapMap,
+  buildGtagInitInlineScript,
+} from './buildArticleAnalyticsBootstrapScript';
 
 const GTAG_JS = 'https://www.googletagmanager.com/gtag/js';
 
@@ -40,7 +45,13 @@ export function injectGoogleTagPlugin(measurementId: string, production: boolean
           return html;
         }
 
+        const analyticsMap = buildArticleAnalyticsBootstrapMap();
         const tags: HtmlTagDescriptor[] = [
+          {
+            tag: 'script',
+            children: buildArticleAnalyticsBootstrapInlineScript(analyticsMap),
+            injectTo: 'head-prepend',
+          },
           {
             tag: 'script',
             attrs: { async: true, src: `${GTAG_JS}?id=${id}` },
@@ -48,10 +59,7 @@ export function injectGoogleTagPlugin(measurementId: string, production: boolean
           },
           {
             tag: 'script',
-            children: `window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${id}', { send_page_view: false });`,
+            children: buildGtagInitInlineScript(id),
             injectTo: 'head-prepend',
           },
         ];

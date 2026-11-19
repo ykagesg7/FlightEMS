@@ -86,11 +86,13 @@ export function syncBrowserUrlToCanonicalArticlePath(): void {
   installDataLayerCanonicalGuard();
 
   const current = `${window.location.pathname}${window.location.search}`;
-  const canonical = canonicalizeAnalyticsPagePath(current);
+  const preboot = window.__FA_GA_CANONICAL_PATH__;
+  const canonical = preboot || canonicalizeAnalyticsPagePath(current);
   lastCanonicalPagePath = canonical;
 
-  if (current !== canonical) {
+  if (!preboot && current !== canonical) {
     window.history.replaceState(window.history.state, '', canonical);
+    window.__FA_GA_CANONICAL_PATH__ = canonical;
   }
 
   applyGa4CanonicalPageContext(canonical);

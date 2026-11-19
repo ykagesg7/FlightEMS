@@ -1,7 +1,7 @@
 import { MotionConfig } from 'framer-motion';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import {
   Navigate,
@@ -37,22 +37,20 @@ const LearningRedirect: React.FC = () => {
 
 const LearningContentRedirect: React.FC = () => {
   const { contentId } = useParams<{ contentId: string }>();
-  const targetPath = contentId ? articleHrefForContentId(contentId, articleMetas) : null;
-
-  useLayoutEffect(() => {
-    if (!targetPath) return;
+  if (!contentId) return <Navigate to="/articles" replace />;
+  const targetPath = articleHrefForContentId(contentId, articleMetas);
+  if (typeof window !== 'undefined') {
     const canonical = canonicalizeAnalyticsPagePath(
       `${targetPath}${window.location.search}`,
     );
-    applyGa4CanonicalPageContext(canonical);
     const current = `${window.location.pathname}${window.location.search}`;
     if (current !== canonical) {
       window.history.replaceState(window.history.state, '', canonical);
+      window.__FA_GA_CANONICAL_PATH__ = canonical;
+      applyGa4CanonicalPageContext(canonical);
     }
-  }, [targetPath]);
-
-  if (!contentId) return <Navigate to="/articles" replace />;
-  return <Navigate to={targetPath ?? '/articles'} replace />;
+  }
+  return <Navigate to={targetPath} replace />;
 };
 
 const NotFoundPage = () => <div className="text-center text-red-500 py-12">ページが見つかりません</div>;
