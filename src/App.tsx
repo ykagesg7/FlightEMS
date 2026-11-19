@@ -26,8 +26,10 @@ import { MarketingLayout } from './layouts/MarketingLayout';
 import { lazyProtectedRoute, lazyRoute } from './layouts/routeLazy';
 import { importWithChunkRetry } from './utils/lazyWithRetry';
 import { buildSpiralLmsDevRoutes } from './utils/spiralLmsDevRoutes';
+import { applyGa4CanonicalPageContext } from './lib/ga4CanonicalBootstrap';
 import articleMetas from 'virtual:articles-index';
 import { articleHrefForContentId } from './utils/articleCanonicalPath';
+import { canonicalizeAnalyticsPagePath } from './utils/articleRouteResolve';
 
 const LearningRedirect: React.FC = () => {
   return <Navigate to="/articles" replace />;
@@ -36,7 +38,19 @@ const LearningRedirect: React.FC = () => {
 const LearningContentRedirect: React.FC = () => {
   const { contentId } = useParams<{ contentId: string }>();
   if (!contentId) return <Navigate to="/articles" replace />;
-  return <Navigate to={articleHrefForContentId(contentId, articleMetas)} replace />;
+  const targetPath = articleHrefForContentId(contentId, articleMetas);
+  if (typeof window !== 'undefined') {
+    const canonical = canonicalizeAnalyticsPagePath(
+      `${targetPath}${window.location.search}`,
+    );
+    const current = `${window.location.pathname}${window.location.search}`;
+    if (current !== canonical) {
+      window.history.replaceState(window.history.state, '', canonical);
+      window.__FA_GA_CANONICAL_PATH__ = canonical;
+      applyGa4CanonicalPageContext(canonical);
+    }
+  }
+  return <Navigate to={targetPath} replace />;
 };
 
 const NotFoundPage = () => <div className="text-center text-red-500 py-12">ページが見つかりません</div>;
@@ -126,7 +140,7 @@ const router = createBrowserRouter([
           { path: 'learning', element: <LearningRedirect /> },
           { path: 'learning/:contentId', element: <LearningContentRedirect /> },
           { path: 'articles', ...lazyRoute(() => import('./pages/articles/ArticlesPage'), true) },
-          { path: 'articles/:contentId', ...lazyRoute(() => import('./pages/articles/ArticleDetailPage'), true) },
+          { path: 'articles/:contentId', ...lazyRoute(() => import('./pages/articles/ArticleDetailRoute'), true) },
           { path: 'courses/:courseId', ...lazyRoute(() => import('./pages/courses/CourseRedirectPage')) },
           { path: 'account', element: <Navigate to="/profile" replace /> },
           { path: 'test', ...lazyRoute(() => import('./pages/test/TestPage'), true) },

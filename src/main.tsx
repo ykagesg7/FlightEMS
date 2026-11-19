@@ -1,4 +1,6 @@
 import './instrument'; // Sentry 初期化（最初のインポート）
+import { syncBrowserUrlToCanonicalArticlePath } from './lib/ga4CanonicalBootstrap';
+syncBrowserUrlToCanonicalArticlePath();
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';

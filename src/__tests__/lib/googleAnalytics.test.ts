@@ -8,7 +8,10 @@ describe('googleAnalytics', () => {
     gtag.mockClear();
     vi.stubGlobal('window', {
       gtag,
-      location: { href: 'https://flight-lms.vercel.app/articles/foo' },
+      location: {
+        origin: 'https://flight-lms.vercel.app',
+        href: 'https://flight-lms.vercel.app/articles/foo',
+      },
     });
     vi.stubGlobal('document', { title: 'Flight Academy' });
   });
@@ -23,25 +26,33 @@ describe('googleAnalytics', () => {
 
     sendGa4PageView('G-TEST123', '/articles/foo');
 
-    expect(gtag).toHaveBeenCalledTimes(1);
-    expect(gtag).toHaveBeenCalledWith('event', 'page_view', {
+    expect(gtag).toHaveBeenCalledTimes(2);
+    expect(gtag).toHaveBeenNthCalledWith(1, 'config', 'G-TEST123', {
+      page_path: '/articles/foo',
+      page_location: 'https://flight-lms.vercel.app/articles/foo',
+    });
+    expect(gtag).toHaveBeenNthCalledWith(2, 'event', 'page_view', {
       page_path: '/articles/foo',
       page_title: 'Flight Academy',
       page_location: 'https://flight-lms.vercel.app/articles/foo',
     });
-    expect(gtag).not.toHaveBeenCalledWith('config', expect.anything(), expect.anything());
   });
 
-  it('sendGa4PageView reads page_location from window.location at send time', () => {
+  it('sendGa4PageView uses canonical page_location even when window.location is a legacy learning URL', () => {
     vi.stubEnv('PROD', true);
-    const win = window as Window & { location: { href: string } };
-    win.location.href = 'https://preview.example/articles/bar';
+    const win = window as Window & { location: { href: string; origin: string } };
+    win.location.origin = 'https://flight-lms.vercel.app';
+    win.location.href = 'https://flight-lms.vercel.app/learning/IF-1-3_IMC_Scan';
 
-    sendGa4PageView('G-TEST123', '/articles/bar');
+    sendGa4PageView('G-TEST123', '/articles/if-1-3-imc-scan');
 
-    expect(gtag).toHaveBeenCalledWith('event', 'page_view', expect.objectContaining({
-      page_path: '/articles/bar',
-      page_location: 'https://preview.example/articles/bar',
+    expect(gtag).toHaveBeenNthCalledWith(1, 'config', 'G-TEST123', {
+      page_path: '/articles/if-1-3-imc-scan',
+      page_location: 'https://flight-lms.vercel.app/articles/if-1-3-imc-scan',
+    });
+    expect(gtag).toHaveBeenNthCalledWith(2, 'event', 'page_view', expect.objectContaining({
+      page_path: '/articles/if-1-3-imc-scan',
+      page_location: 'https://flight-lms.vercel.app/articles/if-1-3-imc-scan',
     }));
   });
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  articleHrefForContentId,
   articlePrettySlug,
   buildArticleCanonicalPath,
   canonicalArticlePathIfNeeded,
@@ -26,6 +27,12 @@ describe('articleCanonicalPath', () => {
     const meta: ArticleMeta = { title: 'Legacy', tags: [] };
     expect(buildArticleCanonicalPath(meta, '1.1.1_UnconsciousSuccess')).toBe(
       '/articles/1.1.1_UnconsciousSuccess',
+    );
+  });
+
+  it('uses reserved slug when MDX meta is missing', () => {
+    expect(articleHrefForContentId('PPL-2-3-3_WindShearAndVolcanicAsh', {})).toBe(
+      '/articles/ppl-2-3-3-wind-shear-and-volcanic-ash',
     );
   });
 

@@ -1,4 +1,6 @@
 import articleMetas from 'virtual:articles-index';
+import { ARTICLE_ROUTE_ALIASES } from '../config/articleRouteAliases';
+import { reservedContentIdFromSlug } from './articleCanonicalPath';
 import { isWithdrawnArticle } from '../constants/withdrawnArticleIds';
 import type { ArticleIndexEntry, ArticleMeta, ArticleNavigation, ArticleSearchOptions, MDXModule } from '../types/articles';
 import { isArticleReadable } from './articlePublishGate';
@@ -24,16 +26,6 @@ function loaderFor(filename: string): (() => Promise<MDXModule>) | undefined {
   }
   return undefined;
 }
-
-/** Published/emailed Contact stems → CP. Route params and filenames both resolve. */
-const ARTICLE_ROUTE_ALIASES: Record<string, string> = {
-  'ctx-1-1-area-and-purpose': 'cp-1-1-area-and-purpose',
-  'ctx-1-2-energy': 'cp-1-2-energy',
-  'ctx-1-3-controls-g-pio': 'cp-1-3-controls-g-pio',
-  'CTX-1-1_AreaAndPurpose': 'CP-1-1_AreaAndPurpose',
-  'CTX-1-2_Energy': 'CP-1-2_Energy',
-  'CTX-1-3_ControlsGPio': 'CP-1-3_ControlsGPio',
-};
 
 /**
  * ファイル名からslugを生成（フォールバック用）
@@ -154,11 +146,13 @@ function matchesArticleFilenamePrefix(param: string, filename: string): boolean 
  * (e.g. `4.1.1_ChoresAreTheJob` or `chores-are-the-job` / `/articles/chores-are-the-job`).
  * Does not apply the publish gate — callers decide release UX.
  */
-export async function findArticleByRouteParam(
+export function findArticleByRouteParamInIndex(
   param: string,
-): Promise<ArticleIndexEntry | null> {
-  const index = await getArticleIndex();
+  index: ArticleIndexEntry[],
+): ArticleIndexEntry | null {
   const rawKey = normalizeArticleSlug(param);
+  const reservedId = reservedContentIdFromSlug(rawKey);
+  if (reservedId) return null;
   const key = ARTICLE_ROUTE_ALIASES[rawKey] ?? ARTICLE_ROUTE_ALIASES[param] ?? rawKey;
   const prefixMatches = index.filter((entry) => matchesArticleFilenamePrefix(key, entry.filename));
   if (prefixMatches.length === 1) {
@@ -182,6 +176,18 @@ export async function findArticleByRouteParam(
       );
     }) ?? null
   );
+}
+
+/** Synchronous resolver for in-app canonical redirects and GA4 path normalization. */
+export function findArticleByRouteParamSync(param: string): ArticleIndexEntry | null {
+  return findArticleByRouteParamInIndex(param, buildArticleIndexSync());
+}
+
+export async function findArticleByRouteParam(
+  param: string,
+): Promise<ArticleIndexEntry | null> {
+  const index = await getArticleIndex();
+  return findArticleByRouteParamInIndex(param, index);
 }
 
 /**

@@ -65,15 +65,23 @@ describe('GoogleAnalyticsTracker', () => {
 
     await waitFor(() => expect(sendGa4PageView).toHaveBeenCalledTimes(1));
 
-    await router.navigate('/articles/IF-1-3_IMC_Scan');
+    await router.navigate('/articles/if-1-3-imc-scan');
 
     await waitFor(() => expect(sendGa4PageView).toHaveBeenCalledTimes(2));
     expect(sendGa4PageView).toHaveBeenLastCalledWith(
       'G-TEST123',
-      '/articles/IF-1-3_IMC_Scan',
+      '/articles/if-1-3-imc-scan',
     );
 
     unmount();
+  });
+
+  it('does not send page_view while router location is still /learning/:id', async () => {
+    renderTracker('/learning/IF-1-3_IMC_Scan');
+
+    await waitFor(() => {
+      expect(sendGa4PageView).not.toHaveBeenCalled();
+    });
   });
 
   it('includes search in page_path on route change', async () => {

@@ -31,6 +31,11 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
+interface Window {
+  /** index.html インライン bootstrap が設定する GA4 正本 path（search 含む）。 */
+  __FA_GA_CANONICAL_PATH__?: string;
+}
+
 declare module '*.json' {
   const value: any;
   export default value;
