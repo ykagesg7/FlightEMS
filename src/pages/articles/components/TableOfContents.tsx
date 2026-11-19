@@ -18,6 +18,13 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
   const { tocItems, activeId, scrollToHeading } = useTableOfContents();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  const handleTocClick = (id: string) => {
+    scrollToHeading(id);
+    if (mode === 'drawer') {
+      setIsDrawerOpen(false);
+    }
+  };
+
   // 指定レベル以下の見出しのみフィルタ
   const filteredItems = tocItems.filter(item => item.level <= maxLevel);
 
@@ -32,7 +39,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
     return (
       <li key={`${item.id}-${index}`} className={`toc-item level-${item.level}`}>
         <button
-          onClick={() => scrollToHeading(item.id)}
+          onClick={() => handleTocClick(item.id)}
           className={`block w-full text-left py-1 px-2 rounded text-sm transition-all duration-200 ${isActive
             ? 'font-semibold text-brand-primary bg-indigo-900 bg-opacity-30'
             : 'text-white opacity-80 hover:opacity-100 hover:text-brand-primary'
