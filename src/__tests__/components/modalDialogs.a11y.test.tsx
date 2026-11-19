@@ -73,11 +73,16 @@ describe('modal dialog accessibility', () => {
 
   it('ImageComponent lightbox opens with dialog semantics', async () => {
     const user = userEvent.setup();
-    render(<ImageComponent src="/test.png" alt="テスト画像" />);
+    render(<ImageComponent src="/test.png" alt="テスト画像" caption="キャプション" />);
 
     await user.click(screen.getByRole('button', { name: /テスト画像/ }));
-    const dialog = await screen.findByRole('dialog', { name: 'テスト画像' });
+    const dialog = await screen.findByRole('dialog', { name: 'キャプション' });
     expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveClass('fixed', 'inset-0');
+    expect(screen.getByRole('heading', { level: 2, name: 'キャプション' })).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: '閉じる' })).toHaveFocus();
+    });
     fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();

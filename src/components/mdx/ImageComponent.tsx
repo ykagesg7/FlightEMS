@@ -1,4 +1,4 @@
-import React, { useCallback, useId, useRef, useState } from 'react';
+import React, { useCallback, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useModalDialog } from '../../hooks/useModalDialog';
 
@@ -28,58 +28,66 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
 
+  const dialogTitle = useMemo(() => {
+    const fromCaption = caption?.trim();
+    if (fromCaption) return fromCaption;
+    const fromAlt = alt?.trim();
+    if (fromAlt) return fromAlt;
+    return '画像の拡大表示';
+  }, [alt, caption]);
+
   const closeLightbox = useCallback(() => setIsEnlarged(false), []);
 
   useModalDialog({ open: isEnlarged, onClose: closeLightbox, containerRef: dialogRef });
 
   const lightbox = isEnlarged
     ? createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center overscroll-contain">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black bg-opacity-80 overscroll-contain"
-            aria-label="拡大表示を閉じる"
+        <div
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          className="fixed inset-0 z-[100] flex items-center justify-center overscroll-contain bg-black/80 p-4"
+        >
+          <div
+            className="absolute inset-0 h-full w-full"
+            aria-hidden="true"
             onClick={closeLightbox}
           />
-          <div
-            ref={dialogRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={titleId}
-            className="relative z-10 flex max-h-screen max-w-screen items-center justify-center p-4"
+          <h2
+            id={titleId}
+            className="pointer-events-none absolute top-4 left-4 right-16 z-20 truncate text-sm font-semibold text-white"
           >
-            <p id={titleId} className="sr-only">
-              {alt || '画像の拡大表示'}
-            </p>
-            <img
-              src={src}
-              alt={alt}
-              className="mx-auto max-h-screen max-w-screen rounded-lg object-contain p-4"
-            />
-            <div className="absolute top-4 right-4">
-              <button
-                type="button"
-                className="rounded-full bg-white bg-opacity-80 p-2"
-                onClick={closeLightbox}
-                aria-label="閉じる"
+            {dialogTitle}
+          </h2>
+          <img
+            src={src}
+            alt={alt}
+            className="pointer-events-none relative z-10 mx-auto max-h-[calc(100dvh-2rem)] max-w-full rounded-lg object-contain"
+          />
+          <div className="absolute top-4 right-4 z-20">
+            <button
+              type="button"
+              className="rounded-full bg-white bg-opacity-80 p-2"
+              onClick={closeLightbox}
+              aria-label="閉じる"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
           </div>
         </div>,
         document.body,
@@ -91,9 +99,13 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
       <button
         ref={triggerRef}
         type="button"
-        className="block w-full cursor-pointer overflow-hidden rounded-lg text-left"
+        className={`block w-full cursor-pointer overflow-hidden rounded-lg text-left ${
+          isEnlarged ? 'pointer-events-none invisible' : ''
+        }`}
         onClick={() => setIsEnlarged(true)}
         aria-haspopup="dialog"
+        aria-expanded={isEnlarged}
+        tabIndex={isEnlarged ? -1 : undefined}
       >
         <img
           src={src}
