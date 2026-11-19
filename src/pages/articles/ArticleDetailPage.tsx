@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import MDXLoader from '../../components/mdx/MDXLoader';
-import { isWithdrawnArticle, WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
+import { WITHDRAWN_ARTICLE_MESSAGE } from '../../constants/withdrawnArticleIds';
+import { resolveWithdrawnArticleBasename } from '../../utils/withdrawnArticleRoute';
 import { useArticleStats } from '../../hooks/useArticleStats';
 import { useAuth } from '../../hooks/useAuth';
 import { ArticleMeta } from '../../types/articles';
@@ -140,7 +141,7 @@ const ArticleDetailPage: React.FC = () => {
   );
 
   useEffect(() => {
-    if (!articleId || isWithdrawnArticle(articleId)) return;
+    if (!articleId || resolveWithdrawnArticleBasename(articleId)) return;
     loadArticleStats([articleId]);
     loadComments(articleId);
   }, [articleId, loadArticleStats, loadComments]);
@@ -186,7 +187,10 @@ const ArticleDetailPage: React.FC = () => {
   }
 
   const articleComments = comments[articleId] || [];
-  const withdrawn = isWithdrawnArticle(articleId);
+  const withdrawnBasename =
+    (contentId ? resolveWithdrawnArticleBasename(contentId) : null) ??
+    (articleId ? resolveWithdrawnArticleBasename(articleId) : null);
+  const withdrawn = withdrawnBasename !== null;
   const notYetReleased =
     !isCatalogOnlyArticle &&
     !withdrawn &&
