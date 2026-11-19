@@ -50,6 +50,9 @@ export default defineConfig({
         'public/',
         'coverage/',
         'archive/',
+        // Vite virtual ids (\\0-prefixed) e.g. \\0vite/dynamic-import-helper.js break istanbul html on Node 24
+        '**/dynamic-import-helper.js',
+        'virtual:articles-index',
       ],
       thresholds: {
         lines: 4,
