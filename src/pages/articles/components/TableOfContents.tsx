@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { runAfterDomLayoutSettle } from '@/utils/mdxHeadingAnchors';
 import { useTableOfContents } from '../../../hooks/useTableOfContents';
 
 interface TableOfContentsProps {
@@ -17,12 +18,27 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
 }) => {
   const { tocItems, activeId, scrollToHeading } = useTableOfContents();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const collapsibleDetailsRef = useRef<HTMLDetailsElement>(null);
 
   const handleTocClick = (id: string) => {
-    scrollToHeading(id);
+    const runScroll = () => scrollToHeading(id);
+
     if (mode === 'drawer') {
       setIsDrawerOpen(false);
+      runAfterDomLayoutSettle(runScroll);
+      return;
     }
+
+    if (mode === 'collapsible-top') {
+      const details = collapsibleDetailsRef.current;
+      if (details?.open) {
+        details.open = false;
+        runAfterDomLayoutSettle(runScroll);
+        return;
+      }
+    }
+
+    runScroll();
   };
 
   // 指定レベル以下の見出しのみフィルタ
@@ -136,7 +152,10 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
   // モバイル上部・折りたたみ
   if (mode === 'collapsible-top') {
     return (
-      <details className="toc-collapsible-top mb-4 rounded-lg border border-brand-primary/20 bg-brand-secondary-dark lg:hidden">
+      <details
+        ref={collapsibleDetailsRef}
+        className="toc-collapsible-top mb-4 rounded-lg border border-brand-primary/20 bg-brand-secondary-dark lg:hidden"
+      >
         <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-[color:var(--text-primary)] marker:content-none [&::-webkit-details-marker]:hidden">
           <span className="flex items-center gap-2">
             <svg className="h-4 w-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>

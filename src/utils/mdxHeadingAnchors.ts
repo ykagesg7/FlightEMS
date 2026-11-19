@@ -123,6 +123,17 @@ export function resolveMdxHeadingElement(
   return syncedHit && container.contains(syncedHit) ? syncedHit : null;
 }
 
+/** Run after the browser has applied DOM/layout changes (e.g. closing `<details>`). */
+export function runAfterDomLayoutSettle(callback: () => void): void {
+  if (typeof requestAnimationFrame !== 'function') {
+    callback();
+    return;
+  }
+  requestAnimationFrame(() => {
+    requestAnimationFrame(callback);
+  });
+}
+
 export function scrollElementToAnchor(
   element: HTMLElement,
   options?: { offsetPx?: number; behavior?: ScrollBehavior },
