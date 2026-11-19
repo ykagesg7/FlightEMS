@@ -38,7 +38,12 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
 
   const closeLightbox = useCallback(() => setIsEnlarged(false), []);
 
-  useModalDialog({ open: isEnlarged, onClose: closeLightbox, containerRef: dialogRef });
+  useModalDialog({
+    open: isEnlarged,
+    onClose: closeLightbox,
+    containerRef: dialogRef,
+    returnFocusRef: triggerRef,
+  });
 
   const lightbox = isEnlarged
     ? createPortal(
@@ -100,12 +105,11 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
         ref={triggerRef}
         type="button"
         className={`block w-full cursor-pointer overflow-hidden rounded-lg text-left ${
-          isEnlarged ? 'pointer-events-none invisible' : ''
+          isEnlarged ? 'pointer-events-none opacity-0' : ''
         }`}
         onClick={() => setIsEnlarged(true)}
         aria-haspopup="dialog"
         aria-expanded={isEnlarged}
-        tabIndex={isEnlarged ? -1 : undefined}
       >
         <img
           src={src}

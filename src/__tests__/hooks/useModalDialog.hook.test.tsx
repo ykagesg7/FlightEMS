@@ -1,6 +1,6 @@
 import { useModalDialog } from '@/hooks/useModalDialog';
 import { lockBodyScroll } from '@/utils/modalScrollLock';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useRef, useState } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -75,7 +75,9 @@ describe('useModalDialog', () => {
     const opener = screen.getByRole('button', { name: '開く' });
     await user.click(opener);
     await user.click(screen.getByRole('button', { name: '閉じる' }));
-    expect(opener).toHaveFocus();
+    await waitFor(() => {
+      expect(opener).toHaveFocus();
+    });
   });
 
   it('cycles Tab between focusable elements inside the dialog', async () => {

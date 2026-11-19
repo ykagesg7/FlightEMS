@@ -75,7 +75,8 @@ describe('modal dialog accessibility', () => {
     const user = userEvent.setup();
     render(<ImageComponent src="/test.png" alt="テスト画像" caption="キャプション" />);
 
-    await user.click(screen.getByRole('button', { name: /テスト画像/ }));
+    const opener = screen.getByRole('button', { name: /テスト画像/ });
+    await user.click(opener);
     const dialog = await screen.findByRole('dialog', { name: 'キャプション' });
     expect(dialog).toHaveAttribute('aria-modal', 'true');
     expect(dialog).toHaveClass('fixed', 'inset-0');
@@ -86,6 +87,20 @@ describe('modal dialog accessibility', () => {
     fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(opener).toHaveFocus();
+      expect(document.activeElement).toBe(opener);
+    });
+
+    await user.click(opener);
+    const dialogAgain = await screen.findByRole('dialog', { name: 'キャプション' });
+    const backdrop = dialogAgain.querySelector(':scope > [aria-hidden="true"]');
+    expect(backdrop).toBeTruthy();
+    await user.click(backdrop as Element);
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(opener).toHaveFocus();
     });
   });
 });

@@ -7,6 +7,8 @@ type UseModalDialogOptions = {
   onClose: () => void;
   /** Element with `role="dialog"` (or native `<dialog>`) that receives focus trapping. */
   containerRef: RefObject<HTMLElement | null>;
+  /** When set, focus returns here on close instead of the element that was focused on open. */
+  returnFocusRef?: RefObject<HTMLElement | null>;
   /** When false, Escape does not call onClose (e.g. while submitting). */
   closeOnEscape?: boolean;
 };
@@ -15,6 +17,7 @@ export function useModalDialog({
   open,
   onClose,
   containerRef,
+  returnFocusRef,
   closeOnEscape = true,
 }: UseModalDialogOptions): void {
   const onCloseRef = useRef(onClose);
@@ -81,9 +84,15 @@ export function useModalDialog({
     document.addEventListener('keydown', onKeyDown, true);
     return () => {
       document.removeEventListener('keydown', onKeyDown, true);
-      if (previousFocus?.isConnected) {
-        previousFocus.focus();
-      }
+      const explicit = returnFocusRef?.current ?? null;
+      const fallback = previousFocus?.isConnected ? previousFocus : null;
+      const target = explicit?.isConnected ? explicit : fallback;
+      if (!target) return;
+      requestAnimationFrame(() => {
+        if (target.isConnected) {
+          target.focus();
+        }
+      });
     };
-  }, [open, containerRef, closeOnEscape]);
+  }, [open, containerRef, returnFocusRef, closeOnEscape]);
 }
